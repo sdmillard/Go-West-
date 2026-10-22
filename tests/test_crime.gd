@@ -155,7 +155,7 @@ func run():
 			check(not current.knowledge.has("staff:fort_bridger"),"No aggregate staff observer remains")
 	for outcome in ["unseen","noticed","killed"]:check(witnessed.has(outcome),"Witness sample exercises "+outcome)
 	game=outfit()
-	check(game.crime.record.actors.size()==12 and game.crime.service("fort_bridger").owner=="keeper:fort_bridger" and game.crime.service("fort_bridger").staff==["keeper:fort_bridger","hand:fort_bridger"],"Store service is owned by the keeper and staffed by separate people")
+	check(game.crime.record.actors.size()==16 and game.crime.service("fort_bridger").owner=="keeper:fort_bridger" and game.crime.service("fort_bridger").staff==["keeper:fort_bridger","hand:fort_bridger"],"Store service is owned by the keeper and staffed by separate people")
 	game.crime.scenes.fort_bridger.shot_hit=1
 	game.crime.scenes.fort_bridger.shot_fatal=1
 	game.open_crime()
@@ -340,6 +340,7 @@ func run():
 	choose(game,"flee")
 	check(game.crime.record.reports.size()==1 and game.crime.record.reports[0].senders==["hand:fort_bridger"],"With the keeper dead, the hired hand's report still goes out")
 	venue_checks(store)
+	fort_checks(store)
 	var screen=Main.instantiate()
 	root.add_child(screen)
 	await process_frame
@@ -485,11 +486,11 @@ func venue_checks(store) -> void:
 	game=willing(outfit())
 	saved=store.capture(game)
 	var old: Dictionary=saved.duplicate(true)
-	for place in ["kansas_river","fort_laramie","fort_hall","fort_boise","barlow_pass"]:
+	for place in ["kansas_river","fort_kearny","fort_laramie","fort_hall","fort_boise","barlow_pass"]:
 		old.crime.record.services.erase(place)
 		for uid in game.crime.staff_ids(place):old.crime.record.actors.erase(uid)
 	var restored=store.restore(JSON.parse_string(JSON.stringify(old)))
-	check(restored!=null and restored.crime.record.services.size()==6 and restored.crime.service("fort_laramie").cash_cents==6000 and restored.crime.owner("barlow_pass").health==100,"A save made before the new venues gains them untouched")
+	check(restored!=null and restored.crime.record.services.size()==restored.crime.scenes.size() and restored.crime.service("fort_laramie").cash_cents==6000 and restored.crime.owner("barlow_pass").health==100,"A save made before the new venues gains them untouched")
 	old.crime.record.actors["keeper:fort_laramie"]={"uid":"keeper:fort_laramie","place":"fort_laramie","role":"keeper","health":0}
 	check(store.restore(JSON.parse_string(JSON.stringify(old)))==null,"A partial venue in an old save is rejected, not repaired")
 	# Rules: every venue declares a kind; only stores hold food; only ferries can be taken.
@@ -508,3 +509,69 @@ func venue_checks(store) -> void:
 	broken=rules.duplicate(true)
 	broken.scenes.fort_hall["seized_risk_low"]=0.1
 	check(not crime.load_data(broken),"Only a ferry has a taken-crossing risk")
+## Fort Kearny: soldiers close in, and a failed escape becomes a standoff.
+func fort_checks(store) -> void:
+	var game=outfit()
+	game.state.departure_month=3
+	game.state.day=40
+	at(game,"fort_kearny")
+	check(not game.open_crime(),"Before June 1848 nobody is at the Fort Kearny site to rob")
+	game=outfit()
+	game.state.departure_month=5
+	game.state.day=40
+	at(willing(game),"fort_kearny")
+	check(game.open_crime() and game.pending.title=="The commissary tent" and "Soldiers on duty nearby: 3" in game.pending.text and "shoot its way out" in game.pending.text,"Once soldiers are building the post, its commissary can be targeted")
+	choose_back(game)
+	game.crime.scenes.fort_kearny.compliance=1
+	game.crime.scenes.fort_kearny.escape_capture=1
+	game.open_crime()
+	choose(game,"robbery")
+	var food: int=game.state.food
+	check(game.crime.loot_quote(game,"fort_kearny").food>0,"The commissary holds rations to take")
+	choose(game,"take")
+	check(game.state.food>food,"Rations taken from the commissary reach the wagon")
+	choose(game,"flee")
+	check(game.crime.incident().stage=="standoff" and game.state.status=="traveling","Soldiers who stop the escape force a standoff, not an instant capture")
+	check(game.pending.choices.map(func(choice):return choice.crime_command)==["breakout","surrender","back"],"The standoff offers shooting out or surrender")
+	var saved: Dictionary=store.capture(game)
+	check(store.restore(JSON.parse_string(JSON.stringify(saved)))!=null,"A standoff round-trips through saves")
+	var bullets: int=game.state.bullets
+	var copy=store.restore(JSON.parse_string(JSON.stringify(saved)))
+	copy.crime.scenes.fort_kearny.breakout=1
+	copy.crime.scenes.fort_kearny.shot_hit=1
+	copy.crime.scenes.fort_kearny.shot_fatal=1
+	var health: int=copy.party_health.members[0].health
+	check(choose(copy,"breakout") and copy.crime.incident().resolution=="escaped","A successful breakout gets the party away")
+	check(copy.state.bullets==bullets-3 and copy.crime.incident().shots==3,"Shooting out spends the authored bullets")
+	check(copy.party_health.members[0].health<health,"Soldiers fire back: someone in the party is hurt")
+	check(copy.crime.living_staff("fort_kearny")==["keeper:fort_kearny"],"Each hit can kill a soldier, who stays dead")
+	check(copy.crime.record.reports.size()==1 and copy.crime.record.reports[0].senders==["keeper:fort_kearny"] and copy.crime.record.reports[0].identified,"Surviving soldiers still report the party")
+	check(store.restore(JSON.parse_string(JSON.stringify(store.capture(copy))))!=null,"A breakout round-trips through saves")
+	copy=store.restore(JSON.parse_string(JSON.stringify(saved)))
+	copy.crime.scenes.fort_kearny.breakout=0
+	check(choose(copy,"breakout") and copy.state.status=="lost","A failed breakout ends the journey in custody")
+	copy=store.restore(JSON.parse_string(JSON.stringify(saved)))
+	check(choose(copy,"surrender") and copy.state.status=="lost","The party can surrender to the soldiers")
+	copy=store.restore(JSON.parse_string(JSON.stringify(saved)))
+	copy.state.bullets=0
+	copy.pending=copy.crime.menu(copy)
+	check(not copy.crime.can_choose(copy,"breakout") and copy.crime.can_choose(copy,"surrender"),"Without bullets the only way out is surrender")
+	var bad: Dictionary=saved.duplicate(true)
+	bad.crime.record.incidents[0].shots=9
+	check(store.restore(bad)==null,"A breakout cannot claim more shots than the scene allows")
+	# A standoff is a fort's alone.
+	game=at(willing(outfit()),"fort_bridger")
+	game.crime.scenes.fort_bridger.compliance=1
+	game.crime.scenes.fort_bridger.escape_capture=1
+	game.open_crime()
+	choose(game,"robbery")
+	choose(game,"flee")
+	check(game.state.status=="lost","A store's staff simply catch the party; only soldiers force a standoff")
+	var rules: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/crime_scenes.json"))
+	var crime=game.crime.get_script().new()
+	var broken: Dictionary=rules.duplicate(true)
+	broken.scenes.fort_kearny.erase("breakout")
+	check(not crime.load_data(broken),"A fort needs a breakout chance")
+	broken=rules.duplicate(true)
+	broken.scenes.fort_bridger["food_stock"]=100
+	check(not crime.load_data(broken),"Only a fort has its own food stock")
