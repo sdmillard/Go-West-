@@ -19,7 +19,64 @@
     "miles_per_day": 25
   },
   "scenes": {
+    "kansas_river": {
+      "kind": "ferry",
+      "title": "The ferry landing",
+      "note": "An authored encounter with a ferry crew, not a reconstruction of the Papin family or their Kanza relatives. A ferry taken from its crew must be worked by the party, with a higher mishap risk than a crewed crossing.",
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "ferryman"
+        },
+        {
+          "id": "hand",
+          "role": "ferry hand"
+        }
+      ],
+      "cash_cents": 1500,
+      "food_lot": 0,
+      "loot_limit": 0,
+      "theft_success": 0.35,
+      "compliance": 0.5,
+      "shot_hit": 0.65,
+      "shot_fatal": 0.5,
+      "escape_capture": 0.1,
+      "escape_injury": 0.25,
+      "injury_damage": 15,
+      "seized_risk_low": 0.12,
+      "seized_risk_high": 0.3
+    },
+    "fort_laramie": {
+      "kind": "store",
+      "title": "The trading store",
+      "note": "An authored encounter at the private adobe trading post, then still Fort John. A larger staff than the western posts; not a reconstruction of named traders or a garrison.",
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "keeper"
+        },
+        {
+          "id": "clerk",
+          "role": "clerk"
+        },
+        {
+          "id": "hand",
+          "role": "hired hand"
+        }
+      ],
+      "cash_cents": 6000,
+      "food_lot": 200,
+      "loot_limit": 200,
+      "theft_success": 0.45,
+      "compliance": 0.35,
+      "shot_hit": 0.6,
+      "shot_fatal": 0.5,
+      "escape_capture": 0.16,
+      "escape_injury": 0.3,
+      "injury_damage": 20
+    },
     "fort_bridger": {
+      "kind": "store",
       "title": "The trading store",
       "note": "An authored encounter at the private trading establishment, not a reconstruction of a named historical keeper or an army garrison.",
       "staff": [
@@ -42,6 +99,77 @@
       "escape_capture": 0.12,
       "escape_injury": 0.3,
       "injury_damage": 20
+    },
+    "fort_hall": {
+      "kind": "store",
+      "title": "The trading store",
+      "note": "An authored encounter at the Hudson's Bay Company post, not a reconstruction of a named officer or an army garrison.",
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "keeper"
+        },
+        {
+          "id": "hand",
+          "role": "hired hand"
+        }
+      ],
+      "cash_cents": 4000,
+      "food_lot": 200,
+      "loot_limit": 200,
+      "theft_success": 0.5,
+      "compliance": 0.4,
+      "shot_hit": 0.65,
+      "shot_fatal": 0.5,
+      "escape_capture": 0.14,
+      "escape_injury": 0.3,
+      "injury_damage": 20
+    },
+    "fort_boise": {
+      "kind": "store",
+      "title": "The trading store",
+      "note": "An authored encounter at the small Hudson's Bay Company post, not a reconstruction of a named officer or the later military fort.",
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "keeper"
+        },
+        {
+          "id": "hand",
+          "role": "hired hand"
+        }
+      ],
+      "cash_cents": 3000,
+      "food_lot": 200,
+      "loot_limit": 200,
+      "theft_success": 0.55,
+      "compliance": 0.45,
+      "shot_hit": 0.65,
+      "shot_fatal": 0.5,
+      "escape_capture": 0.12,
+      "escape_injury": 0.3,
+      "injury_damage": 20
+    },
+    "barlow_pass": {
+      "kind": "toll",
+      "title": "The toll gate",
+      "note": "An authored encounter at the Barlow Road toll gate, not a reconstruction of a named gatekeeper. Getting the wagons through without paying waives the toll.",
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "gatekeeper"
+        }
+      ],
+      "cash_cents": 4000,
+      "food_lot": 0,
+      "loot_limit": 0,
+      "theft_success": 0.5,
+      "compliance": 0.55,
+      "shot_hit": 0.7,
+      "shot_fatal": 0.5,
+      "escape_capture": 0.1,
+      "escape_injury": 0.25,
+      "injury_damage": 15
     }
   }
 }

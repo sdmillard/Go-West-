@@ -83,9 +83,20 @@ Validation derives the expected reports from the incidents, so a report cannot b
 
 `store-reports-journeys.json` reruns the 24-journey store sample with reports on. No-crime and theft journeys all arrive. 4 of 6 robbery journeys and all 6 shooting journeys run out of time before Oregon City: news reaches Fort Hall and Fort Boise before the party, both refuse resupply, and the parties limp on with too little food and too few oxen. The sampler now treats "out of time while still making progress" as an outcome and only flags a journey that stalls for 60 days as a policy loop. This is an integration sample, not balance evidence, but it already shows the news speed and refusal rules are strong enough to matter. The balance campaign should tune them together with loot size.
 
+## More venues: every post, the toll gate and the ferry
+
+Each scene in `data/crime_scenes.json` now has a `kind`: `store`, `toll` or `ferry`. All four trading posts on the route are stores: Fort John / Laramie (keeper, clerk and hired hand, so it is harder to rob), Fort Bridger, Fort Hall and Fort Boise (keeper and hired hand). Two route stops that already charge for passage are the new kinds. Both use the incident, witness and report machinery unchanged, and every role is authored, not a named historical person.
+
+- **Barlow Road toll gate** (`barlow_pass`, one gatekeeper, $40 cash box, no food). Theft means slipping the wagons past the gate. Getting away after reaching the loot stage (an unseen pass, a complied threat, a killed gatekeeper or a search) waives the toll: the stop's continue choice costs nothing. A noticed attempt or resisted threat that runs off still owes the toll. A dead gatekeeper collects nothing.
+- **Kansas River ferry** (`kansas_river`, ferryman and ferry hand, $15 cash box, no food). Theft means casting off with the ferry while the crew is away. Taking the ferry and getting away adds a "Cross on the taken ferry" choice with an authored mishap risk (12% low water, 30% high water, still scaled by the existing crossing factor). The hired ferry is no longer offered once the party has taken it, attacked the crew, or the crew has heard identifying news. A failed robbery leaves only fording and floating.
+
+Passage is derived from the incidents (a `left` or `escaped` incident at that place that reached the loot stage and where the party took the prize), so the save record shape and version do not change. Stop choices are refreshed after each encounter. The taken ferry is appended to the end of the stop's choices, so earlier choice indices never shift. Reports name the venue ("robbed the ferry at Kansas River").
+
+Saves made before these venues existed gain their people and services untouched when loaded; food bought at a post before then is counted conservatively, as `bind_party` already does. A record with only part of a venue is rejected rather than repaired. The genuine fixture `tests/fixtures/pre-venues-save-v1.json` is a reported Fort Bridger robbery saved under the previous rules.
+
 ## Other limits
 
-Personal existing health specials still affect any actual injury damage. Services other than this keeper's trade are not yet governed by a general hostility/access system.
+Personal existing health specials still affect any actual injury damage. Paid trade, paid care and the hired ferry respond to incidents and news; other services are not yet governed by a general hostility/access system. Fort Kearny (the only army post on the 1848 route) has no scene yet.
 
 Reproduce using project-local APPDATA as in `test.ps1`: run `tests/test_crime.gd` for targeted checks or `tests/store_crime_journeys.gd` for the 24-route sample. Both use the actual engine. Keep previous balance reports archived.
 
