@@ -24,6 +24,18 @@ Keeper food starts from the existing eight 200-lb post lots. Theft/looting and l
 
 Each collection is capped at 200 lb and available physical cargo space. Cash and food are transferred once, before that collection day's ordinary meals and hazards. A local alarm closes legitimate trade with this keeper/staff. Passing traders elsewhere remain separate people. Loot provenance currently means incident transfer totals; individual stolen-item ownership chains and later resale recognition are not implemented.
 
+## People, ownership and witnesses (record version 2)
+
+Each scene lists its staff in `data/crime_scenes.json`. The first entry, `keeper`, owns the service; Bridger currently has the keeper and one hired hand, both authored roles rather than named historical people. Every staff member is a separate persistent actor (`keeper:fort_bridger`, `hand:fort_bridger`) with their own health. The service record (`services.fort_bridger`) holds the owner, staff list, cash stash, food sold/taken and the local alarm. Killing the keeper closes the store and opens the search action, but the hired hand stays alive and keeps what they saw.
+
+Knowledge is per person. An unseen theft gives no local person any knowledge. A noticed attempt is seen by every staff member alive after it resolves; a keeper killed by the shot learns nothing. Validation enforces both directions, so a living witness cannot be edited out of a save and nobody can be added from another place. A dead person's earlier knowledge stays on record; later reporting must check whether its holder is alive. `local_witnesses()` lists the local people who know anything about an incident, which is the input phase 6 reporting needs.
+
+Version 1 records (one keeper entry per place plus an aggregate `staff:<place>` observer) are upgraded on load: the keeper's stock, cash and alarm move to the service, and the aggregate observer's facts go to each staff member still alive. The genuine fixture `tests/fixtures/pre-witness-save-v1.json` is an active escape stage after a resisted robbery. Crime rolls and menu texts are unchanged, so the same seed and actions still give the same outcomes.
+
+The rules fingerprint now ignores carriage returns. Windows Git checkouts converted the JSON rules to CRLF, which gave the same rules a different fingerprint on each platform; `.gitattributes` now keeps text files LF. Both fingerprints of the previous rules (`c64ed4…` from the Windows copy, `2805dd…` from an LF checkout) are accepted as compatible earlier saves.
+
+## Identities
+
 Original-party IDs use seed plus original slot; this is a safe namespace for the existing fixed five identities. Future recruitment still needs a slot-to-person mapping and identity allocation before replacing anyone. NPC actors have separate IDs. This checkpoint does not yet create a general corpse ledger or automatically convert deaths to food.
 
 ## Save and replay
@@ -42,7 +54,7 @@ The complete final regression suite passed in the canonical Projects repository 
 
 ## Remaining work
 
-Finish and review the foundation before expanding it: actor-level witnesses and reports instead of the current aggregate nearby-staff observer; precise participation/refusal and stronger witnessed violence responses; broader identity/ownership records; physical bodies and provenance. No rumor spread, distant enforcement, pursuit after departure, guard combat, escape shooting, companion attacks, companion-to-companion bonds, emergency flight, toll/ferry crime, cannibalism, replacement recruitment or final survival balance has shipped.
+Finish and review the foundation before expanding it: reports from the named witnesses; precise participation/refusal and stronger witnessed violence responses; broader identity/ownership records; physical bodies and provenance. No rumor spread, distant enforcement, pursuit after departure, guard combat, escape shooting, companion attacks, companion-to-companion bonds, emergency flight, toll/ferry crime, cannibalism, replacement recruitment or final survival balance has shipped.
 
 The first scene deliberately uses fixed local probabilities. Health/experience/defender-count effects on attacking and escape remain a roadmap task. Personal existing health specials still affect any actual injury damage. Services other than this keeper's trade are not yet governed by a general hostility/access system.
 

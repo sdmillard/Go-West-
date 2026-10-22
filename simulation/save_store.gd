@@ -16,7 +16,8 @@ func fingerprint() -> String:
 	var text := FileAccess.get_file_as_string("res://data/events.json")
 	for file in RULE_FILES:
 		text += FileAccess.get_file_as_string("res://data/%s.json" % file)
-	rules_signature = text.sha256_text()
+	# Line endings depend on the checkout (Windows Git converts to CRLF); the rules do not.
+	rules_signature = text.replace("\r", "").sha256_text()
 	return rules_signature
 
 func capture(game) -> Dictionary:
@@ -325,9 +326,10 @@ func restore(value: Variant):
 	game.survival.wet_ground = int(value.wet_ground)
 	game.survival.last_events = normalize(value.last_events)
 	if value.has("crime"):
-		if not game.crime.valid(value.crime,game):return null
-		game.crime.record=normalize(value.crime.record)
-		game.crime.rng.state=int(value.crime.random)
+		var crime: Variant=game.crime.upgrade(value.crime)
+		if not game.crime.valid(crime,game):return null
+		game.crime.record=normalize(crime.record)
+		game.crime.rng.state=int(crime.random)
 	elif migrated or economy_migrated:game.crime.bind_party(game)
 	else:return null
 	if game.pending.get("crime_menu",false):

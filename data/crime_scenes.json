@@ -4,6 +4,16 @@
     "fort_bridger": {
       "title": "The trading store",
       "note": "An authored encounter at the private trading establishment, not a reconstruction of a named historical keeper or an army garrison.",
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "keeper"
+        },
+        {
+          "id": "hand",
+          "role": "hired hand"
+        }
+      ],
       "cash_cents": 5000,
       "food_lot": 200,
       "loot_limit": 200,
