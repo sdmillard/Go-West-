@@ -342,6 +342,7 @@ func run():
 	venue_checks(store)
 	fort_checks(store)
 	trader_checks(store)
+	emigrant_checks(store)
 	var screen=Main.instantiate()
 	root.add_child(screen)
 	await process_frame
@@ -626,3 +627,53 @@ func trader_checks(store) -> void:
 	game.state.day=game.crime.arrival(game,report,"fort_hall")
 	check(game.open_trade() and "robbed a trading party on the road through the" in game.pending.text,"News of robbed traders names the stretch of road")
 	choose_back(game)
+## Emigrant families camped near the road, with no traders about.
+func at_camp(game):
+	game.pending={}
+	for day in range(int(game.state.day),int(game.state.day)+60):
+		game.state.day=day
+		var offer: Dictionary=game.context.market(game)
+		if not (offer.available and not offer.post) and not game.crime.camp(game).is_empty():return game
+	return game
+func emigrant_checks(store) -> void:
+	var game=at_camp(willing(outfit()))
+	var key: String=game.crime.camp(game)
+	check(key.begins_with("emigrants:") and game.crime.target(game)==key,"With no traders about, a nearby emigrant camp is the target")
+	var before: Dictionary=store.capture(game)
+	check(game.open_crime() and game.pending.title=="An emigrant camp" and "Head of the family: uninjured. Others with them: 3. Food in their wagon: 300 lb. Cash: $60.00." in game.pending.text,"The camp menu describes the family")
+	check(choose(game,"back") and store.capture(game)==before,"Looking at a camp changes nothing")
+	var camps: Dictionary={}
+	for day in range(70):
+		game.state.day=day
+		if not game.crime.camp(game).is_empty():camps[game.crime.camp(game)]=true
+	check(camps.size()>=9 and camps.size()<=11,"About one camp a week is met along the road")
+	game=at_camp(willing(outfit()))
+	key=game.crime.camp(game)
+	game.crime.scenes.passing_emigrants.shot_hit=1
+	game.crime.scenes.passing_emigrants.shot_fatal=1
+	game.crime.scenes.passing_emigrants.escape_capture=0
+	game.crime.scenes.passing_emigrants.escape_injury=0
+	var food: int=game.state.food
+	game.open_crime()
+	choose(game,"shoot")
+	check(game.crime.incident().attempt=="killed" and game.crime.record.services[key].mile==game.state.miles,"A family member can be killed, and the camp joins the record")
+	choose(game,"take")
+	check(game.state.food>food,"The family's food reaches the wagon")
+	choose(game,"flee")
+	var report: Dictionary=game.crime.record.reports[0]
+	check(report.origin==key and report.senders.size()==3 and report.identified,"The rest of the family reports the killing")
+	choose(game,"finish")
+	var saved: Dictionary=store.capture(game)
+	check(store.restore(JSON.parse_string(JSON.stringify(saved)))!=null,"A robbed camp round-trips through saves")
+	at(game,"fort_hall")
+	game.state.day=game.crime.arrival(game,report,"fort_hall")
+	check(game.open_trade() and "shot at an emigrant family on the road through the" in game.pending.text,"News names the family and the stretch of road")
+	choose_back(game)
+	var rules: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/crime_scenes.json"))
+	var crime=game.crime.get_script().new()
+	var broken: Dictionary=rules.duplicate(true)
+	broken.scenes.passing_emigrants.window_days=7
+	check(not crime.load_data(broken),"An emigrant camp cannot be present every day")
+	broken=rules.duplicate(true)
+	broken.scenes.erase("passing_emigrants")
+	check(not crime.load_data(broken),"The emigrant template is required")

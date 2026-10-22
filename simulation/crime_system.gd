@@ -12,11 +12,16 @@ const KINDS={
 	"toll":{"journal":"Toll gate","noun":"the toll gate","theft":"Slip the wagons past the gate without paying · 1 day","raid":"Search the gatekeeper's cabin for the toll money · 1 day","take":"Take $%.2f from the toll box and pass the gate · 1 day","passage":"the gate will be behind you"},
 	"fort":{"journal":"Fort","noun":"the army post","theft":"Take rations from the commissary tent · 1 day","raid":"Search the commissary tent for rations and the cash box · 1 day"},
 	"traders":{"journal":"Trader","noun":"a trading party","theft":"Take goods from the traders' packs without paying · 1 day","raid":"Search the traders' packs · 1 day"},
+	"emigrants":{"journal":"Emigrant","noun":"an emigrant family","theft":"Take food from their wagon while they sleep · 1 day","raid":"Search their wagon · 1 day"},
 	"ferry":{"journal":"Ferry","noun":"the ferry","theft":"Cast off with the ferry while the crew is away · 1 day","raid":"Take the ferry and the crew's cash box · 1 day","take":"Take $%.2f and the ferry · 1 day","passage":"the ferry will be yours to work across"}}
 ## Attempts that reach the loot stage; only these can win passage at a gate or ferry.
 const LOOTING=["unseen","complied","killed","raided"]
 ## The one traders scene is a template: each passing trading party, named by its market key, gets its own people when first targeted.
 const TRADERS:="passing_traders"
+## Emigrant families camped near the road work the same way, named by their camp.
+const EMIGRANTS:="passing_emigrants"
+const TEMPLATES={"passing:":TRADERS,"emigrants:":EMIGRANTS}
+const TEMPLATE_KINDS={TRADERS:"traders",EMIGRANTS:"emigrants"}
 var scenes: Dictionary={}
 var modifiers: Dictionary={}
 var news_rules: Dictionary={}
@@ -46,14 +51,17 @@ func load_data(value: Variant) -> bool:
 		for key in ["cash_cents","food_lot","loot_limit","injury_damage"]:
 			if not whole(scene.get(key),0 if key in ["food_lot","loot_limit"] else 1,100000):return false
 		# Only stores sell or hold food; a gate or ferry holds only its cash box.
-		if (scene.kind=="traders")!=(place==TRADERS):return false
+		if (scene.kind in TEMPLATE_KINDS.values())!=TEMPLATE_KINDS.has(place) or (TEMPLATE_KINDS.has(place) and scene.kind!=TEMPLATE_KINDS[place]):return false
+		if (scene.kind=="emigrants")!=scene.has("every_days") or scene.has("every_days")!=scene.has("window_days"):return false
+		if scene.kind=="emigrants" and (not whole(scene.every_days,2,60) or not whole(scene.window_days,1,scene.every_days-1)):return false
 		# Food lots match what each venue sells: a post's 200 lb lot, a passing party's 50 lb lot.
 		if scene.food_lot!={"store":200,"traders":50}.get(scene.kind,0) or scene.loot_limit>(0 if scene.kind in ["toll","ferry"] else 200) or scene.injury_damage>100:return false
 		# A fort's commissary holds its own stock; soldiers who stop an escape force a standoff.
 		var fort_keys: Array=["food_stock","breakout","breakout_shots"]
 		for key in fort_keys:
-			if scene.has(key)!=(scene.kind=="fort"):return false
-		if scene.kind=="fort" and (not whole(scene.food_stock,1,2000) or not number(scene.breakout) or scene.breakout<0 or scene.breakout>1 or not whole(scene.breakout_shots,1,5)):return false
+			if scene.has(key)!=(scene.kind=="fort" or (key=="food_stock" and scene.kind=="emigrants")):return false
+		if scene.has("food_stock") and not whole(scene.food_stock,1,2000):return false
+		if scene.kind=="fort" and ( not number(scene.breakout) or scene.breakout<0 or scene.breakout>1 or not whole(scene.breakout_shots,1,5)):return false
 		if (scene.kind=="ferry")!=scene.has("seized_risk_low") or scene.has("seized_risk_low")!=scene.has("seized_risk_high"):return false
 		if scene.kind=="ferry":
 			for key in ["seized_risk_low","seized_risk_high"]:
@@ -68,7 +76,7 @@ func load_data(value: Variant) -> bool:
 			if worker.id.is_empty() or not worker.id.is_valid_ascii_identifier():return false
 			ids.append(worker.id)
 		if ids[0]!="keeper":return false
-	if not value.scenes.has(TRADERS):return false
+	if not TEMPLATE_KINDS.keys().all(func(key):return value.scenes.has(key)):return false
 	scenes=value.scenes.duplicate(true)
 	modifiers=mods.duplicate(true)
 	news_rules=news.duplicate(true)
@@ -81,16 +89,21 @@ func start(seed_value: int) -> void:
 		for uid in staff_ids(place):record.actors[uid]=fresh_actor(place,uid)
 		record.services[place]=fresh_service(place,0)
 ## Fixed venues; passing traders are added to the record as they are targeted.
-func venues() -> Array:return scenes.keys().filter(func(place):return place!=TRADERS)
+func venues() -> Array:return scenes.keys().filter(func(place):return not TEMPLATE_KINDS.has(place))
 func trader(place: String) -> bool:return place.begins_with("passing:") and place.length()<=64
-func places() -> Array:return venues()+record.services.keys().filter(trader)
-func rules(place: String) -> Dictionary:return scenes[TRADERS] if trader(place) else scenes[place]
+## A trading party or emigrant family: met on the road, not a fixed venue.
+func transient(place: String) -> bool:return place.length()<=64 and TEMPLATES.keys().any(func(prefix):return place.begins_with(prefix))
+func places() -> Array:return venues()+record.services.keys().filter(transient)
+func rules(place: String) -> Dictionary:
+	for prefix in TEMPLATES:
+		if place.begins_with(prefix):return scenes[TEMPLATES[prefix]]
+	return scenes[place]
 func fresh_actor(place: String,uid: String) -> Dictionary:return {"uid":uid,"place":place,"role":role(place,uid),"health":100}
 func fresh_service(place: String,food_sold: int) -> Dictionary:
 	return {"owner":owner_id(place),"staff":staff_ids(place),"cash_cents":int(rules(place).cash_cents),"food_taken":0,"food_sold":food_sold,"alarmed":false}
 ## A trading party's people and stock enter the record on the first committed act; food already bought from it is counted.
-func add_traders(game,place: String) -> void:
-	if not trader(place) or record.services.has(place):return
+func add_transient(game,place: String) -> void:
+	if not transient(place) or record.services.has(place):return
 	for uid in staff_ids(place):record.actors[uid]=fresh_actor(place,uid)
 	record.services[place]=fresh_service(place,int(game.context.record.spent.get(place+"|buy_food",0))*int(rules(place).food_lot))
 	record.services[place]["mile"]=int(game.state.miles)
@@ -134,9 +147,16 @@ func target(game) -> String:
 	if not incident().is_empty():return incident().place
 	var stop: Dictionary=game.service_return if game.pending.get("crime_menu",false) else game.pending
 	var landmark: String=game.state.landmark
-	if stop.get("landmark","")==landmark and scenes.has(landmark) and landmark!=TRADERS:return landmark if staffed(game,landmark) else ""
+	if stop.get("landmark","")==landmark and scenes.has(landmark) and not TEMPLATE_KINDS.has(landmark):return landmark if staffed(game,landmark) else ""
 	var offer: Dictionary=game.context.market(game)
-	return offer.key if offer.available and not offer.post else ""
+	if offer.available and not offer.post:return offer.key
+	return camp(game)
+## An emigrant family camped near the road, on a fixed rhythm per journey; "" when none is near.
+func camp(game) -> String:
+	var rule: Dictionary=scenes[EMIGRANTS]
+	var day: int=int(game.state.day)+posmod(int(game.state.seed),5)
+	if posmod(day,int(rule.every_days))>=int(rule.window_days):return ""
+	return "emigrants:%s:%d" % [game.context.region_id(game),day/int(rule.every_days)]
 ## A post still waiting for its builders has nobody to rob.
 func staffed(game,place: String) -> bool:
 	var node: Dictionary=game.route.nodes[place]
@@ -144,7 +164,7 @@ func staffed(game,place: String) -> bool:
 func closed(place: String) -> bool:
 	return record.services.has(place) and (service(place).alarmed or owner(place).health==0)
 func food_capacity(game,place: String) -> int:
-	if rules(place).kind=="fort":return int(rules(place).food_stock)
+	if rules(place).has("food_stock"):return int(rules(place).food_stock)
 	return int(game.context.data.passing_lots if trader(place) else game.context.data.post_lots)*int(rules(place).food_lot)
 func food_left(game,place: String) -> int:
 	# Food bought from traders not yet in the record still left their packs.
@@ -166,7 +186,7 @@ func incident() -> Dictionary:
 	return {} if record.active.is_empty() else record.incidents[int(record.active.id)-1]
 func loot_quote(game,place: String) -> Dictionary:
 	var room:=maxi(0,floori(game.provisions.storage_capacity(game.state)-game.provisions.cargo(game.state)))
-	return {"food":mini(mini(food_left(game,place),int(rules(place).loot_limit)),room) if rules(place).kind in ["store","fort","traders"] else 0,"money":service(place).cash_cents if not incident().is_empty() and incident().action!="theft" else 0}
+	return {"food":mini(mini(food_left(game,place),int(rules(place).loot_limit)),room) if rules(place).kind in ["store","fort","traders","emigrants"] else 0,"money":service(place).cash_cents if not incident().is_empty() and incident().action!="theft" else 0}
 func option(label: String,command: String) -> Dictionary:
 	return {"label":label,"crime_command":command,"effects":{},"result":""}
 ## Distinct targets the party got away from, plus clean defensive victories. Capped; the same target never counts twice.
@@ -212,7 +232,8 @@ func menu(game) -> Dictionary:
 	var text: String="Your active companions are present and can observe your actions. Theft or an attack uses one day and ordinary meals. A shot spends one bullet. Nearby staff may resist."
 	var options: Array=[]
 	if current.is_empty():
-		if scene.kind=="traders":text+="\nLead trader: %s. Food in their packs: %d lb. Cash: $%.2f. Nobody else is in sight on this stretch of road." % [condition(keeper),food_left(game,place),service(place).cash_cents/100.0]
+		if scene.kind=="emigrants":text+="\nHead of the family: %s. Others with them: %d. Food in their wagon: %d lb. Cash: $%.2f. Their company is camped within earshot." % [condition(keeper),living_staff(place).size()-1,food_left(game,place),service(place).cash_cents/100.0]
+		elif scene.kind=="traders":text+="\nLead trader: %s. Food in their packs: %d lb. Cash: $%.2f. Nobody else is in sight on this stretch of road." % [condition(keeper),food_left(game,place),service(place).cash_cents/100.0]
 		elif scene.kind=="store":text+="\nKeeper: %s. Accessible food stock: %d lb. Cash stash: $%.2f." % [condition(keeper),food_left(game,place),service(place).cash_cents/100.0]
 		elif scene.kind=="fort":text+="\n%s: %s. Soldiers on duty nearby: %d. Commissary rations: %d lb. Cash box: $%.2f. If soldiers stop an escape, the party must surrender or shoot its way out." % [keeper.role.capitalize(),condition(keeper),living_staff(place).size()-1,food_left(game,place),service(place).cash_cents/100.0]
 		else:text+="\n%s: %s. Cash box: $%.2f." % [keeper.role.capitalize(),condition(keeper),service(place).cash_cents/100.0]
@@ -238,7 +259,7 @@ func menu(game) -> Dictionary:
 	else:
 		text="Incident %d: %s; %s. Food taken: %d lb. Cash taken: $%.2f. Shots: %d. People here who saw it: %d. See the journal and party records for injuries and reactions." % [current.id,current.attempt,current.resolution,current.food,current.cash_cents/100.0,current.shots,local_witnesses(current).size()]
 		options=[option("Acknowledge the outcome","finish")]
-	options.append(option(("Leave the traders alone" if scene.kind=="traders" else "Back to the stop") if current.is_empty() else "Encounter in progress","back"))
+	options.append(option(({"traders":"Leave the traders alone","emigrants":"Leave the family be"}.get(scene.kind,"Back to the stop")) if current.is_empty() else "Encounter in progress","back"))
 	return {"id":"crime","crime_menu":true,"service_menu":true,"title":scene.title,"text":text,"choices":options}
 func can_choose(game,command: String) -> bool:
 	var current:=incident()
@@ -277,7 +298,7 @@ func mile(game,id: String) -> int:
 			distance+=int(next[0].miles)
 			current=next[0].to
 	# A trading party is wherever the party met it.
-	if trader(id):return int(service(id).get("mile",0))
+	if transient(id):return int(service(id).get("mile",0))
 	return int(miles.get(id,0))
 ## News moves along the road with other travelers and traders, in both directions.
 func arrival(game,report: Dictionary,place: String) -> int:
@@ -300,7 +321,7 @@ func news_text(game,place: String) -> String:
 	return " ".join(lines)
 ## "at Fort Hall", or for a trading party, the stretch of road where it was met.
 func where(game,place: String) -> String:
-	if not trader(place):return "at "+game.route.nodes[place].name
+	if not transient(place):return "at "+game.route.nodes[place].name
 	var region: String=place.get_slice(":",1)
 	return "on the road through the "+str(game.context.data.regions[region].label) if game.context.data.regions.has(region) else "on the road"
 func observe(game,current: Dictionary,fact: String,staff: bool) -> void:
@@ -343,7 +364,7 @@ func choose(game,command: String) -> bool:
 		return true
 	var place: String=target(game)
 	# A trading party enters the record only once the party commits to an act against it.
-	if incident().is_empty():add_traders(game,place)
+	if incident().is_empty():add_transient(game,place)
 	var keeper: Dictionary=owner(place)
 	var store: Dictionary=service(place)
 	var kind: String=incident().get("action",command)
@@ -489,13 +510,13 @@ func whole(value: Variant,low: int,high: int) -> bool:return number(value) and v
 func valid(value: Variant,game) -> bool:
 	if not value is Dictionary or value.size()!=2 or not value.get("record") is Dictionary or not value.get("random") is String or not value.random.is_valid_int() or str(int(value.random))!=value.random:return false
 	var r: Dictionary=value.record
-	if r.size()!=7 or not r.get("reports") is Array or r.get("version")!=VERSION or not r.get("people") is Dictionary or r.people.size()!=5 or not r.get("actors") is Dictionary or not r.get("services") is Dictionary or not r.services.keys().all(func(place):return scenes.has(place) and place!=TRADERS or trader(place)) or not r.get("incidents") is Array or r.incidents.size()>10000 or not r.get("active") is Dictionary:return false
+	if r.size()!=7 or not r.get("reports") is Array or r.get("version")!=VERSION or not r.get("people") is Dictionary or r.people.size()!=5 or not r.get("actors") is Dictionary or not r.get("services") is Dictionary or not r.services.keys().all(func(place):return scenes.has(place) and not TEMPLATE_KINDS.has(place) or transient(place)) or not r.get("incidents") is Array or r.incidents.size()>10000 or not r.get("active") is Dictionary:return false
 	for member in game.party_health.members:
 		var uid:=person_id(int(game.state.seed),int(member.id))
 		var person: Variant=r.people.get(uid)
 		if not person is Dictionary or person.size()!=2 or person.get("name")!=member.name or person.get("slot")!=member.id:return false
 	var actor_count:=0
-	var targeted: Array=r.services.keys().filter(trader)
+	var targeted: Array=r.services.keys().filter(transient)
 	# Every trading party in the record was the target of an incident.
 	if not targeted.all(func(place):return r.incidents.any(func(current):return current is Dictionary and current.get("place")==place)):return false
 	for place in venues()+targeted:
@@ -505,7 +526,7 @@ func valid(value: Variant,game) -> bool:
 			if not actor is Dictionary or actor.size()!=4 or actor.get("uid")!=uid or actor.get("place")!=place or actor.get("role")!=role(place,uid) or not whole(actor.get("health"),0,100):return false
 			actor_count+=1
 		var store: Variant=r.services.get(place)
-		if not store is Dictionary or store.size()!=(7 if trader(place) else 6) or (trader(place) and not whole(store.get("mile"),0,int(game.state.miles))) or store.get("owner")!=owner_id(place) or store.get("staff")!=staff_ids(place) or not whole(store.get("cash_cents"),0,int(rules(place).cash_cents)) or not whole(store.get("food_taken"),0,lots) or not whole(store.get("food_sold"),0,lots) or not store.get("alarmed") is bool:return false
+		if not store is Dictionary or store.size()!=(7 if transient(place) else 6) or (transient(place) and not whole(store.get("mile"),0,int(game.state.miles))) or store.get("owner")!=owner_id(place) or store.get("staff")!=staff_ids(place) or not whole(store.get("cash_cents"),0,int(rules(place).cash_cents)) or not whole(store.get("food_taken"),0,lots) or not whole(store.get("food_sold"),0,lots) or not store.get("alarmed") is bool:return false
 		if r.actors[owner_id(place)].health==0 and not store.alarmed:return false
 		if store.food_taken+store.food_sold>lots:return false
 		var offers: int=game.context.record.spent.get(market_prefix(place)+"|buy_food",0)
@@ -516,7 +537,7 @@ func valid(value: Variant,game) -> bool:
 	var previous_day: int=-1
 	for index in range(r.incidents.size()):
 		var current: Variant=r.incidents[index]
-		if not current is Dictionary or current.size()!=12 or current.get("id")!=index+1 or not whole(current.get("day"),0,int(game.state.day)) or not (current.get("place") is String and r.services.has(current.place) and current.place!=TRADERS) or current.get("target")!=owner_id(current.place):return false
+		if not current is Dictionary or current.size()!=12 or current.get("id")!=index+1 or not whole(current.get("day"),0,int(game.state.day)) or not (current.get("place") is String and r.services.has(current.place) and not TEMPLATE_KINDS.has(current.place)) or current.get("target")!=owner_id(current.place):return false
 		if current.get("action") not in ["theft","robbery","shoot","raid"] or current.get("attempt") not in ATTEMPTS or current.get("stage") not in STAGES or current.get("resolution") not in RESOLUTIONS:return false
 		if current.day<previous_day:return false
 		previous_day=int(current.day)

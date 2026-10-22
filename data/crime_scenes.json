@@ -235,6 +235,42 @@
       "escape_capture": 0.08,
       "escape_injury": 0.3,
       "injury_damage": 20
+    },
+    "passing_emigrants": {
+      "kind": "emigrants",
+      "title": "An emigrant camp",
+      "note": "A template for the other emigrant families camped near the road; each camp, named by its place in the journey, gets its own people when first targeted. Authored people, not reconstructions. They are armed and travel in company, so threats work less often than at a store, but nobody can hold the party long.",
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "head of the family"
+        },
+        {
+          "id": "partner",
+          "role": "partner"
+        },
+        {
+          "id": "son",
+          "role": "grown son"
+        },
+        {
+          "id": "hired",
+          "role": "hired man"
+        }
+      ],
+      "cash_cents": 6000,
+      "food_lot": 0,
+      "food_stock": 300,
+      "loot_limit": 200,
+      "theft_success": 0.5,
+      "compliance": 0.3,
+      "shot_hit": 0.6,
+      "shot_fatal": 0.5,
+      "escape_capture": 0.06,
+      "escape_injury": 0.4,
+      "injury_damage": 25,
+      "every_days": 7,
+      "window_days": 2
     }
   }
 }
