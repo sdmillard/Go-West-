@@ -206,6 +206,35 @@
       "escape_capture": 0.1,
       "escape_injury": 0.25,
       "injury_damage": 15
+    },
+    "passing_traders": {
+      "kind": "traders",
+      "title": "Passing traders",
+      "note": "A template for every small trading party met on the road. Each party, named by its market window, gets its own lead trader, packer and armed hand when first targeted. Authored people, not reconstructions; food matches their three 50 lb trade lots.",
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "lead trader"
+        },
+        {
+          "id": "packer",
+          "role": "packer"
+        },
+        {
+          "id": "guard",
+          "role": "armed hand"
+        }
+      ],
+      "cash_cents": 3000,
+      "food_lot": 50,
+      "loot_limit": 150,
+      "theft_success": 0.45,
+      "compliance": 0.4,
+      "shot_hit": 0.6,
+      "shot_fatal": 0.5,
+      "escape_capture": 0.08,
+      "escape_injury": 0.3,
+      "injury_damage": 20
     }
   }
 }
