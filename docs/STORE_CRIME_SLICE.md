@@ -205,6 +205,39 @@ Only Fort Kearny has soldiers, so only Fort Kearny pursues. After the party esca
 
 **Saves.** A chase must follow an escape from the same post, within its days, and there can be only one per post.
 
+## What departed companions tell (record version 7)
+
+A companion who leaves the party, whether at a settlement or by fleeing violence, tells others what they saw, but only the acts they object to:
+
+- **Incidents they witnessed**, if they disapprove of or forbid robbery (or murder, for a shooting).
+- **Attacks** they were present for, if they were the target, were close to the target, or object to murder.
+- **Butchering** they learned of, if they object to cannibalism or were close to the dead person.
+
+The Ruthless, and anyone without such a boundary, keep quiet. Their story starts where and when they left, and travels like witness reports: 2 days, then 25 miles a day in both directions. Any post it reaches refuses trade, paid care and the ferry, and its notice names the teller and what they said.
+
+Stories are not stored. They are derived from the record each time. The only new saved fact is each body's `witnesses`: the companions who learned it was butchered. That knowledge outlasts the meat. Version 6 records take their witnesses from the meat still held.
+
+## Outlaw journeys
+
+`tests/outlaw_journeys.gd` drives 20 full-route journeys through public actions only: 5 strategies × 4 seeds, using the banker's suggested outfit and the existing cautious survival policy.
+
+- **Lawful** is the control.
+- **Road robber** robs up to three roadside parties.
+- **Kearny** robs the commissary.
+- **Open cannibal** shoots a companion on day 20, butchers any accessible dead openly and offers the meat.
+- **Killer** does the same, but butchers in secret and serves the meat without telling.
+
+Saves are round-tripped every 40 steps and at every crime or remains panel. Invariants include the carried-remains weight. The run fails on a blocked policy, a broken invariant, a failed save, or two months without progress.
+
+The October 22 run (`docs/outlaw-journeys.json`) had **0 errors**:
+
+- All 4 lawful journeys arrived intact.
+- Robbers were captured, ran out of time near the end of the road, or arrived with fewer companions.
+- At Kearny, one party was captured on the spot, one was caught by the pursuit and taken, and one shot its way out of the chase.
+- Companion attacks killed, wounded or missed. Every miss or wound sent people away, and each who left told their story.
+
+This is integration evidence, not balance evidence.
+
 ## Service audit
 
 - A post that was robbed or lost its keeper is closed. Its trade and its paid local care are both refused there, not only once news reaches other posts. The party's own care kits still work anywhere.

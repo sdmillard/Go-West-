@@ -201,10 +201,30 @@ func run():
 	bad=saved.duplicate(true)
 	bad.state.remains_lb=0
 	check(store.restore(bad)==null,"Human meat weighs what it weighs")
+	# Those who know remember it after the meat is gone, and an objector who leaves tells others.
+	check(game.crime.record.remains[0].witnesses==[1,3,4],"Every companion who learned of the butchering is a witness")
+	bad=saved.duplicate(true)
+	bad.crime.record.remains[0].witnesses=[1,4]
+	check(store.restore(bad)==null,"Someone who knows where the meat came from is a witness")
+	bad=saved.duplicate(true)
+	bad.crime.record.version=6
+	for item in bad.crime.record.remains:item.erase("witnesses")
+	restored=store.restore(bad)
+	check(restored!=null and restored.crime.record.remains[0].witnesses==[1,3,4],"Older records take their witnesses from the meat still held")
+	check(game.crime.tales(game).is_empty(),"Nobody tells anything while they stay")
 	# Drying keeps it longer and lighter; it is still human meat.
 	game.open_remains()
 	check(act(game,"dry",1) and game.crime.record.human_food[0].preserved and game.state.remains_lb==ceili(game.crime.record.human_food[0].pounds*float(game.provisions.data.preservation.dried_weight)),"Dried human meat stays apart and weighs less")
 	check(round_trip(store,game)!=null,"Dried human meat round-trips")
+	var witness_day: int=game.state.day
+	game._depart(game.plan_for([1,4]),"")
+	var tales: Array=game.crime.tales(game)
+	check(tales.size()==1 and tales[0].teller==1 and tales[0].remains==[1],"An objector who leaves tells what they saw; the Ruthless keep quiet")
+	var origin: String=game.state.landmark
+	check(game.crime.refuses(game,origin) and "Ada, who left your party" in game.crime.news_text(game,origin) and "butchered Ben's remains" in game.crime.news_text(game,origin),"The place they left hears it at once")
+	check(not game.crime.refuses(game,"fort_boise"),"Distant posts have not heard yet")
+	game.state.day=witness_day+200
+	check(game.crime.refuses(game,"fort_boise"),"The story travels along the road")
 	# In secret, served without telling: the deceived may find out.
 	game=party(["Compassionate","Compassionate","Compassionate","Compassionate"])
 	game.crime.remains_rules.secret_notice=0

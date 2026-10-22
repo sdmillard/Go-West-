@@ -74,6 +74,11 @@ func run():
 	check(game.state.food<food,"Those who flee take food with them")
 	check(game.characters.profiles[1].memories.back().get("attack_id",0)==1,"Each witness remembers the attack itself")
 	check(round_trip(store,game),"A killing and its flight round-trip through saves")
+	var tellers: Array=game.crime.tales(game).map(func(told):return [told.teller,told.attacks])
+	check(tellers==[[1,[1]],[3,[1]],[4,[1]]],"Everyone who fled tells others about the killing")
+	game.state.day+=200
+	check(game.crime.refuses(game,"fort_hall") and "has told people here that you shot at Ben" in game.crime.news_text(game,"fort_hall"),"Posts ahead hear it from them and refuse the party")
+	game.state.day-=200
 	var saved: Dictionary=store.capture(game)
 	var bad: Dictionary=saved.duplicate(true)
 	bad.crime.record.attacks=[]

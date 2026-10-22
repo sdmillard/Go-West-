@@ -1,0 +1,337 @@
+{
+	"errors": [],
+	"policy": "20 full-route journeys: 5 strategies x 4 seeds (banker suggested outfit; June, May, August, July). Lawful control; robbing up to three roadside parties; robbing the Fort Kearny commissary; shooting a companion on day 20, then butchering any accessible dead openly and offering the meat, or in secret and serving it without telling. Otherwise the cautious salted-hunt survival policy. An integration check, not balance evidence.",
+	"rules_signature": "57a97bc768fa220d23be35ab9c4da8e1b4b5896eeacc7861abbbc4f5da07bea6",
+	"runs": [
+		{
+			"attacks": [],
+			"days": 203,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [],
+			"miles": 1938,
+			"outcome": "arrived",
+			"remains": [],
+			"seed": 0,
+			"strategy": "lawful",
+			"survivors": 5,
+			"tales": 0
+		},
+		{
+			"attacks": [],
+			"days": 210,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [],
+			"miles": 1938,
+			"outcome": "arrived",
+			"remains": [],
+			"seed": 1,
+			"strategy": "lawful",
+			"survivors": 5,
+			"tales": 0
+		},
+		{
+			"attacks": [],
+			"days": 210,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [],
+			"miles": 1938,
+			"outcome": "arrived",
+			"remains": [],
+			"seed": 2,
+			"strategy": "lawful",
+			"survivors": 5,
+			"tales": 0
+		},
+		{
+			"attacks": [],
+			"days": 221,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [],
+			"miles": 1938,
+			"outcome": "arrived",
+			"remains": [],
+			"seed": 3,
+			"strategy": "lawful",
+			"survivors": 5,
+			"tales": 0
+		},
+		{
+			"attacks": [],
+			"days": 9,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [
+				"robbery:complied:escaped",
+				"robbery:resisted:escaped",
+				"robbery:resisted:captured"
+			],
+			"miles": 30,
+			"outcome": "lost",
+			"remains": [],
+			"seed": 0,
+			"strategy": "road_robber",
+			"survivors": 5,
+			"tales": 0
+		},
+		{
+			"attacks": [],
+			"days": 365,
+			"deaths": 1,
+			"departures": 0,
+			"incidents": [
+				"robbery:resisted:escaped",
+				"robbery:resisted:escaped",
+				"robbery:resisted:escaped"
+			],
+			"miles": 1858,
+			"outcome": "out_of_time",
+			"remains": [
+				"lying"
+			],
+			"seed": 1,
+			"strategy": "road_robber",
+			"survivors": 4,
+			"tales": 0
+		},
+		{
+			"attacks": [],
+			"days": 199,
+			"deaths": 0,
+			"departures": 2,
+			"incidents": [
+				"robbery:resisted:escaped",
+				"robbery:resisted:escaped",
+				"robbery:resisted:escaped"
+			],
+			"miles": 1938,
+			"outcome": "arrived",
+			"remains": [],
+			"seed": 2,
+			"strategy": "road_robber",
+			"survivors": 3,
+			"tales": 2
+		},
+		{
+			"attacks": [],
+			"days": 365,
+			"deaths": 1,
+			"departures": 0,
+			"incidents": [
+				"robbery:complied:escaped",
+				"robbery:resisted:escaped",
+				"robbery:complied:escaped"
+			],
+			"miles": 1858,
+			"outcome": "out_of_time",
+			"remains": [
+				"lying"
+			],
+			"seed": 3,
+			"strategy": "road_robber",
+			"survivors": 4,
+			"tales": 0
+		},
+		{
+			"attacks": [],
+			"days": 31,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [
+				"robbery:resisted:captured"
+			],
+			"miles": 327,
+			"outcome": "lost",
+			"remains": [],
+			"seed": 0,
+			"strategy": "kearny",
+			"survivors": 5,
+			"tales": 0
+		},
+		{
+			"attacks": [],
+			"days": 210,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [],
+			"miles": 1938,
+			"outcome": "arrived",
+			"remains": [],
+			"seed": 1,
+			"strategy": "kearny",
+			"survivors": 5,
+			"tales": 0
+		},
+		{
+			"attacks": [],
+			"days": 35,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [
+				"robbery:resisted:escaped",
+				"pursuit:caught:captured"
+			],
+			"miles": 353,
+			"outcome": "lost",
+			"remains": [],
+			"seed": 2,
+			"strategy": "kearny",
+			"survivors": 5,
+			"tales": 0
+		},
+		{
+			"attacks": [],
+			"days": 365,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [
+				"robbery:complied:escaped",
+				"pursuit:caught:escaped"
+			],
+			"miles": 1772,
+			"outcome": "out_of_time",
+			"remains": [
+				"lying"
+			],
+			"seed": 3,
+			"strategy": "kearny",
+			"survivors": 5,
+			"tales": 0
+		},
+		{
+			"attacks": [
+				"killed"
+			],
+			"days": 195,
+			"deaths": 1,
+			"departures": 2,
+			"incidents": [],
+			"miles": 1938,
+			"outcome": "arrived",
+			"remains": [
+				"processed"
+			],
+			"seed": 0,
+			"strategy": "open_cannibal",
+			"survivors": 2,
+			"tales": 2
+		},
+		{
+			"attacks": [
+				"wounded"
+			],
+			"days": 222,
+			"deaths": 0,
+			"departures": 3,
+			"incidents": [],
+			"miles": 1938,
+			"outcome": "arrived",
+			"remains": [],
+			"seed": 1,
+			"strategy": "open_cannibal",
+			"survivors": 2,
+			"tales": 3
+		},
+		{
+			"attacks": [
+				"missed"
+			],
+			"days": 251,
+			"deaths": 0,
+			"departures": 4,
+			"incidents": [],
+			"miles": 1938,
+			"outcome": "arrived",
+			"remains": [],
+			"seed": 2,
+			"strategy": "open_cannibal",
+			"survivors": 1,
+			"tales": 4
+		},
+		{
+			"attacks": [
+				"wounded"
+			],
+			"days": 365,
+			"deaths": 0,
+			"departures": 1,
+			"incidents": [],
+			"miles": 1894,
+			"outcome": "out_of_time",
+			"remains": [],
+			"seed": 3,
+			"strategy": "open_cannibal",
+			"survivors": 4,
+			"tales": 1
+		},
+		{
+			"attacks": [
+				"killed"
+			],
+			"days": 195,
+			"deaths": 1,
+			"departures": 2,
+			"incidents": [],
+			"miles": 1938,
+			"outcome": "arrived",
+			"remains": [
+				"processed"
+			],
+			"seed": 0,
+			"strategy": "killer",
+			"survivors": 2,
+			"tales": 2
+		},
+		{
+			"attacks": [
+				"wounded"
+			],
+			"days": 222,
+			"deaths": 0,
+			"departures": 3,
+			"incidents": [],
+			"miles": 1938,
+			"outcome": "arrived",
+			"remains": [],
+			"seed": 1,
+			"strategy": "killer",
+			"survivors": 2,
+			"tales": 3
+		},
+		{
+			"attacks": [
+				"missed"
+			],
+			"days": 251,
+			"deaths": 0,
+			"departures": 4,
+			"incidents": [],
+			"miles": 1938,
+			"outcome": "arrived",
+			"remains": [],
+			"seed": 2,
+			"strategy": "killer",
+			"survivors": 1,
+			"tales": 4
+		},
+		{
+			"attacks": [
+				"wounded"
+			],
+			"days": 365,
+			"deaths": 0,
+			"departures": 1,
+			"incidents": [],
+			"miles": 1894,
+			"outcome": "out_of_time",
+			"remains": [],
+			"seed": 3,
+			"strategy": "killer",
+			"survivors": 4,
+			"tales": 1
+		}
+	]
+}

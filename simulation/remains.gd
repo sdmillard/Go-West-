@@ -40,7 +40,7 @@ static func sync(game,lost: bool=false) -> void:
 
 static func add(game,uid: String,name: String,cause: String,day: int,goods: int,lost: bool) -> void:
 	var entries: Array=game.crime.record.remains
-	entries.append({"id":entries.size()+1,"person":uid,"name":name,"cause":cause,"day":day,"mile":int(game.state.miles),"state":"lost" if lost else "lying","goods_cents":goods,"disturbed":false})
+	entries.append({"id":entries.size()+1,"person":uid,"name":name,"cause":cause,"day":day,"mile":int(game.state.miles),"state":"lost" if lost else "lying","goods_cents":goods,"disturbed":false,"witnesses":[]})
 
 static func entry(game,id: int) -> Dictionary:
 	var entries: Array=game.crime.record.remains
@@ -236,6 +236,10 @@ static func learn(game,slot: int,meat: Dictionary) -> void:
 	meat.known.append(slot)
 	meat.known.sort()
 	if slot==0:return
+	var body:=entry(game,int(meat.remains))
+	if slot not in body.witnesses:
+		body.witnesses.append(slot)
+		body.witnesses.sort()
 	# Someone who learns the truth is no longer being deceived.
 	if game.crime.record.meals.get(str(slot),"")=="deceived":game.crime.record.meals.erase(str(slot))
 	var item:=entry(game,int(meat.remains))
@@ -349,11 +353,17 @@ static func valid(r: Dictionary,game) -> bool:
 	var day: int=int(game.state.day)
 	for index in range(entries.size()):
 		var item: Variant=entries[index]
-		if not item is Dictionary or item.size()!=9 or item.get("id")!=index+1 or not item.get("person") is String or item.person in seen:return false
+		if not item is Dictionary or item.size()!=10 or item.get("id")!=index+1 or not item.get("person") is String or item.person in seen:return false
 		seen.append(item.person)
 		if not item.get("name") is String or item.name.is_empty() or item.name.length()>120 or not item.get("cause") is String or item.cause.length()>120:return false
 		if not whole(item.get("day"),0,day) or not whole(item.get("mile"),0,int(game.state.miles)) or item.get("state") not in STATES or not item.get("disturbed") is bool:return false
 		if item.disturbed and item.state=="lost":return false
+		# Companions who know this body was butchered; they remember it after the meat is gone.
+		if not item.get("witnesses") is Array or (item.state!="processed" and not item.witnesses.is_empty()):return false
+		var previous:=0
+		for slot in item.witnesses:
+			if not whole(slot,1,game.party_health.members.size()-1) or int(slot)<=previous:return false
+			previous=int(slot)
 		# Only the dead have remains: a party member who died, or a stranger with no health left.
 		if r.people.has(item.person):
 			var member: Dictionary=game.party_health.members[int(r.people[item.person].slot)]
@@ -386,6 +396,8 @@ static func valid_food(r: Dictionary,game) -> bool:
 		var longest: int=int(rules.salted_days) if meat.preserved else int(game.provisions.data.fresh_days)+1
 		if not whole(meat.get("expires"),day+1,day+longest+1):return false
 		if not meat.get("known") is Array or meat.known.is_empty() or meat.known[0]!=0:return false
+		var witnesses: Array=r.remains[int(meat.remains)-1].witnesses
+		if not meat.known.all(func(slot):return int(slot)==0 or witnesses.any(func(other):return int(other)==int(slot))):return false
 		var previous:=-1
 		for slot in meat.known:
 			if not whole(slot,0,members.size()-1) or int(slot)<=previous:return false
