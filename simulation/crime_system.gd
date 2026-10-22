@@ -4,7 +4,7 @@ const COMMANDS=["theft","robbery","shoot","raid","take","flee","breakout","surre
 const STAGES=["loot","escape","standoff","report","done"]
 const ATTEMPTS=["unseen","noticed","complied","resisted","missed","wounded","killed","raided","caught"]
 const RESOLUTIONS=["","left","escaped","captured","surrendered","party_lost"]
-const VERSION:=6
+const VERSION:=7
 const FACTS=["attempt","loot","escape"]
 ## Venue wording. A store yields food and cash; a toll gate or ferry yields its cash box and passage.
 const KINDS={
@@ -333,9 +333,28 @@ func arrival(game,report: Dictionary,place: String) -> int:
 	return int(report.day)+int(news_rules.delay_days)+ceili(absi(mile(game,place)-mile(game,report.origin))/float(news_rules.miles_per_day))
 func heard(game,place: String) -> Array:
 	return record.reports.filter(func(report):return arrival(game,report,place)<=int(game.state.day))
-## A post refuses only when news that names the party has actually arrived there.
+## What a companion who left the party tells others: only the acts they object to, that they saw for themselves.
+func tale(game,slot: int) -> Dictionary:
+	var uid:=person_id(int(game.state.seed),slot)
+	var member: Dictionary=game.party_health.members[slot]
+	var objects:=func(action):return game.characters.response(slot,action) in ["forbidden","reluctant","disapproved"]
+	var acts: Array=record.incidents.filter(func(current):return current.knowledge.has(uid) and current.action!="pursuit" and objects.call("murder" if current.action=="shoot" else "robbery")).map(func(current):return int(current.id))
+	var attacks: Array=record.attacks.filter(func(attack):return int(attack.day)<=int(member.departure_day) and (int(attack.target)==slot or attack.responses.has(str(slot))) and (int(attack.target)==slot or bond(slot,int(attack.target)) in CLOSE or objects.call("murder"))).map(func(attack):return int(attack.id))
+	var bodies: Array=record.remains.filter(func(item):return slot in item.witnesses and (objects.call("cannibalism") or (record.people.has(item.person) and bond(slot,int(record.people[item.person].slot)) in CLOSE))).map(func(item):return int(item.id))
+	return {"teller":slot,"origin":member.departure_place,"day":int(member.departure_day),"incidents":acts,"attacks":attacks,"remains":bodies}
+## Every companion who left and has something to tell. Derived from the record; nothing new is stored.
+func tales(game) -> Array:
+	var result: Array=[]
+	for member in game.party_health.members:
+		if not member.get("departed",false):continue
+		var told:=tale(game,int(member.id))
+		if not (told.incidents.is_empty() and told.attacks.is_empty() and told.remains.is_empty()):result.append(told)
+	return result
+func heard_tales(game,place: String) -> Array:
+	return tales(game).filter(func(told):return arrival(game,told,place)<=int(game.state.day))
+## A post refuses only when news that names the party has actually arrived there, from witnesses or from a former companion.
 func refuses(game,place: String) -> bool:
-	return heard(game,place).any(func(report):return report.identified and report.origin!=place)
+	return heard(game,place).any(func(report):return report.identified and report.origin!=place) or not heard_tales(game,place).is_empty()
 func news_text(game,place: String) -> String:
 	var lines: Array=[]
 	for report in heard(game,place):
@@ -345,6 +364,12 @@ func news_text(game,place: String) -> String:
 		var noun: String=kind(report.origin).noun
 		if report.identified:lines.append("Word reached here by day %d that your party %s %s %s. The people here will not trade with you or help you." % [arrival(game,report,place),act,noun,origin])
 		else:lines.append("People here have heard that someone matching a description of your party stole from %s %s." % [noun,origin])
+	for told in heard_tales(game,place):
+		var said: Array=[]
+		for id in told.incidents:said.append("%s %s %s" % [{"theft":"stole from","robbery":"robbed","shoot":"shot at","raid":"looted"}[record.incidents[id-1].action],kind(record.incidents[id-1].place).noun,where(game,record.incidents[id-1].place)])
+		for id in told.attacks:said.append("shot at "+("them" if int(record.attacks[id-1].target)==int(told.teller) else game.party_health.members[int(record.attacks[id-1].target)].name))
+		for id in told.remains:said.append("butchered %s's remains for food" % Remains.entry(game,id).name)
+		lines.append("%s, who left your party on day %d, has told people here that you %s. They will not trade with you or help you." % [game.party_health.members[int(told.teller)].name,told.day,", ".join(said)])
 	return " ".join(lines)
 ## "at Fort Hall", or for a trading party, the stretch of road where it was met.
 func where(game,place: String) -> String:
@@ -626,7 +651,7 @@ func attack(game,target: int) -> void:
 func snapshot() -> Dictionary:return {"record":record.duplicate(true),"random":str(rng.state)}
 ## Converts a version 1 snapshot (one keeper record per place and an aggregate "staff:<place>"
 ## observer) into separate staff people. Anything malformed is returned unchanged for valid() to reject.
-func upgrade(value: Variant,game=null) -> Variant:return add_venues(upgrade_v5(upgrade_v4(upgrade_v3(upgrade_v2(upgrade_v1(value))))),game)
+func upgrade(value: Variant,game=null) -> Variant:return add_venues(upgrade_v6(upgrade_v5(upgrade_v4(upgrade_v3(upgrade_v2(upgrade_v1(value)))))),game)
 ## Version 4 kept no remains. Deaths already recorded join the ledger as lost when the save is restored; nobody knows where they lie.
 func upgrade_v4(value: Variant) -> Variant:
 	if not value is Dictionary or not value.get("record") is Dictionary or value.record.get("version")!=4 or value.record.has("remains"):return value
@@ -638,9 +663,23 @@ func upgrade_v4(value: Variant) -> Variant:
 func upgrade_v5(value: Variant) -> Variant:
 	if not value is Dictionary or not value.get("record") is Dictionary or value.record.get("version")!=5 or value.record.has("human_food") or value.record.has("meals"):return value
 	var r: Dictionary=value.record.duplicate(true)
-	r.version=VERSION
+	r.version=6
 	r.human_food=[]
 	r.meals={}
+	return {"record":r,"random":value.get("random")}
+## Version 6 kept who knew of butchering only on meat still held. Those companions become the body's witnesses.
+func upgrade_v6(value: Variant) -> Variant:
+	if not value is Dictionary or not value.get("record") is Dictionary or value.record.get("version")!=6 or not value.record.get("remains") is Array or not value.record.get("human_food") is Array:return value
+	var r: Dictionary=value.record.duplicate(true)
+	r.version=VERSION
+	for item in r.remains:
+		if not item is Dictionary or item.has("witnesses"):return value
+		item.witnesses=[]
+		for meat in r.human_food:
+			if meat is Dictionary and meat.get("remains")==item.get("id") and meat.get("known") is Array:
+				for slot in meat.known:
+					if number(slot) and int(slot)>0 and int(slot) not in item.witnesses:item.witnesses.append(int(slot))
+		item.witnesses.sort()
 	return {"record":r,"random":value.get("random")}
 ## Version 3 had no companion bonds or attacks. Existing travelers are never given invented bonds.
 func upgrade_v3(value: Variant) -> Variant:

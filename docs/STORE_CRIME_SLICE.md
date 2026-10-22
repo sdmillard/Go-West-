@@ -205,6 +205,18 @@ Only Fort Kearny has soldiers, so only Fort Kearny pursues. After the party esca
 
 **Saves.** A chase must follow an escape from the same post, within its days, and there can be only one per post.
 
+## What departed companions tell (record version 7)
+
+A companion who leaves the party, whether at a settlement or by fleeing violence, tells others what they saw, but only the acts they object to:
+
+- **Incidents they witnessed**, if they disapprove of or forbid robbery (or murder, for a shooting).
+- **Attacks** they were present for, if they were the target, were close to the target, or object to murder.
+- **Butchering** they learned of, if they object to cannibalism or were close to the dead person.
+
+The Ruthless, and anyone without such a boundary, keep quiet. Their story starts where and when they left, and travels like witness reports: 2 days, then 25 miles a day in both directions. Any post it reaches refuses trade, paid care and the ferry, and its notice names the teller and what they said.
+
+Stories are not stored. They are derived from the record each time. The only new saved fact is each body's `witnesses`: the companions who learned it was butchered. That knowledge outlasts the meat. Version 6 records take their witnesses from the meat still held.
+
 ## Service audit
 
 - A post that was robbed or lost its keeper is closed. Its trade and its paid local care are both refused there, not only once news reaches other posts. The party's own care kits still work anywhere.
