@@ -335,7 +335,7 @@ func restore(value: Variant):
 	if game.pending.get("crime_menu",false):
 		# The menu must still have a target: the active incident, this stop's venue, or the traders on the road.
 		var target: String=game.crime.target(game)
-		if target.is_empty() or (game.crime.record.active.is_empty() and not game.crime.trader(target) and game.service_return.get("landmark","")!=game.state.landmark):return null
+		if target.is_empty() or (game.crime.record.active.is_empty() and not game.crime.transient(target) and game.service_return.get("landmark","")!=game.state.landmark):return null
 		# Commands must match the authoritative stage; descriptive text is regenerated so it can change between versions.
 		var authoritative: Dictionary=game.crime.menu(game)
 		if game.pending.choices.map(func(choice):return choice.get("crime_command","")) != authoritative.choices.map(func(choice):return choice.crime_command):return null

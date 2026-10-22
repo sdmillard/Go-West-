@@ -119,6 +119,17 @@ The small trading parties already met on the road (the `passing:<region>:<window
 
 Traders do not yet carry news of other crimes; that belongs to the pursuit and news phase.
 
+## Emigrant camps
+
+Other emigrant families now camp near the road. `passing_emigrants` is a second template, like the traders. About one camp a week is near (`every_days` 7, present for `window_days` 2, offset per journey). Each camp is named `emigrants:<region>:<n>` and enters the record on the first committed act.
+
+- Each family has four people: the head of the family (the target), a partner, a grown son and a hired man. They carry $60 and 300 lb of food, of which up to 200 lb can be taken.
+- They are armed and travel in company. Threats work 30% of the time, and a getaway injures someone 40% of the time. Nobody can hold the party long, so only 6% of escapes are stopped.
+- The crime action aims at the stop's venue first, then traders on the road, then a nearby camp.
+- Reports and news work as for traders: "your party shot at an emigrant family on the road through the …".
+
+So far a camp exists only as a crime target. Meeting one peacefully (trading, swapping news, helping) is not built yet.
+
 ## Other limits
 
 Personal existing health specials still affect any actual injury damage. Paid trade, paid care and the hired ferry respond to incidents and news; other services are not yet governed by a general hostility/access system.
