@@ -4,7 +4,7 @@ const COMMANDS=["theft","robbery","shoot","raid","take","flee","breakout","surre
 const STAGES=["loot","escape","standoff","report","done"]
 const ATTEMPTS=["unseen","noticed","complied","resisted","missed","wounded","killed","raided","caught"]
 const RESOLUTIONS=["","left","escaped","captured","surrendered","party_lost"]
-const VERSION:=7
+const VERSION:=8
 const FACTS=["attempt","loot","escape"]
 ## Venue wording. A store yields food and cash; a toll gate or ferry yields its cash box and passage.
 const KINDS={
@@ -21,6 +21,8 @@ const BONDS=["family","partner","friend","rival"]
 const CLOSE=["family","partner","friend"]
 const RESPONSES=["stood by","objected","fled","retaliated"]
 const ATTACK_RESULTS=["missed","wounded","killed"]
+## What a companion at the betrayal point does: robs the wagon and slips away, or shoots the leader first.
+const BETRAYAL_RESULTS={"theft":["stole","stopped"],"attack":["missed","wounded","killed"]}
 ## The one traders scene is a template: each passing trading party, named by its market key, gets its own people when first targeted.
 const TRADERS:="passing_traders"
 ## Emigrant families camped near the road work the same way, named by their camp.
@@ -58,6 +60,8 @@ func load_data(value: Variant) -> bool:
 		if not number(party.get(key)) or party[key]<0 or party[key]>1:return false
 	for key in ["wound_damage","retaliate_damage"]:
 		if not whole(party.get(key),1,100):return false
+	var betrayal: Variant=party.get("betrayal")
+	if not betrayal is Dictionary or betrayal.size()!=7 or not ["daily","food_share","cash_share","bullet_share","notice","ambush_hit","guard_step"].all(func(key):return number(betrayal.get(key)) and betrayal[key]>=0 and betrayal[key]<=1):return false
 	var bodies: Variant=Remains.load_rules(value.get("remains"))
 	if bodies==null:return false
 	var news: Variant=value.get("reports")
@@ -111,7 +115,7 @@ func load_data(value: Variant) -> bool:
 	return true
 func start(seed_value: int) -> void:
 	rng.seed=seed_value ^ 0x4352494d
-	record={"version":VERSION,"people":{},"actors":{},"services":{},"incidents":[],"active":{},"reports":[],"bonds":[],"attacks":[],"remains":[],"human_food":[],"meals":{}}
+	record={"version":VERSION,"people":{},"actors":{},"services":{},"incidents":[],"active":{},"reports":[],"bonds":[],"attacks":[],"remains":[],"human_food":[],"meals":{},"betrayals":[]}
 	for place in venues():
 		for uid in staff_ids(place):record.actors[uid]=fresh_actor(place,uid)
 		record.services[place]=fresh_service(place,0)
@@ -648,10 +652,70 @@ func attack(game,target: int) -> void:
 	game.state.health=game.party_health.average_health()
 	game.state.party_size=game.party_health.living_count()
 	game._check_health()
+## Ruthless or opportunistic companions whose trust has fallen to their betrayal point (shown as a warning in View Party).
+func betrayer(game,slot: int) -> bool:
+	var profile: Dictionary=game.characters.profiles[slot]
+	return slot>0 and game.party_health.is_active(game.party_health.members[slot]) and profile.get("can_betray",false) and float(profile.trust)<=maxi(0,int(profile.thresholds.betrayal)-game.characters.attachment(profile))
+## Each night, at most one companion at the betrayal point may turn on the party. Chance-based; nobody else is affected by the roll.
+func check_betrayal(game) -> void:
+	if game.state.status!="traveling" or not record.has("betrayals"):return
+	for member in game.party_health.members:
+		var slot: int=int(member.id)
+		if betrayer(game,slot) and rng.randf()<float(companion_rules.betrayal.daily):
+			betray(game,slot)
+			return
+## The ruthless, willing to kill, shoot the leader first and take what they can either way. Others rob the stores in the night;
+## anyone who wakes stops the theft, but the thief still runs. Either way the betrayer is gone by morning.
+func betray(game,slot: int) -> void:
+	var rules: Dictionary=companion_rules.betrayal
+	var members: Array=game.party_health.members
+	var leader: Dictionary=members[0]
+	var member: Dictionary=members[slot]
+	var day: int=int(game.state.day)
+	var profile: Dictionary=game.characters.profiles[slot]
+	var others: Array=members.filter(func(other):return int(other.id)>0 and int(other.id)!=slot and game.party_health.is_active(other)).map(func(other):return int(other.id))
+	var act: String="attack" if profile.traits[1]=="Ruthless" and game.characters.response(slot,"murder") not in ["forbidden","reluctant"] and game.party_health.is_active(leader) and game.state.bullets>0 else "theft"
+	var attempt: String="stole"
+	var noticed: Array=[]
+	if act=="attack":
+		game._apply({"bullets":-1})
+		# A shot wakes the camp; companions willing to defend the wagon spoil the aim.
+		noticed=others.duplicate()
+		var guards: int=others.filter(func(other):return game.characters.willing(other,"defend")).size()
+		var chance: float=clampf(float(rules.ambush_hit)-float(rules.guard_step)*guards,float(modifiers.floor),float(modifiers.ceiling))
+		attempt="missed"
+		if rng.randf()<chance:attempt="killed" if leader.health<=int(companion_rules.wound_damage) or rng.randf()<float(companion_rules.fatal) else "wounded"
+		if attempt=="killed":game.party_health.affect(leader,-int(leader.health),day,"being shot by "+member.name)
+		elif attempt=="wounded":
+			game.party_health.affect(leader,-int(companion_rules.wound_damage),day,"a gunshot wound from "+member.name)
+			game.party_health.begin_condition(0,"wound",day,1)
+	else:
+		for other in others:
+			if rng.randf()<float(rules.notice):noticed.append(other)
+		if not noticed.is_empty():attempt="stopped"
+	var taken: Dictionary={"food":0,"cents":0,"bullets":0}
+	if attempt!="stopped":
+		taken.food=int(floor(int(game.state.food)*float(rules.food_share)))
+		taken.cents=int(floor(roundi(float(game.state.money)*100)*float(rules.cash_share)))
+		taken.bullets=int(floor(int(game.state.bullets)*float(rules.bullet_share)))
+		game._apply({"food":-taken.food,"money":-taken.cents/100.0,"bullets":-taken.bullets})
+	record.betrayals.append({"id":record.betrayals.size()+1,"day":day,"member":slot,"act":act,"attempt":attempt,"taken":taken,"noticed":noticed})
+	var goods: String="%d lb food, $%.2f and %d bullets" % [taken.food,taken.cents/100.0,taken.bullets]
+	var text: String
+	if act=="attack":text="%s shot at you in the night: %s, then ran with %s." % [member.name,attempt,goods]
+	elif attempt=="stole":text="%s robbed the wagon in the night and slipped away with %s." % [member.name,goods]
+	else:text="%s tried to rob the wagon in the night; %s woke and stopped it. %s ran." % [member.name,", ".join(noticed.map(func(other):return members[other].name)),member.name]
+	game.journal.append("Day %d · %s" % [day,text])
+	game.health_events.append(text)
+	game._collect_health_events()
+	game.flee([slot],"after turning on the party")
+	game.state.health=game.party_health.average_health()
+	game.state.party_size=game.party_health.living_count()
+	game._check_health()
 func snapshot() -> Dictionary:return {"record":record.duplicate(true),"random":str(rng.state)}
 ## Converts a version 1 snapshot (one keeper record per place and an aggregate "staff:<place>"
 ## observer) into separate staff people. Anything malformed is returned unchanged for valid() to reject.
-func upgrade(value: Variant,game=null) -> Variant:return add_venues(upgrade_v6(upgrade_v5(upgrade_v4(upgrade_v3(upgrade_v2(upgrade_v1(value)))))),game)
+func upgrade(value: Variant,game=null) -> Variant:return add_venues(upgrade_v7(upgrade_v6(upgrade_v5(upgrade_v4(upgrade_v3(upgrade_v2(upgrade_v1(value))))))),game)
 ## Version 4 kept no remains. Deaths already recorded join the ledger as lost when the save is restored; nobody knows where they lie.
 func upgrade_v4(value: Variant) -> Variant:
 	if not value is Dictionary or not value.get("record") is Dictionary or value.record.get("version")!=4 or value.record.has("remains"):return value
@@ -671,7 +735,7 @@ func upgrade_v5(value: Variant) -> Variant:
 func upgrade_v6(value: Variant) -> Variant:
 	if not value is Dictionary or not value.get("record") is Dictionary or value.record.get("version")!=6 or not value.record.get("remains") is Array or not value.record.get("human_food") is Array:return value
 	var r: Dictionary=value.record.duplicate(true)
-	r.version=VERSION
+	r.version=7
 	for item in r.remains:
 		if not item is Dictionary or item.has("witnesses"):return value
 		item.witnesses=[]
@@ -680,6 +744,13 @@ func upgrade_v6(value: Variant) -> Variant:
 				for slot in meat.known:
 					if number(slot) and int(slot)>0 and int(slot) not in item.witnesses:item.witnesses.append(int(slot))
 		item.witnesses.sort()
+	return {"record":r,"random":value.get("random")}
+## Version 7 had no betrayals; nobody had yet turned on the party.
+func upgrade_v7(value: Variant) -> Variant:
+	if not value is Dictionary or not value.get("record") is Dictionary or value.record.get("version")!=7 or value.record.has("betrayals"):return value
+	var r: Dictionary=value.record.duplicate(true)
+	r.version=VERSION
+	r.betrayals=[]
 	return {"record":r,"random":value.get("random")}
 ## Version 3 had no companion bonds or attacks. Existing travelers are never given invented bonds.
 func upgrade_v3(value: Variant) -> Variant:
@@ -765,14 +836,38 @@ func valid_party(r: Dictionary,game) -> bool:
 			var member: Dictionary=members[int(key)]
 			if attack.responses[key] in ["fled","retaliated"] and member.alive and not member.get("departed",false):return false
 		if (str(int(attack.target)) in attack.responses)==(attack.attempt=="killed"):return false
-	# Nobody fled the party except in answer to an attack.
+	if not valid_betrayals(r,game):return false
+	# Nobody fled the party except in answer to an attack, or after turning on it.
 	for member in members:
-		if member.get("fled",false) and not r.attacks.any(func(attack):return attack is Dictionary and attack.get("responses") is Dictionary and attack.responses.get(str(int(member.id)),"") in ["fled","retaliated"] and attack.day==member.departure_day):return false
+		if member.get("fled",false) and not r.attacks.any(func(attack):return attack is Dictionary and attack.get("responses") is Dictionary and attack.responses.get(str(int(member.id)),"") in ["fled","retaliated"] and attack.day==member.departure_day) and not r.betrayals.any(func(item):return int(item.member)==int(member.id) and int(item.day)==int(member.departure_day)):return false
+	return true
+func valid_betrayals(r: Dictionary,game) -> bool:
+	var members: Array=game.party_health.members
+	if not r.get("betrayals") is Array or r.betrayals.size()>members.size():return false
+	var previous_day:=0
+	for index in range(r.betrayals.size()):
+		var item: Variant=r.betrayals[index]
+		if not item is Dictionary or item.size()!=7 or item.get("id")!=index+1 or not whole(item.get("day"),previous_day,int(game.state.day)) or not whole(item.get("member"),1,members.size()-1):return false
+		previous_day=int(item.day)
+		if not BETRAYAL_RESULTS.has(item.get("act")) or item.get("attempt") not in BETRAYAL_RESULTS[item.act]:return false
+		# The betrayer left that night; they turn on the party only once.
+		var member: Dictionary=members[int(item.member)]
+		if not member.get("fled",false) or int(member.get("departure_day",-1))!=int(item.day) or r.betrayals.filter(func(other):return other is Dictionary and other.get("member")==item.member).size()!=1:return false
+		var taken: Variant=item.get("taken")
+		if not taken is Dictionary or taken.size()!=3 or not whole(taken.get("food"),0,100000) or not whole(taken.get("cents"),0,100000000) or not whole(taken.get("bullets"),0,100000):return false
+		if item.attempt=="stopped" and (taken.food+taken.cents+taken.bullets)>0:return false
+		# The leader died of this shot exactly when the record says it killed.
+		var shot: bool=not members[0].alive and int(members[0].death_day)==int(item.day) and str(members[0].get("cause",""))=="being shot by "+str(member.name)
+		if (item.attempt=="killed")!=shot:return false
+		if not item.get("noticed") is Array:return false
+		for slot in item.noticed:
+			if not whole(slot,1,members.size()-1) or int(slot)==int(item.member) or item.noticed.count(slot)!=1:return false
+		if (item.attempt=="stopped")==item.noticed.is_empty() and item.act=="theft":return false
 	return true
 func valid(value: Variant,game) -> bool:
 	if not value is Dictionary or value.size()!=2 or not value.get("record") is Dictionary or not value.get("random") is String or not value.random.is_valid_int() or str(int(value.random))!=value.random:return false
 	var r: Dictionary=value.record
-	if r.size()!=12 or not valid_party(r,game) or not r.get("reports") is Array or r.get("version")!=VERSION or not r.get("people") is Dictionary or r.people.size()!=5 or not r.get("actors") is Dictionary or not r.get("services") is Dictionary or not r.services.keys().all(func(place):return scenes.has(place) and not TEMPLATE_KINDS.has(place) or transient(place)) or not r.get("incidents") is Array or r.incidents.size()>10000 or not r.get("active") is Dictionary:return false
+	if r.size()!=13 or not valid_party(r,game) or not r.get("reports") is Array or r.get("version")!=VERSION or not r.get("people") is Dictionary or r.people.size()!=5 or not r.get("actors") is Dictionary or not r.get("services") is Dictionary or not r.services.keys().all(func(place):return scenes.has(place) and not TEMPLATE_KINDS.has(place) or transient(place)) or not r.get("incidents") is Array or r.incidents.size()>10000 or not r.get("active") is Dictionary:return false
 	for member in game.party_health.members:
 		var uid:=person_id(int(game.state.seed),int(member.id))
 		var person: Variant=r.people.get(uid)

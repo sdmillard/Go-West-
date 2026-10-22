@@ -28,6 +28,90 @@ func party(values: Array,bonds: Array=[],temperaments: Array=["Cautious","Cautio
 	return game
 func attack(game,target: int) -> bool:
 	return game.open_attack(target) and game.choose(0)
+## Turns the companion in a slot against the party: allowed to betray, trust at zero.
+func turn(game,slot: int) -> void:
+	var profile: Dictionary=game.characters.profiles[slot]
+	profile.can_betray=true
+	profile.trust=0
+func betrayal(store) -> void:
+	# Theft in the night, unnoticed: the thief takes a share of the stores and is gone.
+	var game=party(["Opportunistic","Compassionate","Compassionate","Compassionate"])
+	var rules: Dictionary=game.crime.companion_rules.betrayal
+	var random: String=str(game.crime.rng.state)
+	game.crime.check_betrayal(game)
+	check(not game.crime.betrayer(game,1) and str(game.crime.rng.state)==random,"Nobody near the betrayal point: no roll, no betrayal")
+	game.characters.profiles[2].trust=0
+	check(not game.crime.betrayer(game,2),"A companion who could never betray does not, however low their trust")
+	turn(game,1)
+	check(game.crime.betrayer(game,1) and "capable of betrayal" in game.characters.warning(1),"The betrayal point is the warning View Party already shows")
+	rules.daily=1
+	rules.notice=0
+	var food: int=game.state.food
+	var cents: int=roundi(game.state.money*100)
+	var bullets: int=game.state.bullets
+	game.crime.check_betrayal(game)
+	var item: Dictionary=game.crime.record.betrayals[0]
+	check(item.act=="theft" and item.attempt=="stole" and item.member==1 and item.noticed.is_empty(),"An opportunist robs the wagon when nobody wakes")
+	check(item.taken=={"food":int(food*0.25),"cents":int(cents*0.5),"bullets":int(bullets*0.25)} and roundi(game.state.money*100)==cents-item.taken.cents and game.state.bullets==bullets-item.taken.bullets,"The thief takes the authored shares of food, cash and bullets")
+	check(game.state.food<food-item.taken.food and game.party_health.members[1].get("fled",false) and game.state.party_size==4,"The thief also leaves with the usual flight share")
+	check(game.health_events.any(func(text):return "Ada robbed the wagon" in text),"The party hears of it")
+	check(round_trip(store,game),"A betrayal round-trips through saves")
+	var saved: Dictionary=store.capture(game)
+	var bad: Dictionary=saved.duplicate(true)
+	bad.crime.record.betrayals=[]
+	check(store.restore(bad)==null,"Flight needs a cause: an attack or a betrayal")
+	bad=saved.duplicate(true)
+	bad.crime.record.betrayals[0].attempt="stopped"
+	check(store.restore(bad)==null,"A stopped theft takes nothing, and needs someone who woke")
+	bad=saved.duplicate(true)
+	bad.crime.record.betrayals.append(bad.crime.record.betrayals[0].duplicate(true))
+	bad.crime.record.betrayals[1].id=2
+	check(store.restore(bad)==null,"Nobody betrays the party twice")
+	var old: Dictionary=game.crime.snapshot()
+	old.record.version=7
+	old.record.erase("betrayals")
+	var upgraded: Variant=game.crime.upgrade(old,game)
+	check(upgraded.record.version==game.crime.VERSION and upgraded.record.betrayals.is_empty(),"Version 7 records gain an empty betrayal list")
+	# Someone wakes: the theft is stopped, but the thief still runs.
+	game=party(["Opportunistic","Compassionate","Compassionate","Compassionate"])
+	turn(game,1)
+	game.crime.companion_rules.betrayal.daily=1
+	game.crime.companion_rules.betrayal.notice=1
+	cents=roundi(game.state.money*100)
+	game.crime.check_betrayal(game)
+	item=game.crime.record.betrayals[0]
+	check(item.attempt=="stopped" and item.noticed==[2,3,4] and item.taken=={"food":0,"cents":0,"bullets":0} and roundi(game.state.money*100)==cents and game.party_health.members[1].get("fled",false),"Anyone who wakes stops the theft; the thief runs empty-handed")
+	check(round_trip(store,game),"A stopped theft round-trips")
+	# The ruthless shoot the leader first, then take what they can.
+	game=party(["Ruthless","Ruthless","Ruthless","Ruthless"])
+	turn(game,2)
+	game.crime.companion_rules.betrayal.daily=1
+	game.crime.companion_rules.betrayal.ambush_hit=1
+	game.crime.companion_rules.betrayal.guard_step=0
+	game.crime.companion_rules.fatal=1
+	bullets=game.state.bullets
+	game.crime.check_betrayal(game)
+	item=game.crime.record.betrayals[0]
+	check(item.act=="attack" and item.attempt=="killed" and not game.party_health.members[0].alive and "Ben" in game.party_health.members[0].cause,"A ruthless betrayer can kill the leader; the cause names them")
+	check(item.noticed==[1,3,4] and game.state.bullets==bullets-1-item.taken.bullets and game.state.status=="traveling","The shot wakes the camp; the journey goes on without its leader")
+	check(round_trip(store,game),"A killing betrayal round-trips")
+	saved=store.capture(game)
+	bad=saved.duplicate(true)
+	bad.crime.record.betrayals[0].attempt="missed"
+	check(store.restore(bad)==null,"A killing cannot be rewritten as a miss")
+	game=party(["Ruthless","Ruthless","Ruthless","Ruthless"])
+	turn(game,2)
+	game.crime.companion_rules.betrayal.daily=1
+	game.crime.companion_rules.betrayal.ambush_hit=0.3
+	game.crime.companion_rules.betrayal.guard_step=0.1
+	game.crime.check_betrayal(game)
+	check(game.crime.record.betrayals[0].act=="attack" and game.crime.record.betrayals[0].attempt=="missed","Companions willing to defend the wagon spoil the shot")
+	# It happens on the trail at night, through the ordinary day.
+	game=party(["Opportunistic","Compassionate","Compassionate","Compassionate"])
+	turn(game,1)
+	game.crime.companion_rules.betrayal.daily=1
+	game.rest()
+	check(game.crime.record.betrayals.size()==1 and game.crime.record.betrayals[0].day==game.state.day,"A night in camp can bring the betrayal")
 func round_trip(store,game) -> bool:
 	return store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))!=null
 func run():
@@ -107,6 +191,7 @@ func run():
 	check(not game.open_attack(1),"No bullets, no attack")
 	game.state.bullets=5
 	check(not game.open_attack(0) and not game.open_attack(9),"Only a companion with the party can be attacked")
+	betrayal(store)
 	var screen=Main.instantiate()
 	root.add_child(screen)
 	await process_frame

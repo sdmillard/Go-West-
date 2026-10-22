@@ -476,6 +476,7 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 		state.party_size = party_health.living_count()
 	_check_health()
 	characters.daily(self,resting,team_working,sick_before)
+	if state.extended_route:crime.check_betrayal(self)
 	if state.extended_route:
 		journal.append("Day %d · %s. Team condition %s; %s." % [state.day, state.weather, PartyHealth.condition_label(state.ox_health).to_lower(), "working" if team_working else "resting"])
 
