@@ -1,7 +1,7 @@
 extends RefCounted
 ## Persistent local people, finite loot and staged incidents. No UI or global RNG.
-const COMMANDS=["theft","robbery","shoot","raid","take","flee","surrender","finish","back"]
-const STAGES=["loot","escape","report","done"]
+const COMMANDS=["theft","robbery","shoot","raid","take","flee","breakout","surrender","finish","back"]
+const STAGES=["loot","escape","standoff","report","done"]
 const ATTEMPTS=["unseen","noticed","complied","resisted","missed","wounded","killed","raided"]
 const RESOLUTIONS=["","left","escaped","captured","surrendered","party_lost"]
 const VERSION:=3
@@ -10,6 +10,7 @@ const FACTS=["attempt","loot","escape"]
 const KINDS={
 	"store":{"journal":"Store","noun":"the store","theft":"Take supplies without paying · 1 day","raid":"Enter the store and search for remaining supplies · 1 day"},
 	"toll":{"journal":"Toll gate","noun":"the toll gate","theft":"Slip the wagons past the gate without paying · 1 day","raid":"Search the gatekeeper's cabin for the toll money · 1 day","take":"Take $%.2f from the toll box and pass the gate · 1 day","passage":"the gate will be behind you"},
+	"fort":{"journal":"Fort","noun":"the army post","theft":"Take rations from the commissary tent · 1 day","raid":"Search the commissary tent for rations and the cash box · 1 day"},
 	"ferry":{"journal":"Ferry","noun":"the ferry","theft":"Cast off with the ferry while the crew is away · 1 day","raid":"Take the ferry and the crew's cash box · 1 day","take":"Take $%.2f and the ferry · 1 day","passage":"the ferry will be yours to work across"}}
 ## Attempts that reach the loot stage; only these can win passage at a gate or ferry.
 const LOOTING=["unseen","complied","killed","raided"]
@@ -42,7 +43,12 @@ func load_data(value: Variant) -> bool:
 		for key in ["cash_cents","food_lot","loot_limit","injury_damage"]:
 			if not whole(scene.get(key),0 if key in ["food_lot","loot_limit"] else 1,100000):return false
 		# Only stores sell or hold food; a gate or ferry holds only its cash box.
-		if scene.food_lot!=(200 if scene.kind=="store" else 0) or scene.loot_limit>scene.food_lot or scene.injury_damage>100:return false
+		if scene.food_lot!=(200 if scene.kind=="store" else 0) or scene.loot_limit>maxi(scene.food_lot,int(scene.get("food_stock",0))) or scene.injury_damage>100:return false
+		# A fort's commissary holds its own stock; soldiers who stop an escape force a standoff.
+		var fort_keys: Array=["food_stock","breakout","breakout_shots"]
+		for key in fort_keys:
+			if scene.has(key)!=(scene.kind=="fort"):return false
+		if scene.kind=="fort" and (not whole(scene.food_stock,1,2000) or not number(scene.breakout) or scene.breakout<0 or scene.breakout>1 or not whole(scene.breakout_shots,1,5)):return false
 		if (scene.kind=="ferry")!=scene.has("seized_risk_low") or scene.has("seized_risk_low")!=scene.has("seized_risk_high"):return false
 		if scene.kind=="ferry":
 			for key in ["seized_risk_low","seized_risk_high"]:
@@ -79,7 +85,7 @@ func role(place: String,uid: String) -> String:return scenes[place].staff[staff_
 func kind(place: String) -> Dictionary:return KINDS[scenes[place].kind]
 ## Passage won at a toll gate or ferry: the party took the cash box or the boat and got away with it, or killed the gatekeeper.
 func passage(place: String) -> bool:
-	if not scenes.has(place) or scenes[place].kind=="store":return false
+	if not scenes.has(place) or scenes[place].kind not in ["toll","ferry"]:return false
 	# Nobody is left to collect a toll.
 	if scenes[place].kind=="toll" and owner(place).health==0:return true
 	return record.incidents.any(func(current):return current.place==place and current.resolution in ["left","escaped"] and current.attempt in LOOTING and current.knowledge.values().any(func(facts):return "loot" in facts))
@@ -100,11 +106,17 @@ func bind_party(game) -> void:
 		var uid:=person_id(int(game.state.seed),int(member.id))
 		if not record.people.has(uid):record.people[uid]={"name":member.name,"slot":int(member.id)}
 func eligible(game) -> bool:
-	return game.can_service() and game.pending.has("landmark") and game.pending.landmark==game.state.landmark and scenes.has(game.state.landmark)
+	return game.can_service() and game.pending.has("landmark") and game.pending.landmark==game.state.landmark and scenes.has(game.state.landmark) and staffed(game,game.state.landmark)
+## A post still waiting for its builders has nobody to rob.
+func staffed(game,place: String) -> bool:
+	var node: Dictionary=game.route.nodes[place]
+	return not node.has("construction_from_month") or int(game.calendar().year)!=1848 or int(game.calendar().month)>=int(node.construction_from_month)
 func closed(place: String) -> bool:
 	return record.services.has(place) and (service(place).alarmed or owner(place).health==0)
+func food_capacity(game,place: String) -> int:
+	return int(scenes[place].food_stock) if scenes[place].kind=="fort" else int(game.context.data.post_lots)*int(scenes[place].food_lot)
 func food_left(game,place: String) -> int:
-	return maxi(0,int(game.context.data.post_lots)*int(scenes[place].food_lot)-int(service(place).food_sold)-int(service(place).food_taken))
+	return maxi(0,food_capacity(game,place)-int(service(place).food_sold)-int(service(place).food_taken))
 func consume_trade(choice: Dictionary) -> void:
 	for place in scenes:
 		if choice.get("market_key","")=="post:"+place+"|buy_food":service(place).food_sold+=maxi(0,int(choice.effects.get("food",0)))
@@ -120,7 +132,7 @@ func incident() -> Dictionary:
 	return {} if record.active.is_empty() else record.incidents[int(record.active.id)-1]
 func loot_quote(game,place: String) -> Dictionary:
 	var room:=maxi(0,floori(game.provisions.storage_capacity(game.state)-game.provisions.cargo(game.state)))
-	return {"food":mini(mini(food_left(game,place),int(scenes[place].loot_limit)),room) if scenes[place].kind=="store" else 0,"money":service(place).cash_cents if not incident().is_empty() and incident().action!="theft" else 0}
+	return {"food":mini(mini(food_left(game,place),int(scenes[place].loot_limit)),room) if scenes[place].kind in ["store","fort"] else 0,"money":service(place).cash_cents if not incident().is_empty() and incident().action!="theft" else 0}
 func option(label: String,command: String) -> Dictionary:
 	return {"label":label,"crime_command":command,"effects":{},"result":""}
 ## Distinct targets the party got away from, plus clean defensive victories. Capped; the same target never counts twice.
@@ -167,6 +179,7 @@ func menu(game) -> Dictionary:
 	var options: Array=[]
 	if current.is_empty():
 		if scene.kind=="store":text+="\nKeeper: %s. Accessible food stock: %d lb. Cash stash: $%.2f." % [condition(keeper),food_left(game,place),service(place).cash_cents/100.0]
+		elif scene.kind=="fort":text+="\n%s: %s. Soldiers on duty nearby: %d. Commissary rations: %d lb. Cash box: $%.2f. If soldiers stop an escape, the party must surrender or shoot its way out." % [keeper.role.capitalize(),condition(keeper),living_staff(place).size()-1,food_left(game,place),service(place).cash_cents/100.0]
 		else:text+="\n%s: %s. Cash box: $%.2f." % [keeper.role.capitalize(),condition(keeper),service(place).cash_cents/100.0]
 		text+="\nStaff on hand: %d. Your party's condition: %s. Fit, willing participants: %d. Prior successful jobs counted: %d of %d." % [living_staff(place).size(),party_condition(game),able(game,"robbery"),experience(game),int(modifiers.experience_cap)]
 		if keeper.health>0:
@@ -174,7 +187,7 @@ func menu(game) -> Dictionary:
 		else:options=[option(words.raid,"raid")]
 	elif current.stage=="loot":
 		var loot:=loot_quote(game,place)
-		if scene.kind!="store":
+		if scene.kind in ["toll","ferry"]:
 			text="%s. You can take $%.2f from the cash box, and %s. Doing it uses one more day. Nearby staff can respond as you leave." % [current.attempt.capitalize(),loot.money/100.0,words.passage]
 			options=[option(words.take % (loot.money/100.0),"take"),option("Give it up and try to get away","flee")]
 		else:
@@ -183,6 +196,10 @@ func menu(game) -> Dictionary:
 	elif current.stage=="escape":
 		text="%s. Staff have been alerted. Attempting escape costs one day; you may be injured or captured. Surrender ends this journey in custody." % current.attempt.capitalize()
 		options=[option("Try to escape · 1 day","flee"),option("Surrender","surrender")]
+	elif current.stage=="standoff":
+		var shots: int=mini(int(scene.breakout_shots),int(game.state.bullets))
+		text="Soldiers have blocked the way out. Shooting your way out spends up to %d bullets; some of you will likely be hurt, and you may still be taken. Surrender ends this journey in custody." % int(scene.breakout_shots)
+		options=[option("Shoot your way out · %d bullet(s)" % shots,"breakout"),option("Surrender","surrender")]
 	else:
 		text="Incident %d: %s; %s. Food taken: %d lb. Cash taken: $%.2f. Shots: %d. People here who saw it: %d. See the journal and party records for injuries and reactions." % [current.id,current.attempt,current.resolution,current.food,current.cash_cents/100.0,current.shots,local_witnesses(current).size()]
 		options=[option("Acknowledge the outcome","finish")]
@@ -199,7 +216,8 @@ func can_choose(game,command: String) -> bool:
 	if current.stage=="loot":
 		var quote:=loot_quote(game,current.place)
 		# Passage is itself the prize at a gate or ferry, even with an empty cash box.
-		return command=="flee" or (command=="take" and (quote.food>0 or quote.money>0 or scenes[current.place].kind!="store"))
+		return command=="flee" or (command=="take" and (quote.food>0 or quote.money>0 or scenes[current.place].kind in ["toll","ferry"]))
+	if current.stage=="standoff":return command=="surrender" or (command=="breakout" and game.state.bullets>0)
 	return current.stage=="escape" and command in ["flee","surrender"]
 ## Local people who hold any knowledge of this incident; later reports can only come from them.
 func local_witnesses(current: Dictionary) -> Array:
@@ -324,22 +342,57 @@ func choose(game,command: String) -> bool:
 		if store.alarmed:
 			if not advance(game):return true
 			if rng.randf()<scene.escape_capture:
+				# Soldiers stop the party instead of simply taking it.
+				if scenes[place].kind=="fort":
+					current.stage="standoff"
+					observe(game,current,"escape",true)
+					game.journal.append("Day %d · Fort incident %d: soldiers block the escape." % [game.state.day,current.id])
+					game.pending=menu(game)
+					return true
 				result(game,"captured")
 				return true
-			if rng.randf()<scene.escape_injury:
-				for member in game.party_health.members:
-					if not game.party_health.is_active(member):continue
-					game.party_health.affect(member,-int(scene.injury_damage),game.state.day,"confrontation injuries")
-					if member.alive:game.party_health.begin_condition(int(member.id),"wound",int(game.state.day),1)
-					game._collect_health_events()
-					game.state.health=game.party_health.average_health()
-					game.state.party_size=game.party_health.living_count()
-					game._check_health()
-					break
+			if rng.randf()<scene.escape_injury:wound(game,int(scene.injury_damage),1)
 		observe(game,current,"escape",store.alarmed)
 		result(game,"escaped" if game.state.status=="traveling" else "party_lost")
+	elif command=="breakout":
+		var current:=incident()
+		var shots: int=mini(int(scenes[place].breakout_shots),int(game.state.bullets))
+		game._apply({"bullets":-shots})
+		current.shots+=shots
+		# Each shot may drop a soldier.
+		for shot in range(shots):
+			var targets: Array=living_staff(place).filter(func(uid):return uid!=owner_id(place))
+			if targets.is_empty() or rng.randf()>=scene.shot_hit:continue
+			var soldier: Dictionary=record.actors[targets[0]]
+			soldier.health=0 if soldier.health<=40 or rng.randf()<scene.shot_fatal else int(soldier.health)-40
+			# A soldier killed here carries nothing onward, as a keeper killed by the first shot never does.
+			if soldier.health==0:current.knowledge.erase(soldier.uid)
+		if not advance(game):return true
+		var chance: float=bounded(float(scenes[place].breakout),float(scenes[place].breakout)+scene.edge,float(modifiers.floor),float(modifiers.ceiling))
+		# Soldiers fire back either way; one or two of the party are hurt.
+		wound(game,int(scene.injury_damage),1 if rng.randf()<0.5 else 2)
+		if game.state.status!="traveling":
+			result(game,"party_lost")
+			return true
+		if rng.randf()>=chance:
+			result(game,"captured")
+			return true
+		observe(game,current,"escape",true)
+		result(game,"escaped")
 	if game.state.status=="traveling":game.pending=menu(game)
 	return true
+## Hurts the first active members, as the existing confrontation injuries do.
+func wound(game,damage: int,count: int) -> void:
+	for member in game.party_health.members:
+		if count<=0:break
+		if not game.party_health.is_active(member):continue
+		count-=1
+		game.party_health.affect(member,-damage,game.state.day,"confrontation injuries")
+		if member.alive:game.party_health.begin_condition(int(member.id),"wound",int(game.state.day),1)
+		game._collect_health_events()
+		game.state.health=game.party_health.average_health()
+		game.state.party_size=game.party_health.living_count()
+		game._check_health()
 func snapshot() -> Dictionary:return {"record":record.duplicate(true),"random":str(rng.state)}
 ## Converts a version 1 snapshot (one keeper record per place and an aggregate "staff:<place>"
 ## observer) into separate staff people. Anything malformed is returned unchanged for valid() to reject.
@@ -399,7 +452,7 @@ func valid(value: Variant,game) -> bool:
 		if not person is Dictionary or person.size()!=2 or person.get("name")!=member.name or person.get("slot")!=member.id:return false
 	var actor_count:=0
 	for place in scenes:
-		var lots: int=int(game.context.data.post_lots)*int(scenes[place].food_lot)
+		var lots: int=food_capacity(game,place)
 		for uid in staff_ids(place):
 			var actor: Variant=r.actors.get(uid)
 			if not actor is Dictionary or actor.size()!=4 or actor.get("uid")!=uid or actor.get("place")!=place or actor.get("role")!=role(place,uid) or not whole(actor.get("health"),0,100):return false
@@ -421,13 +474,16 @@ func valid(value: Variant,game) -> bool:
 		if current.day<previous_day:return false
 		previous_day=int(current.day)
 		if current.attempt not in {"theft":["unseen","noticed"],"robbery":["complied","resisted"],"shoot":["missed","wounded","killed"],"raid":["raided"]}[current.action]:return false
-		if (current.stage in ["loot","escape"])!=(current.resolution==""):return false
+		if (current.stage in ["loot","escape","standoff"])!=(current.resolution==""):return false
+		if current.stage=="standoff" and scenes[current.place].kind!="fort":return false
 		if current.stage=="loot" and current.attempt not in ["unseen","complied","killed","raided"]:return false
 		if current.attempt!="unseen" and not r.services[current.place].alarmed:return false
 		if current.attempt=="killed" and r.actors[owner_id(current.place)].health!=0:return false
 		for key in ["food","cash_cents","shots"]:
 			if not whole(current.get(key),0,100000):return false
-		if current.shots!=(1 if current.action=="shoot" else 0) or not current.get("knowledge") is Dictionary or current.knowledge.size()>5+staff_ids(current.place).size():return false
+		# Only soldiers force the extra shots of a breakout.
+		var extra: int=int(current.shots)-(1 if current.action=="shoot" else 0)
+		if extra<0 or extra>(int(scenes[current.place].breakout_shots) if scenes[current.place].kind=="fort" else 0) or not current.get("knowledge") is Dictionary or current.knowledge.size()>5+staff_ids(current.place).size():return false
 		var local:=0
 		for uid in current.knowledge:
 			if not r.people.has(uid) and uid not in staff_ids(current.place):return false

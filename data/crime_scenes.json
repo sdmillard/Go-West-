@@ -46,6 +46,42 @@
       "seized_risk_low": 0.12,
       "seized_risk_high": 0.3
     },
+    "fort_kearny": {
+      "kind": "fort",
+      "title": "The commissary tent",
+      "note": "An authored encounter at the new army post while soldiers build it (from June 1848), not a reconstruction of named officers or units. The only army post on the 1848 road. Soldiers close in fast: a failed escape becomes a standoff in which the party must surrender or shoot its way out.",
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "commissary sergeant"
+        },
+        {
+          "id": "sentry",
+          "role": "sentry"
+        },
+        {
+          "id": "corporal",
+          "role": "corporal of the guard"
+        },
+        {
+          "id": "private",
+          "role": "private"
+        }
+      ],
+      "cash_cents": 2500,
+      "food_lot": 0,
+      "food_stock": 400,
+      "loot_limit": 150,
+      "theft_success": 0.3,
+      "compliance": 0.2,
+      "shot_hit": 0.6,
+      "shot_fatal": 0.5,
+      "escape_capture": 0.45,
+      "escape_injury": 0.4,
+      "injury_damage": 25,
+      "breakout": 0.35,
+      "breakout_shots": 3
+    },
     "fort_laramie": {
       "kind": "store",
       "title": "The trading store",

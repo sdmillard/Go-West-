@@ -94,9 +94,24 @@ Passage is derived from the incidents (a `left` or `escaped` incident at that pl
 
 Saves made before these venues existed gain their people and services untouched when loaded; food bought at a post before then is counted conservatively, as `bind_party` already does. A record with only part of a venue is rejected rather than repaired. The genuine fixture `tests/fixtures/pre-venues-save-v1.json` is a reported Fort Bridger robbery saved under the previous rules.
 
+## Fort Kearny: soldiers and the standoff
+
+Fort Kearny is a `fort` scene: the commissary tent at the new army post, the only army post on the 1848 road. Before June 1848 the site has no garrison (`construction_from_month` in the route), so there is nobody to rob. The staff are a commissary sergeant (the target) and three soldiers on duty nearby (sentry, corporal of the guard, private). All are authored roles, not named people or a specific unit.
+
+The commissary holds its own stock (`food_stock` 400 lb, up to 150 lb taken at once) plus a $25 cash box. Odds are much worse than at a store: theft goes unnoticed 30% of the time, a threat works 20% of the time, and soldiers stop 45% of escapes.
+
+When soldiers stop an escape, the party is not simply captured. The incident enters a **standoff** stage, and the party must surrender or shoot its way out:
+
+- Shooting out spends up to `breakout_shots` (3) bullets and a day. Each shot can drop a soldier. A soldier killed here stays dead and carries no knowledge onward, so killing witnesses can shrink a report but never cancel one from survivors.
+- Soldiers fire back either way, wounding one or two of the party.
+- The breakout succeeds at `breakout` (35%) plus the party's edge, within the usual 5–95% bounds. Failure ends the journey in custody.
+- Without bullets, the only way out is surrender.
+
+A store's staff still simply catch the party; only soldiers force a standoff. Saves validate the stage (forts only) and the extra shots (no more than the scene allows).
+
 ## Other limits
 
-Personal existing health specials still affect any actual injury damage. Paid trade, paid care and the hired ferry respond to incidents and news; other services are not yet governed by a general hostility/access system. Fort Kearny (the only army post on the 1848 route) has no scene yet.
+Personal existing health specials still affect any actual injury damage. Paid trade, paid care and the hired ferry respond to incidents and news; other services are not yet governed by a general hostility/access system.
 
 Reproduce using project-local APPDATA as in `test.ps1`: run `tests/test_crime.gd` for targeted checks or `tests/store_crime_journeys.gd` for the 24-route sample. Both use the actual engine. Keep previous balance reports archived.
 
