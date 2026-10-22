@@ -2,7 +2,7 @@ extends RefCounted
 ## Persistent local people, finite loot and staged incidents. No UI or global RNG.
 const COMMANDS=["theft","robbery","shoot","raid","take","flee","breakout","surrender","finish","back"]
 const STAGES=["loot","escape","standoff","report","done"]
-const ATTEMPTS=["unseen","noticed","complied","resisted","missed","wounded","killed","raided"]
+const ATTEMPTS=["unseen","noticed","complied","resisted","missed","wounded","killed","raided","caught"]
 const RESOLUTIONS=["","left","escaped","captured","surrendered","party_lost"]
 const VERSION:=6
 const FACTS=["attempt","loot","escape"]
@@ -83,6 +83,10 @@ func load_data(value: Variant) -> bool:
 			if scene.has(key)!=(scene.kind=="fort" or (key=="food_stock" and scene.kind=="emigrants")):return false
 		if scene.has("food_stock") and not whole(scene.food_stock,1,2000):return false
 		if scene.kind=="fort" and ( not number(scene.breakout) or scene.breakout<0 or scene.breakout>1 or not whole(scene.breakout_shots,1,5)):return false
+		# Only soldiers ride after a party; a chase ends in the same standoff as a blocked escape.
+		if scene.has("pursuit"):
+			var chase: Variant=scene.pursuit
+			if scene.kind!="fort" or not chase is Dictionary or chase.size()!=3 or not chase.get("note") is String or not whole(chase.get("days"),1,14) or not number(chase.get("daily")) or chase.daily<0 or chase.daily>1:return false
 		if (scene.kind=="ferry")!=scene.has("seized_risk_low") or scene.has("seized_risk_low")!=scene.has("seized_risk_high"):return false
 		if scene.kind=="ferry":
 			for key in ["seized_risk_low","seized_risk_high"]:
@@ -216,7 +220,7 @@ func option(label: String,command: String) -> Dictionary:
 func experience(game) -> int:
 	var targets: Array=[]
 	for current in record.incidents:
-		if current.resolution in ["left","escaped"] and current.attempt!="noticed" and current.attempt!="resisted" and current.attempt!="missed" and current.target not in targets:targets.append(current.target)
+		if current.resolution in ["left","escaped"] and current.attempt!="noticed" and current.attempt!="resisted" and current.attempt!="missed" and current.attempt!="caught" and current.target not in targets:targets.append(current.target)
 	return mini(targets.size()+game.combat.victories(),int(modifiers.experience_cap))
 ## Party members fit and willing to take part in this kind of act.
 func able(game,action: String) -> int:
@@ -277,7 +281,7 @@ func menu(game) -> Dictionary:
 		options=[option("Try to escape · 1 day","flee"),option("Surrender","surrender")]
 	elif current.stage=="standoff":
 		var shots: int=mini(int(scene.breakout_shots),int(game.state.bullets))
-		text="Soldiers have blocked the way out. Shooting your way out spends up to %d bullets; some of you will likely be hurt, and you may still be taken. Surrender ends this journey in custody." % int(scene.breakout_shots)
+		text=("Soldiers from %s rode after you and have caught up. " % game.route.nodes[place].name if current.action=="pursuit" else "Soldiers have blocked the way out. ")+"Shooting your way out spends up to %d bullets; some of you will likely be hurt, and you may still be taken. Surrender ends this journey in custody." % int(scene.breakout_shots)
 		options=[option("Shoot your way out · %d bullet(s)" % shots,"breakout"),option("Surrender","surrender")]
 	else:
 		text="Incident %d: %s; %s. Food taken: %d lb. Cash taken: $%.2f. Shots: %d. People here who saw it: %d. See the journal and party records for injuries and reactions." % [current.id,current.attempt,current.resolution,current.food,current.cash_cents/100.0,current.shots,local_witnesses(current).size()]
@@ -336,7 +340,7 @@ func news_text(game,place: String) -> String:
 	var lines: Array=[]
 	for report in heard(game,place):
 		if report.origin==place:continue
-		var act: String={"theft":"stole from","robbery":"robbed","shoot":"shot at","raid":"looted"}[record.incidents[int(report.incident)-1].action]
+		var act: String={"theft":"stole from","robbery":"robbed","shoot":"shot at","raid":"looted","pursuit":"fought off soldiers from"}[record.incidents[int(report.incident)-1].action]
 		var origin: String=where(game,report.origin)
 		var noun: String=kind(report.origin).noun
 		if report.identified:lines.append("Word reached here by day %d that your party %s %s %s. The people here will not trade with you or help you." % [arrival(game,report,place),act,noun,origin])
@@ -470,6 +474,32 @@ func choose(game,command: String) -> bool:
 		result(game,"escaped")
 	Remains.sync(game)
 	if game.state.status=="traveling":game.pending=menu(game)
+	return true
+## The post whose soldiers are riding after the party: it escaped them within the last few days, they have not chased it yet, and some are left to ride.
+func pursuer(game) -> String:
+	if not record.active.is_empty():return ""
+	for place in venues():
+		var chase: Dictionary=rules(place).get("pursuit",{})
+		if chase.is_empty() or living_staff(place).filter(func(uid):return uid!=owner_id(place)).is_empty():continue
+		if record.incidents.any(func(current):return current.place==place and current.action=="pursuit"):continue
+		# The chase starts from the day of the getaway, which is the day its report left.
+		var getaways: Array=record.reports.filter(func(report):return report.origin==place and record.incidents[int(report.incident)-1].resolution=="escaped")
+		if not getaways.is_empty() and int(game.state.day)-int(getaways.back().day)<=int(chase.days):return place
+	return ""
+## Rolled once for each day the party travels or rests; a catch opens the standoff where the party must surrender or shoot its way out.
+func check_pursuit(game) -> bool:
+	var place:=pursuer(game)
+	if place.is_empty() or game.state.status!="traveling" or record.incidents.size()>=10000:return false
+	if rng.randf()>=float(rules(place).pursuit.daily):return false
+	var id: int=record.incidents.size()+1
+	var current: Dictionary={"id":id,"day":int(game.state.day),"place":place,"target":owner_id(place),"action":"pursuit","attempt":"caught","resolution":"","stage":"standoff","food":0,"cash_cents":0,"shots":0,"knowledge":{}}
+	record.incidents.append(current)
+	record.active={"id":id}
+	observe(game,current,"attempt",true)
+	game.journal.append("Day %d · Soldiers from %s rode after the party and caught up." % [game.state.day,game.route.nodes[place].name])
+	game.health_events.append("Soldiers from %s have caught up with the party." % game.route.nodes[place].name)
+	game.service_return=game.pending.duplicate(true)
+	game.pending=menu(game)
 	return true
 ## Hurts the first active members, as the existing confrontation injuries do.
 func wound(game,damage: int,count: int) -> void:
@@ -731,10 +761,15 @@ func valid(value: Variant,game) -> bool:
 	for index in range(r.incidents.size()):
 		var current: Variant=r.incidents[index]
 		if not current is Dictionary or current.size()!=12 or current.get("id")!=index+1 or not whole(current.get("day"),0,int(game.state.day)) or not (current.get("place") is String and r.services.has(current.place) and not TEMPLATE_KINDS.has(current.place)) or current.get("target")!=owner_id(current.place):return false
-		if current.get("action") not in ["theft","robbery","shoot","raid"] or current.get("attempt") not in ATTEMPTS or current.get("stage") not in STAGES or current.get("resolution") not in RESOLUTIONS:return false
+		if current.get("action") not in ["theft","robbery","shoot","raid","pursuit"] or current.get("attempt") not in ATTEMPTS or current.get("stage") not in STAGES or current.get("resolution") not in RESOLUTIONS:return false
 		if current.day<previous_day:return false
 		previous_day=int(current.day)
-		if current.attempt not in {"theft":["unseen","noticed"],"robbery":["complied","resisted"],"shoot":["missed","wounded","killed"],"raid":["raided"]}[current.action]:return false
+		if current.attempt not in {"theft":["unseen","noticed"],"robbery":["complied","resisted"],"shoot":["missed","wounded","killed"],"raid":["raided"],"pursuit":["caught"]}[current.action]:return false
+		# A chase follows an escape from the same post, within its days, and happens once.
+		if current.action=="pursuit":
+			var chase: Dictionary=rules(current.place).get("pursuit",{})
+			if chase.is_empty() or current.stage in ["loot","escape"] or r.incidents.slice(0,index).any(func(other):return other.get("place")==current.place and other.get("action")=="pursuit"):return false
+			if not r.reports.any(func(report):return report is Dictionary and report.get("origin")==current.place and whole(report.get("incident"),1,index) and r.incidents[int(report.incident)-1].get("resolution")=="escaped" and int(current.day)-int(report.get("day",0))<=int(chase.days) and int(current.day)>=int(report.get("day",0))):return false
 		if (current.stage in ["loot","escape","standoff"])!=(current.resolution==""):return false
 		if current.stage=="standoff" and rules(current.place).kind!="fort":return false
 		if current.stage=="loot" and current.attempt not in ["unseen","complied","killed","raided"]:return false

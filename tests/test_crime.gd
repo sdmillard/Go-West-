@@ -561,6 +561,50 @@ func fort_checks(store) -> void:
 	var bad: Dictionary=saved.duplicate(true)
 	bad.crime.record.incidents[0].shots=9
 	check(store.restore(bad)==null,"A breakout cannot claim more shots than the scene allows")
+	# Soldiers left standing ride after a party that shot its way out, once, for a few days.
+	var chased=store.restore(JSON.parse_string(JSON.stringify(saved)))
+	chased.crime.scenes.fort_kearny.breakout=1
+	chased.crime.scenes.fort_kearny.shot_hit=0
+	choose(chased,"breakout")
+	check(chased.crime.incident().resolution=="escaped" and chased.crime.pursuer(chased)=="","Nobody rides out while the encounter is still open")
+	choose(chased,"finish")
+	check(chased.crime.pursuer(chased)=="fort_kearny","Soldiers still standing can ride after the party")
+	var calm=store.restore(JSON.parse_string(JSON.stringify(store.capture(chased))))
+	calm.crime.scenes.fort_kearny.pursuit.daily=0
+	chased.crime.scenes.fort_kearny.pursuit.daily=1
+	var jobs: int=chased.crime.experience(chased)
+	chased.choose(leave_index(chased))
+	chased.pending={}
+	check(chased.travel() and chased.pending.get("crime_menu",false) and chased.crime.incident().action=="pursuit" and chased.crime.incident().stage=="standoff","Riders catch up on the road and force a standoff")
+	check("rode after you" in chased.pending.text and chased.pending.choices.map(func(choice):return choice.crime_command)==["breakout","surrender","back"],"The chase offers shooting out or surrender")
+	var chase_saved: Dictionary=store.capture(chased)
+	check(store.restore(JSON.parse_string(JSON.stringify(chase_saved)))!=null,"A chase round-trips through saves")
+	bad=chase_saved.duplicate(true)
+	bad.crime.record.incidents[0].resolution="captured"
+	check(store.restore(bad)==null,"A chase needs an escape to follow")
+	check(choose(chased,"breakout") and chased.crime.incident().resolution=="escaped","The party can shoot its way clear of the riders")
+	choose(chased,"finish")
+	check(chased.crime.pursuer(chased)=="" and chased.crime.experience(chased)==jobs,"Soldiers ride after the party only once, and outrunning them is not a new job")
+	bad=store.capture(chased)
+	bad.crime.record.incidents.append(bad.crime.record.incidents[1].duplicate(true))
+	bad.crime.record.incidents[2].id=3
+	check(store.restore(bad)==null,"A second chase from the same post is rejected")
+	calm.choose(leave_index(calm))
+	for day in range(6):
+		calm.pending={}
+		calm.travel()
+	check(calm.crime.record.incidents.size()==1 and calm.crime.pursuer(calm)=="","Nobody catches up once the chase days are over")
+	# A store's staff will not give care after an incident there.
+	var robbed=at(willing(outfit()),"fort_bridger")
+	robbed.crime.scenes.fort_bridger.compliance=1
+	robbed.crime.scenes.fort_bridger.escape_capture=0
+	robbed.crime.scenes.fort_bridger.escape_injury=0
+	robbed.party_health.members[1].health=60
+	robbed.open_crime()
+	choose(robbed,"robbery")
+	choose(robbed,"flee")
+	choose(robbed,"finish")
+	check(robbed.open_care() and not robbed.pending.choices.any(func(choice):return choice.get("care",0)==12) and "nobody at this post" in robbed.pending.text,"No paid care from a post the party just robbed")
 	# A standoff is a fort's alone.
 	game=at(willing(outfit()),"fort_bridger")
 	game.crime.scenes.fort_bridger.compliance=1

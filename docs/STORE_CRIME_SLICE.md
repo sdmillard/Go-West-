@@ -199,6 +199,19 @@ Each day, before ordinary meals, every chosen eater is fed one ration from the o
 
 **Saves.** Every batch needs a butchered body and can hold no more than that body yielded. Expiry stays within the preservation limits. An informed eater knows every batch. A deceived eater knows none, and is never the leader. Eaters must be with the party. Memories of butchering or deception must name a butchered body.
 
+## Soldiers ride after the party
+
+Only Fort Kearny has soldiers, so only Fort Kearny pursues. After the party escapes it, by slipping away or shooting its way out, soldiers may ride after it while any soldier other than the commissary sergeant is still alive. The chase window runs for 4 days from the getaway; the report's day marks it. Each day the party travels or rests in that window carries a 35% chance that they catch up. When they do, it is a new incident (`pursuit`, attempt `caught`) that opens straight into the standoff: shoot your way out or surrender, with the same odds, shots and wounds as at the post. Getting away again files its own report. The post chases the party once. Being caught is never counted as a successful job. Private posts and traders never pursue; they refuse service once they hear the news.
+
+**Saves.** A chase must follow an escape from the same post, within its days, and there can be only one per post.
+
+## Service audit
+
+- A post that was robbed or lost its keeper is closed. Its trade and its paid local care are both refused there, not only once news reaches other posts. The party's own care kits still work anywhere.
+- The ferry refuses passage after an incident, and the Barlow toll after the gatekeeper is killed (earlier sections).
+- Stop activities are the party's own work (grazing, gear checks), so local staff don't affect them.
+- Every open crime, attack or remains panel blocks travel, trade and rest until it is resolved, and is rebuilt from the record when a save loads.
+
 ## Other limits
 
 Personal existing health specials still affect any actual injury damage. Paid trade, paid care and the hired ferry respond to incidents and news; other services are not yet governed by a general hostility/access system.
