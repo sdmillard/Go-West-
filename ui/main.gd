@@ -369,7 +369,7 @@ simplified game rules, not reconstructed conditions for 1848."""
 	actions.add_child(hunt_button)
 	actions.add_child(button("LOCAL CONDITIONS / STOP ACTIVITIES", _show_stop_activities))
 	actions.add_child(button("LOOK FOR TRADERS / TRADE", _open_trade))
-	actions.add_child(button("ACTIONS AT THE STORE", _open_crime))
+	actions.add_child(button("ROB, STEAL OR ATTACK HERE", _open_crime))
 	actions.add_child(button("CARE / MEDICAL ATTENTION", _open_care))
 	actions.add_child(button("PROVISIONS / CARGO", _show_supplies))
 	actions.add_child(button("MEMORIAL BOOK", _show_memorials))
@@ -510,8 +510,8 @@ func _open_crime() -> void:
 	options_window.hide()
 	if game.open_crime():_show_service()
 	else:
-		record_notice.title="AT THE STORE"
-		record_notice.dialog_text="Stop at the Fort Bridger trading store to use these actions."
+		record_notice.title="NOTHING TO TAKE HERE"
+		record_notice.dialog_text="Stop at a trading post, the Kansas River ferry, Fort Kearny once soldiers are there, or the Barlow Road toll gate, or meet passing traders on the road, to use these actions."
 		record_notice.popup_centered()
 
 func _show_service() -> void:
