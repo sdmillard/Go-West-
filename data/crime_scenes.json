@@ -13,6 +13,11 @@
     "floor": 0.05,
     "ceiling": 0.95
   },
+  "reports": {
+    "note": "Authored tuning. Word of an incident leaves with its living local witnesses' contacts after a short delay and travels along the road with other parties and traders in both directions. Not a measured historical rate.",
+    "delay_days": 2,
+    "miles_per_day": 25
+  },
   "scenes": {
     "fort_bridger": {
       "title": "The trading store",
