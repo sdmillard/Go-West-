@@ -63,7 +63,7 @@ func run():
 			var aim:=RandomNumberGenerator.new()
 			aim.seed=seed_value ^ 0x4f55544c
 			var count: Dictionary={"hunts":0,"rests":0,"trades":0,"travel_days":0,"empty_food_days":0,"care":0,"last_care":-100,"shots":0,"meat_obtained":0,"meat_carried":0,"empty_hunts":0,"preservations":0,"oxen_slaughtered":0}
-			var acts: Dictionary={"robberies":0,"kearny":false,"attacked":false}
+			var acts: Dictionary={"robberies":0,"kearny":false,"attacked":false,"visited":[]}
 			var outcome: String="limit"
 			var progress: Dictionary={}
 			var label: String="%s seed %d" % [strategy,seed_value]
