@@ -1,0 +1,36 @@
+[
+  {
+    "id": "wyoming-shpo-posts",
+    "url": "https://wyoarchaeo.wyo.gov/DocsPDFs/Publications/Trading%20Posts%20in%20Wyoming_Pierce.pdf",
+    "local_ignored": ".tools/reference-pdfs/wyoming-trading-posts.pdf",
+    "sha256": "e6e47acf9e4d969dd664fc5b25e02c0c859009bffb1a9e8a3540d16695f976a7",
+    "bytes": 1598307,
+    "inspection": "PDF page 129 figure 9 rendered and visually inspected; 1847 plan reproduced in 2012 report.",
+    "runtime_reused": false
+  },
+  {
+    "id": "nps-idaho",
+    "url": "https://www.nps.gov/orgs/1453/upload/National-Historic-Trails-Auto-Tour-Route-Interpretive-Guide-Across-Idaho.pdf",
+    "local_ignored": ".tools/reference-pdfs/idaho-tour.pdf",
+    "sha256": "ecc9bd5669f64ed83cdb67892dc58a1349c89ef98e87d03d0749785435b55489",
+    "bytes": 4708239,
+    "inspection": "Cover and PDF page 18 rendered and visually inspected; retrospective Jackson painting and Wilkins 1849 drawing.",
+    "runtime_reused": false
+  },
+  {
+    "id": "oregon-city-warre",
+    "url": "https://www.orcity.org/gallery.aspx?PID=557",
+    "local_ignored": ".tools/reference-pdfs/oregon-city-1848.jpg",
+    "sha256": "82f59241baa191e82e39b84a4fdd3ab6b686824fea2b7ffd1062e86fe1e427a6",
+    "bytes": 48461,
+    "inspection": "Image visually inspected. Municipal caption attributes WSU/Warre and labels 1848; drawing/publication dating not independently resolved.",
+    "runtime_reused": false
+  },
+  {
+    "id": "palmer-route",
+    "url": "https://www.gutenberg.org/cache/epub/46906/pg46906-images.html",
+    "source_section": "Palmer 1847 guide, 1906 reprint pp. 277\u2013281: southern route via Bridger and wagon road south of Mount Hood. Numeric source_rows are mileage contributions, not row IDs; source_table_rows index our archived extraction.",
+    "derived_table": "research/PALMER_DISTANCE_TABLE.json",
+    "limits": "1938 reported guide miles. Kearny position and four Barlow sublegs are authored allocations within period aggregate distances; not surveyed coordinates."
+  }
+]

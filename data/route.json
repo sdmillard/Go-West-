@@ -1,0 +1,854 @@
+{
+  "start": "independence",
+  "source": "https://www.gutenberg.org/cache/epub/46906/pg46906-images.html",
+  "source_section": "Palmer 1847 guide, 1906 reprint pp. 277–281: southern route via Bridger and wagon road south of Mount Hood. Numeric source_rows are mileage contributions, not row IDs; source_table_rows index our archived extraction.",
+  "nodes": [
+    {
+      "id": "independence",
+      "name": "Independence",
+      "kind": "town",
+      "text": "Your party sets out from Missouri. You are following one of several emigrant routes west.",
+      "next": [
+        {
+          "to": "elm_grove",
+          "miles": 33,
+          "source_rows": [
+            20,
+            13
+          ],
+          "source_table_rows": [
+            2,
+            3
+          ]
+        }
+      ],
+      "hunting_region": "woodland"
+    },
+    {
+      "id": "elm_grove",
+      "name": "Elm Grove",
+      "kind": "camp",
+      "text": "A gathering place along the emigrant road. Check your supplies before moving toward the Wakarusa.",
+      "next": [
+        {
+          "to": "wakarusa",
+          "miles": 20,
+          "source_rows": [
+            20
+          ],
+          "source_table_rows": [
+            4
+          ]
+        }
+      ],
+      "hunting_region": "woodland"
+    },
+    {
+      "id": "wakarusa",
+      "name": "Wakarusa Creek",
+      "kind": "river",
+      "text": "Wooded banks and limestone ledges make the Wakarusa a difficult approach. Travelers must judge the descent as well as the water before committing wagons and livestock.",
+      "next": [
+        {
+          "to": "kansas_river",
+          "miles": 28,
+          "source_rows": [
+            28
+          ],
+          "source_table_rows": [
+            5
+          ]
+        }
+      ],
+      "hunting_region": "woodland"
+    },
+    {
+      "id": "kansas_river",
+      "name": "Kansas River",
+      "kind": "river",
+      "text": "The Kaw is a major crossing. French-Creole Pappin families and their Kanza relatives helped establish the ferry here. A documented period fare was $1 per wagon.",
+      "ferry_dollars": 1,
+      "next": [
+        {
+          "to": "big_blue",
+          "miles": 93,
+          "source_rows": [
+            14,
+            24,
+            12,
+            29,
+            8,
+            6
+          ],
+          "source_table_rows": [
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ]
+        }
+      ],
+      "hunting_region": "plains"
+    },
+    {
+      "id": "big_blue",
+      "name": "Big Blue River",
+      "kind": "river",
+      "text": "The Big Blue interrupts the emigrant road. No ferryman offers passage at your crossing. Judge the water before committing the wagon and livestock.",
+      "next": [
+        {
+          "to": "platte",
+          "miles": 143,
+          "source_rows": [
+            10,
+            42,
+            18,
+            53,
+            20
+          ],
+          "source_table_rows": [
+            12,
+            14,
+            15,
+            16,
+            17
+          ]
+        }
+      ],
+      "hunting_region": "plains"
+    },
+    {
+      "id": "platte",
+      "name": "Platte River corridor",
+      "kind": "camp",
+      "text": "The broad Platte spreads into sandy channels. This river corridor is a long road west, not the end of the journey.",
+      "next": [
+        {
+          "to": "fort_kearny",
+          "miles": 10,
+          "source_rows": [
+            10
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored subdivision of a period-guide aggregate; not a separately surveyed distance."
+        }
+      ],
+      "hunting_region": "plains"
+    },
+    {
+      "id": "fort_kearny",
+      "name": "Fort Kearny site",
+      "kind": "camp",
+      "text": "Open ground on the south bank marks the new army post site. In 1848 construction began in June: expect tents, sod and adobe work, not a stockaded fortress or guaranteed supplies.",
+      "terrain": "plains",
+      "next": [
+        {
+          "to": "south_platte",
+          "miles": 155,
+          "source_rows": [
+            110,
+            45
+          ],
+          "source_table_rows": [
+            18,
+            20
+          ],
+          "allocation_note": "Authored subdivision of a period-guide aggregate; not a separately surveyed distance."
+        }
+      ],
+      "construction_from_month": 6,
+      "hunting_region": "plains"
+    },
+    {
+      "id": "south_platte",
+      "name": "South Platte crossing",
+      "kind": "river",
+      "text": "The sandy South Platte interrupts the westward road. Channels and quicksand make depth alone a poor guide. There is no later bridge here.",
+      "terrain": "plains",
+      "next": [
+        {
+          "to": "ash_hollow",
+          "miles": 20,
+          "source_rows": [
+            20
+          ],
+          "source_table_rows": [
+            22
+          ]
+        }
+      ],
+      "hunting_region": "plains"
+    },
+    {
+      "id": "ash_hollow",
+      "name": "Ash Hollow",
+      "kind": "camp",
+      "text": "A steep descent leads into a sheltered hollow. Water and vegetation offer relief after exposed prairie. Lower wagons carefully rather than rushing the slope.",
+      "terrain": "plains",
+      "next": [
+        {
+          "to": "courthouse_rock",
+          "miles": 42,
+          "source_rows": [
+            42
+          ],
+          "source_table_rows": [
+            23
+          ]
+        }
+      ],
+      "hunting_region": "plains"
+    },
+    {
+      "id": "courthouse_rock",
+      "name": "Courthouse and Jail Rocks",
+      "kind": "camp",
+      "text": "Large pale rock formations rise from the plains. Palmer called one the Solitary Tower; later travelers used the Courthouse and Jail names.",
+      "terrain": "plains",
+      "next": [
+        {
+          "to": "chimney_rock",
+          "miles": 16,
+          "source_rows": [
+            16
+          ],
+          "source_table_rows": [
+            24
+          ]
+        }
+      ],
+      "hunting_region": "plains"
+    },
+    {
+      "id": "chimney_rock",
+      "name": "Chimney Rock",
+      "kind": "camp",
+      "text": "A narrow spire rises above an eroded mound. Travelers recognize this landmark from guidebooks, but the mountain crossings still lie ahead.",
+      "terrain": "plains",
+      "next": [
+        {
+          "to": "scotts_bluff",
+          "miles": 25,
+          "source_rows": [
+            15,
+            10
+          ],
+          "source_table_rows": [
+            25,
+            26
+          ]
+        }
+      ],
+      "hunting_region": "plains"
+    },
+    {
+      "id": "scotts_bluff",
+      "name": "Scotts Bluff / Robidoux route",
+      "kind": "camp",
+      "text": "The bluffs block a direct road along the river. In 1848 wagons swing south toward Robidoux Pass; the later Mitchell Pass road is not open.",
+      "terrain": "plains",
+      "next": [
+        {
+          "to": "fort_laramie",
+          "miles": 36,
+          "source_rows": [
+            12,
+            24
+          ],
+          "source_table_rows": [
+            27,
+            28
+          ]
+        }
+      ],
+      "hunting_region": "plains"
+    },
+    {
+      "id": "fort_laramie",
+      "name": "Fort John / Laramie",
+      "kind": "fort",
+      "text": "An adobe-walled private trading post stands on the Laramie. It is still Fort John in 1848; the army purchase and the familiar military buildings come later.",
+      "terrain": "plains",
+      "next": [
+        {
+          "to": "north_platte",
+          "miles": 126,
+          "source_rows": [
+            12,
+            10,
+            7,
+            7,
+            8,
+            8,
+            16,
+            5,
+            12,
+            10,
+            6,
+            25
+          ],
+          "source_table_rows": [
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40
+          ]
+        }
+      ],
+      "trade_bulk": true,
+      "hunting_region": "highcountry",
+      "advice": "Check food for the next long leg, allow for days lost to weather, and keep money for later supplies. A post is a chance to prepare, not a guarantee that the journey ahead is safe."
+    },
+    {
+      "id": "north_platte",
+      "name": "North Platte crossing",
+      "kind": "river",
+      "text": "The trail returns to the North Platte. A crossing commits livestock and loaded wagons to the current. Wait for better water if the stage is unfavorable.",
+      "terrain": "plains",
+      "next": [
+        {
+          "to": "independence_rock",
+          "miles": 45,
+          "source_rows": [
+            10,
+            8,
+            5,
+            22
+          ],
+          "source_table_rows": [
+            41,
+            42,
+            43,
+            44
+          ]
+        }
+      ],
+      "hunting_region": "highcountry"
+    },
+    {
+      "id": "independence_rock",
+      "name": "Independence Rock",
+      "kind": "camp",
+      "text": "A broad rounded granite outcrop stands beside the Sweetwater. Earlier travelers left names here. Reaching it by early July was a useful seasonal ambition, not a magical deadline.",
+      "terrain": "plains",
+      "next": [
+        {
+          "to": "devils_gate",
+          "miles": 5,
+          "source_rows": [
+            5
+          ],
+          "source_table_rows": [
+            45
+          ]
+        }
+      ],
+      "hunting_region": "highcountry"
+    },
+    {
+      "id": "devils_gate",
+      "name": "Devil's Gate",
+      "kind": "camp",
+      "text": "The Sweetwater cuts a narrow gap through dark rock. Wagons go around the obstruction; the river gorge is not the wagon road.",
+      "terrain": "mountains",
+      "next": [
+        {
+          "to": "south_pass",
+          "miles": 104,
+          "source_rows": [
+            104
+          ],
+          "source_table_rows": [
+            46
+          ]
+        }
+      ],
+      "hunting_region": "highcountry"
+    },
+    {
+      "id": "south_pass",
+      "name": "South Pass",
+      "kind": "camp",
+      "text": "The Continental Divide is a broad, gently rising saddle here, rather than a narrow alpine notch. Your wagon can cross, but distance, weather and worn livestock still matter.",
+      "terrain": "plains",
+      "next": [
+        {
+          "to": "little_sandy",
+          "miles": 25,
+          "source_rows": [
+            5,
+            20
+          ],
+          "source_table_rows": [
+            47,
+            49
+          ]
+        }
+      ],
+      "hunting_region": "highcountry",
+      "advice": "The road followed here goes south by Bridger. Palmer also described a shorter northern road with a long dry interval; shorter did not mean easier."
+    },
+    {
+      "id": "little_sandy",
+      "name": "Little Sandy / southern road",
+      "kind": "camp",
+      "text": "Beyond Pacific Spring the guide describes a fork. This journey follows the longer southern road toward Bridger's trading post. The shorter northern road remains outside this playable corridor.",
+      "terrain": "plains",
+      "next": [
+        {
+          "to": "green_river",
+          "miles": 36,
+          "source_rows": [
+            12,
+            24
+          ],
+          "source_table_rows": [
+            55,
+            56
+          ]
+        }
+      ],
+      "hunting_region": "highcountry"
+    },
+    {
+      "id": "green_river",
+      "name": "Green River crossing",
+      "kind": "river",
+      "text": "You reach the Green River on Palmer's southern route. This is not the northern shortcut crossing shown by every later map. Judge the current before committing.",
+      "terrain": "plains",
+      "next": [
+        {
+          "to": "fort_bridger",
+          "miles": 53,
+          "source_rows": [
+            8,
+            15,
+            30
+          ],
+          "source_table_rows": [
+            57,
+            58,
+            59
+          ]
+        }
+      ],
+      "hunting_region": "sagebrush"
+    },
+    {
+      "id": "fort_bridger",
+      "name": "Fort Bridger",
+      "kind": "fort",
+      "text": "Bridger and Vasquez trade along Black's Fork. Their log-and-earth trading establishment is not the army fort that develops in the late 1850s.",
+      "terrain": "mountains",
+      "next": [
+        {
+          "to": "soda_springs",
+          "miles": 136,
+          "source_rows": [
+            8,
+            10,
+            32,
+            10,
+            6,
+            10,
+            10,
+            7,
+            3,
+            4,
+            36
+          ],
+          "source_table_rows": [
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            69,
+            70,
+            72
+          ]
+        }
+      ],
+      "trade_bulk": true,
+      "hunting_region": "sagebrush",
+      "advice": "Check food for the next long leg, allow for days lost to weather, and keep money for later supplies. A post is a chance to prepare, not a guarantee that the journey ahead is safe."
+    },
+    {
+      "id": "soda_springs",
+      "name": "Soda Springs",
+      "kind": "camp",
+      "text": "Mineral water bubbles among pale deposits in the Bear River country. Travelers describe the unusual pools and crusted formations around this familiar stopping place.",
+      "terrain": "mountains",
+      "next": [
+        {
+          "to": "fort_hall",
+          "miles": 62,
+          "source_rows": [
+            10,
+            9,
+            8,
+            12,
+            18,
+            5
+          ],
+          "source_table_rows": [
+            73,
+            74,
+            75,
+            76,
+            77,
+            78
+          ]
+        }
+      ],
+      "hunting_region": "sagebrush"
+    },
+    {
+      "id": "fort_hall",
+      "name": "Fort Hall",
+      "kind": "fort",
+      "text": "The Hudson's Bay Company post offers a place to seek supplies and information. Palmer's earlier guide quotes emergency flour at twenty dollars per hundred pounds, but availability is not assured by a price.",
+      "terrain": "desert",
+      "next": [
+        {
+          "to": "snake_river",
+          "miles": 162,
+          "source_rows": [
+            6,
+            12,
+            15,
+            8,
+            15,
+            11,
+            23,
+            8,
+            15,
+            20,
+            6,
+            23
+          ],
+          "source_table_rows": [
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90
+          ]
+        }
+      ],
+      "trade_bulk": true,
+      "bulk_food_cents": 4000,
+      "hunting_region": "sagebrush",
+      "advice": "Check food for the next long leg, allow for days lost to weather, and keep money for later supplies. A post is a chance to prepare, not a guarantee that the journey ahead is safe."
+    },
+    {
+      "id": "snake_river",
+      "name": "Snake River / Three Island area",
+      "kind": "river",
+      "text": "Palmer's first crossing of Lewis's River lies in the Snake corridor. The Three Island area offered an emigrant crossing, but deep channels made it dangerous.",
+      "terrain": "desert",
+      "next": [
+        {
+          "to": "fort_boise",
+          "miles": 116,
+          "source_rows": [
+            70,
+            46
+          ],
+          "source_table_rows": [
+            91,
+            93
+          ]
+        }
+      ],
+      "hunting_region": "sagebrush"
+    },
+    {
+      "id": "fort_boise",
+      "name": "Fort Boise / Snake crossing",
+      "kind": "river",
+      "text": "The Hudson's Bay Company adobe post stands near the Boise and Snake confluence, far from the later military Fort Boise. After visiting, the guide's route crosses the Snake again before turning toward the Malheur.",
+      "terrain": "desert",
+      "next": [
+        {
+          "to": "burnt_river",
+          "miles": 43,
+          "source_rows": [
+            15,
+            20,
+            8
+          ],
+          "source_table_rows": [
+            94,
+            95,
+            96
+          ]
+        }
+      ],
+      "trade_bulk": true,
+      "bulk_food_cents": 4000,
+      "hunting_region": "sagebrush",
+      "advice": "This is the old Hudson's Bay Company post near the river confluence, not the United States Army post built near modern Boise in 1863."
+    },
+    {
+      "id": "burnt_river",
+      "name": "Burnt River",
+      "kind": "camp",
+      "text": "The route leaves the Snake country and follows the broken Burnt River corridor. Steep ground and limited grazing strain teams that were comfortable on the Platte.",
+      "terrain": "desert",
+      "next": [
+        {
+          "to": "powder_river",
+          "miles": 54,
+          "source_rows": [
+            26,
+            28
+          ],
+          "source_table_rows": [
+            97,
+            98
+          ]
+        }
+      ],
+      "hunting_region": "sagebrush"
+    },
+    {
+      "id": "powder_river",
+      "name": "Powder River valley",
+      "kind": "camp",
+      "text": "After the rough Burnt River road, the Powder valley opens ahead. Palmer's lone pine is already described as a stump: this illustration does not invent a living landmark tree.",
+      "terrain": "plains",
+      "next": [
+        {
+          "to": "grande_ronde",
+          "miles": 32,
+          "source_rows": [
+            10,
+            15,
+            7
+          ],
+          "source_table_rows": [
+            99,
+            100,
+            101
+          ]
+        }
+      ],
+      "hunting_region": "sagebrush"
+    },
+    {
+      "id": "grande_ronde",
+      "name": "Grande Ronde valley",
+      "kind": "camp",
+      "text": "A broad valley offers grass before the Blue Mountains. Resting here uses provisions, but a worn team faces a difficult climb if you hurry onward.",
+      "terrain": "mountains",
+      "next": [
+        {
+          "to": "blue_mountains",
+          "miles": 27,
+          "source_rows": [
+            8,
+            19
+          ],
+          "source_table_rows": [
+            102,
+            103
+          ]
+        }
+      ],
+      "hunting_region": "forest"
+    },
+    {
+      "id": "blue_mountains",
+      "name": "Blue Mountains",
+      "kind": "camp",
+      "text": "Forested ridges replace the open river valleys. The ascent and descent demand care with loads and animals. This route continues toward the Umatilla rather than detouring to Fort Walla Walla.",
+      "terrain": "mountains",
+      "next": [
+        {
+          "to": "umatilla",
+          "miles": 16,
+          "source_rows": [
+            16
+          ],
+          "source_table_rows": [
+            104
+          ]
+        }
+      ],
+      "hunting_region": "forest"
+    },
+    {
+      "id": "umatilla",
+      "name": "Umatilla River",
+      "kind": "river",
+      "text": "The descent reaches the Umatilla country, home to Indigenous communities long before wagon migration. The road approaches the Columbia through dry rolling hills.",
+      "terrain": "plains",
+      "next": [
+        {
+          "to": "john_day",
+          "miles": 77,
+          "source_rows": [
+            44,
+            33
+          ],
+          "source_table_rows": [
+            105,
+            106
+          ]
+        }
+      ],
+      "hunting_region": "forest"
+    },
+    {
+      "id": "john_day",
+      "name": "John Day River",
+      "kind": "river",
+      "text": "The river cuts a dry canyon on the way to the Columbia. Water at a crossing does not mean that grass and easy travel are abundant on the next stretch.",
+      "terrain": "desert",
+      "next": [
+        {
+          "to": "deschutes",
+          "miles": 22,
+          "source_rows": [
+            22
+          ],
+          "source_table_rows": [
+            107
+          ]
+        }
+      ],
+      "hunting_region": "sagebrush"
+    },
+    {
+      "id": "deschutes",
+      "name": "Deschutes River",
+      "kind": "river",
+      "text": "Palmer's Falls River is the Deschutes. Its channel and current make this another serious obstacle before The Dalles.",
+      "terrain": "desert",
+      "next": [
+        {
+          "to": "the_dalles",
+          "miles": 16,
+          "source_rows": [
+            16
+          ],
+          "source_table_rows": [
+            108
+          ]
+        }
+      ],
+      "hunting_region": "sagebrush"
+    },
+    {
+      "id": "the_dalles",
+      "name": "The Dalles",
+      "kind": "camp",
+      "text": "The Columbia narrows among exposed rock and rapids. Your itinerary takes the Barlow wagon road south of Mount Hood, avoiding the boat passages and portages down the river.",
+      "terrain": "mountains",
+      "next": [
+        {
+          "to": "barlow_pass",
+          "miles": 70,
+          "source_rows": [
+            70
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored subdivision of a period-guide aggregate; not a separately surveyed distance."
+        }
+      ],
+      "hunting_region": "forest",
+      "advice": "The river route used boats, portages and livestock paths. A raft was not an uninterrupted ride through every rapid. This build follows the Barlow wagon road instead."
+    },
+    {
+      "id": "barlow_pass",
+      "name": "Barlow Road / Mount Hood",
+      "kind": "camp",
+      "text": "The toll road opened in 1846. It climbs through the forests south of Mount Hood. The charter rate was five dollars per wagon and ten cents per head of livestock; paying does not make the road easy.",
+      "terrain": "mountains",
+      "next": [
+        {
+          "to": "laurel_hill",
+          "miles": 10,
+          "source_rows": [
+            10
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored subdivision of a period-guide aggregate; not a separately surveyed distance."
+        }
+      ],
+      "toll_dollars": 5.0,
+      "toll_per_ox": 0.1,
+      "hunting_region": "forest"
+    },
+    {
+      "id": "laurel_hill",
+      "name": "Laurel Hill",
+      "kind": "camp",
+      "text": "The descent is steep enough to require ropes and carefully controlled wagons. Lightening a load and taking time are practical alternatives to a hurried descent.",
+      "terrain": "mountains",
+      "next": [
+        {
+          "to": "eagle_creek",
+          "miles": 55,
+          "source_rows": [
+            55
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored subdivision of a period-guide aggregate; not a separately surveyed distance."
+        }
+      ],
+      "descent": true,
+      "hunting_region": "forest"
+    },
+    {
+      "id": "eagle_creek",
+      "name": "Eagle Creek / Foster country",
+      "kind": "camp",
+      "text": "The road descends toward the Willamette settlements. You still need provisions and care for the team; reaching the forest's western edge is not arrival in Oregon City.",
+      "terrain": "forest",
+      "next": [
+        {
+          "to": "oregon_city",
+          "miles": 25,
+          "source_rows": [
+            25
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored subdivision of a period-guide aggregate; not a separately surveyed distance."
+        }
+      ],
+      "hunting_region": "forest"
+    },
+    {
+      "id": "oregon_city",
+      "name": "Oregon City / Willamette Falls",
+      "kind": "destination",
+      "text": "You have reached Oregon City beside Willamette Falls. The overland journey is complete. Surviving the trail is an ending, not a promise of an effortless new life.",
+      "terrain": "forest",
+      "next": [],
+      "hunting_region": "forest"
+    }
+  ],
+  "distance_note": "1938 reported guide miles. Kearny position and four Barlow sublegs are authored allocations within period aggregate distances; not surveyed coordinates."
+}

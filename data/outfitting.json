@@ -1,0 +1,93 @@
+{
+  "professions": [
+    {
+      "id": "banker",
+      "label": "BANKER",
+      "cash_cents": 140000
+    },
+    {
+      "id": "carpenter",
+      "label": "CARPENTER",
+      "cash_cents": 90000
+    },
+    {
+      "id": "farmer",
+      "label": "FARMER",
+      "cash_cents": 60000
+    }
+  ],
+  "goods": [
+    {
+      "id": "oxen",
+      "label": "OXEN  $30 EACH",
+      "price_cents": 3000,
+      "maximum": 20,
+      "step": 1,
+      "suggested": 6
+    },
+    {
+      "id": "food",
+      "label": "FOOD  $0.06 / LB",
+      "price_cents": 6,
+      "maximum": 2000,
+      "step": 25,
+      "suggested": 1700
+    },
+    {
+      "id": "clothing",
+      "label": "CLOTHES  $10 / SET",
+      "price_cents": 1000,
+      "maximum": 50,
+      "step": 1,
+      "suggested": 5
+    },
+    {
+      "id": "bullet_boxes",
+      "label": "BULLETS  $2 / 20",
+      "price_cents": 200,
+      "maximum": 100,
+      "step": 1,
+      "suggested": 10
+    },
+    {
+      "id": "wheels",
+      "label": "WHEELS  $10 EACH",
+      "price_cents": 1000,
+      "maximum": 3,
+      "step": 1,
+      "suggested": 1
+    },
+    {
+      "id": "axles",
+      "label": "AXLES  $10 EACH",
+      "price_cents": 1000,
+      "maximum": 3,
+      "step": 1,
+      "suggested": 1
+    },
+    {
+      "id": "tongues",
+      "label": "TONGUES  $10 EACH",
+      "price_cents": 1000,
+      "maximum": 3,
+      "step": 1,
+      "suggested": 1
+    },
+    {
+      "id": "medicine",
+      "label": "CARE/REPAIR KIT $5",
+      "price_cents": 500,
+      "maximum": 40,
+      "step": 1,
+      "suggested": 2
+    },
+    {
+      "id": "salt",
+      "label": "SALT  $0.06 / LB",
+      "price_cents": 6,
+      "maximum": 100,
+      "step": 1,
+      "suggested": 10
+    }
+  ]
+}

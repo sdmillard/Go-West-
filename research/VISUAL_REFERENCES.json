@@ -1,0 +1,54 @@
+{
+  "reviewed_on": "2026-10-22",
+  "runtime_media_reused": false,
+  "references": [
+    {
+      "id": "independence-engraving",
+      "page": "https://www.thehenryford.org/collections/explore/artifact/88453",
+      "images_viewed": ["https://collections-media.thehenryford.org/CollectionImages/_detail/photos/thf102965.jpg"],
+      "institution": "The Henry Ford",
+      "object": "82.129.623 / THF102965",
+      "depicted_date": "circa 1853",
+      "inspection": "Museum metadata and full image viewed in browser",
+      "limit": "Later than the 1848 setting; appearance of particular buildings in 1848 is not independently established."
+    },
+    {
+      "id": "asa-knight-store",
+      "page": "https://www.osv.org/building/asa-knight-store-2/",
+      "images_viewed": ["https://www.osv.org/content/uploads/2018/04/00066-960x720.jpg", "https://www.osv.org/content/uploads/2018/03/Asa-Knight-Interior-1-960x720.jpg"],
+      "institution": "Old Sturbridge Village",
+      "depicted_date": "Modern museum interior; photography dates unverified",
+      "building_dates": "circa 1810; additions circa 1826 and 1838–39; moved to museum 1972",
+      "inspection": "Museum account and two interior photographs viewed in browser",
+      "limit": "New England comparison, not an actual 1848 Missouri store. Modern visitors are excluded from our art."
+    },
+    {
+      "id": "wakarusa-banks",
+      "page": "https://www.nps.gov/places/bluejacket-crossings-of-the-wakarusa-river.htm",
+      "images_viewed": ["https://www.nps.gov/common/uploads/cropped_image/primary/EC76A0BB-DFA4-0DF1-5C95884B074FBFC4.jpg?mode=crop&quality=90&width=1600"],
+      "institution": "NPS; photograph credited to Lawrence, Kansas photo collection RH PH 18, Kenneth Spencer Research Library, University of Kansas",
+      "depicted_date": "Photograph date unverified",
+      "inspection": "NPS description and archival photograph viewed in browser",
+      "limit": "Our route's exact ford is not established. Later Bluejacket businesses are not included."
+    },
+    {
+      "id": "kaw-ferry-description",
+      "page": "https://www.nps.gov/places/kansas-river-crossing-and-pappins-ferry.htm",
+      "inspection": "Written historical description, not a ferry image",
+      "limit": "Ferry construction principle informs original illustration; specific boat dimensions and stage are interpretive."
+    },
+    {
+      "id": "big-blue-exhibit",
+      "page": "https://www.nps.gov/media/video/view.htm?id=F5FCA14D-5F5F-4251-B2BA-DD6855A66A09",
+      "depicted_date": "Modern interpretive exhibit, audio description created 2023-04-26",
+      "inspection": "Written exhibit description",
+      "limit": "Changed channel since 1903; not a contemporary 1848 picture."
+    },
+    {
+      "id": "platte-landscape",
+      "page": "https://www.nps.gov/articles/000/the-platte-experience.htm",
+      "inspection": "Historical interpretation and cited traveler accounts",
+      "limit": "Landscape character, not an exact view or channel survey."
+    }
+  ]
+}

@@ -1,0 +1,499 @@
+[
+  {
+    "id": "breakdown",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 6,
+    "title": "Wagon breakdown",
+    "text": "A {part} has failed. Fit a spare or spend time making a repair.",
+    "choices": [
+      {
+        "label": "Fit a spare {part}",
+        "service": "repair",
+        "effects": {},
+        "result": "The spare is fitted."
+      },
+      {
+        "label": "Patch it \u00b7 2 days, 1 care kit",
+        "requires": {
+          "medicine": 1
+        },
+        "effects": {
+          "medicine": -1,
+          "days": 2
+        },
+        "result": "The repair holds, for now."
+      },
+      {
+        "label": "Make a wooden repair \u00b7 3 days",
+        "effects": {
+          "days": 3
+        },
+        "result": "Three days of work put the wagon back on the road."
+      }
+    ]
+  },
+  {
+    "id": "ox_injury",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 5,
+    "title": "An ox is lame",
+    "text": "An ox injures its leg. Your team will pull more slowly until its condition improves.",
+    "onset_effects": {
+      "ox_health": -20
+    },
+    "choices": [
+      {
+        "label": "Rest the team \u00b7 1 day",
+        "rest": true,
+        "effects": {
+          "days": 1
+        },
+        "result": "You give the team time to recover."
+      },
+      {
+        "label": "Continue with the weakened team",
+        "effects": {},
+        "result": "The injured team pulls at a slower pace."
+      }
+    ]
+  },
+  {
+    "id": "broken_arm",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 2,
+    "title": "An accident on the trail",
+    "text": "{person} has a {injury}. Support the injured limb and stop to care for them.",
+    "condition": "broken_arm",
+    "condition_choices": [
+      "broken_arm",
+      "broken_leg"
+    ],
+    "choices": [
+      {
+        "label": "Use supplies for a support \u00b7 1 kit, 1 day",
+        "requires": {
+          "medicine": 1
+        },
+        "effects": {
+          "medicine": -1,
+          "days": 1
+        },
+        "result": "You support the injured limb and stop to rest."
+      },
+      {
+        "label": "Improvise a support \u00b7 2 days",
+        "effects": {
+          "days": 2
+        },
+        "result": "You improvise a support and make camp."
+      }
+    ]
+  },
+  {
+    "id": "wandering_ox",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 2,
+    "title": "An ox wanders off",
+    "text": "One animal is missing when you count the team.",
+    "onset_effects": {
+      "oxen": -1
+    },
+    "choices": [
+      {
+        "label": "Search \u00b7 1 day",
+        "effects": {
+          "days": 1,
+          "oxen": 1
+        },
+        "result": "You find the wandering ox."
+      },
+      {
+        "label": "Continue without it",
+        "effects": {},
+        "result": "You continue with a smaller team."
+      }
+    ]
+  },
+  {
+    "id": "lost_traveler",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 2,
+    "title": "A traveler is missing",
+    "text": "{person} has wandered away from the wagon. You stop and search.",
+    "choices": [
+      {
+        "label": "Search the trail \u00b7 1 day",
+        "effects": {
+          "days": 1
+        },
+        "result": "The searchers bring your companion back safely."
+      }
+    ]
+  },
+  {
+    "id": "unsafe_water",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 5,
+    "title": "Unsafe water",
+    "text": "The water here looks foul. A cleaner spring will take time to find.",
+    "choices": [
+      {
+        "label": "Find a clean spring \u00b7 1 day",
+        "effects": {
+          "days": 1
+        },
+        "result": "The party fills its containers at a spring."
+      },
+      {
+        "label": "Press on with this water",
+        "effects": {},
+        "risk": {
+          "probability": 0.35,
+          "effects": {},
+          "condition": "dysentery",
+          "text": "A traveler becomes ill after the stop."
+        },
+        "result": "You continue without searching."
+      }
+    ]
+  },
+  {
+    "id": "rain_damage",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 10,
+    "weather": [
+      "heavy_rain"
+    ],
+    "title": "Supplies soaked by rain",
+    "text": "Heavy rain gets into the load: 10 lb food, 20 bullets and 1 care kit are damaged, up to what you carried.",
+    "onset_effects": {
+      "food": -10,
+      "bullets": -20,
+      "medicine": -1
+    },
+    "choices": [
+      {
+        "label": "Dry the load \u00b7 1 day",
+        "effects": {
+          "days": 1
+        },
+        "result": "You stop to dry and repack the remaining supplies."
+      }
+    ]
+  },
+  {
+    "id": "bandits",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 3,
+    "title": "A robbery on the road",
+    "text": "Armed thieves demand money. Decide whether to surrender supplies, defend the wagon, or flee. Fighting can cause serious or fatal injury.",
+    "choices": [
+      {
+        "label": "Surrender $20",
+        "requires": {
+          "money": 20
+        },
+        "effects": {
+          "money": -20
+        },
+        "result": "The thieves leave with the money."
+      },
+      {
+        "label": "Defend the wagon \u00b7 10 bullets",
+        "service": "defend",
+        "requires": {
+          "bullets": 10
+        },
+        "effects": {
+          "bullets": -10
+        },
+        "risk": {
+          "probability": 0.25,
+          "effects": {
+            "ox_health": -10
+          },
+          "condition": "wound",
+          "text": "A traveler is hit and suffers a serious wound. Such injuries can be fatal.",
+          "victim_damage": 20,
+          "severity": 2
+        },
+        "result": "The thieves retreat.",
+        "combat": "defend"
+      },
+      {
+        "label": "Flee \u00b7 1 day, team strain",
+        "effects": {
+          "days": 1,
+          "ox_health": -15
+        },
+        "result": "You escape, but the team is strained."
+      }
+    ]
+  },
+  {
+    "id": "wagon_fire",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 2,
+    "title": "Fire in the wagon",
+    "text": "Fire damages 40 lb food, 40 bullets and 2 care kits, up to the stock you carried.",
+    "onset_effects": {
+      "food": -40,
+      "bullets": -40,
+      "medicine": -2
+    },
+    "choices": [
+      {
+        "label": "Put out the fire and repack \u00b7 1 day",
+        "effects": {
+          "days": 1
+        },
+        "result": "You put out the last embers and salvage the load."
+      }
+    ]
+  },
+  {
+    "id": "lost_in_fog",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 5,
+    "weather": [
+      "fog"
+    ],
+    "title": "Lost in the fog",
+    "text": "You cannot make out the trail ahead.",
+    "choices": [
+      {
+        "label": "Wait for visibility \u00b7 1 day",
+        "effects": {
+          "days": 1
+        },
+        "result": "You wait rather than risk losing the road."
+      }
+    ]
+  },
+  {
+    "id": "snakebite",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 2,
+    "title": "Snakebite",
+    "text": "{person} has been bitten by a snake. The party must stop and tend the injured traveler.",
+    "condition": "snakebite",
+    "choices": [
+      {
+        "label": "Stop and use care supplies \u00b7 1 kit, 1 day",
+        "requires": {
+          "medicine": 1
+        },
+        "effects": {
+          "medicine": -1,
+          "days": 1
+        },
+        "result": "You stop and attend to your companion. Watch their condition."
+      },
+      {
+        "label": "Stop with the supplies available \u00b7 2 days",
+        "effects": {
+          "days": 2
+        },
+        "result": "You stop to care for the injured traveler."
+      }
+    ]
+  },
+  {
+    "id": "swamped_load",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 10,
+    "weather": [
+      "heavy_rain",
+      "rain"
+    ],
+    "title": "Water enters the wagon",
+    "text": "A flooded hollow soaks the load. You lose up to 30 lb food and 1 clothing set.",
+    "onset_effects": {
+      "food": -30,
+      "clothing": -1
+    },
+    "choices": [
+      {
+        "label": "Recover the load \u00b7 1 day",
+        "effects": {
+          "days": 1
+        },
+        "result": "You get the wagon back onto firm ground."
+      }
+    ]
+  },
+  {
+    "id": "animals_at_camp",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 10,
+    "title": "Animals at the food stores",
+    "text": "Animals are getting into your provisions. Protect the stores or let them take some food.",
+    "choices": [
+      {
+        "label": "Drive them off \u00b7 2 bullets",
+        "requires": {
+          "bullets": 2
+        },
+        "effects": {
+          "bullets": -2
+        },
+        "result": "The noise drives the animals away."
+      },
+      {
+        "label": "Leave them \u00b7 lose up to 15 lb food",
+        "effects": {
+          "food": -15
+        },
+        "result": "The animals carry off some food."
+      }
+    ]
+  },
+  {
+    "id": "hail_damage",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 5,
+    "weather": [
+      "hail"
+    ],
+    "title": "A damaging hailstorm",
+    "text": "Hail damages the wagon cover and provisions: up to 10 bullets and 1 care kit are lost.",
+    "onset_effects": {
+      "bullets": -10,
+      "medicine": -1
+    },
+    "choices": [
+      {
+        "label": "Repair the cover \u00b7 1 day",
+        "effects": {
+          "days": 1
+        },
+        "result": "You patch the cover before setting off again."
+      }
+    ]
+  },
+  {
+    "id": "illness",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 26,
+    "title": "Illness in the party",
+    "text": "{person} is exhausted and unwell. Check their personal condition and make time to rest.",
+    "condition": "exhaustion",
+    "choices": [
+      {
+        "label": "Stop to rest \u00b7 1 day",
+        "rest": true,
+        "effects": {
+          "days": 1
+        },
+        "result": "You stop to let the party recover."
+      },
+      {
+        "label": "Continue cautiously",
+        "effects": {},
+        "result": "You will keep watching the sick traveler's condition."
+      }
+    ]
+  },
+  {
+    "id": "assistance",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 5,
+    "title": "Help along the trail",
+    "text": "Other travelers share provisions and point you toward the next good stopping place.",
+    "onset_effects": {
+      "food": 14
+    },
+    "choices": [
+      {
+        "label": "Accept their help",
+        "effects": {},
+        "result": "You thank the travelers for 14 lb of food."
+      }
+    ]
+  },
+  {
+    "id": "riders",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 3,
+    "title": "Riders on the road",
+    "text": "Mounted strangers approach the wagon. You cannot yet judge their intentions. Fighting can cause serious or fatal injury.",
+    "choices": [
+      {
+        "label": "Run \u00b7 1 day, team strain",
+        "effects": {
+          "days": 1,
+          "ox_health": -10
+        },
+        "result": "You put distance between the wagon and the riders."
+      },
+      {
+        "label": "Defend the wagon \u00b7 10 bullets",
+        "requires": {
+          "bullets": 10
+        },
+        "effects": {
+          "bullets": -10
+        },
+        "risk": {
+          "probability": 0.25,
+          "effects": {},
+          "condition": "wound",
+          "text": "A traveler is hit and suffers a serious wound. Such injuries can be fatal.",
+          "victim_damage": 20,
+          "severity": 2
+        },
+        "result": "The riders leave the wagon.",
+        "combat": "defend"
+      },
+      {
+        "label": "Continue and watch",
+        "effects": {},
+        "risk": {
+          "probability": 0.35,
+          "effects": {
+            "money": -20
+          },
+          "text": "The strangers steal up to $20 before leaving."
+        },
+        "result": "You keep moving along the road."
+      },
+      {
+        "label": "Circle and guard \u00b7 5 bullets, 1 day",
+        "requires": {
+          "bullets": 5
+        },
+        "effects": {
+          "bullets": -5,
+          "days": 1
+        },
+        "result": "You take precautions and wait until the riders move on.",
+        "combat": "circle",
+        "risk": {
+          "probability": 0.15,
+          "effects": {},
+          "condition": "wound",
+          "victim_damage": 10,
+          "severity": 1,
+          "text": "A traveler is hit while guarding the wagon. The wound may be fatal to someone already weak."
+        }
+      }
+    ]
+  }
+]

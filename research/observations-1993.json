@@ -1,0 +1,45 @@
+{
+  "evidence": "1993-observed",
+  "source": "User-supplied Windows repack, running under bundled DOSBox 0.74-3 / Windows 3.11 inside Docker/Wine",
+  "game_exe_sha256": "e0fa745648b7bb7da3790db255e55d06b803aad837ddcbda985555727adacb12",
+  "copyright_year_visible": 1993,
+  "numeric_application_version": null,
+  "not_a_verified_1985_ruleset": true,
+  "occupations_visible": ["banker", "blacksmith", "carpenter", "doctor", "farmer", "merchant", "saddlemaker", "teacher"],
+  "starting_cash_observed": {"banker": 1600},
+  "departure_months_visible": [3, 4, 5, 6, 7, 8],
+  "initial_store_observed": {
+    "oxen": {"unit_price_dollars": 20, "maximum": 20},
+    "clothing_sets": {"unit_price_dollars": 10, "maximum": 50},
+    "ammunition_boxes": {"unit_price_dollars": 2, "bullets_per_box": 20, "maximum": 100},
+    "wheels": {"unit_price_dollars": 10, "maximum": 3},
+    "axles": {"unit_price_dollars": 10, "maximum": 3},
+    "tongues": {"unit_price_dollars": 10, "maximum": 3},
+    "food_lb": {"unit_price_dollars": 0.20, "maximum": 2000}
+  },
+  "travel": {
+    "mode_observed": "Automatic days between Continue and Time Out / landmark / modal interruption",
+    "pace_choices_visible": ["steady", "strenuous", "grueling"],
+    "ration_choices_visible": ["filling", "meager", "bare_bones"],
+    "filling_food_per_day_observed_for_five_people_lb": 15,
+    "other_ration_consumption": null,
+    "fog_repeated_in_run": true,
+    "weight_thresholds": null
+  },
+  "route_observed": [
+    {"from": "Independence", "to": "Kansas River crossing", "miles": 102},
+    {"from": "Kansas River crossing", "to": "Big Blue River crossing", "miles": 83}
+  ],
+  "one_run_river_offer_not_a_global_formula": {
+    "river": "Kansas River",
+    "arrival_date": "1848-04-11",
+    "width_ft": 624,
+    "depth_ft": 5.2,
+    "methods_visible": ["ford", "caulk_float", "ferry", "wait"],
+    "ferry_price_dollars": 5,
+    "ferry_wait_days": 6,
+    "crossing_date": "1848-04-17",
+    "outcome": "safe",
+    "remaining_food_lb": 960
+  }
+}

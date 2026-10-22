@@ -1,0 +1,26 @@
+; Open this file in Godot 4.5.1 or later.
+config_version=5
+
+[application]
+config/name="Westward, Probably"
+run/main_scene="res://ui/main.tscn"
+config/features=PackedStringArray("4.5", "GL Compatibility")
+config/use_custom_user_dir=true
+config/custom_user_dir_name="WestwardProbably"
+
+[display]
+window/size/viewport_width=640
+window/size/viewport_height=360
+window/size/window_width_override=1280
+window/size/window_height_override=720
+window/size/min_width=640
+window/size/min_height=360
+window/stretch/mode="viewport"
+window/stretch/scale_mode="integer"
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/default_filters/use_nearest_mipmap_filter=false
+textures/canvas_textures/default_texture_filter=0
+environment/defaults/default_clear_color=Color(0.13, 0.10, 0.09, 1)

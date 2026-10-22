@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "scenes": {
+    "fort_bridger": {
+      "title": "The trading store",
+      "note": "An authored encounter at the private trading establishment, not a reconstruction of a named historical keeper or an army garrison.",
+      "cash_cents": 5000,
+      "food_lot": 200,
+      "loot_limit": 200,
+      "theft_success": 0.55,
+      "compliance": 0.45,
+      "shot_hit": 0.65,
+      "shot_fatal": 0.5,
+      "escape_capture": 0.12,
+      "escape_injury": 0.3,
+      "injury_damage": 20
+    }
+  }
+}

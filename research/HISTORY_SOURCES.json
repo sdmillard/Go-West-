@@ -1,0 +1,45 @@
+[
+  {
+    "id": "palmer-1847",
+    "file": "local/history/palmer-1847-reprint-1906.html",
+    "url": "https://www.gutenberg.org/cache/epub/46906/pg46906-images.html",
+    "retrieved_utc": "2026-10-22T04:17:03.2850061Z",
+    "status": "downloaded",
+    "bytes": 696104,
+    "sha256": "b4e1fa323faed63afdb1136f244e25b1a740171979eb03ea6ff6259abc62e6b2"
+  },
+  {
+    "id": "nps-kaw",
+    "file": "local/history/nps-kaw-ferry.html",
+    "url": "https://www.nps.gov/places/kansas-river-crossing-and-pappins-ferry.htm",
+    "retrieved_utc": "2026-10-22T04:17:03.4669885Z",
+    "status": "downloaded",
+    "bytes": 39309,
+    "sha256": "7c48009e6b2f6065bb22ff5d13350de92565dd57d382772c4e78c9baf8784aab"
+  },
+  {
+    "id": "nps-marshall",
+    "file": "local/history/nps-marshalls-ferry.html",
+    "url": "https://www.nps.gov/places/000/historic-trails-park-marshalls-ferry.htm",
+    "retrieved_utc": "2026-10-22T04:17:03.8785478Z",
+    "status": "downloaded",
+    "bytes": 36610,
+    "sha256": "899b5d2c6e7e0e455d38f62c18b00325d4830788bd351387c16ca3df52272d88"
+  },
+  {
+    "id": "nebraska-kearny",
+    "file": "local/history/nebraska-fort-kearny.html",
+    "url": "https://history.nebraska.gov/fort-kearny-as-a-sort-of-one-horse-affair/",
+    "retrieved_utc": "2026-10-22T04:17:04.1547153Z",
+    "status": "download_failed"
+  },
+  {
+    "id": "nps-fort-john",
+    "file": "local/history/nps-fort-john.html",
+    "url": "https://www.nps.gov/fola/faqs.htm?fullweb=1",
+    "retrieved_utc": "2026-10-22T04:17:07.5158130Z",
+    "status": "downloaded",
+    "bytes": 35843,
+    "sha256": "cb264a327461fdc0a82e4d07bb6b3d408e24959c25549d619046354815387d29"
+  }
+]

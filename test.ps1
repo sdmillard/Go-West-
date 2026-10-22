@@ -1,0 +1,33 @@
+param([string]$Godot = "$PSScriptRoot/.tools/godot/Godot_v4.5.1-stable_win64_console.exe")
+$ErrorActionPreference = 'Stop'
+if (-not (Test-Path -LiteralPath $Godot)) {
+    $resolved = Get-Command godot -ErrorAction SilentlyContinue
+    if (-not $resolved) { throw 'Pass -Godot with the path to a Godot 4.5.1+ executable.' }
+    $Godot = $resolved.Source
+}
+# Keep test runtime files local to the project.
+$env:APPDATA = Join-Path $PSScriptRoot '.tools/userdata'
+New-Item -ItemType Directory -Force -Path $env:APPDATA | Out-Null
+$importOutput = & $Godot --headless --path $PSScriptRoot --editor --import 2>&1
+if ($LASTEXITCODE -ne 0 -or ($importOutput -match 'SCRIPT ERROR:|ERROR:')) {
+    $importOutput | Write-Output
+    throw 'Godot asset import failed'
+}
+foreach ($suite in @('tests/test_simulation.gd', 'tests/test_route.gd', 'tests/test_art.gd', 'tests/test_ui.gd', 'tests/test_motion.gd', 'tests/test_health.gd', 'tests/test_survival.gd', 'tests/test_hunting.gd', 'tests/test_provisions.gd', 'tests/test_preservation.gd', 'tests/test_oxen.gd', 'tests/test_trail_context.gd', 'tests/test_care_combat.gd', 'tests/test_camp_rest.gd', 'tests/test_party_character.gd', 'tests/test_party_framework.gd', 'tests/test_party_setup.gd', 'tests/test_party_flaws.gd', 'tests/test_character_catalog.gd', 'tests/test_crime.gd', 'tests/test_party_benefits.gd', 'tests/test_historical_economy.gd', 'tests/test_departures.gd', 'tests/test_walking.gd', 'tests/test_saves.gd', 'tests/test_graves.gd', 'tests/test_full_trail.gd')) {
+    $output = & $Godot --headless --path $PSScriptRoot --script $suite 2>&1
+    $code = $LASTEXITCODE
+    $output | Write-Output
+    if ($code -ne 0 -or ($output -match 'SCRIPT ERROR:|ERROR:|FAIL:|FAIL UI:')) {
+        throw "Godot suite failed: $suite"
+    }
+}
+
+
+
+
+
+
+
+
+
+

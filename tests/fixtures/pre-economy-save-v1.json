@@ -1,0 +1,294 @@
+{
+	"crossing_history": [
+		{
+			"clothing_lost": 1,
+			"day": 5,
+			"food_lost": 30,
+			"health_lost": 15,
+			"landmark": "wakarusa",
+			"lost": false,
+			"method": "ford",
+			"mishap": true,
+			"place": "Wakarusa Creek",
+			"summary": "Wakarusa Creek · fording. Crossing mishap! Cargo washes away. Lost 30 lb food and 1 clothing set(s); the party suffered injuries. The party reached the far bank."
+		},
+		{
+			"clothing_lost": 0,
+			"day": 8,
+			"food_lost": 0,
+			"health_lost": 0,
+			"landmark": "kansas_river",
+			"lost": false,
+			"method": "ferry",
+			"mishap": false,
+			"place": "Kansas River",
+			"summary": "Kansas River · ferry. No cargo lost. The party reached the far bank."
+		}
+	],
+	"format": "westward-probably",
+	"fresh": [],
+	"health_events": [],
+	"health_random": "7853801786594767830",
+	"journal": [
+		"Independence, 1848. Outfit your wagon.",
+		"Departed 5 1, 1848 as a farmer. Party: A, B, C, D, E.",
+		"Supplies cost $380.00. Cash remaining: $20.00.",
+		"Day 1 · Clear. Team condition good; working.",
+		"Day 1 · Traveled to mile 20. Food remaining: 785 lb.",
+		"Day 2 · Clear. Team condition good; working.",
+		"Day 2 · Traveled to mile 33. Food remaining: 770 lb.",
+		"Day 2 · Reached Elm Grove. Guide mileage: 33.",
+		"Leaving Elm Grove.",
+		"Encounter · The prairie holds on",
+		"Day 2 · Supplies: Wheels -1. Daily rations counted separately.",
+		"The replacement wheel holds. The wagon is ready.",
+		"Day 3 · Clear. Team condition good; working.",
+		"Day 3 · Traveled to mile 52. Food remaining: 755 lb.",
+		"Day 4 · Clear. Team condition good; working.",
+		"Day 4 · Traveled to mile 53. Food remaining: 740 lb.",
+		"Day 4 · Reached Wakarusa Creek. Guide mileage: 53.",
+		"Day 5 · Clear. Team condition good; resting.",
+		"Day 5 · Supplies: Food (lb) -30; Clothing -1. Daily rations counted separately.",
+		"Day 5 · Wakarusa Creek · fording. Crossing mishap! Cargo washes away. Lost 30 lb food and 1 clothing set(s); the party suffered injuries. The party reached the far bank.",
+		"Crossed Wakarusa Creek by ford.",
+		"Leaving Wakarusa Creek.",
+		"Day 6 · Rain. Team condition good; working.",
+		"Day 6 · Traveled to mile 72. Food remaining: 680 lb.",
+		"Day 7 · E has typhoid fever.",
+		"Day 7 · Cold wind. Team condition good; working.",
+		"Day 7 · Traveled to mile 81. Food remaining: 665 lb.",
+		"The party takes stock before continuing.",
+		"Day 7 · Reached Kansas River. Guide mileage: 81.",
+		"Day 7 · Supplies: Cash ($) -1.00. Daily rations counted separately.",
+		"Day 8 · Clear. Team condition good; resting.",
+		"Day 8 · Kansas River · ferry. No cargo lost. The party reached the far bank.",
+		"Crossed Kansas River by ferry.",
+		"Leaving Kansas River.",
+		"Day 9 · Clear. Team condition good; working.",
+		"Day 9 · Traveled to mile 105. Food remaining: 635 lb.",
+		"Day 10 · Rain. Team condition good; working.",
+		"Day 10 · Traveled to mile 124. Food remaining: 620 lb.",
+		"Day 11 · Rain. Team condition good; working.",
+		"Day 11 · Traveled to mile 141. Food remaining: 605 lb.",
+		"Day 12 · Clear. Team condition good; working.",
+		"Day 12 · Traveled to mile 160. Food remaining: 590 lb.",
+		"Day 12 · A has broken arm.",
+		"Day 12 · An accident on the trail. A has a broken arm. Support the injured limb and stop to care for them."
+	],
+	"last_crossing": {
+		"clothing_lost": 0,
+		"day": 8,
+		"food_lost": 0,
+		"health_lost": 0,
+		"landmark": "kansas_river",
+		"lost": false,
+		"method": "ferry",
+		"mishap": false,
+		"place": "Kansas River",
+		"summary": "Kansas River · ferry. No cargo lost. The party reached the far bank."
+	},
+	"last_events": {
+		"broken_arm": 12
+	},
+	"outings": 0,
+	"party": [
+		{
+			"alive": true,
+			"cause": "",
+			"conditions": [
+				{
+					"elapsed": 0,
+					"id": "broken_arm",
+					"severity": 1,
+					"started_day": 12
+				}
+			],
+			"death_day": -1,
+			"health": 76,
+			"history": [
+				"Day 5 · Suffered injuries during a river crossing.",
+				"Day 12 · A has broken arm."
+			],
+			"id": 0,
+			"name": "A"
+		},
+		{
+			"alive": true,
+			"cause": "",
+			"conditions": [],
+			"death_day": -1,
+			"health": 82,
+			"history": [
+				"Day 5 · Suffered injuries during a river crossing."
+			],
+			"id": 1,
+			"name": "B"
+		},
+		{
+			"alive": true,
+			"cause": "",
+			"conditions": [],
+			"death_day": -1,
+			"health": 82,
+			"history": [
+				"Day 5 · Suffered injuries during a river crossing."
+			],
+			"id": 2,
+			"name": "C"
+		},
+		{
+			"alive": true,
+			"cause": "",
+			"conditions": [],
+			"death_day": -1,
+			"health": 82,
+			"history": [
+				"Day 5 · Suffered injuries during a river crossing."
+			],
+			"id": 3,
+			"name": "D"
+		},
+		{
+			"alive": true,
+			"cause": "",
+			"conditions": [
+				{
+					"elapsed": 5,
+					"id": "typhoid",
+					"severity": 1,
+					"started_day": 7
+				}
+			],
+			"death_day": -1,
+			"health": 57,
+			"history": [
+				"Day 5 · Suffered injuries during a river crossing.",
+				"Day 7 · E has typhoid fever."
+			],
+			"id": 4,
+			"name": "E"
+		}
+	],
+	"pending": {
+		"category": "historical",
+		"choices": [
+			{
+				"effects": {
+					"days": 1,
+					"medicine": -1
+				},
+				"label": "Use supplies for a support · 1 kit, 1 day",
+				"requires": {
+					"medicine": 1
+				},
+				"result": "You support the injured limb and stop to rest."
+			},
+			{
+				"effects": {
+					"days": 2
+				},
+				"label": "Improvise a support · 2 days",
+				"result": "You improvise a support and make camp."
+			}
+		],
+		"condition": "broken_arm",
+		"condition_choices": [
+			"broken_arm",
+			"broken_leg"
+		],
+		"id": "broken_arm",
+		"member_id": 0,
+		"text": "A has a broken arm. Support the injured limb and stop to care for them.",
+		"title": "An accident on the trail",
+		"trigger": "random",
+		"weight": 2
+	},
+	"random": "6252847109092585598",
+	"route_end": "oregon_city",
+	"rules": "6e3e04b9265401db7c6e90ce797b1bf07a3ecba15967cbdffba9dcd895c687f8",
+	"seen": [
+		"muddy_trail"
+	],
+	"service_return": {
+
+	},
+	"state": {
+		"axles": 1,
+		"bullets": 200,
+		"clothing": 4,
+		"day": 12,
+		"departure_month": 5,
+		"extended_route": true,
+		"fatigue": 8,
+		"food": 590,
+		"fuel": 0,
+		"health": 76,
+		"items": [],
+		"landmark": "kansas_river",
+		"leg_length": 93,
+		"leg_miles": 79,
+		"loss_reason": "",
+		"medicine": 0,
+		"miles": 160,
+		"mode": "classic",
+		"money": 19,
+		"next_landmark": "big_blue",
+		"ox_health": 100,
+		"oxen": 6,
+		"pace": 0,
+		"parts": 2,
+		"party": [
+			"A",
+			"B",
+			"C",
+			"D",
+			"E"
+		],
+		"party_size": 5,
+		"profession": "farmer",
+		"rations": 2,
+		"river_stage": "",
+		"seed": 12,
+		"status": "traveling",
+		"terrain": "plains",
+		"tongues": 1,
+		"vehicle": "wagon",
+		"weather": "Clear",
+		"wheels": 0
+	},
+	"supply_history": [
+		{
+			"changes": {
+				"wheels": -1
+			},
+			"day": 2,
+			"event": "muddy_trail"
+		},
+		{
+			"changes": {
+				"clothing": -1,
+				"food": -30
+			},
+			"day": 5,
+			"event": "stop_wakarusa"
+		},
+		{
+			"changes": {
+				"money": -1
+			},
+			"day": 7,
+			"event": "stop_kansas_river"
+		}
+	],
+	"survival_random": "1866219144841107307",
+	"version": 1,
+	"weather": {
+		"exposure": 0,
+		"id": "clear",
+		"label": "Clear",
+		"speed": 1,
+		"weight": 50,
+		"wet": 0
+	},
+	"wet_ground": 0
+}

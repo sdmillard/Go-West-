@@ -1,0 +1,82 @@
+[
+  {
+    "id": "bouchard-index",
+    "url": "https://www.philipbouchard.com/oregon-trail.html",
+    "file": "local/bouchard/index.html",
+    "bytes": 8669,
+    "sha256": "660f8f3911e2ed6a843cc410b69107284f50a43db10d7e42637df5711eb1e865",
+    "retrieved_utc": "2026-10-22T03:49:54.121750+00:00"
+  },
+  {
+    "id": "bouchard-early-versions",
+    "url": "https://www.philipbouchard.com/oregon-trail/early-versions.html",
+    "file": "local/bouchard/early-versions.html",
+    "bytes": 15834,
+    "sha256": "5cf9c7a4c6750dc84f42556c1929691d2bb2b6f01acaf585dbd2e683bef24aee",
+    "retrieved_utc": "2026-10-22T03:49:54.517340+00:00"
+  },
+  {
+    "id": "bouchard-imagining-design",
+    "url": "https://www.philipbouchard.com/oregon-trail/imagining-design.html",
+    "file": "local/bouchard/imagining-design.html",
+    "bytes": 30189,
+    "sha256": "0fdbb9b342abd1b8bcb50ebd8c8657c278d46e7ffe069d303d5306ce1fb9bc07",
+    "retrieved_utc": "2026-10-22T03:49:57.369577+00:00"
+  },
+  {
+    "id": "bouchard-travel-screen",
+    "url": "https://www.philipbouchard.com/oregon-trail/travel-screen.html",
+    "file": "local/bouchard/travel-screen.html",
+    "bytes": 19709,
+    "sha256": "31f5f2a464a36da6822d6cff9d01b40218887f40b781200070765b91d312ac89",
+    "retrieved_utc": "2026-10-22T03:49:57.779440+00:00"
+  },
+  {
+    "id": "bouchard-hunting",
+    "url": "https://www.philipbouchard.com/oregon-trail/hunting.html",
+    "file": "local/bouchard/hunting.html",
+    "bytes": 21664,
+    "sha256": "54c72dbd40f95c4575c33176babb028e3b0dadbfd4eaee95120ea81d367a0607",
+    "retrieved_utc": "2026-10-22T03:49:58.119820+00:00"
+  },
+  {
+    "id": "bouchard-crossing-rivers",
+    "url": "https://www.philipbouchard.com/oregon-trail/crossing-rivers.html",
+    "file": "local/bouchard/crossing-rivers.html",
+    "bytes": 17165,
+    "sha256": "db882c68ef22d5db4a8d65e0eaa5f55a206ea819bd2e3f7b9163cbeaa7c86c70",
+    "retrieved_utc": "2026-10-22T03:49:58.512925+00:00"
+  },
+  {
+    "id": "bouchard-real-geography",
+    "url": "https://www.philipbouchard.com/oregon-trail/real-geography.html",
+    "file": "local/bouchard/real-geography.html",
+    "bytes": 11413,
+    "sha256": "e52b2198da644cdc25ed3303d71f84a6d9d094b25ecdb5c823e0a188a4342592",
+    "retrieved_utc": "2026-10-22T03:49:58.839585+00:00"
+  },
+  {
+    "id": "bouchard-rafting-columbia",
+    "url": "https://www.philipbouchard.com/oregon-trail/rafting-columbia.html",
+    "file": "local/bouchard/rafting-columbia.html",
+    "bytes": 14587,
+    "sha256": "1daf6b775296bbb4180253692bfda2662bd47e594c288a02af513a95fd3c5ad2",
+    "retrieved_utc": "2026-10-22T03:49:59.252292+00:00"
+  },
+  {
+    "id": "bouchard-including-humans",
+    "url": "https://www.philipbouchard.com/oregon-trail/including-humans.html",
+    "file": "local/bouchard/including-humans.html",
+    "bytes": 10894,
+    "sha256": "45f6356d44db44dab0517d5d367b01f4262de31ce3834c1871a0e7bd57f9deac",
+    "retrieved_utc": "2026-10-22T03:50:02.019087+00:00"
+  },
+  {
+    "id": "bouchard-different-journey",
+    "url": "https://www.philipbouchard.com/oregon-trail/different-journey.html",
+    "file": "local/bouchard/different-journey.html",
+    "bytes": 25048,
+    "sha256": "17fa3029ab01e5e334be4c8603b38be457c67e7accfd615e444b6c995b8e481a",
+    "retrieved_utc": "2026-10-22T03:50:02.464878+00:00"
+  }
+]

@@ -1,0 +1,47 @@
+[
+  {
+    "id": "muddy_trail", "category": "historical", "trigger": "day", "at": 2,
+    "title": "The prairie holds on",
+    "text": "Rain has softened the trail. A wheel cracks in a deep rut. Fit a spare wheel, or spend tomorrow digging free and patching the old one.",
+    "choices": [
+      {"label": "Replace the wheel · 1 spare wheel", "requires": {"wheels": 1}, "effects": {"wheels": -1}, "result": "The replacement wheel holds. The wagon is ready."},
+      {"label": "Dig it free · 1 day, with food consumed", "effects": {"days": 1}, "result": "Mud, shovels, and a long day. At last the wagon is free."}
+    ]
+  },
+  {
+    "id": "kansas_river", "category": "historical", "trigger": "mile", "at": 102,
+    "title": "Kansas River crossing",
+    "text": "You have reached the Kansas River. The current is strong. A ferryman offers passage for $15. Floating the wagon costs nothing, but risks food and health. Crossing completes this first leg.",
+    "choices": [
+      {"label": "Hire the ferry · $15 and 1 day", "requires": {"money": 15}, "effects": {"money": -15, "days": 1}, "complete": true, "result": "The ferry carries your party safely across. First leg complete."},
+      {"label": "Caulk and float · 1 day, 35% mishap risk", "effects": {"days": 1}, "risk": {"probability": 0.35, "effects": {"food": -30, "health": -15}, "text": "Water pours over the side. Supplies are lost, but everyone reaches shore."}, "complete": true, "result": "The wagon reaches the far bank. First leg complete."}
+    ]
+  },
+  {
+    "id": "found_lightsaber", "category": "absurd", "trigger": "random",
+    "title": "An elegant fence post",
+    "text": "A metal cylinder lies in the grass. A blue blade hums into existence. Your family agrees this is probably a new kind of plow.",
+    "choices": [
+      {"label": "Keep the lightsaber", "effects": {"item": "lightsaber"}, "result": "Lightsaber packed. Its agricultural applications remain unproven."},
+      {"label": "Leave the mysterious implement", "effects": {}, "result": "Somebody else's problem, probably."}
+    ]
+  },
+  {
+    "id": "corolla", "category": "absurd", "trigger": "random",
+    "title": "The 2002 Toyota Corolla",
+    "text": "A beige Corolla idles beside the trail. The odometer reads 287,000. A note says: 'Still runs.' There is enough fuel for about 90 miles. Keep the wagon hitched behind it for when the tank runs dry.",
+    "choices": [
+      {"label": "Drive it · 30 miles/day while fuel lasts", "effects": {"vehicle": "corolla", "fuel": 3}, "result": "The oxen ride in the back. No one discusses the logistics."},
+      {"label": "Stay with the wagon", "effects": {}, "result": "You leave the keys on the seat."}
+    ]
+  },
+  {
+    "id": "elder_god", "category": "absurd", "trigger": "random",
+    "title": "The thing beyond the ford",
+    "text": "The horizon unfolds into an elder god. It asks for a modest offering of trail biscuits. This was absent from the guidebook.",
+    "choices": [
+      {"label": "Offer 20 lb of food · recover 10 health", "requires": {"food": 20}, "effects": {"food": -20, "health": 10}, "result": "The sky knits itself together. Everyone feels strangely rested."},
+      {"label": "Politely decline · lose 5 health", "effects": {"health": -5}, "result": "It accepts your refusal. Your dreams will be less accommodating."}
+    ]
+  }
+]

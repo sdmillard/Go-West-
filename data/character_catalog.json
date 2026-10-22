@@ -1,0 +1,356 @@
+{
+  "version": 1,
+  "temperaments": {
+    "Cautious": {
+      "description": "Objects to armed defense and pushing sick travelers at a grueling pace.",
+      "defense": -1,
+      "push_sick": -2
+    },
+    "Bold": {
+      "description": "Gains trust when willing to stand and defend the party.",
+      "defense": 1
+    },
+    "Steady": {
+      "description": "Ordinary trust losses are reduced by 25%; neither admires nor resents armed defense.",
+      "trust_loss": 0.75,
+      "defense": 0
+    },
+    "Nervous": {
+      "description": "Ordinary trust losses are 25% greater; strongly resents armed defense and pushing the sick.",
+      "trust_loss": 1.25,
+      "defense": -2,
+      "push_sick": -2
+    },
+    "Reckless": {
+      "description": "Strongly approves of a willing armed defense; does not object merely because a sick party travels hard.",
+      "defense": 2
+    },
+    "Patient": {
+      "description": "Ordinary trust losses are reduced by 25%; mildly resents armed defense.",
+      "trust_loss": 0.75,
+      "defense": -1
+    },
+    "Stubborn": {
+      "description": "Ordinary disagreements hurt trust 25% more; mildly resents armed defense.",
+      "trust_loss": 1.25,
+      "defense": -1
+    },
+    "Adaptable": {
+      "description": "Accepts armed defense neutrally and gains a little trust when the party rests for someone sick.",
+      "defense": 0,
+      "rest_sick": 1
+    }
+  },
+  "values": {
+    "Compassionate": {
+      "description": "Values care and rest for sick travelers; forbids robbery, murder and cannibalism.",
+      "forbidden": [
+        "robbery",
+        "murder",
+        "cannibalism"
+      ],
+      "rest_sick": 1,
+      "care_others": 2,
+      "push_sick": -2
+    },
+    "Pragmatic": {
+      "description": "Accepts practical compromises but forbids murder. Expects a small wage premium.",
+      "forbidden": [
+        "murder"
+      ]
+    },
+    "Principled": {
+      "description": "Values keeping obligations; forbids robbery, murder, cannibalism and unpaid wages.",
+      "forbidden": [
+        "robbery",
+        "murder",
+        "cannibalism",
+        "miss_wages"
+      ],
+      "rest_sick": 1,
+      "care_others": 1
+    },
+    "Self-serving": {
+      "description": "Accepts theft but forbids murder; appreciates personal care, without gaining trust from care for others.",
+      "forbidden": [
+        "murder"
+      ]
+    },
+    "Ruthless": {
+      "description": "Approves of robbery and has no default forbidden crime. Still reacts to unpaid personal wages and low trust.",
+      "approved": [
+        "robbery"
+      ]
+    },
+    "Communal": {
+      "description": "Values care for others and resting for the sick; forbids robbery, murder and cannibalism.",
+      "forbidden": [
+        "robbery",
+        "murder",
+        "cannibalism"
+      ],
+      "rest_sick": 1,
+      "care_others": 2,
+      "push_sick": -2
+    },
+    "Pacifist": {
+      "description": "Values care; refuses armed defense, robbery and murder. Accepting human remains is a separate boundary.",
+      "forbidden": [
+        "robbery",
+        "murder",
+        "defend"
+      ],
+      "rest_sick": 1,
+      "care_others": 1,
+      "push_sick": -2
+    },
+    "Opportunistic": {
+      "description": "Approves of robbery but forbids murder; values practical success more than helping strangers.",
+      "forbidden": [
+        "murder"
+      ],
+      "approved": [
+        "robbery"
+      ]
+    }
+  },
+  "specials": {
+    "Loyal": {
+      "description": "Ordinary trust losses are halved; forbidden actions retain their full consequence."
+    },
+    "Mercenary": {
+      "description": "Requires an agreed cash wage plus party food. Honored payments can build trust."
+    },
+    "Veteran": {
+      "description": "A fit, willing companion reduces confrontation injury risk by 3 percentage points, subject to its floor."
+    },
+    "Cannibal": {
+      "description": "Has no personal objection to eating human remains. Does not grant approval of murder or deception."
+    },
+    "Hardy": {
+      "description": "Personal health losses from all causes are reduced by 20%, rounded up; +10 cents/day if hired.",
+      "hurt_all": 0.8,
+      "wage_cents": 10
+    },
+    "Quick Healer": {
+      "description": "Personal positive health gains increase by 50%, rounded down; +10 cents/day if hired. Recovery timers unchanged.",
+      "heal": 1.5,
+      "wage_cents": 10
+    },
+    "Iron Stomach": {
+      "description": "Personal health losses from food shortage are reduced by 25%; +5 cents/day if hired.",
+      "hurt_hunger": 0.75,
+      "wage_cents": 5
+    },
+    "Sure-footed": {
+      "description": "Personal river-crossing injury damage is reduced by 25%; +5 cents/day if hired.",
+      "hurt_crossing": 0.75,
+      "wage_cents": 5
+    },
+    "Cool-headed": {
+      "description": "Personal confrontation injury damage is reduced by 25%; +10 cents/day if hired.",
+      "hurt_combat": 0.75,
+      "wage_cents": 10
+    },
+    "Weatherwise": {
+      "description": "Personal exposure damage is reduced by 25%; does not replace warm clothing. +5 cents/day if hired.",
+      "hurt_exposure": 0.75,
+      "wage_cents": 5
+    },
+    "Tireless": {
+      "description": "Personal exhaustion damage is reduced by 25%; +10 cents/day if hired.",
+      "hurt_exhaustion": 0.75,
+      "wage_cents": 10
+    },
+    "Stoic": {
+      "description": "Ordinary trust losses are reduced by 25%; forbidden actions retain full force. +5 cents/day if hired.",
+      "trust_loss": 0.75,
+      "wage_cents": 5
+    },
+    "Field Medic": {
+      "description": "Provides the existing Caregiving party benefit even with another background; does not stack. +15 cents/day if hired.",
+      "assists": "Caregiving",
+      "wage_cents": 15
+    },
+    "Wagonwright": {
+      "description": "Provides the existing Carpentry party benefit even with another background; does not stack. +15 cents/day if hired.",
+      "assists": "Carpentry",
+      "wage_cents": 15
+    },
+    "Sharpshooter": {
+      "description": "Provides the existing Hunting reload benefit even with another background; does not stack. +15 cents/day if hired.",
+      "assists": "Hunting",
+      "wage_cents": 15
+    },
+    "Haggler": {
+      "description": "Provides the existing Trading purchase discount even with another background; does not stack. +10 cents/day if hired.",
+      "assists": "Trading",
+      "wage_cents": 10
+    }
+  },
+  "flaws": {
+    "Frail": {
+      "description": "Takes 25% more health damage from all causes, rounded up.",
+      "hurt_all": 1.25
+    },
+    "Slow Healer": {
+      "description": "Health gains are halved, rounded down (minimum 1). Illness recovery timers are unchanged.",
+      "heal": 0.5
+    },
+    "Sickly": {
+      "description": "Takes 50% more daily damage from an active illness; injuries and recovery timers are unchanged.",
+      "hurt_illness": 1.5
+    },
+    "Cold-sensitive": {
+      "description": "Takes 50% more exposure damage when inadequately clothed.",
+      "hurt_exposure": 1.5
+    },
+    "Delicate Stomach": {
+      "description": "Takes 50% more health damage from food shortage.",
+      "hurt_hunger": 1.5
+    },
+    "Poor Endurance": {
+      "description": "Takes 50% more exhaustion damage from hard travel.",
+      "hurt_exhaustion": 1.5
+    },
+    "Clumsy": {
+      "description": "Takes 50% more personal injury damage from river crossings.",
+      "hurt_crossing": 1.5
+    },
+    "Shaken by Gunfire": {
+      "description": "Takes 50% more damage when personally injured in an armed confrontation.",
+      "hurt_combat": 1.5
+    },
+    "Hot-tempered": {
+      "description": "Ordinary trust losses are 50% greater. Forbidden-action penalties remain bounded.",
+      "trust_loss": 1.5
+    },
+    "Distrustful": {
+      "description": "Trust gains are halved, rounded to half points.",
+      "trust_gain": 0.5
+    },
+    "Proud": {
+      "description": "Gains no trust from arranging care for them personally; can still appreciate care for others according to values.",
+      "personal_care": 0
+    },
+    "Restless": {
+      "description": "Loses 1 trust on each rest day, including rest taken for illness. This can coexist with approval of caring for the sick.",
+      "idle_trust": -1
+    }
+  },
+  "relationships": {
+    "fellow_traveler": {
+      "description": "A fellow traveler with no special prior attachment.",
+      "trust": 50,
+      "attachment": 0
+    },
+    "friend": {
+      "description": "Established friendship; stronger attachment to the leader.",
+      "trust": 60,
+      "attachment": 5
+    },
+    "family": {
+      "description": "A close relative; greater attachment is not permission to cross their boundaries.",
+      "trust": 70,
+      "attachment": 10
+    },
+    "stranger": {
+      "description": "An unfamiliar traveler; trust starts lower.",
+      "trust": 40,
+      "attachment": 0
+    },
+    "acquaintance": {
+      "description": "Someone you know slightly.",
+      "trust": 45,
+      "attachment": 0
+    },
+    "partner": {
+      "description": "A spouse or partner with strong trust and commitment.",
+      "trust": 75,
+      "attachment": 12
+    },
+    "sibling": {
+      "description": "A brother or sister with strong prior attachment.",
+      "trust": 70,
+      "attachment": 10
+    },
+    "cousin": {
+      "description": "A relative with some prior familiarity and attachment.",
+      "trust": 60,
+      "attachment": 5
+    },
+    "parent": {
+      "description": "An adult companion who is the leader's parent.",
+      "trust": 75,
+      "attachment": 12
+    },
+    "adult_child": {
+      "description": "An adult companion who is the leader's child.",
+      "trust": 75,
+      "attachment": 12
+    },
+    "mentor": {
+      "description": "An experienced acquaintance who knows you well.",
+      "trust": 60,
+      "attachment": 5
+    },
+    "former_employer": {
+      "description": "Someone from a former working relationship; this does not itself create a wage contract.",
+      "trust": 45,
+      "attachment": 0
+    },
+    "rival": {
+      "description": "An existing rival; starts with little trust, but may come to respect your decisions.",
+      "trust": 30,
+      "attachment": 0
+    }
+  },
+  "first_names": [
+    "Ada",
+    "Amos",
+    "Clara",
+    "Daniel",
+    "Eliza",
+    "Elias",
+    "Esther",
+    "Felix",
+    "George",
+    "Hannah",
+    "Isaac",
+    "Jane",
+    "Jonas",
+    "Josephine",
+    "Levi",
+    "Lydia",
+    "Martha",
+    "Nathan",
+    "Nell",
+    "Oliver",
+    "Rosa",
+    "Ruth",
+    "Samuel",
+    "Sarah"
+  ],
+  "surnames": [
+    "Bennett",
+    "Brooks",
+    "Carter",
+    "Cole",
+    "Davis",
+    "Ellis",
+    "Foster",
+    "Grant",
+    "Hale",
+    "Hayes",
+    "Hill",
+    "Lane",
+    "Mason",
+    "Miller",
+    "Morgan",
+    "Parker",
+    "Reed",
+    "Stone",
+    "Turner",
+    "Ward"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "minimum_health": 40,
+  "missed_payments_before_departure": 3,
+  "departure_notice_days": 1,
+  "food_days_on_departure": 3,
+  "hunter_reload_factor": 0.8,
+  "carpentry_days_saved": 1,
+  "care_health_bonus": 2,
+  "care_recovery_bonus": 1,
+  "trade_buy_factor": 0.95,
+  "veteran_risk_reduction": 0.03,
+  "wage_bases": {"Hunting": 40, "Carpentry": 90, "Caregiving": 50, "Trading": 60},
+  "wage_modifiers": {"Compassionate": -5, "Pragmatic": 5, "Loyal": 10, "Veteran": 20}
+}

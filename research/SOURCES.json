@@ -1,0 +1,101 @@
+[
+  {
+    "id": "basic-1975",
+    "file": "oregon-trail-1975.bas",
+    "url": "https://raw.githubusercontent.com/fortran-gaming/oregon-trail-1975/master/oregon-trail-1975.bas",
+    "retrieved_utc": "2026-10-22T03:01:03.5623178Z",
+    "status": "downloaded",
+    "sha256": "73cf15422fcc866244f84a791d13275657eadbed25718b9ef8c099c2c4762bc3",
+    "bytes": 20213
+  },
+  {
+    "id": "basic-1978",
+    "file": "oregon-trail-1978.bas",
+    "url": "https://raw.githubusercontent.com/fortran-gaming/oregon-trail-1975/master/oregon-trail-1978.bas",
+    "retrieved_utc": "2026-10-22T03:01:03.8632940Z",
+    "status": "downloaded",
+    "sha256": "57d631dd1feed37815e4340faf8ee73102511040a7dab9913e090dd235e74b0f",
+    "bytes": 19678
+  },
+  {
+    "id": "basic-readme",
+    "file": "basic-repository-README.md",
+    "url": "https://raw.githubusercontent.com/fortran-gaming/oregon-trail-1975/master/README.md",
+    "retrieved_utc": "2026-10-22T03:01:04.0629342Z",
+    "status": "downloaded",
+    "sha256": "885005d90aeeffa47069684c6f0ceb3ed2a9e5da9207ce5f3c72ea45a7b8ff34",
+    "bytes": 1864
+  },
+  {
+    "id": "basic-license",
+    "file": "basic-repository-LICENSE",
+    "url": "https://raw.githubusercontent.com/fortran-gaming/oregon-trail-1975/master/LICENSE",
+    "retrieved_utc": "2026-10-22T03:01:04.3068568Z",
+    "status": "downloaded",
+    "sha256": "48d2942432b609e1dfcbb9a38d3c8e73aadd2e00b15998969c9062ca57823083",
+    "bytes": 1813
+  },
+  {
+    "id": "manual-1985",
+    "file": "mecc-1985-apple-ii-manual.pdf",
+    "url": "https://mirrors.apple2.org.za/ftp.apple.asimov.net/images/educational/mecc/documentation/oregon_trail/The%20Oregon%20Trail.pdf",
+    "retrieved_utc": "2026-10-22T03:01:09.8175721Z",
+    "status": "downloaded",
+    "sha256": "152acc96a5727171b59605c8cd1d5f2a67e8b821127de668283392bbdfb9b6f1",
+    "bytes": 9874601
+  },
+  {
+    "id": "bouchard-design",
+    "file": "bouchard-imagining-design.html",
+    "url": "https://www.philipbouchard.com/oregon-trail/imagining-design.html",
+    "retrieved_utc": "2026-10-22T03:01:10.7103448Z",
+    "status": "downloaded",
+    "sha256": "0fdbb9b342abd1b8bcb50ebd8c8657c278d46e7ffe069d303d5306ce1fb9bc07",
+    "bytes": 30189
+  },
+  {
+    "id": "bouchard-rivers",
+    "file": "bouchard-crossing-rivers.html",
+    "url": "https://www.philipbouchard.com/oregon-trail/crossing-rivers.html",
+    "retrieved_utc": "2026-10-22T03:01:11.2011755Z",
+    "status": "downloaded",
+    "sha256": "db882c68ef22d5db4a8d65e0eaa5f55a206ea819bd2e3f7b9163cbeaa7c86c70",
+    "bytes": 17165
+  },
+  {
+    "id": "bouchard-geography",
+    "file": "bouchard-geography.html",
+    "url": "https://www.philipbouchard.com/oregon-trail/real-geography.html",
+    "retrieved_utc": "2026-10-22T03:01:11.7054810Z",
+    "status": "downloaded",
+    "sha256": "e52b2198da644cdc25ed3303d71f84a6d9d094b25ecdb5c823e0a188a4342592",
+    "bytes": 11413
+  },
+  {
+    "id": "mecc-history",
+    "file": "mecc-history.html",
+    "url": "https://mecc.co/history/",
+    "retrieved_utc": "2026-10-22T03:01:14.5741396Z",
+    "status": "downloaded",
+    "sha256": "7d3a7c38f064b85128af262c9ac38dc3f8ee0967f347a2a53d435212cb7d0e46",
+    "bytes": 100871
+  },
+  {
+    "id": "windows-1993-reference",
+    "file": "windows-1993-reference.html",
+    "url": "https://oregontrail.ws/games/the-oregon-trail-cd-rom",
+    "retrieved_utc": "2026-10-22T03:01:15.1003988Z",
+    "status": "downloaded",
+    "sha256": "279b44cd34b85f83ef04298948a609f7ac49b3574d850cde1ba107fb879f824f",
+    "bytes": 240029
+  },
+  {
+    "id": "creative-computing-1978",
+    "file": "creative-computing-1978-05.pdf",
+    "url": "https://archive.org/download/creativecomputing-1978-05/Creative_Computing_v04_n03_1978_May-June.pdf",
+    "retrieved_utc": "2026-10-22T03:01:34.3845472Z",
+    "status": "downloaded",
+    "sha256": "570e0f9e2e3aa48377b527cb3d497dc6aa66b4113333ba388b91eb70987ac5f4",
+    "bytes": 21017244
+  }
+]

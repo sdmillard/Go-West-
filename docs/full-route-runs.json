@@ -1,0 +1,157 @@
+{
+	"departure_months": [
+		3,
+		5
+	],
+	"pace_miles": [
+		22.0,
+		26.0,
+		30.0
+	],
+	"policy": "banker, 1700 lb start, filling/steady, bulk resupply below 1250 lb at posts, rest below 75 condition or above 50 fatigue",
+	"route_guide_miles": 1938,
+	"rules_signature": "6e3e04b9265401db7c6e90ce797b1bf07a3ecba15967cbdffba9dcd895c687f8",
+	"runs": [
+		{
+			"cash": 1413.4,
+			"days": 189,
+			"food": 505,
+			"month": 3,
+			"moving_miles_per_day": 13.006711409396,
+			"seed": 0,
+			"status": "arrived",
+			"survivors": 5,
+			"travel_days": 149
+		},
+		{
+			"cash": 1413.4,
+			"days": 184,
+			"food": 594,
+			"month": 3,
+			"moving_miles_per_day": 13.3655172413793,
+			"seed": 1,
+			"status": "arrived",
+			"survivors": 5,
+			"travel_days": 145
+		},
+		{
+			"cash": 1393.4,
+			"days": 191,
+			"food": 563,
+			"month": 3,
+			"moving_miles_per_day": 12.8344370860927,
+			"seed": 2,
+			"status": "arrived",
+			"survivors": 5,
+			"travel_days": 151
+		},
+		{
+			"cash": 1353.4,
+			"days": 198,
+			"food": 700,
+			"month": 3,
+			"moving_miles_per_day": 11.962962962963,
+			"seed": 3,
+			"status": "arrived",
+			"survivors": 5,
+			"travel_days": 162
+		},
+		{
+			"cash": 1453.4,
+			"days": 192,
+			"food": 534,
+			"month": 3,
+			"moving_miles_per_day": 12.8344370860927,
+			"seed": 4,
+			"status": "arrived",
+			"survivors": 5,
+			"travel_days": 151
+		},
+		{
+			"cash": 1413.4,
+			"days": 185,
+			"food": 649,
+			"month": 3,
+			"moving_miles_per_day": 13.2739726027397,
+			"seed": 5,
+			"status": "arrived",
+			"survivors": 5,
+			"travel_days": 146
+		},
+		{
+			"cash": 1393.4,
+			"days": 189,
+			"food": 615,
+			"month": 5,
+			"moving_miles_per_day": 14.0434782608696,
+			"seed": 0,
+			"status": "arrived",
+			"survivors": 5,
+			"travel_days": 138
+		},
+		{
+			"cash": 1393.4,
+			"days": 193,
+			"food": 759,
+			"month": 5,
+			"moving_miles_per_day": 13.6478873239437,
+			"seed": 1,
+			"status": "arrived",
+			"survivors": 4,
+			"travel_days": 142
+		},
+		{
+			"cash": 1433.4,
+			"days": 187,
+			"food": 635,
+			"month": 5,
+			"moving_miles_per_day": 12.75,
+			"seed": 2,
+			"status": "arrived",
+			"survivors": 5,
+			"travel_days": 152
+		},
+		{
+			"cash": 1433.4,
+			"days": 189,
+			"food": 533,
+			"month": 5,
+			"moving_miles_per_day": 13.2739726027397,
+			"seed": 3,
+			"status": "arrived",
+			"survivors": 5,
+			"travel_days": 146
+		},
+		{
+			"cash": 1453.4,
+			"days": 191,
+			"food": 663,
+			"month": 5,
+			"moving_miles_per_day": 12.92,
+			"seed": 4,
+			"status": "arrived",
+			"survivors": 5,
+			"travel_days": 150
+		},
+		{
+			"cash": 1413.4,
+			"days": 192,
+			"food": 560,
+			"month": 5,
+			"moving_miles_per_day": 13.0945945945946,
+			"seed": 5,
+			"status": "arrived",
+			"survivors": 5,
+			"travel_days": 148
+		}
+	],
+	"seed_range": [
+		0,
+		5
+	],
+	"terrain_speed_factors": {
+		"desert": 0.95,
+		"forest": 0.9,
+		"mountains": 0.8
+	}
+}

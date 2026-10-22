@@ -1,0 +1,47 @@
+{
+  "cargo_guideline_lb": 2500,
+  "household_gear_lb": 450,
+  "weights_lb": {
+    "food": 1,
+    "clothing": 6,
+    "bullets": 0.1,
+    "wheels": 35,
+    "axles": 60,
+    "tongues": 50,
+    "medicine": 2,
+    "salt": 1
+  },
+  "rations_lb": [
+    1,
+    2,
+    3
+  ],
+  "fresh_days": 2,
+  "light_load_lb": 1250,
+  "full_load_speed": 0.75,
+  "preservation": {
+    "batch_lb": 100,
+    "retained_food": 0.8,
+    "salted_retained_food": 0.9,
+    "dried_weight": 0.35,
+    "days": 21,
+    "salted_days": 30,
+    "salt_per_food_lb": 0.05
+  },
+  "ox_slaughter": {
+    "usable_meat_lb": 400,
+    "minimum_yield_factor": 0.5,
+    "minimum_team": 0,
+    "bullets": 1,
+    "hand_injury_chance": 0.35
+  },
+  "working_load_per_ox_lb": 625,
+  "walking": {
+    "carry_lb_per_person": 40,
+    "personal_gear_lb_per_person": 15,
+    "miles_per_day": 12,
+    "cache_loss_base": 0.15,
+    "cache_loss_daily": 0.03,
+    "cache_loss_cap": 0.85
+  }
+}

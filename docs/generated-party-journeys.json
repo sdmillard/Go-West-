@@ -1,0 +1,6564 @@
+{
+	"errors": [],
+	"policy": "Twelve seeded generated parties; banker, suggested outfit, three departure months, existing cautious salted-hunt policy with65% center aim. Full wages paid if $10 cash remains. Real traits, flaws, disease, rest, health, helpers and warned departures; saves checked every50actions and at finish. This is an integration smoke sample, not a tuned balance study or historical mortality model.",
+	"rules_signature": "f6e5acff6247c2a38a8b571042ab6a8259735c06f88b45301d6733012c57e264",
+	"runs": [
+		{
+			"cash": 680.8,
+			"days": 189,
+			"departures": 0,
+			"final_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism",
+							"miss_wages"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Poor Endurance"
+					],
+					"id": 1,
+					"memories": [
+						{
+							"day": 77,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 85,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 118,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 119,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 121,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 132,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 135,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 145,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 147,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 154,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 159,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 188,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "adult_child",
+					"skill": "Hunting",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Steady",
+						"Principled"
+					],
+					"trust": 99.0
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 2,
+					"memories": [
+						{
+							"day": 77,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 85,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 118,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 119,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 121,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 132,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 135,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 145,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 147,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 154,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 159,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 188,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "acquaintance",
+					"skill": "Caregiving",
+					"specials": [
+						"Cool-headed"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Patient",
+						"Communal"
+					],
+					"trust": 69.0
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism",
+							"miss_wages"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 3,
+					"memories": [
+						{
+							"day": 77,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 85,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 118,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 119,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 121,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 132,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 135,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 145,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 147,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 154,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 159,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 188,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "family",
+					"skill": "Caregiving",
+					"specials": [
+						"Quick Healer"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Stubborn",
+						"Principled"
+					],
+					"trust": 94.0
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Hot-tempered"
+					],
+					"id": 4,
+					"memories": [
+						{
+							"day": 77,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 85,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 118,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 119,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 121,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 132,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 135,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 145,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 147,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 154,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 159,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 188,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "former_employer",
+					"skill": "Carpentry",
+					"specials": [
+						"Tireless"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Adaptable",
+						"Pragmatic"
+					],
+					"trust": 69.0
+				}
+			],
+			"initial_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism",
+							"miss_wages"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Poor Endurance"
+					],
+					"id": 1,
+					"memories": [],
+					"relationship": "adult_child",
+					"skill": "Hunting",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Steady",
+						"Principled"
+					],
+					"trust": 75
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 2,
+					"memories": [],
+					"relationship": "acquaintance",
+					"skill": "Caregiving",
+					"specials": [
+						"Cool-headed"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Patient",
+						"Communal"
+					],
+					"trust": 45
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism",
+							"miss_wages"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 3,
+					"memories": [],
+					"relationship": "family",
+					"skill": "Caregiving",
+					"specials": [
+						"Quick Healer"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Stubborn",
+						"Principled"
+					],
+					"trust": 70
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Hot-tempered"
+					],
+					"id": 4,
+					"memories": [],
+					"relationship": "former_employer",
+					"skill": "Carpentry",
+					"specials": [
+						"Tireless"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Adaptable",
+						"Pragmatic"
+					],
+					"trust": 45
+				}
+			],
+			"month": 3,
+			"outcome": "arrived",
+			"seed": 0,
+			"survivors": 5
+		},
+		{
+			"cash": 657.8,
+			"days": 203,
+			"departures": 0,
+			"final_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 1,
+					"memories": [
+						{
+							"day": 117,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 118,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 119,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 120,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 134,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 135,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 136,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 137,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 138,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 139,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 140,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 192,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "cousin",
+					"skill": "Trading",
+					"specials": [
+						"Field Medic",
+						"Loyal"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Steady",
+						"Compassionate"
+					],
+					"trust": 83.0
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Distrustful"
+					],
+					"id": 2,
+					"memories": [],
+					"relationship": "sibling",
+					"skill": "Trading",
+					"specials": [
+						"Loyal",
+						"Tireless",
+						"Stoic"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Patient",
+						"Pragmatic"
+					],
+					"trust": 70
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 3,
+					"memories": [],
+					"relationship": "acquaintance",
+					"skill": "Hunting",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Reckless",
+						"Pragmatic"
+					],
+					"trust": 45
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 4,
+					"memories": [
+						{
+							"day": 117,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 118,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 119,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 120,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 134,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 135,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 136,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 137,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 138,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 139,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 140,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 192,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "family",
+					"skill": "Hunting",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Reckless",
+						"Pacifist"
+					],
+					"trust": 93.0
+				}
+			],
+			"initial_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 1,
+					"memories": [],
+					"relationship": "cousin",
+					"skill": "Trading",
+					"specials": [
+						"Field Medic",
+						"Loyal"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Steady",
+						"Compassionate"
+					],
+					"trust": 60
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Distrustful"
+					],
+					"id": 2,
+					"memories": [],
+					"relationship": "sibling",
+					"skill": "Trading",
+					"specials": [
+						"Loyal",
+						"Tireless",
+						"Stoic"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Patient",
+						"Pragmatic"
+					],
+					"trust": 70
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 3,
+					"memories": [],
+					"relationship": "acquaintance",
+					"skill": "Hunting",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Reckless",
+						"Pragmatic"
+					],
+					"trust": 45
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 4,
+					"memories": [],
+					"relationship": "family",
+					"skill": "Hunting",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Reckless",
+						"Pacifist"
+					],
+					"trust": 70
+				}
+			],
+			"month": 5,
+			"outcome": "arrived",
+			"seed": 1,
+			"survivors": 5
+		},
+		{
+			"cash": 715.8,
+			"days": 204,
+			"departures": 0,
+			"final_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [
+							"robbery"
+						],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": true,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 1,
+					"memories": [],
+					"relationship": "family",
+					"skill": "Hunting",
+					"specials": [
+						"Field Medic",
+						"Sharpshooter"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Steady",
+						"Opportunistic"
+					],
+					"trust": 70
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Shaken by Gunfire"
+					],
+					"id": 2,
+					"memories": [],
+					"relationship": "sibling",
+					"skill": "Hunting",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Cautious",
+						"Self-serving"
+					],
+					"trust": 70
+				},
+				{
+					"boundaries": {
+						"approved": [
+							"robbery"
+						],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": true,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Frail"
+					],
+					"id": 3,
+					"memories": [
+						{
+							"day": 73,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 74,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 75,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 76,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 80,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 88,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 90,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 150,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 157,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 172,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 174,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 193,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "stranger",
+					"skill": "Hunting",
+					"specials": [
+						"Wagonwright",
+						"Haggler"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Adaptable",
+						"Ruthless"
+					],
+					"trust": 57.0
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Frail"
+					],
+					"id": 4,
+					"memories": [
+						{
+							"day": 73,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 74,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 75,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 76,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 80,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 88,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 90,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 150,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 157,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 172,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 174,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 193,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "cousin",
+					"skill": "Caregiving",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Patient",
+						"Pacifist"
+					],
+					"trust": 77.0
+				}
+			],
+			"initial_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [
+							"robbery"
+						],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": true,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 1,
+					"memories": [],
+					"relationship": "family",
+					"skill": "Hunting",
+					"specials": [
+						"Field Medic",
+						"Sharpshooter"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Steady",
+						"Opportunistic"
+					],
+					"trust": 70
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Shaken by Gunfire"
+					],
+					"id": 2,
+					"memories": [],
+					"relationship": "sibling",
+					"skill": "Hunting",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Cautious",
+						"Self-serving"
+					],
+					"trust": 70
+				},
+				{
+					"boundaries": {
+						"approved": [
+							"robbery"
+						],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": true,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Frail"
+					],
+					"id": 3,
+					"memories": [],
+					"relationship": "stranger",
+					"skill": "Hunting",
+					"specials": [
+						"Wagonwright",
+						"Haggler"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Adaptable",
+						"Ruthless"
+					],
+					"trust": 40
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Frail"
+					],
+					"id": 4,
+					"memories": [],
+					"relationship": "cousin",
+					"skill": "Caregiving",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Patient",
+						"Pacifist"
+					],
+					"trust": 60
+				}
+			],
+			"month": 8,
+			"outcome": "arrived",
+			"seed": 2,
+			"survivors": 5
+		},
+		{
+			"cash": 675.8,
+			"days": 180,
+			"departures": 0,
+			"final_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 1,
+					"memories": [
+						{
+							"day": 37,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 63,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 114,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 117,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 127,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 148,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 154,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 160,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 161,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 162,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 163,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 164,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "former_employer",
+					"skill": "Carpentry",
+					"specials": [
+						"Field Medic"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Adaptable",
+						"Self-serving"
+					],
+					"trust": 59.0
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 2,
+					"memories": [
+						{
+							"day": 37,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 63,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 114,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 117,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 127,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 148,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 154,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 160,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 161,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 162,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 163,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 164,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "acquaintance",
+					"skill": "Trading",
+					"specials": [
+						"Weatherwise"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Cautious",
+						"Pacifist"
+					],
+					"trust": 59.0
+				},
+				{
+					"boundaries": {
+						"approved": [
+							"robbery"
+						],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": true,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 3,
+					"memories": [],
+					"relationship": "acquaintance",
+					"skill": "Hunting",
+					"specials": [
+						"Hardy",
+						"Stoic"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Nervous",
+						"Ruthless"
+					],
+					"trust": 45
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 4,
+					"memories": [
+						{
+							"day": 37,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 63,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 114,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 117,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 127,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 148,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 154,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 160,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 161,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 162,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 163,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 164,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "rival",
+					"skill": "Trading",
+					"specials": [
+						"Wagonwright"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Steady",
+						"Compassionate"
+					],
+					"trust": 44.0
+				}
+			],
+			"initial_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 1,
+					"memories": [],
+					"relationship": "former_employer",
+					"skill": "Carpentry",
+					"specials": [
+						"Field Medic"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Adaptable",
+						"Self-serving"
+					],
+					"trust": 45
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 2,
+					"memories": [],
+					"relationship": "acquaintance",
+					"skill": "Trading",
+					"specials": [
+						"Weatherwise"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Cautious",
+						"Pacifist"
+					],
+					"trust": 45
+				},
+				{
+					"boundaries": {
+						"approved": [
+							"robbery"
+						],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": true,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 3,
+					"memories": [],
+					"relationship": "acquaintance",
+					"skill": "Hunting",
+					"specials": [
+						"Hardy",
+						"Stoic"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Nervous",
+						"Ruthless"
+					],
+					"trust": 45
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 4,
+					"memories": [],
+					"relationship": "rival",
+					"skill": "Trading",
+					"specials": [
+						"Wagonwright"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Steady",
+						"Compassionate"
+					],
+					"trust": 30
+				}
+			],
+			"month": 3,
+			"outcome": "arrived",
+			"seed": 3,
+			"survivors": 5
+		},
+		{
+			"cash": 734.8,
+			"days": 199,
+			"departures": 0,
+			"final_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Hot-tempered"
+					],
+					"id": 1,
+					"memories": [],
+					"relationship": "family",
+					"skill": "Hunting",
+					"specials": [
+						"Stoic",
+						"Cool-headed",
+						"Veteran"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Patient",
+						"Pragmatic"
+					],
+					"trust": 70
+				},
+				{
+					"boundaries": {
+						"approved": [
+							"robbery"
+						],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": true,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 2,
+					"memories": [],
+					"relationship": "fellow_traveler",
+					"skill": "Trading",
+					"specials": [
+						"Iron Stomach",
+						"Stoic"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Nervous",
+						"Opportunistic"
+					],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 3,
+					"memories": [],
+					"relationship": "acquaintance",
+					"skill": "Caregiving",
+					"specials": [
+						"Sure-footed"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Stubborn",
+						"Self-serving"
+					],
+					"trust": 45
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 4,
+					"memories": [
+						{
+							"day": 132,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 135,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 136,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 157,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 158,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 159,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 161,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 168,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 174,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 192,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 195,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 196,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "sibling",
+					"skill": "Caregiving",
+					"specials": [
+						"Weatherwise"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Stubborn",
+						"Compassionate"
+					],
+					"trust": 92.0
+				}
+			],
+			"initial_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Hot-tempered"
+					],
+					"id": 1,
+					"memories": [],
+					"relationship": "family",
+					"skill": "Hunting",
+					"specials": [
+						"Stoic",
+						"Cool-headed",
+						"Veteran"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Patient",
+						"Pragmatic"
+					],
+					"trust": 70
+				},
+				{
+					"boundaries": {
+						"approved": [
+							"robbery"
+						],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": true,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 2,
+					"memories": [],
+					"relationship": "fellow_traveler",
+					"skill": "Trading",
+					"specials": [
+						"Iron Stomach",
+						"Stoic"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Nervous",
+						"Opportunistic"
+					],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 3,
+					"memories": [],
+					"relationship": "acquaintance",
+					"skill": "Caregiving",
+					"specials": [
+						"Sure-footed"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Stubborn",
+						"Self-serving"
+					],
+					"trust": 45
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 4,
+					"memories": [],
+					"relationship": "sibling",
+					"skill": "Caregiving",
+					"specials": [
+						"Weatherwise"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Stubborn",
+						"Compassionate"
+					],
+					"trust": 70
+				}
+			],
+			"month": 5,
+			"outcome": "arrived",
+			"seed": 4,
+			"survivors": 5
+		},
+		{
+			"cash": 639.8,
+			"days": 221,
+			"departures": 0,
+			"final_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 1,
+					"memories": [],
+					"relationship": "family",
+					"skill": "Hunting",
+					"specials": [
+						"Stoic",
+						"Field Medic"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Patient",
+						"Self-serving"
+					],
+					"trust": 70
+				},
+				{
+					"boundaries": {
+						"approved": [
+							"robbery"
+						],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": true,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 2,
+					"memories": [
+						{
+							"day": 106,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 107,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 139,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 142,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 143,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 153,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 154,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 155,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 170,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 183,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 195,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 209,
+							"delta": 0.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "parent",
+					"skill": "Hunting",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Adaptable",
+						"Ruthless"
+					],
+					"trust": 100.0
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 3,
+					"memories": [],
+					"relationship": "acquaintance",
+					"skill": "Trading",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Reckless",
+						"Pragmatic"
+					],
+					"trust": 45
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Clumsy"
+					],
+					"id": 4,
+					"memories": [
+						{
+							"day": 106,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 107,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 139,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 142,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 143,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 153,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 154,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 155,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 170,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 183,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 195,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 209,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "friend",
+					"skill": "Carpentry",
+					"specials": [
+						"Veteran"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Steady",
+						"Pacifist"
+					],
+					"trust": 86.0
+				}
+			],
+			"initial_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 1,
+					"memories": [],
+					"relationship": "family",
+					"skill": "Hunting",
+					"specials": [
+						"Stoic",
+						"Field Medic"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Patient",
+						"Self-serving"
+					],
+					"trust": 70
+				},
+				{
+					"boundaries": {
+						"approved": [
+							"robbery"
+						],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": true,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 2,
+					"memories": [],
+					"relationship": "parent",
+					"skill": "Hunting",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Adaptable",
+						"Ruthless"
+					],
+					"trust": 75
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 3,
+					"memories": [],
+					"relationship": "acquaintance",
+					"skill": "Trading",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Reckless",
+						"Pragmatic"
+					],
+					"trust": 45
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Clumsy"
+					],
+					"id": 4,
+					"memories": [],
+					"relationship": "friend",
+					"skill": "Carpentry",
+					"specials": [
+						"Veteran"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Steady",
+						"Pacifist"
+					],
+					"trust": 60
+				}
+			],
+			"month": 8,
+			"outcome": "arrived",
+			"seed": 5,
+			"survivors": 5
+		},
+		{
+			"cash": 505.8,
+			"days": 178,
+			"departures": 0,
+			"final_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 1,
+					"memories": [
+						{
+							"day": 56,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 59,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 73,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 75,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 78,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 89,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 101,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 106,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 111,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 123,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 129,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 143,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "friend",
+					"skill": "Hunting",
+					"specials": [
+						"Veteran",
+						"Cool-headed"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Reckless",
+						"Pacifist"
+					],
+					"trust": 80.0
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+						"arrears_cents": 0,
+						"interval_days": 7,
+						"last_assessed_day": 175,
+						"last_due_day": 175,
+						"last_late_reward_day": -7,
+						"misses": 0,
+						"next_due_day": 182,
+						"oldest_due_day": -1,
+						"reward_days": 0,
+						"wage_cents": 420
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Delicate Stomach"
+					],
+					"id": 2,
+					"memories": [
+						{
+							"day": 119,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 123,
+							"delta": 0.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 126,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 129,
+							"delta": 0.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 133,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 140,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 143,
+							"delta": 0.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 147,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 154,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 161,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 168,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 175,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						}
+					],
+					"relationship": "family",
+					"skill": "Caregiving",
+					"specials": [
+						"Cannibal",
+						"Mercenary",
+						"Haggler"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Steady",
+						"Pacifist"
+					],
+					"trust": 100.0
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+						"arrears_cents": 0,
+						"interval_days": 7,
+						"last_assessed_day": 175,
+						"last_due_day": 175,
+						"last_late_reward_day": -7,
+						"misses": 0,
+						"next_due_day": 182,
+						"oldest_due_day": -1,
+						"reward_days": 0,
+						"wage_cents": 420
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Poor Endurance"
+					],
+					"id": 3,
+					"memories": [
+						{
+							"day": 119,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 123,
+							"delta": 0.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 126,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 129,
+							"delta": 0.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 133,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 140,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 143,
+							"delta": 0.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 147,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 154,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 161,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 168,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 175,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						}
+					],
+					"relationship": "mentor",
+					"skill": "Trading",
+					"specials": [
+						"Mercenary"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Stubborn",
+						"Pacifist"
+					],
+					"trust": 100.0
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Clumsy"
+					],
+					"id": 4,
+					"memories": [
+						{
+							"day": 56,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 59,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 73,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 75,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 78,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 89,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 101,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 106,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 111,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 123,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 129,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 143,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "sibling",
+					"skill": "Caregiving",
+					"specials": [
+						"Field Medic",
+						"Cannibal"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Adaptable",
+						"Pragmatic"
+					],
+					"trust": 88.0
+				}
+			],
+			"initial_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 1,
+					"memories": [],
+					"relationship": "friend",
+					"skill": "Hunting",
+					"specials": [
+						"Veteran",
+						"Cool-headed"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Reckless",
+						"Pacifist"
+					],
+					"trust": 60
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Delicate Stomach"
+					],
+					"id": 2,
+					"memories": [],
+					"relationship": "family",
+					"skill": "Caregiving",
+					"specials": [
+						"Cannibal",
+						"Mercenary",
+						"Haggler"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Steady",
+						"Pacifist"
+					],
+					"trust": 70
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Poor Endurance"
+					],
+					"id": 3,
+					"memories": [],
+					"relationship": "mentor",
+					"skill": "Trading",
+					"specials": [
+						"Mercenary"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Stubborn",
+						"Pacifist"
+					],
+					"trust": 60
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Clumsy"
+					],
+					"id": 4,
+					"memories": [],
+					"relationship": "sibling",
+					"skill": "Caregiving",
+					"specials": [
+						"Field Medic",
+						"Cannibal"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Adaptable",
+						"Pragmatic"
+					],
+					"trust": 70
+				}
+			],
+			"month": 3,
+			"outcome": "arrived",
+			"seed": 6,
+			"survivors": 5
+		},
+		{
+			"cash": 658.8,
+			"days": 214,
+			"departures": 0,
+			"final_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism",
+							"miss_wages"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 1,
+					"memories": [
+						{
+							"day": 46,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 47,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 53,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 94,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 102,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 111,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 117,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 144,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 163,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 170,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 172,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 202,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "fellow_traveler",
+					"skill": "Caregiving",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Cautious",
+						"Principled"
+					],
+					"trust": 71.0
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism",
+							"miss_wages"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 2,
+					"memories": [
+						{
+							"day": 46,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 47,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 53,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 94,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 102,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 111,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 117,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 144,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 163,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 170,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 172,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 202,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "former_employer",
+					"skill": "Hunting",
+					"specials": [
+						"Hardy",
+						"Sharpshooter"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Reckless",
+						"Principled"
+					],
+					"trust": 66.0
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Delicate Stomach"
+					],
+					"id": 3,
+					"memories": [
+						{
+							"day": 46,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 47,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 53,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 94,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 102,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 111,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 117,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 144,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 163,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 170,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 172,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 202,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "sibling",
+					"skill": "Carpentry",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Patient",
+						"Communal"
+					],
+					"trust": 92.0
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism",
+							"miss_wages"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Poor Endurance"
+					],
+					"id": 4,
+					"memories": [
+						{
+							"day": 46,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 47,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 53,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 94,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 102,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 111,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 117,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 144,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 163,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 170,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 172,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 202,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "fellow_traveler",
+					"skill": "Trading",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Steady",
+						"Principled"
+					],
+					"trust": 71.0
+				}
+			],
+			"initial_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism",
+							"miss_wages"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 1,
+					"memories": [],
+					"relationship": "fellow_traveler",
+					"skill": "Caregiving",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Cautious",
+						"Principled"
+					],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism",
+							"miss_wages"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 2,
+					"memories": [],
+					"relationship": "former_employer",
+					"skill": "Hunting",
+					"specials": [
+						"Hardy",
+						"Sharpshooter"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Reckless",
+						"Principled"
+					],
+					"trust": 45
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Delicate Stomach"
+					],
+					"id": 3,
+					"memories": [],
+					"relationship": "sibling",
+					"skill": "Carpentry",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Patient",
+						"Communal"
+					],
+					"trust": 70
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism",
+							"miss_wages"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Poor Endurance"
+					],
+					"id": 4,
+					"memories": [],
+					"relationship": "fellow_traveler",
+					"skill": "Trading",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Steady",
+						"Principled"
+					],
+					"trust": 50
+				}
+			],
+			"month": 5,
+			"outcome": "arrived",
+			"seed": 7,
+			"survivors": 5
+		},
+		{
+			"cash": 637.8,
+			"days": 205,
+			"departures": 0,
+			"final_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [
+							"robbery"
+						],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": true,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Distrustful"
+					],
+					"id": 1,
+					"memories": [],
+					"relationship": "former_employer",
+					"skill": "Caregiving",
+					"specials": [
+						"Tireless"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Cautious",
+						"Opportunistic"
+					],
+					"trust": 45
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 2,
+					"memories": [
+						{
+							"day": 91,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 104,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 126,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 132,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 133,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 141,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 158,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 161,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 182,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 183,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 192,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 203,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "partner",
+					"skill": "Trading",
+					"specials": [
+						"Cool-headed"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Patient",
+						"Pacifist"
+					],
+					"trust": 96.0
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 3,
+					"memories": [
+						{
+							"day": 91,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 104,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 126,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 132,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 133,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 141,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 158,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 161,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 182,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 183,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 192,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 203,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "cousin",
+					"skill": "Trading",
+					"specials": [
+						"Loyal"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Bold",
+						"Pacifist"
+					],
+					"trust": 81.0
+				},
+				{
+					"boundaries": {
+						"approved": [
+							"robbery"
+						],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": true,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Slow Healer"
+					],
+					"id": 4,
+					"memories": [],
+					"relationship": "parent",
+					"skill": "Hunting",
+					"specials": [
+						"Hardy",
+						"Cool-headed",
+						"Loyal"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Bold",
+						"Ruthless"
+					],
+					"trust": 75
+				}
+			],
+			"initial_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [
+							"robbery"
+						],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": true,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Distrustful"
+					],
+					"id": 1,
+					"memories": [],
+					"relationship": "former_employer",
+					"skill": "Caregiving",
+					"specials": [
+						"Tireless"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Cautious",
+						"Opportunistic"
+					],
+					"trust": 45
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 2,
+					"memories": [],
+					"relationship": "partner",
+					"skill": "Trading",
+					"specials": [
+						"Cool-headed"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Patient",
+						"Pacifist"
+					],
+					"trust": 75
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 3,
+					"memories": [],
+					"relationship": "cousin",
+					"skill": "Trading",
+					"specials": [
+						"Loyal"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Bold",
+						"Pacifist"
+					],
+					"trust": 60
+				},
+				{
+					"boundaries": {
+						"approved": [
+							"robbery"
+						],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": true,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Slow Healer"
+					],
+					"id": 4,
+					"memories": [],
+					"relationship": "parent",
+					"skill": "Hunting",
+					"specials": [
+						"Hardy",
+						"Cool-headed",
+						"Loyal"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Bold",
+						"Ruthless"
+					],
+					"trust": 75
+				}
+			],
+			"month": 8,
+			"outcome": "arrived",
+			"seed": 8,
+			"survivors": 4
+		},
+		{
+			"cash": 602.8,
+			"days": 199,
+			"departures": 0,
+			"final_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 1,
+					"memories": [],
+					"relationship": "acquaintance",
+					"skill": "Hunting",
+					"specials": [
+						"Hardy",
+						"Stoic"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Nervous",
+						"Self-serving"
+					],
+					"trust": 45
+				},
+				{
+					"boundaries": {
+						"approved": [
+							"robbery"
+						],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": true,
+					"contract": {
+						"arrears_cents": 0,
+						"interval_days": 7,
+						"last_assessed_day": 196,
+						"last_due_day": 196,
+						"last_late_reward_day": 190,
+						"misses": 1,
+						"next_due_day": 203,
+						"oldest_due_day": -1,
+						"reward_days": 0,
+						"wage_cents": 350
+					},
+					"exit_warning": {
+
+					},
+					"id": 2,
+					"memories": [
+						{
+							"day": 126,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 133,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 140,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 147,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 154,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 161,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 168,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 175,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 182,
+							"delta": 0.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						},
+						{
+							"day": 190,
+							"delta": -2.0,
+							"kind": "wage_missed",
+							"text": "You missed an agreed wage payment; the debt remains."
+						},
+						{
+							"day": 190,
+							"delta": 1.0,
+							"kind": "wage_paid",
+							"text": "You cleared the overdue wages."
+						},
+						{
+							"day": 196,
+							"delta": 1.0,
+							"kind": "wage_paid",
+							"text": "You honored a week of agreed wages."
+						}
+					],
+					"relationship": "partner",
+					"skill": "Caregiving",
+					"specials": [
+						"Mercenary"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Cautious",
+						"Ruthless"
+					],
+					"trust": 100.0
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Clumsy"
+					],
+					"id": 3,
+					"memories": [
+						{
+							"day": 134,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 136,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 137,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 138,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 139,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 140,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 141,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 162,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 166,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 167,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 195,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 197,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "fellow_traveler",
+					"skill": "Carpentry",
+					"specials": [
+						"Weatherwise",
+						"Quick Healer",
+						"Cool-headed"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Nervous",
+						"Pacifist"
+					],
+					"trust": 71.0
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism",
+							"miss_wages"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 4,
+					"memories": [
+						{
+							"day": 134,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 136,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 137,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 138,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 139,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 140,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 141,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 162,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 166,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 167,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 195,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 197,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "family",
+					"skill": "Caregiving",
+					"specials": [
+						"Weatherwise"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Bold",
+						"Principled"
+					],
+					"trust": 91.0
+				}
+			],
+			"initial_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 1,
+					"memories": [],
+					"relationship": "acquaintance",
+					"skill": "Hunting",
+					"specials": [
+						"Hardy",
+						"Stoic"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Nervous",
+						"Self-serving"
+					],
+					"trust": 45
+				},
+				{
+					"boundaries": {
+						"approved": [
+							"robbery"
+						],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": true,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 2,
+					"memories": [],
+					"relationship": "partner",
+					"skill": "Caregiving",
+					"specials": [
+						"Mercenary"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Cautious",
+						"Ruthless"
+					],
+					"trust": 75
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Clumsy"
+					],
+					"id": 3,
+					"memories": [],
+					"relationship": "fellow_traveler",
+					"skill": "Carpentry",
+					"specials": [
+						"Weatherwise",
+						"Quick Healer",
+						"Cool-headed"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Nervous",
+						"Pacifist"
+					],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism",
+							"miss_wages"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 4,
+					"memories": [],
+					"relationship": "family",
+					"skill": "Caregiving",
+					"specials": [
+						"Weatherwise"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Bold",
+						"Principled"
+					],
+					"trust": 70
+				}
+			],
+			"month": 3,
+			"outcome": "arrived",
+			"seed": 9,
+			"survivors": 5
+		},
+		{
+			"cash": 734.8,
+			"days": 201,
+			"departures": 0,
+			"final_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Cold-sensitive"
+					],
+					"id": 1,
+					"memories": [
+						{
+							"day": 101,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 114,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 118,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 119,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 135,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 158,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 161,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 170,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 171,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 191,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 192,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 199,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "adult_child",
+					"skill": "Caregiving",
+					"specials": [
+						"Stoic",
+						"Loyal",
+						"Wagonwright"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Adaptable",
+						"Pacifist"
+					],
+					"trust": 96.0
+				},
+				{
+					"boundaries": {
+						"approved": [
+							"robbery"
+						],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": true,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 2,
+					"memories": [],
+					"relationship": "family",
+					"skill": "Carpentry",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Cautious",
+						"Ruthless"
+					],
+					"trust": 70
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Cold-sensitive"
+					],
+					"id": 3,
+					"memories": [],
+					"relationship": "cousin",
+					"skill": "Carpentry",
+					"specials": [
+						"Wagonwright",
+						"Hardy"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Reckless",
+						"Pragmatic"
+					],
+					"trust": 60
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 4,
+					"memories": [
+						{
+							"day": 101,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 114,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 118,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 119,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 135,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 158,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 161,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 170,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 171,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 191,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 192,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 199,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "mentor",
+					"skill": "Trading",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Bold",
+						"Pacifist"
+					],
+					"trust": 81.0
+				}
+			],
+			"initial_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Cold-sensitive"
+					],
+					"id": 1,
+					"memories": [],
+					"relationship": "adult_child",
+					"skill": "Caregiving",
+					"specials": [
+						"Stoic",
+						"Loyal",
+						"Wagonwright"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Adaptable",
+						"Pacifist"
+					],
+					"trust": 75
+				},
+				{
+					"boundaries": {
+						"approved": [
+							"robbery"
+						],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": true,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 2,
+					"memories": [],
+					"relationship": "family",
+					"skill": "Carpentry",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Cautious",
+						"Ruthless"
+					],
+					"trust": 70
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Cold-sensitive"
+					],
+					"id": 3,
+					"memories": [],
+					"relationship": "cousin",
+					"skill": "Carpentry",
+					"specials": [
+						"Wagonwright",
+						"Hardy"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Reckless",
+						"Pragmatic"
+					],
+					"trust": 60
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 4,
+					"memories": [],
+					"relationship": "mentor",
+					"skill": "Trading",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Bold",
+						"Pacifist"
+					],
+					"trust": 60
+				}
+			],
+			"month": 5,
+			"outcome": "arrived",
+			"seed": 10,
+			"survivors": 5
+		},
+		{
+			"cash": 580.8,
+			"days": 207,
+			"departures": 0,
+			"final_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism",
+							"miss_wages"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 1,
+					"memories": [
+						{
+							"day": 77,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 84,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 86,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 87,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 89,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 102,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 103,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 112,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 115,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 168,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 187,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 194,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "family",
+					"skill": "Carpentry",
+					"specials": [
+						"Hardy",
+						"Wagonwright"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Reckless",
+						"Principled"
+					],
+					"trust": 87.0
+				},
+				{
+					"boundaries": {
+						"approved": [
+							"robbery"
+						],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": true,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Hot-tempered"
+					],
+					"id": 2,
+					"memories": [],
+					"relationship": "cousin",
+					"skill": "Caregiving",
+					"specials": [
+						"Field Medic"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Reckless",
+						"Opportunistic"
+					],
+					"trust": 60
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 3,
+					"memories": [
+						{
+							"day": 77,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 84,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 86,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 87,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 89,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 102,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 103,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 112,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 115,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 168,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 187,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 194,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "friend",
+					"skill": "Trading",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Nervous",
+						"Compassionate"
+					],
+					"trust": 77.0
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Cold-sensitive"
+					],
+					"id": 4,
+					"memories": [
+						{
+							"day": 77,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 84,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 86,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 87,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 89,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 102,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 103,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 112,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 115,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 168,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 187,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						},
+						{
+							"day": 194,
+							"delta": 1.0,
+							"kind": "rest_sick",
+							"text": "You stopped to rest while someone was ill or injured."
+						}
+					],
+					"relationship": "sibling",
+					"skill": "Trading",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Stubborn",
+						"Pacifist"
+					],
+					"trust": 87.0
+				}
+			],
+			"initial_profiles": [
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": []
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 0,
+					"memories": [],
+					"relationship": "self",
+					"skill": "Leadership",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [],
+					"trust": 50
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism",
+							"miss_wages"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 1,
+					"memories": [],
+					"relationship": "family",
+					"skill": "Carpentry",
+					"specials": [
+						"Hardy",
+						"Wagonwright"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Reckless",
+						"Principled"
+					],
+					"trust": 70
+				},
+				{
+					"boundaries": {
+						"approved": [
+							"robbery"
+						],
+						"disapproved": [],
+						"forbidden": [
+							"murder"
+						]
+					},
+					"can_betray": true,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Hot-tempered"
+					],
+					"id": 2,
+					"memories": [],
+					"relationship": "cousin",
+					"skill": "Caregiving",
+					"specials": [
+						"Field Medic"
+					],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Reckless",
+						"Opportunistic"
+					],
+					"trust": 60
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"cannibalism"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"id": 3,
+					"memories": [],
+					"relationship": "friend",
+					"skill": "Trading",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Nervous",
+						"Compassionate"
+					],
+					"trust": 60
+				},
+				{
+					"boundaries": {
+						"approved": [],
+						"disapproved": [],
+						"forbidden": [
+							"robbery",
+							"murder",
+							"defend"
+						]
+					},
+					"can_betray": false,
+					"contract": {
+
+					},
+					"exit_warning": {
+
+					},
+					"flaws": [
+						"Cold-sensitive"
+					],
+					"id": 4,
+					"memories": [],
+					"relationship": "sibling",
+					"skill": "Trading",
+					"specials": [],
+					"thresholds": {
+						"betrayal": 10,
+						"breaking": 20,
+						"loyalty": 80
+					},
+					"traits": [
+						"Stubborn",
+						"Pacifist"
+					],
+					"trust": 70
+				}
+			],
+			"month": 8,
+			"outcome": "arrived",
+			"seed": 11,
+			"survivors": 5
+		}
+	]
+}

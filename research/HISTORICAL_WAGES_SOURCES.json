@@ -1,0 +1,27 @@
+{
+  "reviewed": "2026-10-22",
+  "setting": 1848,
+  "sources": [
+    {
+      "id": "census-compendium-1850",
+      "url": "https://www2.census.gov/prod2/decennial/documents/1850c-05.pdf",
+      "local": "local/census-1850-statistics.pdf",
+      "sha256": "7d899e62c2fec8dc9121970295ae54aead2f11380a5fd0fe9708c2c77e92a6a9",
+      "pages": "Printed 164–165; PDF 32–33. Table CLXXV and paragraph below it, visually checked from local rendered scan.",
+      "supports": "1848 Patent inquiry summary: free white field labor $10–15/month with board; mechanics 75 cents–$1.50/day. Separate 1850 Missouri table: farm monthly boarded $11.81; daily boarded labor $0.55; daily unboarded $0.75; carpenter daily unboarded $1.48; weekly board $1.31.",
+      "limits": "1850 state averages differ from the 1848 inquiry. Not emigrant contracts; occupation/board/time basis matter. Source's discriminatory categories are not in-game pricing rules. Western boom rates not applied to departure wages."
+    },
+    {
+      "id": "oregon-city-outfit-compilation",
+      "url": "https://historicoregoncity.org/2019/04/03/outfitting-for-the-journey/",
+      "supports": "Broad 1840s/early-1850s compilation lists oxen $30–35/head and salt $0.06/lb.",
+      "limits": "Secondary compilation, explicitly not one date/place. Provisional price anchors, not an 1848 Independence receipt. Its 1857 wage complaint is excluded from the baseline."
+    },
+    {
+      "id": "prior-outfit-evidence",
+      "local": "ECONOMY_PRESERVATION_SOURCES.json",
+      "supports": "Palmer 1847 emergency flour, BLM departure flour, NPS 1850 outfit context and classic-game budget distinctions remain documented in the prior ledger."
+    }
+  ],
+  "interpretation": "Daily cash plus party food; all precise background bases, personality premiums, 30-day scaling, scarcity margins and initial discretionary budgets are authored tuning within historical scale. Owned wagon/household equipment is outside store cash."
+}

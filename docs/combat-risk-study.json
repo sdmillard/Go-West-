@@ -1,0 +1,74 @@
+{
+	"combat_rules": {
+		"circle_floor": 0.08,
+		"defense_floor": 0.15,
+		"experience_cap": 3.0,
+		"experience_reduction": 0.02,
+		"fair_health": 70.0,
+		"fair_multiplier": 1.25,
+		"minimum_defenders": 3.0,
+		"poor_health": 40.0,
+		"poor_multiplier": 1.6,
+		"risk_cap": 0.75,
+		"small_party_penalty": 0.1
+	},
+	"errors": [],
+	"rows": [
+		{
+			"attempts": 400,
+			"fatal": 0,
+			"health": 85,
+			"injured": 102,
+			"previous_wins": 0,
+			"quoted_risk": 0.25,
+			"won": 298
+		},
+		{
+			"attempts": 400,
+			"fatal": 0,
+			"health": 85,
+			"injured": 79,
+			"previous_wins": 3,
+			"quoted_risk": 0.19,
+			"won": 321
+		},
+		{
+			"attempts": 400,
+			"fatal": 0,
+			"health": 30,
+			"injured": 210,
+			"previous_wins": 0,
+			"quoted_risk": 0.5,
+			"won": 190
+		},
+		{
+			"attempts": 400,
+			"fatal": 0,
+			"health": 30,
+			"injured": 184,
+			"previous_wins": 3,
+			"quoted_risk": 0.44,
+			"won": 216
+		},
+		{
+			"attempts": 400,
+			"fatal": 210,
+			"health": 15,
+			"injured": 0,
+			"previous_wins": 0,
+			"quoted_risk": 0.5,
+			"won": 190
+		},
+		{
+			"attempts": 400,
+			"fatal": 184,
+			"health": 15,
+			"injured": 0,
+			"previous_wins": 3,
+			"quoted_risk": 0.44,
+			"won": 216
+		}
+	],
+	"rules_signature": "81c6617985a64eb1c89fa68b85f1a82e5d81c9997722783bcec7e688c8824476",
+	"scenario": "400 matched seeds per cohort; same fully fed five-person outfit, forced hostile bandit encounter and ordinary Defend choice. Only starting health and recorded prior victories differ. Immediate outcomes, not long-term wound mortality; separate regression verifies later untreated death."
+}

@@ -1,0 +1,854 @@
+[
+  {
+    "row": 1,
+    "cells": [
+      "",
+      "",
+      "MILES"
+    ]
+  },
+  {
+    "row": 2,
+    "cells": [
+      "From",
+      "Independence to Rendezvous",
+      "20"
+    ]
+  },
+  {
+    "row": 3,
+    "cells": [
+      "\"",
+      "Rendezvous to Elm Grove",
+      "13"
+    ]
+  },
+  {
+    "row": 4,
+    "cells": [
+      "\"",
+      "Elm Grove to Walkarusha",
+      "20"
+    ]
+  },
+  {
+    "row": 5,
+    "cells": [
+      "\"",
+      "Walkarusha to crossing of Kansas river",
+      "28"
+    ]
+  },
+  {
+    "row": 6,
+    "cells": [
+      "\"",
+      "Kansas to crossing of Turkey creek",
+      "14"
+    ]
+  },
+  {
+    "row": 7,
+    "cells": [
+      "\"",
+      "Turkey creek to Little Vermilion",
+      "24"
+    ]
+  },
+  {
+    "row": 8,
+    "cells": [
+      "\"",
+      "Little Vermilion to branch of same",
+      "12"
+    ]
+  },
+  {
+    "row": 9,
+    "cells": [
+      "\"",
+      "To Big Vermilion, with intermediate camps",
+      "29"
+    ]
+  },
+  {
+    "row": 10,
+    "cells": [
+      "\"",
+      "Vermilion to Lee's branch",
+      "8"
+    ]
+  },
+  {
+    "row": 11,
+    "cells": [
+      "\"",
+      "Lee's branch to Big Blue",
+      "6"
+    ]
+  },
+  {
+    "row": 12,
+    "cells": [
+      "\"",
+      "Big Blue to the junction with St. Joseph's trail",
+      "10"
+    ]
+  },
+  {
+    "row": 13,
+    "cells": [
+      "The distance from St. Joseph, Missouri, to the Independence trail, striking it ten miles west of Blue river, is about one hundred miles. Good camps can be had from eight to fifteen miles apart.",
+      ""
+    ]
+  },
+  {
+    "row": 14,
+    "cells": [
+      "From",
+      "forks of road as above, to Big Sandy, striking it near its junction with the Republican Fork of Blue river, with intermediate camps",
+      "42"
+    ]
+  },
+  {
+    "row": 15,
+    "cells": [
+      "\"",
+      "Sandy to Republican fork of Blue river",
+      "18"
+    ]
+  },
+  {
+    "row": 16,
+    "cells": [
+      "\"",
+      "up Republican fork, with good camps",
+      "53"
+    ]
+  },
+  {
+    "row": 17,
+    "cells": [
+      "\"",
+      "Republican fork to Big Platte",
+      "20"
+    ]
+  },
+  {
+    "row": 18,
+    "cells": [
+      "\"",
+      "up Big Platte to the crossing of South fork",
+      "120"
+    ]
+  },
+  {
+    "row": 19,
+    "cells": [
+      "[pg. 278] Camps can be had at suitable distances, with wood for fuel upon the islands.",
+      ""
+    ]
+  },
+  {
+    "row": 20,
+    "cells": [
+      "From",
+      "lower to upper crossings of South fork",
+      "45"
+    ]
+  },
+  {
+    "row": 21,
+    "cells": [
+      "There is a road on each side of the river, and but little choice in them.",
+      ""
+    ]
+  },
+  {
+    "row": 22,
+    "cells": [
+      "From",
+      "South to North fork, at Ash Hollow",
+      "20"
+    ]
+  },
+  {
+    "row": 23,
+    "cells": [
+      "\"",
+      "Ash Hollow to opposite Solitary Tower, on Little creek",
+      "42"
+    ]
+  },
+  {
+    "row": 24,
+    "cells": [
+      "\"",
+      "Little creek to opposite Chimney rock",
+      "16"
+    ]
+  },
+  {
+    "row": 25,
+    "cells": [
+      "\"",
+      "Chimney Rock to where the road leaves the River",
+      "15"
+    ]
+  },
+  {
+    "row": 26,
+    "cells": [
+      "\"",
+      "thence to Scott's Bluffs (Good Spring)",
+      "10"
+    ]
+  },
+  {
+    "row": 27,
+    "cells": [
+      "\"",
+      "Scott's Bluffs to Horse creek",
+      "12"
+    ]
+  },
+  {
+    "row": 28,
+    "cells": [
+      "\"",
+      "Horse creek to Fort Laramie",
+      "24"
+    ]
+  },
+  {
+    "row": 29,
+    "cells": [
+      "\"",
+      "Laramie to Dry Branch and Big Spring",
+      "12"
+    ]
+  },
+  {
+    "row": 30,
+    "cells": [
+      "\"",
+      "to Bitter Cottonwood",
+      "10"
+    ]
+  },
+  {
+    "row": 31,
+    "cells": [
+      "To",
+      "Willow Branch",
+      "7"
+    ]
+  },
+  {
+    "row": 32,
+    "cells": [
+      "\"",
+      "Horse Shoe Creek",
+      "7"
+    ]
+  },
+  {
+    "row": 33,
+    "cells": [
+      "\"",
+      "River",
+      "8"
+    ]
+  },
+  {
+    "row": 34,
+    "cells": [
+      "Thence",
+      "to where the Road leaves the River",
+      "8"
+    ]
+  },
+  {
+    "row": 35,
+    "cells": [
+      "To",
+      "Big Timber creek",
+      "16"
+    ]
+  },
+  {
+    "row": 36,
+    "cells": [
+      "\"",
+      "Marble creek",
+      "5"
+    ]
+  },
+  {
+    "row": 37,
+    "cells": [
+      "\"",
+      "Mike's-head creek",
+      "12"
+    ]
+  },
+  {
+    "row": 38,
+    "cells": [
+      "\"",
+      "the River, crossing several streams",
+      "10"
+    ]
+  },
+  {
+    "row": 39,
+    "cells": [
+      "\"",
+      "Deer creek",
+      "6"
+    ]
+  },
+  {
+    "row": 40,
+    "cells": [
+      "Thence",
+      "to crossing of North fork of Platte",
+      "25"
+    ]
+  },
+  {
+    "row": 41,
+    "cells": [
+      "From",
+      "crossing of Platte to Spring",
+      "10"
+    ]
+  },
+  {
+    "row": 42,
+    "cells": [
+      "Thence",
+      "to Mineral Springs (bad camp)",
+      "8"
+    ]
+  },
+  {
+    "row": 43,
+    "cells": [
+      "\"",
+      "Willow Spring (good camp)",
+      "5"
+    ]
+  },
+  {
+    "row": 44,
+    "cells": [
+      "\"",
+      "Independence Rock on Sweet Water",
+      "22"
+    ]
+  },
+  {
+    "row": 45,
+    "cells": [
+      "\"",
+      "Devil's Gate",
+      "5"
+    ]
+  },
+  {
+    "row": 46,
+    "cells": [
+      "[pg. 279] Up",
+      "Sweet Water to South Pass (good camps)",
+      "104"
+    ]
+  },
+  {
+    "row": 47,
+    "cells": [
+      "Over the dividing ridge to Pacific Spring, the waters of which run into Green river",
+      "5"
+    ]
+  },
+  {
+    "row": 48,
+    "cells": [
+      "Here, Hail Oregon!"
+    ]
+  },
+  {
+    "row": 49,
+    "cells": [
+      "From",
+      "Spring to Little Sandy",
+      "20"
+    ]
+  },
+  {
+    "row": 50,
+    "cells": [
+      "Here the road forks, the southern trail going by way of Bridger's Old Fort, and thence to Bear river. The northern (which is two and a half days less driving) strikes Green river about forty miles above the southern trail; I will give the distance on both routes.",
+      ""
+    ]
+  },
+  {
+    "row": 51,
+    "cells": [
+      "The",
+      "northern route, from Little Sandy to Big Sandy",
+      "6"
+    ]
+  },
+  {
+    "row": 52,
+    "cells": [
+      "From",
+      "Big Sandy to Green river (No water and but little grass between.)",
+      "40"
+    ]
+  },
+  {
+    "row": 53,
+    "cells": [
+      "\"",
+      "thence to Bear river, (with good camps,)",
+      "64"
+    ]
+  },
+  {
+    "row": 54,
+    "cells": [
+      "On the southern route:\u2014",
+      ""
+    ]
+  },
+  {
+    "row": 55,
+    "cells": [
+      "From",
+      "Little Sandy to Big Sandy",
+      "12"
+    ]
+  },
+  {
+    "row": 56,
+    "cells": [
+      "Down",
+      "Big Sandy to Green river",
+      "24"
+    ]
+  },
+  {
+    "row": 57,
+    "cells": [
+      "Cross",
+      "Green river and down",
+      "8"
+    ]
+  },
+  {
+    "row": 58,
+    "cells": [
+      "From",
+      "Green river to Black's fork",
+      "15"
+    ]
+  },
+  {
+    "row": 59,
+    "cells": [
+      "Up",
+      "Black's fork to Bridger's Old Fort",
+      "30"
+    ]
+  },
+  {
+    "row": 60,
+    "cells": [
+      "From",
+      "Old Fort to Little Muddy (poor camp)",
+      "8"
+    ]
+  },
+  {
+    "row": 61,
+    "cells": [
+      "\"",
+      "thence to Big Muddy (poor camp)",
+      "10"
+    ]
+  },
+  {
+    "row": 62,
+    "cells": [
+      "Up",
+      "Big Muddy to the dividing ridge (good camp near head of creek)",
+      "32"
+    ]
+  },
+  {
+    "row": 63,
+    "cells": [
+      "Over",
+      "dividing ridge to spring",
+      "10"
+    ]
+  },
+  {
+    "row": 64,
+    "cells": [
+      "From",
+      "spring to camp on Bear river",
+      "6"
+    ]
+  },
+  {
+    "row": 65,
+    "cells": [
+      "\"",
+      "thence to where the northern trail comes in",
+      "10"
+    ]
+  },
+  {
+    "row": 66,
+    "cells": [
+      "To",
+      "Smith's fork three miles, to Narrows four miles, and thence to crossing of Bear river three miles",
+      "10"
+    ]
+  },
+  {
+    "row": 67,
+    "cells": [
+      "[pg. 280] Here the road forks; the nearest is to follow up the creek two miles, cross and then go over the ridge five miles to foot of Big Hill, where the roads again unite",
+      "7"
+    ]
+  },
+  {
+    "row": 68,
+    "cells": [
+      "The other road crosses the river, follows up the bottom about ten miles, re-crosses and is then about seven miles to junction.",
+      ""
+    ]
+  },
+  {
+    "row": 69,
+    "cells": [
+      "From",
+      "foot of Big Hill, to top of ridge is about",
+      "3"
+    ]
+  },
+  {
+    "row": 70,
+    "cells": [
+      "\"",
+      "thence to Big Timber on Bear river",
+      "4"
+    ]
+  },
+  {
+    "row": 71,
+    "cells": [
+      "Here is a company of American traders and trappers",
+      ""
+    ]
+  },
+  {
+    "row": 72,
+    "cells": [
+      "From",
+      "Big Timber to Soda Springs",
+      "36"
+    ]
+  },
+  {
+    "row": 73,
+    "cells": [
+      "\"",
+      "Spring to Soda Pool seven miles, to Spring Branch three",
+      "10"
+    ]
+  },
+  {
+    "row": 74,
+    "cells": [
+      "\"",
+      "Spring to Running Branch",
+      "9"
+    ]
+  },
+  {
+    "row": 75,
+    "cells": [
+      "\"",
+      "thence to foot of hill",
+      "8"
+    ]
+  },
+  {
+    "row": 76,
+    "cells": [
+      "\"",
+      "foot of hill over dividing ridge and down to camp",
+      "12"
+    ]
+  },
+  {
+    "row": 77,
+    "cells": [
+      "\"",
+      "thence to Lewis's river bottom at Springs",
+      "18"
+    ]
+  },
+  {
+    "row": 78,
+    "cells": [
+      "",
+      "and to Fort Hall",
+      "5"
+    ]
+  },
+  {
+    "row": 79,
+    "cells": [
+      "\"",
+      "Fort Hall to the crossing of Portneth",
+      "6"
+    ]
+  },
+  {
+    "row": 80,
+    "cells": [
+      "\"",
+      "Portneth to American falls",
+      "12"
+    ]
+  },
+  {
+    "row": 81,
+    "cells": [
+      "\"",
+      "American falls to Levey Creek",
+      "15"
+    ]
+  },
+  {
+    "row": 82,
+    "cells": [
+      "\"",
+      "thence to Cassia creek, (here the California trail turns off)",
+      "8"
+    ]
+  },
+  {
+    "row": 83,
+    "cells": [
+      "\"",
+      "Cassia to Big Marsh",
+      "15"
+    ]
+  },
+  {
+    "row": 84,
+    "cells": [
+      "\"",
+      "Marsh to River",
+      "11"
+    ]
+  },
+  {
+    "row": 85,
+    "cells": [
+      "\"",
+      "River to Goose creek four miles, seven miles to river, and twelve miles to Dry Branch, (water in pools)",
+      "23"
+    ]
+  },
+  {
+    "row": 86,
+    "cells": [
+      "To",
+      "Rocky Creek",
+      "8"
+    ]
+  },
+  {
+    "row": 87,
+    "cells": [
+      "[pg. 281] To",
+      "crossing of Rocky creek, eight miles, down to where the road leaves the bluff of creek, seven",
+      "15"
+    ]
+  },
+  {
+    "row": 88,
+    "cells": [
+      "\"",
+      "Salmon Falls creek",
+      "20"
+    ]
+  },
+  {
+    "row": 89,
+    "cells": [
+      "From",
+      "thence to Salmon falls",
+      "6"
+    ]
+  },
+  {
+    "row": 90,
+    "cells": [
+      "\"",
+      "Falls to first crossing of Lewis river",
+      "23"
+    ]
+  },
+  {
+    "row": 91,
+    "cells": [
+      "\"",
+      "crossing to Bois river is about",
+      "70"
+    ]
+  },
+  {
+    "row": 92,
+    "cells": [
+      "Camps can be had from six to fifteen miles",
+      ""
+    ]
+  },
+  {
+    "row": 93,
+    "cells": [
+      "Down Bois river to Fort Bois (good camps)",
+      "46"
+    ]
+  },
+  {
+    "row": 94,
+    "cells": [
+      "Cross",
+      "Lewis river and thence to Malheur",
+      "15"
+    ]
+  },
+  {
+    "row": 95,
+    "cells": [
+      "\"",
+      "Malheur to Birch creek, about",
+      "20"
+    ]
+  },
+  {
+    "row": 96,
+    "cells": [
+      "\"",
+      "Birch creek to river three miles, and thence five miles to Burnt river",
+      "8"
+    ]
+  },
+  {
+    "row": 97,
+    "cells": [
+      "Up",
+      "Burnt river about (good camps)",
+      "26"
+    ]
+  },
+  {
+    "row": 98,
+    "cells": [
+      "From",
+      "where the road leaves Burnt river, to the lone pine stump in the bottom of Powder river, (the last thirteen miles no water)",
+      "28"
+    ]
+  },
+  {
+    "row": 99,
+    "cells": [
+      "To the crossing of Powder river",
+      "10"
+    ]
+  },
+  {
+    "row": 100,
+    "cells": [
+      "To Grand Round",
+      "15"
+    ]
+  },
+  {
+    "row": 101,
+    "cells": [
+      "Across the southern end of Grand Round",
+      "7"
+    ]
+  },
+  {
+    "row": 102,
+    "cells": [
+      "Up Big Hill and on to Grand Round river",
+      "8"
+    ]
+  },
+  {
+    "row": 103,
+    "cells": [
+      "Over the Blue Mountains to Lee's encampment",
+      "19"
+    ]
+  },
+  {
+    "row": 104,
+    "cells": [
+      "To Umatillo river",
+      "16"
+    ]
+  },
+  {
+    "row": 105,
+    "cells": [
+      "Down",
+      "Umatillo river",
+      "44"
+    ]
+  },
+  {
+    "row": 106,
+    "cells": [
+      "\"",
+      "Columbia river to John Day's river",
+      "33"
+    ]
+  },
+  {
+    "row": 107,
+    "cells": [
+      "From",
+      "thence to Falls river",
+      "22"
+    ]
+  },
+  {
+    "row": 108,
+    "cells": [
+      "And thence to the Dalles of the Columbia",
+      "16"
+    ]
+  },
+  {
+    "row": 109,
+    "cells": [
+      "From",
+      "the Dalles to Oregon city, by way of wagon road south of Mount Hood about",
+      "160"
+    ]
+  }
+]

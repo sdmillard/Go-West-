@@ -1,0 +1,19 @@
+{
+  "opening_route_v1": [
+    "e10d6d15557240c4c3065ec6acc5a922c4130b268f44e3bc08f25faab6cdc8b5"
+  ],
+  "note": "Verified previous opening and full-route economy fingerprints only. Economy updates retain existing cash, inventory, party, time and pending transaction quotes; future offers use current prices.",
+  "economy_v1": [
+    "f6e5acff6247c2a38a8b571042ab6a8259735c06f88b45301d6733012c57e264",
+    "cbceaf523eb55ce31ca786db0e9bbcd147fb3422010753e94214049f77c9292e",
+    "7abec6fa0b31ecddfacc9b2f03798b23fc8af7de885a3d1a7a2bca82169141c6",
+	"4f7b463fe90ea2a4cc4917d2dcaaa3cf699371b5df187efbc95050fd411703ed",
+	"81c6617985a64eb1c89fa68b85f1a82e5d81c9997722783bcec7e688c8824476",
+    "fd4b3848a2a4dbc0d6b8a7508906af063ff99f576c85706bdef9fe2791d98fb2",
+    "6e3e04b9265401db7c6e90ce797b1bf07a3ecba15967cbdffba9dcd895c687f8",
+    "ce11461cf338ec8e18a8e6287cf2c36dcaa6b40154785f55b1d8d6e637eacede",
+    "a4122a3468a54b2ea6e40b17f85bd16591642f330be7c663047c25edec51fe15",
+    "2152920fe3d07c2516c8448c95341a4689802bffbdae9cab742425aac7cb7a5a",
+    "7ccfe5e3de364fc9f39c55f6cb96c0822d62e43e9fbc5e3706b49ba9233ca6d4"
+  ]
+}

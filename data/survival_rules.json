@@ -1,0 +1,152 @@
+{
+  "team_speed_factors": [0, 0.25, 0.5, 0.75, 1.0, 1.05, 1.1],
+  "pace_miles": [
+    22,
+    26,
+    30
+  ],
+  "rest_recovery": [
+    3,
+    5,
+    7
+  ],
+  "event_chance": 0.18,
+  "event_cooldown_days": 5,
+  "monthly_cold_chance": [
+    0.75,
+    0.65,
+    0.3,
+    0.12,
+    0.03,
+    0.0,
+    0.0,
+    0.0,
+    0.06,
+    0.25,
+    0.55,
+    0.8
+  ],
+  "weather": [
+    {
+      "id": "clear",
+      "label": "Clear",
+      "weight": 50,
+      "speed": 1.0,
+      "exposure": 0,
+      "wet": 0
+    },
+    {
+      "id": "rain",
+      "label": "Rain",
+      "weight": 20,
+      "speed": 0.85,
+      "exposure": 1,
+      "wet": 1
+    },
+    {
+      "id": "heavy_rain",
+      "label": "Heavy rain",
+      "weight": 10,
+      "speed": 0.65,
+      "exposure": 2,
+      "wet": 3
+    },
+    {
+      "id": "fog",
+      "label": "Thick fog",
+      "weight": 10,
+      "speed": 0.55,
+      "exposure": 0,
+      "wet": 0
+    },
+    {
+      "id": "hail",
+      "label": "Hail",
+      "weight": 5,
+      "speed": 0.7,
+      "exposure": 2,
+      "wet": 1
+    },
+    {
+      "id": "cold",
+      "label": "Cold wind",
+      "weight": 4,
+      "speed": 0.85,
+      "exposure": 3,
+      "wet": 0
+    },
+    {
+      "id": "blizzard",
+      "label": "Blizzard",
+      "weight": 1,
+      "speed": 0.3,
+      "exposure": 7,
+      "wet": 2
+    }
+  ],
+  "trade_lots": [
+    {
+      "item": "food",
+      "label": "50 lb food",
+      "amount": 50,
+      "buy_cents": 1500,
+      "sell_cents": 500
+    },
+    {
+      "item": "bullets",
+      "label": "20 bullets",
+      "amount": 20,
+      "buy_cents": 300,
+      "sell_cents": 100
+    },
+    {
+      "item": "medicine",
+      "label": "1 care kit",
+      "amount": 1,
+      "buy_cents": 750,
+      "sell_cents": 250
+    },
+    {
+      "item": "clothing",
+      "label": "1 clothing set",
+      "amount": 1,
+      "buy_cents": 1500,
+      "sell_cents": 500
+    },
+    {
+      "item": "oxen",
+      "label": "1 ox",
+      "amount": 1,
+      "buy_cents": 4500,
+      "sell_cents": 1000
+    },
+    {
+      "item": "wheels",
+      "label": "1 wheel",
+      "amount": 1,
+      "buy_cents": 1500,
+      "sell_cents": 500
+    },
+    {
+      "item": "axles",
+      "label": "1 axle",
+      "amount": 1,
+      "buy_cents": 1500,
+      "sell_cents": 500
+    },
+    {
+      "item": "tongues",
+      "label": "1 tongue",
+      "amount": 1,
+      "buy_cents": 1500,
+      "sell_cents": 500
+    },
+    {
+      "item": "salt",
+      "label": "10 lb salt",
+      "amount": 10,
+      "buy_cents": 200,
+      "sell_cents": 50
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "daily_onset_chance": 0.03,
+  "conditions": [
+    {"id": "dysentery", "name": "Dysentery", "kind": "illness", "daily_damage": 6, "recovery_days": 9},
+    {"id": "cholera", "name": "Cholera", "kind": "illness", "daily_damage": 9, "recovery_days": 7, "from_year": 1849},
+    {"id": "typhoid", "name": "Typhoid fever", "kind": "illness", "daily_damage": 5, "recovery_days": 12},
+    {"id": "measles", "name": "Measles", "kind": "illness", "daily_damage": 4, "recovery_days": 10},
+    {"id": "exhaustion", "name": "Exhaustion", "kind": "illness", "daily_damage": 3, "recovery_days": 5},
+    {"id": "broken_arm", "name": "Broken arm", "kind": "injury", "daily_damage": 1, "recovery_days": 28},
+    {"id": "broken_leg", "name": "Broken leg", "kind": "injury", "daily_damage": 2, "recovery_days": 35},
+    {"id": "snakebite", "name": "Snakebite", "kind": "injury", "daily_damage": 8, "recovery_days": 8},
+    {"id": "wound", "name": "Wound", "kind": "injury", "daily_damage": 5, "recovery_days": 12}
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "duration": 30.0,
+  "reload_seconds": 1.4,
+  "shot_limit": 5,
+  "carry_limit": 100,
+  "species": [
+    {
+      "id": "bison",
+      "label": "Bison",
+      "meat": 300,
+      "width": 40,
+      "height": 24,
+      "speed": 9,
+      "meat_min": 200,
+      "meat_max": 450
+    },
+    {
+      "id": "deer",
+      "label": "Deer",
+      "meat": 53,
+      "width": 27,
+      "height": 22,
+      "speed": 17,
+      "meat_min": 42,
+      "meat_max": 85
+    },
+    {
+      "id": "rabbit",
+      "label": "Rabbit",
+      "meat": 2,
+      "width": 15,
+      "height": 11,
+      "speed": 26,
+      "meat_min": 1,
+      "meat_max": 2
+    }
+  ],
+  "regions": {
+    "woodland": {
+      "label": "Wooded prairie",
+      "weights": [
+        1,
+        6,
+        7
+      ],
+      "empty_chance": 0.12
+    },
+    "plains": {
+      "label": "Open prairie",
+      "weights": [
+        4,
+        3,
+        7
+      ],
+      "empty_chance": 0.18
+    },
+    "highcountry": {
+      "label": "High country",
+      "weights": [
+        1,
+        5,
+        6
+      ],
+      "empty_chance": 0.2
+    },
+    "sagebrush": {
+      "label": "Sagebrush country",
+      "weights": [
+        0,
+        4,
+        7
+      ],
+      "empty_chance": 0.25
+    },
+    "forest": {
+      "label": "Western forest",
+      "weights": [
+        0,
+        7,
+        5
+      ],
+      "empty_chance": 0.18
+    }
+  }
+}

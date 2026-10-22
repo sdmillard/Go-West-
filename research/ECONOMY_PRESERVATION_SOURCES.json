@@ -1,0 +1,71 @@
+{
+  "reviewed": "2026-10-22",
+  "purpose": "Source boundaries for economy and preservation balancing; all exact simulation yields, shelf lives, budgets and mixed-food prices are authored tuning.",
+  "sources": [
+    {
+      "id": "basic-1978",
+      "url": "https://github.com/fortran-gaming/oregon-trail-1975/blob/master/oregon-trail-1978.bas",
+      "local": "local/oregon-trail-1978.bas",
+      "labels": "1130; 2410; 2530–2860; 6920",
+      "supports": "$700 post-wagon expenditure budget; F is amount spent on food, not pounds. Skilled hunt adds 52–58 food units, against 13/18/23 units per nominal fortnight; fort food credit is two-thirds of spending. No fresh-meat expiry ledger in inspected code.",
+      "limits": "Transcription with known issues. Not a historical commodity price list or 1985 executable.",
+      "sha256": "57d631dd1feed37815e4340faf8ee73102511040a7dab9913e090dd235e74b0f"
+    },
+    {
+      "id": "mecc-1985-manual",
+      "local": "local/mecc-1985-manual-extracted.txt",
+      "supports": "Classic banker/carpenter/farmer starting budgets $2500/$1000/$400; hunting costs a day; resupply, changing rations and caution discussed.",
+      "limits": "Manual establishes behavior and game budgets, not actual emigrant occupational wealth or recovered source algorithms.",
+      "sha256": "f1acc3aa7517303720a07a7f73b3d56696bc5b06641014f2f3dab1917b606852"
+    },
+    {
+      "id": "bouchard-hunting",
+      "url": "https://www.philipbouchard.com/oregon-trail/hunting.html",
+      "local": "local/bouchard/hunting.txt",
+      "supports": "Designer explains 100 lb carry limit as a transport and wastefulness decision, and regional animals/cover/skill; later versions sometimes used 200 lb.",
+      "limits": "Do not infer a fresh-meat spoilage formula or compulsory preservation from the essay.",
+      "sha256": "1899726df06c74d17a709fcb5d0bc53e3a3608018d335cbc691406df1c6bf68e"
+    },
+    {
+      "id": "palmer-1847",
+      "url": "https://www.gutenberg.org/cache/epub/46906/pg46906-images.html#NECESSARY_OUTFITS_FOR_EMIGRANTS",
+      "local": "local/history/palmer-1847-reprint-1906.html",
+      "supports": "pp258–262: four yoke and 2500 lb guideline; five weighed staples total340 lb/adult, plus other goods including10 lb salt; St Joseph work cattle $25–30/yoke; emergency Hall/Boise flour $20/100 lb.",
+      "limits": "1847 guide in1906 reprint, not1848 Independence mixed-food/salt receipt. Later mission resupply references are not1848 promises. Period advice contains bias and obsolete medicine.",
+      "sha256": "b4e1fa323faed63afdb1136f244e25b1a740171979eb03ea6ff6259abc62e6b2"
+    },
+    {
+      "id": "blm-2016",
+      "url": "https://www.blm.gov/sites/blm.gov/files/learn_interp_nhotic_edguide.pdf",
+      "supports": "PDFp24 classroom flour comparison $2/100 lb at Independence vs$20 Boise; PDFp29 Bonney recollection of1845 dried buffalo provisions; PDFp30 reprinted March19,1847 Missouri Gazette outfit list.",
+      "limits": "Modern interpretation/reprinted or retrospective testimony; prices are not a complete dated market series."
+    },
+    {
+      "id": "marcy-1859",
+      "url": "https://www.gutenberg.org/cache/epub/23066/pg23066-images.html",
+      "section": "Chapter V, Jerking Meat",
+      "supports": "Describes sun/fire drying, preservation without salt, and stocking preserved meat while game is available.",
+      "limits": "1859, eleven years after game setting; not proof of exact1848 procedures, labor, yield or shelf life. No historical recipe is implemented as real-world instructions."
+    },
+    {
+      "id": "nps-outfit",
+      "url": "https://www.nps.gov/articles/000/traveling-emigrant-trails.htm",
+      "section": "Supplies",
+      "supports": "Broad1850 outfit/year-of-support estimate $800–1200, with1849 Ware list, provides scale context.",
+      "limits": "Postdates1848; includes equipment and a year of support. Cannot directly set post-wagon cash, profession earnings or exact1848 prices."
+    },
+    {
+      "id": "supplied-1993-strings",
+      "local": "local/windows-game/string-tables.json",
+      "sha256": "bf54a44e6c0cf7610da79cef5c9936b8b43e5ec59accd39069ab644b4a67a4aa",
+      "supports": "Extracted strings contain ox-slaughter offer, meat-award message and trading-for-replacement-team notice.",
+      "limits": "Confirms presented behavior only, not yield/timing/ammunition/feed formulas. Hand-butchering injury branch is authored."
+    },
+    {
+      "id": "wisconsin-beef-yield",
+      "url": "https://livestock.extension.wisc.edu/articles/how-much-meat-should-a-beef-animal-yield/",
+      "supports": "Distinguishes live, carcass and edible product weights; modern worked example 1200 lb live to481 lb take-home product.",
+      "limits": "Modern finished beef, not a historical working-ox measurement; 200–400 lb and condition curve remain tuning."
+    }
+  ]
+}

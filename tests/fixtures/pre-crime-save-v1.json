@@ -1,0 +1,319 @@
+{
+  "characters": [
+    {
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": []
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 0,
+      "memories": [],
+      "relationship": "self",
+      "skill": "Leadership",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [],
+      "trust": 50
+    },
+    {
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": [
+          "murder"
+        ]
+      },
+      "can_betray": false,
+      "contract": {
+        "arrears_cents": 0,
+        "interval_days": 7,
+        "last_assessed_day": -1,
+        "last_due_day": -1,
+        "last_late_reward_day": -7,
+        "misses": 0,
+        "next_due_day": 7,
+        "oldest_due_day": -1,
+        "reward_days": 0,
+        "wage_cents": 1000
+      },
+      "exit_warning": {
+
+      },
+      "flaws": [
+        "Frail"
+      ],
+      "id": 1,
+      "memories": [],
+      "relationship": "fellow_traveler",
+      "skill": "Hunting",
+      "specials": [
+        "Mercenary"
+      ],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [
+        "Bold",
+        "Pragmatic"
+      ],
+      "trust": 50
+    },
+    {
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": [
+          "murder"
+        ]
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 2,
+      "memories": [],
+      "relationship": "fellow_traveler",
+      "skill": "Trading",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [
+        "Bold",
+        "Pragmatic"
+      ],
+      "trust": 50
+    },
+    {
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": [
+          "murder"
+        ]
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 3,
+      "memories": [],
+      "relationship": "fellow_traveler",
+      "skill": "Carpentry",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [
+        "Bold",
+        "Pragmatic"
+      ],
+      "trust": 50
+    },
+    {
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": [
+          "robbery",
+          "murder",
+          "cannibalism"
+        ]
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 4,
+      "memories": [],
+      "relationship": "fellow_traveler",
+      "skill": "Caregiving",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [
+        "Cautious",
+        "Compassionate"
+      ],
+      "trust": 50
+    }
+  ],
+  "characters_version": 3,
+  "combat_history": [],
+  "context": {
+    "activities": [],
+    "prepared": [],
+    "spent": {
+
+    }
+  },
+  "crossing_history": [],
+  "format": "westward-probably",
+  "fresh": [],
+  "health_events": [],
+  "health_random": "-8147447316415321669",
+  "journal": [
+    "Independence, 1848. Outfit your wagon.",
+    "Departed 5 1, 1848 as a banker. Party: A, B, C, D, E.",
+    "Supplies cost $350.60. Cash remaining: $1049.40.",
+    "Day 0 · Agreed to pay B $10.00 every 7 days."
+  ],
+  "last_crossing": {
+
+  },
+  "last_events": {
+
+  },
+  "outings": 0,
+  "party": [
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 85,
+      "history": [],
+      "id": 0,
+      "name": "A"
+    },
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 85,
+      "history": [],
+      "id": 1,
+      "name": "B"
+    },
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 85,
+      "history": [],
+      "id": 2,
+      "name": "C"
+    },
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 85,
+      "history": [],
+      "id": 3,
+      "name": "D"
+    },
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 85,
+      "history": [],
+      "id": 4,
+      "name": "E"
+    }
+  ],
+  "pending": {
+
+  },
+  "random": "3937041516539914903",
+  "route_end": "oregon_city",
+  "rules": "f6e5acff6247c2a38a8b571042ab6a8259735c06f88b45301d6733012c57e264",
+  "seen": [],
+  "service_return": {
+
+  },
+  "state": {
+    "axles": 1,
+    "bullets": 200,
+    "clothing": 5,
+    "day": 0,
+    "departure_month": 5,
+    "extended_route": true,
+    "fatigue": 0,
+    "food": 1000,
+    "fuel": 0,
+    "health": 85,
+    "items": [],
+    "landmark": "independence",
+    "leg_length": 33,
+    "leg_miles": 0,
+    "loss_reason": "",
+    "medicine": 2,
+    "miles": 0,
+    "mode": "classic",
+    "money": 1049.4,
+    "next_landmark": "elm_grove",
+    "ox_health": 100,
+    "oxen": 6,
+    "pace": 0,
+    "parts": 3,
+    "party": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ],
+    "party_size": 5,
+    "profession": "banker",
+    "rations": 2,
+    "river_stage": "",
+    "salt": 10,
+    "seed": 57,
+    "status": "traveling",
+    "terrain": "plains",
+    "tongues": 1,
+    "vehicle": "wagon",
+    "weather": "Clear",
+    "wheels": 1
+  },
+  "supply_history": [],
+  "survival_random": "1360573283353127490",
+  "version": 1,
+  "wagon_cache": {
+
+  },
+  "weather": {
+    "exposure": 0,
+    "id": "clear",
+    "label": "Clear",
+    "speed": 1,
+    "weight": 50,
+    "wet": 0
+  },
+  "wet_ground": 0
+}

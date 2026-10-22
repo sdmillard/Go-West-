@@ -1,0 +1,13 @@
+{
+  "poor_health": 40,
+  "fair_health": 70,
+  "poor_multiplier": 1.6,
+  "fair_multiplier": 1.25,
+  "experience_reduction": 0.02,
+  "experience_cap": 3,
+  "defense_floor": 0.15,
+  "circle_floor": 0.08,
+  "risk_cap": 0.75,
+  "small_party_penalty": 0.1,
+  "minimum_defenders": 3
+}

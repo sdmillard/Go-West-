@@ -1,0 +1,115 @@
+{
+  "regions": {
+    "woodland": {
+      "label": "Missouri border country",
+      "period": 8,
+      "price": 1.0,
+      "strain": 0,
+      "wet": 1.1,
+      "cold": 1.0,
+      "note": "Wooded streams and settled country give way to the open plains."
+    },
+    "plains": {
+      "label": "Platte grasslands",
+      "period": 10,
+      "price": 1.0,
+      "strain": 0,
+      "wet": 1.0,
+      "cold": 1.0,
+      "note": "River-bottom grass supports teams; late-season dry ground makes grazing harder."
+    },
+    "highcountry": {
+      "label": "Rocky Mountain country",
+      "period": 12,
+      "price": 1.15,
+      "strain": 1,
+      "wet": 0.9,
+      "cold": 1.7,
+      "note": "Exposed uplands and colder weather strain working animals. Rest before the next long stretch."
+    },
+    "sagebrush": {
+      "label": "Snake River country",
+      "period": 14,
+      "price": 1.35,
+      "strain": 1,
+      "wet": 0.55,
+      "cold": 0.9,
+      "note": "Dry sage country offers uneven grazing. River water is not always accessible from the trail."
+    },
+    "forest": {
+      "label": "Blue Mountains and Cascades",
+      "period": 10,
+      "price": 1.2,
+      "strain": 1,
+      "wet": 1.4,
+      "cold": 1.4,
+      "note": "Wooded mountain roads and wet weather slow travel. Plan supplies before the descent."
+    }
+  },
+  "activities": {
+    "ash_hollow": {
+      "talk": "The descent is steep. Travelers look for grass and shelter near the hollow before moving on.",
+      "label": "Find a sheltered grazing camp",
+      "kind": "graze"
+    },
+    "grande_ronde": {
+      "talk": "Meadows offer a welcome chance to rest the team before the next mountain road.",
+      "label": "Seek meadow grazing for the team",
+      "kind": "graze"
+    },
+    "soda_springs": {
+      "talk": "The mineral springs are a landmark, not a promise that every nearby pool is suitable drinking water. Choose camp carefully.",
+      "label": "Search for a better grazing camp",
+      "kind": "graze"
+    },
+    "south_pass": {
+      "talk": "The divide is broad, but exposed uplands and long distances between supplies still matter. Judge the team before proceeding."
+    },
+    "fort_laramie": {
+      "talk": "This is a trading post in 1848, before the United States Army acquires it in 1849. Check supplies before entering the uplands."
+    },
+    "fort_hall": {
+      "talk": "Supplies are costly and finite. Westward travel enters dry Snake River country; hunting alone is an uncertain provision plan."
+    },
+    "fort_boise": {
+      "talk": "Restock what you can carry. The road ahead still crosses dry stretches and mountains."
+    },
+    "fort_kearny": {
+      "talk": "Construction at the new Platte post begins in June 1848. An early arrival should not expect a mature supply depot."
+    },
+    "kansas_river": {
+      "talk": "Inspect the load and crossing gear. Preparation reduces risk, but swift water remains dangerous.",
+      "label": "Check and repair crossing gear \u00b7 1 kit",
+      "kind": "prepare"
+    },
+    "green_river": {
+      "talk": "Pause to inspect the load and gear. Waiting can change water conditions; preparation does not make a dangerous crossing safe.",
+      "label": "Check and repair crossing gear \u00b7 1 kit",
+      "kind": "prepare"
+    },
+    "snake_river": {
+      "talk": "Crossing this river is a serious decision. Check your gear and consider water conditions before committing.",
+      "label": "Check and repair crossing gear \u00b7 1 kit",
+      "kind": "prepare"
+    },
+    "laurel_hill": {
+      "talk": "The steep descent calls for caution. A loaded wagon presents a different problem from a party on foot."
+    }
+  },
+  "passing_window_days": 4,
+  "passing_lots": 3,
+  "post_lots": 8,
+  "prepared_risk_factor": 0.85,
+  "sources": [
+    "https://www.nps.gov/articles/000/traveling-emigrant-trails.htm",
+    "https://home.nps.gov/oreg/learn/historyculture/making-the-trek.htm",
+    "https://www.nps.gov/places/fort-william-and-fort-john.htm"
+  ],
+  "limits": "Regional weights, trading schedules, stock and activity effects are authored game tuning, not reconstructed 1848 measurements. Dialogue is original paraphrase, not quotations.",
+  "care_posts": [
+    "fort_laramie",
+    "fort_bridger",
+    "fort_hall",
+    "fort_boise"
+  ]
+}
