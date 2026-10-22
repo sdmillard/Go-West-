@@ -73,6 +73,7 @@ var memorial_window: AcceptDialog
 var memorial_rows: VBoxContainer
 var visited_graves: Array = []
 var grave_editing := false
+var grave_remains: Dictionary = {}
 var crossing_result: Dictionary = {}
 
 func _ready() -> void:
@@ -274,6 +275,7 @@ func _build_ui() -> void:
 	grave_window = AcceptDialog.new()
 	grave_window.title = "A GRAVESTONE ON THE TRAIL"
 	grave_window.confirmed.connect(_leave_gravestone)
+	grave_window.visibility_changed.connect(_grave_window_closed)
 	add_child(grave_window)
 	var grave_content := Control.new()
 	grave_content.custom_minimum_size = Vector2(432,196)
@@ -543,7 +545,14 @@ func _show_service() -> void:
 
 func _service_choice(index: int) -> void:
 	service_window.hide()
+	var burial: int = int(game.pending.choices[index].get("remains_id",-1)) if game.pending.get("remains_menu",false) and game.pending.choices[index].get("remains_command","")=="bury" else -1
 	_choose(index)
+	if burial >= 0 and game.state.status == "traveling":
+		var grave: Dictionary = game.Remains.entry(game,burial)
+		if grave.get("state","") == "buried":
+			# One dialog at a time: the remains panel returns once the stone is set or declined.
+			service_window.hide()
+			_edit_gravestone(grave)
 
 func _cancel_service() -> void:
 	service_window.hide()
@@ -1144,29 +1153,45 @@ func _load_journey() -> void:
 	record_notice.dialog_text = result.message if not result.is_empty() else save_store.error
 	record_notice.popup_centered()
 
-func _edit_gravestone() -> void:
-	if game.state.status != "lost":
+## With a buried companion's remains entry, marks that grave; otherwise the lost party's own stone.
+func _edit_gravestone(grave: Dictionary = {}) -> void:
+	if grave.is_empty() and game.state.status != "lost":
 		return
 	_pause_travel()
 	grave_editing = true
+	grave_remains = grave.duplicate(true)
 	epitaph_input.show()
-	epitaph_input.text = "They followed the western road."
-	grave_view.record = grave_store.make_record(game,epitaph_input.text)
+	epitaph_input.text = "They followed the western road." if grave.is_empty() else "Rest easy by the western road."
+	grave_view.record = grave_store.make_record(game,epitaph_input.text,grave_remains)
 	grave_view.queue_redraw()
+	grave_window.title = "A GRAVESTONE ON THE TRAIL" if grave.is_empty() else "MARK %s'S GRAVE" % str(grave.name).to_upper()
 	grave_window.get_ok_button().text = "LEAVE THIS STONE"
 	grave_window.popup_centered()
 
+func _grave_window_closed() -> void:
+	if not grave_window.visible:
+		_return_to_remains.call_deferred()
+
+func _return_to_remains() -> void:
+	var open: bool = [guide,journal_window,party_window,options_window,service_window,supplies_window,grave_window,memorial_window,record_notice].any(func(window): return window.visible)
+	if not open and game.state.status == "traveling" and game.pending.get("remains_menu",false):
+		_show_service()
+
 func _preview_epitaph(text: String) -> void:
 	if grave_editing:
-		grave_view.record = grave_store.make_record(game,text)
+		grave_view.record = grave_store.make_record(game,text,grave_remains)
 		grave_view.queue_redraw()
 
 func _leave_gravestone() -> void:
 	if not grave_editing:
 		return
-	if grave_store.leave_memorial(game,epitaph_input.text):
-		game.journal.append("Left a gravestone at guide mile %d: %s" % [game.state.miles,grave_store.make_record(game,epitaph_input.text).epitaph])
+	if grave_store.leave_memorial(game,epitaph_input.text,grave_remains):
+		var record: Dictionary = grave_store.make_record(game,epitaph_input.text,grave_remains)
+		game.journal.append(("Left a gravestone at guide mile %d: %s" % [record.miles,record.epitaph]) if grave_remains.is_empty() else ("Marked %s's grave at guide mile %d: %s" % [record.name,record.miles,record.epitaph]))
+		# This journey already knows the stone it just set; later journeys find it on the road.
+		visited_graves.append(record.id)
 		grave_editing = false
+		grave_remains = {}
 		_refresh()
 	else:
 		record_notice.dialog_text = grave_store.error
@@ -1175,6 +1200,8 @@ func _leave_gravestone() -> void:
 func _read_gravestone(record: Dictionary) -> void:
 	_pause_travel()
 	grave_editing = false
+	grave_remains = {}
+	grave_window.title = "A GRAVESTONE ON THE TRAIL"
 	epitaph_input.hide()
 	grave_view.record = record.duplicate(true)
 	grave_view.queue_redraw()
@@ -1193,7 +1220,7 @@ func _show_memorials() -> void:
 		memorial_rows.add_child(label("No gravestones have been left on this trail."))
 	else:
 		for record in grave_store.records:
-			memorial_rows.add_child(button("%s · MILE %d · %s" % [record.name,record.miles,record.date],_read_gravestone.bind(record)))
+			memorial_rows.add_child(button("%s%s · MILE %d · %s" % [record.name," (GRAVE)" if record.get("kind","party")=="companion" else "",record.miles,record.date],_read_gravestone.bind(record)))
 	memorial_window.popup_centered()
 
 func _check_roadside_graves(before: int, after: int) -> void:

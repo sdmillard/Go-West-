@@ -15,9 +15,10 @@ func _draw() -> void:
 	draw_colored_polygon(PackedVector2Array([Vector2(116,140),Vector2(116,28),Vector2(128,16),Vector2(304,16),Vector2(316,28),Vector2(316,140)]),Color("aaa58b"))
 	draw_rect(Rect2(120,30,192,108),Color("c6bea0"))
 	draw_rect(Rect2(128,21,176,10),Color("c6bea0"))
-	center_text("HERE REST THE PARTY OF",38)
+	var companion: bool = record.get("kind","party") == "companion"
+	center_text("HERE LIES" if companion else "HERE REST THE PARTY OF",38)
 	center_text(str(record.name).to_upper(),50)
-	center_text(str(record.date),63)
+	center_text(("DIED " if companion else "") + str(record.date),63)
 	center_text("GUIDE MILE %d" % record.miles,75)
 	draw_rect(Rect2(140,81,152,1),Color("85816c"))
 	var words: PackedStringArray = str(record.epitaph).to_upper().split(" ",false)
