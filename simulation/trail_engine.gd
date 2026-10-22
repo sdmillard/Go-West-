@@ -231,6 +231,7 @@ func _choose_landmark(index: int) -> bool:
 		_tick_day(true)
 		_update_river_stage()
 		journal.append("Day %d · Rested at %s." % [state.day, route.nodes[state.landmark].name])
+		crime.check_pursuit(self)
 		return true
 	last_crossing = {}
 	if choice.action == "cross":
@@ -334,7 +335,7 @@ func travel() -> bool:
 		state.miles = mini(DESTINATION, state.miles + distance)
 		_tick_day(false)
 	journal.append("Day %d · Traveled to mile %d. Food remaining: %d lb." % [state.day, state.miles, state.food])
-	if state.status == "traveling":
+	if state.status == "traveling" and not crime.check_pursuit(self):
 		_schedule_event()
 	return true
 
@@ -343,7 +344,7 @@ func rest() -> bool:
 		return false
 	_tick_day(true)
 	journal.append("Day %d · Rested in camp. Food remaining: %d lb." % [state.day, state.food])
-	if state.status == "traveling":
+	if state.status == "traveling" and not crime.check_pursuit(self):
 		_schedule_event()
 	return true
 
@@ -698,12 +699,13 @@ func open_care() -> bool:
 		if not party_health.is_active(member) or (member.conditions.is_empty() and member.health >= 100):
 			continue
 		options.append({"label": "Care for %s · 1 kit, 1 day" % member.name, "member_id": member.id, "care": 6, "requires": {"medicine": 1}, "effects": {"medicine": -1, "days": 1}, "result": "Used care supplies for " + member.name + "."})
-		if context.local_care(self) and not crime.refuses(self,str(state.landmark)):options.append({"label": "Seek local care for %s · $20, 1 day" % member.name, "member_id": member.id, "care": 12, "requires": {"money": 20}, "effects": {"money": -20, "days": 1}, "result": "Paid $20 for medical attention for " + member.name + "."})
+		if context.local_care(self) and not crime.refuses(self,str(state.landmark)) and not crime.closed(str(state.landmark)):options.append({"label": "Seek local care for %s · $20, 1 day" % member.name, "member_id": member.id, "care": 12, "requires": {"money": 20}, "effects": {"money": -20, "days": 1}, "result": "Paid $20 for medical attention for " + member.name + "."})
 	if characters.available(self,"Caregiving"):
 		for option in options:
 			option.care_bonus=int(characters.benefits.care_health_bonus)
 			option.recovery_bonus=int(characters.benefits.care_recovery_bonus)
 			option.label+=" · caregiver +%d health" % option.care_bonus
+	if context.local_care(self) and crime.closed(str(state.landmark)):return _service_menu("Care for the party", "Use your own kits anywhere. After the incident, nobody at this post will help your party.", options)
 	if context.local_care(self) and crime.refuses(self,str(state.landmark)):return _service_menu("Care for the party", "Use your own kits anywhere. "+crime.news_text(self,str(state.landmark)), options)
 	return _service_menu("Care for the party", "Use your own kits anywhere. Paid local help is available at this post." if context.local_care(self) else "No local medical help here. Use your own kits and rest; paid help is offered only while stopped at selected supply posts.", options)
 

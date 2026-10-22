@@ -109,7 +109,12 @@
       "escape_injury": 0.4,
       "injury_damage": 25,
       "breakout": 0.35,
-      "breakout_shots": 3
+      "breakout_shots": 3,
+      "pursuit": {
+        "note": "Authored tuning. After a party escapes the post, a few soldiers may ride after it for several days, once, while any are left who are not the commissary sergeant.",
+        "days": 4,
+        "daily": 0.35
+      }
     },
     "fort_laramie": {
       "kind": "store",

@@ -1,6 +1,6 @@
 # Claude handoff: Westward, Probably
 
-Updated with every merged pull request, so a session cut off at any point loses nothing. Last update: October 22, 2026, with the human-meat PR (#12). **Continue the existing project; do not restart it.**
+Updated with every merged pull request, so a session cut off at any point loses nothing. Last update: October 22, 2026, with the pursuit and service audit PR (#13). **Continue the existing project; do not restart it.**
 
 ## Where things stand
 
@@ -16,6 +16,7 @@ Updated with every merged pull request, so a session cut off at any point loses 
   8. Companion bonds and attacks (#9).
   9. Remains ledger (#11).
   10. Butchering, human meat and meals (#12).
+  11. Fort Kearny pursuit, plus a care/service audit (#13).
 - **Crime record:** version 6, in `simulation/crime_system.gd`. Each version has an `upgrade_vN` step, chained in `upgrade()`. Remains, human food and meals live in `simulation/remains.gd`, as static functions on `game.crime.record`.
 - **Design reference:** `docs/STORE_CRIME_SLICE.md` describes every implemented mechanic, its tuning and its save rules. `docs/CRIME_AND_CANNIBALISM_ROADMAP.md` holds the plan.
 
@@ -25,8 +26,6 @@ Roadmap phase 6 (information spread, pursuit, service audit):
 
 - Traders and travelers carry news. Reports already exist, and refusals at posts and the ferry already use them.
 - Companions who leave or flee reveal what they know, including concealed butchering or deception.
-- Pursuit or confrontation encounters, driven by what a place actually knows and can do.
-- Audit every legitimate service after hostile acts, so that care, rest, stop activities and trade can't bypass an active danger.
 - Several full-route criminal and lawful journeys with no stuck encounters.
 
 Smaller follow-ups noted along the way:

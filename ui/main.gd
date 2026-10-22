@@ -755,6 +755,7 @@ func _advance_day() -> void:
 	if not game._can_act():
 		_pause_travel()
 	_refresh()
+	if game.pending.get("crime_menu",false):_show_service()
 	if game.characters.due_total()>wages_before:
 		_pause_travel()
 		_refresh()
@@ -819,6 +820,9 @@ func _confirm_rest() -> void:
 	var report:="Camp rest: %d of %d day(s). %s" % [completed,requested,reason]
 	game.journal.append("Day %d · %s" % [game.state.day,report])
 	_refresh()
+	if game.pending.get("crime_menu",false):
+		_show_service()
+		return
 	if not food_notice.visible:
 		record_notice.title="CAMP REST"
 		record_notice.get_label().autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
