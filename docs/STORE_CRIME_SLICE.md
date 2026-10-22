@@ -161,6 +161,25 @@ Each attack records its result, helpers and every response. Memories carry the a
 
 Not yet: an attack started by a companion, betrayal at low trust, or companions revealing what they know after leaving (the news phase).
 
+## Remains (record version 5)
+
+Every death the party could reach goes into a remains ledger in the crime record. That covers a companion dying of anything, and a stranger the party killed. Each entry gives the person, their name, the cause and day of death, where the body is (a mile), its state, any money they carried, and whether the grave was ever opened. A death never grants food or anything else by itself.
+
+| State | Within reach | What you can do |
+| --- | --- | --- |
+| Lying | At the same mile, unless living staff or survivors are still there to keep their own dead | Bury (1 day), carry, search a stranger's belongings |
+| Carried | Always | Bury here (1 day), set down here, search |
+| Buried | At the same mile | Dig up the grave (1 day), which leaves the body lying |
+| Lost | Never | Nothing. Used for deaths from older saves, where nobody knows where the body lies |
+
+**Tuning.** All values are authored in `data/crime_scenes.json`, not historical rates. A wrapped body counts as 150 lb of real cargo, and at most two ride with the party. A stranger killed by the party carries $2.50. A companion's own goods were already shared with the party, so there is nothing to search on them.
+
+**Reactions.** Everyone with the wagon sees a grave opened. Companions close to the dead person (family, partner, friend) lose 12 trust and treat it as crossing a boundary. Others lose 3, and the Ruthless, Self-serving and Opportunistic lose nothing. Each memory carries the grave's id, so opening a second grave the same day is its own memory.
+
+**Saves.** Only the dead have remains, one entry each, never ahead of the party. A companion's entry must match their death record. Carried bodies must match the cargo weight (`remains_lb`). A remembered desecration must match a grave marked as opened. Deaths with no entry, which only happens in records from before the ledger, join it as lost when the save is restored. An open list of the dead is rebuilt from the ledger.
+
+Not yet: turning remains into food, meals and deception (next), or a gravestone in the memorial book for a grave dug on the trail.
+
 ## Other limits
 
 Personal existing health specials still affect any actual injury damage. Paid trade, paid care and the hired ferry respond to incidents and news; other services are not yet governed by a general hostility/access system.

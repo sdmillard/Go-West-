@@ -6,6 +6,7 @@ const Route = preload("res://simulation/route_catalog.gd")
 const PartyHealth = preload("res://simulation/party_health.gd")
 const Survival = preload("res://simulation/survival_rules.gd")
 const CacheSupport=preload("res://simulation/wagon_cache.gd")
+const Remains=preload("res://simulation/remains.gd")
 var wagon_cache: Dictionary={}
 var context=preload("res://simulation/trail_context.gd").new()
 var combat=preload("res://simulation/combat.gd").new()
@@ -295,6 +296,7 @@ func _collect_health_events() -> void:
 		journal.append(entry)
 		health_events.append(entry)
 	party_health.notices.clear()
+	Remains.sync(self)
 
 func configure(pace: int, rations: int) -> void:
 	if _can_act():
@@ -360,6 +362,7 @@ func can_choose(index: int) -> bool:
 	var choice: Dictionary = pending.choices[index]
 	if pending.get("crime_menu",false):return crime.can_choose(self,str(choice.get("crime_command","")))
 	if pending.get("attack_menu",false):return int(choice.get("attack_target",-1))<0 or crime.attack_ready(self,int(choice.attack_target))
+	if pending.get("remains_menu",false):return Remains.can_choose(self,str(choice.get("remains_command","")),int(choice.get("remains_id",0)))
 	if choice.get("care",0)==12 and not context.local_care(self):return false
 	if choice.get("method","")=="ferry" and crime.ferry_refused(self,str(state.landmark)):return false
 	if not context.can_trade(choice) or not crime.can_trade(self,choice) or (choice.has("activity") and choice.activity in context.record.activities):return false
@@ -373,6 +376,7 @@ func choose(index: int) -> bool:
 		return false
 	if pending.get("crime_menu",false):return crime.choose(self,str(pending.choices[index].crime_command))
 	if pending.get("attack_menu",false):return crime.choose_attack(self,index)
+	if pending.get("remains_menu",false):return Remains.choose(self,index)
 	if pending.get("service_menu", false):
 		return _choose_service(index)
 	if pending.has("landmark"):
@@ -774,6 +778,13 @@ func open_attack(target: int) -> bool:
 	if not crime.can_attack(self,target):return false
 	service_return=pending.duplicate(true)
 	pending=crime.attack_menu(self,target)
+	return true
+
+## The dead within reach: here, or carried with the party.
+func open_remains() -> bool:
+	if not can_service() or Remains.here(self).is_empty():return false
+	service_return=pending.duplicate(true)
+	pending=Remains.menu(self)
 	return true
 
 func open_departure_review() -> bool:

@@ -130,6 +130,8 @@ func valid_menu(menu: Dictionary, game) -> bool:
 		if choice.has("crime_command") and not menu.get("crime_menu",false):return false
 		if menu.has("attack_menu") and (menu.attack_menu!=true or menu.id!="attack" or not menu.get("service_menu",false) or not integer(choice.get("attack_target"),-1,4)):return false
 		if choice.has("attack_target") and not menu.get("attack_menu",false):return false
+		if menu.has("remains_menu") and (menu.remains_menu!=true or menu.id!="remains" or not menu.get("service_menu",false) or choice.get("remains_command","") not in game.Remains.COMMANDS or not integer(choice.get("remains_id"),0,200)):return false
+		if choice.has("remains_command") and not menu.get("remains_menu",false):return false
 		if choice.has("action") and choice.action not in ["cross", "rest", "leave", "trade", "notes", "activity"]:
 			return false
 		if choice.has("activity") and (not choice.activity is String or not game.context.data.activities.has(choice.activity)):return false
@@ -341,6 +343,12 @@ func restore(value: Variant):
 		var target: int=int(game.pending.choices[0].get("attack_target",-1))
 		if not game.crime.attack_ready(game,target):return null
 		game.pending=game.crime.attack_menu(game,target)
+	# An open list of the dead must still offer exactly what can be done; its text is regenerated.
+	if game.pending.get("remains_menu",false):
+		var authoritative: Dictionary=game.Remains.menu(game)
+		var commands:=func(menu):return menu.choices.map(func(choice):return "%s:%d" % [choice.get("remains_command",""),int(choice.get("remains_id",0))])
+		if commands.call(game.pending)!=commands.call(authoritative) or game.Remains.here(game).is_empty():return null
+		game.pending=authoritative
 	if game.pending.get("crime_menu",false):
 		# The menu must still have a target: the active incident, this stop's venue, or the traders on the road.
 		var target: String=game.crime.target(game)
@@ -353,10 +361,14 @@ func restore(value: Variant):
 		for memory in profile.memories:
 			if memory.has("attack_id"):
 				if memory.attack_id>game.crime.record.attacks.size() or game.crime.record.attacks[int(memory.attack_id)-1].day!=memory.day:return null
+			if memory.has("remains_id"):
+				if memory.remains_id>game.crime.record.remains.size() or not game.crime.record.remains[int(memory.remains_id)-1].disturbed:return null
 			if memory.has("incident_id"):
 				if memory.incident_id>game.crime.record.incidents.size():return null
 				var incident: Dictionary=game.crime.record.incidents[int(memory.incident_id)-1]
 				if memory.kind!="action_"+("murder" if incident.action=="shoot" else "robbery") or not incident.knowledge.has(game.crime.person_id(int(s.seed),int(profile.id))):return null
+	# Deaths from before the ledger existed are known, but not where the bodies lie.
+	game.Remains.sync(game,true)
 	if migrated:
 		if game.state.status == "arrived" and game.state.landmark == "platte":
 			game.state.status = "traveling"

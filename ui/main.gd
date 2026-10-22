@@ -373,6 +373,7 @@ simplified game rules, not reconstructed conditions for 1848."""
 	actions.add_child(button("LOCAL CONDITIONS / STOP ACTIVITIES", _show_stop_activities))
 	actions.add_child(button("LOOK FOR TRADERS / TRADE", _open_trade))
 	actions.add_child(button("ROB, STEAL OR ATTACK HERE", _open_crime))
+	actions.add_child(button("THE DEAD: BURY, CARRY OR SEARCH", _open_remains))
 	actions.add_child(button("CARE / MEDICAL ATTENTION", _open_care))
 	actions.add_child(button("PROVISIONS / CARGO", _show_supplies))
 	actions.add_child(button("MEMORIAL BOOK", _show_memorials))
@@ -515,6 +516,14 @@ func _open_crime() -> void:
 	else:
 		record_notice.title="NOTHING TO TAKE HERE"
 		record_notice.dialog_text="Stop at a trading post, the Kansas River ferry, Fort Kearny once soldiers are there, or the Barlow Road toll gate, or meet passing traders on the road, to use these actions."
+		record_notice.popup_centered()
+
+func _open_remains() -> void:
+	options_window.hide()
+	if game.open_remains():_show_service()
+	else:
+		record_notice.title="NOBODY TO TEND"
+		record_notice.dialog_text="There are no remains here or in the wagon. A body stays where its person died unless you carry it."
 		record_notice.popup_centered()
 
 func _show_service() -> void:
