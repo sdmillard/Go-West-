@@ -206,7 +206,7 @@ func run():
 	restored=store.restore(previous)
 	check(restored!=null and restored.state==store.normalize(previous.state) and restored.crime.record.reports==store.normalize(previous.crime.record.reports),"Save from before the other venues restores with its report unchanged")
 	if restored!=null:
-		check(restored.crime.record.services.size()==restored.crime.scenes.size() and not restored.crime.closed("fort_hall") and restored.crime.service("barlow_pass").cash_cents==4000,"Earlier saves gain the new venues untouched")
+		check(restored.crime.record.services.size()==restored.crime.venues().size() and not restored.crime.closed("fort_hall") and restored.crime.service("barlow_pass").cash_cents==4000,"Earlier saves gain the new venues untouched")
 		check(store.restore(JSON.parse_string(JSON.stringify(store.capture(restored))))!=null,"The upgraded record saves again")
 	var malformed: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-witness-save-v1.json"))
 	malformed.crime.record.actors.fort_bridger.uid="keeper:elsewhere"
@@ -341,6 +341,7 @@ func run():
 	check(game.crime.record.reports.size()==1 and game.crime.record.reports[0].senders==["hand:fort_bridger"],"With the keeper dead, the hired hand's report still goes out")
 	venue_checks(store)
 	fort_checks(store)
+	trader_checks(store)
 	var screen=Main.instantiate()
 	root.add_child(screen)
 	await process_frame
@@ -490,7 +491,7 @@ func venue_checks(store) -> void:
 		old.crime.record.services.erase(place)
 		for uid in game.crime.staff_ids(place):old.crime.record.actors.erase(uid)
 	var restored=store.restore(JSON.parse_string(JSON.stringify(old)))
-	check(restored!=null and restored.crime.record.services.size()==restored.crime.scenes.size() and restored.crime.service("fort_laramie").cash_cents==6000 and restored.crime.owner("barlow_pass").health==100,"A save made before the new venues gains them untouched")
+	check(restored!=null and restored.crime.record.services.size()==restored.crime.venues().size() and restored.crime.service("fort_laramie").cash_cents==6000 and restored.crime.owner("barlow_pass").health==100,"A save made before the new venues gains them untouched")
 	old.crime.record.actors["keeper:fort_laramie"]={"uid":"keeper:fort_laramie","place":"fort_laramie","role":"keeper","health":0}
 	check(store.restore(JSON.parse_string(JSON.stringify(old)))==null,"A partial venue in an old save is rejected, not repaired")
 	# Rules: every venue declares a kind; only stores hold food; only ferries can be taken.
@@ -575,3 +576,53 @@ func fort_checks(store) -> void:
 	broken=rules.duplicate(true)
 	broken.scenes.fort_bridger["food_stock"]=100
 	check(not crime.load_data(broken),"Only a fort has its own food stock")
+## A trading party met on the road, with traders available and no stop in progress.
+func on_road(game):
+	game.pending={}
+	for day in range(int(game.state.day),int(game.state.day)+40):
+		game.state.day=day
+		var offer: Dictionary=game.context.market(game)
+		if offer.available and not offer.post:return game
+	return game
+## Passing traders: each party is its own target, entering the record only once the party acts against it.
+func trader_checks(store) -> void:
+	var game=on_road(willing(outfit()))
+	var key: String=game.context.market(game).key
+	check(game.crime.target(game)==key and key.begins_with("passing:"),"On the road, passing traders are the target")
+	var before: Dictionary=store.capture(game)
+	check(game.open_crime() and game.pending.title=="Passing traders" and "Lead trader: uninjured" in game.pending.text and "Food in their packs: 150 lb" in game.pending.text,"The trader menu shows their packs")
+	check(game.pending.choices[-1].label=="Leave the traders alone","Backing out leaves the traders alone")
+	check(store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))!=null,"An open trader menu restores")
+	check(choose(game,"back") and store.capture(game)==before and not game.crime.record.services.has(key),"Looking at the traders adds nobody to the record")
+	game.context.record.spent[key+"|buy_food"]=2
+	check(game.crime.food_left(game,key)==50,"Food already bought from these traders is gone from their packs")
+	game.context.record.spent.erase(key+"|buy_food")
+	game.crime.scenes.passing_traders.compliance=1
+	game.crime.scenes.passing_traders.escape_capture=0
+	game.crime.scenes.passing_traders.escape_injury=0
+	var miles: int=game.state.miles
+	var money: float=game.state.money
+	game.open_crime()
+	choose(game,"robbery")
+	check(game.crime.record.services.has(key) and game.crime.service(key).mile==miles and game.crime.living_staff(key).size()==3,"The robbed party joins the record where it was met")
+	choose(game,"take")
+	check(is_equal_approx(game.state.money,money+30) and game.crime.incident().food>0,"The traders' cash and food reach the wagon")
+	choose(game,"flee")
+	var report: Dictionary=game.crime.record.reports[0]
+	check(report.origin==key and report.identified and report.senders.size()==3,"The traders report the party")
+	choose(game,"finish")
+	check(game.pending.is_empty() and game.state.status=="traveling","After the encounter the party is back on the road")
+	var saved: Dictionary=store.capture(game)
+	check(store.restore(JSON.parse_string(JSON.stringify(saved)))!=null,"A robbed trading party round-trips through saves")
+	check(not game.crime.can_trade(game,{"market_key":key+"|buy_food","effects":{"food":50}}),"Traders the party robbed will not trade with it")
+	check(game.crime.can_trade(game,{"market_key":"passing:other:1|buy_food","effects":{"food":50}}),"Other trading parties still trade")
+	var bad: Dictionary=saved.duplicate(true)
+	bad.crime.record.services["passing:plains:99"]=bad.crime.record.services[key].duplicate(true)
+	check(store.restore(bad)==null,"A trading party nobody targeted cannot be added to a save")
+	bad=saved.duplicate(true)
+	bad.crime.record.services[key].mile=999999
+	check(store.restore(bad)==null,"Where the traders were met cannot be moved past the party")
+	at(game,"fort_hall")
+	game.state.day=game.crime.arrival(game,report,"fort_hall")
+	check(game.open_trade() and "robbed a trading party on the road through the" in game.pending.text,"News of robbed traders names the stretch of road")
+	choose_back(game)

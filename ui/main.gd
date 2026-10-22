@@ -511,7 +511,7 @@ func _open_crime() -> void:
 	if game.open_crime():_show_service()
 	else:
 		record_notice.title="NOTHING TO TAKE HERE"
-		record_notice.dialog_text="Stop at a trading post, the Kansas River ferry, Fort Kearny once soldiers are there, or the Barlow Road toll gate to use these actions."
+		record_notice.dialog_text="Stop at a trading post, the Kansas River ferry, Fort Kearny once soldiers are there, or the Barlow Road toll gate, or meet passing traders on the road, to use these actions."
 		record_notice.popup_centered()
 
 func _show_service() -> void:

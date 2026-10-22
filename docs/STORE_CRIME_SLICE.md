@@ -109,6 +109,16 @@ When soldiers stop an escape, the party is not simply captured. The incident ent
 
 A store's staff still simply catch the party; only soldiers force a standoff. Saves validate the stage (forts only) and the extra shots (no more than the scene allows).
 
+## Passing traders
+
+The small trading parties already met on the road (the `passing:<region>:<window>` markets in `trail_context.gd`) can now be targeted too. The ROB, STEAL OR ATTACK HERE action aims at the venue at a stop when there is one, otherwise at traders available on the road.
+
+- `passing_traders` in `data/crime_scenes.json` is a template: a lead trader, a packer and an armed hand, $30 cash, and food matching their three 50 lb trade lots (food already bought from them is gone). Each party is identified by its market key and enters the record (`actors` plus a service with the `mile` where it was met) only on the first committed act, so looking at the menu changes nothing.
+- Robbed or alarmed traders refuse to trade, and other trading parties are unaffected. Reports from traders travel from the mile where they were met, and posts hear that "your party robbed a trading party on the road through the Platte grasslands".
+- Validation accepts a trader service only if an incident targeted it, and its mile cannot lie beyond the party's own.
+
+Traders do not yet carry news of other crimes; that belongs to the pursuit and news phase.
+
 ## Other limits
 
 Personal existing health specials still affect any actual injury damage. Paid trade, paid care and the hired ferry respond to incidents and news; other services are not yet governed by a general hostility/access system.
