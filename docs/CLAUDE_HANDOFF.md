@@ -1,6 +1,6 @@
 # Claude handoff: Westward, Probably
 
-Updated with every merged pull request, so a session cut off at any point loses nothing. Last update: October 22, 2026, with the trail gravestones PR (#15). **Continue the existing project; do not restart it.**
+Updated with every merged pull request, so a session cut off at any point loses nothing. Last update: October 22, 2026, with the betrayal PR (#16). **Continue the existing project; do not restart it.**
 
 ## Where things stand
 
@@ -19,7 +19,8 @@ Updated with every merged pull request, so a session cut off at any point loses 
   11. Fort Kearny pursuit, plus a care/service audit (#13).
   12. Departed companions tell what they saw, plus the outlaw journey sampler (#14).
   13. Gravestones over companions buried on the trail (#15).
-- **Crime record:** version 7, in `simulation/crime_system.gd`. Each version has an `upgrade_vN` step, chained in `upgrade()`. Remains, human food and meals live in `simulation/remains.gd`, as static functions on `game.crime.record`.
+  14. Betrayal at low trust (#16, record version 8).
+- **Crime record:** version 8, in `simulation/crime_system.gd`. Each version has an `upgrade_vN` step, chained in `upgrade()`. Remains, human food and meals live in `simulation/remains.gd`, as static functions on `game.crime.record`.
 - **Design reference:** `docs/STORE_CRIME_SLICE.md` describes every implemented mechanic, its tuning and its save rules. `docs/CRIME_AND_CANNIBALISM_ROADMAP.md` holds the plan.
 
 ## Next work
@@ -32,7 +33,7 @@ Roadmap phase 6 (information spread, pursuit, service audit):
 Smaller follow-ups noted along the way:
 
 - Done: a gravestone in the memorial book for graves dug on the trail (#15).
-- Attacks started by companions, and betrayal at low trust.
+- Done: betrayal at low trust: night theft, or a night attack on the leader (#16).
 - A peaceful emigrant camp encounter.
 
 After phase 6 comes the full balance campaign (roadmap phase 7), which is not started.

@@ -19,7 +19,7 @@
     "miles_per_day": 25
   },
   "companions": {
-    "note": "Authored tuning, not historical rates. Bonds are drawn once per new journey for each pair of companions (at most one partner each). Attacks on a companion use the leader's shot plus willing helpers; companions close to the target fight back if bold, otherwise flee with what they can carry.",
+    "note": "Authored tuning, not historical rates. Bonds are drawn once per new journey for each pair of companions (at most one partner each). Attacks on a companion use the leader's shot plus willing helpers; companions close to the target fight back if bold, otherwise flee with what they can carry. Betrayal: each night a Ruthless or Opportunistic companion at their betrayal point may turn on the party (daily). The Ruthless, if willing to kill, shoot the leader first (ambush_hit, less guard_step for each companion willing to defend). Others rob the stores; each other companion may wake (notice) and stop it. Whoever succeeds takes the shares of food, cash and bullets; the betrayer leaves either way.",
     "bond_chances": {
       "family": 0.1,
       "partner": 0.06,
@@ -31,7 +31,16 @@
     "wound_damage": 40,
     "participant_step": 0.05,
     "retaliate_hit": 0.5,
-    "retaliate_damage": 30
+    "retaliate_damage": 30,
+    "betrayal": {
+      "daily": 0.12,
+      "food_share": 0.25,
+      "cash_share": 0.5,
+      "bullet_share": 0.25,
+      "notice": 0.25,
+      "ambush_hit": 0.5,
+      "guard_step": 0.1
+    }
   },
   "remains": {
     "note": "Authored tuning. A wrapped adult body is counted as 150 lb of cargo; at most two ride with the party. Burying or opening a grave takes a day. A stranger killed by the party may carry a little money. Companions close to someone whose grave is opened take it as a grievous wrong; others mind less, and the callous not at all. Butchering takes a day and yields 40 ration-lb of meat, a deliberately modest game value with no claim to anatomical accuracy; it spoils and dries like other meat. In secret, each companion has a 35% chance to see it. Someone served it without being told has an 8% chance each day to find out.",

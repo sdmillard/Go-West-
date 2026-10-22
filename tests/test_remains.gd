@@ -130,7 +130,7 @@ func run():
 	# Older records: known deaths join the ledger, but nobody knows where they lie.
 	bad=saved.duplicate(true)
 	bad.crime.record.version=4
-	for key in ["remains","human_food","meals"]:bad.crime.record.erase(key)
+	for key in ["remains","human_food","meals","betrayals"]:bad.crime.record.erase(key)
 	for profile in bad.characters:profile.memories=profile.memories.filter(func(memory):return not memory.has("remains_id"))
 	restored=store.restore(bad)
 	check(restored!=null and restored.crime.record.remains.size()==1 and restored.crime.record.remains[0].state=="lost" and not restored.open_remains(),"A death from before the ledger is recorded as lost")
@@ -208,6 +208,7 @@ func run():
 	check(store.restore(bad)==null,"Someone who knows where the meat came from is a witness")
 	bad=saved.duplicate(true)
 	bad.crime.record.version=6
+	bad.crime.record.erase("betrayals")
 	for item in bad.crime.record.remains:item.erase("witnesses")
 	restored=store.restore(bad)
 	check(restored!=null and restored.crime.record.remains[0].witnesses==[1,3,4],"Older records take their witnesses from the meat still held")
