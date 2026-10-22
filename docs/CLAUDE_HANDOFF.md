@@ -1,6 +1,6 @@
 # Claude handoff: Westward, Probably
 
-Updated with every merged pull request, so a session cut off at any point loses nothing. Last update: October 22, 2026, with the peaceful emigrant camp PR (#17). **Continue the existing project; do not restart it.**
+Updated with every merged pull request, so a session cut off at any point loses nothing. Last update: October 22, 2026, with the peaceful emigrant camp PR (#18). **Continue the existing project; do not restart it.**
 
 ## Where things stand
 
@@ -20,7 +20,7 @@ Updated with every merged pull request, so a session cut off at any point loses 
   12. Departed companions tell what they saw, plus the outlaw journey sampler (#14).
   13. Gravestones over companions buried on the trail (#15).
   14. Betrayal at low trust (#16, record version 8).
-  15. Peaceful emigrant camp visits (#17).
+  15. Peaceful emigrant camp visits (#18).
 - **Crime record:** version 8, in `simulation/crime_system.gd`. Each version has an `upgrade_vN` step, chained in `upgrade()`. Remains, human food and meals live in `simulation/remains.gd`, as static functions on `game.crime.record`.
 - **Design reference:** `docs/STORE_CRIME_SLICE.md` describes every implemented mechanic, its tuning and its save rules. `docs/CRIME_AND_CANNIBALISM_ROADMAP.md` holds the plan.
 
@@ -35,7 +35,7 @@ Smaller follow-ups noted along the way:
 
 - Done: a gravestone in the memorial book for graves dug on the trail (#15).
 - Done: betrayal at low trust: night theft, or a night attack on the leader (#16).
-- Done: a peaceful emigrant camp visit: trade, nursing, news (#17).
+- Done: a peaceful emigrant camp visit: trade, nursing, news (#18).
 
 After phase 6 comes the full balance campaign (roadmap phase 7), which is not started.
 
