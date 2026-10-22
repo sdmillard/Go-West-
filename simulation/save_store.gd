@@ -128,6 +128,8 @@ func valid_menu(menu: Dictionary, game) -> bool:
 			return false
 		if menu.has("crime_menu") and (menu.crime_menu!=true or menu.id!="crime" or not menu.get("service_menu",false) or choice.get("crime_command","") not in game.crime.COMMANDS):return false
 		if choice.has("crime_command") and not menu.get("crime_menu",false):return false
+		if menu.has("attack_menu") and (menu.attack_menu!=true or menu.id!="attack" or not menu.get("service_menu",false) or not integer(choice.get("attack_target"),-1,4)):return false
+		if choice.has("attack_target") and not menu.get("attack_menu",false):return false
 		if choice.has("action") and choice.action not in ["cross", "rest", "leave", "trade", "notes", "activity"]:
 			return false
 		if choice.has("activity") and (not choice.activity is String or not game.context.data.activities.has(choice.activity)):return false
@@ -260,11 +262,13 @@ func restore(value: Variant):
 			return null
 		if member.has("departed"):
 			if not member.departed is bool or not member.departed or index==0 or not member.alive or not integer(member.get("departure_day"),0,int(s.day)) or not game.route.nodes.has(member.get("departure_place","")) or not member.get("departure_supplies") is Dictionary:return null
-			if game.route.nodes[member.departure_place].kind not in ["town","fort"]:return null
+			# Settlement departures happen at towns and forts; flight after violence happens anywhere.
+			if member.has("fled") and member.fled!=true:return null
+			if not member.get("fled",false) and game.route.nodes[member.departure_place].kind not in ["town","fort"]:return null
 			var supplies: Dictionary=member.departure_supplies
 			if supplies.size()!=3 or not integer(supplies.get("food"),0,120) or not integer(supplies.get("clothing"),0,1) or supplies.get("gear_lb")!=game.provisions.data.walking.personal_gear_lb_per_person:return null
 			departed+=1
-		elif member.has("departure_day") or member.has("departure_place") or member.has("departure_supplies"):return null
+		elif member.has("departure_day") or member.has("departure_place") or member.has("departure_supplies") or member.has("fled"):return null
 		alive += 1 if game.party_health.is_active(member) else 0
 		health += int(member.health) if game.party_health.is_active(member) else 0
 		for condition in member.conditions:
@@ -332,6 +336,11 @@ func restore(value: Variant):
 		game.crime.rng.state=int(crime.random)
 	elif migrated or economy_migrated:game.crime.bind_party(game)
 	else:return null
+	# An open attack menu must still be possible; its text is regenerated.
+	if game.pending.get("attack_menu",false):
+		var target: int=int(game.pending.choices[0].get("attack_target",-1))
+		if not game.crime.attack_ready(game,target):return null
+		game.pending=game.crime.attack_menu(game,target)
 	if game.pending.get("crime_menu",false):
 		# The menu must still have a target: the active incident, this stop's venue, or the traders on the road.
 		var target: String=game.crime.target(game)
@@ -342,6 +351,8 @@ func restore(value: Variant):
 		game.pending=authoritative
 	for profile in game.characters.profiles:
 		for memory in profile.memories:
+			if memory.has("attack_id"):
+				if memory.attack_id>game.crime.record.attacks.size() or game.crime.record.attacks[int(memory.attack_id)-1].day!=memory.day:return null
 			if memory.has("incident_id"):
 				if memory.incident_id>game.crime.record.incidents.size():return null
 				var incident: Dictionary=game.crime.record.incidents[int(memory.incident_id)-1]

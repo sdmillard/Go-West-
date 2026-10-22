@@ -130,6 +130,37 @@ Other emigrant families now camp near the road. `passing_emigrants` is a second 
 
 So far a camp exists only as a crime target. Meeting one peacefully (trading, swapping news, helping) is not built yet.
 
+## Companion bonds and attacks (record version 4)
+
+**Bonds.** Each new journey draws sparse bonds between companions once, from its own random stream (so crime odds are unchanged). Per pair: family 10%, partner 6%, friend 18%, rival 10%, and nobody has two partners. Bonds are shown in View Party. Older saves upgrade with no bonds, because existing travelers are never given invented family. The leader's relationship to each companion is still the existing `relationship` field.
+
+**Attacking a companion.** View Party has a SHOOT button for any companion with the party. The menu is pure and shows:
+
+- the target;
+- who joins: the leader plus companions willing to kill who are not family, partner or friend of the target;
+- who refuses;
+- the bonds involved;
+- the chance to hit: 70% plus 5% per helper, within the usual bounds.
+
+Committing spends one bullet and no day. A hit kills if the target is already weak, or half the time otherwise. Any other hit wounds for 40 and starts a wound condition. The cause of death names the killer.
+
+**Immediate responses.** Every companion with the wagon sees the attack:
+
+| Who | Response |
+| --- | --- |
+| The target, if alive, or anyone close to them (family, partner, friend) | Fights back if Bold or Reckless and fit; otherwise flees at once. A fighter hits the leader half the time for 30, then leaves too. |
+| A rival of the target | Stands by and loses no trust. |
+| Anyone who forbids murder | Flees at once if they saw a killing; objects and stays (with the usual trust loss) after a miss or a wound. |
+| Everyone else | Stands by. |
+
+Flight reuses the departure transfer: each person takes an equal share of a few days' food, a clothing set and personal gear. It happens anywhere on the road, not just at settlements, and is marked `fled` on the member.
+
+Each attack records its result, helpers and every response. Memories carry the attack's id, so a second attack the same day is its own memory and replaying a menu charges nothing.
+
+**Save validation.** A killing must match a dead target on that day. Anyone who fled or fought back must have left. A fled member must have an attack that caused it. Bonds must be distinct pairs with at most one partner each.
+
+Not yet: an attack started by a companion, betrayal at low trust, or companions revealing what they know after leaving (the news phase).
+
 ## Other limits
 
 Personal existing health specials still affect any actual injury damage. Paid trade, paid care and the hired ferry respond to incidents and news; other services are not yet governed by a general hostility/access system.

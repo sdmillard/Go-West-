@@ -18,6 +18,21 @@
     "delay_days": 2,
     "miles_per_day": 25
   },
+  "companions": {
+    "note": "Authored tuning, not historical rates. Bonds are drawn once per new journey for each pair of companions (at most one partner each). Attacks on a companion use the leader's shot plus willing helpers; companions close to the target fight back if bold, otherwise flee with what they can carry.",
+    "bond_chances": {
+      "family": 0.1,
+      "partner": 0.06,
+      "friend": 0.18,
+      "rival": 0.1
+    },
+    "hit": 0.7,
+    "fatal": 0.5,
+    "wound_damage": 40,
+    "participant_step": 0.05,
+    "retaliate_hit": 0.5,
+    "retaliate_damage": 30
+  },
   "scenes": {
     "kansas_river": {
       "kind": "ferry",

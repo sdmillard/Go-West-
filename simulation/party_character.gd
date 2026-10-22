@@ -186,7 +186,7 @@ func react_to_incident(game,action: String,incident_id: int) -> void:
 		var reaction:=response(int(profile.id),action)
 		if reaction=="neutral":continue
 		var forbidden: bool=reaction in ["forbidden","reluctant"]
-		remember(game,profile,"action_"+action,-12 if forbidden else (2 if reaction=="approved" else -2),"You attempted %s at the store. Response: %s." % [action,reaction],forbidden,incident_id)
+		remember(game,profile,"action_"+action,-12 if forbidden else (2 if reaction=="approved" else -2),"You attempted %s%s. Response: %s." % [action," "+game.crime.where(game,game.crime.record.incidents[incident_id-1].place) if incident_id<=game.crime.record.incidents.size() else "",reaction],forbidden,incident_id)
 
 func warning(index: int) -> String:
 	if index<=0 or index>=profiles.size():return ""
@@ -262,9 +262,10 @@ func defense(game) -> void:
 		var reaction: int=catalog.reaction(profile,"defense",-1) if willing(profile.id,"defend") else -1
 		remember(game,profile,"defend",-12 if forbidden else reaction,"You stood and fought to defend the wagon." if reaction>0 else "You risked the party in an armed defense.",forbidden)
 
-func remember(game, profile: Dictionary, kind: String, delta: float, text: String, forbidden: bool=false,incident_id: int=0) -> void:
+func remember(game, profile: Dictionary, kind: String, delta: float, text: String, forbidden: bool=false,incident_id: int=0,attack_id: int=0) -> void:
 	if not whole(delta,-12,2):return
-	if profile.memories.any(func(memory):return memory.day==game.state.day and memory.kind==kind and int(memory.get("incident_id",0))==incident_id):return
+	# A second incident or attack the same day is its own memory; repeating one is not.
+	if profile.memories.any(func(memory):return memory.day==game.state.day and memory.kind==kind and int(memory.get("incident_id",0))==incident_id and int(memory.get("attack_id",0))==attack_id):return
 	var first: bool=not profile.memories.any(func(memory):return memory.kind==kind)
 	var previous_warning:=warning(int(profile.id))
 	if delta<0 and "Loyal" in profile.specials and not forbidden:delta*=0.5
@@ -275,6 +276,7 @@ func remember(game, profile: Dictionary, kind: String, delta: float, text: Strin
 	profile.trust+=actual
 	profile.memories.append({"day":int(game.state.day),"kind":kind,"delta":actual,"text":text})
 	if incident_id>0:profile.memories.back()["incident_id"]=incident_id
+	if attack_id>0:profile.memories.back()["attack_id"]=attack_id
 	if profile.memories.size()>12:profile.memories.pop_front()
 	game.journal.append("Day %d · %s: %s (trust %+.1f)." % [game.state.day,game.party_health.members[profile.id].name,text,actual])
 	var current_warning:=warning(int(profile.id))
@@ -337,7 +339,8 @@ func valid(value: Variant, count: int, day: int, legacy: bool=false, framework_v
 			var kinds: Array=KINDS if legacy else KINDS+["wage_paid","wage_missed","action_idle"]+ACTIONS.map(func(action):return "action_"+action)
 			if not memory is Dictionary or not whole(memory.get("day"),0,day) or memory.get("kind") not in kinds or not half_number(memory.get("delta"),-12 if not legacy else -2,2) or not memory.get("text") is String or memory.text.length()>240:return false
 			if memory.has("incident_id") and not whole(memory.incident_id,1,10000):return false
-			var key: String=str(memory.day)+":"+memory.kind+":"+str(int(memory.get("incident_id",0)))
+			if memory.has("attack_id") and (not whole(memory.attack_id,1,100) or memory.kind!="action_murder" or memory.has("incident_id")):return false
+			var key: String=str(memory.day)+":"+memory.kind+":"+str(int(memory.get("incident_id",0)))+":"+str(int(memory.get("attack_id",0)))
 			if key in seen or memory.day<previous_day:return false
 			seen.append(key)
 			previous_day=int(memory.day)

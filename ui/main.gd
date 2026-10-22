@@ -29,6 +29,7 @@ var party_button: Button
 var party_rows: VBoxContainer
 var member_details: RichTextLabel
 var selected_member := 0
+var attack_button: Button
 var wages_button: Button
 var stop_window: AcceptDialog
 var stop_rows: VBoxContainer
@@ -359,6 +360,8 @@ simplified game rules, not reconstructed conditions for 1848."""
 	place(member_details, Rect2(261, 0, 291, 188), party_content)
 	wages_button=button("PAY WAGES",_pay_selected_wages)
 	place(wages_button,Rect2(261,194,291,22),party_content)
+	attack_button=button("ATTACK",_attack_selected)
+	place(attack_button,Rect2(261,194,291,22),party_content)
 	options_window = AcceptDialog.new()
 	options_window.title = "TRAIL OPTIONS"
 	add_child(options_window)
@@ -585,6 +588,8 @@ func _select_member(index: int) -> void:
 
 func _refresh_party() -> void:
 	wages_button.hide()
+	attack_button.hide()
+	wages_button.size.x=291
 	member_details.size.y=216
 	for node in party_rows.get_children():
 		party_rows.remove_child(node)
@@ -604,7 +609,7 @@ func _refresh_party() -> void:
 		row.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		row.tooltip_text = "View condition and personal history"
 		party_rows.add_child(row)
-	member_details.text = game.party_health.description(selected_member).replace("PERSONAL HISTORY",game.characters.description(selected_member)+"\n\nHEALTH HISTORY")
+	member_details.text = game.party_health.description(selected_member).replace("PERSONAL HISTORY",game.characters.description(selected_member)+("\n\n"+game.crime.bond_text(game,selected_member) if selected_member>0 else "")+"\n\nHEALTH HISTORY")
 	if selected_member<game.characters.profiles.size():
 		var contract: Dictionary=game.characters.profiles[selected_member].contract
 		if not contract.is_empty():
@@ -612,6 +617,24 @@ func _refresh_party() -> void:
 			wages_button.show()
 			wages_button.text="PAY WAGES OWED · $%.2f" % (contract.arrears_cents/100.0)
 			wages_button.disabled=contract.arrears_cents<=0 or roundi(game.state.money*100)<contract.arrears_cents or not game.characters.can_receive_wages(game,selected_member)
+	if selected_member>0 and game.party_health.is_active(game.party_health.members[selected_member]):
+		member_details.size.y=188
+		attack_button.show()
+		attack_button.text="SHOOT %s" % game.party_health.members[selected_member].name.to_upper()
+		attack_button.disabled=not game.crime.can_attack(game,selected_member)
+		# Share the row with wages when both apply.
+		if wages_button.visible:
+			wages_button.size.x=143
+			attack_button.position.x=410
+			attack_button.size.x=142
+		else:
+			attack_button.position.x=261
+			attack_button.size.x=291
+
+func _attack_selected() -> void:
+	if game.open_attack(selected_member):
+		party_window.hide()
+		_show_service()
 
 func _pay_selected_wages() -> void:
 	if game.characters.pay_wages(game,selected_member):

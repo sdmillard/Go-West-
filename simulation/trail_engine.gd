@@ -126,6 +126,7 @@ func depart(profession: String, names: Array, month: int, cart: Dictionary, cust
 	characters.start(int(state.seed),cleaned.size())
 	if not customization.is_empty():characters.profiles.assign(customization.profiles.duplicate(true))
 	crime.bind_party(self)
+	crime.make_bonds(self)
 	survival.start(int(state.seed))
 	state.profession = profession
 	state.departure_month = month
@@ -358,6 +359,7 @@ func can_choose(index: int) -> bool:
 		return false
 	var choice: Dictionary = pending.choices[index]
 	if pending.get("crime_menu",false):return crime.can_choose(self,str(choice.get("crime_command","")))
+	if pending.get("attack_menu",false):return int(choice.get("attack_target",-1))<0 or crime.attack_ready(self,int(choice.attack_target))
 	if choice.get("care",0)==12 and not context.local_care(self):return false
 	if choice.get("method","")=="ferry" and crime.ferry_refused(self,str(state.landmark)):return false
 	if not context.can_trade(choice) or not crime.can_trade(self,choice) or (choice.has("activity") and choice.activity in context.record.activities):return false
@@ -370,6 +372,7 @@ func choose(index: int) -> bool:
 	if not can_choose(index):
 		return false
 	if pending.get("crime_menu",false):return crime.choose(self,str(pending.choices[index].crime_command))
+	if pending.get("attack_menu",false):return crime.choose_attack(self,index)
 	if pending.get("service_menu", false):
 		return _choose_service(index)
 	if pending.has("landmark"):
@@ -702,25 +705,7 @@ func _choose_service(index: int) -> bool:
 	if choice.get("departure_review",false):
 		pending=service_return.duplicate(true)
 		service_return={}
-		var plan:=departure_plan()
-		for transfer in plan:
-			var member: Dictionary=party_health.members[transfer.id]
-			provisions.remove(transfer.food)
-			state.food-=transfer.food
-			state.clothing-=transfer.clothing
-			state["departed_gear_lb"]=int(state.get("departed_gear_lb",0))+transfer.gear_lb
-			member["departed"]=true
-			member["departure_day"]=int(state.day)
-			member["departure_place"]=state.landmark
-			member["departure_supplies"]={"food":transfer.food,"clothing":transfer.clothing,"gear_lb":transfer.gear_lb}
-			var text: String="%s left at %s with %d ration-lb food, %d clothing set(s), and %d lb personal gear." % [member.name,route.nodes[state.landmark].name,transfer.food,transfer.clothing,transfer.gear_lb]
-			member.history.append("Day %d · %s" % [state.day,text])
-			journal.append("Day %d · %s" % [state.day,text])
-			health_events.append(text)
-			supply_history.append({"day":int(state.day),"event":"companion_departure","changes":{"food":-transfer.food,"clothing":-transfer.clothing}})
-		state.party_size=party_health.living_count()
-		state.health=party_health.average_health()
-		_check_health()
+		_depart(departure_plan(),"")
 		return true
 	crime.consume_trade(choice)
 	context.consume(choice)
@@ -749,8 +734,9 @@ func swimming_risk() -> float:
 	# Authored gameplay odds, higher than either wagon option at the same stage.
 	return 0.8 if state.river_stage == "high" else 0.3
 
-func departure_plan() -> Array[Dictionary]:
-	var candidates: Array[int]=characters.departure_candidates(self)
+func departure_plan() -> Array[Dictionary]:return plan_for(characters.departure_candidates(self))
+## Each leaving companion takes an equal share of a few days' food and a clothing set, never the wagon, stock, cash, ammunition or kits.
+func plan_for(candidates: Array) -> Array[Dictionary]:
 	var plan: Array[Dictionary]=[]
 	if candidates.is_empty():return plan
 	var food_budget: int=mini(int(state.food),candidates.size()*int(characters.benefits.food_days_on_departure)*int(provisions.data.rations_lb[state.rations]))
@@ -758,6 +744,37 @@ func departure_plan() -> Array[Dictionary]:
 	for index in range(candidates.size()):
 		plan.append({"id":candidates[index],"food":int(food_budget/candidates.size())+(1 if index<food_budget%candidates.size() else 0),"clothing":1 if index<clothing_budget else 0,"gear_lb":int(provisions.data.walking.personal_gear_lb_per_person)})
 	return plan
+
+## Settlement departures (no reason) or immediate flight from the road (with the reason).
+func _depart(plan: Array,fled_reason: String) -> void:
+	for transfer in plan:
+		var member: Dictionary=party_health.members[transfer.id]
+		provisions.remove(transfer.food)
+		state.food-=transfer.food
+		state.clothing-=transfer.clothing
+		state["departed_gear_lb"]=int(state.get("departed_gear_lb",0))+transfer.gear_lb
+		member["departed"]=true
+		member["departure_day"]=int(state.day)
+		member["departure_place"]=state.landmark
+		member["departure_supplies"]={"food":transfer.food,"clothing":transfer.clothing,"gear_lb":transfer.gear_lb}
+		if not fled_reason.is_empty():member["fled"]=true
+		var text: String="%s %s %s with %d ration-lb food, %d clothing set(s), and %d lb personal gear." % [member.name,"fled "+fled_reason+", near" if not fled_reason.is_empty() else "left at",route.nodes[state.landmark].name,transfer.food,transfer.clothing,transfer.gear_lb]
+		member.history.append("Day %d · %s" % [state.day,text])
+		journal.append("Day %d · %s" % [state.day,text])
+		health_events.append(text)
+		supply_history.append({"day":int(state.day),"event":"companion_departure","changes":{"food":-transfer.food,"clothing":-transfer.clothing}})
+	state.party_size=party_health.living_count()
+	state.health=party_health.average_health()
+	_check_health()
+## Companions who leave at once after violence, wherever the party is.
+func flee(ids: Array,reason: String) -> void:
+	var active: Array=ids.filter(func(id):return party_health.is_active(party_health.members[id]))
+	if not active.is_empty():_depart(plan_for(active),reason)
+func open_attack(target: int) -> bool:
+	if not crime.can_attack(self,target):return false
+	service_return=pending.duplicate(true)
+	pending=crime.attack_menu(self,target)
+	return true
 
 func open_departure_review() -> bool:
 	var plan:=departure_plan()
