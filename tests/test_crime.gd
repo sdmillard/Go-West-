@@ -24,6 +24,9 @@ func outfit(seed_value: int=57):
 		profile.traits=["Cautious","Compassionate"]
 		profile.boundaries=game.characters.catalog.boundaries("Compassionate")
 	return game
+func willing(game):
+	for profile in game.characters.profiles.slice(1):profile.boundaries=game.characters.catalog.boundaries("Opportunistic")
+	return game
 func choose(game,command: String) -> bool:
 	for index in range(game.pending.choices.size()):
 		if game.pending.choices[index].get("crime_command","")==command:return game.choose(index)
@@ -187,9 +190,67 @@ func run():
 		check(restored.crime.rng.state==int(previous.crime.random) and restored.pending==restored.crime.menu(restored),"Crime random stream and authoritative menu carry over")
 		check(store.restore(JSON.parse_string(JSON.stringify(store.capture(restored))))!=null,"Migrated record saves again in the new format")
 		check(choose(restored,"flee") and restored.crime.valid(restored.crime.snapshot(),restored),"Migrated encounter can be finished")
-	var malformed: Dictionary=previous.duplicate(true)
+	# Genuine save from the previous rules (named witnesses, fixed odds) after a resolved escape.
+	previous=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-report-save-v1.json"))
+	restored=store.restore(previous)
+	check(restored!=null and restored.state==store.normalize(previous.state) and restored.crime.record.incidents.size()==1,"Save from the previous crime rules restores unchanged")
+	var malformed: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-witness-save-v1.json"))
 	malformed.crime.record.actors.fort_bridger.uid="keeper:elsewhere"
 	check(store.restore(malformed)==null,"Malformed version 1 record still rejects")
+	# Situational odds: experience and condition shift intimidation, aim and escape, never noticing.
+	game=outfit()
+	check(game.crime.able(game,"robbery")==1 and game.crime.odds(game,"fort_bridger").edge<0,"A leader with only objecting companions has no willing help")
+	for profile in game.characters.profiles.slice(1):profile.boundaries=game.characters.catalog.boundaries("Opportunistic")
+	check(game.crime.able(game,"robbery")==5 and game.crime.able(game,"murder")==1,"Willing participants depend on each companion's own boundaries for the act")
+	var base: Dictionary=game.crime.scenes.fort_bridger
+	var base_theft: float=base.theft_success
+	var even: Dictionary=game.crime.odds(game,"fort_bridger")
+	check(is_zero_approx(even.edge) and even.compliance==base.compliance and even.shot_hit==base.shot_hit and even.escape_capture==base.escape_capture and even.theft_success==base.theft_success,"Healthy, inexperienced, full-staff odds equal the authored scene values")
+	preview=store.capture(game)
+	game.crime.odds(game,"fort_bridger")
+	check(store.capture(game)==preview,"Computing odds is pure")
+	for member in game.party_health.members:member.health=30
+	var weak: Dictionary=game.crime.odds(game,"fort_bridger")
+	check(weak.compliance<even.compliance and weak.shot_hit<even.shot_hit and weak.escape_capture>even.escape_capture and weak.escape_injury>even.escape_injury,"A party in poor condition intimidates, aims and escapes worse")
+	check(weak.theft_success==even.theft_success,"Party condition does not change whether a theft is noticed")
+	game=willing(outfit())
+	game.crime.scenes.fort_bridger.theft_success=1
+	game.open_crime()
+	choose(game,"theft")
+	choose(game,"take")
+	choose(game,"finish")
+	check(game.crime.experience(game)==1,"Getting away with a job counts as experience")
+	var seasoned: Dictionary=game.crime.odds(game,"fort_bridger")
+	check(seasoned.compliance>even.compliance and seasoned.escape_capture<even.escape_capture,"Experience improves intimidation and escape")
+	game.crime.scenes.fort_bridger.theft_success=base_theft
+	check(is_equal_approx(game.crime.odds(game,"fort_bridger").theft_success,base_theft+game.crime.modifiers.stealth_step),"Experience gives a smaller bonus to going unnoticed")
+	game.crime.scenes.fort_bridger.theft_success=1
+	check(is_equal_approx(game.crime.odds(game,"fort_bridger").theft_success,minf(1.0,1.0)),"Authored certainty is kept")
+	game.open_crime()
+	choose(game,"theft")
+	choose(game,"take")
+	choose(game,"finish")
+	check(game.crime.experience(game)==1,"The same resolved target never counts twice")
+	game=willing(outfit())
+	game.crime.scenes.fort_bridger.compliance=0
+	game.open_crime()
+	choose(game,"robbery")
+	game.crime.scenes.fort_bridger.escape_capture=0
+	choose(game,"flee")
+	check(game.crime.experience(game)==0,"Escaping a resisted robbery is not a successful job")
+	game=willing(outfit())
+	for day in range(6):game.combat.history.append({"day":0,"event":"bandits","tactic":"defend","outcome":"won","victim":0,"risk":0.2})
+	check(game.crime.experience(game)==int(game.crime.modifiers.experience_cap),"Defensive victories count toward a capped total")
+	var veteran: Dictionary=game.crime.odds(game,"fort_bridger")
+	check(veteran.escape_capture>=game.crime.modifiers.floor and veteran.compliance<=game.crime.modifiers.ceiling and veteran.compliance<1,"A capped veteran is still never certain to succeed or escape")
+	game.open_crime()
+	check("Prior successful jobs counted: 3 of 3" in game.pending.text and "Staff on hand: 2" in game.pending.text,"The store menu shows the factors behind the odds")
+	game=willing(outfit())
+	game.crime.scenes.fort_bridger.shot_hit=1
+	game.crime.scenes.fort_bridger.shot_fatal=1
+	game.open_crime()
+	choose(game,"shoot")
+	check(game.crime.odds(game,"fort_bridger").escape_capture<even.escape_capture,"A dead keeper leaves fewer people to stop the escape")
 	var screen=Main.instantiate()
 	root.add_child(screen)
 	await process_frame

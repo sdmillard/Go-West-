@@ -56,7 +56,22 @@ The complete final regression suite passed in the canonical Projects repository 
 
 Finish and review the foundation before expanding it: reports from the named witnesses; precise participation/refusal and stronger witnessed violence responses; broader identity/ownership records; physical bodies and provenance. No rumor spread, distant enforcement, pursuit after departure, guard combat, escape shooting, companion attacks, companion-to-companion bonds, emergency flight, toll/ferry crime, cannibalism, replacement recruitment or final survival balance has shipped.
 
-The first scene deliberately uses fixed local probabilities. Health/experience/defender-count effects on attacking and escape remain a roadmap task. Personal existing health specials still affect any actual injury damage. Services other than this keeper's trade are not yet governed by a general hostility/access system.
+## Situational odds
+
+Scene values in `data/crime_scenes.json` are the odds for a healthy, inexperienced party with willing help against the full staff. `crime_system.odds()` adjusts them without using any randomness, from the shared `modifiers` block:
+
+- **Experience:** each distinct target the party got away from (`left` or `escaped` after an unseen theft, compliance, wound, kill or search) plus each clean defensive victory counts once, capped at 3. Each point adds 4 percentage points. A noticed theft, resisted threat or missed shot does not count, and the same keeper never counts twice.
+- **Condition:** below the existing combat thresholds (poor < 40, fair < 70 average health) the party loses 15 or 7 points.
+- **Participants:** if fewer than two people are fit (health of at least the poor threshold) and willing for that act, the party loses 8 points. Willingness uses each companion's own boundaries, so murder and robbery can differ.
+- **Staff:** every listed staff member already dead adds 8 points against resistance, and also makes an unnoticed theft more likely.
+
+The resulting edge raises compliance and hit chance and lowers capture and escape-injury chances. Whether a theft is noticed depends mainly on who is there to notice; experience adds a smaller bonus (2 points per counted job, at most 6), and party condition never affects it. Modifiers cannot push any chance past 5% or 95%, so a capped veteran can still be caught. The store menu lists the factors (staff on hand, party condition, willing participants, jobs counted). All numbers are authored tuning for the balance campaign, not historical rates.
+
+Saved crime menus now restore by checking their commands against the authoritative stage and regenerating the text, so descriptive text can change between versions without breaking saves.
+
+## Other limits
+
+Personal existing health specials still affect any actual injury damage. Services other than this keeper's trade are not yet governed by a general hostility/access system.
 
 Reproduce using project-local APPDATA as in `test.ps1`: run `tests/test_crime.gd` for targeted checks or `tests/store_crime_journeys.gd` for the 24-route sample. Both use the actual engine. Keep previous balance reports archived.
 

@@ -6,13 +6,21 @@ const ATTEMPTS=["unseen","noticed","complied","resisted","missed","wounded","kil
 const RESOLUTIONS=["","left","escaped","captured","surrendered","party_lost"]
 const VERSION:=2
 var scenes: Dictionary={}
+var modifiers: Dictionary={}
 var record: Dictionary={}
 var rng:=RandomNumberGenerator.new()
 var error: String=""
 func _init():load_data(JSON.parse_string(FileAccess.get_file_as_string("res://data/crime_scenes.json")))
 func load_data(value: Variant) -> bool:
 	error="Invalid crime scene rules"
-	if not value is Dictionary or value.get("version")!=1 or not value.get("scenes") is Dictionary or value.scenes.is_empty():return false
+	if not value is Dictionary or value.get("version")!=1 or not value.get("scenes") is Dictionary or value.scenes.is_empty() or not value.get("modifiers") is Dictionary:return false
+	var mods: Dictionary=value.modifiers
+	if not mods.get("note") is String:return false
+	for key in ["experience_step","stealth_step","staff_step","poor_condition_penalty","fair_condition_penalty","small_party_penalty","floor","ceiling"]:
+		if not number(mods.get(key)) or mods[key]<0 or mods[key]>1:return false
+	for key in ["experience_cap","minimum_able"]:
+		if not whole(mods.get(key),0,5):return false
+	if mods.floor>=mods.ceiling or mods.experience_step*mods.experience_cap>0.25 or mods.stealth_step>mods.experience_step:return false
 	for place in value.scenes:
 		var scene: Variant=value.scenes[place]
 		if not place is String or not scene is Dictionary:return false
@@ -32,6 +40,7 @@ func load_data(value: Variant) -> bool:
 			ids.append(worker.id)
 		if ids[0]!="keeper":return false
 	scenes=value.scenes.duplicate(true)
+	modifiers=mods.duplicate(true)
 	error=""
 	return true
 func start(seed_value: int) -> void:
@@ -82,6 +91,38 @@ func loot_quote(game,place: String) -> Dictionary:
 	return {"food":mini(mini(food_left(game,place),int(scenes[place].loot_limit)),room),"money":service(place).cash_cents if not incident().is_empty() and incident().action!="theft" else 0}
 func option(label: String,command: String) -> Dictionary:
 	return {"label":label,"crime_command":command,"effects":{},"result":""}
+## Distinct targets the party got away from, plus clean defensive victories. Capped; the same target never counts twice.
+func experience(game) -> int:
+	var targets: Array=[]
+	for current in record.incidents:
+		if current.resolution in ["left","escaped"] and current.attempt!="noticed" and current.attempt!="resisted" and current.attempt!="missed" and current.target not in targets:targets.append(current.target)
+	return mini(targets.size()+game.combat.victories(),int(modifiers.experience_cap))
+## Party members fit and willing to take part in this kind of act.
+func able(game,action: String) -> int:
+	return game.party_health.members.filter(func(member):return game.party_health.is_active(member) and member.health>=int(game.combat.data.poor_health) and game.characters.willing(int(member.id),action)).size()
+func party_condition(game) -> String:
+	var health: int=game.party_health.average_health()
+	return "poor" if health<int(game.combat.data.poor_health) else ("fair" if health<int(game.combat.data.fair_health) else "good")
+## Pure: no RNG, no state change. Experience and the situation shift intimidation, aim and escape.
+## Whether a theft is noticed depends on who is there to notice it, plus a smaller experience bonus; never on party condition.
+func odds(game,place: String,action: String="robbery") -> Dictionary:
+	var scene: Dictionary=scenes[place]
+	# Scene odds assume all of its staff are alive; each one already dead weakens resistance.
+	var missing: int=staff_ids(place).size()-living_staff(place).size()
+	var penalty: float=-missing*float(modifiers.staff_step)+{"poor":float(modifiers.poor_condition_penalty),"fair":float(modifiers.fair_condition_penalty),"good":0.0}[party_condition(game)]
+	if able(game,action)<int(modifiers.minimum_able):penalty+=float(modifiers.small_party_penalty)
+	var edge: float=experience(game)*float(modifiers.experience_step)-penalty
+	var low: float=float(modifiers.floor)
+	var high: float=float(modifiers.ceiling)
+	return {"edge":edge,
+		"theft_success":bounded(float(scene.theft_success),float(scene.theft_success)+missing*float(modifiers.staff_step)+experience(game)*float(modifiers.stealth_step),low,high),
+		"compliance":bounded(float(scene.compliance),float(scene.compliance)+edge,low,high),
+		"shot_hit":bounded(float(scene.shot_hit),float(scene.shot_hit)+edge,low,high),
+		"escape_capture":bounded(float(scene.escape_capture),float(scene.escape_capture)-edge,low,high),
+		"escape_injury":bounded(float(scene.escape_injury),float(scene.escape_injury)-edge,low,high),
+		"shot_fatal":float(scene.shot_fatal),"injury_damage":int(scene.injury_damage)}
+## Modifiers cannot push a value past the floor/ceiling, but authored extremes are kept.
+func bounded(base: float,value: float,low: float,high: float) -> float:return clampf(value,minf(base,low),maxf(base,high))
 func condition(actor: Dictionary) -> String:
 	return "dead" if actor.health==0 else ("wounded" if actor.health<100 else "uninjured")
 func menu(game) -> Dictionary:
@@ -93,6 +134,7 @@ func menu(game) -> Dictionary:
 	var options: Array=[]
 	if current.is_empty():
 		text+="\nKeeper: %s. Accessible food stock: %d lb. Cash stash: $%.2f." % [condition(keeper),food_left(game,place),service(place).cash_cents/100.0]
+		text+="\nStaff on hand: %d. Your party's condition: %s. Fit, willing participants: %d. Prior successful jobs counted: %d of %d." % [living_staff(place).size(),party_condition(game),able(game,"robbery"),experience(game),int(modifiers.experience_cap)]
 		if keeper.health>0:
 			options=[option("Take supplies without paying · 1 day","theft"),option("Threaten the keeper with your gun · 1 day","robbery"),option("Shoot at the keeper · 1 bullet, 1 day","shoot")]
 		else:options=[option("Enter the store and search for remaining supplies · 1 day","raid")]
@@ -162,7 +204,8 @@ func choose(game,command: String) -> bool:
 	var place: String=game.state.landmark
 	var keeper: Dictionary=owner(place)
 	var store: Dictionary=service(place)
-	var scene: Dictionary=scenes[place]
+	var kind: String=incident().get("action",command)
+	var scene: Dictionary=odds(game,place,"murder" if kind=="shoot" else "robbery")
 	if incident().is_empty():
 		var id: int=record.incidents.size()+1
 		var current: Dictionary={"id":id,"day":int(game.state.day),"place":place,"target":keeper.uid,"action":command,"attempt":"raided","resolution":"","stage":"escape","food":0,"cash_cents":0,"shots":0,"knowledge":{}}
