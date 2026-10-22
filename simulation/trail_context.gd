@@ -24,6 +24,11 @@ func load_data(value: Variant) -> bool:
 		if not numeric(value.get(key)) or value[key]!=int(value[key]) or value[key]<1 or value[key]>8:return false
 	if value.passing_lots>value.post_lots:return false
 	if value.passing_window_days>=5 or not numeric(value.get("prepared_risk_factor")) or value.prepared_risk_factor<=0 or value.prepared_risk_factor>1:return false
+	var camp: Variant=value.get("emigrant_camp")
+	if not camp is Dictionary or camp.size()!=5 or not camp.get("note") is String:return false
+	for key in ["barter_bullets","barter_food","barter_lots","care"]:
+		if not numeric(camp.get(key)) or camp[key]!=int(camp[key]) or camp[key]<1:return false
+	if camp.barter_lots>value.post_lots or camp.care>=12 or camp.barter_food>100:return false
 	for id in value.activities:
 		var activity=value.activities[id]
 		if not activity is Dictionary or not activity.get("talk") is String:return false

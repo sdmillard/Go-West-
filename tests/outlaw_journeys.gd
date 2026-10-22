@@ -36,6 +36,17 @@ func eat_the_dead(game,deceive: bool) -> bool:
 		elif deceive:pick(game,"remains_command","deceive",slot)
 	if game.pending.get("remains_menu",false):pick(game,"remains_command","back")
 	return true
+## Visits a camp the lawful way: trade for food when bullets allow, have the first traveler in need nursed, and swap news.
+func visit_camp(game) -> bool:
+	if not game.open_camp():return false
+	for key in ["barter_food","care","news"]:
+		if not game.pending.get("service_menu",false) and not game.open_camp():return true
+		for index in range(game.pending.choices.size()):
+			if str(game.pending.choices[index].get("market_key","")).ends_with("|"+key) and game.can_choose(index):
+				game.choose(index)
+				break
+	if game.pending.get("service_menu",false):game.choose(game.pending.choices.size()-1)
+	return true
 func run():
 	adaptive=true
 	hunting_study=true
@@ -52,7 +63,7 @@ func run():
 			var aim:=RandomNumberGenerator.new()
 			aim.seed=seed_value ^ 0x4f55544c
 			var count: Dictionary={"hunts":0,"rests":0,"trades":0,"travel_days":0,"empty_food_days":0,"care":0,"last_care":-100,"shots":0,"meat_obtained":0,"meat_carried":0,"empty_hunts":0,"preservations":0,"oxen_slaughtered":0}
-			var acts: Dictionary={"robberies":0,"kearny":false,"attacked":false}
+			var acts: Dictionary={"robberies":0,"kearny":false,"attacked":false,"visited":[]}
 			var outcome: String="limit"
 			var progress: Dictionary={}
 			var label: String="%s seed %d" % [strategy,seed_value]
@@ -66,6 +77,9 @@ func run():
 				var idle: bool=game.pending.is_empty() or game.pending.has("landmark")
 				if game.pending.get("crime_menu",false):okay=settle_crime(game)
 				elif game.pending.get("remains_menu",false) or game.pending.get("attack_menu",false):okay=game.choose(game.pending.choices.size()-1)
+				elif idle and strategy=="lawful" and not game.crime.camp(game).is_empty() and game.crime.camp(game) not in acts.visited:
+					acts.visited.append(game.crime.camp(game))
+					okay=visit_camp(game)
 				elif idle and strategy=="road_robber" and acts.robberies<3 and game.crime.eligible(game) and game.crime.transient(game.crime.target(game)):
 					acts.robberies+=1
 					okay=game.open_crime() and pick(game,"crime_command","robbery")
@@ -98,10 +112,10 @@ func run():
 			rows.append({"strategy":strategy,"seed":seed_value,"outcome":outcome,"days":game.state.day,"miles":game.state.miles,"survivors":game.state.party_size,
 				"deaths":game.party_health.members.filter(func(member):return not member.alive).size(),"departures":game.party_health.members.filter(func(member):return member.get("departed",false)).size(),
 				"incidents":record.incidents.map(func(current):return "%s:%s:%s" % [current.action,current.attempt,current.resolution]),"attacks":record.attacks.map(func(attack):return attack.attempt),
-				"remains":record.remains.map(func(item):return item.state),"tales":game.crime.tales(game).size(),"betrayals":record.betrayals.map(func(item):return "%s:%s" % [item.act,item.attempt])})
+				"remains":record.remains.map(func(item):return item.state),"camps_visited":acts.visited.size(),"tales":game.crime.tales(game).size(),"betrayals":record.betrayals.map(func(item):return "%s:%s" % [item.act,item.attempt])})
 			print("%s: %s on day %d at mile %d, %d with the party" % [label,outcome,game.state.day,game.state.miles,game.state.party_size])
 	var file=FileAccess.open("res://docs/outlaw-journeys.json",FileAccess.WRITE)
-	file.store_string(JSON.stringify({"rules_signature":store.fingerprint(),"runs":rows,"errors":errors,"policy":"20 full-route journeys: 5 strategies x 4 seeds (banker suggested outfit; June, May, August, July). Lawful control; robbing up to three roadside parties; robbing the Fort Kearny commissary; shooting a companion on day 20, then butchering any accessible dead openly and offering the meat, or in secret and serving it without telling. Otherwise the cautious salted-hunt survival policy. An integration check, not balance evidence."},"\t"))
+	file.store_string(JSON.stringify({"rules_signature":store.fingerprint(),"runs":rows,"errors":errors,"policy":"20 full-route journeys: 5 strategies x 4 seeds (banker suggested outfit; June, May, August, July). Lawful control that visits each emigrant camp peacefully (trading bullets for food, nursing, news); robbing up to three roadside parties; robbing the Fort Kearny commissary; shooting a companion on day 20, then butchering any accessible dead openly and offering the meat, or in secret and serving it without telling. Otherwise the cautious salted-hunt survival policy. An integration check, not balance evidence."},"\t"))
 	file.close()
 	for error in errors:printerr("ERROR: %s" % JSON.stringify(error))
 	print("Outlaw journeys: %d runs, %d errors" % [rows.size(),errors.size()])

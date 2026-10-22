@@ -376,6 +376,7 @@ simplified game rules, not reconstructed conditions for 1848."""
 	actions.add_child(button("LOOK FOR TRADERS / TRADE", _open_trade))
 	actions.add_child(button("ROB, STEAL OR ATTACK HERE", _open_crime))
 	actions.add_child(button("THE DEAD: BURY, CARRY OR SEARCH", _open_remains))
+	actions.add_child(button("VISIT AN EMIGRANT CAMP", _open_camp))
 	actions.add_child(button("CARE / MEDICAL ATTENTION", _open_care))
 	actions.add_child(button("PROVISIONS / CARGO", _show_supplies))
 	actions.add_child(button("MEMORIAL BOOK", _show_memorials))
@@ -518,6 +519,14 @@ func _open_crime() -> void:
 	else:
 		record_notice.title="NOTHING TO TAKE HERE"
 		record_notice.dialog_text="Stop at a trading post, the Kansas River ferry, Fort Kearny once soldiers are there, or the Barlow Road toll gate, or meet passing traders on the road, to use these actions."
+		record_notice.popup_centered()
+
+func _open_camp() -> void:
+	options_window.hide()
+	if game.open_camp():_show_service()
+	else:
+		record_notice.title="NO CAMP NEARBY"
+		record_notice.dialog_text="Emigrant families camp near the road every so often. When one is close, you can visit, trade, ask for help or swap news."
 		record_notice.popup_centered()
 
 func _open_remains() -> void:
