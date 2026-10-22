@@ -4,7 +4,7 @@ const COMMANDS=["theft","robbery","shoot","raid","take","flee","breakout","surre
 const STAGES=["loot","escape","standoff","report","done"]
 const ATTEMPTS=["unseen","noticed","complied","resisted","missed","wounded","killed","raided"]
 const RESOLUTIONS=["","left","escaped","captured","surrendered","party_lost"]
-const VERSION:=3
+const VERSION:=4
 const FACTS=["attempt","loot","escape"]
 ## Venue wording. A store yields food and cash; a toll gate or ferry yields its cash box and passage.
 const KINDS={
@@ -16,6 +16,11 @@ const KINDS={
 	"ferry":{"journal":"Ferry","noun":"the ferry","theft":"Cast off with the ferry while the crew is away · 1 day","raid":"Take the ferry and the crew's cash box · 1 day","take":"Take $%.2f and the ferry · 1 day","passage":"the ferry will be yours to work across"}}
 ## Attempts that reach the loot stage; only these can win passage at a gate or ferry.
 const LOOTING=["unseen","complied","killed","raided"]
+## Sparse named bonds between companions, and how each companion answers an attack on another.
+const BONDS=["family","partner","friend","rival"]
+const CLOSE=["family","partner","friend"]
+const RESPONSES=["stood by","objected","fled","retaliated"]
+const ATTACK_RESULTS=["missed","wounded","killed"]
 ## The one traders scene is a template: each passing trading party, named by its market key, gets its own people when first targeted.
 const TRADERS:="passing_traders"
 ## Emigrant families camped near the road work the same way, named by their camp.
@@ -25,6 +30,7 @@ const TEMPLATE_KINDS={TRADERS:"traders",EMIGRANTS:"emigrants"}
 var scenes: Dictionary={}
 var modifiers: Dictionary={}
 var news_rules: Dictionary={}
+var companion_rules: Dictionary={}
 var miles: Dictionary={}
 var record: Dictionary={}
 var rng:=RandomNumberGenerator.new()
@@ -39,6 +45,17 @@ func load_data(value: Variant) -> bool:
 		if not number(mods.get(key)) or mods[key]<0 or mods[key]>1:return false
 	for key in ["experience_cap","minimum_able"]:
 		if not whole(mods.get(key),0,5):return false
+	var party: Variant=value.get("companions")
+	if not party is Dictionary or not party.get("note") is String or not party.get("bond_chances") is Dictionary or party.bond_chances.keys()!=BONDS:return false
+	var total:=0.0
+	for kind in BONDS:
+		if not number(party.bond_chances[kind]) or party.bond_chances[kind]<0:return false
+		total+=float(party.bond_chances[kind])
+	if total>1:return false
+	for key in ["hit","fatal","participant_step","retaliate_hit"]:
+		if not number(party.get(key)) or party[key]<0 or party[key]>1:return false
+	for key in ["wound_damage","retaliate_damage"]:
+		if not whole(party.get(key),1,100):return false
 	var news: Variant=value.get("reports")
 	if not news is Dictionary or not news.get("note") is String or not whole(news.get("delay_days"),0,30) or not whole(news.get("miles_per_day"),1,200):return false
 	if mods.floor>=mods.ceiling or mods.experience_step*mods.experience_cap>0.25 or mods.stealth_step>mods.experience_step:return false
@@ -80,11 +97,12 @@ func load_data(value: Variant) -> bool:
 	scenes=value.scenes.duplicate(true)
 	modifiers=mods.duplicate(true)
 	news_rules=news.duplicate(true)
+	companion_rules=party.duplicate(true)
 	error=""
 	return true
 func start(seed_value: int) -> void:
 	rng.seed=seed_value ^ 0x4352494d
-	record={"version":VERSION,"people":{},"actors":{},"services":{},"incidents":[],"active":{},"reports":[]}
+	record={"version":VERSION,"people":{},"actors":{},"services":{},"incidents":[],"active":{},"reports":[],"bonds":[],"attacks":[]}
 	for place in venues():
 		for uid in staff_ids(place):record.actors[uid]=fresh_actor(place,uid)
 		record.services[place]=fresh_service(place,0)
@@ -458,10 +476,129 @@ func wound(game,damage: int,count: int) -> void:
 		game.state.health=game.party_health.average_health()
 		game.state.party_size=game.party_health.living_count()
 		game._check_health()
+## Bonds are generated once, for new journeys only, from their own random stream.
+func make_bonds(game) -> void:
+	if not record.bonds.is_empty() or int(game.state.day)!=0:return
+	var random:=RandomNumberGenerator.new()
+	random.seed=int(game.state.seed) ^ 0x424f4e44
+	var partnered: Array=[]
+	var count: int=game.party_health.members.size()
+	for a in range(1,count):
+		for b in range(a+1,count):
+			var roll: float=random.randf()
+			for kind in BONDS:
+				var chance: float=float(companion_rules.bond_chances[kind])
+				if roll<chance:
+					if kind=="partner" and (a in partnered or b in partnered):break
+					if kind=="partner":partnered.append_array([a,b])
+					record.bonds.append({"a":a,"b":b,"kind":kind})
+					break
+				roll-=chance
+func bond(a: int,b: int) -> String:
+	for item in record.bonds:
+		if (int(item.a)==a and int(item.b)==b) or (int(item.a)==b and int(item.b)==a):return item.kind
+	return ""
+func bond_text(game,id: int) -> String:
+	var lines: Array=[]
+	for item in record.bonds:
+		if int(item.a)==id or int(item.b)==id:lines.append("%s: %s" % [item.kind.capitalize(),game.party_health.members[int(item.b) if int(item.a)==id else int(item.a)].name])
+	return "Bonds: "+(", ".join(lines) if not lines.is_empty() else "None")
+## Who joins the leader against a companion, and who refuses: anyone close to the target, or unwilling to kill.
+func attack_side(game,target: int) -> Dictionary:
+	var joining: Array=[0]
+	var refusing: Array=[]
+	for member in game.party_health.members:
+		var id: int=int(member.id)
+		if id==0 or id==target or not game.party_health.is_active(member):continue
+		if bond(id,target) in CLOSE or not game.characters.willing(id,"murder"):refusing.append(id)
+		else:joining.append(id)
+	return {"joining":joining,"refusing":refusing}
+func attack_chance(game,target: int) -> float:
+	return clampf(float(companion_rules.hit)+float(companion_rules.participant_step)*(attack_side(game,target).joining.size()-1),float(modifiers.floor),float(modifiers.ceiling))
+func attack_ready(game,target: int) -> bool:
+	var members: Array=game.party_health.members
+	return target>0 and target<members.size() and game.party_health.is_active(members[target]) and game.party_health.is_active(members[0]) and game.state.bullets>0 and record.active.is_empty() and record.attacks.size()<100
+func can_attack(game,target: int) -> bool:return game.can_service() and attack_ready(game,target)
+## Pure: shows the target, who joins, who refuses and the odds before anything is committed.
+func attack_menu(game,target: int) -> Dictionary:
+	var members: Array=game.party_health.members
+	var side:=attack_side(game,target)
+	var name: String=members[target].name
+	var names:=func(ids):return ", ".join(ids.map(func(id):return members[id].name)) if not ids.is_empty() else "nobody"
+	var text: String="You intend to shoot %s. Joining you: %s. Refusing: %s. Chance to hit: %d%%. A hit may kill or only wound. Everyone with the wagon sees it; companions close to %s may fight you or flee at once, and others who object may leave." % [name,names.call(side.joining),names.call(side.refusing),roundi(attack_chance(game,target)*100),name]
+	for item in record.bonds:
+		if int(item.a)==target or int(item.b)==target:text+="\n%s and %s: %s." % [members[int(item.a)].name,members[int(item.b)].name,item.kind]
+	return {"id":"attack","attack_menu":true,"service_menu":true,"title":"Attack "+name,"text":text,"choices":[{"label":"Shoot %s · 1 bullet" % name,"attack_target":target,"effects":{},"result":""},{"label":"Back","attack_target":-1,"effects":{},"result":""}]}
+func choose_attack(game,index: int) -> bool:
+	var target: int=int(game.pending.choices[index].attack_target)
+	if target>=0 and not attack_ready(game,target):return false
+	game.pending=game.service_return.duplicate(true)
+	game.service_return={}
+	if target>=0:attack(game,target)
+	return true
+func attack(game,target: int) -> void:
+	var members: Array=game.party_health.members
+	var leader: Dictionary=members[0]
+	var victim: Dictionary=members[target]
+	var day: int=int(game.state.day)
+	var side:=attack_side(game,target)
+	var chance:=attack_chance(game,target)
+	game._apply({"bullets":-1})
+	var attempt: String="missed"
+	if rng.randf()<chance:attempt="killed" if victim.health<=int(companion_rules.wound_damage) or rng.randf()<float(companion_rules.fatal) else "wounded"
+	if attempt=="killed":game.party_health.affect(victim,-int(victim.health),day,"being shot by "+leader.name)
+	elif attempt=="wounded":
+		game.party_health.affect(victim,-int(companion_rules.wound_damage),day,"a gunshot wound from "+leader.name)
+		game.party_health.begin_condition(target,"wound",day,1)
+	var id: int=record.attacks.size()+1
+	var responses: Dictionary={}
+	var poor: int=int(game.combat.data.poor_health)
+	for member in members:
+		var other: int=int(member.id)
+		if other==0 or other in side.joining or not game.party_health.is_active(member):continue
+		var profile: Dictionary=game.characters.profiles[other]
+		var fighter: bool=profile.traits[0] in ["Bold","Reckless"] and member.health>=poor
+		var answer: String="stood by"
+		if other==target or bond(other,target) in CLOSE:answer="retaliated" if fighter else "fled"
+		elif bond(other,target)!="rival" and game.characters.response(other,"murder") in ["forbidden","reluctant"]:answer="fled" if attempt=="killed" else "objected"
+		responses[str(other)]=answer
+		# Harm to oneself or a loved one is never an ordinary trust loss; a rival is unmoved.
+		if other==target or bond(other,target) in CLOSE:game.characters.remember(game,profile,"action_murder",-12,"You shot at %s." % ("them" if other==target else victim.name),true,0,id)
+		elif bond(other,target)!="rival":
+			var reaction: String=game.characters.response(other,"murder")
+			if reaction!="neutral":game.characters.remember(game,profile,"action_murder",-12 if reaction in ["forbidden","reluctant"] else (2 if reaction=="approved" else -2),"You shot at %s. Response: %s." % [victim.name,reaction],reaction in ["forbidden","reluctant"],0,id)
+	record.attacks.append({"id":id,"day":day,"target":target,"attempt":attempt,"joining":side.joining,"responses":responses})
+	game.journal.append("Day %d · You shot at %s: %s." % [day,victim.name,attempt])
+	var leaving: Array=[]
+	for key in responses:
+		var member: Dictionary=members[int(key)]
+		if responses[key]=="retaliated" and game.party_health.is_active(leader):
+			var hit: bool=rng.randf()<float(companion_rules.retaliate_hit)
+			if hit:
+				game.party_health.affect(leader,-int(companion_rules.retaliate_damage),day,"being shot by "+member.name)
+				game.party_health.begin_condition(0,"wound",day,1)
+			game.journal.append("Day %d · %s fought back%s." % [day,member.name," and hit you" if hit else " and missed"])
+		if responses[key] in ["fled","retaliated"]:leaving.append(int(key))
+		elif responses[key]=="objected":game.journal.append("Day %d · %s objects to the attack." % [day,member.name])
+	game._collect_health_events()
+	game.flee(leaving,"after you shot at "+victim.name)
+	game.health_events.append("You shot at %s: %s.%s" % [victim.name,attempt,(" Leaving at once: "+", ".join(leaving.map(func(other):return members[other].name))+".") if not leaving.is_empty() else ""])
+	game.state.health=game.party_health.average_health()
+	game.state.party_size=game.party_health.living_count()
+	game._check_health()
 func snapshot() -> Dictionary:return {"record":record.duplicate(true),"random":str(rng.state)}
 ## Converts a version 1 snapshot (one keeper record per place and an aggregate "staff:<place>"
 ## observer) into separate staff people. Anything malformed is returned unchanged for valid() to reject.
-func upgrade(value: Variant,game=null) -> Variant:return add_venues(upgrade_v2(upgrade_v1(value)),game)
+func upgrade(value: Variant,game=null) -> Variant:return add_venues(upgrade_v3(upgrade_v2(upgrade_v1(value))),game)
+## Version 3 had no companion bonds or attacks. Existing travelers are never given invented bonds.
+func upgrade_v3(value: Variant) -> Variant:
+	if not value is Dictionary or not value.get("record") is Dictionary or value.record.get("version")!=3:return value
+	var r: Dictionary=value.record.duplicate(true)
+	if r.has("bonds") or r.has("attacks"):return value
+	r.version=VERSION
+	r.bonds=[]
+	r.attacks=[]
+	return {"record":r,"random":value.get("random")}
 ## Records made before a venue existed gain its untouched people and service. Food already bought there is counted conservatively, as in bind_party.
 func add_venues(value: Variant,game) -> Variant:
 	if not value is Dictionary or not value.get("record") is Dictionary or value.record.get("version")!=VERSION or not value.record.get("actors") is Dictionary or not value.record.get("services") is Dictionary:return value
@@ -478,7 +615,7 @@ func upgrade_v2(value: Variant) -> Variant:
 	if not value is Dictionary or not value.get("record") is Dictionary or value.record.get("version")!=2 or not value.record.get("incidents") is Array:return value
 	# Version 2 had witnesses but no reports. Their reports are dated to the incident day.
 	var r: Dictionary=value.record.duplicate(true)
-	r.version=VERSION
+	r.version=3
 	r.reports=[]
 	for current in r.incidents:
 		if not current is Dictionary or not current.get("knowledge") is Dictionary or not scenes.has(current.get("place","")):return value
@@ -507,10 +644,44 @@ func upgrade_v1(value: Variant) -> Variant:
 	return {"record":r,"random":value.get("random")}
 func number(value: Variant) -> bool:return (value is int or value is float) and is_finite(value)
 func whole(value: Variant,low: int,high: int) -> bool:return number(value) and value==floor(value) and value>=low and value<=high
+## Bonds are sparse pairs of companions; each attack is consistent with who died, who left and how each companion answered.
+func valid_party(r: Dictionary,game) -> bool:
+	var members: Array=game.party_health.members
+	if not r.get("bonds") is Array or r.bonds.size()>10 or not r.get("attacks") is Array or r.attacks.size()>100:return false
+	var pairs: Array=[]
+	var partnered: Array=[]
+	for item in r.bonds:
+		if not item is Dictionary or item.size()!=3 or not whole(item.get("a"),1,members.size()-1) or not whole(item.get("b"),int(item.get("a"))+1,members.size()-1) or item.get("kind") not in BONDS:return false
+		var pair: String="%d:%d" % [item.a,item.b]
+		if pair in pairs:return false
+		pairs.append(pair)
+		if item.kind=="partner":
+			if int(item.a) in partnered or int(item.b) in partnered:return false
+			partnered.append_array([int(item.a),int(item.b)])
+	var previous_day:=0
+	for index in range(r.attacks.size()):
+		var attack: Variant=r.attacks[index]
+		if not attack is Dictionary or attack.size()!=6 or attack.get("id")!=index+1 or not whole(attack.get("day"),previous_day,int(game.state.day)) or not whole(attack.get("target"),1,members.size()-1) or attack.get("attempt") not in ATTACK_RESULTS:return false
+		previous_day=int(attack.day)
+		var victim: Dictionary=members[int(attack.target)]
+		if attack.attempt=="killed" and (victim.alive or victim.death_day!=attack.day):return false
+		if not attack.get("joining") is Array or attack.joining.is_empty() or attack.joining[0]!=0 or not attack.get("responses") is Dictionary:return false
+		for id in attack.joining:
+			if not whole(id,0,members.size()-1) or id==attack.target or attack.joining.count(id)!=1:return false
+		for key in attack.responses:
+			if not key is String or not key.is_valid_int() or not whole(int(key),1,members.size()-1) or int(key) in attack.joining or attack.responses[key] not in RESPONSES:return false
+			# Whoever fled or fought back is no longer with the party (unless they died there).
+			var member: Dictionary=members[int(key)]
+			if attack.responses[key] in ["fled","retaliated"] and member.alive and not member.get("departed",false):return false
+		if (str(int(attack.target)) in attack.responses)==(attack.attempt=="killed"):return false
+	# Nobody fled the party except in answer to an attack.
+	for member in members:
+		if member.get("fled",false) and not r.attacks.any(func(attack):return attack is Dictionary and attack.get("responses") is Dictionary and attack.responses.get(str(int(member.id)),"") in ["fled","retaliated"] and attack.day==member.departure_day):return false
+	return true
 func valid(value: Variant,game) -> bool:
 	if not value is Dictionary or value.size()!=2 or not value.get("record") is Dictionary or not value.get("random") is String or not value.random.is_valid_int() or str(int(value.random))!=value.random:return false
 	var r: Dictionary=value.record
-	if r.size()!=7 or not r.get("reports") is Array or r.get("version")!=VERSION or not r.get("people") is Dictionary or r.people.size()!=5 or not r.get("actors") is Dictionary or not r.get("services") is Dictionary or not r.services.keys().all(func(place):return scenes.has(place) and not TEMPLATE_KINDS.has(place) or transient(place)) or not r.get("incidents") is Array or r.incidents.size()>10000 or not r.get("active") is Dictionary:return false
+	if r.size()!=9 or not valid_party(r,game) or not r.get("reports") is Array or r.get("version")!=VERSION or not r.get("people") is Dictionary or r.people.size()!=5 or not r.get("actors") is Dictionary or not r.get("services") is Dictionary or not r.services.keys().all(func(place):return scenes.has(place) and not TEMPLATE_KINDS.has(place) or transient(place)) or not r.get("incidents") is Array or r.incidents.size()>10000 or not r.get("active") is Dictionary:return false
 	for member in game.party_health.members:
 		var uid:=person_id(int(game.state.seed),int(member.id))
 		var person: Variant=r.people.get(uid)

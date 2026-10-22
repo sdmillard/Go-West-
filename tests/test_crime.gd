@@ -199,7 +199,7 @@ func run():
 	check(restored!=null and restored.state==store.normalize(previous.state) and restored.crime.record.incidents.size()==1,"Save from the previous crime rules restores unchanged")
 	if restored!=null:
 		var upgraded: Array=restored.crime.record.reports
-		check(restored.crime.record.version==3 and upgraded.size()==1 and upgraded[0].day==restored.crime.record.incidents[0].day and upgraded[0].identified and upgraded[0].senders==["keeper:fort_bridger","hand:fort_bridger"],"An earlier witnessed escape gains its report, dated to the incident day")
+		check(restored.crime.record.version==restored.crime.VERSION and upgraded.size()==1 and upgraded[0].day==restored.crime.record.incidents[0].day and upgraded[0].identified and upgraded[0].senders==["keeper:fort_bridger","hand:fort_bridger"],"An earlier witnessed escape gains its report, dated to the incident day")
 	# Genuine save from the report rules, before the other venues existed: a reported robbery at Fort Bridger.
 	previous=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-venues-save-v1.json"))
 	check(previous.crime.record.services.size()==1 and previous.crime.record.reports.size()==1,"Fixture predates the other venues")
