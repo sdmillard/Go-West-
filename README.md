@@ -18,7 +18,7 @@ Companions have traits, backgrounds, trust in your leadership and memories of se
 
 [Companion consequences](docs/COMPANION_CONSEQUENCES.md) add refusal and warned departures at settlements, with an explicit belongings review. Free companions rely on relationships and decisions; paid companions can build trust by honoring wages, but carry a recurring budget obligation. Payment rewards are normalized across daily/weekly schedules.
 
-Double-click **launch.cmd**. The official portable Godot 4.5.1 runtime downloaded for development is in `.tools/godot/` (ignored by Git).
+Double-click **launch.cmd**. The official portable Godot 4.5.1 runtime downloaded for development is in `.tools/godot/` (ignored by Git). Before starting, it runs **update.cmd**, which fast-forwards a clean `master` checkout to GitHub's `master`. It skips the update on another branch or when tracked files have local edits, and plays the copy already there if the pull fails. Run update.cmd by itself to update without playing.
 
 Alternatively, import `project.godot` in [Godot 4.5.1](https://github.com/godotengine/godot/releases/tag/4.5.1-stable) or a compatible later Godot 4 release, then press **F5**. On another computer, install Godot yourself; the runtime is not part of the repository. No addons, paid assets, or export templates are needed to play from the editor.
 
