@@ -155,7 +155,7 @@ func run():
 			check(not current.knowledge.has("staff:fort_bridger"),"No aggregate staff observer remains")
 	for outcome in ["unseen","noticed","killed"]:check(witnessed.has(outcome),"Witness sample exercises "+outcome)
 	game=outfit()
-	check(game.crime.record.actors.size()==2 and game.crime.service("fort_bridger").owner=="keeper:fort_bridger" and game.crime.service("fort_bridger").staff==["keeper:fort_bridger","hand:fort_bridger"],"Store service is owned by the keeper and staffed by separate people")
+	check(game.crime.record.actors.size()==12 and game.crime.service("fort_bridger").owner=="keeper:fort_bridger" and game.crime.service("fort_bridger").staff==["keeper:fort_bridger","hand:fort_bridger"],"Store service is owned by the keeper and staffed by separate people")
 	game.crime.scenes.fort_bridger.shot_hit=1
 	game.crime.scenes.fort_bridger.shot_fatal=1
 	game.open_crime()
@@ -200,6 +200,14 @@ func run():
 	if restored!=null:
 		var upgraded: Array=restored.crime.record.reports
 		check(restored.crime.record.version==3 and upgraded.size()==1 and upgraded[0].day==restored.crime.record.incidents[0].day and upgraded[0].identified and upgraded[0].senders==["keeper:fort_bridger","hand:fort_bridger"],"An earlier witnessed escape gains its report, dated to the incident day")
+	# Genuine save from the report rules, before the other venues existed: a reported robbery at Fort Bridger.
+	previous=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-venues-save-v1.json"))
+	check(previous.crime.record.services.size()==1 and previous.crime.record.reports.size()==1,"Fixture predates the other venues")
+	restored=store.restore(previous)
+	check(restored!=null and restored.state==store.normalize(previous.state) and restored.crime.record.reports==store.normalize(previous.crime.record.reports),"Save from before the other venues restores with its report unchanged")
+	if restored!=null:
+		check(restored.crime.record.services.size()==restored.crime.scenes.size() and not restored.crime.closed("fort_hall") and restored.crime.service("barlow_pass").cash_cents==4000,"Earlier saves gain the new venues untouched")
+		check(store.restore(JSON.parse_string(JSON.stringify(store.capture(restored))))!=null,"The upgraded record saves again")
 	var malformed: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-witness-save-v1.json"))
 	malformed.crime.record.actors.fort_bridger.uid="keeper:elsewhere"
 	check(store.restore(malformed)==null,"Malformed version 1 record still rejects")
@@ -331,6 +339,7 @@ func run():
 	choose(game,"take")
 	choose(game,"flee")
 	check(game.crime.record.reports.size()==1 and game.crime.record.reports[0].senders==["hand:fort_bridger"],"With the keeper dead, the hired hand's report still goes out")
+	venue_checks(store)
 	var screen=Main.instantiate()
 	root.add_child(screen)
 	await process_frame
@@ -357,3 +366,145 @@ func run():
 	quit(1 if failures else 0)
 
 
+func at(game,place: String):
+	game.state.next_landmark=place
+	game._arrive_landmark()
+	return game
+func stop_choice(game,predicate: Callable) -> int:
+	for index in range(game.pending.choices.size()):
+		if predicate.call(game.pending.choices[index]):return index
+	return -1
+func leave_index(game) -> int:return stop_choice(game,func(choice):return choice.get("action","")=="leave")
+func ferry_index(game) -> int:return stop_choice(game,func(choice):return choice.get("method","")=="ferry")
+func seized_index(game) -> int:return stop_choice(game,func(choice):return choice.get("method","")=="seized")
+## Every trading post is a store; the Barlow toll gate and the Kansas River ferry are their own venues.
+func venue_checks(store) -> void:
+	var game=outfit()
+	for place in ["fort_laramie","fort_hall","fort_boise"]:
+		at(game,place)
+		check(game.open_crime() and game.pending.title=="The trading store" and "Accessible food stock" in game.pending.text,"%s has a trading store" % place)
+		choose_back(game)
+	at(game,"fort_laramie")
+	game.open_crime()
+	check("Staff on hand: 3" in game.pending.text,"Fort John has a larger staff")
+	choose_back(game)
+	check(game.crime.valid(game.crime.snapshot(),game),"All venues validate in a new record")
+	# Toll gate: getting through unseen waives the toll.
+	game=at(willing(outfit()),"barlow_pass")
+	var money: float=game.state.money
+	check(float(game.pending.choices[leave_index(game)].requires.money)>0,"The toll is owed on arrival")
+	game.crime.scenes.barlow_pass.theft_success=1
+	check(game.open_crime() and game.pending.title=="The toll gate" and "Gatekeeper: uninjured. Cash box: $40.00." in game.pending.text and "Slip the wagons past" in game.pending.choices[0].label,"The toll gate has its own menu")
+	choose(game,"theft")
+	check(game.crime.incident().stage=="loot" and game.crime.can_choose(game,"take"),"Passing the gate is the prize even with nothing taken")
+	choose(game,"take")
+	check(game.crime.incident().resolution=="left" and game.state.money==money,"An unseen pass takes no money")
+	choose(game,"finish")
+	var leave: Dictionary=game.pending.choices[leave_index(game)]
+	check(game.crime.passage("barlow_pass") and leave.requires.is_empty() and leave.effects.is_empty() and "not paid" in leave.label,"Slipping past the gate waives the toll")
+	var saved: Dictionary=store.capture(game)
+	check(store.restore(JSON.parse_string(JSON.stringify(saved)))!=null,"A waived toll round-trips through saves")
+	check(game.choose(leave_index(game)) and game.state.money==money and game.state.next_landmark=="laurel_hill","The party continues without paying")
+	game=at(willing(outfit()),"barlow_pass")
+	game.crime.scenes.barlow_pass.theft_success=0
+	game.crime.scenes.barlow_pass.escape_capture=0
+	game.crime.scenes.barlow_pass.escape_injury=0
+	game.open_crime()
+	choose(game,"theft")
+	choose(game,"flee")
+	choose(game,"finish")
+	check(not game.crime.passage("barlow_pass") and float(game.pending.choices[leave_index(game)].requires.money)>0,"A noticed attempt that runs off still owes the toll")
+	game=at(willing(outfit()),"barlow_pass")
+	game.crime.scenes.barlow_pass.compliance=1
+	game.crime.scenes.barlow_pass.escape_capture=0
+	game.crime.scenes.barlow_pass.escape_injury=0
+	money=game.state.money
+	game.open_crime()
+	choose(game,"robbery")
+	choose(game,"take")
+	choose(game,"flee")
+	check(is_equal_approx(game.state.money,money+40) and game.crime.service("barlow_pass").cash_cents==0,"Robbing the gate takes the toll box")
+	choose(game,"finish")
+	check(game.pending.choices[leave_index(game)].requires.is_empty(),"Robbing the gate also gets the party through")
+	game=at(willing(outfit()),"barlow_pass")
+	game.crime.scenes.barlow_pass.shot_hit=1
+	game.crime.scenes.barlow_pass.shot_fatal=1
+	game.crime.scenes.barlow_pass.escape_capture=0
+	game.crime.scenes.barlow_pass.escape_injury=0
+	game.open_crime()
+	choose(game,"shoot")
+	choose(game,"flee")
+	choose(game,"finish")
+	check(game.crime.passage("barlow_pass") and game.pending.choices[leave_index(game)].requires.is_empty(),"Nobody is left to collect the toll from a dead gatekeeper")
+	check(game.crime.record.reports.is_empty(),"With the only witness dead, no report leaves the gate")
+	# Ferry: taking it means crossing without the crew.
+	game=at(willing(outfit()),"kansas_river")
+	var hire: int=ferry_index(game)
+	check(hire>=0 and game.can_choose(hire) and seized_index(game)==-1,"The crewed ferry is for hire on arrival")
+	game.crime.scenes.kansas_river.compliance=1
+	game.crime.scenes.kansas_river.escape_capture=0
+	game.crime.scenes.kansas_river.escape_injury=0
+	check(game.open_crime() and game.pending.title=="The ferry landing" and "Ferryman: uninjured" in game.pending.text and "Threaten the ferryman" in game.pending.choices[1].label,"The ferry has its own menu")
+	choose(game,"robbery")
+	check("the ferry will be yours" in game.pending.text,"The loot screen says the ferry is the prize")
+	choose(game,"take")
+	choose(game,"flee")
+	choose(game,"finish")
+	var seized: int=seized_index(game)
+	check(ferry_index(game)==hire and not game.can_choose(hire),"The robbed crew will not carry the party, and earlier choices keep their places")
+	check(seized==game.pending.choices.size()-1 and is_equal_approx(float(game.pending.choices[seized].risk),game.crime.seized_risk(game,"kansas_river")),"The taken ferry is offered with its own risk")
+	check(game.crime.seized_risk(game,"kansas_river")>0.0,"Working a ferry without its crew is never safe")
+	saved=store.capture(game)
+	check(store.restore(JSON.parse_string(JSON.stringify(saved)))!=null,"A taken ferry round-trips through saves")
+	game.refresh_stop_offers()
+	check(game.pending.choices.filter(func(choice):return choice.get("method","")=="seized").size()==1,"Refreshing does not add the taken ferry twice")
+	check(game.choose(seized) and game.last_crossing.method=="seized" and game.state.landmark=="kansas_river" and game.state.next_landmark!="kansas_river","The party crosses on the taken ferry")
+	game=at(willing(outfit()),"kansas_river")
+	game.crime.scenes.kansas_river.theft_success=1
+	game.open_crime()
+	choose(game,"theft")
+	choose(game,"take")
+	choose(game,"finish")
+	check(seized_index(game)>=0 and not game.can_choose(ferry_index(game)),"A ferry taken unseen can no longer be hired")
+	game=at(willing(outfit()),"kansas_river")
+	game.crime.scenes.kansas_river.compliance=0
+	game.crime.scenes.kansas_river.escape_capture=0
+	game.crime.scenes.kansas_river.escape_injury=0
+	game.open_crime()
+	choose(game,"robbery")
+	choose(game,"flee")
+	choose(game,"finish")
+	check(seized_index(game)==-1 and not game.can_choose(ferry_index(game)),"A failed robbery leaves the party with neither ferry")
+	check(game.pending.choices.any(func(choice):return choice.get("method","") in ["ford","float"]),"The party can still ford or float")
+	var report: Dictionary=game.crime.record.reports[0]
+	at(game,"fort_laramie")
+	game.state.day=game.crime.arrival(game,report,"fort_laramie")
+	check(game.open_trade() and "robbed the ferry at Kansas River" in game.pending.text,"News names the venue")
+	choose_back(game)
+	# Saves from before these venues existed gain them untouched.
+	game=willing(outfit())
+	saved=store.capture(game)
+	var old: Dictionary=saved.duplicate(true)
+	for place in ["kansas_river","fort_laramie","fort_hall","fort_boise","barlow_pass"]:
+		old.crime.record.services.erase(place)
+		for uid in game.crime.staff_ids(place):old.crime.record.actors.erase(uid)
+	var restored=store.restore(JSON.parse_string(JSON.stringify(old)))
+	check(restored!=null and restored.crime.record.services.size()==6 and restored.crime.service("fort_laramie").cash_cents==6000 and restored.crime.owner("barlow_pass").health==100,"A save made before the new venues gains them untouched")
+	old.crime.record.actors["keeper:fort_laramie"]={"uid":"keeper:fort_laramie","place":"fort_laramie","role":"keeper","health":0}
+	check(store.restore(JSON.parse_string(JSON.stringify(old)))==null,"A partial venue in an old save is rejected, not repaired")
+	# Rules: every venue declares a kind; only stores hold food; only ferries can be taken.
+	var rules: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/crime_scenes.json"))
+	var crime=game.crime.get_script().new()
+	check(crime.load_data(rules.duplicate(true)),"Shipped venue rules load")
+	var broken: Dictionary=rules.duplicate(true)
+	broken.scenes.barlow_pass.kind="fort"
+	check(not crime.load_data(broken),"An unknown venue kind is rejected")
+	broken=rules.duplicate(true)
+	broken.scenes.barlow_pass.food_lot=200
+	check(not crime.load_data(broken),"A toll gate cannot hold food")
+	broken=rules.duplicate(true)
+	broken.scenes.kansas_river.erase("seized_risk_high")
+	check(not crime.load_data(broken),"A ferry needs a risk for crossing without its crew")
+	broken=rules.duplicate(true)
+	broken.scenes.fort_hall["seized_risk_low"]=0.1
+	check(not crime.load_data(broken),"Only a ferry has a taken-crossing risk")

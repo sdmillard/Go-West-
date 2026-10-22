@@ -208,7 +208,7 @@ func _arrive_landmark() -> void:
 	pending = {"id": "stop_" + node.id, "landmark": node.id, "title": node.name, "text": description, "choices": options}
 
 func _choose_landmark(index: int) -> bool:
-	_refresh_toll_offer()
+	refresh_stop_offers()
 	var choice: Dictionary = pending.choices[index]
 	if choice.action=="leave" and not characters.departure_candidates(self).is_empty():return open_departure_review()
 	if choice.action == "trade":
@@ -268,7 +268,7 @@ func _choose_landmark(index: int) -> bool:
 	return true
 
 func crossing_summary(result: Dictionary) -> String:
-	var method: String = {"ford": "fording", "float": "floating", "ferry": "ferry","swim":"swimming with packs","wade":"wading with packs"}.get(result.method,str(result.method))
+	var method: String = {"ford": "fording", "float": "floating", "ferry": "ferry", "seized": "working the taken ferry","swim":"swimming with packs","wade":"wading with packs"}.get(result.method,str(result.method))
 	var text := "%s · %s. " % [result.place, method]
 	if result.mishap:
 		text += "Crossing mishap! Cargo washes away. Lost %d lb food and %d clothing set(s); the party suffered injuries. " % [result.food_lost, result.get("clothing_lost", 0)]
@@ -359,6 +359,7 @@ func can_choose(index: int) -> bool:
 	var choice: Dictionary = pending.choices[index]
 	if pending.get("crime_menu",false):return crime.can_choose(self,str(choice.get("crime_command","")))
 	if choice.get("care",0)==12 and not context.local_care(self):return false
+	if choice.get("method","")=="ferry" and crime.ferry_refused(self,str(state.landmark)):return false
 	if not context.can_trade(choice) or not crime.can_trade(self,choice) or (choice.has("activity") and choice.activity in context.record.activities):return false
 	for key in choice.get("requires", {}):
 		if state.get(key, 0) < choice.requires[key]:
@@ -737,7 +738,7 @@ func _choose_service(index: int) -> bool:
 		journal.append("Day %d · %s" % [state.day, choice.result])
 	pending = service_return if state.status == "traveling" else {}
 	service_return = {}
-	_refresh_toll_offer()
+	refresh_stop_offers()
 	if int(choice.effects.get("days", 0)) > 0:
 		_update_river_stage()
 	if state.status == "traveling" and pending.is_empty():
@@ -797,6 +798,8 @@ func _update_river_stage() -> void:
 			option.risk = swimming_risk()
 		elif option.get("method", "") == "float":
 			option.risk = 0.35 if state.river_stage == "high" else 0.2
+		elif option.get("method", "") == "seized":
+			option.risk = crime.seized_risk(self,str(state.landmark))
 
 func start_hunt() -> bool:
 	if not _can_act() or not state.extended_route or state.bullets < 1:
@@ -949,11 +952,30 @@ func journey_summary() -> String:
 			remembered.append("%s (day %d)" % [member.name,member.death_day])
 	return "%d OF 5 TRAVELERS SURVIVED WITH THE PARTY\n%d days · %d reported guide miles\nSurvivors: %s\nDeaths: %s\nLeft party: %s\nFood %d lb · Cash $%.2f" % [survivors.size(),state.day,state.miles,", ".join(survivors),", ".join(remembered) if not remembered.is_empty() else "None",", ".join(departed) if not departed.is_empty() else "None",state.food,state.money]
 
+## Stop choices that depend on what the party has done here: tolls, and a ferry crew it robbed or that has heard of it.
+func refresh_stop_offers() -> void:
+	_refresh_toll_offer()
+	if not pending.has("landmark") or pending.landmark!=state.landmark or not crime.scenes.has(state.landmark):
+		return
+	for choice in pending.choices:
+		if choice.get("method","")=="ferry" and crime.ferry_refused(self,str(state.landmark)):
+			choice.label="The ferry crew will not carry your party"
+	if crime.passage(str(state.landmark)) and crime.scenes[state.landmark].kind=="ferry" and not pending.choices.any(func(choice):return choice.get("method","")=="seized"):
+		# Appended so the stop's existing choice indices never shift.
+		pending.choices.append({"label":"Cross on the taken ferry, without its crew · 1 day, risk to supplies","action":"cross","method":"seized","effects":{"days":1},"risk":crime.seized_risk(self,str(state.landmark))})
+
 func _refresh_toll_offer() -> void:
 	if not pending.has("landmark"):
 		return
 	var node: Dictionary = route.nodes[state.landmark]
 	if not node.has("toll_dollars"):
+		return
+	if crime.passage(str(state.landmark)):
+		for choice in pending.choices:
+			if choice.get("action","") == "leave":
+				choice.label = "Continue down the road · the toll was not paid"
+				choice["requires"] = {}
+				choice["effects"] = {}
 		return
 	var toll := snappedf((0.0 if state.vehicle=="foot" else float(node.toll_dollars)) + float(node.get("toll_per_ox",0)) * int(state.oxen),0.01)
 	for choice in pending.choices:
