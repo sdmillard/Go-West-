@@ -4,7 +4,7 @@ const COMMANDS=["theft","robbery","shoot","raid","take","flee","breakout","surre
 const STAGES=["loot","escape","standoff","report","done"]
 const ATTEMPTS=["unseen","noticed","complied","resisted","missed","wounded","killed","raided"]
 const RESOLUTIONS=["","left","escaped","captured","surrendered","party_lost"]
-const VERSION:=4
+const VERSION:=5
 const FACTS=["attempt","loot","escape"]
 ## Venue wording. A store yields food and cash; a toll gate or ferry yields its cash box and passage.
 const KINDS={
@@ -27,10 +27,12 @@ const TRADERS:="passing_traders"
 const EMIGRANTS:="passing_emigrants"
 const TEMPLATES={"passing:":TRADERS,"emigrants:":EMIGRANTS}
 const TEMPLATE_KINDS={TRADERS:"traders",EMIGRANTS:"emigrants"}
+const Remains=preload("res://simulation/remains.gd")
 var scenes: Dictionary={}
 var modifiers: Dictionary={}
 var news_rules: Dictionary={}
 var companion_rules: Dictionary={}
+var remains_rules: Dictionary={}
 var miles: Dictionary={}
 var record: Dictionary={}
 var rng:=RandomNumberGenerator.new()
@@ -56,6 +58,8 @@ func load_data(value: Variant) -> bool:
 		if not number(party.get(key)) or party[key]<0 or party[key]>1:return false
 	for key in ["wound_damage","retaliate_damage"]:
 		if not whole(party.get(key),1,100):return false
+	var bodies: Variant=Remains.load_rules(value.get("remains"))
+	if bodies==null:return false
 	var news: Variant=value.get("reports")
 	if not news is Dictionary or not news.get("note") is String or not whole(news.get("delay_days"),0,30) or not whole(news.get("miles_per_day"),1,200):return false
 	if mods.floor>=mods.ceiling or mods.experience_step*mods.experience_cap>0.25 or mods.stealth_step>mods.experience_step:return false
@@ -98,11 +102,12 @@ func load_data(value: Variant) -> bool:
 	modifiers=mods.duplicate(true)
 	news_rules=news.duplicate(true)
 	companion_rules=party.duplicate(true)
+	remains_rules=bodies
 	error=""
 	return true
 func start(seed_value: int) -> void:
 	rng.seed=seed_value ^ 0x4352494d
-	record={"version":VERSION,"people":{},"actors":{},"services":{},"incidents":[],"active":{},"reports":[],"bonds":[],"attacks":[]}
+	record={"version":VERSION,"people":{},"actors":{},"services":{},"incidents":[],"active":{},"reports":[],"bonds":[],"attacks":[],"remains":[]}
 	for place in venues():
 		for uid in staff_ids(place):record.actors[uid]=fresh_actor(place,uid)
 		record.services[place]=fresh_service(place,0)
@@ -352,6 +357,7 @@ func observe(game,current: Dictionary,fact: String,staff: bool) -> void:
 		if not current.knowledge.has(uid):current.knowledge[uid]=[]
 		if fact not in current.knowledge[uid]:current.knowledge[uid].append(fact)
 func result(game,resolution: String) -> void:
+	Remains.sync(game)
 	var current:=incident()
 	current.resolution=resolution
 	current.stage="report"
@@ -462,6 +468,7 @@ func choose(game,command: String) -> bool:
 			return true
 		observe(game,current,"escape",true)
 		result(game,"escaped")
+	Remains.sync(game)
 	if game.state.status=="traveling":game.pending=menu(game)
 	return true
 ## Hurts the first active members, as the existing confrontation injuries do.
@@ -589,13 +596,20 @@ func attack(game,target: int) -> void:
 func snapshot() -> Dictionary:return {"record":record.duplicate(true),"random":str(rng.state)}
 ## Converts a version 1 snapshot (one keeper record per place and an aggregate "staff:<place>"
 ## observer) into separate staff people. Anything malformed is returned unchanged for valid() to reject.
-func upgrade(value: Variant,game=null) -> Variant:return add_venues(upgrade_v3(upgrade_v2(upgrade_v1(value))),game)
+func upgrade(value: Variant,game=null) -> Variant:return add_venues(upgrade_v4(upgrade_v3(upgrade_v2(upgrade_v1(value)))),game)
+## Version 4 kept no remains. Deaths already recorded join the ledger as lost when the save is restored; nobody knows where they lie.
+func upgrade_v4(value: Variant) -> Variant:
+	if not value is Dictionary or not value.get("record") is Dictionary or value.record.get("version")!=4 or value.record.has("remains"):return value
+	var r: Dictionary=value.record.duplicate(true)
+	r.version=VERSION
+	r.remains=[]
+	return {"record":r,"random":value.get("random")}
 ## Version 3 had no companion bonds or attacks. Existing travelers are never given invented bonds.
 func upgrade_v3(value: Variant) -> Variant:
 	if not value is Dictionary or not value.get("record") is Dictionary or value.record.get("version")!=3:return value
 	var r: Dictionary=value.record.duplicate(true)
 	if r.has("bonds") or r.has("attacks"):return value
-	r.version=VERSION
+	r.version=4
 	r.bonds=[]
 	r.attacks=[]
 	return {"record":r,"random":value.get("random")}
@@ -681,7 +695,7 @@ func valid_party(r: Dictionary,game) -> bool:
 func valid(value: Variant,game) -> bool:
 	if not value is Dictionary or value.size()!=2 or not value.get("record") is Dictionary or not value.get("random") is String or not value.random.is_valid_int() or str(int(value.random))!=value.random:return false
 	var r: Dictionary=value.record
-	if r.size()!=9 or not valid_party(r,game) or not r.get("reports") is Array or r.get("version")!=VERSION or not r.get("people") is Dictionary or r.people.size()!=5 or not r.get("actors") is Dictionary or not r.get("services") is Dictionary or not r.services.keys().all(func(place):return scenes.has(place) and not TEMPLATE_KINDS.has(place) or transient(place)) or not r.get("incidents") is Array or r.incidents.size()>10000 or not r.get("active") is Dictionary:return false
+	if r.size()!=10 or not valid_party(r,game) or not r.get("reports") is Array or r.get("version")!=VERSION or not r.get("people") is Dictionary or r.people.size()!=5 or not r.get("actors") is Dictionary or not r.get("services") is Dictionary or not r.services.keys().all(func(place):return scenes.has(place) and not TEMPLATE_KINDS.has(place) or transient(place)) or not r.get("incidents") is Array or r.incidents.size()>10000 or not r.get("active") is Dictionary:return false
 	for member in game.party_health.members:
 		var uid:=person_id(int(game.state.seed),int(member.id))
 		var person: Variant=r.people.get(uid)
@@ -753,4 +767,4 @@ func valid(value: Variant,game) -> bool:
 		if report.get("incident")!=derived.incident or report.get("origin")!=derived.origin or report.get("identified")!=derived.identified or report.get("senders")!=derived.senders or report.get("facts")!=derived.facts:return false
 	if not r.active.is_empty():
 		if r.active.size()!=1 or not whole(r.active.get("id"),1,r.incidents.size()) or r.active.id!=r.incidents.size() or r.incidents[int(r.active.id)-1].stage=="done" or not game.pending.get("crime_menu",false):return false
-	return true
+	return Remains.valid(r,game)

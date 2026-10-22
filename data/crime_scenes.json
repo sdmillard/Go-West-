@@ -33,6 +33,16 @@
     "retaliate_hit": 0.5,
     "retaliate_damage": 30
   },
+  "remains": {
+    "note": "Authored tuning. A wrapped adult body is counted as 150 lb of cargo; at most two ride with the party. Burying or opening a grave takes a day. A stranger killed by the party may carry a little money. Companions close to someone whose grave is opened take it as a grievous wrong; others mind less, and the callous not at all.",
+    "body_lb": 150,
+    "carry_limit": 2,
+    "bury_days": 1,
+    "disturb_days": 1,
+    "stranger_goods_cents": 250,
+    "disturb_close": -12,
+    "disturb_other": -3
+  },
   "scenes": {
     "kansas_river": {
       "kind": "ferry",
