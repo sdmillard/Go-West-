@@ -121,7 +121,7 @@ func run():
 		bad.crime[field]=null
 		check(store.restore(bad)==null,"Malformed crime root rejects")
 	var bad: Dictionary=good.duplicate(true)
-	bad.crime.record.actors.fort_bridger.cash_cents=5001
+	bad.crime.record.services.fort_bridger.cash_cents=5001
 	check(store.restore(bad)==null,"Invented actor cash rejects")
 	bad=good.duplicate(true)
 	bad.pending.choices[0].crime_command="take"
@@ -130,8 +130,66 @@ func run():
 	bad.crime.record.incidents[0].attempt="unseen"
 	check(store.restore(bad)==null,"Impossible attempt/outcome combinations reject")
 	bad=good.duplicate(true)
-	bad.crime.record.actors.fort_bridger.alarmed=false
+	bad.crime.record.services.fort_bridger.alarmed=false
 	check(store.restore(bad)==null,"A witnessed attack cannot erase the local alarm")
+	# Named staff witnesses replace the old aggregate observer.
+	var witnessed: Dictionary={}
+	for action in ["theft","robbery","shoot"]:
+		for seed_value in range(30):
+			game=outfit(seed_value)
+			game.open_crime()
+			choose(game,action)
+			var current: Dictionary=game.crime.incident()
+			var local: Array=game.crime.local_witnesses(current)
+			witnessed[current.attempt]=local
+			if current.attempt=="unseen":check(local.is_empty(),"Nobody at the store knows of an unseen theft")
+			else:
+				check("hand:fort_bridger" in local,"The hired hand personally witnesses a noticed attempt")
+				check(("keeper:fort_bridger" in local)==(current.attempt!="killed"),"A keeper killed by the shot learns nothing; a living keeper is a witness")
+			check(not current.knowledge.has("staff:fort_bridger"),"No aggregate staff observer remains")
+	for outcome in ["unseen","noticed","killed"]:check(witnessed.has(outcome),"Witness sample exercises "+outcome)
+	game=outfit()
+	check(game.crime.record.actors.size()==2 and game.crime.service("fort_bridger").owner=="keeper:fort_bridger" and game.crime.service("fort_bridger").staff==["keeper:fort_bridger","hand:fort_bridger"],"Store service is owned by the keeper and staffed by separate people")
+	game.crime.scenes.fort_bridger.shot_hit=1
+	game.crime.scenes.fort_bridger.shot_fatal=1
+	game.open_crime()
+	choose(game,"shoot")
+	check(game.crime.owner("fort_bridger").health==0 and game.crime.record.actors["hand:fort_bridger"].health==100,"Killing the keeper does not kill or silence the other staff")
+	good=store.capture(game)
+	bad=good.duplicate(true)
+	bad.crime.record.incidents[0].knowledge.erase("hand:fort_bridger")
+	check(store.restore(bad)==null,"A living witness cannot be edited out of a saved incident")
+	bad=good.duplicate(true)
+	bad.crime.record.incidents[0].knowledge["keeper:fort_bridger"]=["attempt"]
+	check(store.restore(bad)!=null,"A dead person's earlier knowledge is allowed to remain on record")
+	bad=good.duplicate(true)
+	bad.crime.record.incidents[0].knowledge["hand:fort_hall"]=["attempt"]
+	check(store.restore(bad)==null,"Witnesses from another place are rejected")
+	bad=good.duplicate(true)
+	bad.crime.record.actors["hand:fort_bridger"].health=150
+	check(store.restore(bad)==null,"Staff health is bounded per person")
+	bad=good.duplicate(true)
+	bad.crime.record.actors.erase("hand:fort_bridger")
+	check(store.restore(bad)==null,"A staff member cannot be deleted from the record")
+	bad=good.duplicate(true)
+	bad.crime.record.actors["clerk:fort_bridger"]={"uid":"clerk:fort_bridger","place":"fort_bridger","role":"clerk","health":100}
+	check(store.restore(bad)==null,"Extra invented people are rejected")
+	# Genuine save written by the previous (aggregate observer) version, mid-escape after resisted robbery.
+	previous=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-witness-save-v1.json"))
+	check(previous.crime.record.version==1 and previous.crime.record.incidents[0].knowledge.has("staff:fort_bridger"),"Fixture is a real version 1 crime record")
+	restored=store.restore(previous)
+	check(restored!=null,"Version 1 crime save migrates")
+	if restored!=null:
+		var migrated: Dictionary=restored.crime.incident()
+		check(restored.crime.record.version==2 and migrated.stage=="escape" and migrated.attempt=="resisted","Active incident survives migration at the same stage")
+		check(migrated.knowledge.get("keeper:fort_bridger",[])==["attempt"] and migrated.knowledge.get("hand:fort_bridger",[])==["attempt"] and not migrated.knowledge.has("staff:fort_bridger"),"Aggregate staff knowledge becomes each living staff member's knowledge")
+		check(restored.crime.service("fort_bridger").alarmed and restored.crime.service("fort_bridger").cash_cents==5000 and restored.state==store.normalize(previous.state),"Stock, cash, alarm and party state are unchanged by migration")
+		check(restored.crime.rng.state==int(previous.crime.random) and restored.pending==restored.crime.menu(restored),"Crime random stream and authoritative menu carry over")
+		check(store.restore(JSON.parse_string(JSON.stringify(store.capture(restored))))!=null,"Migrated record saves again in the new format")
+		check(choose(restored,"flee") and restored.crime.valid(restored.crime.snapshot(),restored),"Migrated encounter can be finished")
+	var malformed: Dictionary=previous.duplicate(true)
+	malformed.crime.record.actors.fort_bridger.uid="keeper:elsewhere"
+	check(store.restore(malformed)==null,"Malformed version 1 record still rejects")
 	var screen=Main.instantiate()
 	root.add_child(screen)
 	await process_frame

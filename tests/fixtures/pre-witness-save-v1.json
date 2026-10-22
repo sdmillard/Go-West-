@@ -1,0 +1,469 @@
+{
+  "characters": [
+    {
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": []
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 0,
+      "memories": [],
+      "relationship": "self",
+      "skill": "Leadership",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [],
+      "trust": 50
+    },
+    {
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": [
+          "murder"
+        ]
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 1,
+      "memories": [],
+      "relationship": "fellow_traveler",
+      "skill": "Caregiving",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [
+        "Cautious",
+        "Pragmatic"
+      ],
+      "trust": 50
+    },
+    {
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": [
+          "robbery",
+          "murder",
+          "cannibalism"
+        ]
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 2,
+      "memories": [
+        {
+          "day": 0,
+          "delta": -12,
+          "incident_id": 1,
+          "kind": "action_robbery",
+          "text": "You attempted robbery at the store. Response: forbidden."
+        }
+      ],
+      "relationship": "fellow_traveler",
+      "skill": "Trading",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [
+        "Cautious",
+        "Compassionate"
+      ],
+      "trust": 38
+    },
+    {
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": [
+          "robbery",
+          "murder",
+          "cannibalism"
+        ]
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 3,
+      "memories": [
+        {
+          "day": 0,
+          "delta": -12,
+          "incident_id": 1,
+          "kind": "action_robbery",
+          "text": "You attempted robbery at the store. Response: forbidden."
+        }
+      ],
+      "relationship": "fellow_traveler",
+      "skill": "Carpentry",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [
+        "Cautious",
+        "Compassionate"
+      ],
+      "trust": 38
+    },
+    {
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": [
+          "robbery",
+          "murder",
+          "cannibalism"
+        ]
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 4,
+      "memories": [
+        {
+          "day": 0,
+          "delta": -12,
+          "incident_id": 1,
+          "kind": "action_robbery",
+          "text": "You attempted robbery at the store. Response: forbidden."
+        }
+      ],
+      "relationship": "fellow_traveler",
+      "skill": "Hunting",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [
+        "Bold",
+        "Compassionate"
+      ],
+      "trust": 38
+    }
+  ],
+  "characters_version": 3,
+  "combat_history": [],
+  "context": {
+    "activities": [],
+    "prepared": [],
+    "spent": {
+
+    }
+  },
+  "crime": {
+    "random": "719925119551246128",
+    "record": {
+      "active": {
+        "id": 1
+      },
+      "actors": {
+        "fort_bridger": {
+          "alarmed": true,
+          "cash_cents": 5000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "health": 100,
+          "uid": "keeper:fort_bridger"
+        }
+      },
+      "incidents": [
+        {
+          "action": "robbery",
+          "attempt": "resisted",
+          "cash_cents": 0,
+          "day": 0,
+          "food": 0,
+          "id": 1,
+          "knowledge": {
+            "party:1:original:0": [
+              "attempt"
+            ],
+            "party:1:original:1": [
+              "attempt"
+            ],
+            "party:1:original:2": [
+              "attempt"
+            ],
+            "party:1:original:3": [
+              "attempt"
+            ],
+            "party:1:original:4": [
+              "attempt"
+            ],
+            "staff:fort_bridger": [
+              "attempt"
+            ]
+          },
+          "place": "fort_bridger",
+          "resolution": "",
+          "shots": 0,
+          "stage": "escape",
+          "target": "keeper:fort_bridger"
+        }
+      ],
+      "people": {
+        "party:1:original:0": {
+          "name": "Ada",
+          "slot": 0
+        },
+        "party:1:original:1": {
+          "name": "Bram",
+          "slot": 1
+        },
+        "party:1:original:2": {
+          "name": "Cora",
+          "slot": 2
+        },
+        "party:1:original:3": {
+          "name": "Dell",
+          "slot": 3
+        },
+        "party:1:original:4": {
+          "name": "Eli",
+          "slot": 4
+        }
+      },
+      "version": 1
+    }
+  },
+  "crossing_history": [],
+  "format": "westward-probably",
+  "fresh": [],
+  "health_events": [
+    "Cora: You attempted robbery at the store. Response: forbidden. I object to that decision.",
+    "Dell: You attempted robbery at the store. Response: forbidden. I object to that decision.",
+    "Eli: You attempted robbery at the store. Response: forbidden. I object to that decision."
+  ],
+  "health_random": "-7043521637681619763",
+  "journal": [
+    "Independence, 1848. Outfit your wagon.",
+    "Departed 5 1, 1848 as a banker. Party: Ada, Bram, Cora, Dell, Eli.",
+    "Supplies cost $392.60. Cash remaining: $1007.40.",
+    "Day 0 · Reached Fort Bridger. Guide mileage: 0.",
+    "Day 0 · Store incident 1: robbery; keeper resisted. Nearby staff were alerted.",
+    "Day 0 · Cora: You attempted robbery at the store. Response: forbidden. (trust -12.0).",
+    "Day 0 · Dell: You attempted robbery at the store. Response: forbidden. (trust -12.0).",
+    "Day 0 · Eli: You attempted robbery at the store. Response: forbidden. (trust -12.0).",
+    "Day 1 · Clear. Team condition good; resting."
+  ],
+  "last_crossing": {
+
+  },
+  "last_events": {
+
+  },
+  "outings": 0,
+  "party": [
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 86,
+      "history": [],
+      "id": 0,
+      "name": "Ada"
+    },
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 86,
+      "history": [],
+      "id": 1,
+      "name": "Bram"
+    },
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 86,
+      "history": [],
+      "id": 2,
+      "name": "Cora"
+    },
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 86,
+      "history": [],
+      "id": 3,
+      "name": "Dell"
+    },
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 86,
+      "history": [],
+      "id": 4,
+      "name": "Eli"
+    }
+  ],
+  "pending": {
+    "choices": [
+      {
+        "crime_command": "flee",
+        "effects": {
+
+        },
+        "label": "Try to escape · 1 day",
+        "result": ""
+      },
+      {
+        "crime_command": "surrender",
+        "effects": {
+
+        },
+        "label": "Surrender",
+        "result": ""
+      },
+      {
+        "crime_command": "back",
+        "effects": {
+
+        },
+        "label": "Encounter in progress",
+        "result": ""
+      }
+    ],
+    "crime_menu": true,
+    "id": "crime",
+    "service_menu": true,
+    "text": "Resisted. Staff have been alerted. Attempting escape costs one day; you may be injured or captured. Surrender ends this journey in custody.",
+    "title": "The trading store"
+  },
+  "random": "-1966449618399012673",
+  "route_end": "oregon_city",
+  "rules": "2805dd481daad016bea6b2ec9fd6a0cbe5a2dff39e348708a9d3dfa458691683",
+  "seen": [],
+  "service_return": {
+    "choices": [
+      {
+        "action": "leave",
+        "label": "Continue toward Soda Springs"
+      },
+      {
+        "action": "trade",
+        "label": "Visit the trading post"
+      },
+      {
+        "action": "notes",
+        "label": "Read trail notes"
+      },
+      {
+        "action": "rest",
+        "label": "Rest here · 1 day, food consumed"
+      }
+    ],
+    "id": "stop_fort_bridger",
+    "landmark": "fort_bridger",
+    "text": "Bridger and Vasquez trade along Black's Fork. Their log-and-earth trading establishment is not the army fort that develops in the late 1850s.",
+    "title": "Fort Bridger"
+  },
+  "state": {
+    "axles": 1,
+    "bullets": 200,
+    "clothing": 5,
+    "day": 1,
+    "departure_month": 5,
+    "extended_route": true,
+    "fatigue": 0,
+    "food": 1685,
+    "fuel": 0,
+    "health": 86,
+    "items": [],
+    "landmark": "fort_bridger",
+    "leg_length": 33,
+    "leg_miles": 0,
+    "loss_reason": "",
+    "medicine": 2,
+    "miles": 0,
+    "mode": "classic",
+    "money": 1007.4,
+    "next_landmark": "fort_bridger",
+    "ox_health": 100,
+    "oxen": 6,
+    "pace": 0,
+    "parts": 3,
+    "party": [
+      "Ada",
+      "Bram",
+      "Cora",
+      "Dell",
+      "Eli"
+    ],
+    "party_size": 5,
+    "profession": "banker",
+    "rations": 2,
+    "river_stage": "",
+    "salt": 10,
+    "seed": 1,
+    "status": "traveling",
+    "terrain": "plains",
+    "tongues": 1,
+    "vehicle": "wagon",
+    "weather": "Clear",
+    "wheels": 1
+  },
+  "supply_history": [],
+  "survival_random": "6776987447223156171",
+  "version": 1,
+  "wagon_cache": {
+
+  },
+  "weather": {
+    "exposure": 0,
+    "id": "clear",
+    "label": "Clear",
+    "speed": 1,
+    "weight": 50,
+    "wet": 0
+  },
+  "wet_ground": 0
+}

@@ -1,0 +1,7 @@
+# Keep text identical on every platform; save files fingerprint the JSON rules.
+* text=auto eol=lf
+*.cmd text eol=crlf
+*.png binary
+*.gif binary
+*.pdf binary
+*.exe binary
