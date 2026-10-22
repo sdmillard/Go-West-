@@ -178,7 +178,26 @@ Every death the party could reach goes into a remains ledger in the crime record
 
 **Saves.** Only the dead have remains, one entry each, never ahead of the party. A companion's entry must match their death record. Carried bodies must match the cargo weight (`remains_lb`). A remembered desecration must match a grave marked as opened. Deaths with no entry, which only happens in records from before the ledger, join it as lost when the save is restored. An open list of the dead is rebuilt from the ledger.
 
-Not yet: turning remains into food, meals and deception (next), or a gravestone in the memorial book for a grave dug on the trail.
+Not yet: a gravestone in the memorial book for a grave dug on the trail.
+
+## Butchering and human meat (record version 6)
+
+Butchering is its own decision. It is open to any body lying here or carried, whatever the party's food. It takes a day and leaves the body `processed`, with one batch of 40 ration-lb fresh meat (an authored, deliberately modest value). Each batch is tied to the body it came from and is never mixed into ordinary food. It spoils on the same schedule as other fresh meat. It can be dried or salted with the ordinary preservation rules, and it remains human meat. Its physical weight counts in `remains_lb`.
+
+**Who knows.** Done openly, everyone with the wagon knows where the meat came from. Done in secret, each companion has a 35% chance to see it. The leader always knows. Learning is a single event per person and batch. That person's own boundary decides the reaction: −12 if they forbid it, −2 or +2 for disapproval or approval, nothing for the Cannibal special or those without a boundary. Anyone close to the dead person also loses 12 for the harm to the body. Eating it, carrying it and opening the menu again cost nothing further.
+
+**Meals.** Nobody eats it unless chosen by name:
+
+- *Eat it yourself* (the leader).
+- *Offer it openly.* This tells them where every batch came from before they choose. Anyone whose boundary forbids it refuses, and is shown as refusing before you offer.
+- *Serve it without telling them.* Only possible for someone who doesn't know.
+- *Stop serving.*
+
+Each day, before ordinary meals, every chosen eater is fed one ration from the oldest human meat. The ordinary ration then feeds only everyone else. When the meat runs out or spoils, the plan ends.
+
+**Deception.** Each day a deceived eater has an 8% chance to find out. Discovery is remembered as its own wrong (−12), on top of their boundary's reaction, and they stop eating it. Someone who learns the truth any other way is no longer deceived either. Low trust then works through the ordinary departure rules.
+
+**Saves.** Every batch needs a butchered body and can hold no more than that body yielded. Expiry stays within the preservation limits. An informed eater knows every batch. A deceived eater knows none, and is never the leader. Eaters must be with the party. Memories of butchering or deception must name a butchered body.
 
 ## Other limits
 

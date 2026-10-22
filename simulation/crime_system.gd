@@ -4,7 +4,7 @@ const COMMANDS=["theft","robbery","shoot","raid","take","flee","breakout","surre
 const STAGES=["loot","escape","standoff","report","done"]
 const ATTEMPTS=["unseen","noticed","complied","resisted","missed","wounded","killed","raided"]
 const RESOLUTIONS=["","left","escaped","captured","surrendered","party_lost"]
-const VERSION:=5
+const VERSION:=6
 const FACTS=["attempt","loot","escape"]
 ## Venue wording. A store yields food and cash; a toll gate or ferry yields its cash box and passage.
 const KINDS={
@@ -107,7 +107,7 @@ func load_data(value: Variant) -> bool:
 	return true
 func start(seed_value: int) -> void:
 	rng.seed=seed_value ^ 0x4352494d
-	record={"version":VERSION,"people":{},"actors":{},"services":{},"incidents":[],"active":{},"reports":[],"bonds":[],"attacks":[],"remains":[]}
+	record={"version":VERSION,"people":{},"actors":{},"services":{},"incidents":[],"active":{},"reports":[],"bonds":[],"attacks":[],"remains":[],"human_food":[],"meals":{}}
 	for place in venues():
 		for uid in staff_ids(place):record.actors[uid]=fresh_actor(place,uid)
 		record.services[place]=fresh_service(place,0)
@@ -596,13 +596,21 @@ func attack(game,target: int) -> void:
 func snapshot() -> Dictionary:return {"record":record.duplicate(true),"random":str(rng.state)}
 ## Converts a version 1 snapshot (one keeper record per place and an aggregate "staff:<place>"
 ## observer) into separate staff people. Anything malformed is returned unchanged for valid() to reject.
-func upgrade(value: Variant,game=null) -> Variant:return add_venues(upgrade_v4(upgrade_v3(upgrade_v2(upgrade_v1(value)))),game)
+func upgrade(value: Variant,game=null) -> Variant:return add_venues(upgrade_v5(upgrade_v4(upgrade_v3(upgrade_v2(upgrade_v1(value))))),game)
 ## Version 4 kept no remains. Deaths already recorded join the ledger as lost when the save is restored; nobody knows where they lie.
 func upgrade_v4(value: Variant) -> Variant:
 	if not value is Dictionary or not value.get("record") is Dictionary or value.record.get("version")!=4 or value.record.has("remains"):return value
 	var r: Dictionary=value.record.duplicate(true)
-	r.version=VERSION
+	r.version=5
 	r.remains=[]
+	return {"record":r,"random":value.get("random")}
+## Version 5 had remains but no human-derived food or meal plans.
+func upgrade_v5(value: Variant) -> Variant:
+	if not value is Dictionary or not value.get("record") is Dictionary or value.record.get("version")!=5 or value.record.has("human_food") or value.record.has("meals"):return value
+	var r: Dictionary=value.record.duplicate(true)
+	r.version=VERSION
+	r.human_food=[]
+	r.meals={}
 	return {"record":r,"random":value.get("random")}
 ## Version 3 had no companion bonds or attacks. Existing travelers are never given invented bonds.
 func upgrade_v3(value: Variant) -> Variant:
@@ -695,7 +703,7 @@ func valid_party(r: Dictionary,game) -> bool:
 func valid(value: Variant,game) -> bool:
 	if not value is Dictionary or value.size()!=2 or not value.get("record") is Dictionary or not value.get("random") is String or not value.random.is_valid_int() or str(int(value.random))!=value.random:return false
 	var r: Dictionary=value.record
-	if r.size()!=10 or not valid_party(r,game) or not r.get("reports") is Array or r.get("version")!=VERSION or not r.get("people") is Dictionary or r.people.size()!=5 or not r.get("actors") is Dictionary or not r.get("services") is Dictionary or not r.services.keys().all(func(place):return scenes.has(place) and not TEMPLATE_KINDS.has(place) or transient(place)) or not r.get("incidents") is Array or r.incidents.size()>10000 or not r.get("active") is Dictionary:return false
+	if r.size()!=12 or not valid_party(r,game) or not r.get("reports") is Array or r.get("version")!=VERSION or not r.get("people") is Dictionary or r.people.size()!=5 or not r.get("actors") is Dictionary or not r.get("services") is Dictionary or not r.services.keys().all(func(place):return scenes.has(place) and not TEMPLATE_KINDS.has(place) or transient(place)) or not r.get("incidents") is Array or r.incidents.size()>10000 or not r.get("active") is Dictionary:return false
 	for member in game.party_health.members:
 		var uid:=person_id(int(game.state.seed),int(member.id))
 		var person: Variant=r.people.get(uid)
