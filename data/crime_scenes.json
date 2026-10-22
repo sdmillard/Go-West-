@@ -1,5 +1,17 @@
 {
   "version": 1,
+  "modifiers": {
+    "note": "Authored tuning, not historical rates. Positive edge improves intimidation, aim and escape; it never changes whether a theft is noticed.",
+    "experience_step": 0.04,
+    "experience_cap": 3,
+    "staff_step": 0.08,
+    "poor_condition_penalty": 0.15,
+    "fair_condition_penalty": 0.07,
+    "minimum_able": 2,
+    "small_party_penalty": 0.08,
+    "floor": 0.05,
+    "ceiling": 0.95
+  },
   "scenes": {
     "fort_bridger": {
       "title": "The trading store",

@@ -333,7 +333,11 @@ func restore(value: Variant):
 	elif migrated or economy_migrated:game.crime.bind_party(game)
 	else:return null
 	if game.pending.get("crime_menu",false):
-		if not game.crime.scenes.has(game.state.landmark) or not game.service_return.has("landmark") or game.service_return.landmark!=game.state.landmark or game.pending!=game.crime.menu(game):return null
+		if not game.crime.scenes.has(game.state.landmark) or not game.service_return.has("landmark") or game.service_return.landmark!=game.state.landmark:return null
+		# Commands must match the authoritative stage; descriptive text is regenerated so it can change between versions.
+		var authoritative: Dictionary=game.crime.menu(game)
+		if game.pending.choices.map(func(choice):return choice.get("crime_command","")) != authoritative.choices.map(func(choice):return choice.crime_command):return null
+		game.pending=authoritative
 	for profile in game.characters.profiles:
 		for memory in profile.memories:
 			if memory.has("incident_id"):
