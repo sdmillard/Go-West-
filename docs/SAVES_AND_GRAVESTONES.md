@@ -16,7 +16,9 @@ Files use Godot's `user://` directory: with the normal Windows environment, `%AP
 
 ## Gravestones
 
-After all travelers are lost, the ending offers **Leave a Gravestone** and **Memorial Book**. The editor previews an original pixel marker and accepts a 90-character epitaph; a blank inscription gets a default. It records the party leader's name, the journey's actual date and guide mile. The marker commemorates the lost party. An individual death while others continue stays in the personal history and does not end the journey or open this terminal memorial editor.
+After all travelers are lost, the ending offers **Leave a Gravestone** and **Memorial Book**. The editor previews an original pixel marker and accepts a 90-character epitaph; a blank inscription gets a default. It records the party leader's name, the journey's actual date and guide mile. The marker commemorates the lost party.
+
+A companion who dies while others continue can get a stone too, but only over a grave the party actually digs (**The dead → Bury**). Right after the burial the editor opens titled with that person's name. The stone reads "Here lies", the name, the date of death and the grave's guide mile. Declining leaves the grave unmarked, and the remains panel returns either way. A body carried on, left lying, butchered or lost gets no stone. Each stone records a `kind`: `party` or `companion`. Books written before companion stones have no `kind` and read as party stones; an unknown kind is refused as damage. A companion stone counts toward the same 100-stone limit, and later journeys find it on the road like any other.
 
 **Leave This Stone** writes to `user://gravestones.json`, separately from the save slot. Starting or loading a different journey does not erase memorials. The archive retains up to 100 stones; repeated edits to the same seeded party/date/mile loss update its entry rather than duplicating it. A full or malformed archive reports an error and preserves existing data. It also retains the previous file as a backup; automatic backup recovery currently applies to journey saves, not the memorial archive.
 
@@ -26,4 +28,4 @@ Later travel can pause at a previously recorded mile to read a stone; simulation
 
 ## Verification
 
-The save suite checks full JSON round trips and 120 subsequent decision steps across eight seeds, fresh meat, conditions, fractional cash, unresolved crossings, service-return state, malformed rules/effects, file replacement, backup recovery and real Save/Load controls. The graves suite checks eligibility, persistence, deduplication, inscription limits, corrupt-file preservation, editor preview and later roadside reading. Rendered captures are in `gravestone.png` and `provisions.png`.
+The save suite checks full JSON round trips and 120 subsequent decision steps across eight seeds, fresh meat, conditions, fractional cash, unresolved crossings, service-return state, malformed rules/effects, file replacement, backup recovery and real Save/Load controls. The graves suite checks eligibility (including companion graves and older books), persistence, deduplication, inscription limits, corrupt-file preservation, editor preview and later roadside reading. Rendered captures are in `gravestone.png` and `provisions.png`.
