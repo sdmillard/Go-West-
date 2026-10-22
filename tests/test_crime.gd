@@ -190,7 +190,11 @@ func run():
 		check(restored.crime.rng.state==int(previous.crime.random) and restored.pending==restored.crime.menu(restored),"Crime random stream and authoritative menu carry over")
 		check(store.restore(JSON.parse_string(JSON.stringify(store.capture(restored))))!=null,"Migrated record saves again in the new format")
 		check(choose(restored,"flee") and restored.crime.valid(restored.crime.snapshot(),restored),"Migrated encounter can be finished")
-	var malformed: Dictionary=previous.duplicate(true)
+	# Genuine save from the previous rules (named witnesses, fixed odds) after a resolved escape.
+	previous=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-report-save-v1.json"))
+	restored=store.restore(previous)
+	check(restored!=null and restored.state==store.normalize(previous.state) and restored.crime.record.incidents.size()==1,"Save from the previous crime rules restores unchanged")
+	var malformed: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-witness-save-v1.json"))
 	malformed.crime.record.actors.fort_bridger.uid="keeper:elsewhere"
 	check(store.restore(malformed)==null,"Malformed version 1 record still rejects")
 	# Situational odds: experience and condition shift intimidation, aim and escape, never noticing.
