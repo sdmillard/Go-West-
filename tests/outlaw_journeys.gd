@@ -98,7 +98,7 @@ func run():
 			rows.append({"strategy":strategy,"seed":seed_value,"outcome":outcome,"days":game.state.day,"miles":game.state.miles,"survivors":game.state.party_size,
 				"deaths":game.party_health.members.filter(func(member):return not member.alive).size(),"departures":game.party_health.members.filter(func(member):return member.get("departed",false)).size(),
 				"incidents":record.incidents.map(func(current):return "%s:%s:%s" % [current.action,current.attempt,current.resolution]),"attacks":record.attacks.map(func(attack):return attack.attempt),
-				"remains":record.remains.map(func(item):return item.state),"tales":game.crime.tales(game).size()})
+				"remains":record.remains.map(func(item):return item.state),"tales":game.crime.tales(game).size(),"betrayals":record.betrayals.map(func(item):return "%s:%s" % [item.act,item.attempt])})
 			print("%s: %s on day %d at mile %d, %d with the party" % [label,outcome,game.state.day,game.state.miles,game.state.party_size])
 	var file=FileAccess.open("res://docs/outlaw-journeys.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify({"rules_signature":store.fingerprint(),"runs":rows,"errors":errors,"policy":"20 full-route journeys: 5 strategies x 4 seeds (banker suggested outfit; June, May, August, July). Lawful control; robbing up to three roadside parties; robbing the Fort Kearny commissary; shooting a companion on day 20, then butchering any accessible dead openly and offering the meat, or in secret and serving it without telling. Otherwise the cautious salted-hunt survival policy. An integration check, not balance evidence."},"\t"))
