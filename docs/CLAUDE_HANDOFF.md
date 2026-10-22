@@ -17,7 +17,7 @@ Updated with every merged pull request, so a session cut off at any point loses 
   9. Remains ledger (#11).
   10. Butchering, human meat and meals (#12).
   11. Fort Kearny pursuit, plus a care/service audit (#13).
-  12. Departed companions tell what they saw (#14).
+  12. Departed companions tell what they saw, plus the outlaw journey sampler (#14).
 - **Crime record:** version 7, in `simulation/crime_system.gd`. Each version has an `upgrade_vN` step, chained in `upgrade()`. Remains, human food and meals live in `simulation/remains.gd`, as static functions on `game.crime.record`.
 - **Design reference:** `docs/STORE_CRIME_SLICE.md` describes every implemented mechanic, its tuning and its save rules. `docs/CRIME_AND_CANNIBALISM_ROADMAP.md` holds the plan.
 
@@ -26,7 +26,7 @@ Updated with every merged pull request, so a session cut off at any point loses 
 Roadmap phase 6 (information spread, pursuit, service audit):
 
 - Traders and travelers carry news. This is already modeled as report travel delays, and companions' tales use the same delays.
-- Several full-route criminal and lawful journeys with no stuck encounters.
+- Done: `tests/outlaw_journeys.gd`, 20 full-route criminal and lawful journeys with no stuck encounters (0 errors on October 22). Rerun it after crime changes; it takes a few minutes.
 
 Smaller follow-ups noted along the way:
 
