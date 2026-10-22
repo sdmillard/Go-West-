@@ -200,6 +200,8 @@ func food_capacity(game,place: String) -> int:
 func food_left(game,place: String) -> int:
 	# Food bought from traders not yet in the record still left their packs.
 	var sold: int=int(service(place).food_sold) if record.services.has(place) else int(game.context.record.spent.get(market_prefix(place)+"|buy_food",0))*int(rules(place).food_lot)
+	# An emigrant family's food traded away on a peaceful visit is no longer in their wagon.
+	if rules(place).kind=="emigrants":sold+=int(game.context.record.spent.get(place+"|barter_food",0))*int(game.context.data.emigrant_camp.barter_food)
 	return maxi(0,food_capacity(game,place)-sold-int(service(place).food_taken))
 func market_prefix(place: String) -> String:return place if trader(place) else "post:"+place
 func consume_trade(choice: Dictionary) -> void:
@@ -208,6 +210,11 @@ func consume_trade(choice: Dictionary) -> void:
 func can_trade(game,choice: Dictionary) -> bool:
 	var key: String=choice.get("market_key","")
 	if key.begins_with("post:") and refuses(game,key.get_slice("|",0).trim_prefix("post:")):return false
+	# A camp the party wronged, or one that has heard of it, will not deal with it.
+	if key.begins_with("emigrants:"):
+		var camp_id: String=key.get_slice("|",0)
+		if record.services.has(camp_id) or refuses(game,camp_id):return false
+		if key.ends_with("|barter_food") and int(choice.effects.get("food",0))>food_left(game,camp_id):return false
 	for place in places():
 		if key.begins_with(market_prefix(place)+"|"):
 			if closed(place):return false
@@ -328,8 +335,8 @@ func mile(game,id: String) -> int:
 			if next.is_empty() or not game.route.nodes.has(next[0].to):break
 			distance+=int(next[0].miles)
 			current=next[0].to
-	# A trading party is wherever the party met it.
-	if transient(id):return int(service(id).get("mile",0))
+	# A trading party is wherever the party met it; one not yet in the record is here.
+	if transient(id):return int(record.services[id].mile) if record.services.has(id) else int(game.state.miles)
 	return int(miles.get(id,0))
 ## News moves along the road with other travelers and traders, in both directions.
 func arrival(game,report: Dictionary,place: String) -> int:

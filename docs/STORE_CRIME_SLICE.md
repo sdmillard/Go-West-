@@ -161,6 +161,17 @@ Each attack records its result, helpers and every response. Memories carry the a
 
 Companions revealing what they know after leaving is covered under tales below. Betrayal at low trust has its own section below.
 
+## Visiting an emigrant camp peacefully
+
+The same emigrant camps that the crime menu can target can also be visited peacefully: **Options → Visit an emigrant camp** (`open_camp`). The rules are in `data/trail_context.json` under `emigrant_camp`. They are authored tuning.
+
+- **Trade.** 20 bullets for 40 lb of the family's food, up to twice per camp, with no day spent. Food traded away leaves their wagon, so a later robbery finds that much less.
+- **Nursing.** They help nurse one traveler per camp: +10 health and a day of recovery, for one day. This is less than a post's paid care.
+- **News.** Once per camp, with no day spent, they say which posts ahead have already heard of the party. If none have, they say they heard no talk of it.
+- **Refusal.** A family the party wronged will not receive it, and neither will a camp that has heard the party named by witnesses or by a former companion.
+
+Visits use the ordinary trade counters (`context.spent`, keyed by the camp). They need no crime-record change. The outlaw sampler's lawful control now visits every camp it meets.
+
 ## Betrayal at low trust (record version 8)
 
 Some companions can betray the party: those whose values are Ruthless or Opportunistic. Such a companion reaches their **betrayal point** when trust falls to their betrayal threshold (10, less their relationship's attachment). View Party already warns "capable of betrayal" at that point. Nobody else ever betrays, however low their trust.

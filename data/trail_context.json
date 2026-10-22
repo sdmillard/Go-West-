@@ -106,6 +106,13 @@
     "https://www.nps.gov/places/fort-william-and-fort-john.htm"
   ],
   "limits": "Regional weights, trading schedules, stock and activity effects are authored game tuning, not reconstructed 1848 measurements. Dialogue is original paraphrase, not quotations.",
+  "emigrant_camp": {
+    "note": "A peaceful visit to the emigrant family camped near the road (the same camps the crime menu can target). Authored tuning. They trade a little food for ammunition, help nurse one traveler, and pass on what they heard at the posts behind them about the road ahead. A family the party wronged, or one that has heard the party named, turns it away.",
+    "barter_bullets": 20,
+    "barter_food": 40,
+    "barter_lots": 2,
+    "care": 10
+  },
   "care_posts": [
     "fort_laramie",
     "fort_bridger",
