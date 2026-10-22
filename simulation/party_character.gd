@@ -337,12 +337,12 @@ func valid(value: Variant, count: int, day: int, legacy: bool=false, framework_v
 		var seen: Array=[]
 		var previous_day: int=-1
 		for memory in profile.memories:
-			var kinds: Array=KINDS if legacy else KINDS+["wage_paid","wage_missed","action_idle","remains_disturbed"]+ACTIONS.map(func(action):return "action_"+action)
+			var kinds: Array=KINDS if legacy else KINDS+["wage_paid","wage_missed","action_idle","remains_disturbed","meal_deceived"]+ACTIONS.map(func(action):return "action_"+action)
 			if not memory is Dictionary or not whole(memory.get("day"),0,day) or memory.get("kind") not in kinds or not half_number(memory.get("delta"),-12 if not legacy else -2,2) or not memory.get("text") is String or memory.text.length()>240:return false
 			if memory.has("incident_id") and not whole(memory.incident_id,1,10000):return false
 			if memory.has("attack_id") and (not whole(memory.attack_id,1,100) or memory.kind!="action_murder" or memory.has("incident_id")):return false
-			if memory.has("remains_id") and (not whole(memory.remains_id,1,200) or memory.kind!="remains_disturbed" or memory.has("incident_id") or memory.has("attack_id")):return false
-			if memory.kind=="remains_disturbed" and not memory.has("remains_id"):return false
+			if memory.has("remains_id") and (not whole(memory.remains_id,1,200) or memory.kind not in ["remains_disturbed","action_cannibalism","meal_deceived"] or memory.has("incident_id") or memory.has("attack_id")):return false
+			if memory.kind in ["remains_disturbed","meal_deceived"] and not memory.has("remains_id"):return false
 			var key: String=str(memory.day)+":"+memory.kind+":"+str(int(memory.get("incident_id",0)))+":"+str(int(memory.get("attack_id",0)))+":"+str(int(memory.get("remains_id",0)))
 			if key in seen or memory.day<previous_day:return false
 			seen.append(key)

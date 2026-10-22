@@ -34,14 +34,18 @@
     "retaliate_damage": 30
   },
   "remains": {
-    "note": "Authored tuning. A wrapped adult body is counted as 150 lb of cargo; at most two ride with the party. Burying or opening a grave takes a day. A stranger killed by the party may carry a little money. Companions close to someone whose grave is opened take it as a grievous wrong; others mind less, and the callous not at all.",
+    "note": "Authored tuning. A wrapped adult body is counted as 150 lb of cargo; at most two ride with the party. Burying or opening a grave takes a day. A stranger killed by the party may carry a little money. Companions close to someone whose grave is opened take it as a grievous wrong; others mind less, and the callous not at all. Butchering takes a day and yields 40 ration-lb of meat, a deliberately modest game value with no claim to anatomical accuracy; it spoils and dries like other meat. In secret, each companion has a 35% chance to see it. Someone served it without being told has an 8% chance each day to find out.",
     "body_lb": 150,
     "carry_limit": 2,
     "bury_days": 1,
     "disturb_days": 1,
     "stranger_goods_cents": 250,
     "disturb_close": -12,
-    "disturb_other": -3
+    "disturb_other": -3,
+    "butcher_days": 1,
+    "yield_lb": 40,
+    "secret_notice": 0.35,
+    "deceit_notice": 0.08
   },
   "scenes": {
     "kansas_river": {

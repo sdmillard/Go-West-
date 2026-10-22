@@ -362,7 +362,7 @@ func can_choose(index: int) -> bool:
 	var choice: Dictionary = pending.choices[index]
 	if pending.get("crime_menu",false):return crime.can_choose(self,str(choice.get("crime_command","")))
 	if pending.get("attack_menu",false):return int(choice.get("attack_target",-1))<0 or crime.attack_ready(self,int(choice.attack_target))
-	if pending.get("remains_menu",false):return Remains.can_choose(self,str(choice.get("remains_command","")),int(choice.get("remains_id",0)))
+	if pending.get("remains_menu",false):return Remains.can_choose(self,str(choice.get("remains_command","")),int(choice.get("remains_id",0)),int(choice.get("member",-1)))
 	if choice.get("care",0)==12 and not context.local_care(self):return false
 	if choice.get("method","")=="ferry" and crime.ferry_refused(self,str(state.landmark)):return false
 	if not context.can_trade(choice) or not crime.can_trade(self,choice) or (choice.has("activity") and choice.activity in context.record.activities):return false
@@ -444,7 +444,10 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 			state.food -= spoiled
 			journal.append("Day %d · Discarded %d ration-lb spoiled meat." % [state.day, spoiled])
 			supply_history.append({"day":state.day,"event":"spoilage","changes":{"food":-spoiled}})
+		Remains.spoil(self)
 	var needed: int = (int(provisions.data.rations_lb[state.rations]) if state.extended_route else RATION_LB[state.rations]) * state.party_size
+	# Those chosen to eat human meat are fed from it first; nobody else is ever served it.
+	if state.extended_route:needed-=Remains.serve(self)
 	var fed: bool = state.food >= needed
 	var eaten := mini(int(state.food), needed)
 	if state.extended_route:
@@ -782,7 +785,7 @@ func open_attack(target: int) -> bool:
 
 ## The dead within reach: here, or carried with the party.
 func open_remains() -> bool:
-	if not can_service() or Remains.here(self).is_empty():return false
+	if not can_service() or not Remains.within_reach(self):return false
 	service_return=pending.duplicate(true)
 	pending=Remains.menu(self)
 	return true

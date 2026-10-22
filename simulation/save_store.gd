@@ -130,7 +130,7 @@ func valid_menu(menu: Dictionary, game) -> bool:
 		if choice.has("crime_command") and not menu.get("crime_menu",false):return false
 		if menu.has("attack_menu") and (menu.attack_menu!=true or menu.id!="attack" or not menu.get("service_menu",false) or not integer(choice.get("attack_target"),-1,4)):return false
 		if choice.has("attack_target") and not menu.get("attack_menu",false):return false
-		if menu.has("remains_menu") and (menu.remains_menu!=true or menu.id!="remains" or not menu.get("service_menu",false) or choice.get("remains_command","") not in game.Remains.COMMANDS or not integer(choice.get("remains_id"),0,200)):return false
+		if menu.has("remains_menu") and (menu.remains_menu!=true or menu.id!="remains" or not menu.get("service_menu",false) or choice.get("remains_command","") not in game.Remains.COMMANDS or not integer(choice.get("remains_id"),0,200) or not integer(choice.get("member",-1),-1,4)):return false
 		if choice.has("remains_command") and not menu.get("remains_menu",false):return false
 		if choice.has("action") and choice.action not in ["cross", "rest", "leave", "trade", "notes", "activity"]:
 			return false
@@ -346,8 +346,8 @@ func restore(value: Variant):
 	# An open list of the dead must still offer exactly what can be done; its text is regenerated.
 	if game.pending.get("remains_menu",false):
 		var authoritative: Dictionary=game.Remains.menu(game)
-		var commands:=func(menu):return menu.choices.map(func(choice):return "%s:%d" % [choice.get("remains_command",""),int(choice.get("remains_id",0))])
-		if commands.call(game.pending)!=commands.call(authoritative) or game.Remains.here(game).is_empty():return null
+		var commands:=func(menu):return menu.choices.map(func(choice):return "%s:%d:%d" % [choice.get("remains_command",""),int(choice.get("remains_id",0)),int(choice.get("member",-1))])
+		if commands.call(game.pending)!=commands.call(authoritative) or not game.Remains.within_reach(game):return null
 		game.pending=authoritative
 	if game.pending.get("crime_menu",false):
 		# The menu must still have a target: the active incident, this stop's venue, or the traders on the road.
@@ -362,7 +362,10 @@ func restore(value: Variant):
 			if memory.has("attack_id"):
 				if memory.attack_id>game.crime.record.attacks.size() or game.crime.record.attacks[int(memory.attack_id)-1].day!=memory.day:return null
 			if memory.has("remains_id"):
-				if memory.remains_id>game.crime.record.remains.size() or not game.crime.record.remains[int(memory.remains_id)-1].disturbed:return null
+				if memory.remains_id>game.crime.record.remains.size():return null
+				var body: Dictionary=game.crime.record.remains[int(memory.remains_id)-1]
+				# Opening a grave marks it; butchering is the only other way to harm a body.
+				if body.state!="processed" and (memory.kind!="remains_disturbed" or not body.disturbed):return null
 			if memory.has("incident_id"):
 				if memory.incident_id>game.crime.record.incidents.size():return null
 				var incident: Dictionary=game.crime.record.incidents[int(memory.incident_id)-1]

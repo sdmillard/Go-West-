@@ -42,10 +42,16 @@ func go(game,days: int) -> void:
 		game.pending={}
 		game.travel()
 	if not game.pending.has("landmark"):game.pending={}
+func camp(game) -> void:
+	game.pending={}
+	game.rest()
+	game.pending={}
 func command(game,name: String,id: int) -> int:
 	for index in range(game.pending.choices.size()):
 		var choice: Dictionary=game.pending.choices[index]
-		if choice.get("remains_command","")==name and int(choice.get("remains_id",0))==id:return index
+		if choice.get("remains_command","")!=name:continue
+		# Meal choices name an eater; the others name a body.
+		if int(choice.get("member",-1) if name in Remains.MEAL_COMMANDS else choice.get("remains_id",0))==id:return index
 	return -1
 func act(game,name: String,id: int) -> bool:
 	var index:=command(game,name,id)
@@ -124,7 +130,7 @@ func run():
 	# Older records: known deaths join the ledger, but nobody knows where they lie.
 	bad=saved.duplicate(true)
 	bad.crime.record.version=4
-	bad.crime.record.erase("remains")
+	for key in ["remains","human_food","meals"]:bad.crime.record.erase(key)
 	for profile in bad.characters:profile.memories=profile.memories.filter(func(memory):return not memory.has("remains_id"))
 	restored=store.restore(bad)
 	check(restored!=null and restored.crime.record.remains.size()==1 and restored.crime.record.remains[0].state=="lost" and not restored.open_remains(),"A death from before the ledger is recorded as lost")
@@ -152,6 +158,85 @@ func run():
 	for id in [1,2,3]:kill(game,id)
 	game.open_remains()
 	check(act(game,"carry",1) and act(game,"carry",2) and command(game,"carry",3)>=0 and not game.can_choose(command(game,"carry",3)),"No more than two bodies ride with the party")
+	# Butchering openly: a separate batch that the ordinary ration never touches.
+	game=party(["Compassionate","Compassionate","Compassionate","Ruthless"],[{"a":1,"b":2,"kind":"family"}])
+	kill(game,2)
+	food=game.state.food
+	trust=[]
+	for profile in game.characters.profiles:trust.append(float(profile.trust))
+	game.open_remains()
+	check(command(game,"butcher_open",1)>=0 and command(game,"butcher_secret",1)>=0,"A body can be butchered with a full wagon of food; hunger is not a gate")
+	day=game.state.day
+	check(act(game,"butcher_open",1) and game.crime.record.remains[0].state=="processed" and game.state.day==day+1,"Butchering takes a day")
+	var meat: Dictionary=game.crime.record.human_food[0]
+	check(meat.remains==1 and meat.pounds==40 and not meat.preserved and meat.known==[0,1,3,4],"Done openly, everyone with the wagon knows what the meat is")
+	check(game.state.food<food and game.state.food>=food-5*int(game.provisions.data.rations_lb[game.state.rations]) and game.state.remains_lb==40,"The meat is kept apart from ordinary food and weighs on the cargo")
+	profiles=game.characters.profiles
+	check(profiles[1].trust==trust[1]-24 and profiles[3].trust==trust[3]-12 and profiles[4].trust==trust[4],"Those who forbid it object; family also grieve the body; the Ruthless shrug")
+	check(profiles[3].memories.back().kind=="action_cannibalism" and profiles[3].memories.back().remains_id==1,"The objection is remembered once, for this body")
+	check(command(game,"eat",0)>=0 and command(game,"offer",4)>=0 and not game.can_choose(command(game,"offer",1)) and command(game,"deceive",1)<0,"Those who know cannot be deceived, and those who forbid it refuse")
+	check(round_trip(store,game)!=null,"Butchered remains and their meat round-trip")
+	check(act(game,"eat",0) and act(game,"offer",4) and game.crime.record.meals=={"0":"informed","4":"informed"},"Each eater is chosen by name")
+	var ration: int=int(game.provisions.data.rations_lb[game.state.rations])
+	game.choose(game.pending.choices.size()-1)
+	food=game.state.food
+	var human: int=meat.pounds
+	camp(game)
+	check(game.crime.record.human_food[0].pounds==human-2*ration and game.state.food==food-ration*(game.state.party_size-2),"Chosen eaters eat the meat; everyone else eats ordinary food")
+	saved=store.capture(game)
+	check(store.restore(saved)!=null,"A meal plan round-trips")
+	bad=saved.duplicate(true)
+	bad.crime.record.meals["1"]="deceived"
+	check(store.restore(bad)==null,"Someone who knows cannot be listed as deceived")
+	bad=saved.duplicate(true)
+	bad.crime.record.human_food[0].known=[0,1,4]
+	bad.crime.record.meals["3"]="informed"
+	check(store.restore(bad)==null,"Nobody eats it knowingly without being told")
+	bad=saved.duplicate(true)
+	bad.crime.record.human_food[0].pounds=41
+	check(store.restore(bad)==null,"A body yields no more than it can")
+	bad=saved.duplicate(true)
+	bad.crime.record.remains[0].state="buried"
+	check(store.restore(bad)==null,"Meat needs a butchered body")
+	bad=saved.duplicate(true)
+	bad.state.remains_lb=0
+	check(store.restore(bad)==null,"Human meat weighs what it weighs")
+	# Drying keeps it longer and lighter; it is still human meat.
+	game.open_remains()
+	check(act(game,"dry",1) and game.crime.record.human_food[0].preserved and game.state.remains_lb==ceili(game.crime.record.human_food[0].pounds*float(game.provisions.data.preservation.dried_weight)),"Dried human meat stays apart and weighs less")
+	check(round_trip(store,game)!=null,"Dried human meat round-trips")
+	# In secret, served without telling: the deceived may find out.
+	game=party(["Compassionate","Compassionate","Compassionate","Compassionate"])
+	game.crime.remains_rules.secret_notice=0
+	kill(game,2)
+	game.open_remains()
+	act(game,"butcher_secret",1)
+	check(game.crime.record.human_food[0].known==[0] and game.characters.profiles[1].memories.is_empty(),"Unseen butchering is known only to the leader")
+	check(act(game,"deceive",1) and game.crime.record.meals=={"1":"deceived"},"A companion can be served it without being told")
+	check(round_trip(store,game)!=null,"Deception round-trips")
+	game.choose(game.pending.choices.size()-1)
+	game.crime.remains_rules.deceit_notice=1
+	trust=[]
+	for profile in game.characters.profiles:trust.append(float(profile.trust))
+	camp(game)
+	profiles=game.characters.profiles
+	check(game.crime.record.meals.is_empty() and 1 in game.crime.record.human_food[0].known and profiles[1].trust==trust[1]-24,"Discovered deception is its own wrong, on top of the boundary")
+	check(profiles[1].memories.any(func(memory):return memory.kind=="meal_deceived" and memory.remains_id==1),"The deception is remembered")
+	check(game.journal.any(func(text):return "discovered" in text),"The discovery is announced")
+	check(round_trip(store,game)!=null,"A discovered deception round-trips")
+	# Unpreserved meat spoils; the meal plan ends with it.
+	game.open_remains()
+	act(game,"eat",0)
+	game.choose(game.pending.choices.size()-1)
+	for rest_day in range(int(game.provisions.data.fresh_days)+2):camp(game)
+	check(game.crime.record.human_food.is_empty() and game.crime.record.meals.is_empty() and game.state.remains_lb==0 and game.journal.any(func(text):return "spoiled meat from Ben" in text),"Fresh human meat spoils and the plan ends")
+	# A stranger's body can be butchered once nobody is left to stop it.
+	game=party()
+	for uid in game.crime.staff_ids("fort_kearny"):game.crime.record.actors[uid].health=0
+	game.crime.record.services["fort_kearny"].alarmed=true
+	Remains.sync(game)
+	check(game.open_remains() and act(game,"butcher_open",1) and game.crime.record.human_food.size()==1,"A dead stranger can be butchered")
+	check(round_trip(store,game)!=null,"A stranger's butchered remains round-trip")
 	# Native UI.
 	var screen=Main.instantiate()
 	root.add_child(screen)
