@@ -1,0 +1,1078 @@
+{
+	"errors": [],
+	"policy": "24 actual full-route journeys: 4 actions x6seeds; banker suggested outfit, March/May/August, existing cautious salted-hunt65% aim policy. At Fort Bridger attempt chosen action once, take reachable loot and try to escape, then resume normal survival decisions. Natural disease/weather and actual time, ammunition, injuries, death, stock and companion reactions apply. This integration sample is not the final survival balance campaign.",
+	"rules_signature": "072e95d3a56275fb91f136195b30728e1ef805604c3a0440fab1e6584009e4b6",
+	"runs": [
+		{
+			"action": "none",
+			"attempted": false,
+			"cash": 715.8,
+			"days": 202,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [],
+			"outcome": "arrived",
+			"seed": 0,
+			"survivors": 5
+		},
+		{
+			"action": "none",
+			"attempted": false,
+			"cash": 677.8,
+			"days": 210,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [],
+			"outcome": "arrived",
+			"seed": 1,
+			"survivors": 5
+		},
+		{
+			"action": "none",
+			"attempted": false,
+			"cash": 677.8,
+			"days": 210,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [],
+			"outcome": "arrived",
+			"seed": 2,
+			"survivors": 5
+		},
+		{
+			"action": "none",
+			"attempted": false,
+			"cash": 675.8,
+			"days": 196,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [],
+			"outcome": "arrived",
+			"seed": 3,
+			"survivors": 5
+		},
+		{
+			"action": "none",
+			"attempted": false,
+			"cash": 734.8,
+			"days": 199,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [],
+			"outcome": "arrived",
+			"seed": 4,
+			"survivors": 5
+		},
+		{
+			"action": "none",
+			"attempted": false,
+			"cash": 677.8,
+			"days": 197,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [],
+			"outcome": "arrived",
+			"seed": 5,
+			"survivors": 5
+		},
+		{
+			"action": "theft",
+			"attempted": true,
+			"cash": 772.8,
+			"days": 189,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [
+				{
+					"action": "theft",
+					"attempt": "unseen",
+					"cash_cents": 0,
+					"day": 98,
+					"food": 200,
+					"id": 1,
+					"knowledge": {
+						"party:0:original:0": [
+							"attempt",
+							"loot"
+						],
+						"party:0:original:1": [
+							"attempt",
+							"loot"
+						],
+						"party:0:original:2": [
+							"attempt",
+							"loot"
+						],
+						"party:0:original:3": [
+							"attempt",
+							"loot"
+						],
+						"party:0:original:4": [
+							"attempt",
+							"loot"
+						]
+					},
+					"place": "fort_bridger",
+					"resolution": "left",
+					"shots": 0,
+					"stage": "done",
+					"target": "keeper:fort_bridger"
+				}
+			],
+			"outcome": "arrived",
+			"seed": 0,
+			"survivors": 5
+		},
+		{
+			"action": "theft",
+			"attempted": true,
+			"cash": 734.8,
+			"days": 220,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [
+				{
+					"action": "theft",
+					"attempt": "unseen",
+					"cash_cents": 0,
+					"day": 92,
+					"food": 200,
+					"id": 1,
+					"knowledge": {
+						"party:1:original:0": [
+							"attempt",
+							"loot"
+						],
+						"party:1:original:1": [
+							"attempt",
+							"loot"
+						],
+						"party:1:original:2": [
+							"attempt",
+							"loot"
+						],
+						"party:1:original:3": [
+							"attempt",
+							"loot"
+						],
+						"party:1:original:4": [
+							"attempt",
+							"loot"
+						]
+					},
+					"place": "fort_bridger",
+					"resolution": "left",
+					"shots": 0,
+					"stage": "done",
+					"target": "keeper:fort_bridger"
+				}
+			],
+			"outcome": "arrived",
+			"seed": 1,
+			"survivors": 5
+		},
+		{
+			"action": "theft",
+			"attempted": true,
+			"cash": 734.9,
+			"days": 230,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [
+				{
+					"action": "theft",
+					"attempt": "noticed",
+					"cash_cents": 0,
+					"day": 105,
+					"food": 0,
+					"id": 1,
+					"knowledge": {
+						"hand:fort_bridger": [
+							"attempt",
+							"escape"
+						],
+						"keeper:fort_bridger": [
+							"attempt",
+							"escape"
+						],
+						"party:2:original:0": [
+							"attempt",
+							"escape"
+						],
+						"party:2:original:1": [
+							"attempt",
+							"escape"
+						],
+						"party:2:original:2": [
+							"attempt",
+							"escape"
+						],
+						"party:2:original:3": [
+							"attempt",
+							"escape"
+						],
+						"party:2:original:4": [
+							"attempt",
+							"escape"
+						]
+					},
+					"place": "fort_bridger",
+					"resolution": "escaped",
+					"shots": 0,
+					"stage": "done",
+					"target": "keeper:fort_bridger"
+				}
+			],
+			"outcome": "arrived",
+			"seed": 2,
+			"survivors": 5
+		},
+		{
+			"action": "theft",
+			"attempted": true,
+			"cash": 692.8,
+			"days": 186,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [
+				{
+					"action": "theft",
+					"attempt": "unseen",
+					"cash_cents": 0,
+					"day": 90,
+					"food": 200,
+					"id": 1,
+					"knowledge": {
+						"party:3:original:0": [
+							"attempt",
+							"loot"
+						],
+						"party:3:original:1": [
+							"attempt",
+							"loot"
+						],
+						"party:3:original:2": [
+							"attempt",
+							"loot"
+						],
+						"party:3:original:3": [
+							"attempt",
+							"loot"
+						],
+						"party:3:original:4": [
+							"attempt",
+							"loot"
+						]
+					},
+					"place": "fort_bridger",
+					"resolution": "left",
+					"shots": 0,
+					"stage": "done",
+					"target": "keeper:fort_bridger"
+				}
+			],
+			"outcome": "arrived",
+			"seed": 3,
+			"survivors": 5
+		},
+		{
+			"action": "theft",
+			"attempted": true,
+			"cash": 829.8,
+			"days": 192,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [
+				{
+					"action": "theft",
+					"attempt": "unseen",
+					"cash_cents": 0,
+					"day": 89,
+					"food": 200,
+					"id": 1,
+					"knowledge": {
+						"party:4:original:0": [
+							"attempt",
+							"loot"
+						],
+						"party:4:original:1": [
+							"attempt",
+							"loot"
+						],
+						"party:4:original:2": [
+							"attempt",
+							"loot"
+						],
+						"party:4:original:3": [
+							"attempt",
+							"loot"
+						],
+						"party:4:original:4": [
+							"attempt",
+							"loot"
+						]
+					},
+					"place": "fort_bridger",
+					"resolution": "left",
+					"shots": 0,
+					"stage": "done",
+					"target": "keeper:fort_bridger"
+				}
+			],
+			"outcome": "arrived",
+			"seed": 4,
+			"survivors": 5
+		},
+		{
+			"action": "theft",
+			"attempted": true,
+			"cash": 752.8,
+			"days": 193,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [
+				{
+					"action": "theft",
+					"attempt": "noticed",
+					"cash_cents": 0,
+					"day": 95,
+					"food": 0,
+					"id": 1,
+					"knowledge": {
+						"hand:fort_bridger": [
+							"attempt",
+							"escape"
+						],
+						"keeper:fort_bridger": [
+							"attempt",
+							"escape"
+						],
+						"party:5:original:0": [
+							"attempt",
+							"escape"
+						],
+						"party:5:original:1": [
+							"attempt",
+							"escape"
+						],
+						"party:5:original:2": [
+							"attempt",
+							"escape"
+						],
+						"party:5:original:3": [
+							"attempt",
+							"escape"
+						],
+						"party:5:original:4": [
+							"attempt",
+							"escape"
+						]
+					},
+					"place": "fort_bridger",
+					"resolution": "escaped",
+					"shots": 0,
+					"stage": "done",
+					"target": "keeper:fort_bridger"
+				}
+			],
+			"outcome": "arrived",
+			"seed": 5,
+			"survivors": 5
+		},
+		{
+			"action": "robbery",
+			"attempted": true,
+			"cash": 504.1,
+			"days": 365,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [
+				{
+					"action": "robbery",
+					"attempt": "complied",
+					"cash_cents": 5000,
+					"day": 98,
+					"food": 200,
+					"id": 1,
+					"knowledge": {
+						"hand:fort_bridger": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"keeper:fort_bridger": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"party:0:original:0": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"party:0:original:1": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"party:0:original:2": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"party:0:original:3": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"party:0:original:4": [
+							"attempt",
+							"loot",
+							"escape"
+						]
+					},
+					"place": "fort_bridger",
+					"resolution": "escaped",
+					"shots": 0,
+					"stage": "done",
+					"target": "keeper:fort_bridger"
+				}
+			],
+			"outcome": "out_of_time",
+			"seed": 0,
+			"survivors": 5
+		},
+		{
+			"action": "robbery",
+			"attempted": true,
+			"cash": 496.84,
+			"days": 365,
+			"deaths": 1,
+			"departures": 0,
+			"incidents": [
+				{
+					"action": "robbery",
+					"attempt": "resisted",
+					"cash_cents": 0,
+					"day": 92,
+					"food": 0,
+					"id": 1,
+					"knowledge": {
+						"hand:fort_bridger": [
+							"attempt",
+							"escape"
+						],
+						"keeper:fort_bridger": [
+							"attempt",
+							"escape"
+						],
+						"party:1:original:0": [
+							"attempt",
+							"escape"
+						],
+						"party:1:original:1": [
+							"attempt",
+							"escape"
+						],
+						"party:1:original:2": [
+							"attempt",
+							"escape"
+						],
+						"party:1:original:3": [
+							"attempt",
+							"escape"
+						],
+						"party:1:original:4": [
+							"attempt",
+							"escape"
+						]
+					},
+					"place": "fort_bridger",
+					"resolution": "escaped",
+					"shots": 0,
+					"stage": "done",
+					"target": "keeper:fort_bridger"
+				}
+			],
+			"outcome": "out_of_time",
+			"seed": 1,
+			"survivors": 4
+		},
+		{
+			"action": "robbery",
+			"attempted": true,
+			"cash": 409.2,
+			"days": 365,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [
+				{
+					"action": "robbery",
+					"attempt": "resisted",
+					"cash_cents": 0,
+					"day": 105,
+					"food": 0,
+					"id": 1,
+					"knowledge": {
+						"hand:fort_bridger": [
+							"attempt",
+							"escape"
+						],
+						"keeper:fort_bridger": [
+							"attempt",
+							"escape"
+						],
+						"party:2:original:0": [
+							"attempt",
+							"escape"
+						],
+						"party:2:original:1": [
+							"attempt",
+							"escape"
+						],
+						"party:2:original:2": [
+							"attempt",
+							"escape"
+						],
+						"party:2:original:3": [
+							"attempt",
+							"escape"
+						],
+						"party:2:original:4": [
+							"attempt",
+							"escape"
+						]
+					},
+					"place": "fort_bridger",
+					"resolution": "escaped",
+					"shots": 0,
+					"stage": "done",
+					"target": "keeper:fort_bridger"
+				}
+			],
+			"outcome": "out_of_time",
+			"seed": 2,
+			"survivors": 5
+		},
+		{
+			"action": "robbery",
+			"attempted": true,
+			"cash": 831.6,
+			"days": 246,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [
+				{
+					"action": "robbery",
+					"attempt": "complied",
+					"cash_cents": 5000,
+					"day": 90,
+					"food": 200,
+					"id": 1,
+					"knowledge": {
+						"hand:fort_bridger": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"keeper:fort_bridger": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"party:3:original:0": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"party:3:original:1": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"party:3:original:2": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"party:3:original:3": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"party:3:original:4": [
+							"attempt",
+							"loot",
+							"escape"
+						]
+					},
+					"place": "fort_bridger",
+					"resolution": "escaped",
+					"shots": 0,
+					"stage": "done",
+					"target": "keeper:fort_bridger"
+				}
+			],
+			"outcome": "arrived",
+			"seed": 3,
+			"survivors": 5
+		},
+		{
+			"action": "robbery",
+			"attempted": true,
+			"cash": 962.7,
+			"days": 241,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [
+				{
+					"action": "robbery",
+					"attempt": "complied",
+					"cash_cents": 5000,
+					"day": 89,
+					"food": 200,
+					"id": 1,
+					"knowledge": {
+						"hand:fort_bridger": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"keeper:fort_bridger": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"party:4:original:0": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"party:4:original:1": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"party:4:original:2": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"party:4:original:3": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"party:4:original:4": [
+							"attempt",
+							"loot",
+							"escape"
+						]
+					},
+					"place": "fort_bridger",
+					"resolution": "escaped",
+					"shots": 0,
+					"stage": "done",
+					"target": "keeper:fort_bridger"
+				}
+			],
+			"outcome": "arrived",
+			"seed": 4,
+			"survivors": 5
+		},
+		{
+			"action": "robbery",
+			"attempted": true,
+			"cash": 394.28,
+			"days": 365,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [
+				{
+					"action": "robbery",
+					"attempt": "resisted",
+					"cash_cents": 0,
+					"day": 95,
+					"food": 0,
+					"id": 1,
+					"knowledge": {
+						"hand:fort_bridger": [
+							"attempt",
+							"escape"
+						],
+						"keeper:fort_bridger": [
+							"attempt",
+							"escape"
+						],
+						"party:5:original:0": [
+							"attempt",
+							"escape"
+						],
+						"party:5:original:1": [
+							"attempt",
+							"escape"
+						],
+						"party:5:original:2": [
+							"attempt",
+							"escape"
+						],
+						"party:5:original:3": [
+							"attempt",
+							"escape"
+						],
+						"party:5:original:4": [
+							"attempt",
+							"escape"
+						]
+					},
+					"place": "fort_bridger",
+					"resolution": "escaped",
+					"shots": 0,
+					"stage": "done",
+					"target": "keeper:fort_bridger"
+				}
+			],
+			"outcome": "out_of_time",
+			"seed": 5,
+			"survivors": 5
+		},
+		{
+			"action": "shoot",
+			"attempted": true,
+			"cash": 504.1,
+			"days": 365,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [
+				{
+					"action": "shoot",
+					"attempt": "killed",
+					"cash_cents": 5000,
+					"day": 98,
+					"food": 200,
+					"id": 1,
+					"knowledge": {
+						"hand:fort_bridger": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"party:0:original:0": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"party:0:original:1": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"party:0:original:2": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"party:0:original:3": [
+							"attempt",
+							"loot",
+							"escape"
+						],
+						"party:0:original:4": [
+							"attempt",
+							"loot",
+							"escape"
+						]
+					},
+					"place": "fort_bridger",
+					"resolution": "escaped",
+					"shots": 1,
+					"stage": "done",
+					"target": "keeper:fort_bridger"
+				}
+			],
+			"outcome": "out_of_time",
+			"seed": 0,
+			"survivors": 5
+		},
+		{
+			"action": "shoot",
+			"attempted": true,
+			"cash": 496.84,
+			"days": 365,
+			"deaths": 1,
+			"departures": 0,
+			"incidents": [
+				{
+					"action": "shoot",
+					"attempt": "wounded",
+					"cash_cents": 0,
+					"day": 92,
+					"food": 0,
+					"id": 1,
+					"knowledge": {
+						"hand:fort_bridger": [
+							"attempt",
+							"escape"
+						],
+						"keeper:fort_bridger": [
+							"attempt",
+							"escape"
+						],
+						"party:1:original:0": [
+							"attempt",
+							"escape"
+						],
+						"party:1:original:1": [
+							"attempt",
+							"escape"
+						],
+						"party:1:original:2": [
+							"attempt",
+							"escape"
+						],
+						"party:1:original:3": [
+							"attempt",
+							"escape"
+						],
+						"party:1:original:4": [
+							"attempt",
+							"escape"
+						]
+					},
+					"place": "fort_bridger",
+					"resolution": "escaped",
+					"shots": 1,
+					"stage": "done",
+					"target": "keeper:fort_bridger"
+				}
+			],
+			"outcome": "out_of_time",
+			"seed": 1,
+			"survivors": 4
+		},
+		{
+			"action": "shoot",
+			"attempted": true,
+			"cash": 409.2,
+			"days": 365,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [
+				{
+					"action": "shoot",
+					"attempt": "missed",
+					"cash_cents": 0,
+					"day": 105,
+					"food": 0,
+					"id": 1,
+					"knowledge": {
+						"hand:fort_bridger": [
+							"attempt",
+							"escape"
+						],
+						"keeper:fort_bridger": [
+							"attempt",
+							"escape"
+						],
+						"party:2:original:0": [
+							"attempt",
+							"escape"
+						],
+						"party:2:original:1": [
+							"attempt",
+							"escape"
+						],
+						"party:2:original:2": [
+							"attempt",
+							"escape"
+						],
+						"party:2:original:3": [
+							"attempt",
+							"escape"
+						],
+						"party:2:original:4": [
+							"attempt",
+							"escape"
+						]
+					},
+					"place": "fort_bridger",
+					"resolution": "escaped",
+					"shots": 1,
+					"stage": "done",
+					"target": "keeper:fort_bridger"
+				}
+			],
+			"outcome": "out_of_time",
+			"seed": 2,
+			"survivors": 5
+		},
+		{
+			"action": "shoot",
+			"attempted": true,
+			"cash": 376.57,
+			"days": 365,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [
+				{
+					"action": "shoot",
+					"attempt": "wounded",
+					"cash_cents": 0,
+					"day": 90,
+					"food": 0,
+					"id": 1,
+					"knowledge": {
+						"hand:fort_bridger": [
+							"attempt",
+							"escape"
+						],
+						"keeper:fort_bridger": [
+							"attempt",
+							"escape"
+						],
+						"party:3:original:0": [
+							"attempt",
+							"escape"
+						],
+						"party:3:original:1": [
+							"attempt",
+							"escape"
+						],
+						"party:3:original:2": [
+							"attempt",
+							"escape"
+						],
+						"party:3:original:3": [
+							"attempt",
+							"escape"
+						],
+						"party:3:original:4": [
+							"attempt",
+							"escape"
+						]
+					},
+					"place": "fort_bridger",
+					"resolution": "escaped",
+					"shots": 1,
+					"stage": "done",
+					"target": "keeper:fort_bridger"
+				}
+			],
+			"outcome": "out_of_time",
+			"seed": 3,
+			"survivors": 5
+		},
+		{
+			"action": "shoot",
+			"attempted": true,
+			"cash": 353.5,
+			"days": 365,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [
+				{
+					"action": "shoot",
+					"attempt": "wounded",
+					"cash_cents": 0,
+					"day": 89,
+					"food": 0,
+					"id": 1,
+					"knowledge": {
+						"hand:fort_bridger": [
+							"attempt",
+							"escape"
+						],
+						"keeper:fort_bridger": [
+							"attempt",
+							"escape"
+						],
+						"party:4:original:0": [
+							"attempt",
+							"escape"
+						],
+						"party:4:original:1": [
+							"attempt",
+							"escape"
+						],
+						"party:4:original:2": [
+							"attempt",
+							"escape"
+						],
+						"party:4:original:3": [
+							"attempt",
+							"escape"
+						],
+						"party:4:original:4": [
+							"attempt",
+							"escape"
+						]
+					},
+					"place": "fort_bridger",
+					"resolution": "escaped",
+					"shots": 1,
+					"stage": "done",
+					"target": "keeper:fort_bridger"
+				}
+			],
+			"outcome": "out_of_time",
+			"seed": 4,
+			"survivors": 5
+		},
+		{
+			"action": "shoot",
+			"attempted": true,
+			"cash": 394.28,
+			"days": 365,
+			"deaths": 0,
+			"departures": 0,
+			"incidents": [
+				{
+					"action": "shoot",
+					"attempt": "missed",
+					"cash_cents": 0,
+					"day": 95,
+					"food": 0,
+					"id": 1,
+					"knowledge": {
+						"hand:fort_bridger": [
+							"attempt",
+							"escape"
+						],
+						"keeper:fort_bridger": [
+							"attempt",
+							"escape"
+						],
+						"party:5:original:0": [
+							"attempt",
+							"escape"
+						],
+						"party:5:original:1": [
+							"attempt",
+							"escape"
+						],
+						"party:5:original:2": [
+							"attempt",
+							"escape"
+						],
+						"party:5:original:3": [
+							"attempt",
+							"escape"
+						],
+						"party:5:original:4": [
+							"attempt",
+							"escape"
+						]
+					},
+					"place": "fort_bridger",
+					"resolution": "escaped",
+					"shots": 1,
+					"stage": "done",
+					"target": "keeper:fort_bridger"
+				}
+			],
+			"outcome": "out_of_time",
+			"seed": 5,
+			"survivors": 5
+		}
+	]
+}

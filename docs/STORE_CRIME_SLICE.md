@@ -54,7 +54,7 @@ The complete final regression suite passed in the canonical Projects repository 
 
 ## Remaining work
 
-Finish and review the foundation before expanding it: reports from the named witnesses; precise participation/refusal and stronger witnessed violence responses; broader identity/ownership records; physical bodies and provenance. No rumor spread, distant enforcement, pursuit after departure, guard combat, escape shooting, companion attacks, companion-to-companion bonds, emergency flight, toll/ferry crime, cannibalism, replacement recruitment or final survival balance has shipped.
+Finish and review the foundation before expanding it: precise participation/refusal and stronger witnessed violence responses; broader identity/ownership records; physical bodies and provenance. No distant enforcement, pursuit after departure, news carried by passing traders, guard combat, escape shooting, companion attacks, companion-to-companion bonds, emergency flight, toll/ferry crime, cannibalism, replacement recruitment or final survival balance has shipped.
 
 ## Situational odds
 
@@ -68,6 +68,20 @@ Scene values in `data/crime_scenes.json` are the odds for a healthy, inexperienc
 The resulting edge raises compliance and hit chance and lowers capture and escape-injury chances. Whether a theft is noticed depends mainly on who is there to notice; experience adds a smaller bonus (2 points per counted job, at most 6), and party condition never affects it. Modifiers cannot push any chance past 5% or 95%, so a capped veteran can still be caught. The store menu lists the factors (staff on hand, party condition, willing participants, jobs counted). All numbers are authored tuning for the balance campaign, not historical rates.
 
 Saved crime menus now restore by checking their commands against the authoritative stage and regenerating the text, so descriptive text can change between versions without breaking saves.
+
+## Witness reports (record version 3)
+
+When an incident ends with the party leaving or escaping, its living local witnesses send one report (`record.reports`): the incident, origin, day, the senders in staff order, the union of their facts, and whether the party was **identified**. Face-to-face acts (threat, shot, search) identify the party. A noticed theft gives only a description. An unseen theft, or one whose only witness is dead, sends nothing.
+
+News travels along the road with other parties and traders in both directions. It reaches a stop `delay_days` (2) after the report, plus one day per `miles_per_day` (25) guide miles from the origin, rounded up. Both values are authored tuning in `data/crime_scenes.json`, not measured rates. A party that moves faster than the news can still trade before it arrives.
+
+At a trading post that has heard an identifying report, the post refuses to trade and refuses paid care, and its menu says what it heard and when. The party's own kits still work. A description-only report leaves the post open but adds a line saying people are wary of a party matching the description. Passing traders do not carry news yet.
+
+Validation derives the expected reports from the incidents, so a report cannot be deleted, downgraded to a description, given other facts, or dated before its incident. Version 2 saves gain reports for their resolved, witnessed escapes, dated to the incident day (the resolution day was not stored). The genuine fixture `tests/fixtures/pre-report-save-v1.json` covers this.
+
+### First journey sample with reports
+
+`store-reports-journeys.json` reruns the 24-journey store sample with reports on. No-crime and theft journeys all arrive. 4 of 6 robbery journeys and all 6 shooting journeys run out of time before Oregon City: news reaches Fort Hall and Fort Boise before the party, both refuse resupply, and the parties limp on with too little food and too few oxen. The sampler now treats "out of time while still making progress" as an outcome and only flags a journey that stalls for 60 days as a policy loop. This is an integration sample, not balance evidence, but it already shows the news speed and refusal rules are strong enough to matter. The balance campaign should tune them together with loot size.
 
 ## Other limits
 

@@ -27,6 +27,9 @@ func outfit(seed_value: int=57):
 func willing(game):
 	for profile in game.characters.profiles.slice(1):profile.boundaries=game.characters.catalog.boundaries("Opportunistic")
 	return game
+func choose_back(game) -> void:
+	game.pending=game.service_return.duplicate(true)
+	game.service_return={}
 func choose(game,command: String) -> bool:
 	for index in range(game.pending.choices.size()):
 		if game.pending.choices[index].get("crime_command","")==command:return game.choose(index)
@@ -184,7 +187,7 @@ func run():
 	check(restored!=null,"Version 1 crime save migrates")
 	if restored!=null:
 		var migrated: Dictionary=restored.crime.incident()
-		check(restored.crime.record.version==2 and migrated.stage=="escape" and migrated.attempt=="resisted","Active incident survives migration at the same stage")
+		check(restored.crime.record.version==restored.crime.VERSION and migrated.stage=="escape" and migrated.attempt=="resisted","Active incident survives migration at the same stage")
 		check(migrated.knowledge.get("keeper:fort_bridger",[])==["attempt"] and migrated.knowledge.get("hand:fort_bridger",[])==["attempt"] and not migrated.knowledge.has("staff:fort_bridger"),"Aggregate staff knowledge becomes each living staff member's knowledge")
 		check(restored.crime.service("fort_bridger").alarmed and restored.crime.service("fort_bridger").cash_cents==5000 and restored.state==store.normalize(previous.state),"Stock, cash, alarm and party state are unchanged by migration")
 		check(restored.crime.rng.state==int(previous.crime.random) and restored.pending==restored.crime.menu(restored),"Crime random stream and authoritative menu carry over")
@@ -194,6 +197,9 @@ func run():
 	previous=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-report-save-v1.json"))
 	restored=store.restore(previous)
 	check(restored!=null and restored.state==store.normalize(previous.state) and restored.crime.record.incidents.size()==1,"Save from the previous crime rules restores unchanged")
+	if restored!=null:
+		var upgraded: Array=restored.crime.record.reports
+		check(restored.crime.record.version==3 and upgraded.size()==1 and upgraded[0].day==restored.crime.record.incidents[0].day and upgraded[0].identified and upgraded[0].senders==["keeper:fort_bridger","hand:fort_bridger"],"An earlier witnessed escape gains its report, dated to the incident day")
 	var malformed: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-witness-save-v1.json"))
 	malformed.crime.record.actors.fort_bridger.uid="keeper:elsewhere"
 	check(store.restore(malformed)==null,"Malformed version 1 record still rejects")
@@ -251,6 +257,80 @@ func run():
 	game.open_crime()
 	choose(game,"shoot")
 	check(game.crime.odds(game,"fort_bridger").escape_capture<even.escape_capture,"A dead keeper leaves fewer people to stop the escape")
+	# Witness reports travel down the road and close posts that hear the party named.
+	game=willing(outfit())
+	game.crime.scenes.fort_bridger.compliance=0
+	game.crime.scenes.fort_bridger.escape_capture=0
+	game.crime.scenes.fort_bridger.escape_injury=0
+	game.open_crime()
+	choose(game,"robbery")
+	choose(game,"flee")
+	check(game.crime.record.reports.size()==1,"A witnessed getaway sends one report")
+	var report: Dictionary=game.crime.record.reports[0]
+	check(report.identified and report.origin=="fort_bridger" and report.senders.size()==2 and report.facts==["attempt","escape"],"The report names the party and carries exactly what the living witnesses saw")
+	check("People here who saw it: 2" in game.pending.text,"The outcome screen says how many people saw it")
+	choose(game,"finish")
+	var saved_with_report: Dictionary=store.capture(game)
+	check(store.restore(JSON.parse_string(JSON.stringify(saved_with_report)))!=null,"Reports round-trip through saves")
+	var hall: int=game.crime.arrival(game,report,"fort_hall")
+	var miles_apart: int=game.crime.mile(game,"fort_hall")-game.crime.mile(game,"fort_bridger")
+	check(miles_apart>0 and hall==report.day+int(game.crime.news_rules.delay_days)+ceili(miles_apart/float(game.crime.news_rules.miles_per_day)),"News reaches the next post after a delay set by distance")
+	check(game.crime.arrival(game,report,"fort_laramie")>report.day,"News also travels back east")
+	game.state.next_landmark="fort_hall"
+	game._arrive_landmark()
+	game.state.day=hall-1
+	check(not game.crime.refuses(game,"fort_hall") and game.open_trade() and game.pending.title=="Trading post","A party that outruns the news can still trade")
+	choose_back(game)
+	game.state.day=hall
+	check(game.crime.refuses(game,"fort_hall") and game.open_trade() and game.pending.title=="The post will not trade" and "Fort Bridger" in game.pending.text,"Once word arrives, the post refuses to trade and says why")
+	choose_back(game)
+	game.party_health.members[1].health=50
+	check(game.open_care() and not game.pending.choices.any(func(choice):return choice.get("care",0)==12),"The post also refuses paid care; the party's own kits still work")
+	choose_back(game)
+	check(not game.crime.refuses(game,"fort_bridger"),"The origin store is handled by its own closure, not by the news")
+	good=saved_with_report
+	bad=good.duplicate(true)
+	bad.crime.record.reports=[]
+	check(store.restore(bad)==null,"A report cannot be deleted from a save")
+	bad=good.duplicate(true)
+	bad.crime.record.reports[0].identified=false
+	check(store.restore(bad)==null,"A report cannot be downgraded to a vague description")
+	bad=good.duplicate(true)
+	bad.crime.record.reports[0].day=-1
+	check(store.restore(bad)==null,"A report cannot predate its incident")
+	bad=good.duplicate(true)
+	bad.crime.record.reports[0].facts=["attempt"]
+	check(store.restore(bad)==null,"Report facts must match what the witnesses know")
+	game=willing(outfit())
+	game.crime.scenes.fort_bridger.theft_success=0
+	game.crime.scenes.fort_bridger.escape_capture=0
+	game.crime.scenes.fort_bridger.escape_injury=0
+	game.open_crime()
+	choose(game,"theft")
+	choose(game,"flee")
+	choose(game,"finish")
+	report=game.crime.record.reports[0]
+	check(not report.identified,"A noticed theft only gives a description")
+	game.state.next_landmark="fort_hall"
+	game._arrive_landmark()
+	game.state.day=game.crime.arrival(game,report,"fort_hall")
+	check(not game.crime.refuses(game,"fort_hall") and game.open_trade() and game.pending.title=="Trading post" and "description" in game.pending.text,"A description makes people wary but does not close the post")
+	choose_back(game)
+	game=willing(outfit())
+	game.crime.scenes.fort_bridger.theft_success=1
+	game.open_crime()
+	choose(game,"theft")
+	choose(game,"take")
+	check(game.crime.record.reports.is_empty(),"An unseen theft sends no report")
+	game=willing(outfit())
+	game.crime.scenes.fort_bridger.shot_hit=1
+	game.crime.scenes.fort_bridger.shot_fatal=1
+	game.crime.scenes.fort_bridger.escape_capture=0
+	game.open_crime()
+	choose(game,"shoot")
+	choose(game,"take")
+	choose(game,"flee")
+	check(game.crime.record.reports.size()==1 and game.crime.record.reports[0].senders==["hand:fort_bridger"],"With the keeper dead, the hired hand's report still goes out")
 	var screen=Main.instantiate()
 	root.add_child(screen)
 	await process_frame

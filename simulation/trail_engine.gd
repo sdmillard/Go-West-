@@ -642,6 +642,7 @@ func open_trade() -> bool:
 	if not can_service():return false
 	var offer: Dictionary=context.market(self)
 	if offer.post and crime.closed(str(state.landmark)):return _service_menu("The store is closed","After the incident, the remaining staff will not trade with your party.",[])
+	if offer.post and crime.refuses(self,str(state.landmark)):return _service_menu("The post will not trade",crime.news_text(self,str(state.landmark)),[])
 	if not offer.available:
 		return _service_menu("No traders nearby","No trading party is available today. Waiting costs a day and meals; another trader may not arrive immediately.",[{"label":"Wait and watch for traders · 1 day","effects":{"days":1},"result":"Waited for passing traders. Check again or continue along the road."}])
 	var options: Array = []
@@ -670,7 +671,8 @@ func open_trade() -> bool:
 		options.append({"label":"Buy %s · $%.2f, 1 day" % [lot.label,lot.buy_cents/100.0],"requires":{"money":lot.buy_cents/100.0},"effects":{"money":-lot.buy_cents/100.0,"salt":lot.amount,"days":1},"result":"Bought salt for preserving meat."})
 		options.append({"label":"Sell %s · $%.2f, 1 day" % [lot.label,lot.sell_cents/100.0],"requires":{"salt":lot.amount},"effects":{"money":lot.sell_cents/100.0,"salt":-lot.amount,"days":1},"result":"Sold salt."})
 	context.decorate(self,options,offer)
-	return _service_menu("Trading post" if at_post else "Passing traders", "Stock and buying demand are limited. Each transaction costs one day and meals. Regional prices apply."+(" Your trading companion negotiated 5% off cash purchases." if characters.available(self,"Trading") else ""), options)
+	var rumor: String=crime.news_text(self,str(state.landmark)) if at_post else ""
+	return _service_menu("Trading post" if at_post else "Passing traders", "Stock and buying demand are limited. Each transaction costs one day and meals. Regional prices apply."+(" Your trading companion negotiated 5% off cash purchases." if characters.available(self,"Trading") else "")+(" "+rumor if not rumor.is_empty() else ""), options)
 
 func open_crime() -> bool:
 	if pending.get("crime_menu",false):return true
@@ -685,12 +687,13 @@ func open_care() -> bool:
 		if not party_health.is_active(member) or (member.conditions.is_empty() and member.health >= 100):
 			continue
 		options.append({"label": "Care for %s · 1 kit, 1 day" % member.name, "member_id": member.id, "care": 6, "requires": {"medicine": 1}, "effects": {"medicine": -1, "days": 1}, "result": "Used care supplies for " + member.name + "."})
-		if context.local_care(self):options.append({"label": "Seek local care for %s · $20, 1 day" % member.name, "member_id": member.id, "care": 12, "requires": {"money": 20}, "effects": {"money": -20, "days": 1}, "result": "Paid $20 for medical attention for " + member.name + "."})
+		if context.local_care(self) and not crime.refuses(self,str(state.landmark)):options.append({"label": "Seek local care for %s · $20, 1 day" % member.name, "member_id": member.id, "care": 12, "requires": {"money": 20}, "effects": {"money": -20, "days": 1}, "result": "Paid $20 for medical attention for " + member.name + "."})
 	if characters.available(self,"Caregiving"):
 		for option in options:
 			option.care_bonus=int(characters.benefits.care_health_bonus)
 			option.recovery_bonus=int(characters.benefits.care_recovery_bonus)
 			option.label+=" · caregiver +%d health" % option.care_bonus
+	if context.local_care(self) and crime.refuses(self,str(state.landmark)):return _service_menu("Care for the party", "Use your own kits anywhere. "+crime.news_text(self,str(state.landmark)), options)
 	return _service_menu("Care for the party", "Use your own kits anywhere. Paid local help is available at this post." if context.local_care(self) else "No local medical help here. Use your own kits and rest; paid help is offered only while stopped at selected supply posts.", options)
 
 func _choose_service(index: int) -> bool:
