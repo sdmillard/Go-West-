@@ -1,10 +1,11 @@
 {
 	"errors": [],
 	"policy": "20 full-route journeys: 5 strategies x 4 seeds (banker suggested outfit; June, May, August, July). Lawful control; robbing up to three roadside parties; robbing the Fort Kearny commissary; shooting a companion on day 20, then butchering any accessible dead openly and offering the meat, or in secret and serving it without telling. Otherwise the cautious salted-hunt survival policy. An integration check, not balance evidence.",
-	"rules_signature": "57a97bc768fa220d23be35ab9c4da8e1b4b5896eeacc7861abbbc4f5da07bea6",
+	"rules_signature": "fe4904649717884ce630e8f99be0c16a01eeb06a39bc8964b77f6ca16fa35b72",
 	"runs": [
 		{
 			"attacks": [],
+			"betrayals": [],
 			"days": 203,
 			"deaths": 0,
 			"departures": 0,
@@ -19,6 +20,7 @@
 		},
 		{
 			"attacks": [],
+			"betrayals": [],
 			"days": 210,
 			"deaths": 0,
 			"departures": 0,
@@ -33,6 +35,7 @@
 		},
 		{
 			"attacks": [],
+			"betrayals": [],
 			"days": 210,
 			"deaths": 0,
 			"departures": 0,
@@ -47,6 +50,7 @@
 		},
 		{
 			"attacks": [],
+			"betrayals": [],
 			"days": 221,
 			"deaths": 0,
 			"departures": 0,
@@ -61,6 +65,7 @@
 		},
 		{
 			"attacks": [],
+			"betrayals": [],
 			"days": 9,
 			"deaths": 0,
 			"departures": 0,
@@ -79,6 +84,7 @@
 		},
 		{
 			"attacks": [],
+			"betrayals": [],
 			"days": 365,
 			"deaths": 1,
 			"departures": 0,
@@ -99,6 +105,7 @@
 		},
 		{
 			"attacks": [],
+			"betrayals": [],
 			"days": 199,
 			"deaths": 0,
 			"departures": 2,
@@ -117,6 +124,7 @@
 		},
 		{
 			"attacks": [],
+			"betrayals": [],
 			"days": 365,
 			"deaths": 1,
 			"departures": 0,
@@ -137,6 +145,7 @@
 		},
 		{
 			"attacks": [],
+			"betrayals": [],
 			"days": 31,
 			"deaths": 0,
 			"departures": 0,
@@ -153,6 +162,7 @@
 		},
 		{
 			"attacks": [],
+			"betrayals": [],
 			"days": 210,
 			"deaths": 0,
 			"departures": 0,
@@ -167,6 +177,7 @@
 		},
 		{
 			"attacks": [],
+			"betrayals": [],
 			"days": 35,
 			"deaths": 0,
 			"departures": 0,
@@ -184,6 +195,7 @@
 		},
 		{
 			"attacks": [],
+			"betrayals": [],
 			"days": 365,
 			"deaths": 0,
 			"departures": 0,
@@ -205,6 +217,7 @@
 			"attacks": [
 				"killed"
 			],
+			"betrayals": [],
 			"days": 195,
 			"deaths": 1,
 			"departures": 2,
@@ -223,6 +236,7 @@
 			"attacks": [
 				"wounded"
 			],
+			"betrayals": [],
 			"days": 222,
 			"deaths": 0,
 			"departures": 3,
@@ -239,6 +253,7 @@
 			"attacks": [
 				"missed"
 			],
+			"betrayals": [],
 			"days": 251,
 			"deaths": 0,
 			"departures": 4,
@@ -255,6 +270,7 @@
 			"attacks": [
 				"wounded"
 			],
+			"betrayals": [],
 			"days": 365,
 			"deaths": 0,
 			"departures": 1,
@@ -271,6 +287,7 @@
 			"attacks": [
 				"killed"
 			],
+			"betrayals": [],
 			"days": 195,
 			"deaths": 1,
 			"departures": 2,
@@ -289,6 +306,7 @@
 			"attacks": [
 				"wounded"
 			],
+			"betrayals": [],
 			"days": 222,
 			"deaths": 0,
 			"departures": 3,
@@ -305,6 +323,7 @@
 			"attacks": [
 				"missed"
 			],
+			"betrayals": [],
 			"days": 251,
 			"deaths": 0,
 			"departures": 4,
@@ -321,6 +340,7 @@
 			"attacks": [
 				"wounded"
 			],
+			"betrayals": [],
 			"days": 365,
 			"deaths": 0,
 			"departures": 1,
