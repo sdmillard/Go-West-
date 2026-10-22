@@ -199,6 +199,7 @@ func run():
 	for profile in game.characters.profiles.slice(1):profile.boundaries=game.characters.catalog.boundaries("Opportunistic")
 	check(game.crime.able(game,"robbery")==5 and game.crime.able(game,"murder")==1,"Willing participants depend on each companion's own boundaries for the act")
 	var base: Dictionary=game.crime.scenes.fort_bridger
+	var base_theft: float=base.theft_success
 	var even: Dictionary=game.crime.odds(game,"fort_bridger")
 	check(is_zero_approx(even.edge) and even.compliance==base.compliance and even.shot_hit==base.shot_hit and even.escape_capture==base.escape_capture and even.theft_success==base.theft_success,"Healthy, inexperienced, full-staff odds equal the authored scene values")
 	preview=store.capture(game)
@@ -217,7 +218,10 @@ func run():
 	check(game.crime.experience(game)==1,"Getting away with a job counts as experience")
 	var seasoned: Dictionary=game.crime.odds(game,"fort_bridger")
 	check(seasoned.compliance>even.compliance and seasoned.escape_capture<even.escape_capture,"Experience improves intimidation and escape")
-	check(seasoned.theft_success==1,"Experience does not change whether a theft is noticed")
+	game.crime.scenes.fort_bridger.theft_success=base_theft
+	check(is_equal_approx(game.crime.odds(game,"fort_bridger").theft_success,base_theft+game.crime.modifiers.stealth_step),"Experience gives a smaller bonus to going unnoticed")
+	game.crime.scenes.fort_bridger.theft_success=1
+	check(is_equal_approx(game.crime.odds(game,"fort_bridger").theft_success,minf(1.0,1.0)),"Authored certainty is kept")
 	game.open_crime()
 	choose(game,"theft")
 	choose(game,"take")

@@ -65,7 +65,7 @@ Scene values in `data/crime_scenes.json` are the odds for a healthy, inexperienc
 - **Participants:** if fewer than two people are fit (health of at least the poor threshold) and willing for that act, the party loses 8 points. Willingness uses each companion's own boundaries, so murder and robbery can differ.
 - **Staff:** every listed staff member already dead adds 8 points against resistance, and also makes an unnoticed theft more likely.
 
-The resulting edge raises compliance and hit chance and lowers capture and escape-injury chances. Experience and condition never change whether a theft is noticed; that depends only on who is there to notice. Modifiers cannot push any chance past 5% or 95%, so a capped veteran can still be caught. The store menu lists the factors (staff on hand, party condition, willing participants, jobs counted). All numbers are authored tuning for the balance campaign, not historical rates.
+The resulting edge raises compliance and hit chance and lowers capture and escape-injury chances. Whether a theft is noticed depends mainly on who is there to notice; experience adds a smaller bonus (2 points per counted job, at most 6), and party condition never affects it. Modifiers cannot push any chance past 5% or 95%, so a capped veteran can still be caught. The store menu lists the factors (staff on hand, party condition, willing participants, jobs counted). All numbers are authored tuning for the balance campaign, not historical rates.
 
 Saved crime menus now restore by checking their commands against the authoritative stage and regenerating the text, so descriptive text can change between versions without breaking saves.
 

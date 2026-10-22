@@ -16,11 +16,11 @@ func load_data(value: Variant) -> bool:
 	if not value is Dictionary or value.get("version")!=1 or not value.get("scenes") is Dictionary or value.scenes.is_empty() or not value.get("modifiers") is Dictionary:return false
 	var mods: Dictionary=value.modifiers
 	if not mods.get("note") is String:return false
-	for key in ["experience_step","staff_step","poor_condition_penalty","fair_condition_penalty","small_party_penalty","floor","ceiling"]:
+	for key in ["experience_step","stealth_step","staff_step","poor_condition_penalty","fair_condition_penalty","small_party_penalty","floor","ceiling"]:
 		if not number(mods.get(key)) or mods[key]<0 or mods[key]>1:return false
 	for key in ["experience_cap","minimum_able"]:
 		if not whole(mods.get(key),0,5):return false
-	if mods.floor>=mods.ceiling or mods.experience_step*mods.experience_cap>0.25:return false
+	if mods.floor>=mods.ceiling or mods.experience_step*mods.experience_cap>0.25 or mods.stealth_step>mods.experience_step:return false
 	for place in value.scenes:
 		var scene: Variant=value.scenes[place]
 		if not place is String or not scene is Dictionary:return false
@@ -104,7 +104,7 @@ func party_condition(game) -> String:
 	var health: int=game.party_health.average_health()
 	return "poor" if health<int(game.combat.data.poor_health) else ("fair" if health<int(game.combat.data.fair_health) else "good")
 ## Pure: no RNG, no state change. Experience and the situation shift intimidation, aim and escape.
-## Whether a theft is noticed depends only on who is there to notice it.
+## Whether a theft is noticed depends on who is there to notice it, plus a smaller experience bonus; never on party condition.
 func odds(game,place: String,action: String="robbery") -> Dictionary:
 	var scene: Dictionary=scenes[place]
 	# Scene odds assume all of its staff are alive; each one already dead weakens resistance.
@@ -115,7 +115,7 @@ func odds(game,place: String,action: String="robbery") -> Dictionary:
 	var low: float=float(modifiers.floor)
 	var high: float=float(modifiers.ceiling)
 	return {"edge":edge,
-		"theft_success":bounded(float(scene.theft_success),float(scene.theft_success)+missing*float(modifiers.staff_step),low,high),
+		"theft_success":bounded(float(scene.theft_success),float(scene.theft_success)+missing*float(modifiers.staff_step)+experience(game)*float(modifiers.stealth_step),low,high),
 		"compliance":bounded(float(scene.compliance),float(scene.compliance)+edge,low,high),
 		"shot_hit":bounded(float(scene.shot_hit),float(scene.shot_hit)+edge,low,high),
 		"escape_capture":bounded(float(scene.escape_capture),float(scene.escape_capture)-edge,low,high),
