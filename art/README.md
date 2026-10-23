@@ -18,6 +18,10 @@ The game uses original, directly authored pixel assets. Shapes, letters and anim
 
 This is **16-bit-era art direction**, not emulation of a particular console's hardware, palette or memory restrictions. The graphics continue to be ordinary Godot textures. Pixel art can gain more detail through further deliberate asset work without changing the simulation.
 
+## Aseprite pipeline
+
+Replacement art is being drawn with Lua scripts run in Aseprite; see [the Aseprite pipeline](aseprite/README.md). The PNG names and sizes stay the same, so the game loads replaced pictures without code changes. Pictures not yet replaced still come from the GDScript painters below.
+
 ## Rebuild
 
 ```text
