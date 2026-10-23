@@ -40,6 +40,10 @@ const DUST_DEVIL = preload("res://art/pixels/dust_devil.png") # four 16x40 frame
 const TRAIL_DUST = preload("res://art/pixels/trail_dust.png") # three 16x12 puffs
 const STAMPEDE_OX = preload("res://art/pixels/stampede_ox.png") # four 26x16 frames, rump at (0, 15)
 const FLOTSAM = preload("res://art/pixels/flotsam.png") # two 24x12 pieces, water line at y 9
+const RAIN_CLOUDS = preload("res://art/pixels/rain_clouds.png") # 432x56, tiles sideways
+const RAIN_SPLASH = preload("res://art/pixels/rain_splash.png") # four 8x4 frames
+const FOG_BANK = preload("res://art/pixels/fog_bank.png") # 432x40, tiles sideways
+const SNOW_SQUALL = preload("res://art/pixels/snow_squall.png") # 432x150, tiles both ways
 const NEAR_BANK = [Vector2(0, 178), Vector2(25, 189), Vector2(50, 204), Vector2(75, 212), Vector2(100, 220), Vector2(125, 237), Vector2(150, 248), Vector2(175, 269), Vector2(200, 275), Vector2(225, 288), Vector2(250, 295), Vector2(260, 300), Vector2(0, 300)]
 const FAR_BANK = [Vector2(330, 0), Vector2(360, 21), Vector2(390, 26), Vector2(420, 43), Vector2(450, 62), Vector2(480, 77), Vector2(510, 90), Vector2(540, 99), Vector2(570, 125), Vector2(600, 136), Vector2(630, 150), Vector2(660, 161), Vector2(690, 182), Vector2(720, 200), Vector2(720, 0)]
 signal crossing_finished
@@ -133,14 +137,15 @@ func _draw() -> void:
 	var set_name: String = "river" if river_scene else ("travel_" + terrain if terrain in ["mountains", "desert", "forest"] else "prairie")
 	var layers: Array = PARALLAX[set_name]
 	for layer in layers:
-		if layer[0] == "clouds" and weather_id in ["thunderstorm", "hail"]:
-			continue # fair-weather clouds are lost under the thunderhead
+		if layer[0] == "clouds" and weather_id in ["thunderstorm", "hail", "rain", "heavy_rain", "blizzard", "fog"]:
+			continue # fair-weather clouds are lost under the overcast
 		var texture: Texture2D = _layer_texture(set_name + "_" + layer[0])
 		var drift: float = clock_time * 1.5 if layer[0] == "clouds" else 0.0
 		_tile(texture, 0, posmod(int(scroll_distance * layer[1] + drift), 432))
 	if set_name in ["prairie", "river"]:
 		_tile(HORIZON, 65, int(scroll_distance / 7.0) % 432)
 		_tile(GROUND, 100, int(scroll_distance) % 432)
+	_draw_fog_banks()
 	var frame := int(clock_time * FPS) % FRAMES if scrolling or motion > 0 else 0
 	var bob := -1 if frame % 4 >= 2 else 0
 	var shift := int(sin(clock_time * 3) * 3) if motion > 0 else 0
@@ -219,15 +224,41 @@ func _draw_weather() -> void:
 			var devil_x := posmod(int(clock_time * 7.0) + 300, 560) - 64
 			var sway := int(sin(clock_time * 1.3) * 4)
 			draw_texture_rect_region(DUST_DEVIL, Rect2(devil_x - 8, 118 + sway - 39, 16, 40), Rect2((int(clock_time * 10) % 4) * 16, 0, 16, 40))
-	elif weather_id in ["rain", "heavy_rain", "blizzard"]:
-		var snow := weather_id == "blizzard"
-		for index in range(45 if weather_id in ["heavy_rain", "blizzard"] else 22):
-			var x := posmod(index * 37 - int(clock_time * 13), 432)
-			var y := posmod(index * 19 + int(clock_time * (24 if snow else 70)), 150)
-			draw_rect(Rect2(x, y, 2 if snow else 1, 2 if snow else 4), Color("f6e7bc") if snow else Color("8db8c3"))
+	elif weather_id in ["rain", "heavy_rain"]:
+		# A low grey overcast, rain on the wind, and drops splashing on the ground.
+		var heavy := weather_id == "heavy_rain"
+		draw_rect(full, Color(0.2, 0.24, 0.28, 0.26 if heavy else 0.16))
+		draw_rect(Rect2(0, 0, 432, 90), Color(0.5, 0.55, 0.58, 0.4)) # the sky goes grey
+		_tile(RAIN_CLOUDS, 0, posmod(int(clock_time * 2.0), 432))
+		var slant := 2 if heavy else 1
+		for index in range(80 if heavy else 40):
+			var x := posmod(index * 37 - int(clock_time * 20.0 * slant), 432)
+			var y := posmod(index * 19 + int(clock_time * 95), 150)
+			draw_line(Vector2(x, y), Vector2(x - slant, y + 5 + slant), Color(0.55, 0.72, 0.76, 0.85))
+		for index in range(24 if heavy else 12):
+			var phase := int(clock_time * 12.0) + index * 5
+			var spot := Vector2(posmod(index * 71 + (phase / 4) * 53, 432), 112 + posmod(index * 23 + (phase / 4) * 17, 36))
+			draw_texture_rect_region(RAIN_SPLASH, Rect2(spot, Vector2(8, 4)), Rect2((phase % 4) * 8, 0, 8, 4))
+	elif weather_id == "blizzard":
+		# Whiteout: snow driven sideways in two depths, the far ground lost behind it.
+		draw_rect(full, Color(0.84, 0.87, 0.9, 0.5))
+		for depth in range(2):
+			var speed := 90.0 if depth == 0 else 150.0
+			var ox := posmod(int(clock_time * speed) + depth * 200, 432)
+			var oy := posmod(int(clock_time * speed * 0.25) + depth * 70, 150)
+			for tx in [-1, 0]:
+				for ty in [-1, 0]:
+					draw_texture(SNOW_SQUALL, Vector2(ox + tx * 432, oy + ty * 150))
 	elif weather_id == "fog":
-		for y in [24, 51, 79, 105]:
-			draw_rect(Rect2(0, y, 432, 16), Color(0.75, 0.78, 0.73, 0.3))
+		# A pale wash and two banks of mist drifting at their own pace.
+		draw_rect(full, Color(0.8, 0.83, 0.78, 0.3))
+		if not scene_id.is_empty() or not crossing.is_empty():
+			_draw_fog_banks() # on the road the banks lie behind the wagon instead
+
+func _draw_fog_banks() -> void:
+	if weather_id == "fog":
+		_tile(FOG_BANK, 44, posmod(int(clock_time * 4.0), 432))
+		_tile(FOG_BANK, 70, posmod(int(clock_time * 7.0) + 150, 432))
 
 func _draw_stampede() -> void:
 	# Two oxen broken loose and running off ahead of the wagon in their own dust.
