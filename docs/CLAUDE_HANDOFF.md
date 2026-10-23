@@ -1,6 +1,6 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 23, 2026, after map navigation, foraging/vitamin C and unarmed attacks (see final checkpoint). Sections below cover PRs #19 to #34. **Continue the existing project; do not restart it. Spencer requested a break. This is a saved checkpoint, not a request to continue working now.**
+Last updated October 23, 2026, after editable/evolving companion relationships (see final checkpoint). Sections below cover PRs #19 to #34. **Continue the existing project; do not restart it. Spencer requested a break. This is a saved checkpoint, not a request to continue working now.**
 
 ## Resume here
 
@@ -217,3 +217,5 @@ Validation: committed feature code `12657a2` passed all37 suites in an isolated 
 ## Editable companion bonds and social development (October 23)
 
 See `docs/PARTY_SOCIAL.md`. Spencer requested customizable peer bonds, relationships changing from their starting state, romance/rivalry and spouse-aware departures. `party_social.gd` keeps six pairs with bounded affinity and eight memories each; `social_rules.json` defines provisional weekly changes. Date-keyed social randomness is separate from existing RNG. The setup editor shows seeded default bonds and permits explicit no bonds; one active partnership per companion, including a declared partner to the leader. No new romances among known kin or currently partnered companions. View Party and the journal expose developments. Existing sparse crime bonds remain authoritative for close relationships in violence/witness reactions. Partners join warned settlement departure plans with explicit review and supply transfers; immediate violence/flight/betrayal rules remain unchanged. Hostility can create ordinary departure intent. Old saves preserve bonds, initialize feelings on load without invented past history; previous master rules migrate. This adds social survival pressure and requires a new combined balance campaign; do not claim the older campaigns validate it.
+
+Social checkpoint validation: feature commit3016323 passed all38suites in an isolated clean checkout, including33social checks, plus24store and20outlaw journeys with0reported errors. Setup bond editor, joint-departure warning and party panel were rendered and inspected at640x360. Archived reports, debug pilots and real player saves remain untouched; generated integration reports are retained only in ignored validation storage. The current integration policies do not optimize social dynamics or foraging, so this is regression evidence rather than settled survival balance.
