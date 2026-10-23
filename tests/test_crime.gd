@@ -578,7 +578,7 @@ func fort_checks(store) -> void:
 	chased.choose(leave_index(chased))
 	chased.pending={}
 	check(chased.travel() and chased.pending.get("crime_menu",false) and chased.crime.incident().action=="pursuit" and chased.crime.incident().stage=="standoff","Riders catch up on the road and force a standoff")
-	check("rode after you" in chased.pending.text and chased.pending.choices.map(func(choice):return choice.crime_command)==["breakout","surrender","back"],"The chase offers shooting out or surrender")
+	check("rode after you" in chased.pending.text and chased.pending.choices.map(func(choice):return choice.crime_command)==["breakout","surrender","flee","back"],"The chase offers fighting, surrender or flight")
 	var chase_saved: Dictionary=store.capture(chased)
 	check(store.restore(JSON.parse_string(JSON.stringify(chase_saved)))!=null,"A chase round-trips through saves")
 	bad=chase_saved.duplicate(true)
