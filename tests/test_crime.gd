@@ -637,12 +637,14 @@ func trader_checks(store) -> void:
 	var key: String=game.context.market(game).key
 	check(game.crime.target(game)==key and key.begins_with("passing:"),"On the road, passing traders are the target")
 	var before: Dictionary=store.capture(game)
-	check(game.open_crime() and game.pending.title=="Passing traders" and "Lead trader: uninjured" in game.pending.text and "Food in their packs: 150 lb" in game.pending.text,"The trader menu shows their packs")
+	# Each party carries its own seeded load of food.
+	var packed: int=int(game.context.barter_goods(game,key).stock.get("food",0))
+	check(game.open_crime() and game.pending.title=="Passing traders" and "Lead trader: uninjured" in game.pending.text and "Food in their packs: %d lb" % packed in game.pending.text,"The trader menu shows their packs")
 	check(game.pending.choices[-1].label=="Leave the traders alone","Backing out leaves the traders alone")
 	check(store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))!=null,"An open trader menu restores")
 	check(choose(game,"back") and store.capture(game)==before and not game.crime.record.services.has(key),"Looking at the traders adds nobody to the record")
 	game.context.record.spent[key+"|buy_food"]=2
-	check(game.crime.food_left(game,key)==50,"Food already bought from these traders is gone from their packs")
+	check(game.crime.food_left(game,key)==maxi(0,packed-100),"Food already bought from these traders is gone from their packs")
 	game.context.record.spent.erase(key+"|buy_food")
 	game.crime.scenes.passing_traders.compliance=1
 	game.crime.scenes.passing_traders.escape_capture=0
