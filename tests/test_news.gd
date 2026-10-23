@@ -65,6 +65,8 @@ func run():
     check(heard>0 and heard<=3,"A post's clerk passes on up to three headlines")
     check(told.has(game.news.data.road.snake_river),"The road ahead describes the next stop")
     check(told.any(func(said):return said.contains("Next store's at Fort Boise,")),"The road ahead names the next store and its prices")
+    check(not told.any(func(said):return said.contains("miles on") or said.contains("percent")),"People reckon in days and dearer or cheaper, not exact miles and percents")
+    check(game.news.off(15)=="only a day or two off" and game.news.off(210).begins_with("a fortnight off") and game.news.off(900)=="more than a month off","Distances are told in rough days and weeks")
     check(not told.any(func(said):return said.contains("you folks") or said.contains("your outfit")),"A party with nothing to hide hears nothing about itself")
     game.state.food=10
     check(game.news.fragments(game,"post","fort_hall").any(func(said):return said.contains("your food will hold out")),"Short food for the road to the next store is mentioned")

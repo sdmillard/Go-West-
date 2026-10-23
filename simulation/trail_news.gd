@@ -110,17 +110,36 @@ func road_ahead(game) -> Array:
 	if not post.is_empty():
 		var there: float=float(game.context.data.regions[nodes[post[0]].hunting_region].price)
 		var change: int=roundi((there/price-1.0)*100.0)
-		var compare: String="about what you'd pay here" if absi(change)<5 else ("about %d percent %s than here" % [absi(change),"more" if change>0 else "less"])
-		lines.append("Next store's at %s, about %d miles on. They charge %s." % [spoken(nodes[post[0]].name),post[1],compare])
+		var compare: String="about what you'd pay here" if absi(change)<5 else ("a little %s than here" if absi(change)<=15 else "a good deal %s than here") % ("dearer" if change>0 else "cheaper")
+		lines.append("Next store's at %s, %s. Their prices run %s." % [spoken(nodes[post[0]].name),off(int(post[1])),compare])
 	# Whether the food will last to the next store (or the end of the road), at the party's rations and a train's pace.
 	var reach: int=int(post[1]) if not post.is_empty() else maxi(0,game.destination()-int(game.state.miles))
 	var lasts: int=game.provisions.expected_days(int(game.state.food),int(game.state.party_size),int(game.state.rations))
 	var needed: int=ceili(float(reach)/MILES_PER_DAY)
-	if reach>0 and lasts<needed:lines.append("I don't think your food will hold out. At the rate you're eating it'll last maybe %d days, and %s is a good %d days off." % [lasts,spoken(nodes[post[0]].name) if not post.is_empty() else "the end of the road",needed])
+	if reach>0 and lasts<needed:lines.append("I don't think your food will hold out. You look to have %s, and %s is %s." % [supply(lasts),spoken(nodes[post[0]].name) if not post.is_empty() else "the end of the road",off(reach)])
 	var miles: Dictionary=game.route.node_miles()
 	if month>=9 and int(game.state.miles)<int(miles.get("blue_mountains",0)):lines.append("You're getting a late start on the mountains. Snow can shut the Blue Mountains and the Cascades by October.")
 	elif month<=5 and int(game.state.miles)<int(miles.get("fort_kearny",0)):lines.append("The grass is still short on the plains this early. Let your teams graze every chance you get.")
 	return lines
+
+## How far off a place is, the way people reckon it: in days and weeks at a train's pace, never exact miles.
+func off(miles: int) -> String:
+	var days: float=float(miles)/MILES_PER_DAY
+	if days<=2.0:return "only a day or two off"
+	if days<=4.0:return "a few days off"
+	if days<=8.0:return "about a week off"
+	if days<=11.0:return "a week and a half off"
+	if days<=17.0:return "a fortnight off, a bit less if you push your team"
+	if days<=24.0:return "a good three weeks off"
+	if days<=35.0:return "a month off, if your team holds up"
+	return "more than a month off"
+
+## A party's food the way an onlooker would judge it.
+func supply(days: int) -> String:
+	if days<=3:return "only a few days' food left"
+	if days<=9:return "maybe a week's food left"
+	if days<=17:return "two weeks' food left at most"
+	return "a few weeks' food left"
 
 ## The next post with a store on the main road ahead, as [id, miles from here], or [].
 func next_post(game) -> Array:
