@@ -1,24 +1,37 @@
-# Trail action ribbon and preferences
+# Trail ribbon, place choices and window exits
 
-The logical canvas is now 800 × 360. The original 640-pixel travel area and art retain their pixel sizes; the extra width holds a permanent right ribbon. Default window size is 1600 × 720 with integer scaling and nearest filtering. Smaller monitors fall back to 800 × 360. Full-screen remains letterboxed at integer scale.
+The logical canvas is 800 × 360. The original 640-pixel travel area and art keep their pixel sizes; extra width holds a permanent right ribbon. The default window is 1600 × 720 with nearest filtering and integer scaling. Smaller displays fall back to 800 × 360.
 
 | Ribbon | Actions |
 | --- | --- |
 | Map | Route overview, zoom, pan, wagon focus |
 | Guide | Overland guide |
-| Party | Individual health, relationships, wages, dismissal and vacancies |
+| Party | Health, relationships, wages, dismissal and vacancies |
 | Travel | Pace and rations |
-| Supplies | Cargo, preservation, packing, oxen; buy/trade |
-| Camp & Care | Rest duration, medical care, emigrant camp |
-| Hunt & Forage | Existing hunting outing or foraging preview |
-| People & Places | Local conditions/activities; companion search |
-| Villainy | Attack someone → Party member → named companion → attack options; local attacks, theft, robbery; handling the dead |
-| History | Journal; memorial book |
+| Supplies | Cargo, preservation, packing and oxen |
+| Camp & Care | Rest duration and medical care |
+| Hunt & Forage | Hunting or foraging preview |
+| Villainy | Attack someone, steal, rob, handling the dead |
+| History | Journal and memorial book |
 
-Sections open compact trees rather than one long Options list. Opening a section pauses travel without spending a day. Existing costs and confirmation screens apply when an action is committed. Encounters, hunts and crossing reviews still gate services; these buttons do not bypass simulation rules. The ledger area shows current pace and rations even when the Travel section is closed. Continue and Camp remain convenient main-screen controls.
+## Context belongs below the picture
 
-**Options** is now solely for preferences: full-screen, 1×/2× window size and automatic travel display speed (2.5, 1.25 or 0.75 seconds per day). Display speed changes the delay between simulated days, not distance, meals, disease probabilities or any other daily calculation. Preferences are stored separately in `user://preferences.cfg`; journey save format and rule fingerprints do not change. Old five-person and replacement-companion journeys use the same simulation.
+The existing place/story area shows buttons only for opportunities present there: **Store**, **Talk to traders**, **Visit emigrant camp**, **Find companions** when a position is vacant, and **Local activities** at a stop. No permanent camp/trader/recruitment entry remains in the ribbon. The place choices disappear during unresolved encounters, hunts and crossing reviews. Visiting a panel is free; actual transactions, searches and activities retain their existing costs. Recruitment also recognizes nearby emigrant camps.
 
-No reference-game art was copied. This layout uses the existing original parchment/wood UI, bitmap font and pixel scenes. Native checks cover setup, main trail, each section, preferences and the existing route-map view at the expanded canvas.
+## Villainy tree
 
-Villainy uses nested Back navigation. **Attack someone** offers **Party member** and **Someone here**. The companion branch lists only active nonleader travelers, including recruits. Local attacks open the existing venue encounter (keeper, toll collector, ferryman or nearby traders); individual targeting of every supporting staff actor is not added by this UI change. Theft and robbery have separate preview branches. Opening or backing out of these trees commits no violence or crime. Saved venue previews reopen at their category chooser, with the authoritative encounter choices preserved. Party retains dismissal and wages without an attack button.
+**Attack someone → Party member → named active traveler → attack options.** This includes recruits and excludes dead/departed travelers and the leader. Party no longer contains an attack button; dismissal remains separate.
+
+**Attack someone → Someone here → named local → attack options.** The list comes from living staff at the current staffed venue, nearby passing traders and nearby emigrant camp. A stable cosmetic name and role identify each fictional actor; naming uses an independent RNG and makes no historical identity claim. Selecting a target never attacks automatically. Guns and unarmed attacks use existing costs and risks.
+
+Committed incidents retain the actual target id. The chosen person receives the injury/death, produces their own remains and is removed from future lists if dead. Attacking a supporting worker does not seize the keeper's stock or waive the toll. Other staff can witness, resist and spread news as before. Saved previews validate the target's place and identity; returning to a preview never rerolls it. Theft and robbery have separate preview branches. Mandatory loot/escape/standoff stages still use the authoritative simulation choices.
+
+## One exit convention
+
+A small **X in the upper-right corner** closes dialogs and the map; Escape is the keyboard alternative. The X uses the existing bitmap-font glyph inside a 14-pixel hit area. Redundant OK/Back-to-trail footer exits are hidden. Explicit committing actions such as Rest, Slaughter, Leave Wagon and Leave This Stone remain visible; X cancels their confirmations. Nested trees have labeled parent links inside the menu, distinct from exiting the window. Closing a committed hunt returns its existing report; closing an active crime panel does not cancel or erase the incident.
+
+## Actual Options
+
+**Options** holds full-screen, 1×/2× window size and automatic-travel display speed (2.5, 1.25 or 0.75 seconds per simulated day). Display speed changes the delay between days, not distance, food, disease or other daily rules. Preferences live separately in `user://preferences.cfg`; no journey-rule fingerprint change is needed for the layout. Current pace/rations remain visible on the main ledger/control panel.
+
+The UI reuses the original parchment/wood theme, bitmap font and pixel scenes. No reference-game artwork was copied. Native checks cover setup, trail, place choices, all ribbon sections, local targets, preferences and map.

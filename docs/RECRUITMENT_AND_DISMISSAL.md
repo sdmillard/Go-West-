@@ -4,7 +4,7 @@ The party has five positions. Death and departure leave an empty position instea
 
 ## Finding someone
 
-Click a vacancy or use **People & Places > Look for companions**. Recruitment is available at staffed towns, forts, other populated trading stops and passing-trader camps. An empty stretch of trail has nobody to search for. Closed services and people refusing the party because of its crimes also block recruitment.
+Click a vacancy at an available site, or use **Find companions** below the scene. Recruitment is available at staffed towns, forts, other populated trading stops and passing-trader and emigrant camps. An empty stretch of trail has nobody to search for. Closed services and people refusing the party because of its crimes also block recruitment.
 
 A search takes one day, including meals, weather, illness and wage effects. Each place permits one search per journey, with an authored 65% chance of a candidate. Reopening, returning or declining does not reroll the offer. The preview shows the person's appearance, heritage, temperament/values, background, specials, flaw, starting trust and wage requirement. Accept or decline explicitly. Inviting someone costs no further day.
 

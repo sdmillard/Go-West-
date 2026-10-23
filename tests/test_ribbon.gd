@@ -19,7 +19,7 @@ func run():
  var before: Dictionary=Store.new().capture(screen.game)
  for key in screen.ribbon_buttons:
   check(Rect2(640,9,150,342).encloses(screen.ribbon_buttons[key].get_global_rect()),key+" fits the right rail")
- var groups: Array=["Travel","Supplies","Camp & care","Hunt & forage","People & places","Villainy","History"]
+ var groups: Array=["Travel","Supplies","Camp & care","Hunt & forage","Villainy","History"]
  for group in groups:
   screen._show_section(group)
   await process_frame
@@ -74,6 +74,33 @@ func run():
  check(screen.ribbon_buttons.SUPPLIES.disabled and not screen.options_button.disabled,"Encounters gate gameplay services while allowing preferences")
  screen._show_section("Supplies")
  check(not screen.section_window.visible,"Disabled service sections cannot bypass an encounter")
+ screen.game.pending={}
+ screen._refresh()
+ screen._show_preferences()
+ await process_frame
+ check(not screen.options_window.get_ok_button().visible,"Preferences exit through the shared X rather than a second OK/Back button")
+ check(screen.theme.get_icon("close","Window").get_size()==Vector2(14,14),"The small close glyph retains a usable shared hit area")
+ screen.options_window.hide()
+ screen._show_section("Villainy")
+ await process_frame
+ var click:=InputEventMouseButton.new()
+ click.button_index=MOUSE_BUTTON_LEFT
+ click.pressed=true
+ click.position=Vector2(screen.section_window.position)+Vector2(screen.section_window.size.x-11,-8)
+ root.push_input(click)
+ click=click.duplicate()
+ click.pressed=false
+ root.push_input(click)
+ await process_frame
+ check(not screen.section_window.visible,"Clicking the embedded title-bar X closes the section")
+ screen._rest()
+ await process_frame
+ check(screen.rest_window.get_ok_button().visible and not screen.rest_window.get_cancel_button().visible,"Confirmation retains its explicit action and uses X to cancel")
+ screen.rest_window.hide()
+ screen._show_map()
+ check(screen.map_view.close_button.text=="X" and screen.map_view.close_button.position.y<30,"Map uses the same top-right X convention")
+ screen.map_view.close_button.pressed.emit()
+ check(not screen.map_view.visible,"Map X returns to the trail")
  screen.queue_free()
  await process_frame
  DirAccess.remove_absolute(ProjectSettings.globalize_path("user://ribbon-test-preferences.cfg"))

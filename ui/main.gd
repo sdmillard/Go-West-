@@ -44,7 +44,7 @@ var section_window: AcceptDialog
 var section_rows: VBoxContainer
 var ribbon_buttons: Dictionary={}
 var crime_category := ""
-const SECTION_PARENTS={"Attack someone":"Villainy","Party member":"Attack someone","Steal":"Villainy","Rob":"Villainy"}
+const SECTION_PARENTS={"Attack someone":"Villainy","Party member":"Attack someone","Someone here":"Attack someone","Steal":"Villainy","Rob":"Villainy"}
 var window_scale: OptionButton
 var fullscreen: CheckBox
 var travel_speed: OptionButton
@@ -67,6 +67,7 @@ var post_store_window: AcceptDialog
 var post_store_view: Panel
 var service_rows: VBoxContainer
 var story_scroll: ScrollContainer
+var place_actions: HFlowContainer
 var story_column: VBoxContainer
 var departure_view: Panel
 var travel_timer: Timer
@@ -117,6 +118,7 @@ func _ready() -> void:
 	section_window.visibility_changed.connect(_update_animation_pause)
 	service_window.visibility_changed.connect(_update_animation_pause)
 	get_tree().node_added.connect(_wrap_tooltip)
+	_normalize_dialog_tree(self)
 	grave_store.read_records()
 	_open_departure()
 	_refresh()
@@ -188,6 +190,13 @@ func _build_theme() -> void:
 	skin.set_font("title_font", "Window", PIXEL_FONT)
 	skin.set_font_size("title_font_size", "Window", 8)
 	skin.set_constant("title_height", "Window", 15)
+	var close_image:=Image.create(14,14,false,Image.FORMAT_RGBA8)
+	close_image.blit_rect(PIXEL_FONT.get_texture_image(0,Vector2i(8,0),0),Rect2i(64,30,5,7),Vector2i(4,3))
+	var close_glyph:=ImageTexture.create_from_image(close_image)
+	skin.set_icon("close","Window",close_glyph)
+	skin.set_icon("close_pressed","Window",close_glyph)
+	skin.set_constant("close_h_offset","Window",18)
+	skin.set_constant("close_v_offset","Window",15)
 	skin.set_stylebox("background", "ProgressBar", style("302b2c", "76503c", 0))
 	skin.set_stylebox("fill", "ProgressBar", style("ddb461", "f6e7bc", 0))
 	theme = skin
@@ -209,6 +218,7 @@ static func wrap_text(text: String, width: float, font_size: int = 8) -> String:
 
 ## Godot's own tooltip label never wraps, so every hint is broken into lines before its popup sizes itself.
 func _wrap_tooltip(node: Node) -> void:
+	if node is AcceptDialog:_normalize_dialog_tree.call_deferred(node)
 	if node is Label and node.theme_type_variation == &"TooltipLabel":
 		node.text = wrap_text(node.text, TOOLTIP_WIDTH)
 
@@ -304,6 +314,10 @@ func _build_ui() -> void:
 	event_title = label("")
 	event_title.add_theme_color_override("font_color", Color("76503c"))
 	story_column.add_child(event_title)
+	place_actions=HFlowContainer.new()
+	place_actions.add_theme_constant_override("h_separation",4)
+	place_actions.add_theme_constant_override("v_separation",3)
+	story_column.add_child(place_actions)
 	event_text = label("")
 	event_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	story_column.add_child(event_text)
@@ -574,7 +588,6 @@ func _build_ribbon() -> void:
 		["SUPPLIES",_show_section.bind("Supplies"),"Cargo, preservation, buying and trading."],
 		["CAMP & CARE",_show_section.bind("Camp & care"),"Rest, medical care and emigrant camps."],
 		["HUNT & FORAGE",_show_section.bind("Hunt & forage"),"Find food; review time and ammunition costs."],
-		["PEOPLE & PLACES",_show_section.bind("People & places"),"Local activities and potential companions."],
 		["VILLAINY",_show_section.bind("Villainy"),"Attacks, theft, robbery and handling the dead."],
 		["HISTORY",_show_section.bind("History"),"Journal and memorial book."]]
 	for index in range(specs.size()):
@@ -617,12 +630,20 @@ func _show_section(section: String) -> void:
 				setting[1].show()
 				setting[1].custom_minimum_size=Vector2(350,24)
 			section_rows.add_child(label("Choices take effect on the next trail day."))
-		"Supplies":entries=[["PROVISIONS / CARGO / PRESERVE",_show_supplies],["BUY / TRADE",_open_trade]]
-		"Camp & care":entries=[["REST IN CAMP",_rest],["CARE / MEDICAL ATTENTION",_open_care],["VISIT AN EMIGRANT CAMP",_open_camp]]
+		"Supplies":entries=[["PROVISIONS / CARGO / PRESERVE",_show_supplies]]
+		"Camp & care":entries=[["REST IN CAMP",_rest],["CARE / MEDICAL ATTENTION",_open_care]]
 		"Hunt & forage":entries=[["HUNT · 1 DAY, UP TO 5 SHOTS",_start_hunt],["FORAGE FOR GREENS AND BERRIES",_open_forage]]
-		"People & places":entries=[["LOCAL CONDITIONS / STOP ACTIVITIES",_show_stop_activities],["LOOK FOR COMPANIONS",_open_companions]]
 		"Villainy":entries=[["ATTACK SOMEONE >",_show_section.bind("Attack someone")],["STEAL >",_show_section.bind("Steal")],["ROB >",_show_section.bind("Rob")],["THE DEAD: BURY, CARRY OR SEARCH >",_open_remains]]
-		"Attack someone":entries=[["PARTY MEMBER >",_show_section.bind("Party member")],["SOMEONE HERE >",_open_crime_category.bind("attack")]]
+		"Attack someone":
+			entries=[["PARTY MEMBER >",_show_section.bind("Party member")],["SOMEONE HERE >",_show_section.bind("Someone here")]]
+		"Someone here":
+			var targets: Array=game.crime.local_targets(game)
+			for person in targets:
+				var target:=button(person.name.to_upper()+" >",_section_action.bind(_open_local_attack.bind(person.uid)))
+				target.custom_minimum_size.y=27
+				target.set_meta("local_target",person.uid)
+				section_rows.add_child(target)
+			if targets.is_empty():section_rows.add_child(label("No local encounter targets are present."))
 		"Party member":
 			for member in game.party_health.members:
 				if int(member.id)==0 or not game.party_health.is_active(member):continue
@@ -640,6 +661,7 @@ func _show_section(section: String) -> void:
 		entry.custom_minimum_size.y=27
 		if item[1]==Callable(self,"_start_hunt"):entry.disabled=not game.pending.is_empty() or game.state.bullets==0
 		section_rows.add_child(entry)
+	if SECTION_PARENTS.has(section):section_rows.add_child(button("< "+str(SECTION_PARENTS[section]).to_upper(),_section_action.bind(_show_section.bind(SECTION_PARENTS[section]))))
 	section_window.popup_centered()
 
 func _section_back() -> void:
@@ -653,6 +675,12 @@ func _open_party_attack(id: int) -> void:
 	section_window.hide()
 	selected_member=id
 	_attack_selected()
+
+func _open_local_attack(uid: String) -> void:
+	section_window.hide()
+	crime_category="attack"
+	if game.open_local_attack(uid):_show_service()
+	_refresh()
 
 func _open_crime_category(category: String) -> void:
 	crime_category=category
@@ -906,7 +934,7 @@ func _refresh_party() -> void:
 		if int(id)<0:
 			var vacancy:=button("EMPTY SLOT · FIND A COMPANION",_open_companions)
 			vacancy.custom_minimum_size.y=33
-			vacancy.disabled=not game.can_service()
+			vacancy.disabled=not game.can_service() or game.recruitment.site(game).is_empty()
 			party_rows.add_child(vacancy)
 		else:_add_party_row(game.party_health.members[int(id)])
 	var past: Array=game.party_health.members.filter(func(member):return not game.party_health.is_active(member))
@@ -1197,6 +1225,7 @@ func _update_animation_pause() -> void:
 
 func _refresh() -> void:
 	var s: Dictionary = game.state
+	_refresh_place_actions()
 	pace.selected = int(s.pace)
 	rations.selected = int(s.rations)
 	travel_settings_label.text="PACE: %s\nRATIONS: %s\nCHANGE: TRAVEL >" % [pace.get_item_text(pace.selected),rations.get_item_text(rations.selected)]
@@ -1630,3 +1659,37 @@ func _change_preferences() -> void:
 	file.set_value("display","fullscreen",fullscreen.button_pressed)
 	file.set_value("travel","speed",travel_speed.selected)
 	if file.save(preferences_path)!=OK:notice("GAME OPTIONS","These preferences could not be saved for next time.")
+
+
+func _refresh_place_actions() -> void:
+	for child in place_actions.get_children():
+		place_actions.remove_child(child)
+		child.queue_free()
+	if not game.can_service() or not landscape.crossing.is_empty() or _reviewing_crossing():return
+	var entries: Array=[]
+	var market: Dictionary=game.context.market(game)
+	if market.available:entries.append(["STORE" if market.post else "TALK TO TRADERS",_open_trade])
+	if not game.crime.camp(game).is_empty():entries.append(["VISIT EMIGRANT CAMP",_open_camp])
+	if not game.recruitment.site(game).is_empty() and game.current_party_slots().has(-1) and game.party_health.members.size()<game.MAX_TRAVELERS:entries.append(["FIND COMPANIONS",_open_companions])
+	if game.pending.has("landmark"):entries.append(["LOCAL ACTIVITIES",_show_stop_activities])
+	for entry in entries:
+		var option:=button(entry[0],entry[1])
+		option.tooltip_text="Available here. Opens a preview before you spend time or supplies."
+		place_actions.add_child(option)
+
+
+func _normalize_dialog_tree(node: Node) -> void:
+	if not is_instance_valid(node):return
+	if node is AcceptDialog:
+		if not node.has_meta("normalized_exit"):
+			node.set_meta("normalized_exit",true)
+			node.visibility_changed.connect(func():
+				if node.visible:_normalize_dialog_buttons(node))
+		_normalize_dialog_buttons(node)
+	for child in node.get_children():_normalize_dialog_tree(child)
+
+func _normalize_dialog_buttons(dialog: AcceptDialog) -> void:
+	# Only real committing actions remain below; X/Escape is the one exit convention.
+	var commits: Array=["REST","SLAUGHTER","REPACK","LEAVE WAGON","LEAVE THIS STONE"]
+	dialog.get_ok_button().visible=dialog is ConfirmationDialog or dialog.get_ok_button().text in commits
+	if dialog is ConfirmationDialog:dialog.get_cancel_button().hide()

@@ -234,9 +234,9 @@ func run() -> void:
 	screen.game.party_health.daily_onset_chance = 0
 	screen.game.survival.data.event_chance = 0
 	screen.game.survival.forced_weather = "clear"
-	screen._show_options()
-	check(screen.options_window.visible and not screen.traveling, "Trail Options opens a paused action menu")
-	screen.hunt_button.pressed.emit()
+	screen._show_section("Hunt & forage")
+	check(screen.section_window.visible and not screen.traveling, "Hunt & forage opens a paused action menu")
+	screen.section_rows.get_child(0).pressed.emit()
 	check(screen.hunt_window.visible and screen.game.state.day == 1, "Mouse menu starts the actual hunt")
 	screen.hunt_view.set_process(false)
 	if "--capture" in OS.get_cmdline_user_args():
