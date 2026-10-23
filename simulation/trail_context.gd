@@ -30,6 +30,7 @@ func load_data(value: Variant) -> bool:
 	for key in ["barter_bullets","barter_food","barter_lots","care"]:
 		if not numeric(camp.get(key)) or camp[key]!=int(camp[key]) or camp[key]<1:return false
 	if camp.barter_lots>value.post_lots or camp.care>=12 or camp.barter_food>100:return false
+	if not valid_goods(value.get("passing_goods"),true) or not valid_goods(value.get("emigrant_goods"),false):return false
 	for id in value.activities:
 		var activity=value.activities[id]
 		if not activity is Dictionary or not activity.get("talk") is String:return false
@@ -37,6 +38,68 @@ func load_data(value: Variant) -> bool:
 	data=value.duplicate(true)
 	error=""
 	return true
+## A trading party's goods: moods whose chances sum to one, and per item a [chance, least, most] for what it carries and wants.
+## An emigrant family instead has a reluctance range for what it sells and a need range for what it buys.
+func valid_goods(goods: Variant,traders: bool) -> bool:
+	if not goods is Dictionary or not goods.get("note") is String:return false
+	if traders:
+		if not goods.get("moods") is Array or goods.moods.is_empty():return false
+		var total:=0.0
+		for mood in goods.moods:
+			if not mood is Dictionary or not mood.get("id") is String:return false
+			for key in ["chance","buy","sell"]:
+				if not numeric(mood.get(key)) or mood[key]<=0 or mood[key]>2:return false
+			total+=float(mood.chance)
+		if not is_equal_approx(total,1.0):return false
+		if not numeric(goods.get("late_food_factor")) or goods.late_food_factor<1 or goods.late_food_factor>2:return false
+		if not numeric(goods.get("late_food_month")) or goods.late_food_month!=int(goods.late_food_month) or goods.late_food_month<1 or goods.late_food_month>12:return false
+	else:
+		for key in ["reluctance","need"]:
+			var spread: Variant=goods.get(key)
+			if not spread is Array or spread.size()!=2 or not spread.all(numeric) or spread[0]<=0 or spread[1]<spread[0] or spread[1]>3:return false
+	for side in ["stock","wants"]:
+		if not goods.get(side) is Dictionary:return false
+		for item in goods[side]:
+			var spread: Variant=goods[side][item]
+			if not item in ["food","bullets","medicine","clothing","oxen","wheels","axles","tongues","salt"] or not spread is Array or spread.size()!=3:return false
+			if not spread.all(numeric) or spread[0]<0 or spread[0]>1 or spread[1]<1 or spread[1]!=int(spread[1]) or spread[2]!=int(spread[2]) or spread[2]<spread[1] or spread[2]>1000:return false
+	var purse: Variant=goods.get("purse_dollars")
+	return purse is Array and purse.size()==2 and purse.all(numeric) and purse[0]>=0 and purse[1]>=purse[0] and purse[1]<=80
+## What a trading party met on the road carries, wants and pays out, and its temper. Seeded by the journey and the meeting,
+## so it holds for the whole visit and through saves.
+func barter_goods(game,key: String) -> Dictionary:
+	var goods: Dictionary=data.passing_goods
+	var rng:=RandomNumberGenerator.new()
+	rng.seed=hash("%d|%s" % [int(game.state.seed),key])
+	var roll:=rng.randf()
+	var mood: Dictionary=goods.moods[-1]
+	for candidate in goods.moods:
+		roll-=float(candidate.chance)
+		if roll<0:
+			mood=candidate
+			break
+	var result: Dictionary={"mood":mood.id,"buy":float(mood.buy),"sell":float(mood.sell)}
+	result.merge(_roll_goods(goods,rng))
+	return result
+## The emigrant family camped at this place: its spare goods, how reluctantly it parts with them, and how much it needs each thing it wants.
+func camp_goods(game,place: String) -> Dictionary:
+	var goods: Dictionary=data.emigrant_goods
+	var rng:=RandomNumberGenerator.new()
+	rng.seed=hash("%d|%s" % [int(game.state.seed),place])
+	var result: Dictionary={"reluctance":snappedf(rng.randf_range(float(goods.reluctance[0]),float(goods.reluctance[1])),0.05)}
+	result.merge(_roll_goods(goods,rng))
+	var need: Dictionary={}
+	for item in result.wants:need[item]=snappedf(rng.randf_range(float(goods.need[0]),float(goods.need[1])),0.05)
+	result["need"]=need
+	return result
+func _roll_goods(goods: Dictionary,rng: RandomNumberGenerator) -> Dictionary:
+	var result: Dictionary={"stock":{},"wants":{}}
+	for side in ["stock","wants"]:
+		for item in goods[side]:
+			var spread: Array=goods[side][item]
+			if rng.randf()<float(spread[0]):result[side][item]=rng.randi_range(int(spread[1]),int(spread[2]))
+	result["purse_cents"]=rng.randi_range(int(goods.purse_dollars[0]),int(goods.purse_dollars[1]))*100
+	return result
 func numeric(value: Variant) -> bool:
 	return (value is int or value is float) and is_finite(float(value))
 func region_id(game) -> String:

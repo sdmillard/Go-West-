@@ -90,6 +90,47 @@ func run():
     var counter_save: Dictionary=store.capture(game)
     var counter_copy=store.restore(JSON.parse_string(JSON.stringify(counter_save)))
     check(counter_copy!=null and counter_copy.post_store()==game.post_store(),"Counter stock and the paid visit round-trip through a save")
+    # Passing traders sell only what they carry and buy only what they want, at their own temper, out of their own purse.
+    game=outfit()
+    game.pending={}
+    var traders: Dictionary={}
+    for _step in range(60):
+        game.state.day+=1
+        traders=game.trade_counter()
+        if not traders.is_empty() and traders.rows.any(func(row):return row.sells and row.can_buy>0) and traders.rows.any(func(row):return row.buys and row.can_sell>0):break
+    check(traders.get("kind","")=="traders" and traders.mood in ["generous","fair","stingy"],"A passing party opens the trading counter with its own temper")
+    check(game.context.barter_goods(game,traders.key)==game.context.barter_goods(game,traders.key),"A party's goods are fixed for the meeting")
+    check(traders.rows.all(func(row):return row.sells or row.can_buy==0) and traders.rows.all(func(row):return row.buys or row.can_sell==0),"Nothing is offered or taken outside the party's goods and wants")
+    var ware: Dictionary=traders.rows.filter(func(row):return row.sells and row.can_buy>0)[0]
+    var wanted: Dictionary=traders.rows.filter(func(row):return row.buys and row.can_sell>0)[0]
+    check(not game.counter_quote({ware.item:ware.can_buy+1}).valid,"They cannot sell more than they carry")
+    var trader_day: int=game.state.day
+    check(game.counter_checkout({ware.item:1}) and game.state.day==trader_day+1 and game.trade_counter().rows.filter(func(row):return row.item==ware.item)[0].can_buy==ware.can_buy-1,"Buying from them takes the visit's day and comes out of their goods")
+    var purse: int=int(game.trade_counter().purse_cents)
+    var big_sale: Dictionary={wanted.item:-wanted.can_sell}
+    var sale_quote: Dictionary=game.counter_quote(big_sale)
+    check(sale_quote.net_cents<=purse or not sale_quote.valid,"They pay out no more than their purse holds")
+    if sale_quote.valid:
+        check(game.counter_checkout(big_sale) and game.trade_counter().purse_cents==purse-sale_quote.net_cents,"What they pay comes out of their purse")
+    var trader_copy=store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))
+    check(trader_copy!=null and trader_copy.trade_counter()==game.trade_counter(),"A passing party's remaining goods and purse round-trip through a save")
+    # An emigrant family trades whatever it can spare, without costing time, and pays over the odds for what it needs.
+    game=outfit()
+    game.pending={}
+    var camp: Dictionary={}
+    for _visit in range(120):
+        game.state.day+=1
+        if game.crime.camp(game).is_empty() or not game.open_camp():continue
+        camp=game.trade_counter("camp")
+        if camp.rows.any(func(row):return row.sells and row.can_buy>0):break
+        game.choose(game.pending.choices.size()-1)
+    check(camp.get("kind","")=="camp" and camp.days==0 and game.pending.get("camp","")==camp.key,"The camp menu opens the family's trading counter")
+    check(game.pending.choices.any(func(choice):return choice.get("counter","")=="camp"),"The camp menu offers to trade goods")
+    var spare: Dictionary=camp.rows.filter(func(row):return row.sells and row.can_buy>0)[0]
+    var camp_day: int=game.state.day
+    check(game.counter_checkout({spare.item:1},"camp") and game.state.day==camp_day and game.pending.get("camp","")==camp.key,"Trading with a family takes no time and stays at their camp")
+    var needs: Dictionary=game.context.camp_goods(game,camp.key).need
+    check(camp.rows.all(func(row):return not needs.has(row.item) or row.premium==needs[row.item]),"What the family needs carries its own premium")
     game=outfit()
     game.state.next_landmark="kansas_river"
     game._arrive_landmark()
@@ -152,12 +193,12 @@ func run():
     screen.departure_view.hide()
     screen.game=outfit()
     screen._open_trade()
-    check(screen.game.pending.choices[0].has("market_key"),"Actual available trade screen carries stock-controlled offers")
+    check(screen.post_store_window.visible and screen.post_store_view.kind=="traders" and not screen.post_store_view.held.is_empty(),"Actual available traders open their barter counter")
     if "--capture" in OS.get_cmdline_user_args():
         await process_frame
         await RenderingServer.frame_post_draw
         root.get_texture().get_image().save_png("res://docs/trader-stock.png")
-    screen._cancel_service()
+    screen._close_post_store()
     screen.game.state.day=5
     screen._open_trade()
     check(screen.service_window.visible and screen.game.pending.title=="No traders nearby","Actual trade UI opens the unavailable-trader choice")

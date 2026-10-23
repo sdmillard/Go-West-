@@ -231,12 +231,14 @@ func closed(place: String) -> bool:
 	return record.services.has(place) and (service(place).alarmed or owner(place).health==0)
 func food_capacity(game,place: String) -> int:
 	if rules(place).has("food_stock"):return int(rules(place).food_stock)
+	# A passing party carries its own load of food, seeded per meeting.
+	if trader(place) and game!=null:return int(game.context.barter_goods(game,place).stock.get("food",0))
 	return int(game.context.data.passing_lots if trader(place) else game.context.data.post_lots)*int(rules(place).food_lot)
 func food_left(game,place: String) -> int:
 	# Food bought from traders not yet in the record still left their packs.
 	var sold: int=int(service(place).food_sold) if record.services.has(place) else int(game.context.record.spent.get(market_prefix(place)+"|buy_food|units",int(game.context.record.spent.get(market_prefix(place)+"|buy_food",0))*int(rules(place).food_lot)))
 	# An emigrant family's food traded away on a peaceful visit is no longer in their wagon.
-	if rules(place).kind=="emigrants":sold+=int(game.context.record.spent.get(place+"|barter_food",0))*int(game.context.data.emigrant_camp.barter_food)
+	if rules(place).kind=="emigrants":sold+=int(game.context.record.spent.get(place+"|barter_food",0))*int(game.context.data.emigrant_camp.barter_food)+int(game.context.record.spent.get(place+"|buy_food|units",0))
 	return maxi(0,food_capacity(game,place)-sold-int(service(place).food_taken))
 func market_prefix(place: String) -> String:return place if trader(place) else "post:"+place
 func consume_trade(choice: Dictionary) -> void:
@@ -945,7 +947,8 @@ func valid(value: Variant,game) -> bool:
 	# Every trading party in the record was the target of an incident.
 	if not targeted.all(func(place):return r.incidents.any(func(current):return current is Dictionary and current.get("place")==place)):return false
 	for place in venues()+targeted:
-		var lots: int=food_capacity(game,place)
+		# Saves from before traders carried their own goods allowed every party three 50 lb lots.
+		var lots: int=maxi(food_capacity(game,place),int(game.context.data.passing_lots)*int(rules(place).food_lot) if trader(place) else 0)
 		for uid in staff_ids(place):
 			var actor: Variant=r.actors.get(uid)
 			if not actor is Dictionary or actor.size()!=4 or actor.get("uid")!=uid or actor.get("place")!=place or actor.get("role")!=role(place,uid) or not whole(actor.get("health"),0,100):return false

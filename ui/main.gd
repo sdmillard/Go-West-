@@ -744,21 +744,28 @@ func _filter_crime(category: String) -> void:
 func _open_trade() -> void:
 	options_window.hide()
 	crossing_result = {}
-	# A post that will deal with the party opens its store counter; refusals and the road use the menu.
-	if not game.post_store().is_empty():
-		_pause_travel()
-		post_store_view.game = game
-		post_store_window.title = "TRADING AT " + game.post_store().name.to_upper()
-		post_store_view.open()
-		post_store_window.popup_centered()
-		return
+	# A post or passing party that will deal with the party opens the trading counter; refusals and waiting use the menu.
+	if _open_counter(""):return
 	if game.open_trade():
 		_show_service()
 	_refresh()
 
+## Open the trading counter for a post, a passing party, or (venue "camp") the emigrant family; false when nobody will trade.
+func _open_counter(venue: String) -> bool:
+	var counter: Dictionary = game.trade_counter(venue)
+	if counter.is_empty():return false
+	_pause_travel()
+	post_store_view.game = game
+	post_store_window.title = {"post": "TRADING AT " + str(counter.name).to_upper(), "traders": "TRADING WITH PASSING TRADERS", "camp": "TRADING WITH AN EMIGRANT FAMILY"}[counter.kind]
+	post_store_view.open(venue)
+	post_store_window.popup_centered()
+	return true
+
 func _close_post_store() -> void:
 	post_store_window.hide()
 	_refresh()
+	# Trading with a family returns to their camp's menu.
+	if post_store_view.venue == "camp" and game.pending.get("service_menu",false):_show_service()
 
 func _open_forage() -> void:
 	options_window.hide()
@@ -809,6 +816,7 @@ func _open_crime() -> void:
 
 func _open_camp() -> void:
 	options_window.hide()
+	crime_category=""
 	if game.open_camp():_show_service()
 	else:
 		notice("NO CAMP NEARBY","Emigrant families camp near the road every so often. When one is close, you can visit, trade, ask for help or swap news.")
@@ -831,6 +839,16 @@ func _show_service() -> void:
 		if int(game.crime.rules(current.place).loot_limit)>0:
 			var quote: Dictionary=game.crime.loot_quote(game,current.place)
 			description+="\n"+("The wagon is alongside for loading." if quote.wagon_access else "Carry it away on foot: willing helpers can haul up to %d lb at their current health. Broken legs prevent hauling." % quote.haul_limit_lb)
+	# An emigrant camp is a place of its own: its picture heads the menu.
+	if game.pending.has("camp"):
+		var camp_picture:=TextureRect.new()
+		var camp_atlas:=AtlasTexture.new()
+		camp_atlas.atlas=landscape.scenes.texture_for("camp_trade")
+		camp_atlas.region=Rect2(0,98,432,134)
+		camp_picture.texture=camp_atlas
+		camp_picture.custom_minimum_size=Vector2(432,134)
+		camp_picture.stretch_mode=TextureRect.STRETCH_KEEP_CENTERED
+		service_rows.add_child(camp_picture)
 	var explanation := label(description)
 	explanation.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	service_rows.add_child(explanation)
@@ -850,19 +868,35 @@ func _show_service() -> void:
 	if crime_preview and crime_category.is_empty():
 		for branch in [["STEAL >","theft"],["ROB >","robbery"],["ATTACK >","attack"]]:
 			service_rows.add_child(button(branch[0],_filter_crime.bind(branch[1])))
+	# At an emigrant camp, nursing requests sit behind one ASK FOR CARE branch listing the travelers.
+	var camp_menu: bool=game.pending.has("camp")
+	var care_offered:=false
 	for index in range(game.pending.choices.size() - 1):
+		if camp_menu:
+			var care: bool=game.pending.choices[index].has("care")
+			if care and crime_category!="care":
+				if not care_offered:service_rows.add_child(button("ASK FOR CARE >",_filter_crime.bind("care")))
+				care_offered=true
+				continue
+			if crime_category=="care" and not care:continue
 		if crime_preview:
 			var command: String=game.pending.choices[index].get("crime_command","")
 			if crime_category.is_empty() or (command not in (["shoot","assault"] if crime_category=="attack" else [crime_category,"raid"])):continue
+		# Fixed offers the trading counter already covers are kept for the study policies only.
+		if game.pending.choices[index].get("policy_only",false):continue
 		var option := button(game.pending.choices[index].label, _service_choice.bind(index))
 		option.disabled = not game.can_choose(index)
 		service_rows.add_child(option)
-	if crime_preview and not crime_category.is_empty():service_rows.add_child(button("OTHER ACTIONS HERE <",_filter_crime.bind("")))
+	if (crime_preview or camp_menu) and not crime_category.is_empty():service_rows.add_child(button("OTHER ACTIONS HERE <",_filter_crime.bind("")))
+	elif camp_menu:service_rows.add_child(button("LEAVE CAMP <",_cancel_service))
 	service_window.popup_centered()
 
 func _service_choice(index: int) -> void:
 	crime_category=""
 	service_window.hide()
+	if game.pending.choices[index].has("counter"):
+		_open_counter(str(game.pending.choices[index].counter))
+		return
 	var burial: int = int(game.pending.choices[index].get("remains_id",-1)) if game.pending.get("remains_menu",false) and game.pending.choices[index].get("remains_command","")=="bury" else -1
 	var shooting: bool = game.pending.get("attack_menu",false) and int(game.pending.choices[index].get("attack_target",-1)) >= 0
 	var attacks: int = game.crime.record.attacks.size()
