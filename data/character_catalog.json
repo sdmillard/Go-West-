@@ -116,7 +116,7 @@
   },
   "specials": {
     "Loyal": {
-      "description": "Ordinary trust losses are halved; forbidden actions retain their full consequence."
+      "description": "Sticks with you: will not leave or refuse to help until trust falls 10 points lower than usual, and never betrays the party. Trust losses are normal. +10 cents/day if hired."
     },
     "Mercenary": {
       "description": "Requires an agreed cash wage plus party food. Honored payments can build trust."
@@ -163,8 +163,8 @@
       "wage_cents": 10
     },
     "Stoic": {
-      "description": "Ordinary trust losses are reduced by 25%; forbidden actions retain full force. +5 cents/day if hired.",
-      "trust_loss": 0.75,
+      "description": "Takes hardship in stride: trust lost to rest days, pushing the sick, stopping for the sick and armed defense is halved. Moral choices and wages count in full. +5 cents/day if hired.",
+      "hardship_trust_loss": 0.5,
       "wage_cents": 5
     },
     "Field Medic": {

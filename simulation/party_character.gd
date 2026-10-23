@@ -108,8 +108,16 @@ func upgrade() -> void:
 		profile.contract={}
 		profile.exit_warning={}
 
+## Loyal companions stay through worse: their breaking point sits this much lower, and they never betray.
+const LOYAL_STAY:=10
+## Hardship memories Stoic companions take in stride; moral choices and broken promises are not hardship.
+const HARDSHIP:=["action_idle","rest_sick","push_sick","defend"]
+
 func breaking_point(profile: Dictionary) -> int:
-	return maxi(0,int(profile.thresholds.breaking)-attachment(profile))
+	return maxi(0,int(profile.thresholds.breaking)-attachment(profile)-(LOYAL_STAY if "Loyal" in profile.get("specials",[]) else 0))
+
+func may_betray(profile: Dictionary) -> bool:
+	return profile.get("can_betray",false) and "Loyal" not in profile.get("specials",[])
 
 func attachment(profile: Dictionary) -> int:
 	return int(catalog.data.relationships.get(profile.relationship,{}).get("attachment",0))
@@ -192,9 +200,9 @@ func warning(index: int) -> String:
 	if index<=0 or index>=profiles.size():return ""
 	var profile: Dictionary=profiles[index]
 	var attachment: int=attachment(profile)
-	if profile.can_betray and profile.trust<=maxi(0,int(profile.thresholds.betrayal)-attachment):return "Trust is critically low; capable of betrayal."
-	if profile.trust<=maxi(0,int(profile.thresholds.breaking)-attachment):return "Trust is at a breaking point."
-	if profile.trust<=maxi(0,int(profile.thresholds.breaking)-attachment)+10:return "Trust is weakening; your companion is losing faith in your leadership."
+	if may_betray(profile) and profile.trust<=maxi(0,int(profile.thresholds.betrayal)-attachment):return "Trust is critically low; capable of betrayal."
+	if profile.trust<=breaking_point(profile):return "Trust is at a breaking point."
+	if profile.trust<=breaking_point(profile)+10:return "Trust is weakening; your companion is losing faith in your leadership."
 	return ""
 
 func has_sick(game) -> bool:
@@ -268,7 +276,7 @@ func remember(game, profile: Dictionary, kind: String, delta: float, text: Strin
 	if profile.memories.any(func(memory):return memory.day==game.state.day and memory.kind==kind and int(memory.get("incident_id",0))==incident_id and int(memory.get("attack_id",0))==attack_id and int(memory.get("remains_id",0))==remains_id):return
 	var first: bool=not profile.memories.any(func(memory):return memory.kind==kind)
 	var previous_warning:=warning(int(profile.id))
-	if delta<0 and "Loyal" in profile.specials and not forbidden:delta*=0.5
+	if delta<0 and kind in HARDSHIP and not forbidden:delta*=catalog.factor(profile,"hardship_trust_loss")
 	if not forbidden:
 		delta=roundf(delta*catalog.factor(profile,"trust_loss" if delta<0 else "trust_gain")*2)/2
 	delta=clampf(delta,-12,2)

@@ -669,7 +669,7 @@ func attack(game,target: int) -> void:
 ## Ruthless or opportunistic companions whose trust has fallen to their betrayal point (shown as a warning in View Party).
 func betrayer(game,slot: int) -> bool:
 	var profile: Dictionary=game.characters.profiles[slot]
-	return slot>0 and game.party_health.is_active(game.party_health.members[slot]) and profile.get("can_betray",false) and float(profile.trust)<=maxi(0,int(profile.thresholds.betrayal)-game.characters.attachment(profile))
+	return slot>0 and game.party_health.is_active(game.party_health.members[slot]) and game.characters.may_betray(profile) and float(profile.trust)<=maxi(0,int(profile.thresholds.betrayal)-game.characters.attachment(profile))
 ## Each night, at most one companion at the betrayal point may turn on the party. Chance-based; nobody else is affected by the roll.
 func check_betrayal(game) -> void:
 	if game.state.status!="traveling" or not record.has("betrayals"):return

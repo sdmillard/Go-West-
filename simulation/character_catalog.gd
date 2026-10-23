@@ -28,7 +28,7 @@ func load_data(value: Variant) -> bool:
 					if amount not in ["Hunting","Carpentry","Caregiving","Trading"]:return false
 				else:
 					if not (amount is int or amount is float) or not is_finite(amount):return false
-					if key in HEALTH_KEYS+["trust_loss","trust_gain"]:
+					if key in HEALTH_KEYS+["trust_loss","trust_gain","hardship_trust_loss"]:
 						if amount<0.25 or amount>3:return false
 					elif key in ["defense","push_sick","rest_sick","care_others","idle_trust","personal_care"]:
 						if amount!=floor(amount) or amount< -2 or amount>2:return false
