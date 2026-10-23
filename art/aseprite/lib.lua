@@ -99,6 +99,10 @@ function K.blend(x, y, w, a, b)
   end
 end
 function K.line(x0, y0, x1, y1, c)
+  -- endpoints a fractional distance apart would never meet and loop forever: snap those to the grid
+  if (x1 - x0) % 1 ~= 0 or (y1 - y0) % 1 ~= 0 then
+    x0, y0, x1, y1 = math.floor(x0 + 0.5), math.floor(y0 + 0.5), math.floor(x1 + 0.5), math.floor(y1 + 0.5)
+  end
   local dx, dy = math.abs(x1 - x0), -math.abs(y1 - y0)
   local sx, sy = x0 < x1 and 1 or -1, y0 < y1 and 1 or -1
   local err = dx + dy
