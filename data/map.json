@@ -80,11 +80,11 @@
     {"note": "Iowa (1846), western line along the Missouri", "line": [[40.58, -95.77], [41.25, -95.88], [42.0, -96.12], [42.49, -96.45], [43.50, -96.45], [43.50, -91.8]]}
   ],
   "labels": [
-    {"text": "PACIFIC\nOCEAN", "at": [40.4, -125.8]},
+    {"text": "PACIFIC\nOCEAN", "at": [40.4, -125.5]},
     {"text": "OREGON", "at": [44.2, -120.9]},
     {"text": "MEXICAN CESSION", "at": [39.0, -117.5]},
     {"text": "INDIAN COUNTRY", "at": [44.6, -101.5]},
-    {"text": "MISSOURI", "at": [38.0, -93.3]},
+    {"text": "MISSOURI", "at": [37.75, -93.4]},
     {"text": "IOWA", "at": [42.1, -93.9]},
     {"text": "GREAT\nSALT LAKE", "at": [40.55, -112.4]},
     {"text": "ROCKY MOUNTAINS", "at": [44.5, -110.1]},

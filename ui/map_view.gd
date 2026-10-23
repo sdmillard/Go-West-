@@ -136,7 +136,8 @@ func text(at: Vector2, value: String, color: Color = LABEL) -> void:
 	var y := at.y
 	for line in value.split("\n"):
 		var width := PIXEL_FONT.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1, 8).x
-		draw_string(PIXEL_FONT, Vector2(round(at.x - width / 2.0), y), line, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, color)
+		var x := clampf(roundf(at.x - width / 2.0), ORIGIN.x + 5.0, ORIGIN.x + data.projection.width - width - 5.0)
+		draw_string(PIXEL_FONT, Vector2(x, y), line, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, color)
 		y += 9
 
 ## A name on a small paper tag beside a map point (side: "above", "below" or "left"), kept inside the map.
@@ -191,7 +192,7 @@ func _draw() -> void:
 		var r := 2.0 if kind in ["fort", "town", "destination"] else 1.0
 		draw_rect(Rect2(p - Vector2(r, r), Vector2(r * 2 + 1, r * 2 + 1)), INK)
 		draw_rect(Rect2(p - Vector2(r - 1, r - 1), Vector2(r * 2 - 1, r * 2 - 1)), JOURNEY if visited else PAPER)
-	tag(stops["independence"], "INDEPENDENCE", "above")
+	tag(stops["independence"], "INDEPENDENCE", "below")
 	tag(stops["oregon_city"], "OREGON CITY", "left")
 	# The wagon: a small covered wagon standing on the party's spot, with a blinking ring.
 	var here: Vector2 = (ORIGIN + j.here).round()
