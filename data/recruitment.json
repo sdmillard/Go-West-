@@ -1,0 +1,9 @@
+{
+  "note": "Authored chance per searched populated stop or passing-trader camp, not a historical recruitment rate. One search per site, costing a day and meals. At most five active travelers; departed/dead identities are retained up to 32 records.",
+  "find_chance": 0.65,
+  "starting_health": 85,
+  "clothing": 1,
+  "personal_gear_lb": 15,
+  "dismiss_close_trust": -4,
+  "dismiss_other_trust": -1
+}

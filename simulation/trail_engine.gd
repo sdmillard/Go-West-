@@ -8,6 +8,9 @@ const Survival = preload("res://simulation/survival_rules.gd")
 const CacheSupport=preload("res://simulation/wagon_cache.gd")
 const Remains=preload("res://simulation/remains.gd")
 var wagon_cache: Dictionary={}
+const MAX_TRAVELERS := 32
+const PARTY_CAPACITY := 5
+var recruitment=preload("res://simulation/party_recruitment.gd").new()
 var social=preload("res://simulation/party_social.gd").new()
 var context=preload("res://simulation/trail_context.gd").new()
 var combat=preload("res://simulation/combat.gd").new()
@@ -425,6 +428,7 @@ func can_choose(index: int) -> bool:
 	if pending.is_empty() or index < 0 or index >= pending.choices.size() or state.status != "traveling":
 		return false
 	var choice: Dictionary = pending.choices[index]
+	if pending.get("recruit_menu",false) or pending.get("dismiss_menu",false):return recruitment.can_choose(self,index)
 	if pending.get("crime_menu",false):return crime.can_choose(self,str(choice.get("crime_command","")))
 	if pending.get("attack_menu",false):return int(choice.get("attack_target",-1))<0 or (crime.attack_ready(self,int(choice.attack_target)) and (choice.get("unarmed",false) or state.bullets>0))
 	if pending.get("remains_menu",false):return Remains.can_choose(self,str(choice.get("remains_command","")),int(choice.get("remains_id",0)),int(choice.get("member",-1)))
@@ -439,6 +443,7 @@ func can_choose(index: int) -> bool:
 func choose(index: int) -> bool:
 	if not can_choose(index):
 		return false
+	if pending.get("recruit_menu",false) or pending.get("dismiss_menu",false):return recruitment.choose(self,index)
 	if pending.get("crime_menu",false):return crime.choose(self,str(pending.choices[index].crime_command))
 	if pending.get("attack_menu",false):return crime.choose_attack(self,index)
 	if pending.get("remains_menu",false):return Remains.choose(self,index)
@@ -1243,7 +1248,7 @@ func journey_summary() -> String:
 			survivors.append(member.name)
 		else:
 			remembered.append("%s (day %d)" % [member.name,member.death_day])
-	return "%d OF 5 TRAVELERS SURVIVED WITH THE PARTY\n%d days · %d reported guide miles\nSurvivors: %s\nDeaths: %s\nLeft party: %s\nFood %d lb · Cash $%.2f" % [survivors.size(),state.day,state.miles,", ".join(survivors),", ".join(remembered) if not remembered.is_empty() else "None",", ".join(departed) if not departed.is_empty() else "None",state.food,state.money]
+	return "%d TRAVELERS FINISHED WITH THE PARTY\n%d days · %d reported guide miles\nSurvivors: %s\nDeaths: %s\nLeft party: %s\nFood %d lb · Cash $%.2f" % [survivors.size(),state.day,state.miles,", ".join(survivors),", ".join(remembered) if not remembered.is_empty() else "None",", ".join(departed) if not departed.is_empty() else "None",state.food,state.money]
 
 ## Stop choices that depend on what the party has done here: tolls, and a ferry crew it robbed or that has heard of it.
 func refresh_stop_offers() -> void:
@@ -1290,3 +1295,13 @@ func season_notice(days_ahead: int=0) -> String:
 	if month in [9,10]:return "Autumn: mountain snow is approaching. Longer stops risk worse roads and grazing."
 	if month in [3,4] and seasonal_pressure().upland:return "Spring: snow can still slow upland travel."
 	return ""
+
+
+func current_party_slots() -> Array:
+	return recruitment.slots(self)
+
+func open_companions() -> bool:
+	return recruitment.open(self)
+
+func open_dismiss(target: int) -> bool:
+	return recruitment.open_dismiss(self,target)

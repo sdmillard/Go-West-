@@ -836,7 +836,7 @@ func whole(value: Variant,low: int,high: int) -> bool:return number(value) and v
 ## Bonds are sparse pairs of companions; each attack is consistent with who died, who left and how each companion answered.
 func valid_party(r: Dictionary,game) -> bool:
 	var members: Array=game.party_health.members
-	if not r.get("bonds") is Array or r.bonds.size()>10 or not r.get("attacks") is Array or r.attacks.size()>100:return false
+	if not r.get("bonds") is Array or r.bonds.size()>(members.size()*(members.size()-1))/2 or not r.get("attacks") is Array or r.attacks.size()>100:return false
 	var pairs: Array=[]
 	var partnered: Array=[]
 	for item in r.bonds:
@@ -895,7 +895,7 @@ func valid_betrayals(r: Dictionary,game) -> bool:
 func valid(value: Variant,game) -> bool:
 	if not value is Dictionary or value.size()!=2 or not value.get("record") is Dictionary or not value.get("random") is String or not value.random.is_valid_int() or str(int(value.random))!=value.random:return false
 	var r: Dictionary=value.record
-	if r.size()!=13 or not valid_party(r,game) or not r.get("reports") is Array or r.get("version")!=VERSION or not r.get("people") is Dictionary or r.people.size()!=5 or not r.get("actors") is Dictionary or not r.get("services") is Dictionary or not r.services.keys().all(func(place):return scenes.has(place) and not TEMPLATE_KINDS.has(place) or transient(place)) or not r.get("incidents") is Array or r.incidents.size()>10000 or not r.get("active") is Dictionary:return false
+	if r.size()!=13 or not valid_party(r,game) or not r.get("reports") is Array or r.get("version")!=VERSION or not r.get("people") is Dictionary or r.people.size()!=game.party_health.members.size() or not r.get("actors") is Dictionary or not r.get("services") is Dictionary or not r.services.keys().all(func(place):return scenes.has(place) and not TEMPLATE_KINDS.has(place) or transient(place)) or not r.get("incidents") is Array or r.incidents.size()>10000 or not r.get("active") is Dictionary:return false
 	for member in game.party_health.members:
 		var uid:=person_id(int(game.state.seed),int(member.id))
 		var person: Variant=r.people.get(uid)
@@ -941,7 +941,7 @@ func valid(value: Variant,game) -> bool:
 			if not whole(current.get(key),0,100000):return false
 		# Only soldiers force the extra shots of a breakout.
 		var extra: int=int(current.shots)-(1 if current.action=="shoot" else 0)
-		if extra<0 or extra>(int(rules(current.place).breakout_shots) if rules(current.place).kind=="fort" else 0) or not current.get("knowledge") is Dictionary or current.knowledge.size()>5+staff_ids(current.place).size():return false
+		if extra<0 or extra>(int(rules(current.place).breakout_shots) if rules(current.place).kind=="fort" else 0) or not current.get("knowledge") is Dictionary or current.knowledge.size()>game.party_health.members.size()+staff_ids(current.place).size():return false
 		var local:=0
 		for uid in current.knowledge:
 			if not r.people.has(uid) and uid not in staff_ids(current.place):return false

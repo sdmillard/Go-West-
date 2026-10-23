@@ -100,7 +100,7 @@ func run() -> void:
 				arrivals+=1
 				check(game.state.landmark == "oregon_city" and game.state.miles == 1938 and not game.travel() and not game.rest(), "Actual arrival is final, locks time and uses complete guide distance")
 				check("fort_laramie" in stops and "the_dalles" in stops and "laurel_hill" in stops, "Complete run visits western trading posts and Barlow descent")
-				check("TRAVELERS SURVIVED" in game.journey_summary(), "Arrival provides party and resource results")
+				check("TRAVELERS FINISHED WITH THE PARTY" in game.journey_summary(), "Arrival provides party and resource results")
 				if seed_value == 2 and month == 3:sample=game
 			results.append({"seed":seed_value,"month":month,"status":game.state.status,"days":game.state.day,"survivors":game.state.party_size,"travel_days":travel_days,"moving_miles_per_day":float(game.state.miles)/maxi(1,travel_days),"cash":game.state.money,"food":game.state.food})
 		check(arrivals > 0, "Prepared parties can complete the entire road in this departure season")

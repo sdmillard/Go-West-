@@ -39,11 +39,11 @@ func prepare(game,content: Dictionary) -> void:
 		choice.risk.probability=risk(game,choice.combat,float(choice.risk.probability))
 		choice["quoted_risk"]=choice.risk.probability
 		choice.label+=" · %d%% injury risk%s" % [roundi(choice.quoted_risk*100)," if hostile" if content.id=="riders" else ""]
-func valid(value: Variant,day: int) -> bool:
+func valid(value: Variant,day: int, count: int=5) -> bool:
 	if not value is Array or value.size()>10000:return false
 	for row in value:
 		if not row is Dictionary or row.get("event","") not in ["bandits","riders"] or row.get("tactic","") not in ["defend","circle"] or row.get("outcome","") not in ["won","deterred","injured","fatal","friendly"]:return false
 		for key in ["day","victim"]:
 			if not number(row.get(key)) or row[key]!=int(row[key]):return false
-		if row.day<0 or row.day>day or row.victim<0 or row.victim>4 or not number(row.get("risk")) or row.risk<0 or row.risk>1:return false
+		if row.day<0 or row.day>day or row.victim<0 or row.victim>=count or not number(row.get("risk")) or row.risk<0 or row.risk>1:return false
 	return true
