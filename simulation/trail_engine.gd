@@ -273,7 +273,7 @@ func _choose_landmark(index: int) -> bool:
 		return true
 	last_crossing = {}
 	if choice.action == "cross":
-		last_crossing = {"method": choice.method, "place": route.nodes[state.landmark].name, "mishap": false, "lost": false}
+		last_crossing = {"method": choice.method, "place": route.nodes[state.landmark].name, "mishap": false, "lost": false, "stage": state.river_stage}
 	_apply(choice.get("effects", {}), "injuries", choice.get("rest", false))
 	if state.status == "traveling" and choice.has("descent_risk") and rng.randf() < choice.descent_risk:
 		var descent_food_before: int = state.food

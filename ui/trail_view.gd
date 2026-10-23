@@ -33,6 +33,13 @@ const PARALLAX := {
 	"travel_forest": [["sky", 0.0], ["clouds", 0.04], ["far", 0.15], ["mid", 0.5], ["ground", 1.0]],
 }
 const GROUND = preload("res://art/pixels/travel_ground.png")
+# Weather and event overlays (art/aseprite/scenes/weather.lua).
+const STORM_CLOUDS = preload("res://art/pixels/storm_clouds.png") # 432x56, tiles sideways
+const BOLT = preload("res://art/pixels/weather_bolt.png") # three 32x96 bolts
+const DUST_DEVIL = preload("res://art/pixels/dust_devil.png") # four 16x40 frames, ground point (8, 39)
+const TRAIL_DUST = preload("res://art/pixels/trail_dust.png") # three 16x12 puffs
+const STAMPEDE_OX = preload("res://art/pixels/stampede_ox.png") # four 26x16 frames, rump at (0, 15)
+const FLOTSAM = preload("res://art/pixels/flotsam.png") # two 24x12 pieces, water line at y 9
 const NEAR_BANK = [Vector2(0, 178), Vector2(25, 189), Vector2(50, 204), Vector2(75, 212), Vector2(100, 220), Vector2(125, 237), Vector2(150, 248), Vector2(175, 269), Vector2(200, 275), Vector2(225, 288), Vector2(250, 295), Vector2(260, 300), Vector2(0, 300)]
 const FAR_BANK = [Vector2(330, 0), Vector2(360, 21), Vector2(390, 26), Vector2(420, 43), Vector2(450, 62), Vector2(480, 77), Vector2(510, 90), Vector2(540, 99), Vector2(570, 125), Vector2(600, 136), Vector2(630, 150), Vector2(660, 161), Vector2(690, 182), Vector2(720, 200), Vector2(720, 0)]
 signal crossing_finished
@@ -126,6 +133,8 @@ func _draw() -> void:
 	var set_name: String = "river" if river_scene else ("travel_" + terrain if terrain in ["mountains", "desert", "forest"] else "prairie")
 	var layers: Array = PARALLAX[set_name]
 	for layer in layers:
+		if layer[0] == "clouds" and weather_id in ["thunderstorm", "hail"]:
+			continue # fair-weather clouds are lost under the thunderhead
 		var texture: Texture2D = _layer_texture(set_name + "_" + layer[0])
 		var drift: float = clock_time * 1.5 if layer[0] == "clouds" else 0.0
 		_tile(texture, 0, posmod(int(scroll_distance * layer[1] + drift), 432))
@@ -152,6 +161,8 @@ func _draw() -> void:
 		"corolla":
 			if vehicle != "corolla":
 				draw_texture(CAR, Vector2(39, 99))
+		"stampede":
+			_draw_stampede()
 		"muddy_trail":
 			draw_rect(Rect2(150, 130, 80, 7), Color("76503c"))
 			draw_rect(Rect2(159, 132, 60, 2), Color("a16b43"))
@@ -165,23 +176,69 @@ func _draw_walkers(origin: Vector2,moving: bool) -> void:
 		draw_texture_rect_region(WALKER,Rect2(x-5,y-23,16,24),Rect2(step*16,(index%2)*24,16,24))
 
 func _draw_weather() -> void:
-	# Placeholder thunderstorm and heat effects until the Aseprite overlays land.
-	if weather_id == "thunderstorm" and posmod(int(clock_time * 10), 37) == 0:
-		draw_rect(Rect2(0, 0, 432, 150), Color(1, 1, 0.9, 0.35))
-	if weather_id == "heat":
-		for y in [92, 104, 116]:
-			var x := posmod(int(clock_time * 9) + y * 5, 48)
-			for band in range(0, 432, 48):
-				draw_rect(Rect2(band + x, y, 18, 1), Color(1, 0.93, 0.7, 0.25))
-	if weather_id in ["rain", "heavy_rain", "hail", "blizzard", "thunderstorm"]:
-		var snow := weather_id in ["hail", "blizzard"]
-		for index in range(45 if weather_id in ["heavy_rain", "blizzard", "thunderstorm"] else 22):
+	var full := Rect2(0, 0, 432, 150)
+	if weather_id in ["thunderstorm", "hail"]:
+		# The light goes under a thunderhead whose base drifts slowly across the top of the view.
+		draw_rect(full, Color(0.13, 0.15, 0.2, 0.28))
+		_tile(STORM_CLOUDS, 0, posmod(int(clock_time * 3.0), 432))
+	if weather_id == "thunderstorm":
+		# A strike every few seconds somewhere new: the bolt, and a double flash over everything.
+		var strike := int(clock_time / 4.3)
+		var into := fmod(clock_time, 4.3)
+		if into < 0.22:
+			if into < 0.07 or (into > 0.12 and into < 0.17):
+				draw_rect(full, Color(1, 1, 0.92, 0.3))
+			draw_texture_rect_region(BOLT, Rect2(30 + posmod(strike * 151, 350), 30, 32, 96), Rect2((strike % 3) * 32, 0, 32, 96))
+		for index in range(70):
+			var x := posmod(index * 37 - int(clock_time * 40), 432)
+			var y := posmod(index * 19 + int(clock_time * 110), 150)
+			draw_line(Vector2(x, y), Vector2(x - 2, y + 6), Color("8db8c3"))
+	elif weather_id == "hail":
+		for index in range(40):
+			var x := posmod(index * 37 - int(clock_time * 8), 432)
+			var y := posmod(index * 23 + int(clock_time * 120), 150)
+			draw_rect(Rect2(x, y, 2, 2), Color("fff4d4"))
+			draw_rect(Rect2(x + 1, y + 1, 1, 1), Color("b7d2c6"))
+		if crossing.is_empty() and scene_id.is_empty():
+			# Stones lying white on the road and grass, a few bouncing.
+			for index in range(70):
+				var gx := posmod(index * 61 + int(scroll_distance), 432)
+				var gy := 112 + posmod(index * 29, 38)
+				var hop := 2 if posmod(index * 7 + int(clock_time * 12), 23) == 0 else 0
+				draw_rect(Rect2(gx, gy - hop, 1 + index % 2, 1), Color("fff4d4"))
+	elif weather_id == "heat":
+		# A white-hot sky, the horizon swimming in mirage, and a dust devil wandering the flats.
+		draw_rect(full, Color(1, 0.88, 0.6, 0.1))
+		var horizon := 66 if scene_id.is_empty() else 84
+		for row in range(8):
+			var y := horizon + row * 2
+			var wave := int(sin(clock_time * 2.3 + row * 1.7) * 6)
+			for band in range(0, 432, 36):
+				draw_rect(Rect2(band + posmod(wave + row * 11, 36), y, 10 + row % 3 * 4, 1), Color(1, 0.95, 0.78, 0.35))
+		if crossing.is_empty():
+			var devil_x := posmod(int(clock_time * 7.0) + 300, 560) - 64
+			var sway := int(sin(clock_time * 1.3) * 4)
+			draw_texture_rect_region(DUST_DEVIL, Rect2(devil_x - 8, 118 + sway - 39, 16, 40), Rect2((int(clock_time * 10) % 4) * 16, 0, 16, 40))
+	elif weather_id in ["rain", "heavy_rain", "blizzard"]:
+		var snow := weather_id == "blizzard"
+		for index in range(45 if weather_id in ["heavy_rain", "blizzard"] else 22):
 			var x := posmod(index * 37 - int(clock_time * 13), 432)
 			var y := posmod(index * 19 + int(clock_time * (24 if snow else 70)), 150)
 			draw_rect(Rect2(x, y, 2 if snow else 1, 2 if snow else 4), Color("f6e7bc") if snow else Color("8db8c3"))
 	elif weather_id == "fog":
 		for y in [24, 51, 79, 105]:
 			draw_rect(Rect2(0, y, 432, 16), Color(0.75, 0.78, 0.73, 0.3))
+
+func _draw_stampede() -> void:
+	# Two oxen broken loose and running off ahead of the wagon in their own dust.
+	for i in range(2):
+		var at := Vector2(318 + i * 52, 116 - i * 9)
+		var frame := (int(clock_time * 14.0) + i * 2) % 4
+		var bob := -1 if frame == 2 else 0
+		for k in range(3):
+			var puff := (int(clock_time * 8.0) + k + i) % 3
+			draw_texture_rect_region(TRAIL_DUST, Rect2(at.x - 12 - k * 9, at.y - 11 - k, 16, 12), Rect2(puff * 16, 0, 16, 12))
+		draw_texture_rect_region(STAMPEDE_OX, Rect2(at.x, at.y - 15 + bob, 26, 16), Rect2(frame * 26, 0, 26, 16))
 
 var layer_textures: Dictionary = {}
 func _layer_texture(name: String) -> Texture2D:
@@ -216,6 +273,30 @@ func _sprite(texture: Texture2D, size: Vector2i, anchor: Vector2i, frame: int, r
 func _ease(u: float) -> float:
 	u = clampf(u, 0.0, 1.0)
 	return u * u * (3.0 - 2.0 * u)
+
+func _draw_high_water(water: Color) -> void:
+	# The river laps a few pixels up over both banks, foam at the edge, and drift rides the current.
+	for y in range(WORLD.y):
+		var span: Vector2i = water_spans[y]
+		if span.y <= span.x:
+			continue
+		var lap := 12 + int(2.0 * sin(y * 0.4 + crossing_elapsed * 3.0))
+		var foam := Color("f6e7bc") if (y + int(crossing_elapsed * 8.0)) % 5 == 0 else Color("afd5ce")
+		if span.x > 0:
+			draw_rect(Rect2(span.x - lap, y, lap, 1), water)
+			draw_rect(Rect2(span.x - lap - 1, y, 1, 1), foam)
+		if span.y < WORLD.x:
+			draw_rect(Rect2(span.y, y, lap, 1), water)
+			draw_rect(Rect2(span.y + lap, y, 1, 1), foam)
+	for i in range(4):
+		var along := fmod(crossing_elapsed * 22.0 + i * 70.0, 300.0)
+		# Along the middle of the channel, each piece in its own lane.
+		var spot := (Vector2(90, 70) + Vector2(1, -2) * (i - 1.5) * 11.0 + Vector2(2, 1) * along).round()
+		var afloat := true
+		for corner in [Vector2(0, 1), Vector2(23, 1), Vector2(0, 11), Vector2(23, 11)]:
+			afloat = afloat and _in_water(spot + corner)
+		if afloat:
+			draw_texture_rect_region(FLOTSAM, Rect2(spot, Vector2(24, 12)), Rect2((i % 2) * 24, 0, 24, 12))
 
 func _draw_wagon_at(t: float, frame: int, ford: bool, bob := 0, aboard := false) -> void:
 	# The wagon and its team: hitched on land, wading in a ford, or floated with the team swimming.
@@ -295,18 +376,24 @@ func _draw_crossing() -> void:
 	var method: String = "ferry" if crossing.method == "seized" else crossing.method
 	# Ferried rivers (the Kansas above all) run yellow-brown with silt, matching their location pictures.
 	var water := Color("a38b64") if method == "ferry" else Color("3d7f99")
+	# Snowmelt high water runs fast, swollen and muddier, over the gravel at its edges.
+	var high: bool = crossing.get("stage", "") == "high"
+	if high:
+		water = Color("8f7a58") if method == "ferry" else Color("5a7c7c")
 	var cam := _camera()
 	draw_set_transform(-cam)
 	draw_rect(Rect2(cam, Vector2(432, 150)), water)
 	# The current: short streaks drifting downstream, parallel to the banks.
-	for i in range(110):
-		var drift := crossing_elapsed * 16.0
+	for i in range(170 if high else 110):
+		var drift := crossing_elapsed * (30.0 if high else 16.0)
 		var sx := posmod(i * 97 + int(drift * 2.0), WORLD.x)
 		var sy := posmod(i * 53 + int(drift), WORLD.y)
 		var length := 2 + i % 3
 		for k in range(length):
 			_water_rect(Rect2(sx + k * 2, sy + k, 3, 1), Color("afd5ce") if i % 4 else Color("f6e7bc"))
 	draw_texture(CROSSING, Vector2.ZERO)
+	if high:
+		_draw_high_water(water)
 	var phase := _crossing_phase()
 	var rough: bool = crossing.get("mishap", false) and progress > 0.4 and progress < 0.75
 	var bob := roundi(sin(progress * TAU * 4.0)) + (2 if rough else 0)
