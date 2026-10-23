@@ -67,7 +67,9 @@ Spencer's order: crime follow-ups and these expanded mechanics first, the big ba
 
 - Route branches part 2: Columbia raft from The Dalles (40 mi on hazard `river` to new `columbia_raft` Cascades stop with a `portage` flag, then 76 mi on `river` to Oregon City; 1,894 total). Edge `effects` (days) copy onto the leave choice; `river` legs move ~15 mi/day × weather speed with no working team; running the rapids risks a wreck (`portage_risk`, validated in saves). The `unrest` hazard (2x event chance, 3x riders/bandits) is also in the engine, unused until the Walla Walla detour. Previous fingerprint `6dff9902…f3ec` whitelisted. See `docs/ROUTE_BRANCHES.md`.
 
-### Paused here (Spencer, October 23, 2026): resume with route branches part 2 (now done: see the line above; next is the Walla Walla detour)
+- Route branches part 3: Fort Walla Walla detour from `blue_mountains` (55 mi to new `fort_walla_walla` HBC fort, 58 mi on to `john_day`; authored estimates with `allocation_note`, 1,958 total). Both legs use hazard `unrest`; events may now carry `"hazard": "unrest"` and only happen on such legs (`war_volunteers`, `cayuse_riders` with armed defense, `waiilatpu_ruins`). Fort added to crime scenes, talk and care posts. Previous fingerprint `b6aa4581…a291` whitelisted. Route branches are done; next for this work is nothing until the balance pass.
+
+### Paused here (Spencer, October 23, 2026): resume with route branches part 2 (all three parts now done; historical notes below) (now done: see the line above; next is the Walla Walla detour)
 
 Done and merged: disease part 1 (#41), scurvy (#42), climate (#44), route branches part 1 / Greenwood's Cutoff (this PR). Not started in code: the Columbia raft and the Fort Walla Walla detour. Then the crime follow-ups thread's work and the big balance pass (last).
 

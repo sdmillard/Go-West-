@@ -533,5 +533,105 @@
         }
       }
     ]
+  },
+  {
+    "id": "war_volunteers",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 8,
+    "hazard": "unrest",
+    "title": "Oregon volunteers",
+    "text": "A patrol of Oregon volunteers rides up, ragged and short of food after months hunting the men blamed for the Whitman killings. They ask for provisions and warn that this road is no place for families.",
+    "choices": [
+      {
+        "label": "Share 30 lb food",
+        "requires": {
+          "food": 30
+        },
+        "effects": {
+          "food": -30
+        },
+        "result": "They thank you and ride on. They say the Cayuse bands have scattered, and that most of them never wanted this war."
+      },
+      {
+        "label": "Keep your stores",
+        "effects": {},
+        "result": "The volunteers ride on, muttering about emigrants who expect protection but will not feed the men who give it."
+      }
+    ]
+  },
+  {
+    "id": "cayuse_riders",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 8,
+    "hazard": "unrest",
+    "title": "Cayuse riders",
+    "text": "Cayuse riders stop the wagon. Measles killed many of their people last winter, and volunteers have been riding through their country since spring. Through gestures and a few words of trade jargon they make it plain: they want you off their land.",
+    "choices": [
+      {
+        "label": "Trade for passage \u00b7 1 clothing set, 10 bullets",
+        "requires": {
+          "clothing": 1,
+          "bullets": 10
+        },
+        "effects": {
+          "clothing": -1,
+          "bullets": -10
+        },
+        "result": "They accept the goods and let you pass, watching until you are out of sight."
+      },
+      {
+        "label": "Turn aside and go around \u00b7 1 day, team strain",
+        "effects": {
+          "days": 1,
+          "ox_health": -8
+        },
+        "result": "You take a longer way through the hills and do not see them again."
+      },
+      {
+        "label": "Stand your ground \u00b7 10 bullets",
+        "requires": {
+          "bullets": 10
+        },
+        "effects": {
+          "bullets": -10
+        },
+        "combat": "defend",
+        "risk": {
+          "probability": 0.3,
+          "effects": {},
+          "condition": "wound",
+          "text": "Shots are exchanged and a traveler is hit. Such wounds can be fatal.",
+          "victim_damage": 20,
+          "severity": 2
+        },
+        "result": "After a tense standoff the riders withdraw."
+      }
+    ]
+  },
+  {
+    "id": "waiilatpu_ruins",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 4,
+    "hazard": "unrest",
+    "title": "The Whitman mission",
+    "text": "Off the road lie the burned buildings of Waiilatpu and the graves of Marcus and Narcissa Whitman and eleven others killed last November. The volunteers threw up a small fort here in the spring.",
+    "choices": [
+      {
+        "label": "Pass by",
+        "effects": {},
+        "result": "You keep the wagons moving past the ruins."
+      },
+      {
+        "label": "Stop and tend the graves \u00b7 1 day",
+        "rest": true,
+        "effects": {
+          "days": 1
+        },
+        "result": "You spend a day here. The party is quiet that night."
+      }
+    ]
   }
 ]

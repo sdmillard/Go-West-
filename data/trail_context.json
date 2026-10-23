@@ -71,6 +71,9 @@
     "fort_hall": {
       "talk": "Supplies are costly and finite. Westward travel enters dry Snake River country; hunting alone is an uncertain provision plan."
     },
+    "fort_walla_walla": {
+      "talk": "The traders here ransomed the Whitman mission captives last winter. They will sell what they can spare, but they advise you to keep moving and keep together until you reach the John Day."
+    },
     "fort_boise": {
       "talk": "Restock what you can carry. The road ahead still crosses dry stretches and mountains."
     },
@@ -118,6 +121,7 @@
     "fort_laramie",
     "fort_bridger",
     "fort_hall",
+    "fort_walla_walla",
     "fort_boise"
   ]
 }

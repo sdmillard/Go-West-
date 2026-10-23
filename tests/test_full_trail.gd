@@ -18,7 +18,7 @@ func outfit(seed_value: int = 2,month: int = 3):
 	return game
 func run() -> void:
 	var game = outfit()
-	check(game.route.nodes.size() == 38 and game.destination() == 1938 and game.route.end_id == "oregon_city", "Full continuous corridor reaches Oregon City")
+	check(game.route.nodes.size() == 39 and game.destination() == 1938 and game.route.end_id == "oregon_city", "Full continuous corridor reaches Oregon City")
 	game.state.next_landmark = "platte"
 	game._arrive_landmark()
 	check(game.state.status == "traveling" and game.pending.landmark == "platte", "Platte is now a stop, not a false Oregon arrival")

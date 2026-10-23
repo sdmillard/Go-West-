@@ -50,7 +50,7 @@ func drive_to(game, target: String, limit: int = 300) -> void:
 func run() -> void:
 	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/route.json"))
 	var route = Route.new()
-	check(route.error.is_empty() and route.total_miles == 1938 and route.longest_miles == 1938, "Main road stays 1938 guide miles; no branch is longer")
+	check(route.error.is_empty() and route.total_miles == 1938 and route.longest_miles == 1958, "Main road stays 1938 guide miles; the Walla Walla detour is the only longer road")
 	check(route.nodes.little_sandy.next.size() == 2 and route.nodes.little_sandy.next[0].to == "green_river", "The southern road stays the first (main) road at the Little Sandy")
 	check(route.remaining("greenwood_cutoff") == 1883 - 972, "Remaining miles follow the branch")
 	check(route.main_path_to("fort_bridger").has("green_river") and route.main_path_to("greenwood_cutoff").is_empty(), "Main path excludes branch stops")
@@ -170,6 +170,44 @@ func run() -> void:
 	check(int(game.state.day) == day + 2 and game.state.next_landmark == "oregon_city", "Portaging takes two days")
 	drive_to(game, "oregon_city")
 	check(game.state.status == "arrived" and game.state.miles == 1894 and game.route_path.has("columbia_raft") and not game.route_path.has("barlow_pass") and is_equal_approx(float(game.state.money), cash), "The river reaches Oregon City without the Barlow road or its toll")
+
+	# Fort Walla Walla: a dangerous detour through Cayuse War country.
+	game = outfit(11)
+	game.route_path = game.route.main_path_to("grande_ronde")
+	game.state.merge({"landmark": "grande_ronde", "next_landmark": "blue_mountains", "leg_length": 27, "leg_miles": 27, "miles": 1647}, true)
+	game._schedule_event(false)
+	leaves = game.pending.choices.filter(func(choice): return choice.get("action", "") == "leave")
+	check(game.pending.get("landmark", "") == "blue_mountains" and leaves.size() == 2 and "Umatilla" in leaves[0].label and "Cayuse War" in leaves[1].label, "The Blue Mountains offer the Umatilla first and the warned detour second")
+	game.choose(game.pending.choices.find(leaves[1]))
+	while not game.pending.is_empty():
+		game.choose(0)
+	check(game.state.next_landmark == "fort_walla_walla" and game.current_edge().hazard == "unrest" and game.destination() == 1958, "The detour adds 20 guide miles on an unsettled road")
+	var war_ids := ["war_volunteers", "cayuse_riders", "waiilatpu_ruins"]
+	var seen_war := {}
+	# Sample on a copy: each rolled encounter applies its immediate losses.
+	var sampler = store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))
+	for index in range(400):
+		sampler.pending = {}
+		sampler.survival.last_events.clear()
+		sampler._roll_trail_event()
+		if sampler.pending.get("id", "") in war_ids:
+			seen_war[sampler.pending.id] = true
+	check(seen_war.size() == 3, "All three Cayuse War encounters happen on the detour: %s" % [seen_war.keys()])
+	var calm = outfit(11)
+	calm.route_path = calm.route.main_path_to("blue_mountains")
+	calm.state.merge({"landmark": "blue_mountains", "next_landmark": "umatilla", "leg_length": 16, "leg_miles": 2, "miles": 1649}, true)
+	var war_on_main := false
+	for index in range(400):
+		calm.pending = {}
+		calm.survival.last_events.clear()
+		calm._roll_trail_event()
+		war_on_main = war_on_main or calm.pending.get("id", "") in war_ids
+	check(not war_on_main, "Cayuse War encounters never happen on the main road")
+	drive_to(game, "fort_walla_walla")
+	check(game.state.landmark == "fort_walla_walla" and game.pending.choices.any(func(choice): return choice.get("action", "") == "trade"), "Fort Walla Walla is a trading post")
+	game.choose(game.pending.choices.find(game.pending.choices.filter(func(choice): return choice.get("action", "") == "leave")[0]))
+	drive_to(game, "john_day")
+	check(game.state.landmark == "john_day" and game.route_path.has("fort_walla_walla") and not game.route_path.has("umatilla") and game.state.miles == 1760, "The detour rejoins at the John Day, 20 miles later than the main road")
 
 	print("Branch checks: %d, failures: %d" % [checks, failures])
 	quit(1 if failures else 0)

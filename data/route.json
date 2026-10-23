@@ -733,7 +733,7 @@
       "id": "blue_mountains",
       "name": "Blue Mountains",
       "kind": "camp",
-      "text": "Forested ridges replace the open river valleys. The ascent and descent demand care with loads and animals. This route continues toward the Umatilla rather than detouring to Fort Walla Walla.",
+      "text": "Forested ridges replace the open river valleys. The ascent and descent demand care with loads and animals. The main road descends to the Umatilla; an older road turns north to the Hudson's Bay Company's Fort Walla Walla, through country at war since the killings at the Whitman mission last November.",
       "terrain": "mountains",
       "next": [
         {
@@ -744,10 +744,47 @@
           ],
           "source_table_rows": [
             104
-          ]
+          ],
+          "label": "Descend to the Umatilla on the main road"
+        },
+        {
+          "to": "fort_walla_walla",
+          "miles": 55,
+          "label": "Detour to Fort Walla Walla · Cayuse War country, about 20 miles longer",
+          "hazard": "unrest",
+          "source_rows": [
+            30,
+            25
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored estimate: about 30 miles from the Blue Mountains to the Waiilatpu mission site and about 25 from Waiilatpu to the Hudson's Bay post. Not a Palmer table row."
         }
       ],
       "hunting_region": "forest"
+    },
+    {
+      "id": "fort_walla_walla",
+      "name": "Fort Walla Walla",
+      "kind": "fort",
+      "text": "The Hudson's Bay Company's Fort Nez Percés stands where the Walla Walla River meets the Columbia. Since the killings at Waiilatpu the post has been a place of ransom and refuge; most emigrants this year avoid it. Supplies are scarce and dear.",
+      "terrain": "plains",
+      "trade_bulk": true,
+      "bulk_food_cents": 4000,
+      "next": [
+        {
+          "to": "john_day",
+          "miles": 58,
+          "hazard": "unrest",
+          "source_rows": [
+            25,
+            33
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored estimate of about 25 miles down the Columbia's south bank to the Umatilla's mouth, then Palmer's 33 miles (row 106) to the John Day."
+        }
+      ],
+      "hunting_region": "sagebrush",
+      "advice": "The road down the south bank of the Columbia rejoins the main trail at the John Day. Volunteers and Cayuse bands are both abroad; travel watchfully."
     },
     {
       "id": "umatilla",

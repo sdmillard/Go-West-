@@ -646,6 +646,8 @@ func _roll_trail_event() -> void:
 		if state.oxen==0 and event.id=="ox_injury":continue
 		if state.oxen<2 and event.id=="stampede":continue
 		if current_edge().get("hazard","")=="river" and event.id in ["breakdown","ox_injury","wandering_ox","stampede"]:continue
+		# Encounters tied to a kind of road happen only on that road.
+		if event.has("hazard") and current_edge().get("hazard","")!=event.hazard:continue
 		if not survival.eligible(event, state.day) or (event.id == "wandering_ox" and state.oxen == 0):
 			continue
 		var weighted: Dictionary=event
