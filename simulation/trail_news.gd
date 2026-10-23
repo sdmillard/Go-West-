@@ -45,7 +45,7 @@ func valid_for(route) -> bool:
 ## Everything the people at a counter of this kind ("post", "traders" or "camp") might say; ASK FOR NEWS shows one
 ## fragment at a time. place is the venue's key for word of the party's crimes.
 func fragments(game,kind: String,place: String) -> Array:
-	return headlines(game).slice(0,int(data.limits[kind]))+road_ahead(game)+about_party(game,place)
+	return headlines(game).slice(0,int(data.limits[kind]))+road_ahead(game)+about_party(game,place,kind)
 
 ## The fragment told at the given ask: a seeded order per counter, so asking again tells something else.
 func pick(told: Array,key: String,asked: int) -> String:
@@ -137,7 +137,9 @@ func next_post(game) -> Array:
 	return []
 
 ## Word of the party's crimes that has reached this place. Silent for a party with nothing to hide.
-func about_party(game,place: String) -> Array:
+## A family on the road also says which posts ahead have heard of the party.
+func about_party(game,place: String,kind: String="post") -> Array:
 	if game.crime.record.incidents.is_empty() and game.crime.tales(game).is_empty():return []
 	var said: String=game.crime.news_text(game,place)
+	if kind=="camp":return ([said] if not said.is_empty() else [])+[game.camp_news()]
 	return [said] if not said.is_empty() else ["Nobody here has said anything about your party."]

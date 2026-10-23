@@ -118,13 +118,52 @@ func run():
     var view=screen.post_store_view
     check(screen.post_store_window.visible and view.kind=="post" and not view.bubble.visible and view.news_button.text=="ASK FOR NEWS (3)","The store counter offers three questions")
     view.news_button.pressed.emit()
-    check(view.bubble.visible and not view.bubble_text.text.is_empty() and view.rows_layer.visible and view.news_button.text=="ASK FOR NEWS (2)","ASK FOR NEWS shows a fragment in a speech bubble beside the goods")
-    check(view.bubble.position.x+view.bubble.size.x<=244 and view.bubble.position.y>=0,"The bubble stays over the picture")
+    check(view.bubble.visible and not view.bubble.text.text.is_empty() and view.rows_layer.visible and view.news_button.text=="ASK FOR NEWS (2)","ASK FOR NEWS shows a fragment in a speech bubble beside the goods")
+    check(view.bubble.panel.position.x+view.bubble.panel.size.x<=244 and view.bubble.panel.position.y>=0,"The bubble stays over the picture")
     view.news_button.pressed.emit()
     view.news_button.pressed.emit()
     check(view.news_button.disabled and view.news_button.text=="NO MORE NEWS","The button closes when they have said all they will")
     view.open(view.venue)
     check(not view.bubble.visible and view.news_button.disabled,"Reopening the counter clears the bubble but not the questions spent")
+    view.open(view.venue)
+    screen._close_post_store()
+
+    # An emigrant camp: ASK FOR NEWS on the camp menu itself, sharing its questions with the family's counter.
+    game=outfit()
+    var camp_place:=""
+    for day_index in range(200):
+        game.state.day=day_index
+        if not game.crime.camp(game).is_empty():
+            camp_place=game.crime.camp(game)
+            break
+    screen.game=game
+    screen._open_camp()
+    var ask: int=-1
+    for index in range(game.pending.choices.size()):
+        if game.pending.choices[index].has("news"):ask=index
+    check(ask>=0 and not game.pending.choices.any(func(choice):return str(choice.get("label","")).begins_with("Share news")),"The camp menu has one way to ask for news")
+    var allowed: int=game.news_left("camp")
+    screen._service_choice(ask)
+    check(screen.service_window.visible and not game.last_news.is_empty() and game.news_left("camp")==allowed-1 and game.state.day==camp_day_of(game),"Asking on the camp menu answers in place and spends a question")
+    check(_find_bubble(screen.service_rows)!=null and _find_bubble(screen.service_rows).visible,"The family's answer shows as a speech bubble on the camp picture")
+    if "--capture" in OS.get_cmdline_user_args():
+        await process_frame
+        await RenderingServer.frame_post_draw
+        root.get_texture().get_image().save_png(OS.get_cmdline_user_args()[-1])
+    if allowed>1:
+        screen.service_window.hide()
+        screen._open_counter("camp")
+        check(screen.post_store_view.news_button.text=="ASK FOR NEWS (%d)" % (allowed-1),"The family's counter shares the camp menu's questions")
+        screen._close_post_store()
     screen.queue_free()
     print("News checks: %d, failures: %d" % [checks,failures])
     quit(1 if failures>0 else 0)
+
+func camp_day_of(game) -> int:
+    return int(game.state.day)
+func _find_bubble(node: Node):
+    for child in node.get_children():
+        if child.get_script()==preload("res://ui/speech_bubble.gd"):return child
+        var found=_find_bubble(child)
+        if found!=null:return found
+    return null

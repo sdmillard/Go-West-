@@ -310,5 +310,6 @@ Spencer asked for news at stores and with traders: 1848 news, trail tips and wor
   - *Headlines:* 18 dated 1848 headlines, each with a `from` stop. A headline reaches a place `base_days` (4) plus distance ÷ `miles_per_day` (20, or the item's own speed) after its `known` date. A post knows the 3 newest, a camp 2, traders 1 (`limits`).
   - *The road ahead:* a road note for each of the next stops (every fork at a branch stop), a river forecast from `survival.wet_ground` and `river_high_chance`, the next store and its regional price compared to here, a food warning at the current rations (15 miles a day), and a season line.
   - *Your party:* only once the party has an incident or a departed companion's tale. It uses `crime.news_text` for this venue, or says nobody here has heard anything.
-- `trail_news.json` is deliberately **not** a rule file, so the rules fingerprint is unchanged. Sources are listed in the file. The camp's older "Share news of the road" menu choice is unchanged.
-- Tests: `tests/test_news.gd` (36 checks).
+- `trail_news.json` is deliberately **not** a rule file, so the rules fingerprint is unchanged. Sources are listed in the file.
+- **Camps (follow-up):** the camp menu's old "Share news of the road" choice is gone. The menu now has "Ask for news · n question(s) left" (`news` choice, `market_key` `<camp>|asked`). It shares its question budget with the family counter's ASK FOR NEWS button, and its answer shows as a speech bubble from the husband on the camp picture (`engine.last_news`, not saved). For a party with a past, a family's fragments include `camp_news()`, which says which posts ahead have heard of the party. `ui/speech_bubble.gd` is the shared bubble.
+- Tests: `tests/test_news.gd` (40 checks).
