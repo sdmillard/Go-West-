@@ -1,108 +1,106 @@
--- Soda Springs & Steamboat Spring on the Bear River (432x150).
--- Historical reference: James F. Wilkins's 1849 sketch "Steam Boat Springs" (NPS Idaho guide).
--- White/cream travertine mineral cones, bubbling teal mineral basins, and Steamboat Spring's
--- spouting water/vapor plume in the open Bear River mountain valley. No later resort buildings.
+-- Soda Springs (432x150).
+-- In the Bear River valley, under low juniper-dotted hills, carbonated springs bubble out of
+-- rusty-orange mounds of travertine. Steamboat Spring spouted and puffed beside the river.
+-- Emigrants stopped to drink the "beer" water, sweetened with sugar or syrup.
 local K = dofile(app.params.kit)
 local W, H = 432, 150
-local tau = math.pi * 2.0
 
-K.canvas(W, H, 184819)
+K.canvas(W, H, 184831)
 
------------------------------------------------------------------ 1. Sky & Bear River Range
-K.layer("sky_and_range", function()
-  K.rect(0, 0, W, 16, "blue")
-  K.blend(0, 16, W, "blue", "sky_top")
-  K.rect(0, 19, W, 18, "sky_top")
-  K.blend(0, 37, W, "sky_top", "sky")
-  K.rect(0, 40, W, 16, "sky")
-  K.blend(0, 56, W, "sky", "light_blue")
-  K.rect(0, 59, W, 14, "light_blue")
-
-  K.cloud(42, 16, 1.35)
-  K.cloud(300, 14, 1.4)
-
-  -- Bear River / Caribou mountain ridges across the valley
-  K.poly({{0, 72}, {44, 52}, {88, 68}, {142, 38}, {204, 67}, {256, 46}, {314, 68}, {372, 40}, {432, 70}, {432, 92}, {0, 92}}, "haze")
-  K.poly({{128, 46}, {142, 38}, {154, 46}, {140, 49}}, "cream")
-  K.poly({{358, 48}, {372, 40}, {384, 48}, {370, 51}}, "cream")
-
-  for x = 0, W - 1 do
-    local fh = 76 + math.floor(4 * math.sin(tau * x / 432.0 + 0.4) + 3 * math.cos(tau * x / 144.0))
-    for y = fh, 98 do
-      K.px(x, y, (y == fh) and "far_hill" or "sage")
-    end
+-- a travertine mound: stepped orange terraces with a pool on top
+local function mound(cx, y, rx, ry, pool)
+  -- terraces climb in steps, each with a dark wet lip and a sunlit top
+  local steps = math.max(2, math.floor(rx / 5))
+  K.ellipse(cx + 2, y + 1, rx, ry, "shadow")
+  local top_y, top_rx, top_ry = y, rx, ry
+  for k = 0, steps - 1 do
+    local r = rx - k * 4
+    local yy = y - k * 2
+    local rr = math.max(1, ry - math.floor(k / 2))
+    K.ellipse(cx, yy, r, rr, "rust")
+    K.ellipse(cx - 1, yy - 1, r - 1, math.max(1, rr - 1), (k % 2 == 0) and "ochre" or "gold")
+    K.ellipse(cx - 2, yy - 1, math.max(1, r - 4), math.max(1, rr - 2), (k % 2 == 0) and "gold" or "sand")
+    for i = 0, r * 2, 5 do K.px(cx - r + i, yy + rr, "red") end
+    top_y, top_rx, top_ry = yy, r, rr
   end
-
-  -- Bear River glinting along the base of the distant hills
-  K.rect(0, 86, W, 5, "sky")
-  K.rect(0, 86, W, 1, "sand")
-  for x = 16, W - 16, 20 do
-    K.rect(x, 88 + (x % 2), 5, 1, "light_blue")
+  if pool then
+    K.ellipse(cx, top_y - 1, math.max(2, top_rx - 2), math.max(1, top_ry - 1), "cream")
+    K.ellipse(cx, top_y - 1, math.max(1, top_rx - 4), math.max(1, top_ry - 1), "sky_top")
+    K.px(cx - 1, top_y - 1, "white"); K.px(cx + 1, top_y - 2, "white")
+    -- overflow trickling down the terraces
+    K.line(cx + 2, top_y + 1, cx + 4, y + ry, "cream")
   end
+  return top_y
+end
+
+K.layer("sky", function()
+  K.sky(W, 70, {{250, 18, 0.7}, {60, 8, 1.0}}, "mist")
 end)
 
------------------------------------------------------------------ 2. Valley Floor, Trail & Travertine Mineral Cones
-K.layer("mineral_springs", function()
-  K.rect(0, 92, W, 12, "sage")
-  K.dither(0, 100, W, 6, "sage", "grass")
-  K.rect(0, 106, W, 44, "grass")
-  K.dither(0, 140, W, 10, "grass", "pine")
-
-  -- Wagon road passing through the Soda Springs basin
-  K.poly({{184, 96}, {204, 96}, {304, 150}, {234, 150}}, "ochre")
-  K.poly({{190, 96}, {198, 96}, {288, 150}, {248, 150}}, "gold")
-  K.line(188, 97, 244, 149, "rust")
-  K.line(199, 97, 290, 149, "rust")
-
-  for i = 1, 650 do
+K.layer("hills", function()
+  -- the Bear River range far off, then cedar-dotted foothills
+  K.ridge(0, W - 1, 0, 100, function(x) return -(46 + 10 * math.sin(x / 47) + 4 * math.sin(x / 13 + 2)) end, "far_hill", "mist", "haze")
+  local fh = function(x) return 22 + 8 * math.sin(x / 31 + 1) + 4 * math.sin(x / 11) end
+  K.ridge(0, W - 1, 92, 100, fh, "sage", "clap_sh", "teal")
+  for i = 1, 140 do
     local x = K.rnd(W)
-    local y = 92 + K.rnd(58)
-    local cur = K.at(x, y)
-    if cur == "grass" or cur == "sage" then
-      K.px(x, y, (i % 3 == 0) and "leaf" or ((i % 2 == 0) and "sage" or "gold"))
-    end
+    local top = math.floor(92 - fh(x) + 0.5)
+    local y = top + 3 + K.rnd(math.max(1, 92 - top))
+    K.ellipse(x, y, 2, 1, "pine"); K.px(x - 1, y - 1, "leaf")
   end
-
-  -- Helper for terraced white/ochre travertine spring mound with bubbling teal mineral pool
-  local function spring_mound(cx, cy, rx, ry, geyser)
-    -- Rust/ochre iron-stained travertine outer apron
-    K.ellipse(cx, cy + 2, rx + 4, ry + 2, "ochre")
-    K.ellipse(cx - 1, cy + 1, rx + 2, ry + 1, "sand")
-    -- Pale cream/white calcium-carbonate sinter rim
-    K.ellipse(cx, cy, rx, ry, "cream")
-    K.ellipse(cx - 2, cy - 1, rx - 3, ry - 1, "white")
-    -- Mineral-rich emerald/teal spring pool
-    local prx = math.max(6, math.floor(rx * 0.68))
-    local pry = math.max(3, math.floor(ry * 0.56))
-    K.ellipse(cx, cy, prx, pry, "teal")
-    K.ellipse(cx - 1, cy, prx - 3, math.max(2, pry - 1), "sky")
-    -- Effervescent CO2 gas bubbles & foam rings
-    for _, off in ipairs({-10, -3, 4, 11}) do
-      if math.abs(off) < prx - 2 then
-        K.rect(cx + off, cy - 1 + (off % 2), 2, 2, "white")
-        K.px(cx + off - 1, cy, "light_blue")
-      end
-    end
-    if geyser then
-      -- Steamboat Spring intermittent spouting column & steam puffs
-      K.rect(cx - 2, cy - 14, 5, 14, "white")
-      K.rect(cx - 1, cy - 18, 3, 18, "white")
-      K.ellipse(cx, cy - 18, 5, 3, "cream")
-      K.ellipse(cx - 1, cy - 22, 4, 2, "white")
-      K.px(cx - 4, cy - 11, "light_blue")
-      K.px(cx + 4, cy - 13, "light_blue")
-    end
-  end
-
-  spring_mound(82,  108, 36, 10, false)
-  spring_mound(204, 120, 38, 11, true)  -- Steamboat Spring spouting in the center
-  spring_mound(338, 100, 34, 9,  false)
 end)
 
------------------------------------------------------------------ 3. Emigrants Tasting the Water & Wagon
-K.layer("wagon", function()
-  K.person(154, 122, "blue", "sand", false)
-  K.wagon(24, 143, 1)
+K.layer("valley", function()
+  K.rect(0, 92, W, H - 92, "grass")
+  for i = 1, 1100 do
+    local x, y = K.rnd(W), 92 + K.rnd(H - 92)
+    K.px(x, y, ({"sage", "leaf", "gold", "grass"})[i % 4 + 1])
+  end
+  -- Bear River bending through the meadow
+  local river = K.smooth({{-6, 100, 3}, {60, 104, 4}, {140, 99, 4}, {230, 105, 4}, {320, 98, 4}, {440, 102, 4}})
+  K.ribbon(river, "leaf", 4)
+  K.river(river, "sage")
+  -- the road
+  local road = K.smooth({{-6, 132, 6}, {80, 126, 5}, {170, 122, 4}, {260, 116, 3}, {350, 112, 2}, {440, 110, 2}})
+  K.ribbon(road, "ochre", 1); K.ribbon(road, "sand", 0)
+  -- crusted white soda flats around the springs
+  for _, f in ipairs({{120, 118, 46, 7}, {300, 128, 60, 9}, {360, 106, 30, 4}}) do
+    K.ellipse(f[1], f[2], f[3], f[4], "clap_sh")
+    for i = 1, f[3] * 2 do
+      local x, y = f[1] - f[3] + K.rnd(f[3] * 2), f[2] - f[4] + K.rnd(f[4] * 2)
+      if K.at(x, y) == "clap_sh" then K.px(x, y, (i % 3 == 0) and "cream" or "sand") end
+    end
+  end
+end)
+
+K.layer("springs", function()
+  mound(360, 106, 14, 4, true)
+  mound(112, 118, 18, 5, true)
+  mound(146, 121, 10, 3, false)
+  mound(300, 128, 26, 7, true)
+  mound(258, 134, 12, 4, true)
+  -- Steamboat Spring by the river: a puffing jet of spray
+  local sx, sy = 206, 104
+  mound(sx, sy, 10, 3, false)
+  for i = 0, 9 do
+    local w = 1 + math.floor(i / 3)
+    K.rect(sx - w + (i % 2), sy - 4 - i * 2, w * 2, 2, (i % 3 == 0) and "light_blue" or "white")
+  end
+  K.ellipse(sx - 1, sy - 26, 5, 3, "white"); K.ellipse(sx + 2, sy - 24, 4, 2, "mist")
+  -- bubbles in the big pool
+  for _, b in ipairs({{296, 125}, {303, 126}, {299, 123}}) do K.px(b[1], b[2], "white") end
+end)
+
+K.layer("figures", function()
+  -- wagons stopped along the road, a party tasting the water at the big spring
+  K.far_wagon(352, 113, -1)
+  K.far_wagon(376, 112, -1)
+  K.wagon(18, 140, 1)
+  K.team(72, 138, 1, {"dark"}, {"light", true})
+  K.person(278, 132, "red", "bonnet", true)
+  K.person(320, 134, "blue", "deep")
+  K.rect(318, 124, 2, 2, "stone"); K.px(317, 125, "stone")
+  K.person(330, 135, "teal", "roof")
 end)
 
 K.save("location_soda_springs")
