@@ -42,6 +42,11 @@ func _initialize() -> void:
 		for kind in ambience.scenes[id]:
 			for point in ambience.scenes[id][kind]:
 				check(Rect2(0, 0, 432, 150).has_point(Vector2(point[0], point[1])), "Ambient %s sits inside %s" % [kind, id])
+	# Every parallax layer the travel view scrolls is a full-width tile.
+	for set_name in preload("res://ui/trail_view.gd").PARALLAX:
+		for layer in preload("res://ui/trail_view.gd").PARALLAX[set_name]:
+			var tile: Texture2D = load("res://art/pixels/%s_%s.png" % [set_name, layer[0]])
+			check(tile != null and tile.get_size() == Vector2(432, 150), "Parallax layer is a 432 x 150 tile: %s %s" % [set_name, layer[0]])
 	for name in ["ambient_smoke", "ambient_flag", "ambient_bird"]:
 		check(load("res://art/pixels/" + name + ".png").get_width() % 8 == 0, name + " holds eight frames")
 	check(scenes.error.is_empty(), "Scene registry loads every image")

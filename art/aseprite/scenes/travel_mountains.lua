@@ -1,12 +1,14 @@
 -- Regional Mountain Travel Scene (432x150).
--- Used when terrain == "mountains". Note: ui/trail_view.gd scrolls the bottom strip
--- (y = 100..150) horizontally across [-offset, 432-offset], so y = 100..150 is authored
--- as a seamlessly tileable horizontal mountain trail matching the wagon & oxen at y = 103..139.
+-- Used when terrain == "mountains". The layers are also written on their own and every one
+-- tiles horizontally (K.wrap), so ui/trail_view.gd scrolls them at different speeds:
+-- clouds, the far range, the near peaks and timber, and the trail strip (y = 100..150) that
+-- matches the wagon & oxen at y = 103..139. The flattened picture backs the hunting screen.
 local K = dofile(app.params.kit)
 local W, H = 432, 150
 local tau = math.pi * 2.0
 
 K.canvas(W, H, 1849)
+K.wrap = true
 
 ----------------------------------------------------------------- 1. High Alpine Sky
 K.layer("sky", function()
@@ -17,15 +19,16 @@ K.layer("sky", function()
   K.rect(0, 40, W, 18, "sky")
   K.blend(0, 58, W, "sky", "light_blue")
   K.rect(0, 61, W, 24, "light_blue")
+end)
 
+K.layer("clouds", function()
   K.cloud(34, 18, 1.3)
   K.cloud(194, 14, 1.1)
   K.cloud(328, 20, 1.4)
 end)
 
 ----------------------------------------------------------------- 2. Craggy Granite Peaks & Snow Couloirs
-K.layer("mountains", function()
-  local function mountain(cx, top_y, base_y, w_left, w_right, style)
+local function mountain(cx, top_y, base_y, w_left, w_right, style)
     for y = top_y, base_y do
       local t = (y - top_y) / math.max(1, (base_y - top_y))
       local jag_l = math.floor(2.5 * math.sin(y * 0.27 + cx * 0.1) + 1.5 * math.cos(y * 0.53))
@@ -74,12 +77,15 @@ K.layer("mountains", function()
     end
   end
 
+K.layer("far", function()
   -- Far background range (hazy blue-slate)
   mountain(38,  34, 88, 56, 62, "far")
   mountain(168, 28, 88, 74, 78, "far")
   mountain(296, 30, 88, 70, 74, "far")
   mountain(404, 36, 88, 54, 48, "far")
+end)
 
+K.layer("mid", function()
   -- Prominent foreground Wind River / Rocky Mountain peaks
   mountain(98,  16, 92, 82, 88, "near")
   mountain(232, 20, 92, 78, 84, "near")
@@ -106,7 +112,7 @@ K.layer("mountains", function()
 end)
 
 ----------------------------------------------------------------- 3. Horizontally Tileable Mountain Trail (y = 100..150)
-K.layer("scrolling_ground", function()
+K.layer("ground", function()
   K.rect(0, 100, W, 50, "sage")
   K.dither(0, 100, W, 4, "pine", "sage")
   K.rect(0, 104, W, 46, "grass")
@@ -157,3 +163,4 @@ K.layer("scrolling_ground", function()
 end)
 
 K.save("travel_mountains")
+K.save_layers({sky = "travel_mountains_sky", clouds = "travel_mountains_clouds", far = "travel_mountains_far", mid = "travel_mountains_mid", ground = "travel_mountains_ground"})

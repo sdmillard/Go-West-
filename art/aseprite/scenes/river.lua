@@ -5,6 +5,7 @@ local W, H = 432, 150
 local tau = math.pi * 2.0
 
 K.canvas(W, H, 73422)
+K.wrap = true
 
 ----------------------------------------------------------------- 1. Sky
 K.layer("sky", function()
@@ -17,7 +18,9 @@ K.layer("sky", function()
   K.rect(0, 61, W, 12, "light_blue")
   K.blend(0, 73, W, "light_blue", "mist")
   K.rect(0, 76, W, 10, "mist")
+end)
 
+K.layer("clouds", function()
   K.cloud(32, 20, 1.3)
   K.cloud(168, 15, 1.0)
   K.cloud(308, 23, 1.5)
@@ -111,3 +114,4 @@ K.layer("prairie_and_channel", function()
 end)
 
 K.save("river")
+K.save_layers({sky = "river_sky", clouds = "river_clouds", river_valley = "river_far", prairie_and_channel = "river_floor"})

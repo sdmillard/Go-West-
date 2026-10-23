@@ -1,7 +1,5 @@
 extends Control
 ## Composites original native-resolution pixel assets. All motion lands on whole pixels.
-const PRAIRIE = preload("res://art/pixels/prairie.png")
-const RIVER = preload("res://art/pixels/river.png")
 const WAGON = preload("res://art/pixels/wagon.png")
 const OXEN = preload("res://art/pixels/oxen.png")
 const WALKER = preload("res://art/pixels/walker.png")
@@ -26,6 +24,14 @@ const CAR = preload("res://art/pixels/corolla.png")
 const ELDER = preload("res://art/pixels/elder.png")
 const SABER = preload("res://art/pixels/lightsaber.png")
 const HORIZON = preload("res://art/pixels/travel_horizon.png")
+# Backdrop layers drawn far to near, with how fast each slides relative to the road.
+const PARALLAX := {
+	"prairie": [["sky", 0.0], ["clouds", 0.04], ["far", 0.1], ["floor", 0.0]],
+	"river": [["sky", 0.0], ["clouds", 0.04], ["far", 0.1], ["floor", 0.0]],
+	"travel_mountains": [["sky", 0.0], ["clouds", 0.04], ["far", 0.1], ["mid", 0.35], ["ground", 1.0]],
+	"travel_desert": [["sky", 0.0], ["clouds", 0.04], ["far", 0.12], ["mid", 0.3], ["ground", 1.0]],
+	"travel_forest": [["sky", 0.0], ["clouds", 0.04], ["far", 0.15], ["mid", 0.5], ["ground", 1.0]],
+}
 const GROUND = preload("res://art/pixels/travel_ground.png")
 const NEAR_BANK = [Vector2(0, 178), Vector2(25, 189), Vector2(50, 204), Vector2(75, 212), Vector2(100, 220), Vector2(125, 237), Vector2(150, 248), Vector2(175, 269), Vector2(200, 275), Vector2(225, 288), Vector2(250, 295), Vector2(260, 300), Vector2(0, 300)]
 const FAR_BANK = [Vector2(330, 0), Vector2(360, 21), Vector2(390, 26), Vector2(420, 43), Vector2(450, 62), Vector2(480, 77), Vector2(510, 90), Vector2(540, 99), Vector2(570, 125), Vector2(600, 136), Vector2(630, 150), Vector2(660, 161), Vector2(690, 182), Vector2(720, 200), Vector2(720, 0)]
@@ -115,14 +121,15 @@ func _draw() -> void:
 		if vehicle=="foot":_draw_walkers(Vector2(140,135),false)
 		_draw_weather()
 		return # Parked wagons/people are composed into each arrival illustration.
-	if terrain in ["mountains","desert","forest"] and not river_scene:
-		var background: Texture2D = scenes.texture_for("travel_"+terrain)
-		draw_texture(background,Vector2.ZERO)
-		var offset := int(scroll_distance) % 432
-		for x in [-offset,432-offset]:
-			draw_texture_rect_region(background,Rect2(x,100,432,50),Rect2(0,100,432,50))
-	else:
-		draw_texture(RIVER if river_scene else PRAIRIE, Vector2.ZERO)
+	# Parallax: each layer of the backdrop slides at its own speed, nearest fastest, and the
+	# clouds also drift on the wind whether or not the party is moving.
+	var set_name: String = "river" if river_scene else ("travel_" + terrain if terrain in ["mountains", "desert", "forest"] else "prairie")
+	var layers: Array = PARALLAX[set_name]
+	for layer in layers:
+		var texture: Texture2D = _layer_texture(set_name + "_" + layer[0])
+		var drift: float = clock_time * 1.5 if layer[0] == "clouds" else 0.0
+		_tile(texture, 0, posmod(int(scroll_distance * layer[1] + drift), 432))
+	if set_name in ["prairie", "river"]:
 		_tile(HORIZON, 65, int(scroll_distance / 7.0) % 432)
 		_tile(GROUND, 100, int(scroll_distance) % 432)
 	var frame := int(clock_time * FPS) % FRAMES if scrolling or motion > 0 else 0
@@ -167,6 +174,12 @@ func _draw_weather() -> void:
 	elif weather_id == "fog":
 		for y in [24, 51, 79, 105]:
 			draw_rect(Rect2(0, y, 432, 16), Color(0.75, 0.78, 0.73, 0.3))
+
+var layer_textures: Dictionary = {}
+func _layer_texture(name: String) -> Texture2D:
+	if not layer_textures.has(name):
+		layer_textures[name] = load("res://art/pixels/" + name + ".png")
+	return layer_textures[name]
 
 func _tile(texture: Texture2D, y: int, offset: int) -> void:
 	draw_texture(texture, Vector2(-offset, y))
