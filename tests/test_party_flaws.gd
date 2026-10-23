@@ -26,11 +26,9 @@ func run():
 	setup.flaw_choice.select(0)
 	setup.flaw_choice.item_selected.emit(0)
 	check(setup.accepted_flaw=="Frail" and setup.flaw_choice.selected==1,"Cannot remove flaw while keeping its extra special")
-	setup.companion.select(1)
-	setup.companion.item_selected.emit(1)
+	setup.edit_buttons[1].pressed.emit()
 	check(setup.accepted_flaw.is_empty() and setup.special_count_label.text=="Special traits: 0 / 2","Flaws and allowances belong to each companion")
-	setup.companion.select(0)
-	setup.companion.item_selected.emit(0)
+	setup.edit_buttons[0].pressed.emit()
 	check(setup.accepted_flaw=="Frail" and setup.special_count_label.text=="Special traits: 3 / 3","Companion switching retains the flaw and three choices")
 	var choices: Dictionary=setup.customization()
 	var game=screen.game

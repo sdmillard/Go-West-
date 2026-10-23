@@ -15,6 +15,12 @@ func run():
 	await process_frame
 	var setup=screen.departure_view
 	check(setup.interval.value==7,"Default wage interval stays weekly before any edits")
+	check(not setup.editor_layer.visible and setup.edit_buttons.size()==4,"The character sheet starts closed; each companion has an EDIT button")
+	setup.edit_buttons[0].pressed.emit()
+	check(setup.editor_layer.visible and setup.edited_member==1 and setup.names[1].text.to_upper() in setup.editor_title.text,"EDIT opens that companion's sheet, named in its title")
+	setup.done_button.pressed.emit()
+	check(not setup.editor_layer.visible,"DONE closes the sheet")
+	setup.edit_buttons[0].pressed.emit()
 	check(setup.personality.get_popup().get_item_tooltip(1)==screen.game.characters.catalog.data.temperaments[setup.personality.get_item_text(1)].description and setup.flaw_choice.get_popup().get_item_tooltip(1)!="" and setup.background_choice.get_popup().get_item_tooltip(0)!="","Open trait lists describe every option on hover")
 	var initial: Dictionary=screen.game.state.duplicate(true)
 	var random: int=screen.game.rng.state
@@ -28,12 +34,10 @@ func run():
 	setup.interval.value=5
 	setup.wage.value=6.75
 	await process_frame
-	setup.companion.selected=1
-	setup.companion.item_selected.emit(1)
+	setup.edit_buttons[1].pressed.emit()
 	setup.personality.selected=0
 	setup.relationship.selected=1
-	setup.companion.selected=0
-	setup.companion.item_selected.emit(0)
+	setup.edit_buttons[0].pressed.emit()
 	await process_frame
 	check(setup.personality.selected==1 and setup.values.selected==0 and setup.relationship.selected==2,"Companion switching retains independent traits and relationship")
 	check(setup.special_checks.Loyal.button_pressed and setup.special_checks.Mercenary.button_pressed and setup.wage.value==6.75 and setup.interval.value==5,"Specials and wage terms survive switching")

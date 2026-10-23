@@ -48,6 +48,7 @@ Last updated October 23, 2026, after merged PR #34 (UI readability). Sections be
   - The shot notice is now a summary: result, fought back, joined, one "Fled:" line with the combined food/clothing/gear taken, objected, stood by. The journal keeps the per-person lines.
   - The guide scrolls in a fixed 500x250 frame (it was cut off at the bottom) and its trading paragraph now matches PR #33.
   - Drop-down lists explain each entry on hover, not just the selected one: companion temperament, values, background, relationship and flaw (`departure_view.gd` `describe_items`), plus pace and rations (follow-up PR to #34).
+  - Party setup: the companion character sheet is closed by default. Each companion name has an EDIT button that opens that companion's sheet (`departure_view.gd` `open_editor`), with DONE to close (Spencer's request). The old TRAVELER 2-5 selector is gone. Entering the store closes the sheet.
   - SpinBox arrows are brown (they were near-white on parchment); the fort store counter columns were widened so prices no longer touch the item names.
 - Visual check: every window and several tooltips were captured under Xvfb at 640x360 before and after. The capture script is not in the repo; `tests/test_ui.gd` now checks tooltip theme and wrapping, notice centering and guide height.
 

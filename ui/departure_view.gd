@@ -17,7 +17,11 @@ var background: TextureRect
 var scene_id := "town_setup"
 var scenes = preload("res://ui/location_scenes.gd").new()
 var draft=preload("res://simulation/party_character.gd").new()
-var companion: OptionButton
+var edit_buttons: Array[Button] = []
+var editor_layer: Control
+var editor_title: Label
+var editor_scroll: ScrollContainer
+var done_button: Button
 var personality: OptionButton
 var values: OptionButton
 var background_choice: OptionButton
@@ -79,9 +83,20 @@ func _ready() -> void:
 		var entry := LineEdit.new()
 		entry.max_length = 14
 		entry.text = game.state.party[i]
-		entry.text_changed.connect(func(_value): _update_quote())
-		put(entry, Rect2(95, 48 + i * 23, 150, 21), party_layer)
+		entry.text_changed.connect(func(_value):
+			_update_quote()
+			_title_editor())
+		# Companions get an EDIT button that opens their character sheet; the leader is defined by play.
+		put(entry, Rect2(95, 48 + i * 23, 150 if i == 0 else 108, 21), party_layer)
 		names.append(entry)
+		if i > 0:
+			var edit := Button.new()
+			edit.text = "EDIT"
+			edit.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+			edit.tooltip_text = "Set this companion's temperament, values, background, relationship, specials, flaw and wages."
+			edit.pressed.connect(open_editor.bind(i))
+			put(edit, Rect2(207, 48 + i * 23, 38, 21), party_layer)
+			edit_buttons.append(edit)
 	text("PROFESSION / TRAIL FUNDS", Rect2(12, 169, 235, 12), party_layer)
 	profession = OptionButton.new()
 	for entry in game.outfitter.professions:
@@ -133,6 +148,7 @@ func _ready() -> void:
 	_update_quote()
 
 func show_store() -> void:
+	if editor_layer.visible:close_editor()
 	scene_id = "store"
 	background.texture = scenes.texture_for(scene_id)
 	party_layer.hide()
@@ -205,20 +221,25 @@ func describe_items(box: OptionButton, descriptions: Array) -> void:
 
 func _build_companions() -> void:
 	draft.start(int(game.state.seed),5)
-	paper(Rect2(267,0,355,230),party_layer)
-	text("COMPANION DETAILS · SCROLL FOR MORE",Rect2(278,10,330,14),party_layer)
-	var scroll:=ScrollContainer.new()
-	scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
-	put(scroll,Rect2(278,30,330,190),party_layer)
+	# The character sheet stays closed until an EDIT button opens it, leaving the town in view.
+	editor_layer=Control.new()
+	put(editor_layer,Rect2(267,0,355,236),party_layer)
+	paper(Rect2(0,0,355,236),editor_layer)
+	editor_title=text("",Rect2(11,10,270,14),editor_layer)
+	editor_title.clip_text=true
+	done_button=Button.new()
+	done_button.text="DONE"
+	done_button.mouse_default_cursor_shape=Control.CURSOR_POINTING_HAND
+	done_button.tooltip_text="Close the character sheet. Your choices are kept."
+	done_button.pressed.connect(close_editor)
+	put(done_button,Rect2(289,6,56,18),editor_layer)
+	editor_scroll=ScrollContainer.new()
+	editor_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
+	put(editor_scroll,Rect2(11,30,333,198),editor_layer)
 	var rows:=VBoxContainer.new()
 	rows.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	rows.add_theme_constant_override("separation",5)
-	scroll.add_child(rows)
-	companion=select_box(["TRAVELER 2","TRAVELER 3","TRAVELER 4","TRAVELER 5"],rows)
-	companion.item_selected.connect(func(index: int):
-		_store_companion()
-		edited_member=index+1
-		_load_companion())
+	editor_scroll.add_child(rows)
 	generate_button=Button.new()
 	generate_button.text="GENERATE A COMPANION"
 	generate_button.tooltip_text="Replaces this draft companion's personality, background, relationship, specials, flaw and wage offer. No journey time or money passes."
@@ -274,6 +295,24 @@ func _build_companions() -> void:
 	for box in [personality,values,background_choice,relationship]:box.item_selected.connect(func(_index: int):_refresh_wage_quote())
 	for special in special_checks:special_checks[special].toggled.connect(_special_toggled.bind(special))
 	_load_companion()
+	editor_layer.hide()
+
+## Opens the character sheet for one companion (1-4), saving whichever companion was open before.
+func open_editor(member: int) -> void:
+	_store_companion()
+	edited_member=member
+	_load_companion()
+	_title_editor()
+	editor_scroll.scroll_vertical=0
+	editor_layer.show()
+
+func close_editor() -> void:
+	_store_companion()
+	editor_layer.hide()
+	_update_quote()
+
+func _title_editor() -> void:
+	if editor_title!=null:editor_title.text="EDITING %s · SCROLL FOR MORE" % names[edited_member].text.strip_edges().to_upper()
 
 func _generate_companion() -> void:
 	_store_companion()
@@ -284,6 +323,7 @@ func _generate_companion() -> void:
 	draft.profiles[edited_member]=profile
 	var full_name: String=offer.name
 	names[edited_member].text=full_name if full_name.length()<=14 else full_name.get_slice(" ",0)+" "+full_name.get_slice(" ",1).left(1)+"."
+	_title_editor()
 	draft_terms.erase(str(edited_member))
 	if not offer.terms.is_empty():draft_terms[str(edited_member)]=offer.terms
 	_load_companion()
