@@ -18,8 +18,8 @@ K.layer("sky_and_foothills", function()
   K.blend(0, 56, W, "sky", "light_blue")
   K.rect(0, 59, W, 14, "light_blue")
 
-  K.cloud(40, 16, 1.35)
-  K.cloud(304, 14, 1.4)
+  K.cloud(72, 10, 0.9)
+  K.cloud(260, 26, 0.7)
 
   -- Timbered Cascade foothills receding behind Eagle Creek
   for x = 0, W - 1 do
@@ -91,8 +91,10 @@ K.layer("firs_and_wagon", function()
     K.conifer(tx, 126 + (tx % 4), 56, "ink", "pine", "leaf")
   end
 
-  K.wagon(24, 143, 1)
-  K.person(84, 142, "blue", "sand", false)
+  K.wagon(176, 145, 1)
+  K.team(222, 144, 1, {"red"}, {"dark", true})
+  K.person(166, 146, "red", "bonnet", true)
+  K.person(258, 145, "blue", "sand", false)
 end)
 
 K.save("location_eagle_creek")

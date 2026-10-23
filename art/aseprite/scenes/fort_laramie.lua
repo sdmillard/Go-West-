@@ -20,8 +20,8 @@ K.layer("sky_and_hills", function()
   K.blend(0, 73, W, "light_blue", "mist")
   K.rect(0, 76, W, 8, "mist")
 
-  K.cloud(36, 16, 1.3)
-  K.cloud(308, 14, 1.4)
+  K.cloud(62, 28, 0.7)
+  K.cloud(280, 8, 1.1)
 
   -- Distant Laramie Range foothills on the western horizon
   for x = 0, W - 1 do
@@ -166,7 +166,9 @@ K.layer("foreground", function()
   -- Fur trader & emigrant conversing outside the gate, plus parked emigrant wagon
   K.person(246, 134, "rust", "wood", false)
   K.person(258, 135, "blue", "sand", false)
-  K.wagon(24, 143, 1)
+  K.wagon(318, 146, -1)
+  K.ox(376, 146, 1, "dark")
+  K.ox(398, 142, -1, "light", true)
 end)
 
 K.save("location_fort_laramie")

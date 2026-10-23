@@ -18,8 +18,8 @@ K.layer("sky", function()
   K.blend(0, 56, W, "sky", "light_blue")
   K.rect(0, 59, W, 14, "light_blue")
 
-  K.cloud(42, 16, 1.35)
-  K.cloud(304, 14, 1.4)
+  K.cloud(96, 24, 0.75)
+  K.cloud(330, 12, 1.0)
 
   for x = 0, W - 1 do
     local hy = 65 + math.floor(4 * math.sin(tau * x / 432.0 + 0.4) + 2 * math.cos(tau * x / 144.0))
@@ -132,7 +132,9 @@ end)
 ----------------------------------------------------------------- 4. Foreground Wagon & Trader
 K.layer("wagon", function()
   K.person(238, 124, "rust", "wood", false)
-  K.wagon(24, 143, 1)
+  K.wagon(296, 145, -1)
+  K.ox(360, 146, 1, "light", true)
+  K.ox(386, 143, -1, "dark")
 end)
 
 K.save("location_fort_hall")

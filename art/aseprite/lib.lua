@@ -249,6 +249,72 @@ function K.peaks(x0, x1, base, floor, height, snow)
   end
 end
 
+-- Eroded clay-and-sandstone butte of the North Platte country (Courthouse, Jail, Chimney's
+-- base, Scotts Bluff). b = {cx, crown, top, shoulder, base, foot, seed, cap}: a crown
+-- `crown` px either side of cx at y=top, near-vertical walls down to y=shoulder, then a concave
+-- apron reaching `foot` px either side at y=base. Light comes from the upper left: west faces
+-- are bright, east faces in shade, with vertical rills in the walls and gullies in the apron.
+-- Returns the top y for each column so callers can stack details on it.
+function K.butte(b)
+  local seed0 = b.seed or 1
+  local wall = math.max(3, math.floor((b.shoulder - b.top) * 0.42))
+  local function n(x, k) return math.sin(x * 0.37 * k + seed0) + 0.6 * math.sin(x * 0.11 * k + seed0 * 2.3) end
+  local tops = {}
+  for x = b.cx - b.foot, b.cx + b.foot do
+    local dx = math.abs(x - b.cx)
+    local y
+    if dx <= b.crown then
+      y = b.top + math.floor(4 * (dx / b.crown) ^ 4 + 0.8 * n(x, 1) + 0.5)
+    elseif dx <= b.crown + wall then
+      local t = (dx - b.crown) / wall
+      y = b.top + 3 + math.floor(t ^ 1.4 * (b.shoulder - b.top - 3) + 1.5 * n(x, 2))
+    else
+      local t = math.min(1, (dx - b.crown - wall) / math.max(1, b.foot - b.crown - wall))
+      y = b.shoulder + math.floor((b.base - b.shoulder) * (1 - (1 - t) ^ 2) + 1.2 * n(x, 1.7) + 0.5)
+    end
+    tops[x] = math.min(y, b.base)
+  end
+  for x = b.cx - b.foot, b.cx + b.foot do
+    local top = tops[x]
+    local slope = (tops[x + 3] or b.base) - (tops[x - 3] or b.base)
+    local side = (slope < -2) and "lit" or ((slope > 2) and "shade" or "front")
+    if x > b.cx + b.crown then side = (slope > 0) and "shade" or side end
+    local rill = (K.rnd(4) == 0) and (top + 2 + K.rnd(b.shoulder - b.top + 6))
+    local reach = math.max(0, 1 - (math.abs(x - b.cx) / (b.crown + wall)) ^ 2)
+    local edge = b.shoulder + 2 + math.floor(reach * 7 + 1.5 * n(x, 3))
+    for y = top, b.base do
+      local c
+      if y < edge or (y < edge + 3 and (x + y) % 2 == 0 and y - edge < K.rnd(3)) then
+        c = ({lit = "cream", front = "sand", shade = "clap_sh"})[side]
+        local bed = y - b.top + math.floor(n(x, 0.5))
+        if (bed == 7 or bed == 15 or bed == 21) and K.rnd(3) > 0 then c = ({lit = "sand", front = "clap_sh", shade = "ochre"})[side] end
+        if rill and y <= rill then c = ({lit = "sand", front = "clap_sh", shade = "ochre"})[side] end
+        if y <= top + 1 and side ~= "shade" then c = b.cap or "white" end
+      else
+        c = ({lit = "gold", front = "ochre", shade = "rust"})[side]
+        if K.rnd(17) == 0 then c = "clap_sh" end
+      end
+      px(x, y, c)
+    end
+  end
+  -- gullies fanning down the apron from the foot of the walls
+  for k = -b.foot, b.foot, 6 + seed0 % 3 do
+    local x0 = b.cx + math.floor(k * (b.crown + wall) / b.foot)
+    local x1 = b.cx + k
+    local y0 = b.shoulder + 1
+    for s = 0, 20 do
+      local t = s / 20
+      local x = math.floor(x0 + (x1 - x0) * t + 0.5)
+      local y = math.floor(y0 + (b.base - y0) * t * t + 0.5)
+      if tops[x] and y > tops[x] + 1 and y < b.base - 1 then
+        px(x, y, (x < b.cx) and "ochre" or "dirt_dk")
+        if x < b.cx then px(x - 1, y, "gold") end
+      end
+    end
+  end
+  return tops
+end
+
 -- Low grey-green sagebrush clump.
 function K.sage(x, y)
   rect(x - 3, y - 1, 7, 2, "teal")

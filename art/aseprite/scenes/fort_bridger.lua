@@ -18,8 +18,8 @@ K.layer("sky_and_mountains", function()
   K.blend(0, 56, W, "sky", "light_blue")
   K.rect(0, 59, W, 14, "light_blue")
 
-  K.cloud(40, 16, 1.35)
-  K.cloud(304, 14, 1.4)
+  K.cloud(20, 26, 0.8)
+  K.cloud(236, 9, 1.2)
 
   -- Distant snow-streaked Uinta Mountain range on the southern horizon
   K.poly({{0, 72}, {44, 52}, {84, 67}, {138, 36}, {198, 66}, {248, 45}, {310, 68}, {368, 38}, {432, 70}, {432, 86}, {0, 86}}, "haze")
@@ -123,7 +123,9 @@ K.layer("creek_and_wagon", function()
 
   -- Mountain man / trader & arriving emigrant wagon
   K.person(228, 125, "ochre", "wood", false)
-  K.wagon(24, 143, 1)
+  K.wagon(320, 149, -1)
+  K.ox(40, 149, 1, "light", true)
+  K.ox(72, 146, -1, "red")
 end)
 
 K.save("location_fort_bridger")

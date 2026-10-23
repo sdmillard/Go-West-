@@ -1,126 +1,54 @@
--- Courthouse and Jail Rocks ("Solitary Tower") (432x150).
--- Historical reference: History Nebraska & Joel Palmer's 1845 journal.
--- The paired Brule siltstone/sandstone monoliths rising from the Pumpkin Creek / North Platte
--- plain: broad stepped castle-like Courthouse Rock on the left, narrower Jail Rock on the right.
+-- Courthouse and Jail Rocks (432x150), seen from the trail along the North Platte.
+-- They stand about five miles south of the road: two eroded Brule clay and Arikaree sandstone
+-- buttes, Courthouse broad with a domed crown and steep gullied walls, Jail Rock smaller to
+-- its east, both rising off long pale aprons above the Pumpkin Creek plain. Emigrants called
+-- Courthouse "the Castle" or "the Solitary Tower".
 local K = dofile(app.params.kit)
 local W, H = 432, 150
-local tau = math.pi * 2.0
+local HORIZON = 96
 
-K.canvas(W, H, 184809)
+K.canvas(W, H, 1848)
 
------------------------------------------------------------------ 1. High-Plains Sky & Distant Ridge
 K.layer("sky", function()
-  K.rect(0, 0, W, 16, "blue")
-  K.blend(0, 16, W, "blue", "sky_top")
-  K.rect(0, 19, W, 18, "sky_top")
-  K.blend(0, 37, W, "sky_top", "sky")
-  K.rect(0, 40, W, 16, "sky")
-  K.blend(0, 56, W, "sky", "light_blue")
-  K.rect(0, 59, W, 12, "light_blue")
-  K.blend(0, 71, W, "light_blue", "mist")
-  K.rect(0, 74, W, 10, "mist")
-
-  K.cloud(38, 17, 1.3)
-  K.cloud(308, 13, 1.45)
-
-  for x = 0, W - 1 do
-    local hy = 69 + math.floor(3 * math.sin(tau * x / 432.0 + 0.4) + 2 * math.cos(tau * x / 144.0))
-    for y = hy, 88 do
-      K.px(x, y, (y == hy) and "mist" or "far_hill")
-    end
-  end
+  K.sky(W, HORIZON, {{24, 22, 0.9}, {188, 12, 1.2}, {372, 30, 0.7}})
+  -- low far breaks of the Wildcat Hills behind the rocks
+  K.ridge(0, W - 1, HORIZON - 4, HORIZON, function(x) return 6 + 3 * math.sin(x / 37) + 2 * math.sin(x / 11 + 1) end, "far_hill", "mist", "haze")
 end)
 
------------------------------------------------------------------ 2. High Prairie Plain & Trail
-K.layer("prairie", function()
-  K.rect(0, 88, W, 16, "sage")
-  K.dither(0, 100, W, 6, "sage", "grass")
-  K.rect(0, 106, W, 44, "grass")
-  K.dither(0, 140, W, 10, "grass", "pine")
-
-  -- Wagon road curving across the plain toward Chimney Rock
-  K.poly({{176, 100}, {204, 100}, {310, 150}, {232, 150}}, "ochre")
-  K.poly({{182, 100}, {198, 100}, {292, 150}, {248, 150}}, "gold")
-  K.line(180, 101, 244, 149, "rust")
-  K.line(196, 101, 294, 149, "rust")
-  K.line(179, 101, 243, 149, "sand")
-  K.line(195, 101, 293, 149, "sand")
-
-  for i = 1, 800 do
-    local x = K.rnd(W)
-    local y = 90 + K.rnd(60)
-    local cur = K.at(x, y)
-    if cur == "grass" or cur == "sage" then
-      K.px(x, y, (i % 3 == 0) and "leaf" or ((i % 2 == 0) and "sage" or "gold"))
-    elseif cur == "ochre" or cur == "gold" then
-      K.px(x, y, (i % 3 == 0) and "sand" or "rust")
-    end
-  end
+K.layer("rocks", function()
+  -- Courthouse: the bigger mass with a western buttress
+  K.butte({cx = 112, crown = 12, top = 62, shoulder = 78, base = 96, foot = 46, seed = 3})
+  K.butte({cx = 150, crown = 26, top = 40, shoulder = 66, base = 98, foot = 70, seed = 1})
+  -- Jail Rock across the gap
+  K.butte({cx = 262, crown = 11, top = 56, shoulder = 74, base = 98, foot = 40, seed = 5})
 end)
 
------------------------------------------------------------------ 3. Courthouse Rock & Jail Rock Monoliths + Wagon
-K.layer("monoliths_and_wagon", function()
-  local function monolith(cx, top_y, sh_y, base_y, top_w, sh_w, base_w, ridge_off)
-    for y = top_y, base_y do
-      local hw
-      if y <= sh_y then
-        local t = (y - top_y) / math.max(1, sh_y - top_y)
-        hw = math.floor(top_w + t * (sh_w - top_w) * 0.35)
-        if y == sh_y - 6 or y == sh_y then hw = hw + 3 end
-      else
-        local t = (y - sh_y) / math.max(1, base_y - sh_y)
-        hw = math.floor(sh_w + (t ^ 1.15) * (base_w - sh_w))
-      end
-      local lx = cx - hw - math.floor(1.5 * math.sin(y * 0.35))
-      local rx = cx + hw + math.floor(1.5 * math.cos(y * 0.31))
-      local ridge = cx + ridge_off + math.floor((y - top_y) * 0.14)
-
-      for x = lx, rx do
-        local lit = (x <= ridge)
-        local c
-        if y <= top_y + 2 then
-          c = lit and "white" or "cream"
-        elseif y <= sh_y then
-          local band = (y + ((x % 9 == 0) and 1 or 0)) % 6
-          if band == 0 then
-            c = lit and "cream" or "sand"
-          elseif band == 3 then
-            c = lit and "ochre" or "rust"
-          else
-            c = lit and "sand" or "ochre"
-          end
-          if (x - cx) % 11 == 0 and y > top_y + 4 then
-            c = lit and "ochre" or "rust"
-          end
-        else
-          local ty = y - sh_y
-          local fan = math.floor((x - cx) * 3 / math.max(5, ty + 4))
-          if ty % 5 == 0 then
-            c = lit and "cream" or "sand"
-          elseif fan % 3 == 0 then
-            c = lit and "ochre" or "rust"
-          else
-            c = lit and "sand" or "ochre"
-          end
-        end
-        -- Feather the bottom 2 rows of the talus into the sage prairie
-        if y < base_y - 1 or ((x + y) % 2 == 0) then
-          K.px(x, y, c)
-        end
-      end
-    end
+K.layer("plain", function()
+  K.rect(0, 97, W, H - 97, "sage")
+  K.dither(0, 97, W, 3, "far_hill", "sage")
+  K.rect(0, 108, W, H - 108, "grass")
+  K.dither(0, 104, W, 4, "sage", "grass")
+  for i = 1, 900 do
+    local x, y = K.rnd(W), 98 + K.rnd(H - 98)
+    local d = (y - 98) / (H - 98)
+    K.px(x, y, (K.rnd(3) == 0) and "gold" or ((d > 0.5 and K.rnd(2) == 0) and "leaf" or "sage"))
   end
+  for i = 1, 26 do K.sage(10 + K.rnd(W - 20), 112 + K.rnd(36)) end
+  -- the wagon road along the valley, crossing in the foreground
+  local road = K.smooth({{-10, 132, 7}, {120, 126, 6}, {260, 116, 4}, {440, 108, 2}}, 10)
+  K.ribbon(road, "ochre", 1)
+  K.ribbon(road, "gold", -2)
+  for i = 1, #road - 1, 2 do K.px(math.floor(road[i][1]), math.floor(road[i][2]), "rust") end
+end)
 
-  -- Courthouse Rock (left, broad massive cupola-like sandstone bluff + western buttress)
-  monolith(132, 36, 70, 102, 24, 34, 58, 4)
-  monolith(90,  62, 78, 101, 10, 15, 26, 2)
-
-  -- Jail Rock (right, narrower freestanding tower across the saddle gap)
-  monolith(278, 42, 74, 101, 11, 16, 36, 2)
-
-  -- Parked emigrant wagon & scout admiring the twin landmarks
-  K.wagon(24, 143, 1)
-  K.person(82, 142, "blue", "sand", false)
+K.layer("travelers", function()
+  -- a train strung along the road for scale against the rocks
+  K.far_wagon(318, 113, 1)
+  K.far_wagon(346, 111, 1)
+  K.wagon(150, 131, 1)
+  K.team(198, 131, 1, {"red"}, {"light", true})
+  K.person(140, 132, "red", "bonnet", true)
+  K.person(232, 130, "blue", "deep", false)
 end)
 
 K.save("location_courthouse_rock")

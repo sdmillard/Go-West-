@@ -20,8 +20,8 @@ K.layer("sky", function()
   K.blend(0, 73, W, "light_blue", "mist")
   K.rect(0, 76, W, 8, "mist")
 
-  K.cloud(40, 18, 1.35)
-  K.cloud(296, 14, 1.45)
+  K.cloud(190, 12, 1.1)
+  K.cloud(390, 28, 0.7)
 end)
 
 ----------------------------------------------------------------- 2. Rolling Tallgrass Prairie Hills

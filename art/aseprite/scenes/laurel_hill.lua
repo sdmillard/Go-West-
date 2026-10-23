@@ -18,8 +18,8 @@ K.layer("sky_and_cascades", function()
   K.blend(0, 56, W, "sky", "light_blue")
   K.rect(0, 59, W, 18, "light_blue")
 
-  K.cloud(48, 16, 1.35)
-  K.cloud(308, 14, 1.4)
+  K.cloud(200, 14, 0.9)
+  K.cloud(380, 24, 0.7)
 
   -- Distant Cascade peaks beyond the steep drop-off
   K.poly({{0, 72}, {44, 52}, {88, 66}, {140, 36}, {204, 67}, {254, 46}, {314, 68}, {372, 38}, {432, 70}, {432, 150}, {0, 150}}, "haze")

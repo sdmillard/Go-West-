@@ -1,88 +1,62 @@
--- Blue Mountains Timbered Pass (432x150).
--- Historical reference: Joel Palmer's 1845 journal & WESTERN_REFERENCES.md.
--- Dense ponderosa pine & Douglas-fir forest covering the Blue Mountains crest,
--- with the narrow rocky emigrant road climbing through a gap in the timber.
+-- Blue Mountains (432x150): the road climbing through heavy timber.
+-- Emigrants found the Blues the worst-timbered country on the trail: ponderosa pine, fir and
+-- larch so close that the road was cut through it, with steep pitches where teams were
+-- doubled. Seen from a clearing at the foot of one climb, the road going up into the trees.
 local K = dofile(app.params.kit)
 local W, H = 432, 150
-local tau = math.pi * 2.0
 
-K.canvas(W, H, 184826)
+K.canvas(W, H, 1846)
 
------------------------------------------------------------------ 1. Sky & High Blue Mountain Ridge
-K.layer("sky_and_ridge", function()
-  K.rect(0, 0, W, 16, "blue")
-  K.blend(0, 16, W, "blue", "sky_top")
-  K.rect(0, 19, W, 18, "sky_top")
-  K.blend(0, 37, W, "sky_top", "sky")
-  K.rect(0, 40, W, 16, "sky")
-  K.blend(0, 56, W, "sky", "light_blue")
-  K.rect(0, 59, W, 14, "light_blue")
+K.layer("sky", function()
+  K.sky(W, 60, {{120, 12, 0.7}, {300, 20, 1.0}}, "mist")
+  -- timbered ridges stacking back, each paler with distance
+  K.ridge(0, W - 1, 56, 70, function(x) return 18 + 6 * math.sin(x / 53 + 1) + 3 * math.sin(x / 19) end, "far_hill", "mist", "haze")
+  K.ridge(0, W - 1, 66, 80, function(x) return 16 + 8 * math.sin(x / 37 + 3) + 3 * math.sin(x / 11) end, "haze", "far_hill", "teal")
+end)
 
-  K.cloud(40, 16, 1.35)
-  K.cloud(304, 14, 1.4)
-
-  -- Distant Blue Mountain summits
-  K.poly({{0, 72}, {44, 52}, {88, 66}, {140, 36}, {204, 67}, {254, 46}, {314, 68}, {372, 38}, {432, 70}, {432, 92}, {0, 92}}, "haze")
-  K.poly({{126, 44}, {140, 36}, {152, 44}, {138, 47}}, "cream")
-  K.poly({{358, 46}, {372, 38}, {384, 46}, {370, 49}}, "cream")
-
-  for x = 0, W - 1 do
-    local fh = 72 + math.floor(5 * math.sin(tau * x / 432.0 + 0.3) + 3 * math.cos(tau * x / 144.0))
-    for y = fh, 102 do
-      K.px(x, y, (y == fh) and "far_hill" or "teal")
-    end
+K.layer("far_timber", function()
+  K.rect(0, 74, W, H - 74, "pine")
+  -- a wall of conifer tips along the middle distance
+  for x = -4, W + 4, 5 do
+    local h = 14 + K.rnd(10)
+    K.conifer(x + K.rnd(3), 84 + K.rnd(4), h, "ink", "pine", "teal")
+  end
+  for x = -4, W + 4, 7 do
+    local h = 18 + K.rnd(12)
+    K.conifer(x + K.rnd(4), 96 + K.rnd(5), h, "ink", "pine", "leaf")
   end
 end)
 
------------------------------------------------------------------ 2. Forest Floor & Winding Timber Road
-K.layer("floor_and_road", function()
-  K.rect(0, 88, W, 14, "pine")
-  K.dither(0, 98, W, 6, "pine", "leaf")
-  K.rect(0, 104, W, 46, "grass")
-  K.dither(0, 138, W, 12, "grass", "pine")
-
-  -- Winding sandy/rocky pass road climbing through the timber gap (x = 188..245)
-  K.poly({{184, 150}, {214, 106}, {235, 88}, {248, 91}, {240, 120}, {234, 150}}, "sand")
-  K.poly({{190, 150}, {218, 106}, {237, 89}, {245, 91}, {236, 120}, {228, 150}}, "ochre")
-  K.poly({{196, 150}, {221, 108}, {238, 90}, {242, 91}, {232, 120}, {222, 150}}, "gold")
-  K.line(192, 149, 237, 89, "rust")
-  K.line(226, 149, 244, 91, "rust")
-
-  for i = 1, 700 do
-    local x = K.rnd(W)
-    local y = 90 + K.rnd(60)
-    local cur = K.at(x, y)
-    if cur == "grass" or cur == "leaf" or cur == "pine" then
-      K.px(x, y, (i % 3 == 0) and "sage" or ((i % 2 == 0) and "leaf" or "pine"))
-    elseif cur == "ochre" or cur == "gold" then
-      K.px(x, y, (i % 3 == 0) and "sand" or "rust")
-    end
+K.layer("clearing", function()
+  -- a grassy clearing with stumps where earlier trains cut timber
+  K.poly({{0, 112}, {120, 104}, {260, 106}, {432, 112}, {432, 150}, {0, 150}}, "grass")
+  K.dither(0, 110, W, 3, "leaf", "grass")
+  for i = 1, 800 do
+    local x, y = K.rnd(W), 108 + K.rnd(42)
+    if K.at(x, y) == "grass" then K.px(x, y, (K.rnd(3) == 0) and "gold" or ((K.rnd(2) == 0) and "leaf" or "sage")) end
+  end
+  for _, s in ipairs({{70, 126}, {96, 140}, {226, 132}, {384, 128}, {350, 144}}) do
+    K.rect(s[1], s[2] - 3, 5, 3, "wood"); K.rect(s[1], s[2] - 4, 5, 1, "gold"); K.px(s[1] + 2, s[2] - 4, "ochre")
+  end
+  -- the road: across the clearing, then up a steep pitch into the timber at upper left
+  local road = K.smooth({{440, 146, 7}, {330, 136, 6}, {220, 126, 5}, {140, 114, 3}, {104, 100, 2}, {92, 90, 1}}, 10)
+  K.ribbon(road, "rust", 1)
+  K.ribbon(road, "ochre", -1)
+  for i = 1, #road - 1, 2 do K.px(math.floor(road[i][1]), math.floor(road[i][2]), "dirt_dk") end
+  -- big trees framing the clearing
+  for _, t in ipairs({{10, 150, 64}, {34, 146, 52}, {404, 150, 70}, {426, 140, 54}, {128, 112, 36}, {168, 108, 30}}) do
+    K.conifer(t[1], t[2], t[3], "ink", "pine", "leaf")
   end
 end)
 
------------------------------------------------------------------ 3. Dense Blue Mountain Conifer Ranks & Wagon
-K.layer("conifers_and_wagon", function()
-  -- Back rank of conifers flanking the road gap
-  for x = 8, 424, 18 do
-    if x < 208 or x > 252 then
-      K.conifer(x, 106 + (x % 7), 32 + (x % 11), "ink", "pine", "teal")
-    end
-  end
-
-  -- Foreground rank of tall ponderosa pines & Douglas-firs
-  for x = 14, 422, 23 do
-    if x < 198 or x > 256 then
-      local ty = 115 + (x % 11)
-      local th = 42 + (x % 15)
-      K.conifer(x, ty, th, "ink", "pine", "leaf")
-    end
-  end
-
-  -- Trailside boulders & arriving wagon
-  K.boulder(174, 136, 5, 2)
-  K.boulder(252, 132, 6, 3)
-  K.wagon(24, 143, 1)
-  K.person(84, 142, "blue", "wood", false)
+K.layer("travelers", function()
+  -- a doubled team takes a wagon up the pitch; the next wagon waits its turn
+  K.far_wagon(108, 104, -1)
+  K.wagon(250, 134, -1)
+  K.team(236, 133, -1, {"dark"}, {"red", true})
+  K.team(206, 130, -1, {"light"}, {"dark", true})
+  K.person(186, 132, "blue", "deep", false)
+  K.person(310, 138, "red", "bonnet", true)
 end)
 
 K.save("location_blue_mountains")

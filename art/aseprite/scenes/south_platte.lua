@@ -10,18 +10,7 @@ K.canvas(W, H, 184807)
 
 ----------------------------------------------------------------- 1. Sky & Treeless High-Plains Bluffs
 K.layer("sky_and_bluffs", function()
-  K.rect(0, 0, W, 16, "blue")
-  K.blend(0, 16, W, "blue", "sky_top")
-  K.rect(0, 19, W, 18, "sky_top")
-  K.blend(0, 37, W, "sky_top", "sky")
-  K.rect(0, 40, W, 16, "sky")
-  K.blend(0, 56, W, "sky", "light_blue")
-  K.rect(0, 59, W, 12, "light_blue")
-  K.blend(0, 71, W, "light_blue", "mist")
-  K.rect(0, 74, W, 8, "mist")
-
-  K.cloud(40, 16, 1.35)
-  K.cloud(296, 14, 1.45)
+  K.sky(W, 82, {{60, 26, 0.7}, {170, 12, 1.0}, {330, 20, 1.2}})
 
   for x = 0, W - 1 do
     local y_far = 65 + math.floor(4 * math.sin(tau * x / 432.0 + 0.2) + 2 * math.cos(tau * x / 144.0))
@@ -37,31 +26,23 @@ end)
 
 ----------------------------------------------------------------- 2. Broad South Platte Channel & Shifting Sandbars
 K.layer("river_and_sandbars", function()
-  -- Far sandy shore
-  K.poly({{0, 88}, {432, 79}, {432, 85}, {0, 94}}, "sand")
-
-  -- Wide shallow South Platte channel (y = 93..141 on left, y = 82..130 on right)
-  K.poly({{0, 92}, {432, 82}, {432, 130}, {0, 141}}, "blue")
-  K.poly({{0, 95}, {432, 85}, {432, 127}, {0, 138}}, "sky_top")
-  K.poly({{0, 99}, {432, 89}, {432, 123}, {0, 134}}, "sky")
-
-  -- Large elongated mid-stream sandbar & wet quicksand flats
-  K.poly({{64, 111}, {192, 102}, {314, 109}, {218, 121}, {112, 118}}, "ochre")
-  K.poly({{72, 110}, {194, 103}, {302, 109}, {214, 119}, {118, 116}}, "sand")
-  K.poly({{94, 109}, {196, 105}, {278, 109}, {206, 115}}, "cream")
-
-  -- Second smaller shoal bar to the right
-  K.poly({{338, 98}, {396, 94}, {424, 99}, {382, 104}}, "ochre")
-  K.poly({{344, 97}, {392, 95}, {416, 98}, {378, 102}}, "sand")
-
-  -- Braided current ripples & foam wakes around the sandbars
-  for y = 86, 136, 2 do
-    for x = 8, W - 8, 16 do
-      local rx = (x + y * 7) % (W - 12)
-      local cur = K.at(rx, y)
-      if cur == "sky" or cur == "sky_top" then
-        K.rect(rx, y, 4 + (y % 4), 1, (y % 4 == 0) and "white" or "light_blue")
-      end
+  -- The whole bed is sand, half a mile across: a broad shallow sheet of water in braided
+  -- runs, bars of wet sand between them where wheels would sink if a team stopped.
+  K.poly({{0, 88}, {432, 79}, {432, 136}, {0, 146}}, "sand")
+  for i = 1, 700 do K.px(K.rnd(W), 80 + K.rnd(64), (K.rnd(3) == 0) and "cream" or "gold") end
+  local function run(pts) K.river(K.smooth(pts, 10), false) end
+  run({{-10, 93, 2}, {110, 90, 3}, {240, 88, 2}, {440, 83, 2}})
+  run({{-10, 104, 5}, {80, 101, 6}, {180, 105, 4}, {300, 98, 6}, {440, 94, 5}})
+  run({{120, 103, 1}, {170, 110, 2}, {240, 112, 3}, {320, 106, 2}, {380, 100, 1}})
+  run({{-10, 124, 7}, {90, 118, 6}, {200, 123, 8}, {320, 116, 6}, {440, 111, 7}})
+  run({{60, 120, 1}, {120, 130, 2}, {190, 132, 2}, {250, 124, 1}})
+  -- wet sand beside the water
+  for i = 1, 1500 do
+    local x, y = K.rnd(W), 82 + K.rnd(60)
+    if K.at(x, y) ~= "sky" and K.at(x, y) ~= "sky_top" and K.at(x, y) ~= "blue" and K.at(x, y) ~= "white" and K.at(x, y) ~= "light_blue" then
+      local wet = false
+      for _, d in ipairs({-2, 2}) do local c = K.at(x, y + d); if c == "blue" or c == "sky_top" then wet = true end end
+      if wet then K.px(x, y, "ochre") end
     end
   end
 end)

@@ -18,8 +18,8 @@ K.layer("sky_and_mount_hood", function()
   K.blend(0, 56, W, "sky", "light_blue")
   K.rect(0, 59, W, 18, "light_blue")
 
-  K.cloud(40, 16, 1.35)
-  K.cloud(312, 14, 1.4)
+  K.cloud(150, 22, 0.8)
+  K.cloud(370, 10, 1.0)
 
   -- Flanking Cascade foothills
   K.poly({{0, 74}, {64, 56}, {132, 72}, {336, 70}, {382, 54}, {432, 72}, {432, 94}, {0, 94}}, "far_hill")
@@ -91,8 +91,9 @@ K.layer("firs_and_wagon", function()
     K.conifer(tx, 126 + (tx % 4), th, "ink", "pine", "leaf")
   end
 
-  K.wagon(24, 143, 1)
-  K.person(84, 142, "blue", "wood", false)
+  K.wagon(250, 145, -1)
+  K.team(236, 144, -1, {"dark"}, {"light", true})
+  K.person(306, 145, "blue", "wood", false)
 end)
 
 K.save("location_barlow_pass")
