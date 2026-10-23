@@ -127,6 +127,122 @@ function K.cloud(x, y, s)
   rect(x - 8, y + 7, math.floor(46*s), 1, "light_blue")
 end
 
+---------------------------------------------------------------- landscape helpers
+-- Sky in banded ramps down to `bottom`, with clouds given as {{x, y, scale}, ...}.
+-- Vary the cloud list per scene so pictures do not repeat one another.
+function K.sky(w, bottom, clouds, haze)
+  local bands = {{"sky_top", 0}, {"sky", 0.3}, {"light_blue", 0.62}, {haze or "mist", 0.86}}
+  for i, b in ipairs(bands) do
+    local y0 = math.floor(b[2] * bottom)
+    local y1 = (i < #bands) and math.floor(bands[i + 1][2] * bottom) or bottom
+    rect(0, y0, w, y1 - y0, b[1])
+    if i < #bands then K.blend(0, y1 - 1, w, b[1], bands[i + 1][1]) end
+  end
+  for _, c in ipairs(clouds or {}) do K.cloud(c[1], c[2], c[3]) end
+end
+
+-- Catmull-Rom through pts ({x, y, w} each), n steps per span, for smooth bends.
+function K.smooth(pts, n)
+  n = n or 6
+  local out = {}
+  for i = 1, #pts - 1 do
+    local p0, p1, p2, p3 = pts[math.max(1, i - 1)], pts[i], pts[i + 1], pts[math.min(#pts, i + 2)]
+    for s = 0, n - 1 do
+      local t = s / n
+      local t2, t3 = t * t, t * t * t
+      local q = {}
+      for k = 1, 3 do
+        q[k] = 0.5 * ((2 * p1[k]) + (-p0[k] + p2[k]) * t + (2 * p0[k] - 5 * p1[k] + 4 * p2[k] - p3[k]) * t2 + (-p0[k] + 3 * p1[k] - 3 * p2[k] + p3[k]) * t3)
+      end
+      out[#out + 1] = q
+    end
+  end
+  out[#out + 1] = pts[#pts]
+  return out
+end
+
+-- A strip whose centre follows pts = {{x, y, half_width}, ...}; widths taper with distance.
+function K.ribbon(pts, c, grow)
+  grow = grow or 0
+  for i = 1, #pts - 1 do
+    local a, b = pts[i], pts[i + 1]
+    local dx, dy = b[1] - a[1], b[2] - a[2]
+    local len = math.max(0.001, math.sqrt(dx * dx + dy * dy))
+    local nx, ny = -dy / len, dx / len
+    local wa, wb = a[3] + grow, b[3] + grow
+    poly({{a[1] + nx * wa, a[2] + ny * wa}, {b[1] + nx * wb, b[2] + ny * wb},
+          {b[1] - nx * wb, b[2] - ny * wb}, {a[1] - nx * wa, a[2] - ny * wa}}, c)
+    ellipse(math.floor(b[1] + 0.5), math.floor(b[2] + 0.5), math.max(0, math.floor(wb)), math.max(0, math.floor(wb * 0.6)), c)
+  end
+end
+
+-- A river along pts: gravel bank, deep edges, lighter channel and broken sun glints.
+-- `bank` may be false for water against rock.
+function K.river(pts, bank, glints)
+  if bank ~= false then K.ribbon(pts, bank or "sand", 2) end
+  K.ribbon(pts, "blue", 0)
+  local inner = {}
+  for i, q in ipairs(pts) do inner[i] = {q[1], q[2], q[3] * 0.62} end
+  K.ribbon(inner, "sky_top", 0)
+  for i = 1, #pts - 1 do
+    local a, b = pts[i], pts[i + 1]
+    local steps = math.floor(math.max(math.abs(b[1] - a[1]), math.abs(b[2] - a[2])) / 3)
+    for s = 0, steps - 1 do
+      if K.rnd(3) == 0 then
+        local t = s / math.max(1, steps)
+        local w = a[3] + (b[3] - a[3]) * t
+        local cx = a[1] + (b[1] - a[1]) * t + (K.rnd(100) / 100 - 0.5) * w
+        local cy = a[2] + (b[2] - a[2]) * t
+        local len = math.max(1, math.floor(w / 4))
+        rect(math.floor(cx), math.floor(cy), len, 1, (K.rnd(3) == 0) and (glints or "white") or "light_blue")
+      end
+    end
+  end
+end
+
+-- Hill or ridge silhouette: for x in [x0, x1] the top is base - height(x), filled down to `floor`.
+-- Faces turned to the upper-left light get `lit` on their crest; faces turned away get `shade`.
+function K.ridge(x0, x1, base, floor, height, fill, lit, shade)
+  for x = x0, x1 do
+    local top = math.floor(base - height(x) + 0.5)
+    local slope = height(x + 1) - height(x - 1)
+    for y = top, floor do px(x, y, fill) end
+    if slope > 0.15 and lit then px(x, top, lit); px(x, top + 1, lit)
+    elseif slope < -0.15 and shade then for y = top, math.min(floor, top + 3) do px(x, y, shade) end
+    elseif lit then px(x, top, lit) end
+  end
+end
+
+-- Low grey-green sagebrush clump.
+function K.sage(x, y)
+  rect(x - 3, y - 1, 7, 2, "teal")
+  rect(x - 2, y - 3, 5, 2, "haze")
+  px(x - 1, y - 4, "far_hill"); px(x + 1, y - 3, "far_hill"); px(x - 3, y - 2, "haze")
+  px(x + 3, y, "pine"); px(x - 3, y, "pine")
+end
+
+-- Rounded willow or brush clump along a creek.
+function K.willow(x, y, s)
+  s = s or 1
+  ellipse(x, y - 3 * s, 6 * s, 4 * s, "pine")
+  ellipse(x - 1, y - 4 * s, 5 * s, 3 * s, "leaf")
+  ellipse(x - 2, y - 5 * s, 3 * s, 2 * s, "grass")
+  px(x - 3 * s, y - 6 * s, "sage")
+end
+
+-- Columnar basalt cliff face from x to x + w, rim at y, down to y + h.
+function K.basalt(x, y, w, h, rim)
+  rect(x, y, w, h, "roof")
+  for xx = x, x + w - 1 do
+    local col = (xx - x) % 5
+    if col == 0 then for yy = y + 2, y + h - 1 do px(xx, yy, "roof_dk") end
+    elseif col == 1 then for yy = y + 2, y + h - 1 do if (yy + xx) % 7 ~= 0 then px(xx, yy, "roof_lt") end end end
+    if K.rnd(4) == 0 then px(xx, y + 2 + K.rnd(math.max(1, h - 2)), "ink") end
+  end
+  rect(x, y, w, 2, rim or "rust")
+  rect(x, y + 2, w, 1, "deep")
+end
+
 ---------------------------------------------------------------- buildings
 -- Light comes from the upper left: left faces lit, right-hand side walls in shade.
 function K.windows(x, y, w, n, wall_dk, shutter)
