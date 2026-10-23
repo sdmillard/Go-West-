@@ -716,6 +716,9 @@ func _start_hunt() -> void:
 	options_window.hide()
 	crossing_result = {}
 	if game.start_hunt():
+		# Use the first active traveler for the visible hunter, including after a leader death.
+		var shooter: Dictionary=game.party_health.members.filter(func(member):return game.party_health.is_active(member))[0]
+		hunt_view.traveler_profile=game.characters.profiles[int(shooter.id)]
 		hunt_view.encounter = game.hunt
 		hunt_view.active = true
 		_update_hunt_report()
@@ -772,6 +775,12 @@ func _refresh_party() -> void:
 			var active: Dictionary = member.conditions[0]
 			text += "\n" + str(game.party_health.conditions[active.id].name)
 		var row := button(text, _select_member.bind(int(member.id)))
+		var portrait := AtlasTexture.new()
+		var profile: Dictionary=game.characters.profiles[int(member.id)] if int(member.id)<game.characters.profiles.size() else {"id":int(member.id)}
+		portrait.atlas=preload("res://ui/traveler_palette.gd").texture(preload("res://art/pixels/walker.png"),profile)
+		portrait.region=Rect2(0,int(profile.get("appearance",{}).get("outfit",int(member.id)%2))*24,16,24)
+		row.icon=portrait
+		row.add_theme_constant_override("icon_max_width",16)
 		row.custom_minimum_size.y = 33
 		row.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		row.tooltip_text = "View condition and personal history"
@@ -1051,6 +1060,7 @@ func _refresh() -> void:
 	landscape.miles = s.miles
 	landscape.vehicle = s.vehicle
 	landscape.walkers=int(s.party_size)
+	landscape.traveler_profiles=game.characters.profiles.filter(func(profile):return int(profile.id)<game.party_health.members.size() and game.party_health.is_active(game.party_health.members[int(profile.id)]))
 	landscape.encounter = game.pending.get("id", "")
 	landscape.weather_id = str(game.survival.weather.get("id", "clear")) if s.extended_route else "clear"
 	landscape.scene_id = ""

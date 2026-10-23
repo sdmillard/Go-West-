@@ -1,5 +1,7 @@
 extends Control
 ## Composites original native-resolution pixel assets. All motion lands on whole pixels.
+const Palette=preload("res://ui/traveler_palette.gd")
+var traveler_profiles: Array = []
 const WAGON = preload("res://art/pixels/wagon.png")
 const OXEN = preload("res://art/pixels/oxen.png")
 const WALKER = preload("res://art/pixels/walker.png")
@@ -178,7 +180,9 @@ func _draw_walkers(origin: Vector2,moving: bool) -> void:
 		var x:=origin.x+index*19
 		var y:=origin.y-(index%2)*3
 		var step:=int(clock_time*FPS+index*3)%FRAMES if moving else 0
-		draw_texture_rect_region(WALKER,Rect2(x-5,y-23,16,24),Rect2(step*16,(index%2)*24,16,24))
+		var profile: Dictionary=traveler_profiles[index] if index<traveler_profiles.size() else {"id":index}
+		var row: int=int(profile.get("appearance",{}).get("outfit",index%2))
+		draw_texture_rect_region(Palette.texture(WALKER,profile),Rect2(x-5,y-23,16,24),Rect2(step*16,row*24,16,24))
 
 func _draw_weather() -> void:
 	var full := Rect2(0, 0, 432, 150)
@@ -367,12 +371,13 @@ func _draw_party_on_foot(t: float, frame: int, lift := Vector2.ZERO, rough := fa
 		var pt := t + 14.0 - (index / 2) * 5.0
 		var side := 5.0 if index % 2 == 0 else -5.0
 		var at := _on_path(pt, side) + lift
-		var row := index % 2
+		var profile: Dictionary=traveler_profiles[index] if index<traveler_profiles.size() else {"id":index}
+		var row: int=int(profile.get("appearance",{}).get("outfit",index%2))
 		var step := (frame + index * 3) % FRAMES
 		if lift == Vector2.ZERO and _in_water(at):
-			_sprite(CROSS_SWIMMER, Vector2i(16, 12), Vector2i(6, 8), step, 2 if rough and index == 0 else row, at)
+			_sprite(Palette.texture(CROSS_SWIMMER,profile), Vector2i(16, 12), Vector2i(6, 8), step, 2 if rough and index == 0 else row, at)
 		else:
-			_sprite(CROSS_PEOPLE, Vector2i(16, 20), Vector2i(8, 17), step if frame > 0 or lift == Vector2.ZERO else 0, row, at)
+			_sprite(Palette.texture(CROSS_PEOPLE,profile), Vector2i(16, 20), Vector2i(8, 17), step if frame > 0 or lift == Vector2.ZERO else 0, row, at)
 
 func _focus() -> Vector2:
 	# The point the view follows: the middle of the wagon (or the party) as it crosses.

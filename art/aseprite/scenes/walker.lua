@@ -62,6 +62,7 @@ local function figure(fx, fy, frame, woman)
   else
     K.rect(fx + 4, fy + 3 + bob, 7, 1, "deep"); K.rect(fx + 5, fy + 1 + bob, 4, 2, "deep"); K.px(fx + 5, fy + 1 + bob, "wood")
   end
+  K.px(fx + 6, fy + 4 + bob, "appearance_hair")
   -- near arm swings opposite the near leg
   limb(shoulder_x - 1, shoulder_y + 1, math.floor(shoulder_x - 1 - 3 * swing + 0.5), fy + 14 + bob, woman and "red" or "blue", woman and "brick_dk" or "teal")
   K.px(math.floor(shoulder_x - 1 - 3 * swing + 0.5), fy + 15 + bob, "skin")

@@ -198,7 +198,7 @@ local function hunter(ox, oy, frame, walking)
   K.line(ox + 6, y + 6, ox + 9, y + 10, "deep"); K.px(ox + 9, y + 11, "cream")
   K.rect(ox + 5, y + 10, 6, 1, "wood")
   -- head in profile under a wide felt hat
-  K.rect(ox + 7, y + 2, 3, 4, "skin"); K.px(ox + 10, y + 3, "skin"); K.px(ox + 9, y + 3, "ink")
+  K.rect(ox + 7, y + 2, 3, 4, "skin"); K.px(ox + 10, y + 3, "skin"); K.px(ox + 9, y + 3, "ink"); K.px(ox + 7, y + 2, "appearance_hair")
   K.rect(ox + 6, y + 2, 1, 3, "deep")
   K.rect(ox + 4, y + 1, 9, 1, "deep"); K.rect(ox + 6, y - 1, 5, 2, "wood"); K.rect(ox + 6, y, 5, 1, "deep")
   -- the near arm, reaching forward to the rifle's fore-end
