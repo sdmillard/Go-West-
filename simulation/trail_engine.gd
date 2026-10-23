@@ -680,6 +680,7 @@ func _roll_trail_event() -> void:
 
 func _present_trail_event(event: Dictionary) -> void:
 	var content := event.duplicate(true)
+	adapt_travel_event(content)
 	var living: Array[int] = []
 	for member in party_health.members:
 		if party_health.is_active(member):
@@ -1164,7 +1165,7 @@ func walking_distance() -> int:
 	return maxi(1,roundi(float(provisions.data.walking.miles_per_day)*[1.0,1.15,1.3][state.pace]*float(seasonal_pressure().travel)*float(survival.weather.speed)*terrain*burden*(1.0-float(state.fatigue)/300.0)))
 func walking_overloaded() -> bool:
 	if state.vehicle!="foot" or provisions.cargo(state)<=provisions.capacity(state):return false
-	pending={"id":"packs_too_heavy","title":"Too much to carry","text":"Your packs exceed the surviving party's carry limit. Discard goods or preserve fresh meat through Provisions / Cargo before walking on.","choices":[{"label":"Return to camp","effects":{},"result":"The party reorganizes its packs."}]}
+	pending={"id":"packs_too_heavy","title":"Too much to carry","text":"Your packs exceed the surviving party's carry limit. Return to camp to drop supplies, or preserve fresh meat through Camp > Preserve meat before walking on.","choices":[{"label":"Return to camp","effects":{},"result":"The party reorganizes its packs."}]}
 	return true
 func pack_quote(cart: Dictionary,from_cache: bool=false) -> Dictionary:return CacheSupport.quote(self,cart,from_cache)
 func abandon_wagon(cart: Dictionary) -> bool:return CacheSupport.pack(self,cart,false)
@@ -1314,3 +1315,16 @@ func open_local_attack(uid: String) -> bool:
 	pending={"crime_menu":true,"crime_target":uid,"crime_place":people[0].place}
 	pending=crime.menu(self)
 	return true
+
+
+func adapt_travel_event(content: Dictionary) -> void:
+	if state.vehicle!="foot" or content.get("choices",[]).size()<2:return
+	if content.get("id","")=="ox_injury":
+		content.text="An ox travelling with your party injures its leg. You are on foot; there is no wagon to pull. The animal's condition will matter if you hitch the wagon again."
+		content.choices[0].label="Rest the herd · 1 day"
+		content.choices[0].result="You stop walking and give the oxen time to recover."
+		content.choices[1].label="Keep walking with the oxen"
+		content.choices[1].result="You continue on foot with the injured ox."
+	elif content.get("id","")=="wandering_ox":
+		content.text="One animal is missing when you count the oxen travelling alongside your party."
+		content.choices[1].result="You keep walking with fewer oxen."

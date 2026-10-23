@@ -16,6 +16,7 @@ var game = Simulation.new(1848, "classic", true)
 var landscape: Control
 var date_label: Label
 var stats: Label
+var ledger_title: Label
 var progress: ProgressBar
 var event_title: Label
 var event_text: Label
@@ -164,6 +165,12 @@ func _build_theme() -> void:
 				bg = "45372f"
 			skin.set_stylebox(state, kind, style(bg, "ddb461" if state in ["hover", "focus"] else "c18d4d"))
 		skin.set_constant("outline_size", kind, 0)
+	skin.set_stylebox("panel","TabContainer",style("f6e7bc","a16b43",7))
+	for tab in ["tab_selected","tab_hovered"]:skin.set_stylebox(tab,"TabBar",style("f6e7bc","a16b43",5))
+	skin.set_stylebox("tab_unselected","TabBar",style("76503c","a16b43",5))
+	skin.set_color("font_selected_color","TabBar",Color("45372f"))
+	skin.set_color("font_hovered_color","TabBar",Color("45372f"))
+	skin.set_color("font_unselected_color","TabBar",Color("f6e7bc"))
 	skin.set_stylebox("normal", "LineEdit", style("ecd097", "76503c", 3))
 	skin.set_stylebox("focus", "LineEdit", style("f6e7bc", "ddb461", 3))
 	skin.set_color("font_color", "LineEdit", Color("45372f"))
@@ -284,7 +291,8 @@ func _build_ui() -> void:
 	landscape = Landscape.new()
 	place(landscape, Rect2(11, 57, 432, 150))
 	var ledger := panel(Rect2(451, 55, 180, 154))
-	place(label("* WAGON LEDGER *"), Rect2(9, 8, 164, 12), ledger)
+	ledger_title=label("* WAGON LEDGER *")
+	place(ledger_title, Rect2(9, 8, 164, 12), ledger)
 	stats = label("")
 	stats.add_theme_constant_override("line_spacing", 1)
 	place(stats, Rect2(21, 25, 152, 100), ledger)
@@ -298,7 +306,6 @@ func _build_ui() -> void:
 		mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		place(mark, Rect2(9, 25 + row * 10, 8, 8), ledger)
 	party_button = button("VIEW PARTY", _show_party)
-	place(label("PARTY DETAILS: RIBBON >"),Rect2(9,132,162,12),ledger)
 	progress = ProgressBar.new()
 	progress.max_value = Simulation.DESTINATION
 	progress.show_percentage = false
@@ -549,7 +556,7 @@ Northern shortcuts and Columbia rafting are not yet playable. Weather, medical e
 	supplies_window.title = "PROVISIONS AND WAGON CARGO"
 	add_child(supplies_window)
 	var supplies_scroll := ScrollContainer.new()
-	supplies_scroll.custom_minimum_size = Vector2(500, 218)
+	supplies_scroll.custom_minimum_size = Vector2(580,250)
 	supplies_window.add_child(supplies_scroll)
 	supplies_rows = VBoxContainer.new()
 	supplies_rows.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -1241,7 +1248,9 @@ func _choose(index: int) -> void:
 	_pause_travel()
 	if game.can_choose(index) and (game.pending.choices[index].get("action","") in ["leave","cross"] or game.pending.choices[index].has("method")):camping=false
 	var is_crossing: bool = game.can_choose(index) and game.pending.has("landmark") and game.pending.choices[index].has("method")
+	var return_to_camp: bool=game.pending.get("id","") in ["packs_too_heavy","no_team"]
 	var accepted: bool = game.choose(index)
+	if accepted and return_to_camp and game.can_service():_enter_camp()
 	if accepted and game.pending.get("service_menu",false):
 		_show_service()
 	if accepted and is_crossing:
@@ -1281,8 +1290,10 @@ func _refresh() -> void:
 	date_label.text = "%s %d, %d   |   GUIDE MILES %d / %d   |   %s" % [months[date.month - 1], date.day, date.year, s.miles, game.destination(), s.mode.to_upper()]
 	if s.status == "outfitting":
 		date_label.text = "INDEPENDENCE, 1848   |   PREPARING FOR DEPARTURE   |   CLASSIC"
+	ledger_title.text="* PACKS & LIVESTOCK *" if s.vehicle=="foot" else "* WAGON LEDGER *"
 	stats.text = "FOOD    %4d UNITS\nHEALTH    %s\nCASH      $%.2f\nOXEN %d   CLOTHES %d\nBULLETS   %d\nSPARES W%d A%d T%d" % [s.food, game.party_condition(), s.money, s.oxen, s.clothing, s.bullets, s.wheels, s.axles, s.tongues]
 	stats.text += "\nCARE %d CARGO %.0f/%.0f\n%s\n%s" % [s.medicine, game.provisions.cargo(s),game.provisions.capacity(s), s.weather.to_upper(),"ON FOOT / PACKS" if s.vehicle=="foot" else "TEAM %s / %s" % [game.PartyHealth.condition_label(s.ox_health), "TIRED" if s.fatigue >= 50 else "FRESH"]]
+	if s.vehicle=="foot" and s.oxen>0:stats.text+="\nHERD "+game.PartyHealth.condition_label(s.ox_health).to_upper()
 	if s.extended_route:
 		var nearby: Dictionary=game.context.market(game)
 		stats.text+="\nPOST: STOCK LIMITED" if nearby.post else ("\nTRADERS NEARBY" if nearby.available else "\nNO TRADERS IN SIGHT")
@@ -1295,6 +1306,7 @@ func _refresh() -> void:
 	landscape.terrain = s.terrain
 	landscape.miles = s.miles
 	landscape.vehicle = s.vehicle
+	landscape.herded_oxen=int(s.oxen) if s.vehicle=="foot" else 0
 	landscape.walkers=int(s.party_size)
 	landscape.traveler_profiles=game.characters.profiles.filter(func(profile):return int(profile.id)<game.party_health.members.size() and game.party_health.is_active(game.party_health.members[int(profile.id)]))
 	landscape.encounter = game.pending.get("id", "")
@@ -1391,40 +1403,46 @@ func _show_supplies() -> void:
 	for child in supplies_rows.get_children():
 		supplies_rows.remove_child(child)
 		child.queue_free()
-	var fresh: int = game.provisions.fresh_pounds(int(game.state.food))
-	var dried: int = game.provisions.preserved_pounds(int(game.state.food))
-	var storage_limit: float=game.provisions.storage_capacity(game.state)
-	var gear: float=float(game.provisions.data.walking.personal_gear_lb_per_person)*game.state.party_size if game.state.vehicle=="foot" else float(game.provisions.data.household_gear_lb)-float(game.state.get("departed_gear_lb",0))
-	var text := "CARGO %.1f / %.0f LB · %s\nSTAPLES %d · FRESH %d · DRIED %d FOOD UNITS\nSALT %d LB · UP TO %d PARTY-DAYS BEFORE SPOILAGE\nFood value and physical meat weight are counted separately.\nFresh meat lasts two days; foraged produce lasts three.\nDrying meat costs one day and some food;\nsalt improves yield/storage. Meals are eaten before processing.\nCargo includes %.0f lb personal/household gear. Discards are permanent." % [game.provisions.cargo(game.state), storage_limit,"OVERLOADED" if game.provisions.cargo(game.state) > storage_limit else "WITHIN GUIDELINE", game.state.food - fresh - dried, fresh, dried, game.state.salt, game.provisions.expected_days(game.state.food, game.state.party_size, game.state.rations),gear]
-	supplies_rows.add_child(button("DROP SUPPLIES >",func():
+	supplies_window.title="SUPPLIES & PACKS" if game.state.vehicle=="foot" else "SUPPLIES & WAGON CARGO"
+	var actions:=HBoxContainer.new()
+	actions.name="InventoryActions"
+	actions.add_theme_constant_override("separation",8)
+	supplies_rows.add_child(actions)
+	var drop:=button("DROP SUPPLIES >",func():
 		supplies_window.hide()
-		_show_section("Drop supplies")))
-	if game.CacheSupport.can_pack(game,false):supplies_rows.add_child(button("ABANDON WAGON / CHOOSE WHAT TO CARRY",func():_show_packing(false)))
-	supplies_rows.add_child(label(text))
-	supplies_rows.add_child(label("Greens and berries supply vitamin C only when eaten.\nUse Hunt & forage > Forage; meat alone does not prevent scurvy."))
-	supplies_rows.add_child(label("TRACKED FOOD %.1f LB / %d FOOD UNITS" % [game.provisions.tracked_mass(game.state.food),fresh+dried]))
-	supplies_rows.add_child(label("HUNTING HAUL %d LB / HEALTH & WILLING HELPERS" % game.hunting_capacity()))
-	supplies_rows.add_child(label("Health scales loads on foot and hunts. Broken legs prevent hauling."))
-	supplies_rows.add_child(label("OXEN %d · GRAZE; DO NOT USE THE PARTY'S FOOD\n%s" % [game.state.oxen,"PACK LIMIT %.0f LB; REDUCE EXCESS BEFORE WALKING" % storage_limit if game.state.vehicle=="foot" else "TEAM LOAD GUIDELINE %.0f LB; EXCESS LOAD SLOWS TRAVEL" % game.provisions.team_capacity(game.state.oxen)]))
-	if game.state.vehicle!="foot":supplies_rows.add_child(label("TEAM PULLING SPEED %d%% · 4 NORMAL; 5 +5%%; 6+ +10%%" % roundi(game.survival.team_factor(game.state.oxen)*100)))
+		_show_section("Drop supplies"))
+	drop.name="DropSupplies"
+	actions.add_child(drop)
+	if game.CacheSupport.can_pack(game,false):
+		var abandon:=button("ABANDON WAGON / CHOOSE PACKS",func():_show_packing(false))
+		abandon.name="AbandonWagon"
+		actions.add_child(abandon)
+	var load: float=game.provisions.cargo(game.state)
+	var capacity: float=game.provisions.storage_capacity(game.state)
+	supplies_rows.add_child(label("%s %.1f / %.0f LB · %s" % ["PACKS" if game.state.vehicle=="foot" else "WAGON CARGO",load,capacity,"OVERLOADED" if load>capacity else "WITHIN LIMIT"]))
+	var meter:=ProgressBar.new()
+	meter.custom_minimum_size.y=7
+	meter.max_value=maxf(1,capacity)
+	meter.value=load
+	meter.show_percentage=false
+	supplies_rows.add_child(meter)
+	var ledger:=preload("res://ui/inventory_ledger.gd").new(game)
+	ledger.name="InventoryLedger"
+	supplies_rows.add_child(ledger)
+	var transport: VBoxContainer=ledger.get_meta("transport_rows")
 	if game.state.vehicle=="foot" and not game.wagon_cache.is_empty():
-		var recover:=button("BACKTRACK TO WAGON · MILE %d · LOSS RISK" % game.wagon_cache.mile,func():
-			supplies_window.hide()
-			var day: int=game.state.day
-			if game.recover_wagon():
-				_refresh()
-				notice("WAGON RECOVERY","%d day(s) passed. Now at mile %d.\n%s\nRead the Journal for the journey and supply losses." % [game.state.day-day,game.state.miles,"Wagon recovered." if game.state.vehicle=="wagon" else ("The wagon and its supplies were lost." if game.wagon_cache.is_empty() else "Wagon found. Repack supplies or trade for an ox.")]))
+		var recover:=button("RECOVER WAGON · MILE %d" % game.wagon_cache.mile,_recover_wagon)
 		recover.disabled=not game._can_act()
-		supplies_rows.add_child(recover)
-		if game.CacheSupport.can_pack(game,true):supplies_rows.add_child(button("REPACK FROM THE CACHED WAGON",func():_show_packing(true)))
+		transport.add_child(recover)
+		if game.CacheSupport.can_pack(game,true):transport.add_child(button("REPACK FROM THE CACHED WAGON",func():_show_packing(true)))
 	var ox_offer: Dictionary = game.ox_slaughter_offer()
 	if not ox_offer.is_empty():
 		var slaughter := button("SHOOT / BUTCHER 1 OX · %d LB · 1 BULLET · 1 DAY" % ox_offer.meat,func():_confirm_slaughter(false))
 		slaughter.tooltip_text = "Smaller teams pull less cargo and travel slowly. No oxen means no wagon movement. Meat may spoil."
-		supplies_rows.add_child(slaughter)
+		transport.add_child(slaughter)
 	var hand_offer: Dictionary = game.ox_slaughter_offer(true)
 	if not hand_offer.is_empty():
-		supplies_rows.add_child(button("BUTCHER BY HAND · NO AMMO · %d%% INJURY RISK · 1 DAY" % roundi(hand_offer.injury_chance*100),func():_confirm_slaughter(true)))
+		transport.add_child(button("BUTCHER BY HAND · NO AMMO · %d%% INJURY RISK · 1 DAY" % roundi(hand_offer.injury_chance*100),func():_confirm_slaughter(true)))
 	supplies_window.popup_centered()
 
 func _packing_cart() -> Dictionary:
@@ -1718,3 +1736,18 @@ func _normalize_dialog_buttons(dialog: AcceptDialog) -> void:
 	var commits: Array=["REST","SLAUGHTER","REPACK","LEAVE WAGON","LEAVE THIS STONE"]
 	dialog.get_ok_button().visible=dialog is ConfirmationDialog or dialog.get_ok_button().text in commits
 	if dialog is ConfirmationDialog:dialog.get_cancel_button().hide()
+
+
+func _recover_wagon() -> void:
+	supplies_window.hide()
+	var day: int=game.state.day
+	if not game.recover_wagon():return
+	_refresh()
+	var message: String
+	if game.state.status!="traveling":message="The recovery journey ended. See the journal for the outcome."
+	elif game.state.vehicle=="wagon":message="Wagon recovered and hitched."
+	elif game.wagon_cache.is_empty():message="The wagon and its cached supplies were lost. You remain on foot."
+	elif game.state.miles>game.wagon_cache.mile:message="Backtracking stopped at mile %d. The wagon remains at mile %d; it has not been reached on this attempt. Reduce your packs before walking back." % [game.state.miles,game.wagon_cache.mile]
+	elif game.wagon_cache.found and game.state.oxen==0:message="Wagon located, but no ox can pull it. Repack here or trade for an animal."
+	else:message="Recovery is incomplete. Resolve the current notice before trying again."
+	notice("WAGON RECOVERY","%d day(s) passed. Now at mile %d.\n%s" % [game.state.day-day,game.state.miles,message])

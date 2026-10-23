@@ -54,6 +54,7 @@ var ambience = preload("res://ui/scene_ambience.gd").new()
 var scene_id := ""
 var miles := 0
 var vehicle := "wagon"
+var herded_oxen := 0
 var walkers := 5
 var encounter := ""
 var motion := 0.0
@@ -131,7 +132,9 @@ func _draw() -> void:
 	if not scene_id.is_empty():
 		draw_texture(scenes.texture_for(scene_id), Vector2.ZERO)
 		ambience.draw(self, scene_id, scenes.texture_for(scene_id), clock_time)
-		if vehicle=="foot":_draw_walkers(Vector2(140,135),false)
+		if vehicle=="foot":
+			_draw_herd(false)
+			_draw_walkers(Vector2(140,135),false)
 		_draw_weather()
 		return # Parked wagons/people are composed into each arrival illustration.
 	# Parallax: each layer of the backdrop slides at its own speed, nearest fastest, and the
@@ -152,6 +155,7 @@ func _draw() -> void:
 	var bob := -1 if frame % 4 >= 2 else 0
 	var shift := int(sin(clock_time * 3) * 3) if motion > 0 else 0
 	if vehicle=="foot":
+		_draw_herd(scrolling or motion>0)
 		_draw_walkers(Vector2(150+shift,132+bob),scrolling or motion>0)
 	elif vehicle == "corolla":
 		draw_texture(CAR, Vector2(173 + shift, 96 + bob))
@@ -174,6 +178,12 @@ func _draw() -> void:
 			draw_rect(Rect2(150, 130, 80, 7), Color("76503c"))
 			draw_rect(Rect2(159, 132, 60, 2), Color("a16b43"))
 	_draw_weather()
+
+func _draw_herd(moving: bool) -> void:
+	# A small representative herd follows the walkers; the ledger gives the exact count.
+	for index in range(mini(herded_oxen,3)):
+		var step:=int(clock_time*FPS+index*3)%FRAMES if moving else 0
+		draw_texture_rect_region(OXEN,Rect2(25+index*31,106-(index%2)*4,48,32),Rect2(step*48,0,48,32))
 
 func _draw_walkers(origin: Vector2,moving: bool) -> void:
 	for index in range(walkers):
