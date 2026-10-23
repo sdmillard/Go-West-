@@ -4,6 +4,10 @@ signal aim(point: Vector2)
 signal move_requested(point: Vector2)
 signal elapsed(delta: float)
 const PRAIRIE = preload("res://art/pixels/prairie.png")
+# Two-frame sheets sized to data/hunting.json species and the model's 12 x 14 cover.
+const ANIMALS = [preload("res://art/pixels/hunt_bison.png"), preload("res://art/pixels/hunt_deer.png"), preload("res://art/pixels/hunt_rabbit.png")]
+const COVER = preload("res://art/pixels/hunt_cover.png")
+const HUNTER = preload("res://art/pixels/hunt_hunter.png")
 var active := false
 var encounter: Dictionary = {}
 var scenes = preload("res://ui/location_scenes.gd").new()
@@ -45,42 +49,16 @@ func _draw() -> void:
 		if encounter.animals[index].direction < 0:
 			draw_set_transform(Vector2(bounds.position.x * 2 + bounds.size.x, 0), 0, Vector2(-1, 1))
 		var kind: int = encounter.animals[index].kind
-		var body := Color("76503c" if kind == 0 else "a16b43")
-		if kind == 0:
-			draw_rect(Rect2(p + Vector2(3, 3), Vector2(29, 15)), body)
-			draw_rect(Rect2(p + Vector2(0, 0), Vector2(17, 15)), Color("45372f"))
-			draw_rect(Rect2(p + Vector2(29, 8), Vector2(10, 11)), Color("45372f"))
-			draw_rect(Rect2(p + Vector2(31, 4), Vector2(2, 5)), Color("ecd097"))
-		elif kind == 1:
-			draw_rect(Rect2(p + Vector2(0, 6), Vector2(23, 10)), Color("45372f"))
-			draw_rect(Rect2(p + Vector2(1, 7), Vector2(20, 7)), Color("ddb461"))
-			draw_rect(Rect2(p + Vector2(19, 2), Vector2(6, 11)), body)
-			draw_rect(Rect2(p + Vector2(23, 0), Vector2(2, 5)), Color("45372f"))
-			draw_rect(Rect2(p + Vector2(24, 4), Vector2(2, 1)), Color("241f22"))
-		else:
-			draw_rect(Rect2(p + Vector2(0, 3), Vector2(14, 7)), Color("45372f"))
-			draw_rect(Rect2(p + Vector2(1, 4), Vector2(12, 5)), Color("ecd097"))
-			draw_rect(Rect2(p + Vector2(9, 0), Vector2(2, 6)), Color("ecd097"))
-			draw_rect(Rect2(p + Vector2(12, 1), Vector2(2, 5)), Color("ecd097"))
-		for leg in [4, 14, 24] if kind == 0 else ([3, 17] if kind == 1 else [3, 10]):
-			draw_rect(Rect2(p + Vector2(leg, 14 if kind < 2 else 8), Vector2(2, (7 if kind < 2 else 3) + (int(encounter.elapsed * 8 + leg) % 2))), Color("45372f"))
+		var frame := int(encounter.elapsed * 8 + index) % 2
+		draw_texture_rect_region(ANIMALS[kind], Rect2(p, bounds.size), Rect2(frame * bounds.size.x, 0, bounds.size.x, bounds.size.y))
 		draw_set_transform(Vector2.ZERO)
 	# Foreground cover masks animals and blocks the rifle's line of fire.
+	var cover_frame := 0 if encounter.region in ["woodland","forest"] else 1
 	for obstacle in encounter.cover:
-		var p: Vector2 = obstacle.position
-		draw_rect(obstacle, Color("596442"))
-		if encounter.region in ["woodland","forest"]:
-			draw_rect(Rect2(p + Vector2(4, 4), Vector2(4, 10)), Color("76503c"))
-			draw_rect(Rect2(p, Vector2(12, 8)), Color("3f563a"))
-		else:
-			for x in [0, 4, 8]:
-				draw_rect(Rect2(p + Vector2(x, 0), Vector2(2, 14)), Color("85864c"))
+		draw_texture_rect_region(COVER, obstacle, Rect2(cover_frame * 12, 0, 12, 14))
 	var hunter: Vector2 = encounter.hunter.round()
-	draw_rect(Rect2(hunter - Vector2(3, 10), Vector2(6, 7)), Color("42636b"))
-	draw_rect(Rect2(hunter - Vector2(2, 14), Vector2(4, 4)), Color("ecc78a"))
-	draw_rect(Rect2(hunter - Vector2(5, 15), Vector2(10, 2)), Color("554335"))
-	for x in [-3, 1]:
-		draw_rect(Rect2(hunter + Vector2(x, -3), Vector2(2, 4)), Color("45372f"))
+	# Feet on the hunter's position, as the old rectangles were.
+	draw_texture(HUNTER, hunter - Vector2(8, 17))
 	var direction: Vector2 = (get_local_mouse_position() - hunter).normalized()
 	draw_line(hunter + Vector2(0, -6), hunter + Vector2(0, -6) + direction * 12, Color("45372f"), 2)
 	if encounter.flash > 0:

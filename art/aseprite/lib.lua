@@ -14,11 +14,14 @@ K.HEX = {
   roof_dk="3a302c", roof="52423a", roof_lt="6a574a", dirt_dk="9a6a44", clap_sh="cfb98e",
   far_hill="9fbfae", shadow="8a5e3e", skin="e0a878", skin_dk="b77f58",
   red="9e3f33", ox_dk="5a3a2a", ox="7d5536", ox_lt="a77a4f", ox_white="e8dcc0",
+  stone_lt="dcd5bc", stone="bfb79c", stone_dk="908a72", stone_ink="66614f",
 }
 local col = {}
 for k, h in pairs(K.HEX) do
   col[k] = app.pixelColor.rgba(tonumber(h:sub(1,2),16), tonumber(h:sub(3,4),16), tonumber(h:sub(5,6),16), 255)
 end
+col.ground_shadow = app.pixelColor.rgba(0x45, 0x37, 0x2f, 0x66)
+col.wagon_shadow  = app.pixelColor.rgba(0x45, 0x37, 0x2f, 0x88)
 
 K.col = col
 
@@ -179,6 +182,19 @@ function K.hip_roof(x, y, w, depth, rise)
   rect(x - 3, y + 1, w + 6, 1, "ink")
 end
 
+function K.gable_roof(x, y, w, rise)
+  K.hip_roof(x, y, w, 0, rise)
+end
+
+function K.window(x, y, w, h)
+  rect(x, y, w, h, "deep")
+  rect(x + 1, y + 1, w - 2, h - 2, "blue")
+  rect(x + 1, y + 1, math.max(1, math.floor((w - 2) / 2)), math.max(1, math.floor((h - 2) / 2)), "light_blue")
+  rect(x + math.floor(w / 2), y + 1, 1, h - 2, "cream")
+  rect(x + 1, y + math.floor(h / 2), w - 2, 1, "cream")
+  rect(x, y + h, w, 1, "sand")
+end
+
 function K.chimney(x, y, h)
   rect(x, y - h, 4, h, "brick")
   rect(x + 3, y - h, 1, h, "brick_dk")
@@ -215,6 +231,41 @@ function K.elm(x, y, s)
   for _, c in ipairs(clumps) do px(x + c[1] * s - 3, y + c[2] * s - 3, "sage") end
 end
 
+-- Tall western conifer (ponderosa pine / Douglas fir) with layered boughs, lit from upper-left.
+function K.conifer(x, y, h, coat_dk, coat_mid, coat_lt)
+  coat_dk  = coat_dk  or "ink"
+  coat_mid = coat_mid or "pine"
+  coat_lt  = coat_lt  or "leaf"
+  local trunk_h = math.max(3, math.floor(h * 0.22))
+  rect(x - 1, y - trunk_h, 3, trunk_h + 1, "deep")
+  px(x - 1, y - trunk_h + 1, "wood")
+  px(x + 1, y - trunk_h + 1, "ink")
+  local tiers = math.max(3, math.floor(h / 6))
+  for t = 1, tiers do
+    local frac = (t - 1) / tiers
+    local ty = y - trunk_h - math.floor(frac * (h - trunk_h))
+    local tier_h = math.max(4, math.floor((h - trunk_h) / tiers) + 2)
+    local half_w = math.max(2, math.floor((1.0 - frac * 0.72) * (h * 0.34)))
+    -- Shaded right/under boughs
+    poly({{x, ty - tier_h}, {x + half_w + 1, ty}, {x - half_w, ty}}, coat_dk)
+    -- Mid foliage body
+    poly({{x, ty - tier_h}, {x + half_w - 1, ty - 1}, {x - half_w, ty - 1}}, coat_mid)
+    -- Sunlit left boughs
+    poly({{x, ty - tier_h}, {x + 1, ty - 1}, {x - half_w, ty - 1}}, coat_lt)
+    if t < tiers then px(x - math.max(1, math.floor(half_w * 0.5)), ty - 2, "grass") end
+  end
+  px(x, y - h - 1, coat_lt)
+end
+
+-- Rounded sandstone/granite boulder with ground shadow and upper-left highlight.
+function K.boulder(bx, by, rx, ry)
+  K.shadow(bx - rx, by + ry, rx * 2 + 2)
+  ellipse(bx, by, rx, ry, "rust")
+  ellipse(bx - 1, by - 1, math.max(1, rx - 1), math.max(1, ry - 1), "ochre")
+  ellipse(bx - 2, by - 1, math.max(1, rx - 3), math.max(1, ry - 2), "sand")
+  rect(bx - rx + 1, by + ry - 1, rx * 2 - 1, 1, "deep")
+end
+
 ---------------------------------------------------------------- wagons, stock, people
 function K.shadow(x, y, w)
   for xx = x, x + w - 1 do px(xx, y, "shadow"); if (xx % 2 == 0) then px(xx, y + 1, "dirt_dk") end end
@@ -234,27 +285,27 @@ function K.wheel(cx, cy, r)
 end
 
 K.OX_ROWS = {
-"..................h...h...",
-"..............ooo.hoooh...",
-"..ooooooooooooolllooddo...",
-".olllllllllllllllllodmmo..",
-"oolmmmmmmmmmmmmmmmlmmmmo..",
-"odlmmwwwwmmmmmmmmmmmmmmeo.",
-"odmmwwwwwwmmmmmmmmmmmmmmmo",
-"odmmmwwwwmmmmmmmmmmmmmmmlo",
-"odmmmmmmmmmmmmmmmmmmmodllo",
-"odmmmmmmmmmmmmmmmmmmmo.oo.",
-".oddmmmmmmmmmmmmmmmmdo....",
-".o.oddmmmmmmmmmmmmddo.....",
-"...odddoddddddddoddo......",
-"...omdo.d......omd.d......",
-"...omdo.d......omd.d......",
-"...oooo.o......ooo.o......",
+"....................h..h..",
+"...................hh..hh.",
+"....oooooo....ooo..ooohoo.",
+"..oollllllooollllooodlllo.",
+".ollmmmmmmlllllllllodlelo.",
+".ommmmmmmmmmmmmllllodlllo.",
+"oommmmmwwwmmmmmmmmmmddddlo",
+"odmmmmmwwwwmmmmmmmmmddddko",
+"odmmmmmmwwmmmmmmmmmmddddo.",
+".oddmmmmmmmmmmmmmmmddddo..",
+".o.oddddddddddddddddddo...",
+"...oooddo.......ooddooo...",
+"...o.mo.d.......o.mo.d....",
+"...o.mo.d.......o.mo.d....",
+"...o.do.d.......o.do.d....",
+"...o.oo.o.......o.oo.o....",
 }
 K.OX_COATS = {
-  light = {o="ink", d="ox_dk", m="ox", l="ox_lt", w="ox_white", h="cream", e="ink"},
-  dark  = {o="ink", d="deep", m="ox_dk", l="ox", w="ox_white", h="cream", e="ink"},
-  red   = {o="ink", d="ox_dk", m="rust", l="ochre", w="ox_white", h="cream", e="ink"},
+  light = {o="ink", d="ox_dk", m="ox", l="ox_lt", w="ox_white", h="cream", e="ink", k="deep"},
+  dark  = {o="ink", d="deep", m="ox_dk", l="ox", w="ox_white", h="cream", e="ink", k="ink"},
+  red   = {o="ink", d="ox_dk", m="rust", l="ochre", w="ox_white", h="cream", e="ink", k="deep"},
 }
 function K.ox(x, y, facing, coat, pale)
   -- 26x16 hand-pixelled sprite; (x, y) = rump at ground level; facing 1 = right
@@ -335,6 +386,29 @@ end
 function K.crate(x, y)
   rect(x, y - 6, 8, 6, "ochre"); rect(x, y - 6, 8, 1, "gold")
   line(x, y - 1, x + 7, y - 6, "rust"); rect(x + 7, y - 6, 1, 6, "rust")
+end
+
+-- Pitched 1840s canvas wedge tent with sunlit left slope, shaded right slope, doorway flap, and guy lines.
+function K.tent(cx, y, half_w, h)
+  half_w = half_w or 20
+  h = h or 26
+  K.shadow(cx - half_w - 2, y + 1, half_w * 2 + 5)
+  -- Sunlit left slope
+  poly({{cx - half_w, y}, {cx, y - h}, {cx + 2, y}}, "cream")
+  line(cx - half_w, y, cx, y - h, "white")
+  line(cx - math.floor(half_w * 0.55), y, cx - 1, y - h + 3, "sand")
+  -- Shaded right slope
+  poly({{cx, y - h}, {cx + 2, y}, {cx + half_w, y}}, "sand")
+  poly({{cx + math.floor(half_w * 0.35), y - math.floor(h * 0.55)}, {cx + 2, y}, {cx + half_w, y}}, "ochre")
+  -- Open tent doorway & pole
+  poly({{cx - 4, y}, {cx, y - math.floor(h * 0.58)}, {cx + 4, y}}, "deep")
+  poly({{cx - 2, y}, {cx, y - math.floor(h * 0.48)}, {cx + 2, y}}, "ink")
+  rect(cx, y - h - 2, 1, h + 2, "wood")
+  -- Guy lines & pegs
+  line(cx - half_w, y, cx - half_w - 4, y + 1, "clap_sh")
+  line(cx + half_w, y, cx + half_w + 4, y + 1, "clap_sh")
+  px(cx - half_w - 4, y + 1, "wood")
+  px(cx + half_w + 4, y + 1, "wood")
 end
 
 

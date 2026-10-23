@@ -7,6 +7,7 @@ const GraveView = preload("res://ui/grave_view.gd")
 const SaveStore = preload("res://simulation/save_store.gd")
 const HuntView = preload("res://ui/hunt_view.gd")
 const PIXEL_FONT = preload("res://art/pixels/trail_font.fnt")
+const LEDGER_ICONS = preload("res://art/pixels/ledger_icons.png")
 var game = Simulation.new(1848, "classic", true)
 var landscape: Control
 var date_label: Label
@@ -199,7 +200,16 @@ func _build_ui() -> void:
 	place(label("* WAGON LEDGER *"), Rect2(9, 8, 164, 12), ledger)
 	stats = label("")
 	stats.add_theme_constant_override("line_spacing", 1)
-	place(stats, Rect2(9, 25, 164, 100), ledger)
+	place(stats, Rect2(21, 25, 152, 100), ledger)
+	# One 8 x 8 icon per ledger line (9 px font line + 1 px spacing): food, health, cash, oxen, bullets, spares.
+	for row in range(6):
+		var icon := AtlasTexture.new()
+		icon.atlas = LEDGER_ICONS
+		icon.region = Rect2(row * 8, 0, 8, 8)
+		var mark := TextureRect.new()
+		mark.texture = icon
+		mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		place(mark, Rect2(9, 25 + row * 10, 8, 8), ledger)
 	party_button = button("VIEW PARTY", _show_party)
 	place(party_button, Rect2(9, 130, 162, 17), ledger)
 	progress = ProgressBar.new()
