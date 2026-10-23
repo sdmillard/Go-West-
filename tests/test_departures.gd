@@ -191,9 +191,9 @@ func run():
 		await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png("res://docs/departure-review.png")
 	screen._service_choice(0)
-	screen.selected_member=1
 	screen._show_party()
-	check("LEFT THE PARTY" in screen.member_details.text and "LEFT PARTY" in screen.party_rows.get_child(1).text,"Party screen identifies a living departed traveler")
+	screen._select_member(1)
+	check("LEFT THE PARTY" in screen.member_details.text and screen.party_rows.get_children().any(func(row):return row.has_meta("traveler_id") and row.get_meta("traveler_id")==1 and "LEFT PARTY" in row.text),"Party screen identifies a living departed traveler")
 	if "--capture" in OS.get_cmdline_user_args():
 		await process_frame
 		await RenderingServer.frame_post_draw

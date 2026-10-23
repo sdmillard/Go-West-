@@ -113,11 +113,12 @@ func run() -> void:
 	var members_before: Array = screen.game.party_health.members.duplicate(true)
 	var rng_before: int = screen.game.party_health.rng.state
 	screen.party_button.pressed.emit()
-	check(screen.party_window.visible and not screen.traveling and screen.party_rows.get_child_count() == 5, "View Party pauses travel and lists every traveler")
+	check(screen.party_window.visible and not screen.traveling and screen.party_rows.get_children().filter(func(row):return row.has_meta("traveler_id") or "EMPTY SLOT" in row.text).size() == 5, "View Party pauses travel and shows five occupied/vacant slots")
 	check(screen.party_rows.get_global_rect().end.x < screen.member_details.get_global_rect().position.x, "Roster and detail columns do not overlap")
 	screen.party_rows.get_child(1).pressed.emit()
 	check("Broken leg" in screen.member_details.text and "SAM" in screen.member_details.text, "Selecting member shows their injury and personal record")
-	screen.party_rows.get_child(3).pressed.emit()
+	screen._toggle_party_history()
+	screen.party_rows.get_children().filter(func(row):return row.has_meta("traveler_id") and row.get_meta("traveler_id")==3)[0].pressed.emit()
 	check("DIED" in screen.member_details.text and "cholera" in screen.member_details.text, "Deceased person's history stays accessible")
 	screen.party_rows.get_child(2).pressed.emit()
 	await create_timer(0.1).timeout

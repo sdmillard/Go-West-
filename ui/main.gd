@@ -52,6 +52,8 @@ var packing_window: AcceptDialog
 var packing_quantities: Dictionary={}
 var packing_quote: Label
 var packing_cache_mode:=false
+var dismiss_button: Button
+var show_past_travelers := false
 var service_window: AcceptDialog
 var post_store_window: AcceptDialog
 var post_store_view: Panel
@@ -427,22 +429,33 @@ Northern shortcuts and Columbia rafting are not yet playable. Weather, medical e
 	party_window.add_child(party_content)
 	var party_heading := label("SELECT A TRAVELER")
 	place(party_heading, Rect2(0, 0, 245, 12), party_content)
+	var roster_scroll:=ScrollContainer.new()
+	roster_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
+	place(roster_scroll,Rect2(0,22,245,190),party_content)
 	party_rows = VBoxContainer.new()
+	party_rows.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	party_rows.add_theme_constant_override("separation", 5)
-	place(party_rows, Rect2(0, 22, 245, 190), party_content)
+	roster_scroll.add_child(party_rows)
 	member_details = RichTextLabel.new()
 	member_details.selection_enabled = true
 	place(member_details, Rect2(261, 0, 291, 188), party_content)
 	wages_button=button("PAY WAGES",_pay_selected_wages)
 	place(wages_button,Rect2(261,194,291,22),party_content)
+	dismiss_button=button("ASK TO LEAVE",_dismiss_selected)
+	place(dismiss_button,Rect2(410,194,142,22),party_content)
 	attack_button=button("ATTACK",_attack_selected)
 	place(attack_button,Rect2(261,194,291,22),party_content)
 	options_window = AcceptDialog.new()
 	options_window.title = "TRAIL OPTIONS"
 	add_child(options_window)
+	var options_scroll:=ScrollContainer.new()
+	options_scroll.custom_minimum_size=Vector2(370,240)
+	options_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
+	options_window.add_child(options_scroll)
 	var actions := VBoxContainer.new()
 	actions.custom_minimum_size = Vector2(350, 110)
-	options_window.add_child(actions)
+	actions.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	options_scroll.add_child(actions)
 	hunt_button = button("HUNT · 1 DAY, UP TO 5 SHOTS", _start_hunt)
 	actions.add_child(hunt_button)
 	actions.add_child(button("LOCAL CONDITIONS / STOP ACTIVITIES", _show_stop_activities))
@@ -450,6 +463,7 @@ Northern shortcuts and Columbia rafting are not yet playable. Weather, medical e
 	actions.add_child(button("ROB, STEAL OR ATTACK HERE", _open_crime))
 	actions.add_child(button("THE DEAD: BURY, CARRY OR SEARCH", _open_remains))
 	actions.add_child(button("VISIT AN EMIGRANT CAMP", _open_camp))
+	actions.add_child(button("LOOK FOR COMPANIONS", _open_companions))
 	actions.add_child(button("FORAGE FOR GREENS AND BERRIES", _open_forage))
 	actions.add_child(button("CARE / MEDICAL ATTENTION", _open_care))
 	actions.add_child(button("PROVISIONS / CARGO", _show_supplies))
@@ -645,6 +659,18 @@ func _show_service() -> void:
 	var explanation := label(description)
 	explanation.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	service_rows.add_child(explanation)
+	if game.pending.get("recruit_menu",false):
+		var candidate: Dictionary=game.recruitment.candidate(game)
+		if not candidate.is_empty():
+			var picture:=TextureRect.new()
+			var atlas:=AtlasTexture.new()
+			atlas.atlas=preload("res://ui/traveler_palette.gd").texture(preload("res://art/pixels/walker.png"),candidate.profile)
+			atlas.region=Rect2(0,int(candidate.profile.appearance.outfit)*24,16,24)
+			picture.texture=atlas
+			picture.custom_minimum_size=Vector2(32,48)
+			picture.expand_mode=TextureRect.EXPAND_IGNORE_SIZE
+			picture.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			service_rows.add_child(picture)
 	for index in range(game.pending.choices.size() - 1):
 		var option := button(game.pending.choices[index].label, _service_choice.bind(index))
 		option.disabled = not game.can_choose(index)
@@ -753,12 +779,14 @@ func _show_party() -> void:
 	party_window.popup_centered()
 
 func _select_member(index: int) -> void:
+	if index<game.party_health.members.size() and not game.party_health.is_active(game.party_health.members[index]):show_past_travelers=true
 	selected_member = index
 	_refresh_party()
 
 func _refresh_party() -> void:
 	wages_button.hide()
 	attack_button.hide()
+	dismiss_button.hide()
 	wages_button.size.x=291
 	member_details.size.y=216
 	for node in party_rows.get_children():
@@ -768,23 +796,20 @@ func _refresh_party() -> void:
 		member_details.text = "Outfit your party before departure."
 		return
 	selected_member = clampi(selected_member, 0, game.party_health.members.size() - 1)
-	for member in game.party_health.members:
-		var condition: String = "LEFT PARTY" if member.get("departed",false) else (game.PartyHealth.condition_label(member.health) if member.alive else "DECEASED")
-		var text: String = member.name.to_upper() + " · " + condition
-		if game.party_health.is_active(member) and not member.conditions.is_empty():
-			var active: Dictionary = member.conditions[0]
-			text += "\n" + str(game.party_health.conditions[active.id].name)
-		var row := button(text, _select_member.bind(int(member.id)))
-		var portrait := AtlasTexture.new()
-		var profile: Dictionary=game.characters.profiles[int(member.id)] if int(member.id)<game.characters.profiles.size() else {"id":int(member.id)}
-		portrait.atlas=preload("res://ui/traveler_palette.gd").texture(preload("res://art/pixels/walker.png"),profile)
-		portrait.region=Rect2(0,int(profile.get("appearance",{}).get("outfit",int(member.id)%2))*24,16,24)
-		row.icon=portrait
-		row.add_theme_constant_override("icon_max_width",16)
-		row.custom_minimum_size.y = 33
-		row.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		row.tooltip_text = "View condition and personal history"
-		party_rows.add_child(row)
+	for id in game.current_party_slots():
+		if int(id)<0:
+			var vacancy:=button("EMPTY SLOT · FIND A COMPANION",_open_companions)
+			vacancy.custom_minimum_size.y=33
+			vacancy.disabled=not game.can_service()
+			party_rows.add_child(vacancy)
+		else:_add_party_row(game.party_health.members[int(id)])
+	var past: Array=game.party_health.members.filter(func(member):return not game.party_health.is_active(member))
+	if not past.is_empty():
+		var history:=button(("HIDE" if show_past_travelers else "SHOW")+" PAST TRAVELERS · %d" % past.size(),_toggle_party_history)
+		history.name="PartyHistory"
+		party_rows.add_child(history)
+		if show_past_travelers:
+			for member in past:_add_party_row(member)
 	member_details.text = game.party_health.description(selected_member).replace("PERSONAL HISTORY",game.characters.description(selected_member)+("\n\n"+game.social.description(game,selected_member) if selected_member>0 else "")+"\n\nHEALTH HISTORY")
 	if selected_member<game.characters.profiles.size():
 		var contract: Dictionary=game.characters.profiles[selected_member].contract
@@ -798,14 +823,56 @@ func _refresh_party() -> void:
 		attack_button.show()
 		attack_button.text="ATTACK %s" % game.party_health.members[selected_member].name.to_upper()
 		attack_button.disabled=not game.crime.can_attack(game,selected_member)
-		# Share the row with wages when both apply.
+		dismiss_button.show()
+		dismiss_button.disabled=not game.recruitment.eligible_dismiss(game,selected_member)
 		if wages_button.visible:
-			wages_button.size.x=143
-			attack_button.position.x=410
-			attack_button.size.x=142
+			wages_button.text="PAY WAGES"
+			wages_button.size.x=91
+			attack_button.text="ATTACK"
+			attack_button.position.x=358
+			attack_button.size.x=91
+			dismiss_button.position.x=455
+			dismiss_button.size.x=97
 		else:
 			attack_button.position.x=261
-			attack_button.size.x=291
+			attack_button.size.x=143
+			dismiss_button.position.x=410
+			dismiss_button.size.x=142
+
+func _add_party_row(member: Dictionary) -> void:
+	var condition: String = "LEFT PARTY" if member.get("departed",false) else (game.PartyHealth.condition_label(member.health) if member.alive else "DECEASED")
+	var text: String = member.name.to_upper() + " · " + condition
+	if game.party_health.is_active(member) and not member.conditions.is_empty():
+		var active: Dictionary = member.conditions[0]
+		text += "\n" + str(game.party_health.conditions[active.id].name)
+	var row := button(text, _select_member.bind(int(member.id)))
+	var portrait := AtlasTexture.new()
+	var profile: Dictionary=game.characters.profiles[int(member.id)] if int(member.id)<game.characters.profiles.size() else {"id":int(member.id)}
+	portrait.atlas=preload("res://ui/traveler_palette.gd").texture(preload("res://art/pixels/walker.png"),profile)
+	portrait.region=Rect2(0,int(profile.get("appearance",{}).get("outfit",int(member.id)%2))*24,16,24)
+	row.icon=portrait
+	row.add_theme_constant_override("icon_max_width",16)
+	row.custom_minimum_size.y = 33
+	row.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	row.tooltip_text = "View condition and personal history"
+	party_rows.add_child(row)
+	row.set_meta("traveler_id",int(member.id))
+
+func _toggle_party_history() -> void:
+	show_past_travelers=not show_past_travelers
+	_refresh_party()
+
+func _open_companions() -> void:
+	options_window.hide()
+	party_window.hide()
+	_pause_travel()
+	if game.open_companions():_show_service()
+	_refresh()
+
+func _dismiss_selected() -> void:
+	if game.open_dismiss(selected_member):
+		party_window.hide()
+		_show_service()
 
 func _attack_selected() -> void:
 	if game.open_attack(selected_member):

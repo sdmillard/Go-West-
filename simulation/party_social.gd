@@ -61,11 +61,11 @@ func start(game, allow_romance: bool = true) -> void:
 func snapshot() -> Dictionary:
 	return {"pairs":pairs.duplicate(true),"last_day":last_day,"romance":romance}
 
-func valid(value: Variant, day: int) -> bool:
-	if not value is Dictionary or value.size()!=3 or not value.get("romance") is bool or not whole(value.get("last_day"),0,day) or not value.get("pairs") is Array or value.pairs.size()!=6:return false
+func valid(value: Variant, day: int, count: int=5) -> bool:
+	if not value is Dictionary or value.size()!=3 or not value.get("romance") is bool or not whole(value.get("last_day"),0,day) or not value.get("pairs") is Array or (value.pairs.size()<6 or value.pairs.size()>count*(count-1)/2):return false
 	var seen := []
 	for pair in value.pairs:
-		if not pair is Dictionary or pair.size()!=4 or not whole(pair.get("a"),1,4) or not whole(pair.get("b"),int(pair.a)+1,4) or not whole(pair.get("affinity"),-100,100) or not pair.get("history") is Array or pair.history.size()>8:return false
+		if not pair is Dictionary or pair.size()!=4 or not whole(pair.get("a"),1,count-1) or not whole(pair.get("b"),int(pair.a)+1,count-1) or not whole(pair.get("affinity"),-100,100) or not pair.get("history") is Array or pair.history.size()>8:return false
 		var key := "%d:%d" % [pair.a,pair.b]
 		if key in seen:return false
 		seen.append(key)
@@ -101,7 +101,7 @@ func family_connected(game, a: int, b: int) -> bool:
 	var kin := ["family","sibling","cousin","parent","adult_child"]
 	if game.characters.profiles[a].relationship in kin:
 		seen.append(0)
-		for slot in range(1,5):
+		for slot in range(1,game.characters.profiles.size()):
 			if game.characters.profiles[slot].relationship in kin:seen.append(slot)
 	for _step in range(4):
 		for bond in game.crime.record.bonds:
@@ -200,3 +200,10 @@ func description(game, id: int) -> String:
 		lines.append("%s: %s; %s (%d)." % [game.party_health.members[other].name,kind if not kind.is_empty() else "fellow travelers",feeling,int(pair.affinity)])
 		if not pair.history.is_empty():lines.append("  "+pair.history.back().text)
 	return "\n".join(lines)
+
+
+func add_member(game, id: int) -> void:
+	for member in game.party_health.members:
+		var other: int=int(member.id)
+		if other==0 or other==id or not active(game,other):continue
+		pairs.append({"a":mini(other,id),"b":maxi(other,id),"affinity":0,"history":[]})

@@ -62,7 +62,7 @@ func number(value: Variant) -> bool:
 	return (value is float or value is int) and is_finite(float(value))
 func cargo(inventory: Dictionary) -> float:
 	var pounds: float = float(data.walking.personal_gear_lb_per_person)*int(inventory.get("party_size",5)) if inventory.get("vehicle","")=="foot" else float(data.household_gear_lb)
-	if inventory.get("vehicle","")!="foot":pounds-=float(inventory.get("departed_gear_lb",0))
+	if inventory.get("vehicle","")!="foot":pounds+=float(inventory.get("recruited_gear_lb",0))-float(inventory.get("departed_gear_lb",0))
 	# Bodies carried with the party weigh what they weigh, on foot or in the wagon.
 	pounds+=float(inventory.get("remains_lb",0))
 	for key in data.weights_lb:
