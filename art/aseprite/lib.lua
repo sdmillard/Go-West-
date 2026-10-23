@@ -17,6 +17,8 @@ K.HEX = {
   stone_lt="dcd5bc", stone="bfb79c", stone_dk="908a72", stone_ink="66614f",
   silt_lt="c4b08a", silt="a38b64", silt_dk="7f6b4c",
   storm_dk="3b414c", storm="555d68", storm_lt="7b8389",
+  -- trail map
+  dune="e2c286", sea="9cc2c2", sea_line="7ba6ae",
 }
 local col = {}
 for k, h in pairs(K.HEX) do

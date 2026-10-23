@@ -7,6 +7,7 @@ const GraveView = preload("res://ui/grave_view.gd")
 const SaveStore = preload("res://simulation/save_store.gd")
 const HuntView = preload("res://ui/hunt_view.gd")
 const PostStoreView = preload("res://ui/post_store_view.gd")
+const MapView = preload("res://ui/map_view.gd")
 const PIXEL_FONT = preload("res://art/pixels/trail_font.fnt")
 const LEDGER_ICONS = preload("res://art/pixels/ledger_icons.png")
 const TOOLTIP_WIDTH := 240.0
@@ -81,6 +82,8 @@ var visited_graves: Array = []
 var grave_editing := false
 var grave_remains: Dictionary = {}
 var crossing_result: Dictionary = {}
+var map_view: Control
+var map_button: Button
 
 func _ready() -> void:
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -92,6 +95,10 @@ func _ready() -> void:
 	add_child(travel_timer)
 	landscape.crossing_finished.connect(_crossing_finished)
 	guide.visibility_changed.connect(_update_animation_pause)
+	map_view = MapView.new(game)
+	add_child(map_view)
+	map_view.hide()
+	map_view.visibility_changed.connect(_update_animation_pause)
 	journal_window.visibility_changed.connect(_update_animation_pause)
 	party_window.visibility_changed.connect(_update_animation_pause)
 	options_window.visibility_changed.connect(_update_animation_pause)
@@ -243,7 +250,10 @@ func _build_ui() -> void:
 	place(title, Rect2(12, 10, 300, 22))
 	var subtitle := label("AN OVERLAND ADVENTURE\nINDEPENDENCE > OREGON CITY")
 	subtitle.add_theme_color_override("font_color", Color("ddb461"))
-	place(subtitle, Rect2(358, 11, 204, 23))
+	place(subtitle, Rect2(330, 11, 180, 23))
+	map_button = button("MAP", _show_map)
+	map_button.tooltip_text = "See where you are on a map of the West, with the road you have taken in red."
+	place(map_button, Rect2(518, 10, 52, 22))
 	place(button("GUIDE", _show_guide), Rect2(576, 10, 52, 22))
 	date_label = label("")
 	date_label.add_theme_color_override("font_color", Color("f6e7bc"))
@@ -374,7 +384,7 @@ func _build_ui() -> void:
 	guide.add_child(guide_scroll)
 	var guide_text := label("""Name five travelers, choose a profession and month, then buy supplies. Care kits are optional; keep cash for the road.
 
-Continue advances days; Pause stops the wagon. Encounters and landmarks stop travel. Guide, Journal, View Party and Options let you take stock without spending another day. Hover over a control for a short explanation.
+Continue advances days; Pause stops the wagon. Encounters and landmarks stop travel. Map, Guide, Journal, View Party and Options let you take stock without spending another day. The map shows where you are, with the road you have taken in red. Hover over a control for a short explanation.
 
 Camp rests people and livestock, using food. Faster travel strains the team; low rations raise illness risk. Clothing protects people in rough weather. Inspect individual travelers.
 
@@ -790,6 +800,13 @@ func _pay_selected_wages() -> void:
 		_refresh()
 		_refresh_party()
 
+func _show_map() -> void:
+	_pause_travel()
+	map_view.game = game
+	move_child(map_view, -1)
+	map_view.open()
+	_refresh()
+
 func _show_guide() -> void:
 	_pause_travel()
 	_refresh()
@@ -994,7 +1011,7 @@ func _acknowledge_crossing() -> void:
 	_refresh()
 
 func _update_animation_pause() -> void:
-	landscape.crossing_paused = guide.visible or journal_window.visible or party_window.visible or options_window.visible or service_window.visible or supplies_window.visible or grave_window.visible or memorial_window.visible or record_notice.visible
+	landscape.crossing_paused = map_view.visible or guide.visible or journal_window.visible or party_window.visible or options_window.visible or service_window.visible or supplies_window.visible or grave_window.visible or memorial_window.visible or record_notice.visible
 
 func _refresh() -> void:
 	var s: Dictionary = game.state
