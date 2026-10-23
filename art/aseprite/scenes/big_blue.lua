@@ -1,119 +1,84 @@
--- Big Blue River Crossing near Alcove Spring (432x150).
--- Historical reference: NPS Alcove Spring exhibit description.
--- Low limestone & wooded ridges, clear blue river channel crossed by a diagonal shallow
--- gravel-bar ford, cottonwoods & bur oaks, and emigrant wagon on the near gravel bank.
--- No later Marshall ferry is shown.
+-- Big Blue River crossing (432x150).
+-- Near Alcove Spring the Big Blue runs between low prairie ridges, its banks lined with
+-- cottonwood, elm and oak. In ordinary water it was forded over a gravel bottom; in flood
+-- parties waited days for it to fall. No later ferry is shown.
 local K = dofile(app.params.kit)
 local W, H = 432, 150
-local tau = math.pi * 2.0
 
-K.canvas(W, H, 248)
+K.canvas(W, H, 184825)
 
------------------------------------------------------------------ 1. Sky & Low Wooded Limestone Ridges
-K.layer("sky_and_ridges", function()
-  K.rect(0, 0, W, 16, "blue")
-  K.blend(0, 16, W, "blue", "sky_top")
-  K.rect(0, 19, W, 18, "sky_top")
-  K.blend(0, 37, W, "sky_top", "sky")
-  K.rect(0, 40, W, 16, "sky")
-  K.blend(0, 56, W, "sky", "light_blue")
-  K.rect(0, 59, W, 14, "light_blue")
+local course = {{440, 96, 4}, {360, 100, 6}, {280, 108, 9}, {210, 116, 12}, {150, 128, 15}, {90, 140, 18}, {30, 156, 21}}
 
-  K.cloud(42, 17, 1.35)
-  K.cloud(302, 14, 1.4)
+K.layer("sky", function()
+  K.sky(W, 74, {{300, 14, 1.0}, {90, 24, 0.6}}, "mist")
+end)
 
-  -- Low rolling Flint Hills / Big Blue valley ridges
-  for x = 0, W - 1 do
-    local y_far = 60 + math.floor(4 * math.sin(tau * x / 432.0 + 0.3) + 3 * math.cos(tau * x / 144.0))
-    for y = y_far, 78 do
-      K.px(x, y, (y == y_far) and "mist" or "far_hill")
-    end
-    local y_mid = 68 + math.floor(4 * math.cos(tau * x / 432.0 + 0.9) + 2 * math.sin(tau * x / 108.0))
-    for y = y_mid, 86 do
-      K.px(x, y, (y <= y_mid + 1) and "sage" or "grass")
-    end
-  end
-
-  -- Exposed pale limestone outcrop band along the far bank (Alcove Spring ledge character)
-  for x = 86, 338 do
-    local ly = 77 + math.floor(2 * math.sin(x * 0.04))
-    K.rect(x, ly, 1, 5, "sand")
-    K.px(x, ly, "cream")
-    K.px(x, ly + 3, "ochre")
-    K.px(x, ly + 4, "wood")
-  end
-
-  -- Far bank cottonwoods & oaks
-  for _, tx in ipairs({22, 64, 348, 398}) do
-    K.elm(tx, 86, 1)
+K.layer("ridges", function()
+  K.ridge(0, W - 1, 0, 100, function(x) return -(68 + 4 * math.sin(x / 53) + 2 * math.sin(x / 17)) end, "far_hill", "mist", "haze")
+  K.ridge(0, W - 1, 0, 100, function(x) return -(78 + 6 * math.sin(x / 37 + 2) + 2 * math.sin(x / 11)) end, "sage", "clap_sh", "grass")
+  for i = 1, 400 do
+    local x, y = K.rnd(W), 74 + K.rnd(26)
+    if K.at(x, y) == "sage" then K.px(x, y, (i % 2 == 0) and "gold" or "grass") end
   end
 end)
 
------------------------------------------------------------------ 2. Big Blue River & Shallow Gravel-Bar Ford
-K.layer("river_and_ford", function()
-  -- Far gravel bank
-  K.poly({{0, 79}, {180, 83}, {432, 87}, {432, 91}, {0, 84}}, "sand")
-
-  -- Deep clear blue channel of the Big Blue River
-  K.poly({{0, 82}, {432, 89}, {432, 130}, {0, 118}}, "blue")
-  K.poly({{0, 85}, {432, 92}, {432, 126}, {0, 115}}, "sky_top")
-  K.poly({{0, 90}, {432, 96}, {432, 120}, {0, 110}}, "sky")
-
-  -- Diagonal shallow gravel ford bar (from near bank x=115,y=124 across to far bank x=318,y=92)
-  for step = 0, 34 do
-    local t = step / 34.0
-    local fx = math.floor(114 + t * 204 + 4 * math.sin(t * math.pi * 2))
-    local fy = math.floor(124 - t * 32)
-    -- Submerged & emergent gravel/cobble shoalstones with whitewater riffle wakes
-    K.ellipse(fx, fy, 7, 2, "sky_top")
-    K.ellipse(fx - 1, fy, 4, 1, (step % 2 == 0) and "ochre" or "sand")
-    K.px(fx - 2, fy, "cream")
-    K.rect(fx + 3, fy, 5, 1, "white")
-    K.rect(fx - 6, fy + 1, 4, 1, "light_blue")
+K.layer("bottom", function()
+  K.rect(0, 92, W, H - 92, "grass")
+  for i = 1, 1200 do
+    local x, y = K.rnd(W), 92 + K.rnd(H - 92)
+    K.px(x, y, ({"leaf", "sage", "gold", "grass"})[i % 4 + 1])
+    if i % 4 == 0 then K.px(x, y - 1, "sage") end
   end
-
-  -- Horizontal water ripples across the rest of the stream
-  for y = 86, 124, 2 do
-    for x = 8, W - 12, 18 do
-      local rx = (x + y * 5) % (W - 16)
-      K.rect(rx, y, 3 + (y % 3), 1, (y % 4 == 0) and "light_blue" or "sky_top")
-    end
+  -- gravel bars and the river
+  local water = K.smooth(course)
+  K.ribbon(water, "dirt_dk", 4)
+  K.ribbon(water, "clap_sh", 2)
+  K.river(water, false)
+  -- the ford: a broad riffle over gravel where the road crosses
+  for i = 1, 60 do
+    local x, y = 170 + K.rnd(80), 112 + K.rnd(20)
+    if K.at(x, y) == "blue" or K.at(x, y) == "sky_top" then K.rect(x, y, 2 + K.rnd(3), 1, (i % 3 == 0) and "white" or "light_blue") end
   end
+  for i = 1, 30 do
+    local x, y = 160 + K.rnd(100), 110 + K.rnd(26)
+    if K.at(x, y) == "sky_top" then K.px(x, y, "stone") end
+  end
+  -- road down the near bank into the ford, and out up the far side
+  local near = K.smooth({{440, 150, 7}, {360, 140, 6}, {290, 132, 5}, {246, 126, 4}})
+  K.ribbon(near, "rust", 1); K.ribbon(near, "ochre", 0)
+  local far = K.smooth({{176, 116, 3}, {150, 108, 3}, {110, 102, 2}, {60, 98, 2}, {-6, 96, 2}})
+  K.ribbon(far, "rust", 1); K.ribbon(far, "ochre", 0)
 end)
 
------------------------------------------------------------------ 3. Near Gravel Bank, Trail & Waiting Wagon
-K.layer("near_bank", function()
-  -- Broad gravel and sand bar on the near shore
-  K.poly({{0, 114}, {96, 118}, {224, 132}, {432, 120}, {432, 150}, {0, 150}}, "sand")
-  K.poly({{0, 118}, {96, 122}, {224, 136}, {432, 124}, {432, 150}, {0, 150}}, "ochre")
-  -- Grassy terrace along the lower left & right corners
-  K.poly({{0, 126}, {82, 134}, {148, 150}, {0, 150}}, "grass")
-  K.poly({{286, 150}, {348, 134}, {432, 128}, {432, 150}}, "grass")
-
-  -- River cobbles, pebbles & grass texture
-  for i = 1, 600 do
-    local x = K.rnd(W)
-    local y = 116 + K.rnd(34)
-    local cur = K.at(x, y)
-    if cur == "sand" or cur == "ochre" then
-      K.px(x, y, (i % 3 == 0) and "cream" or ((i % 2 == 0) and "rust" or "wood"))
-    elseif cur == "grass" then
-      K.px(x, y, (i % 3 == 0) and "leaf" or ((i % 2 == 0) and "sage" or "gold"))
+K.layer("timber", function()
+  -- a belt of timber following the river into the distance
+  for i = 1, #course - 1 do
+    local a, b = course[i], course[i + 1]
+    for s = 0, 4 do
+      local t = s / 5
+      local x, y = a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t
+      local w = a[3] + (b[3] - a[3]) * t
+      local sc = (y > 134) and 2 or 1
+      -- far bank (upper side) gets a tree most steps; near bank fewer, so the ford stays open
+      if K.rnd(3) == 0 and not (x > 140 and x < 260) then K.elm(math.floor(x - 4), math.floor(y - w - 2), sc) end
+      if K.rnd(4) == 0 and x > 300 then K.elm(math.floor(x + 6), math.floor(y + w + 8), sc) end
     end
   end
+  for _, w in ipairs({{132, 112, 1}, {270, 120, 1}, {300, 104, 1}, {116, 128, 1}, {380, 104, 1}}) do K.willow(w[1], w[2], w[3]) end
+end)
 
-  -- Wheel ruts curving down onto the gravel ford approach
-  for i = 0, 40 do
-    local rx = 44 + i * 2
-    local ry = 138 - math.floor(i * 0.35)
-    K.px(rx, ry, "rust"); K.px(rx, ry - 1, "sand")
-    K.px(rx + 6, ry + 4, "rust"); K.px(rx + 6, ry + 3, "sand")
-  end
-
-  -- Emigrant wagon & scout checking the ford depth at the water's edge
-  K.wagon(38, 138, 1)
-  K.team(96, 137, 1, {"light", true}, {"red", false})
-  K.person(132, 134, "blue", "wood", false)
+K.layer("figures", function()
+  -- a wagon in the ford, knee-deep over the gravel, the next waiting on the near bank
+  K.wagon(186, 124, -1)
+  K.team(176, 120, -1, {"dark"}, {"red", true})
+  K.wade(184, 234, 125, 5)
+  K.wade(148, 178, 121, 5)
+  K.person(240, 124, "blue", "deep")
+  K.wade(238, 243, 125, 5)
+  K.wagon(330, 140, -1)
+  K.team(320, 138, -1, {"light"}, {"dark", true})
+  K.person(384, 146, "red", "bonnet", true)
+  K.person(394, 147, "teal", "roof")
 end)
 
 K.save("location_big_blue")

@@ -1,134 +1,119 @@
--- Windlass Hill & Ash Hollow (432x150).
--- Historical reference: Joel Palmer's 1845 journal & WESTERN_REFERENCES.md.
--- Steep eroded calcareous sandstone bluffs framing the canyon draw where wagons locked
--- their wheels to descend into the green ash & cedar bottomland near the North Platte.
+-- Ash Hollow (432x150).
+-- After the dry tableland between the forks of the Platte, the road drops down the very steep
+-- slope later called Windlass Hill, where wagons were let down with locked wheels and ropes,
+-- into a shady hollow of ash trees, wild roses and a good spring, opening onto the North Platte.
 local K = dofile(app.params.kit)
 local W, H = 432, 150
-local tau = math.pi * 2.0
 
-K.canvas(W, H, 184808)
+K.canvas(W, H, 184824)
 
------------------------------------------------------------------ 1. Sky & Distant North Platte Valley
-K.layer("sky_and_valley", function()
-  K.rect(0, 0, W, 16, "blue")
-  K.blend(0, 16, W, "blue", "sky_top")
-  K.rect(0, 19, W, 18, "sky_top")
-  K.blend(0, 37, W, "sky_top", "sky")
-  K.rect(0, 40, W, 16, "sky")
-  K.blend(0, 56, W, "sky", "light_blue")
-  K.rect(0, 59, W, 14, "light_blue")
-  K.blend(0, 73, W, "light_blue", "mist")
-  K.rect(0, 76, W, 8, "mist")
+local function hill(x)
+  -- Windlass Hill: high on the left, a steep face falling to the hollow floor
+  local t = math.max(0, math.min(1, (x - 40) / 170))
+  return 100 - 60 * (1 - t) ^ 1.6 + 6 * math.sin(x / 13) * (1 - t)
+end
 
-  K.cloud(48, 16, 1.3)
-  K.cloud(294, 14, 1.4)
-
-  -- Distant North Platte valley floor seen through the canyon mouth
-  for x = 0, W - 1 do
-    local hy = 68 + math.floor(3 * math.sin(tau * x / 432.0 + 0.5))
-    for y = hy, 96 do
-      K.px(x, y, (y == hy) and "mist" or ((y < hy + 6) and "far_hill" or "sage"))
-    end
-  end
-  -- Glint of the North Platte River spanning the distant valley behind the canyon walls
-  K.rect(0, 78, W, 1, "sand")
-  K.rect(0, 79, W, 5, "sky")
-  K.rect(0, 79, W, 1, "sky_top")
-  for x = 16, W - 16, 18 do
-    K.rect(x, 81 + (x % 2), 5, 1, "light_blue")
-  end
-  K.rect(0, 84, W, 1, "sand")
+K.layer("sky", function()
+  K.sky(W, 74, {{170, 12, 0.8}, {360, 22, 0.6}}, "mist")
 end)
 
------------------------------------------------------------------ 2. Canyon Bluffs & Lush Ash Hollow Bottomland
-K.layer("bluffs_and_hollow", function()
-  -- Lush green Ash Hollow floor watered by fresh springs (center-bottom)
-  K.poly({{96, 94}, {336, 94}, {360, 150}, {72, 150}}, "sage")
-  K.poly({{124, 106}, {308, 102}, {342, 150}, {96, 150}}, "grass")
-  K.dither(110, 102, 210, 6, "sage", "grass")
+K.layer("platte valley", function()
+  -- the North Platte valley seen through the mouth of the hollow
+  K.ridge(0, W - 1, 0, 96, function(x) return -(72 + 2 * math.sin(x / 41)) end, "far_hill", "mist", "haze")
+  K.rect(0, 84, W, 18, "sage")
+  K.dither(0, 84, W, 2, "sage", "far_hill")
+  K.rect(0, 88, W, 2, "light_blue"); K.rect(0, 89, W, 1, "sky_top")
+  for x = 0, W - 1, 7 do K.px(x + K.rnd(4), 87, "grass") end
+end)
 
-  -- Clear spring branch curving from the base of the right bluff down through the hollow
-  K.poly({{304, 104}, {310, 104}, {244, 124}, {228, 150}, {210, 150}, {232, 122}}, "sky_top")
-  K.poly({{305, 104}, {309, 104}, {242, 124}, {224, 150}, {214, 150}, {235, 122}}, "sky")
-  for y = 108, 148, 4 do
-    local sx = (y < 124) and (304 - math.floor((y - 104) * 3.2)) or (236 - math.floor((y - 124) * 0.7))
-    K.rect(sx, y, 3, 1, "white")
-  end
-
-  -- Left calcareous sandstone bluff (sunlit upper-left rim & stepped erosion gullies)
-  for y = 44, 149 do
-    local t = (y - 44) / 105.0
-    local rx = math.floor(88 + t * 94 + 6 * math.sin(y * 0.14) + 3 * math.cos(y * 0.35))
-    for x = 0, rx do
-      local c = "sand"
-      if x >= rx - 3 then
-        c = "cream"
-      elseif y % 7 == 0 then
-        c = "cream"
-      elseif y % 7 == 4 then
-        c = "ochre"
-      elseif (x + y * 2) % 13 == 0 then
-        c = "ochre"
-      end
-      if x < math.floor(rx * 0.35) and y % 5 == 0 then c = "ochre" end
-      K.px(x, y, c)
+K.layer("bluffs", function()
+  -- chalky bluffs closing the east side of the hollow, cedars in the draws
+  local bluff = function(x) return 28 * math.min(1, math.max(0, (x - 280) / 50)) + 6 * math.sin(x / 11) + 4 * math.sin(x / 5) end
+  K.ridge(270, W - 1, 100, 110, bluff, "clap_sh", "cream", "ochre")
+  for x = 270, W - 1 do
+    local top = math.floor(100 - bluff(x) + 0.5)
+    for y = top + 2, 108 do
+      if (y - top) % 6 == 0 then K.px(x, y, "sand") elseif (y - top) % 6 == 1 and K.rnd(3) == 0 then K.px(x, y, "ochre") end
     end
   end
-
-  -- Right canyon bluff in deeper warm afternoon shade
-  for y = 46, 149 do
-    local t = (y - 46) / 103.0
-    local lx = math.floor(342 - t * 102 + 6 * math.cos(y * 0.15) + 3 * math.sin(y * 0.31))
-    for x = lx, W - 1 do
-      local c = "ochre"
-      if x <= lx + 3 then
-        c = "sand"
-      elseif y % 7 == 0 then
-        c = "sand"
-      elseif y % 7 == 3 then
-        c = "rust"
-      elseif (x - y * 2) % 11 == 0 then
-        c = "rust"
-      end
-      if x > lx + math.floor((W - lx) * 0.55) and y % 4 == 0 then c = "rust" end
-      K.px(x, y, c)
-    end
+  for _, c in ipairs({{300, 92, 8}, {322, 84, 10}, {360, 80, 9}, {398, 86, 8}, {414, 78, 10}, {344, 96, 7}}) do
+    K.conifer(c[1], c[2], c[3], "pine", "teal", "leaf")
   end
 end)
 
------------------------------------------------------------------ 3. Steep Descent Trace, Ash Trees & Wagon
-K.layer("trace_and_trees", function()
-  -- Steep Windlass Hill wagon trace cutting down the left bluff into the hollow
-  K.poly({{34, 62}, {52, 60}, {198, 144}, {168, 150}}, "ochre")
-  K.poly({{38, 62}, {48, 60}, {190, 144}, {174, 150}}, "gold")
-  -- Deep locked-wheel ruts & brake-shoe scars in the steep limestone sand
-  K.line(38, 62, 174, 146, "wood")
-  K.line(39, 62, 175, 146, "deep")
-  K.line(46, 61, 188, 144, "wood")
-  K.line(47, 61, 189, 144, "deep")
-  K.line(37, 62, 173, 146, "cream")
+K.layer("hollow", function()
+  -- floor of the hollow: grass, roses and the spring branch running out to the Platte
+  K.rect(0, 100, W, H - 100, "grass")
+  for i = 1, 1100 do
+    local x, y = K.rnd(W), 100 + K.rnd(H - 100)
+    K.px(x, y, ({"leaf", "sage", "gold", "grass", "red"})[i % 5 + 1])
+  end
+  local creek = K.smooth({{230, 142, 2}, {250, 128, 2}, {236, 116, 2}, {262, 104, 1}, {286, 96, 1}})
+  K.river(creek, "leaf")
+  K.ellipse(226, 144, 9, 3, "leaf"); K.ellipse(226, 144, 7, 2, "sky_top"); K.px(224, 143, "white")
+  -- road from the hill foot across the hollow toward the river
+  local road = K.smooth({{196, 118, 3}, {230, 112, 3}, {270, 104, 2}, {300, 98, 1}})
+  K.ribbon(road, "ochre", 1); K.ribbon(road, "sand", 0)
+end)
 
-  -- Green ash & cedar trees thriving in the sheltered hollow bottom
-  K.elm(272, 132, 1)
-  K.elm(298, 120, 1)
-  K.conifer(134, 108, 18, "ink", "pine", "leaf")
-  K.conifer(322, 114, 20, "ink", "pine", "leaf")
-
-  -- Texture pebbles & bunchgrass on the canyon floor and slopes
-  for i = 1, 650 do
-    local x = K.rnd(W)
-    local y = 70 + K.rnd(80)
-    local cur = K.at(x, y)
-    if cur == "grass" or cur == "sage" then
-      K.px(x, y, (i % 3 == 0) and "leaf" or "gold")
-    elseif cur == "sand" or cur == "ochre" then
-      K.px(x, y, (i % 3 == 0) and "cream" or "rust")
+K.layer("windlass hill", function()
+  -- the hill's foot sweeps from the hollow floor round toward the viewer
+  local foot = function(x) return (x < 120) and H - 1 or 101 + 49 * ((230 - x) / 110) ^ 1.6 end
+  for x = 0, 230 do
+    local top = math.floor(hill(x) + 0.5)
+    for y = top, math.floor(foot(x)) do K.px(x, y, "ochre") end
+    K.px(x, top, "sand")
+    if hill(x + 1) - hill(x - 1) > 0.15 then K.px(x, top + 1, "sand") end
+    K.px(x, math.floor(foot(x)), "rust")
+  end
+  -- eroded grass slope: tufts and streaks running down the face
+  for i = 1, 900 do
+    local x = K.rnd(230)
+    local top = math.floor(hill(x) + 0.5)
+    local y = top + 2 + K.rnd(H - top)
+    if K.at(x, y) == "ochre" then K.px(x, y, ({"gold", "sage", "rust", "grass"})[i % 4 + 1]) end
+  end
+  for _, g in ipairs({{30, 6}, {74, -5}, {120, 7}, {168, -4}}) do
+    for y = math.floor(hill(g[1])) + 4, 150 do
+      local x = math.floor(g[1] + g[2] * math.sin(y / 14))
+      if K.at(x, y) then K.px(x, y, "rust"); K.px(x + 1, y, "wood") end
     end
   end
+  -- deep wheel ruts cut straight down the face
+  for k = 0, 1 do
+    local x0 = 60 + k * 6
+    for x = x0, 196 do
+      local y = math.floor(hill(x) + 3 + (x - x0) * 0.06 + 0.5)
+      K.px(x, y, "wood"); K.px(x, y + 1, "deep")
+    end
+  end
+  -- the ground near the viewer stays steep and grassy
+  K.ridge(0, 200, 0, H - 1, function(x) return -(126 + 12 * ((x / 120) ^ 2)) end, "grass", "sage", "leaf")
+end)
 
-  -- Emigrant wagon safely down at the foot of the bluff, with driver checking wheel locks
-  K.wagon(24, 143, 1)
-  K.person(82, 142, "blue", "wood", false)
+K.layer("trees", function()
+  -- the ash grove on the hollow floor, with wild rose thickets
+  for _, t in ipairs({{214, 126, 1}, {268, 118, 1}, {296, 112, 1}, {320, 122, 1}, {246, 140, 1}, {390, 146, 2}, {150, 148, 1}}) do
+    K.elm(t[1], t[2], t[3])
+  end
+  for _, r in ipairs({{230, 132}, {282, 124}, {300, 128}, {340, 132}, {204, 146}}) do
+    K.willow(r[1], r[2], 1); K.px(r[1] - 2, r[2] - 4, "red"); K.px(r[1] + 2, r[2] - 3, "red")
+  end
+end)
+
+K.layer("figures", function()
+  -- two wagons on the descent, small with distance, men holding them back with ropes
+  local function on_hill(x) return math.floor(hill(x) + 3.5) end
+  K.far_wagon(96, on_hill(96), 1)
+  K.line(96, on_hill(96) - 6, 80, on_hill(80) - 4, "cream")
+  K.rect(78, on_hill(78) - 6, 1, 4, "blue"); K.px(78, on_hill(78) - 7, "skin")
+  K.rect(74, on_hill(74) - 6, 1, 4, "red"); K.px(74, on_hill(74) - 7, "skin")
+  K.far_wagon(150, on_hill(150), 1)
+  -- in the hollow: a wagon pulled up in the shade, a woman at the spring
+  K.wagon(326, 142, -1)
+  K.team(316, 140, -1, {"red"}, {"light", true})
+  K.person(236, 146, "teal", "bonnet", true)
+  K.person(266, 144, "blue", "deep")
 end)
 
 K.save("location_ash_hollow")

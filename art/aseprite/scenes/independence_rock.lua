@@ -1,128 +1,115 @@
--- Independence Rock ("The Register of the Desert") on the Sweetwater (432x150).
--- Historical reference: Joel Palmer's 1845 journal & WESTERN_REFERENCES.md.
--- Massive rounded turtle-back granite exfoliation dome rising from the Sweetwater plain,
--- with exfoliation joints, carved/painted emigrant inscriptions, and the Sweetwater River in front.
+-- Independence Rock (432x150).
+-- A lone granite whaleback on the Sweetwater, about 130 feet high and a third of a mile long.
+-- Emigrants camped on the flats beside it, climbed it, and painted their names on it in axle
+-- grease and tar. The rock dwarfs the wagons corralled at its foot.
 local K = dofile(app.params.kit)
 local W, H = 432, 150
-local tau = math.pi * 2.0
+local BASE = 108
 
-K.canvas(W, H, 184813)
+K.canvas(W, H, 184822)
 
------------------------------------------------------------------ 1. Sky & Sweetwater Rocks Horizon
+local function body_h(x)
+  local d = (x - 214) / 168
+  return (math.abs(d) < 1) and 58 * (1 - d * d) ^ 0.55 or 0
+end
+
+local function rock_h(x)
+  -- long, low turtle-back: a flattened ellipse with lumpy granite domes
+  local d = (x - 214) / 168
+  if math.abs(d) >= 1 then return 0 end
+  local body = 58 * (1 - d * d) ^ 0.55
+  local lumps = 4 * math.max(0, math.sin(x / 17)) + 3 * math.max(0, math.sin(x / 7 + 1)) * (1 - math.abs(d))
+  return body + lumps
+end
+
 K.layer("sky", function()
-  K.rect(0, 0, W, 16, "blue")
-  K.blend(0, 16, W, "blue", "sky_top")
-  K.rect(0, 19, W, 18, "sky_top")
-  K.blend(0, 37, W, "sky_top", "sky")
-  K.rect(0, 40, W, 16, "sky")
-  K.blend(0, 56, W, "sky", "light_blue")
-  K.rect(0, 59, W, 12, "light_blue")
-  K.blend(0, 71, W, "light_blue", "mist")
-  K.rect(0, 74, W, 10, "mist")
+  K.sky(W, 78, {{24, 14, 0.6}, {340, 10, 0.9}}, "mist")
+end)
 
-  K.cloud(40, 16, 1.35)
-  K.cloud(304, 14, 1.4)
+K.layer("distance", function()
+  -- the Sweetwater valley: far blue ranges and low sage ridges
+  K.ridge(0, W - 1, 0, BASE, function(x) return -(70 + 6 * math.sin(x / 33 + 1) + 2 * math.sin(x / 9)) end, "far_hill", "mist", "haze")
+  K.ridge(0, W - 1, 0, BASE, function(x) return -(84 + 3 * math.sin(x / 21)) end, "sage", "clap_sh", "grass")
+end)
 
-  for x = 0, W - 1 do
-    local hy = 66 + math.floor(4 * math.sin(tau * x / 432.0 + 0.5) + 2 * math.cos(tau * x / 144.0))
-    for y = hy, 88 do
-      K.px(x, y, (y == hy) and "mist" or "far_hill")
-    end
+K.layer("flats", function()
+  K.rect(0, BASE - 4, W, H - BASE + 4, "clap_sh")
+  for i = 1, 1100 do
+    local x, y = K.rnd(W), BASE - 4 + K.rnd(H - BASE + 4)
+    K.px(x, y, ({"sand", "ochre", "sage", "clap_sh", "gold"})[i % 5 + 1])
+  end
+  -- the Sweetwater winding across the foreground, grassy along its banks
+  local course = K.smooth({{-6, 128, 3}, {60, 124, 4}, {140, 136, 5}, {230, 126, 5}, {330, 138, 6}, {440, 130, 6}})
+  K.ribbon(course, "grass", 6)
+  K.river(course, "sand")
+  -- road along the valley
+  local road = K.smooth({{-6, 120, 2}, {100, 117, 2}, {200, 119, 2}, {300, 117, 2}, {440, 121, 3}})
+  K.ribbon(road, "ochre", 1); K.ribbon(road, "sand", 0)
+  for i = 1, 70 do
+    local x, y = K.rnd(W), BASE + K.rnd(H - BASE)
+    local c = K.at(x, y)
+    if c ~= "blue" and c ~= "sky_top" and c ~= "grass" and c ~= "sand" and c ~= "ochre" and c ~= "light_blue" and c ~= "white" then K.sage(x, y) end
   end
 end)
 
------------------------------------------------------------------ 2. Sweetwater Plain & Independence Rock Granite Dome
-K.layer("granite_dome", function()
-  -- Sagebrush & alkali plain behind the Sweetwater River
-  K.rect(0, 88, W, 24, "sage")
-  K.dither(0, 106, W, 6, "sage", "grass")
-  K.rect(0, 112, W, 38, "grass")
-
-  -- Massive rounded granite exfoliation dome (x = 72..362, y = 44..116)
-  local cx, cy, rx, ry = 217, 108, 146, 62
-  for y = 46, 114 do
-    local dy = (y - cy) / ry
-    local span = math.sqrt(math.max(0.0, 1.0 - dy * dy))
-    -- Slightly asymmetric turtle-back profile with a broad saddle dip in the middle-right
-    local x0 = cx - math.floor(rx * span)
-    local x1 = cx + math.floor(rx * span)
-    for x = x0, x1 do
-      local dx = (x - cx) / rx
-      local saddle = math.floor(4 * math.exp(-((dx - 0.15) * 4.5) ^ 2))
-      if y >= 46 + saddle then
-        -- Smooth upper-left sunlight across the rounded granite dome
-        -- Luminance order (light -> dark): cream -> sand -> clap_sh -> ox_lt -> wood -> roof_lt -> deep
-        local light = -dx * 0.58 - dy * 0.48
-        local dither = ((x + y) % 2 == 0) and 0.04 or -0.04
-        local v = light + dither
-        local c
-        if v > 0.34 then
-          c = "cream"
-        elseif v > 0.14 then
-          c = "sand"
-        elseif v > -0.10 then
-          c = "clap_sh"
-        elseif v > -0.28 then
-          c = "ox_lt"
-        else
-          c = "roof_lt"
-        end
-        -- Subtle granite grain speckles
-        if (x * 7 + y * 13) % 29 == 0 then
-          c = (v > 0) and "sand" or "wood"
-        end
+K.layer("rock", function()
+  K.ridge(40, 390, BASE, BASE, rock_h, "stone_dk", "stone_lt", "stone_ink")
+  -- broad modelling: light falls from the upper left across the whole dome
+  for x = 40, 390 do
+    local h = rock_h(x)
+    if h > 0 then
+      local top = math.floor(BASE - h + 0.5)
+      local u = (x - 214) / 168
+      for y = top + 1, BASE do
+        local v = (BASE - y) / h
+        local lit = -0.75 * u + 0.9 * v - 0.25 + 0.08 * math.sin(x / 9 + y / 7)
+        if (x + y) % 2 == 0 then lit = lit + 0.05 end
+        local c = (lit > 0.62) and "stone_lt" or ((lit > 0.15) and "stone" or ((lit > -0.25) and "stone_dk" or "stone_ink"))
         K.px(x, y, c)
       end
     end
   end
-
-  -- Prominent weathered granite crevices & drainage seams down the dome face
-  for _, seam in ipairs({{124, 62, 136, 112}, {178, 52, 188, 113}, {234, 54, 246, 113}, {288, 60, 302, 112}}) do
-    K.line(seam[1], seam[2], seam[3], seam[4], "wood")
-    K.line(seam[1] + 1, seam[2], seam[3] + 1, seam[4], "deep")
-    K.line(seam[1] - 1, seam[2] + 2, seam[3] - 1, seam[4], "sand")
+  -- exfoliating granite sheets: curved cracks following the dome
+  for _, k in ipairs({{70, 0.35}, {110, 0.5}, {160, 0.3}, {200, 0.55}, {250, 0.4}, {300, 0.5}, {350, 0.35}}) do
+    for dx = -14, 14 do
+      local x = k[1] + dx
+      local h = rock_h(x)
+      if h > 0 then K.px(x, math.floor(BASE - h * (1 - k[2]) + math.abs(dx) * 0.25), "stone_ink") end
+    end
   end
-
-  -- Tiny suggestion of tar/red-paint emigrant names registered near the base of the rock
-  for _, nx in ipairs({146, 158, 198, 212, 256}) do
-    K.rect(nx, 104 + (nx % 3), 4, 1, (nx % 2 == 0) and "rust" or "deep")
-    K.rect(nx + 1, 106 + (nx % 3), 3, 1, "cream")
+  -- lichen and weathering
+  for i = 1, 300 do
+    local x, y = 40 + K.rnd(350), 48 + K.rnd(60)
+    local c = K.at(x, y)
+    if c == "stone" or c == "stone_dk" then K.px(x, y, ({"ochre", "rust", "sage", "stone_ink"})[i % 4 + 1]) end
   end
-
-  -- Granite boulders & talus at the base of the dome
-  for _, bx in ipairs({88, 142, 206, 268, 336}) do
-    K.boulder(bx, 113 + (bx % 2), 5, 2)
+  -- names daubed in axle grease along the base, where people could reach
+  for i = 1, 26 do
+    local x, y = 70 + K.rnd(290), BASE - 4 - K.rnd(8)
+    if K.at(x, y) == "stone_dk" or K.at(x, y) == "stone" then
+      K.rect(x, y, 2 + K.rnd(4), 1, "ink"); K.px(x + K.rnd(3), y - 1, "ink")
+    end
+  end
+  -- boulders and grass at the foot
+  for x = 40, 390, 3 do
+    if rock_h(x) > 0 then K.px(x, BASE + 1, "grass"); if K.rnd(3) == 0 then K.px(x, BASE, "sage") end end
   end
 end)
 
------------------------------------------------------------------ 3. Sweetwater River, Trail & Wagon
-K.layer("sweetwater_and_wagon", function()
-  -- Wagon trail curving past the base of Independence Rock
-  K.poly({{184, 114}, {210, 114}, {304, 150}, {236, 150}}, "ochre")
-  K.poly({{190, 114}, {204, 114}, {288, 150}, {248, 150}}, "gold")
-
-  -- Sweetwater River channel winding across the foreground (y = 128..141)
-  K.rect(0, 128, W, 1, "sand")
-  K.rect(0, 129, W, 12, "sky_top")
-  K.rect(0, 131, W, 8, "sky")
-  for x = 8, W - 8, 16 do
-    K.rect(x, 132 + (x % 5), 5, 1, (x % 3 == 0) and "white" or "light_blue")
+K.layer("figures", function()
+  -- climbers on the crown, a few pixels against 130 feet of granite
+  for _, p in ipairs({{196, "red"}, {204, "blue"}, {236, "cream"}}) do
+    local top = math.floor(BASE - rock_h(p[1]) + 0.5)
+    K.rect(p[1], top - 3, 1, 2, p[2]); K.px(p[1], top - 4, "skin")
   end
-  K.rect(0, 141, W, 1, "sand")
-
-  for i = 1, 550 do
-    local x = K.rnd(W)
-    local y = 90 + K.rnd(60)
-    local cur = K.at(x, y)
-    if cur == "grass" or cur == "sage" then
-      K.px(x, y, (i % 3 == 0) and "leaf" or ((i % 2 == 0) and "sage" or "gold"))
-    end
-  end
-
-  -- Emigrant wagon & figures examining the inscriptions at the rock's base
-  K.person(164, 115, "rust", "sand", false)
-  K.person(172, 116, "blue", "bonnet", true)
-  K.wagon(24, 143, 1)
+  -- wagons corralled on the flat at the rock's west end
+  for i, w in ipairs({{60, 116, 1}, {84, 117, 1}, {108, 117, -1}, {130, 116, -1}, {96, 112, 1}}) do K.far_wagon(w[1], w[2], w[3]) end
+  -- smoke from the cook fire
+  K.px(100, 106, "stone_lt"); K.px(101, 104, "mist"); K.px(100, 102, "mist")
+  -- near the viewer, a man with a tar bucket and a woman headed for the rock
+  K.person(318, 149, "blue", "deep")
+  K.rect(323, 144, 3, 4, "ink"); K.px(323, 143, "wood")
+  K.person(306, 148, "red", "bonnet", true)
 end)
 
 K.save("location_independence_rock")
