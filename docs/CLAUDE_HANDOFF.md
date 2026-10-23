@@ -19,6 +19,7 @@ Last updated October 23, 2026, after merged PR #34 (UI readability). Sections be
 - Fixed stale meal orders after a diner dies/leaves; Hardy/fatal-shot and Frail/lethal-wound history mismatches; body/human-food weight missing from pack previews; and several study-policy stalls/timeout classifications. Save-rule fingerprint then: `376c2029…e635` (see PR #33 section for the current one).
 - The final test policy preserves **four working oxen** before elective slaughter (`slaughter_team_floor=4`). Earlier bots ate working teams down to one, falsely exaggerating four-ox difficulty. This is a policy correction, not a player restriction: the player can still slaughter working animals in emergencies. Keep the three working-team regression cases.
 
+- Crime follow-ups are finished: passing traders now refuse a party that news has named, and travelers at stops repeat that news (trader-news PR). Every crime phase and follow-up is merged. Next is new mechanics (a parallel thread), then the balance pass.
 - PR #31: shooting a companion now opens a notice right away ("YOU SHOT AT <NAME>") with the result, who joined, fought back, objected, fled (with what they took) or stood by. Trust lines stay in the journal (`ui/main.gd` `_show_attack_result`).
 
 ## Aseprite art (published)

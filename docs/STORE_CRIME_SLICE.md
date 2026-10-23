@@ -117,7 +117,7 @@ The small trading parties already met on the road (the `passing:<region>:<window
 - Robbed or alarmed traders refuse to trade, and other trading parties are unaffected. Reports from traders travel from the mile where they were met, and posts hear that "your party robbed a trading party on the road through the Platte grasslands".
 - Validation accepts a trader service only if an incident targeted it, and its mile cannot lie beyond the party's own.
 
-Traders do not yet carry news of other crimes; that belongs to the pursuit and news phase.
+**News reaches traders too.** A passing trading party hears news with the same delays as a post, measured from where the party meets it. Once word naming the party has arrived, they refuse every trade ("The traders will not deal with you"). Traders the party robbed refuse outright. Travelers camped at any stop repeat what has reached that stop when the party talks with them.
 
 ## Emigrant camps
 
@@ -128,7 +128,7 @@ Other emigrant families now camp near the road. `passing_emigrants` is a second 
 - The crime action aims at the stop's venue first, then traders on the road, then a nearby camp.
 - Reports and news work as for traders: "your party shot at an emigrant family on the road through the …".
 
-So far a camp exists only as a crime target. Meeting one peacefully (trading, swapping news, helping) is not built yet.
+Camps can also be visited peacefully; see the section on visiting an emigrant camp below.
 
 ## Companion bonds and attacks (record version 4)
 
@@ -215,7 +215,7 @@ Every death the party could reach goes into a remains ledger in the crime record
 
 **Saves.** Only the dead have remains, one entry each, never ahead of the party. A companion's entry must match their death record. Carried bodies must match the cargo weight (`remains_lb`). A remembered desecration must match a grave marked as opened. Deaths with no entry, which only happens in records from before the ledger, join it as lost when the save is restored. An open list of the dead is rebuilt from the ledger.
 
-Not yet: a gravestone in the memorial book for a grave dug on the trail.
+A grave dug on the trail can be marked with a stone in the memorial book (`docs/SAVES_AND_GRAVESTONES.md`).
 
 ## Butchering and human meat (record version 6)
 
@@ -284,7 +284,7 @@ This is integration evidence, not balance evidence.
 
 ## Other limits
 
-Personal existing health specials still affect any actual injury damage. Paid trade, paid care and the hired ferry respond to incidents and news; other services are not yet governed by a general hostility/access system.
+Personal existing health specials still affect any actual injury damage. Paid trade at posts and with passing traders, paid care, the hired ferry and emigrant camp visits all respond to incidents and news. Unstaffed activities (grazing, repairing crossing gear) need nobody's help and are unaffected.
 
 Reproduce using project-local APPDATA as in `test.ps1`: run `tests/test_crime.gd` for targeted checks or `tests/store_crime_journeys.gd` for the 24-route sample. Both use the actual engine. Keep previous balance reports archived.
 

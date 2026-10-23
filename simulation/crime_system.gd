@@ -210,6 +210,8 @@ func consume_trade(choice: Dictionary) -> void:
 func can_trade(game,choice: Dictionary) -> bool:
 	var key: String=choice.get("market_key","")
 	if key.begins_with("post:") and refuses(game,key.get_slice("|",0).trim_prefix("post:")):return false
+	# Passing traders hear the same news as the posts and refuse a party named in it.
+	if key.begins_with("passing:") and refuses(game,key.get_slice("|",0)):return false
 	# A camp the party wronged, or one that has heard of it, will not deal with it.
 	if key.begins_with("emigrants:"):
 		var camp_id: String=key.get_slice("|",0)

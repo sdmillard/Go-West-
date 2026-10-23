@@ -218,6 +218,8 @@ func _choose_landmark(index: int) -> bool:
 		return open_trade()
 	if choice.action == "notes":
 		pending.text = route.nodes[state.landmark].text + "\n\n" + choice.get("text",route.nodes[state.landmark].get("advice",""))
+		# Word of the party travels with everyone on the road; travelers camped here repeat what has reached them.
+		if crime.refuses(self,str(state.landmark)):pending.text+="\n\nTalk around the fires: "+crime.news_text(self,str(state.landmark))
 		return true
 	if choice.action == "activity":
 		context.record.activities.append(choice.activity)
@@ -659,6 +661,8 @@ func open_trade() -> bool:
 	var offer: Dictionary=context.market(self)
 	if offer.post and crime.closed(str(state.landmark)):return _service_menu("The store is closed","After the incident, the remaining staff will not trade with your party.",[])
 	if offer.post and crime.refuses(self,str(state.landmark)):return _service_menu("The post will not trade",crime.news_text(self,str(state.landmark)),[])
+	if offer.available and not offer.post and crime.closed(str(offer.key)):return _service_menu("The traders will not deal with you","These are the traders your party robbed. They keep their rifles close and will not trade.",[])
+	if offer.available and not offer.post and crime.refuses(self,str(offer.key)):return _service_menu("The traders will not deal with you",crime.news_text(self,str(offer.key)),[])
 	if not offer.available:
 		return _service_menu("No traders nearby","No trading party is available today. Waiting costs a day and meals; another trader may not arrive immediately.",[{"label":"Wait and watch for traders · 1 day","effects":{"days":1},"result":"Waited for passing traders. Check again or continue along the road."}])
 	var at_post: bool=_at_post()
