@@ -34,6 +34,7 @@ func _initialize() -> void:
 	check(load("res://art/pixels/hunt_hunter.png").get_size() == Vector2(128, 36), "Hunter sheet holds standing and walking rows of 16 x 18 frames")
 	check(load("res://art/pixels/hunt_smoke.png").get_size() == Vector2(128, 16), "Rifle smoke holds eight 16 x 16 frames")
 	check(load("res://art/pixels/gravestone_frame.png").get_size() == Vector2(432, 150), "Headstone fills the memorial view")
+	check(load("res://art/pixels/trail_map.png").get_size() == Vector2(616, 288), "Trail map fills the map screen")
 	# Weather and event overlays keep the frame layouts ui/trail_view.gd slices them by.
 	for sheet in [["storm_clouds", 432, 56], ["weather_bolt", 96, 96], ["dust_devil", 64, 40], ["trail_dust", 48, 12], ["stampede_ox", 104, 16], ["flotsam", 48, 12], ["rain_clouds", 432, 56], ["rain_splash", 32, 4], ["fog_bank", 432, 40], ["snow_squall", 432, 150]]:
 		check(load("res://art/pixels/%s.png" % sheet[0]).get_size() == Vector2(sheet[1], sheet[2]), "Overlay sheet keeps its layout: " + sheet[0])

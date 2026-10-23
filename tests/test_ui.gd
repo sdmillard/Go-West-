@@ -165,6 +165,7 @@ func run() -> void:
 	var short_rect := Rect2(screen.record_notice.position, screen.record_notice.size)
 	check(Rect2(0, 0, 640, 360).encloses(short_rect), "A notice opens centered on screen")
 	screen.record_notice.hide()
+	await check_map()
 	print("UI: %d failures" % failures)
 	screen.queue_free()
 	await process_frame
@@ -177,3 +178,32 @@ func capture(name: String) -> void:
 		await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png("res://docs/" + name + ".png")
 
+
+## The trail map: every stop placed inside the picture, waypoints only on real roads,
+## the red line following the roads taken, and the wagon partway along the current road.
+func check_map() -> void:
+	var map = screen.map_view
+	var route = preload("res://simulation/route_catalog.gd").new()
+	var picture := Rect2(Vector2.ZERO, map.MAP_ART.get_size())
+	check(picture.size == Vector2(map.data.projection.width, map.data.projection.height), "Map picture matches the map projection")
+	for id in route.nodes:
+		check(map.stops.has(id) and picture.has_point(map.stops[id]), "Every route stop sits on the map: " + id)
+	for key in map.data.waypoints:
+		var ends: PackedStringArray = key.split(">")
+		check(route.nodes.has(ends[0]) and not route.edge_between(ends[0], ends[1]).is_empty(), "Map waypoints follow a real road: " + key)
+	check(map.stops.independence.x > map.stops.fort_hall.x and map.stops.fort_hall.x > map.stops.oregon_city.x, "West is to the left")
+	check(map.stops.barlow_pass.y > map.stops.the_dalles.y and map.stops.fort_walla_walla.y < map.stops.umatilla.y, "Barlow Road runs south of the Columbia; Fort Walla Walla lies north of the Umatilla")
+	var game = screen.game
+	game.route_path = route.main_path_to("little_sandy") + ["greenwood_cutoff"]
+	game.state.merge({"landmark": "greenwood_cutoff", "next_landmark": "soda_springs", "leg_length": 124, "leg_miles": 62}, true)
+	screen._show_map()
+	check(map.visible and not screen.traveling, "Map opens over the trail and stops the wagon")
+	var j: Dictionary = map.journey()
+	check(j.on_road and "greenwood_cutoff" in j.path and not "fort_bridger" in j.path, "The journey follows the branch taken")
+	var road: PackedVector2Array = map.road("greenwood_cutoff", "soda_springs")
+	check(j.here != road[0] and j.here != road[-1], "The wagon stands partway along the current road")
+	check(map.status.text.contains("62 OF 124 MILES"), "Map footer says where the party is")
+	check(map._get_tooltip(map.ORIGIN + map.stops.greenwood_cutoff).contains("Green River"), "Hovering a stop names it")
+	await process_frame
+	map.close_button.pressed.emit()
+	check(not map.visible, "Back to the trail closes the map")
