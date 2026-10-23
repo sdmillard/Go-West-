@@ -1,6 +1,6 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 23, 2026, after companion appearance, recruitment and dismissal (see final checkpoints). Sections below cover PRs #19 to #34. **Continue the existing project; do not restart it. Spencer requested a break. This is a saved checkpoint, not a request to continue working now.**
+Last updated October 23, 2026, after the action ribbon, contextual place choices, local targets and unified window exits (see final checkpoint). Sections below cover PRs #19 to #34. **Continue the existing project; do not restart it. Spencer requested a break. This is a saved checkpoint, not a request to continue working now.**
 
 ## Resume here
 
@@ -244,3 +244,6 @@ Villainy is the user-chosen label. Companion attacks moved out of Party into Vil
 Latest steering supersedes the initial ribbon layout above: place-only actions now appear below the picture in the existing place/story area, not persistent ribbon entries. Store/trader, emigrant camp, local activities and recruitment buttons appear contextually; recruitment includes emigrant camps. The rail has nine entries; Party attacks moved to Villainy > Attack someone > Party member. Someone here lists all living local staff, traders and camp actors actually present. Stable fictional names derive from seed+uid without consuming crime RNG. Open local attacks carry validated crime_place/crime_target; incident.target now permits a real staff actor for shoot/assault. Supporting-worker kills produce their own remains and force escape, without granting keeper stock/passage. No historical NPC identity claims.
 
 Window exits now use a small shared font-glyph X with14px hit area and Escape, including map. Redundant close-only OK/Back footers hidden; explicit committing buttons remain. Parent links inside trees navigate upward without committing. Normalization applies to dynamically created dialogs as well. Tests exercise an actual embedded X click. Current dedicated suites:53ribbon checks and29local-target/place checks; final full validation follows.
+
+
+Final ribbon/local-target/exit validation: feature commit **e0779d4** passed all **42 Godot suites** in a clean isolated checkout, including53ribbon,29local-target/place,46recruitment and119companion checks. The same checkout completed **24store and20outlaw full-route journeys with0reported errors**. Native800x360 setup, trail, contextual stop options, each tree, actual local staff, toll collector, preferences and map were inspected. Reports stay in ignored `.tools` validation storage; tracked older balance reports, three debug pilots and player saves remain untouched. The new local-target rule is covered directly (supporting worker death, keeper preserved, no free stock, witness/remains/escape and save validation); the journey bots still use their existing owner-target policy. This is integration evidence, not a new survival-balance campaign. Restart a running game instance to load the new code.

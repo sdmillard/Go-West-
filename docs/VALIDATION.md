@@ -260,3 +260,10 @@ Store suite: 1,021 passing checks; native menu captured and inspected. Dedicated
 
 Final checkpoint: all suites in the canonical Projects test.ps1 passed after all store refinements; exit0. Twenty-one changed files hash-verified during sync. Handoff completed with the last usage reading at2% remaining.
 
+
+
+## Expanded ribbon, place choices, local targets and exits — October23
+
+Feature commit `e0779d4` passed all42Godot suites from an isolated clean checkout. Dedicated coverage:53ribbon/preferences/exit checks,29local-target/place checks,46recruitment checks and119companion checks. UI tests use actual section buttons and an actual embedded title-bar X click. Save checks cover selected local staff/transient targets, dead staff and archived recruits.
+
+The same feature commit completed24store and20outlaw full-route journeys without reported errors. These existing policies do not recruit replacements or optimize social/foraging choices, and target venue owners rather than every supporting worker. They provide regression evidence; the dedicated suites cover the new actions directly. Older balance campaigns are not validation of the combined new mechanics. Generated reports stay in ignored local storage. Native800x360 setup, trail, contextual place buttons, villainy hierarchy/local staff/toll collector, preferences and map were inspected.
