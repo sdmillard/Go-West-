@@ -185,67 +185,80 @@ K.save("hunt_hunter")
 -- 6. GRAVESTONE_FRAME (432x150: Prairie memorial scene with carved limestone slab)
 --------------------------------------------------------------------------------
 K.canvas(432, 150, 184886)
-K.layer("gravestone", function()
-  -- Copy prairie background as base
-  local prairie = Image{ fromFile = "c:/Users/Spencer/Projects/Oregon Trail/art/pixels/prairie.png" }
-  local color_to_name = {}
-  for name, c in pairs(K.col) do color_to_name[c] = name end
-  if prairie then
-    for y = 0, 149 do
-      for x = 0, 431 do
-        local cname = color_to_name[prairie:getPixel(x, y)]
-        if cname then K.px(x, y, cname) end
-      end
+K.layer("prairie", function()
+  -- The trail prairie behind the stone, read from the installed picture.
+  local prairie = Image{ fromFile = app.fs.joinPath(app.fs.filePath(app.params.kit), "../pixels/prairie.png") }
+  local names = {}
+  for name, c in pairs(K.col) do names[c] = name end
+  for y = 0, 149 do
+    for x = 0, 431 do
+      local name = names[prairie:getPixel(x, y)]
+      if name then K.px(x, y, name) end
     end
   end
-
-  -- Carved Weathered Limestone Headstone (x = 116..316, y = 16..140)
-  -- Leaves interior tablet (x = 122..310, y = 30..134) clear in warm "sand" for
-  -- ui/grave_view.gd to draw the dynamic centered epitaph & divider line!
-  local sx, sy, sw, sh = 116, 16, 200, 124
-  -- Drop shadow behind stone
-  K.poly({
-    {sx + 4, sy + 14}, {sx + 18, sy + 2}, {sx + sw - 14, sy + 2},
-    {sx + sw + 4, sy + 14}, {sx + sw + 4, sy + sh}, {sx + 4, sy + sh}
-  }, "ink")
-  -- Chiseled limestone outer bevel
-  K.poly({
-    {sx, sy + 12}, {sx + 14, sy}, {sx + sw - 14, sy},
-    {sx + sw, sy + 12}, {sx + sw, sy + sh}, {sx, sy + sh}
-  }, "shadow")
-  K.poly({
-    {sx + 2, sy + 13}, {sx + 15, sy + 2}, {sx + sw - 16, sy + 2},
-    {sx + sw - 3, sy + 13}, {sx + sw - 3, sy + sh - 2}, {sx + 2, sy + sh - 2}
-  }, "clap_sh")
-  -- Smooth limestone face ("sand") where dynamic inscription text renders
-  K.rect(sx + 6, sy + 14, sw - 12, sh - 18, "sand")
-  -- Top-left sunlit highlight
-  K.line(sx, sy + 12, sx + 14, sy, "cream")
-  K.line(sx + 14, sy, sx + sw - 14, sy, "cream")
-  K.line(sx, sy + 12, sx, sy + sh - 1, "cream")
-
-  -- Incised inner tablet border
-  K.rect(sx + 8, sy + 15, sw - 16, 1, "shadow")
-  K.rect(sx + 8, sy + sh - 6, sw - 16, 1, "cream")
-  K.rect(sx + 8, sy + 15, 1, sh - 21, "shadow")
-  K.rect(sx + sw - 9, sy + 15, 1, sh - 21, "cream")
-
-  -- Carved willow/urn medallion in the arched crown (y = 22..28, above text at y = 38)
-  K.ellipse(sx + 100, sy + 9, 8, 3, "shadow")
-  K.ellipse(sx + 100, sy + 8, 6, 2, "sand")
-  K.px(sx + 100, sy + 8, "deep")
-
-  -- Subtle edge weathering cracks (kept outside the central text area)
-  K.line(sx + 9, sy + 42, sx + 16, sy + 45, "shadow")
-  K.line(sx + sw - 17, sy + 92, sx + sw - 10, sy + 96, "shadow")
-
-  -- Freshly turned earth mound & prairie wildflowers at base of stone (y = 138..146)
-  K.ellipse(sx + 100, sy + sh + 1, 114, 5, "wood")
-  K.ellipse(sx + 100, sy + sh, 106, 4, "ochre")
-  for _, gx in ipairs({102, 108, 114, 316, 322, 328}) do
-    K.line(gx, 144, gx - 2, 135, "pine")
-    K.line(gx + 2, 144, gx + 4, 136, "grass")
-    K.px(gx + 4, 135, "gold")
+end)
+K.layer("gravestone", function()
+  -- Round-topped limestone headstone, the common 1840s shape. ui/grave_view.gd centres
+  -- its inscription in x = 122..310 between y = 31 and 134, so that face stays plain.
+  local cx, shoulder, left, right, base = 216, 36, 116, 316, 134
+  local function arch(dx, inset)
+    local rx, ry = 100 - inset, 28 - inset
+    if math.abs(dx) > rx then return nil end
+    return shoulder - math.floor(ry * math.sqrt(1 - (dx * dx) / (rx * rx)) + 0.5)
+  end
+  -- cast shadow to the lower right
+  K.poly({{right, base + 6}, {right + 22, base + 6}, {right + 8, base - 2}}, "dirt_dk")
+  for x = left + 6, right + 6 do
+    local top = arch(x - cx - 6, 0)
+    if top then for y = top + 4, base do K.px(x, y, "stone_ink") end end
+  end
+  -- side thickness, in shade
+  for x = left + 2, right + 5 do
+    local top = arch(x - cx - 4, 0)
+    if top then for y = top + 1, base do K.px(x, y, "stone_dk") end end
+  end
+  -- face
+  for x = left, right do
+    local top = arch(x - cx, 0)
+    if top then
+      for y = top, base do K.px(x, y, "stone") end
+      K.px(x, top, "stone_lt"); K.px(x, top + 1, "stone_lt")
+    end
+  end
+  for y = shoulder, base do K.px(left, y, "stone_lt"); K.px(left + 1, y, "stone_lt") end
+  -- smooth polished field for the lettering, with an incised border
+  for x = left + 6, right - 6 do
+    local top = arch(x - cx, 6)
+    if top then
+      for y = top, base - 6 do K.px(x, y, "stone_lt") end
+      K.px(x, top, "stone_dk")
+    end
+  end
+  for y = shoulder - 6, base - 6 do K.px(left + 6, y, "stone_dk"); K.px(right - 6, y, "stone") end
+  K.rect(left + 6, base - 6, right - left - 11, 1, "stone")
+  -- willow-and-urn emblem in the crown
+  K.rect(cx - 3, 22, 7, 5, "stone_dk"); K.rect(cx - 2, 21, 5, 1, "stone_dk"); K.rect(cx - 1, 27, 3, 1, "stone_dk")
+  K.rect(cx - 2, 23, 5, 3, "stone"); K.px(cx - 2, 23, "stone_lt")
+  for i = 0, 4 do K.px(cx - 6 - i, 17 + i * 2, "stone_dk"); K.px(cx + 6 + i, 17 + i * 2, "stone_dk") end
+  K.line(cx - 5, 16, cx + 5, 16, "stone_dk")
+  -- weathering and lichen kept to the margins
+  for i = 1, 70 do
+    local x, y = left + 2 + K.rnd(right - left - 4), shoulder + K.rnd(base - shoulder)
+    if x < left + 6 or x > right - 6 then K.px(x, y, (i % 3 == 0) and "sage" or "stone_dk") end
+  end
+  K.line(right - 4, 60, right - 1, 66, "stone_ink")
+  -- plinth
+  K.rect(left - 10, base, right - left + 21, 7, "stone")
+  K.rect(left - 10, base, right - left + 21, 1, "stone_lt")
+  K.rect(right + 5, base, 6, 7, "stone_dk")
+  K.rect(left - 10, base + 6, right - left + 21, 1, "stone_ink")
+  -- turned earth and prairie flowers
+  K.ellipse(cx, 146, 120, 4, "wood")
+  K.ellipse(cx, 146, 112, 3, "rust")
+  for _, gx in ipairs({100, 107, 114, 318, 325, 333}) do
+    K.line(gx, 146, gx - 2, 137, "pine")
+    K.line(gx + 2, 146, gx + 4, 138, "grass")
+    K.px(gx + 4, 137, "gold"); K.px(gx - 2, 136, "white")
   end
 end)
 K.save("gravestone_frame")

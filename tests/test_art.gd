@@ -9,7 +9,7 @@ func check(condition: bool, message: String) -> void:
 		printerr("FAIL: " + message)
 
 func _initialize() -> void:
-	for name in ["prairie", "river", "wagon", "oxen", "elder", "corolla", "lightsaber", "location_independence", "location_town_setup", "location_store", "location_elm_grove", "location_wakarusa", "location_kansas_river", "location_big_blue", "location_platte", "location_camp", "travel_horizon", "travel_ground"]:
+	for name in ["prairie", "river", "wagon", "oxen", "elder", "corolla", "lightsaber", "location_independence", "location_town_setup", "location_store", "location_elm_grove", "location_wakarusa", "location_kansas_river", "location_big_blue", "location_platte", "location_camp", "travel_horizon", "travel_ground", "hunt_bison", "hunt_deer", "hunt_rabbit", "hunt_cover", "hunt_hunter", "gravestone_frame", "ledger_icons"]:
 		var texture: Texture2D = load("res://art/pixels/" + name + ".png")
 		check(texture != null, name + " texture imports")
 		var image := texture.get_image()
@@ -25,6 +25,13 @@ func _initialize() -> void:
 			var frame_width: int = 96 if name == "wagon" else 48
 			check(image.get_width() == frame_width * 4, name + " has four exact frames")
 			check(image.get_region(Rect2i(0, 0, frame_width, image.get_height())).get_data() != image.get_region(Rect2i(frame_width, 0, frame_width, image.get_height())).get_data(), name + " frames actually animate")
+	# Hunting sheets hold two frames exactly the size of each species' hitbox.
+	var species: Array = JSON.parse_string(FileAccess.get_file_as_string("res://data/hunting.json")).species
+	for index in range(3):
+		var sheet: Texture2D = load("res://art/pixels/hunt_" + ["bison", "deer", "rabbit"][index] + ".png")
+		check(sheet.get_size() == Vector2(species[index].width * 2, species[index].height), "Hunting sprite matches its hitbox: " + species[index].id)
+	check(load("res://art/pixels/hunt_cover.png").get_size() == Vector2(24, 14), "Cover sheet holds two 12 x 14 frames")
+	check(load("res://art/pixels/gravestone_frame.png").get_size() == Vector2(432, 150), "Headstone fills the memorial view")
 	var scenes = preload("res://ui/location_scenes.gd").new()
 	check(scenes.error.is_empty(), "Scene registry loads every image")
 	var route = preload("res://simulation/route_catalog.gd").new()

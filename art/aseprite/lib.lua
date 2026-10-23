@@ -14,6 +14,7 @@ K.HEX = {
   roof_dk="3a302c", roof="52423a", roof_lt="6a574a", dirt_dk="9a6a44", clap_sh="cfb98e",
   far_hill="9fbfae", shadow="8a5e3e", skin="e0a878", skin_dk="b77f58",
   red="9e3f33", ox_dk="5a3a2a", ox="7d5536", ox_lt="a77a4f", ox_white="e8dcc0",
+  stone_lt="dcd5bc", stone="bfb79c", stone_dk="908a72", stone_ink="66614f",
 }
 local col = {}
 for k, h in pairs(K.HEX) do

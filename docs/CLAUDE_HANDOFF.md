@@ -19,15 +19,10 @@ Last updated October 22, 2026, after merged PR #19. **Continue the existing proj
 - Fixed stale meal orders after a diner dies/leaves; Hardy/fatal-shot and Frail/lethal-wound history mismatches; body/human-food weight missing from pack previews; and several study-policy stalls/timeout classifications. Current save-rule fingerprint: `376c2029c6bbc9acc8338bb3a2d1f0a7eecfc1374cfd0c20fc07fd47d403e635`.
 - The final test policy preserves **four working oxen** before elective slaughter (`slaughter_team_floor=4`). Earlier bots ate working teams down to one, falsely exaggerating four-ox difficulty. This is a policy correction, not a player restriction: the player can still slaughter working animals in emergencies. Keep the three working-team regression cases.
 
-## Local work that is NOT on GitHub
+## Aseprite art (published)
 
-**Inspect `git status` before any cleanup, pull, branch change or publication. Do not discard or silently include the pending artwork.**
-
-- Modified `art/aseprite/lib.lua`, `art/aseprite/scenes/independence.lua`, and many `art/pixels/*.png`.
-- Untracked Aseprite scene Lua sources, seven new UI/hunting/memorial PNGs and their import metadata.
-- Local-only `docs/GUI_ART_HANDOFF.md` describes the 52 rebuilt scenes and seven new GUI sprites, with proposed wiring. It was read for this handoff; its implementation claims still need to be checked against the current UI before proceeding. Those assets and their wiring were intentionally excluded from PR #19.
-- Three untracked `docs/balance-pilot-debug-*-farmer.json` files are debug-only diagnostic copies. They are not required by the final reports and were not published. Preserve them locally unless cleanup is requested.
-- The canonical handoff also contains the local art progress section below. A fresh GitHub clone will not contain those uncommitted art assets or the GUI art handoff. Coordinate from the canonical local checkout rather than assuming they were lost.
+- The local Aseprite rebuild of all 52 scenes, the seven new sprites and `docs/GUI_ART_HANDOFF.md` were committed from the canonical checkout on branch `claude/aseprite-art-wiring`. The hunting sprites, headstone and ledger icons are wired into `ui/hunt_view.gd`, `ui/grave_view.gd` and `ui/main.gd`; the headstone was redrawn round-topped. The river-crossing and cabinet-chrome suggestions in that handoff are not implemented.
+- Three `docs/balance-pilot-debug-*-farmer.json` files remain local debug copies and are not published.
 
 ## Suggested order when Spencer resumes
 

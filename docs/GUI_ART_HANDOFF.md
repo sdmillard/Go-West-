@@ -1,5 +1,7 @@
 # GUI & Mini-Game Art Wiring Handoff
 
+> **Status:** sections 2 (hunting), 3 (memorial, with a redrawn round-topped headstone), the ledger icons in 5, and 6 (tests) are implemented. Section 4 (river crossing restyle) and the cabinet chrome in 5 are not.
+
 All **59 Aseprite pixel-art assets** (52 landmark/travel/encounter scenes + 7 new UI/hunting/memorial sprite sheets) are now built from `art/aseprite/scenes/*.lua` and installed in `art/pixels/`.
 
 This document gives any coding agent (Claude, Codex, etc.) exact, step-by-step instructions to wire the new GUI sprites and period cabinet/parchment styling into the Godot UI (`ui/hunt_view.gd`, `ui/grave_view.gd`, `ui/trail_view.gd`, `ui/main.gd`, and `tests/test_art.gd`) without breaking any existing simulation or UI tests.
