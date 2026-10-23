@@ -162,7 +162,9 @@ func passage(place: String) -> bool:
 	return record.incidents.any(func(current):return current.place==place and current.resolution in ["left","escaped"] and current.attempt in LOOTING and current.knowledge.values().any(func(facts):return "loot" in facts))
 ## A ferry the party took, or whose crew it attacked or has heard about it, will not carry the party.
 func ferry_refused(game,place: String) -> bool:
-	return scenes.has(place) and scenes[place].kind=="ferry" and (closed(place) or refuses(game,place) or passage(place))
+	if scenes.has(place):return scenes[place].kind=="ferry" and (closed(place) or refuses(game,place) or passage(place))
+	# A hired ferry with no crime scene of its own (Green River) cannot be robbed, but its crew hears the same news.
+	return game.route.nodes.has(place) and game.route.nodes[place].has("ferry_dollars") and refuses(game,place)
 func seized_risk(game,place: String) -> float:
 	return float(scenes[place].seized_risk_high if game.state.river_stage=="high" else scenes[place].seized_risk_low)
 ## Untargeted trading parties are read as fresh people and stock without entering the record.

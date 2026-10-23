@@ -284,7 +284,7 @@ This is integration evidence, not balance evidence.
 
 ## Other limits
 
-Personal existing health specials still affect any actual injury damage. Paid trade at posts and with passing traders, paid care, the hired ferry and emigrant camp visits all respond to incidents and news. Unstaffed activities (grazing, repairing crossing gear) need nobody's help and are unaffected.
+Personal existing health specials still affect any actual injury damage. Paid trade at posts and with passing traders, paid care, the hired ferry and emigrant camp visits all respond to incidents and news. The Green River ferrymen, who are not a robbable scene, still refuse a party once news naming it reaches them. Unstaffed activities (grazing, repairing crossing gear) need nobody's help and are unaffected.
 
 Reproduce using project-local APPDATA as in `test.ps1`: run `tests/test_crime.gd` for targeted checks or `tests/store_crime_journeys.gd` for the 24-route sample. Both use the actual engine. Keep previous balance reports archived.
 
