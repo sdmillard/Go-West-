@@ -4,7 +4,7 @@
 
 **Current food/load update:** see [Food and survival baseline](FOOD_AND_SURVIVAL.md) for the 800 lb suggested outfit, total cargo, variable hunting yields and fresh-meat spoilage. Earlier balance numbers below are archived observations.
 
-Open **Options → Hunt** between landmarks with ammunition available. Left-click to fire; right-click to walk to a point. Walk around cover to open a clear shooting lane. Walking stops at cover rather than automatically finding a path around it. Each outing spends one trail day and that day's rations immediately; the 30-second activity does not spend additional trail days.
+Open **Hunt & Forage → Hunt** between landmarks with ammunition available. Left-click to fire; right-click to walk to a point. Walk around cover to open a clear shooting lane. Walking stops at cover rather than automatically finding a path around it. Each outing spends one trail day and that day's rations immediately; the 30-second activity does not spend additional trail days.
 
 The independent `simulation/hunting.gd` model owns movement, cover collision, encounter generation and the activity clock. `simulation/trail_engine.gd` owns ammunition and food settlement. `ui/hunt_view.gd` draws original pixel animals, terrain cover and the hunter, and forwards mouse input. Animation and rendering use no random draws. Reloading lasts 1.4 seconds; rejected rapid clicks cost no ammunition. A valid shot spends one bullet whether it hits an animal, cover or empty ground. Gunfire makes surviving animals run faster; they leave the screen rather than wrapping around. Five shots, 30 seconds, exhausted ammunition or no remaining game end the activity; Return to Camp settles it once.
 

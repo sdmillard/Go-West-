@@ -4,7 +4,7 @@ October 23, 2026. New values are explicit gameplay estimates pending a combined 
 
 ## Foraging and scurvy
 
-Options > Forage for greens and berries opens a confirmation. Canceling costs nothing. Searching takes one ordinary camp day, consumes meals, and advances weather, wages, illness and all other daily rules. No ammunition is required. Yield uses seeded RNG, regional habitat, monthly growing conditions and active walkers' health; broken legs prevent contribution. Snow, winter, rafting and waterless legs prevent gathering. A search can fail to produce a usable quantity. Carrying room limits the result.
+Hunt & Forage > Forage for greens and berries opens a confirmation. Canceling costs nothing. Searching takes one ordinary camp day, consumes meals, and advances weather, wages, illness and all other daily rules. No ammunition is required. Yield uses seeded RNG, regional habitat, monthly growing conditions and active walkers' health; broken legs prevent contribution. Snow, winter, rafting and waterless legs prevent gathering. A search can fail to produce a usable quantity. Carrying room limits the result.
 
 Greens and berries supplement rather than replace bulk provisions: four physical pounds give one staple-equivalent food unit. They keep three days, cannot be processed with the meat-drying action, and retain their weight/type through saves, cargo packing and caches. The party shares meals; eating at least half a pound of tagged produce per living traveler counts as a vitamin-C day. This is a deliberately simple shared-party abstraction, not a milligram nutrition simulation or an identification guide.
 

@@ -25,6 +25,7 @@ var pace: OptionButton
 var rations: OptionButton
 var mode: OptionButton
 var seed_input: SpinBox
+var travel_settings_label: Label
 var travel_button: Button
 var rest_button: Button
 var guide: AcceptDialog
@@ -34,13 +35,20 @@ var party_button: Button
 var party_rows: VBoxContainer
 var member_details: RichTextLabel
 var selected_member := 0
-var attack_button: Button
 var wages_button: Button
 var stop_window: AcceptDialog
 var stop_rows: VBoxContainer
 var options_window: AcceptDialog
 var options_button: Button
-var hunt_button: Button
+var section_window: AcceptDialog
+var section_rows: VBoxContainer
+var ribbon_buttons: Dictionary={}
+var crime_category := ""
+const SECTION_PARENTS={"Attack someone":"Villainy","Party member":"Attack someone","Someone here":"Attack someone","Steal":"Villainy","Rob":"Villainy"}
+var window_scale: OptionButton
+var fullscreen: CheckBox
+var travel_speed: OptionButton
+var preferences_path := "user://preferences.cfg"
 var hunt_window: AcceptDialog
 var hunt_view: Control
 var hunt_report: Label
@@ -59,6 +67,7 @@ var post_store_window: AcceptDialog
 var post_store_view: Panel
 var service_rows: VBoxContainer
 var story_scroll: ScrollContainer
+var place_actions: HFlowContainer
 var story_column: VBoxContainer
 var departure_view: Panel
 var travel_timer: Timer
@@ -95,6 +104,8 @@ func _ready() -> void:
 	travel_timer.wait_time = 1.25
 	travel_timer.timeout.connect(_advance_day)
 	add_child(travel_timer)
+	_build_preferences()
+	_load_preferences()
 	landscape.crossing_finished.connect(_crossing_finished)
 	guide.visibility_changed.connect(_update_animation_pause)
 	map_view = MapView.new(game)
@@ -104,22 +115,24 @@ func _ready() -> void:
 	journal_window.visibility_changed.connect(_update_animation_pause)
 	party_window.visibility_changed.connect(_update_animation_pause)
 	options_window.visibility_changed.connect(_update_animation_pause)
+	section_window.visibility_changed.connect(_update_animation_pause)
 	service_window.visibility_changed.connect(_update_animation_pause)
 	get_tree().node_added.connect(_wrap_tooltip)
+	_normalize_dialog_tree(self)
 	grave_store.read_records()
 	_open_departure()
 	_refresh()
 
 func _draw() -> void:
-	draw_rect(Rect2(0, 0, 640, 360), Color("302b2c"))
+	draw_rect(Rect2(0, 0, 800, 360), Color("302b2c"))
 	# Narrow wood grain bands and brass corner pins, deliberately integer aligned.
 	for y in range(0, 360, 12):
-		draw_rect(Rect2(0, y, 640, 11), Color("45372f" if y % 24 == 0 else "4e3c31"))
-		for x in range(0, 640, 67):
+		draw_rect(Rect2(0, y, 800, 11), Color("45372f" if y % 24 == 0 else "4e3c31"))
+		for x in range(0, 800, 67):
 			draw_rect(Rect2(x + (y % 31), y+4, 22, 1), Color("594232"))
-	draw_rect(Rect2(3, 3, 634, 354), Color("a16b43"), false, 1)
-	draw_rect(Rect2(5, 5, 630, 350), Color("241f22"), false, 1)
-	for pos in [Vector2(3, 3), Vector2(634, 3), Vector2(3, 354), Vector2(634, 354)]:
+	draw_rect(Rect2(3, 3, 794, 354), Color("a16b43"), false, 1)
+	draw_rect(Rect2(5, 5, 790, 350), Color("241f22"), false, 1)
+	for pos in [Vector2(3, 3), Vector2(794, 3), Vector2(3, 354), Vector2(794, 354)]:
 		draw_rect(Rect2(pos, Vector2(3, 3)), Color("ddb461"))
 		draw_rect(Rect2(pos + Vector2.ONE, Vector2.ONE), Color("f6e7bc"))
 
@@ -177,6 +190,13 @@ func _build_theme() -> void:
 	skin.set_font("title_font", "Window", PIXEL_FONT)
 	skin.set_font_size("title_font_size", "Window", 8)
 	skin.set_constant("title_height", "Window", 15)
+	var close_image:=Image.create(14,14,false,Image.FORMAT_RGBA8)
+	close_image.blit_rect(PIXEL_FONT.get_texture_image(0,Vector2i(8,0),0),Rect2i(64,30,5,7),Vector2i(4,3))
+	var close_glyph:=ImageTexture.create_from_image(close_image)
+	skin.set_icon("close","Window",close_glyph)
+	skin.set_icon("close_pressed","Window",close_glyph)
+	skin.set_constant("close_h_offset","Window",18)
+	skin.set_constant("close_v_offset","Window",15)
 	skin.set_stylebox("background", "ProgressBar", style("302b2c", "76503c", 0))
 	skin.set_stylebox("fill", "ProgressBar", style("ddb461", "f6e7bc", 0))
 	theme = skin
@@ -198,6 +218,7 @@ static func wrap_text(text: String, width: float, font_size: int = 8) -> String:
 
 ## Godot's own tooltip label never wraps, so every hint is broken into lines before its popup sizes itself.
 func _wrap_tooltip(node: Node) -> void:
+	if node is AcceptDialog:_normalize_dialog_tree.call_deferred(node)
 	if node is Label and node.theme_type_variation == &"TooltipLabel":
 		node.text = wrap_text(node.text, TOOLTIP_WIDTH)
 
@@ -255,8 +276,7 @@ func _build_ui() -> void:
 	place(subtitle, Rect2(330, 11, 180, 23))
 	map_button = button("MAP", _show_map)
 	map_button.tooltip_text = "See where you are on a map of the West, with the road you have taken in red."
-	place(map_button, Rect2(518, 10, 52, 22))
-	place(button("GUIDE", _show_guide), Rect2(576, 10, 52, 22))
+
 	date_label = label("")
 	date_label.add_theme_color_override("font_color", Color("f6e7bc"))
 	place(date_label, Rect2(14, 39, 612, 12))
@@ -278,7 +298,7 @@ func _build_ui() -> void:
 		mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		place(mark, Rect2(9, 25 + row * 10, 8, 8), ledger)
 	party_button = button("VIEW PARTY", _show_party)
-	place(party_button, Rect2(9, 130, 162, 17), ledger)
+	place(label("PARTY DETAILS: RIBBON >"),Rect2(9,132,162,12),ledger)
 	progress = ProgressBar.new()
 	progress.max_value = Simulation.DESTINATION
 	progress.show_percentage = false
@@ -294,6 +314,10 @@ func _build_ui() -> void:
 	event_title = label("")
 	event_title.add_theme_color_override("font_color", Color("76503c"))
 	story_column.add_child(event_title)
+	place_actions=HFlowContainer.new()
+	place_actions.add_theme_constant_override("h_separation",4)
+	place_actions.add_theme_constant_override("v_separation",3)
+	story_column.add_child(place_actions)
 	event_text = label("")
 	event_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	story_column.add_child(event_text)
@@ -301,7 +325,8 @@ func _build_ui() -> void:
 	choices.add_theme_constant_override("separation", 3)
 	story_column.add_child(choices)
 	panel(Rect2(451, 222, 180, 106))
-	place(label("PACE"), Rect2(459, 231, 42, 10))
+	travel_settings_label=label("")
+	place(travel_settings_label,Rect2(459,231,165,42))
 	pace = OptionButton.new()
 	for text in ["STEADY", "STRENUOUS", "GRUELING"]:
 		pace.add_item(text)
@@ -310,8 +335,8 @@ func _build_ui() -> void:
 	pace.tooltip_text = "Nominal 22/26/30 miles per day before weather, load, team condition and stops. Faster travel costs health."
 	for index in range(3):
 		pace.get_popup().set_item_tooltip(index, ["Steady: about 22 miles a day. Easiest on people and oxen.", "Strenuous: about 26 miles a day. More strain on the party and team.", "Grueling: about 30 miles a day. Hard on health; sick travelers suffer most."][index])
-	place(pace, Rect2(508, 226, 115, 21))
-	place(label("RATIONS"), Rect2(459, 257, 46, 10))
+	add_child(pace)
+	pace.hide()
 	rations = OptionButton.new()
 	for text in ["BARE", "MEAGER", "FILLING"]:
 		rations.add_item(text)
@@ -320,7 +345,8 @@ func _build_ui() -> void:
 	rations.tooltip_text = "Bare 1, meager 2, filling 3 food units per living traveler per day. Low rations slow recovery even in camp."
 	for index in range(3):
 		rations.get_popup().set_item_tooltip(index, ["Bare: 1 food unit per traveler a day. Recovery slows and illness risk rises.", "Meager: 2 food units per traveler a day.", "Filling: 3 food units per traveler a day. Best for health and recovery."][index])
-	place(rations, Rect2(508, 251, 115, 21))
+	add_child(rations)
+	rations.hide()
 	travel_button = button("CONTINUE >", _travel)
 	place(travel_button, Rect2(459, 282, 91, 37))
 	rest_button = button("CAMP", _rest)
@@ -351,8 +377,8 @@ func _build_ui() -> void:
 	record_notice.title = "TRAIL RECORD"
 	wrap_dialog(record_notice)
 	add_child(record_notice)
-	options_button = button("OPTIONS", _show_options)
-	options_button.tooltip_text = "Hunt, trade, and care for travelers"
+	options_button = button("OPTIONS", _show_preferences)
+	options_button.tooltip_text = "Display and automatic travel preferences"
 	place(options_button, Rect2(548, 334, 80, 17))
 	grave_window = AcceptDialog.new()
 	grave_window.title = "A GRAVESTONE ON THE TRAIL"
@@ -386,11 +412,11 @@ func _build_ui() -> void:
 	guide.add_child(guide_scroll)
 	var guide_text := label("""Name five travelers, choose a profession and month, then buy supplies. Care kits are optional; keep cash for the road.
 
-Continue advances days; Pause stops the wagon. Encounters and landmarks stop travel. Map, Guide, Journal, View Party and Options let you take stock without spending another day. The map shows where you are, with the road you have taken in red. Hover over a control for a short explanation.
+Continue advances days; Pause stops the wagon. Encounters and landmarks stop travel. Map, Guide, History, Party and the ribbon sections let you take stock without spending another day. The map shows where you are, with the road you have taken in red. Hover over a control for a short explanation.
 
 Camp rests people and livestock, using food. Faster travel strains the team; low rations raise illness risk. Clothing protects people in rough weather. Inspect individual travelers.
 
-Options offers hunting, foraging, trading and medical care. Foraging costs one day and meals. Seasonal greens and berries supplement food and supply vitamin C when eaten; fresh meat alone does not prevent scurvy. Hunting costs a day and ammunition. Left-click fires; right-click walks. Cover blocks shots. Game flees; reload between shots. Carry back what your health and willing helpers allow (200 lb maximum). Broken legs prevent hauling.
+The right ribbon groups trail actions under Supplies, Camp & care, Hunt & forage, and People & places. Foraging costs one day and meals. Seasonal greens and berries supplement food and supply vitamin C when eaten; fresh meat alone does not prevent scurvy. Hunting costs a day and ammunition. Left-click fires; right-click walks. Cover blocks shots. Game flees; reload between shots. Carry back what your health and willing helpers allow (200 lb maximum). Broken legs prevent hauling.
 
 Each trading visit costs one day, however many trades you make. Trading posts keep a store counter with limited stock; passing traders offer fixed lots at higher prices. Care takes a day each; check costs first.
 
@@ -398,7 +424,7 @@ Recent rain can raise a river while you wait. Low water favors fording; high wat
 
 This chapter follows Palmer's reported opening route from Independence to Oregon City: 1,938 reported guide miles. The southern road via Bridger and the Barlow Road is playable. The suggested staples provision most of the journey, with resupply. Plan bulk resupply at trading posts; allow for weather delays.
 
-Options > Provisions lets you dry fresh meat, with optional salt. This takes a day. Food units and physical weight are separate: two pounds of new meat supply one food unit. Dried meat weighs less in cargo. Preserved meat also eventually spoils.
+Supplies > Provisions lets you dry fresh meat, with optional salt. This takes a day. Food units and physical weight are separate: two pounds of new meat supply one food unit. Dried meat weighs less in cargo. Preserved meat also eventually spoils.
 
 Northern shortcuts and Columbia rafting are not yet playable. Weather, medical effects and other survival values remain simplified game rules, not reconstructed conditions for 1848.""")
 	guide_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -443,32 +469,24 @@ Northern shortcuts and Columbia rafting are not yet playable. Weather, medical e
 	place(wages_button,Rect2(261,194,291,22),party_content)
 	dismiss_button=button("ASK TO LEAVE",_dismiss_selected)
 	place(dismiss_button,Rect2(410,194,142,22),party_content)
-	attack_button=button("ATTACK",_attack_selected)
-	place(attack_button,Rect2(261,194,291,22),party_content)
+	# Gameplay sections have short, contextual trees; Options contains preferences only.
 	options_window = AcceptDialog.new()
-	options_window.title = "TRAIL OPTIONS"
+	options_window.title = "GAME OPTIONS"
 	add_child(options_window)
-	var options_scroll:=ScrollContainer.new()
-	options_scroll.custom_minimum_size=Vector2(370,240)
-	options_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
-	options_window.add_child(options_scroll)
-	var actions := VBoxContainer.new()
-	actions.custom_minimum_size = Vector2(350, 110)
-	actions.size_flags_horizontal=Control.SIZE_EXPAND_FILL
-	options_scroll.add_child(actions)
-	hunt_button = button("HUNT · 1 DAY, UP TO 5 SHOTS", _start_hunt)
-	actions.add_child(hunt_button)
-	actions.add_child(button("LOCAL CONDITIONS / STOP ACTIVITIES", _show_stop_activities))
-	actions.add_child(button("LOOK FOR TRADERS / TRADE", _open_trade))
-	actions.add_child(button("ROB, STEAL OR ATTACK HERE", _open_crime))
-	actions.add_child(button("THE DEAD: BURY, CARRY OR SEARCH", _open_remains))
-	actions.add_child(button("VISIT AN EMIGRANT CAMP", _open_camp))
-	actions.add_child(button("LOOK FOR COMPANIONS", _open_companions))
-	actions.add_child(button("FORAGE FOR GREENS AND BERRIES", _open_forage))
-	actions.add_child(button("CARE / MEDICAL ATTENTION", _open_care))
-	actions.add_child(button("PROVISIONS / CARGO", _show_supplies))
-	actions.add_child(button("MEMORIAL BOOK", _show_memorials))
-	actions.add_child(label("Each activity stops travel.\nCheck costs before committing."))
+	section_window=AcceptDialog.new()
+	section_window.title="TRAIL ACTIONS"
+	section_window.get_ok_button().text="BACK"
+	section_window.confirmed.connect(_section_back)
+	add_child(section_window)
+	var section_scroll:=ScrollContainer.new()
+	section_scroll.custom_minimum_size=Vector2(380,150)
+	section_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
+	section_window.add_child(section_scroll)
+	section_rows=VBoxContainer.new()
+	section_rows.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	section_rows.add_theme_constant_override("separation",7)
+	section_scroll.add_child(section_rows)
+	_build_ribbon()
 	food_notice=AcceptDialog.new()
 	food_notice.title="FOOD WARNING"
 	wrap_dialog(food_notice)
@@ -559,13 +577,118 @@ Northern shortcuts and Columbia rafting are not yet playable. Weather, medical e
 	post_store_window.add_child(post_store_view)
 	post_store_view.settled.connect(_refresh)
 
+func _build_ribbon() -> void:
+	var rail:=panel(Rect2(640,9,150,342))
+	place(label("TRAIL ACTIONS"),Rect2(13,10,130,12),rail)
+	var specs: Array=[
+		["MAP",_show_map,"The road traveled; zoom and pan."],
+		["GUIDE",_show_guide,"Read the overland guide."],
+		["PARTY",_show_party,"Health, bonds, wages and dismissal."],
+		["TRAVEL",_show_section.bind("Travel"),"Choose pace and rations."],
+		["SUPPLIES",_show_section.bind("Supplies"),"Cargo, preservation, buying and trading."],
+		["CAMP & CARE",_show_section.bind("Camp & care"),"Rest, medical care and emigrant camps."],
+		["HUNT & FORAGE",_show_section.bind("Hunt & forage"),"Find food; review time and ammunition costs."],
+		["VILLAINY",_show_section.bind("Villainy"),"Attacks, theft, robbery and handling the dead."],
+		["HISTORY",_show_section.bind("History"),"Journal and memorial book."]]
+	for index in range(specs.size()):
+		var entry: Button=map_button if index==0 else (party_button if index==2 else button(specs[index][0],specs[index][1]))
+		entry.text=specs[index][0]
+		entry.tooltip_text=specs[index][2]
+		place(entry,Rect2(8,29+index*29,134,25),rail)
+		ribbon_buttons[specs[index][0]]=entry
+	place(label("STOP · CHOOSE · CONTINUE"),Rect2(5,323,140,10),rail)
+
 func _show_options() -> void:
-	if not game.can_service() or not landscape.crossing.is_empty() or _reviewing_crossing():
-		return
+	_show_preferences()
+
+func _section_action(action: Callable) -> void:
+	section_window.hide()
+	action.call()
+
+func _show_section(section: String) -> void:
+	if section!="History" and (not game.can_service() or not landscape.crossing.is_empty() or _reviewing_crossing()):return
 	_pause_travel()
 	_refresh()
-	hunt_button.disabled = not game.pending.is_empty() or game.state.bullets == 0
-	options_window.popup_centered()
+	for setting in [pace,rations]:
+		if setting.get_parent()==section_rows:
+			section_rows.remove_child(setting)
+			add_child(setting)
+			setting.hide()
+	for child in section_rows.get_children():
+		section_rows.remove_child(child)
+		child.queue_free()
+	map_view.hide()
+	section_window.title=section.to_upper()
+	section_window.get_ok_button().text="BACK" if SECTION_PARENTS.has(section) else "BACK TO TRAIL"
+	var entries: Array=[]
+	match section:
+		"Travel":
+			for setting in [["PACE",pace],["RATIONS",rations]]:
+				section_rows.add_child(label(setting[0]))
+				if setting[1].get_parent():setting[1].get_parent().remove_child(setting[1])
+				section_rows.add_child(setting[1])
+				setting[1].show()
+				setting[1].custom_minimum_size=Vector2(350,24)
+			section_rows.add_child(label("Choices take effect on the next trail day."))
+		"Supplies":entries=[["PROVISIONS / CARGO / PRESERVE",_show_supplies]]
+		"Camp & care":entries=[["REST IN CAMP",_rest],["CARE / MEDICAL ATTENTION",_open_care]]
+		"Hunt & forage":entries=[["HUNT · 1 DAY, UP TO 5 SHOTS",_start_hunt],["FORAGE FOR GREENS AND BERRIES",_open_forage]]
+		"Villainy":entries=[["ATTACK SOMEONE >",_show_section.bind("Attack someone")],["STEAL >",_show_section.bind("Steal")],["ROB >",_show_section.bind("Rob")],["THE DEAD: BURY, CARRY OR SEARCH >",_open_remains]]
+		"Attack someone":
+			entries=[["PARTY MEMBER >",_show_section.bind("Party member")],["SOMEONE HERE >",_show_section.bind("Someone here")]]
+		"Someone here":
+			var targets: Array=game.crime.local_targets(game)
+			for person in targets:
+				var target:=button(person.name.to_upper()+" >",_section_action.bind(_open_local_attack.bind(person.uid)))
+				target.custom_minimum_size.y=27
+				target.set_meta("local_target",person.uid)
+				section_rows.add_child(target)
+			if targets.is_empty():section_rows.add_child(label("No local encounter targets are present."))
+		"Party member":
+			for member in game.party_health.members:
+				if int(member.id)==0 or not game.party_health.is_active(member):continue
+				var target:=button(member.name.to_upper()+" >",_section_action.bind(_open_party_attack.bind(int(member.id))))
+				target.custom_minimum_size.y=27
+				target.set_meta("attack_target",int(member.id))
+				target.disabled=not game.crime.can_attack(game,int(member.id))
+				section_rows.add_child(target)
+			if section_rows.get_child_count()==0:section_rows.add_child(label("No companion is here to target."))
+		"Steal":entries=[["STEAL FROM SOMEONE HERE >",_open_crime_category.bind("theft")]]
+		"Rob":entries=[["ROB SOMEONE HERE >",_open_crime_category.bind("robbery")]]
+		"History":entries=[["TRAIL JOURNAL",_show_journal],["MEMORIAL BOOK",_show_memorials]]
+	for item in entries:
+		var entry:=button(item[0],_section_action.bind(item[1]))
+		entry.custom_minimum_size.y=27
+		if item[1]==Callable(self,"_start_hunt"):entry.disabled=not game.pending.is_empty() or game.state.bullets==0
+		section_rows.add_child(entry)
+	if SECTION_PARENTS.has(section):section_rows.add_child(button("< "+str(SECTION_PARENTS[section]).to_upper(),_section_action.bind(_show_section.bind(SECTION_PARENTS[section]))))
+	section_window.popup_centered()
+
+func _section_back() -> void:
+	var parent := ""
+	# Titles are upper case; match the authored section spelling.
+	for child in SECTION_PARENTS:
+		if child.to_upper()==section_window.title:parent=SECTION_PARENTS[child]
+	if not parent.is_empty():_show_section.call_deferred(parent)
+
+func _open_party_attack(id: int) -> void:
+	section_window.hide()
+	selected_member=id
+	_attack_selected()
+
+func _open_local_attack(uid: String) -> void:
+	section_window.hide()
+	crime_category="attack"
+	if game.open_local_attack(uid):_show_service()
+	_refresh()
+
+func _open_crime_category(category: String) -> void:
+	crime_category=category
+	_open_crime()
+
+func _filter_crime(category: String) -> void:
+	crime_category=category
+	_show_service()
 
 func _open_trade() -> void:
 	options_window.hide()
@@ -627,6 +750,7 @@ func _stop_choice(place_id: String,index: int) -> void:
 	if game.pending.get("landmark","")==place_id:_choose(index)
 
 func _open_crime() -> void:
+	section_window.hide()
 	options_window.hide()
 	if game.open_crime():_show_service()
 	else:
@@ -671,13 +795,22 @@ func _show_service() -> void:
 			picture.expand_mode=TextureRect.EXPAND_IGNORE_SIZE
 			picture.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			service_rows.add_child(picture)
+	var crime_preview: bool=game.pending.get("crime_menu",false) and game.crime.record.active.is_empty()
+	if crime_preview and crime_category.is_empty():
+		for branch in [["STEAL >","theft"],["ROB >","robbery"],["ATTACK >","attack"]]:
+			service_rows.add_child(button(branch[0],_filter_crime.bind(branch[1])))
 	for index in range(game.pending.choices.size() - 1):
+		if crime_preview:
+			var command: String=game.pending.choices[index].get("crime_command","")
+			if crime_category.is_empty() or (command not in (["shoot","assault"] if crime_category=="attack" else [crime_category,"raid"])):continue
 		var option := button(game.pending.choices[index].label, _service_choice.bind(index))
 		option.disabled = not game.can_choose(index)
 		service_rows.add_child(option)
+	if crime_preview and not crime_category.is_empty():service_rows.add_child(button("OTHER ACTIONS HERE <",_filter_crime.bind("")))
 	service_window.popup_centered()
 
 func _service_choice(index: int) -> void:
+	crime_category=""
 	service_window.hide()
 	var burial: int = int(game.pending.choices[index].get("remains_id",-1)) if game.pending.get("remains_menu",false) and game.pending.choices[index].get("remains_command","")=="bury" else -1
 	var shooting: bool = game.pending.get("attack_menu",false) and int(game.pending.choices[index].get("attack_target",-1)) >= 0
@@ -766,11 +899,13 @@ func _finish_hunt() -> void:
 	var before: int = game.state.food
 	if game.finish_hunt():
 		var carried: int = game.state.food - before
-		notice("HUNTING REPORT","%d shots · %d lb meat obtained\n%d lb brought to camp · %d lb left behind\nUse fresh meat within two trail days, or dry it through Options > Provisions. Salt improves the result.\nRecovered meat supplies %d food units.\nThe outing used one day and that day's rations." % [outing.shots,outing.meat,recovered.mass,recovered.left,carried])
+		notice("HUNTING REPORT","%d shots · %d lb meat obtained\n%d lb brought to camp · %d lb left behind\nUse fresh meat within two trail days, or dry it through Supplies > Provisions. Salt improves the result.\nRecovered meat supplies %d food units.\nThe outing used one day and that day's rations." % [outing.shots,outing.meat,recovered.mass,recovered.left,carried])
 	camping = true
 	_refresh()
 
 func _show_party() -> void:
+	section_window.hide()
+	map_view.hide()
 	if game.party_health.members.is_empty():
 		return
 	_pause_travel()
@@ -785,7 +920,6 @@ func _select_member(index: int) -> void:
 
 func _refresh_party() -> void:
 	wages_button.hide()
-	attack_button.hide()
 	dismiss_button.hide()
 	wages_button.size.x=291
 	member_details.size.y=216
@@ -800,7 +934,7 @@ func _refresh_party() -> void:
 		if int(id)<0:
 			var vacancy:=button("EMPTY SLOT · FIND A COMPANION",_open_companions)
 			vacancy.custom_minimum_size.y=33
-			vacancy.disabled=not game.can_service()
+			vacancy.disabled=not game.can_service() or game.recruitment.site(game).is_empty()
 			party_rows.add_child(vacancy)
 		else:_add_party_row(game.party_health.members[int(id)])
 	var past: Array=game.party_health.members.filter(func(member):return not game.party_health.is_active(member))
@@ -820,24 +954,11 @@ func _refresh_party() -> void:
 			wages_button.disabled=contract.arrears_cents<=0 or roundi(game.state.money*100)<contract.arrears_cents or not game.characters.can_receive_wages(game,selected_member)
 	if selected_member>0 and game.party_health.is_active(game.party_health.members[selected_member]):
 		member_details.size.y=188
-		attack_button.show()
-		attack_button.text="ATTACK %s" % game.party_health.members[selected_member].name.to_upper()
-		attack_button.disabled=not game.crime.can_attack(game,selected_member)
 		dismiss_button.show()
 		dismiss_button.disabled=not game.recruitment.eligible_dismiss(game,selected_member)
-		if wages_button.visible:
-			wages_button.text="PAY WAGES"
-			wages_button.size.x=91
-			attack_button.text="ATTACK"
-			attack_button.position.x=358
-			attack_button.size.x=91
-			dismiss_button.position.x=455
-			dismiss_button.size.x=97
-		else:
-			attack_button.position.x=261
-			attack_button.size.x=143
-			dismiss_button.position.x=410
-			dismiss_button.size.x=142
+		dismiss_button.position.x=410 if wages_button.visible else 261
+		dismiss_button.size.x=142 if wages_button.visible else 291
+		if wages_button.visible:wages_button.size.x=143
 
 func _add_party_row(member: Dictionary) -> void:
 	var condition: String = "LEFT PARTY" if member.get("departed",false) else (game.PartyHealth.condition_label(member.health) if member.alive else "DECEASED")
@@ -885,6 +1006,7 @@ func _pay_selected_wages() -> void:
 		_refresh_party()
 
 func _show_map() -> void:
+	section_window.hide()
 	_pause_travel()
 	map_view.game = game
 	move_child(map_view, -1)
@@ -892,16 +1014,19 @@ func _show_map() -> void:
 	_refresh()
 
 func _show_guide() -> void:
+	section_window.hide()
 	_pause_travel()
 	_refresh()
 	guide.popup_centered()
 
 func _show_journal() -> void:
+	section_window.hide()
 	_pause_travel()
 	_refresh()
 	journal_window.popup_centered()
 
 func _new_journey() -> void:
+	section_window.hide()
 	rest_window.hide()
 	food_notice.hide()
 	last_food_alert=0
@@ -1004,6 +1129,7 @@ func _advance_day() -> void:
 	_check_roadside_graves(before, int(game.state.miles))
 
 func _rest() -> void:
+	section_window.hide()
 	if not landscape.crossing.is_empty() or _reviewing_crossing():
 		return
 	if not game.can_service() and not game._can_act():return
@@ -1095,16 +1221,20 @@ func _acknowledge_crossing() -> void:
 	_refresh()
 
 func _update_animation_pause() -> void:
-	landscape.crossing_paused = map_view.visible or guide.visible or journal_window.visible or party_window.visible or options_window.visible or service_window.visible or supplies_window.visible or grave_window.visible or memorial_window.visible or record_notice.visible
+	landscape.crossing_paused = map_view.visible or section_window.visible or guide.visible or journal_window.visible or party_window.visible or options_window.visible or service_window.visible or supplies_window.visible or grave_window.visible or memorial_window.visible or record_notice.visible
 
 func _refresh() -> void:
 	var s: Dictionary = game.state
+	_refresh_place_actions()
 	pace.selected = int(s.pace)
 	rations.selected = int(s.rations)
+	travel_settings_label.text="PACE: %s\nRATIONS: %s\nCHANGE: TRAVEL >" % [pace.get_item_text(pace.selected),rations.get_item_text(rations.selected)]
 	save_button.disabled = s.status not in ["traveling", "arrived", "lost"] or not game.hunt.is_empty() or not landscape.crossing.is_empty() or _reviewing_crossing()
 	load_button.disabled = not game.hunt.is_empty() or not landscape.crossing.is_empty() or _reviewing_crossing()
 	party_button.disabled = game.party_health.members.is_empty()
-	options_button.disabled = not game.can_service() or not landscape.crossing.is_empty() or _reviewing_crossing()
+	options_button.disabled = not game.hunt.is_empty() or not landscape.crossing.is_empty() or _reviewing_crossing()
+	for key in ribbon_buttons:
+		if key not in ["MAP","GUIDE","PARTY","HISTORY"]:ribbon_buttons[key].disabled=not game.can_service() or not landscape.crossing.is_empty() or _reviewing_crossing()
 	if party_window.visible:
 		_refresh_party()
 	var date: Dictionary = game.calendar()
@@ -1214,6 +1344,7 @@ func _refresh() -> void:
 	story_scroll.scroll_vertical = 0
 
 func _show_supplies() -> void:
+	section_window.hide()
 	options_window.hide()
 	_pause_travel()
 	for child in supplies_rows.get_children():
@@ -1225,7 +1356,7 @@ func _show_supplies() -> void:
 	var gear: float=float(game.provisions.data.walking.personal_gear_lb_per_person)*game.state.party_size if game.state.vehicle=="foot" else float(game.provisions.data.household_gear_lb)-float(game.state.get("departed_gear_lb",0))
 	var text := "CARGO %.1f / %.0f LB · %s\nSTAPLES %d · FRESH %d · DRIED %d FOOD UNITS\nSALT %d LB · UP TO %d PARTY-DAYS BEFORE SPOILAGE\nFood value and physical meat weight are counted separately.\nFresh meat lasts two days; foraged produce lasts three.\nDrying meat costs one day and some food;\nsalt improves yield/storage. Meals are eaten before processing.\nCargo includes %.0f lb personal/household gear. Discards are permanent." % [game.provisions.cargo(game.state), storage_limit,"OVERLOADED" if game.provisions.cargo(game.state) > storage_limit else "WITHIN GUIDELINE", game.state.food - fresh - dried, fresh, dried, game.state.salt, game.provisions.expected_days(game.state.food, game.state.party_size, game.state.rations),gear]
 	supplies_rows.add_child(label(text))
-	supplies_rows.add_child(label("Greens and berries supply vitamin C only when eaten.\nUse Options > Forage; meat alone does not prevent scurvy."))
+	supplies_rows.add_child(label("Greens and berries supply vitamin C only when eaten.\nUse Hunt & forage > Forage; meat alone does not prevent scurvy."))
 	supplies_rows.add_child(label("TRACKED FOOD %.1f LB / %d FOOD UNITS" % [game.provisions.tracked_mass(game.state.food),fresh+dried]))
 	supplies_rows.add_child(label("HUNTING HAUL %d LB / HEALTH & WILLING HELPERS" % game.hunting_capacity()))
 	supplies_rows.add_child(label("Health scales loads on foot and hunts. Broken legs prevent hauling."))
@@ -1361,12 +1492,13 @@ func _save_journey() -> void:
 	notice("TRAIL RECORD","Journey saved. The previous record is kept as a backup." if save_store.save_game(game, save_path) else save_store.error)
 
 func _load_journey() -> void:
+	crime_category=""
 	if load_button.disabled:
 		return
 	_pause_travel()
 	var result: Dictionary = save_store.load_game(save_path)
 	if not result.is_empty():
-		for window in [guide,journal_window,party_window,options_window,food_notice,rest_window,stop_window,service_window,hunt_window,supplies_window,grave_window,memorial_window]:
+		for window in [guide,journal_window,party_window,section_window,options_window,food_notice,rest_window,stop_window,service_window,hunt_window,supplies_window,grave_window,memorial_window]:
 			window.hide()
 		hunt_view.active = false
 		landscape.cancel_crossing()
@@ -1403,7 +1535,7 @@ func _grave_window_closed() -> void:
 		_return_to_remains.call_deferred()
 
 func _return_to_remains() -> void:
-	var open: bool = [guide,journal_window,party_window,options_window,service_window,supplies_window,grave_window,memorial_window,record_notice].any(func(window): return window.visible)
+	var open: bool = [guide,journal_window,party_window,section_window,options_window,service_window,supplies_window,grave_window,memorial_window,record_notice].any(func(window): return window.visible)
 	if not open and game.state.status == "traveling" and game.pending.get("remains_menu",false):
 		_show_service()
 
@@ -1438,6 +1570,7 @@ func _read_gravestone(record: Dictionary) -> void:
 	grave_window.popup_centered()
 
 func _show_memorials() -> void:
+	section_window.hide()
 	_pause_travel()
 	options_window.hide()
 	for child in memorial_rows.get_children():
@@ -1465,3 +1598,98 @@ func _check_roadside_graves(before: int, after: int) -> void:
 	_read_gravestone(found[0])
 	_refresh()
 
+
+
+func _build_preferences() -> void:
+	var rows:=VBoxContainer.new()
+	rows.custom_minimum_size=Vector2(360,160)
+	rows.add_theme_constant_override("separation",7)
+	options_window.add_child(rows)
+	fullscreen=CheckBox.new()
+	fullscreen.text="FULL SCREEN"
+	rows.add_child(fullscreen)
+	rows.add_child(label("WINDOW SIZE · CRISP INTEGER PIXELS"))
+	window_scale=OptionButton.new()
+	window_scale.add_item("1X · 800 BY 360")
+	window_scale.add_item("2X · 1600 BY 720")
+	rows.add_child(window_scale)
+	rows.add_child(label("AUTOMATIC TRAVEL DISPLAY SPEED"))
+	travel_speed=OptionButton.new()
+	for text in ["SLOW · 2.5 SECONDS PER DAY","NORMAL · 1.25 SECONDS PER DAY","FAST · 0.75 SECONDS PER DAY"]:travel_speed.add_item(text)
+	rows.add_child(travel_speed)
+	rows.add_child(label("Display speed changes no daily travel or survival rules."))
+	fullscreen.toggled.connect(func(_value):_change_preferences())
+	window_scale.item_selected.connect(func(_value):_change_preferences())
+	travel_speed.item_selected.connect(func(_value):_change_preferences())
+
+func _show_preferences() -> void:
+	if not game.hunt.is_empty() or not landscape.crossing.is_empty() or _reviewing_crossing():return
+	section_window.hide()
+	_pause_travel()
+	options_window.popup_centered()
+
+func _load_preferences() -> void:
+	var file:=ConfigFile.new()
+	file.load(preferences_path)
+	var scale_value: Variant=file.get_value("display","scale",2)
+	var speed_value: Variant=file.get_value("travel","speed",1)
+	var full_value: Variant=file.get_value("display","fullscreen",false)
+	window_scale.select(int(scale_value)-1 if scale_value is int and scale_value in [1,2] else 1)
+	travel_speed.select(int(speed_value) if speed_value is int and speed_value in [0,1,2] else 1)
+	fullscreen.set_pressed_no_signal(full_value if full_value is bool else false)
+	_apply_preferences()
+
+func _apply_preferences() -> void:
+	travel_timer.wait_time=[2.5,1.25,0.75][travel_speed.selected]
+	window_scale.disabled=fullscreen.button_pressed
+	if DisplayServer.get_name()=="headless":return
+	var window:=get_window()
+	window.mode=Window.MODE_FULLSCREEN if fullscreen.button_pressed else Window.MODE_WINDOWED
+	if not fullscreen.button_pressed:
+		var available:=DisplayServer.screen_get_usable_rect(window.current_screen)
+		var target:=Vector2i(800,360)*(window_scale.selected+1)
+		if target.x>available.size.x or target.y>available.size.y:target=Vector2i(800,360)
+		window.size=target
+		window.position=available.position+(available.size-target)/2
+
+func _change_preferences() -> void:
+	_apply_preferences()
+	var file:=ConfigFile.new()
+	file.set_value("display","scale",window_scale.selected+1)
+	file.set_value("display","fullscreen",fullscreen.button_pressed)
+	file.set_value("travel","speed",travel_speed.selected)
+	if file.save(preferences_path)!=OK:notice("GAME OPTIONS","These preferences could not be saved for next time.")
+
+
+func _refresh_place_actions() -> void:
+	for child in place_actions.get_children():
+		place_actions.remove_child(child)
+		child.queue_free()
+	if not game.can_service() or not landscape.crossing.is_empty() or _reviewing_crossing():return
+	var entries: Array=[]
+	var market: Dictionary=game.context.market(game)
+	if market.available:entries.append(["STORE" if market.post else "TALK TO TRADERS",_open_trade])
+	if not game.crime.camp(game).is_empty():entries.append(["VISIT EMIGRANT CAMP",_open_camp])
+	if not game.recruitment.site(game).is_empty() and game.current_party_slots().has(-1) and game.party_health.members.size()<game.MAX_TRAVELERS:entries.append(["FIND COMPANIONS",_open_companions])
+	if game.pending.has("landmark"):entries.append(["LOCAL ACTIVITIES",_show_stop_activities])
+	for entry in entries:
+		var option:=button(entry[0],entry[1])
+		option.tooltip_text="Available here. Opens a preview before you spend time or supplies."
+		place_actions.add_child(option)
+
+
+func _normalize_dialog_tree(node) -> void:
+	if not is_instance_valid(node):return
+	if node is AcceptDialog:
+		if not node.has_meta("normalized_exit"):
+			node.set_meta("normalized_exit",true)
+			node.visibility_changed.connect(func():
+				if node.visible:_normalize_dialog_buttons(node))
+		_normalize_dialog_buttons(node)
+	for child in node.get_children():_normalize_dialog_tree(child)
+
+func _normalize_dialog_buttons(dialog: AcceptDialog) -> void:
+	# Only real committing actions remain below; X/Escape is the one exit convention.
+	var commits: Array=["REST","SLAUGHTER","REPACK","LEAVE WAGON","LEAVE THIS STONE"]
+	dialog.get_ok_button().visible=dialog is ConfirmationDialog or dialog.get_ok_button().text in commits
+	if dialog is ConfirmationDialog:dialog.get_cancel_button().hide()

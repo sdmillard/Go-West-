@@ -168,6 +168,33 @@ func seized_risk(game,place: String) -> float:
 ## Untargeted trading parties are read as fresh people and stock without entering the record.
 func actor(place: String,uid: String) -> Dictionary:return record.actors[uid] if record.actors.has(uid) else fresh_actor(place,uid)
 func owner(place: String) -> Dictionary:return actor(place,owner_id(place))
+## Cosmetic names derive from actor identity on a separate RNG; no incident rolls are consumed.
+func display_name(game,place: String,uid: String) -> String:
+	var random:=RandomNumberGenerator.new()
+	random.seed=int(game.state.seed) ^ int(uid.hash()) ^ 0x4e414d45
+	var names: Array=game.characters.catalog.data.first_names
+	var title: String="toll collector" if rules(place).kind=="toll" and uid==owner_id(place) else role(place,uid)
+	return "%s · %s" % [names[random.randi_range(0,names.size()-1)],title]
+func attack_target(game,place: String) -> String:
+	return str(incident().get("target",game.pending.get("crime_target",owner_id(place))))
+func local_places(game,stop: Dictionary) -> Array:
+	var places_here: Array=[]
+	var landmark: String=game.state.landmark
+	if stop.get("landmark","")==landmark and scenes.has(landmark) and not TEMPLATE_KINDS.has(landmark) and staffed(game,landmark):places_here.append(landmark)
+	var at_post: bool=stop.has("landmark") and game.route.nodes[landmark].get("trade_bulk",false)
+	if not at_post:
+		var market: Dictionary=game.context.market(game)
+		if market.available and not market.post:places_here.append(market.key)
+	var nearby_camp:=camp(game)
+	if not nearby_camp.is_empty():places_here.append(nearby_camp)
+	return places_here
+func local_targets(game) -> Array:
+	if not game.can_service() or not incident().is_empty():return []
+	var people: Array=[]
+	for place in local_places(game,game.pending):
+		for uid in living_staff(place):people.append({"uid":uid,"place":place,"name":display_name(game,place,uid)})
+	return people
+
 func service(place: String) -> Dictionary:return record.services[place] if record.services.has(place) else fresh_service(place,0)
 func living_staff(place: String) -> Array:
 	return staff_ids(place).filter(func(uid):return actor(place,uid).health>0)
@@ -183,6 +210,7 @@ func eligible(game) -> bool:
 ## What a crime here would be aimed at: the active incident, a staffed venue at this stop, or passing traders on the road.
 func target(game) -> String:
 	if not incident().is_empty():return incident().place
+	if game.pending.get("crime_menu",false) and game.pending.has("crime_place"):return game.pending.crime_place
 	var stop: Dictionary=game.service_return if game.pending.get("crime_menu",false) else game.pending
 	var landmark: String=game.state.landmark
 	if stop.get("landmark","")==landmark and scenes.has(landmark) and not TEMPLATE_KINDS.has(landmark):return landmark if staffed(game,landmark) else ""
@@ -278,7 +306,7 @@ func condition(actor: Dictionary) -> String:
 	return "dead" if actor.health==0 else ("wounded" if actor.health<100 else "uninjured")
 func menu(game) -> Dictionary:
 	var place: String=target(game)
-	var keeper: Dictionary=owner(place)
+	var keeper: Dictionary=actor(place,attack_target(game,place))
 	var scene: Dictionary=rules(place)
 	var words: Dictionary=kind(place)
 	var current:=incident()
@@ -294,6 +322,9 @@ func menu(game) -> Dictionary:
 		if keeper.health>0:
 			options=[option(words.theft,"theft"),option("Threaten the %s with your gun · 1 day" % keeper.role,"robbery"),option("Shoot at the %s · 1 bullet, 1 day" % keeper.role,"shoot"),option("Attack the %s unarmed · 1 day, higher injury risk" % keeper.role,"assault")]
 		else:options=[option(words.raid,"raid")]
+		if game.pending.has("crime_target"):
+			text="Target: %s (%s).\nNearby staff: %d. Your companions can observe this. An attack uses one day and meals; a shot spends one bullet. Unarmed attacks have higher injury risk. Staff may resist or pursue the party." % [display_name(game,place,keeper.uid),condition(keeper),living_staff(place).size()]
+			options=options.filter(func(choice):return choice.crime_command in ["shoot","assault"])
 	elif current.stage=="loot":
 		var loot:=loot_quote(game,place)
 		if scene.kind in ["toll","ferry"]:
@@ -313,13 +344,20 @@ func menu(game) -> Dictionary:
 		text="Incident %d: %s; %s. Food taken: %d lb. Cash taken: $%.2f. Shots: %d. People here who saw it: %d. See the journal and party records for injuries and reactions." % [current.id,current.attempt,current.resolution,current.food,current.cash_cents/100.0,current.shots,local_witnesses(current).size()]
 		options=[option("Acknowledge the outcome","finish")]
 	options.append(option(({"traders":"Leave the traders alone","emigrants":"Leave the family be"}.get(scene.kind,"Back to the stop")) if current.is_empty() else "Encounter in progress","back"))
-	return {"id":"crime","crime_menu":true,"service_menu":true,"title":scene.title,"text":text,"choices":options}
+	var result_menu: Dictionary={"id":"crime","crime_menu":true,"service_menu":true,"title":scene.title,"text":text,"choices":options}
+	if game.pending.has("crime_target"):
+		result_menu["crime_target"]=keeper.uid
+		result_menu["crime_place"]=place
+		if current.is_empty():result_menu.title="Attack "+display_name(game,place,keeper.uid)
+	return result_menu
 func can_choose(game,command: String) -> bool:
 	var current:=incident()
 	if current.is_empty():
 		if command=="back":return true
 		if record.incidents.size()>=10000:return false
-		var alive: bool=owner(target(game)).health>0
+		var place:=target(game)
+		if game.pending.has("crime_target") and command not in ["shoot","assault"]:return false
+		var alive: bool=actor(place,attack_target(game,place)).health>0
 		return (command in ["theft","robbery","shoot","assault"] and alive and (command in ["theft","assault"] or game.state.bullets>0)) or (command=="raid" and not alive)
 	if current.stage=="report":return command=="finish"
 	if current.stage=="loot":
@@ -436,7 +474,7 @@ func choose(game,command: String) -> bool:
 	var place: String=target(game)
 	# A trading party enters the record only once the party commits to an act against it.
 	if incident().is_empty():add_transient(game,place)
-	var keeper: Dictionary=owner(place)
+	var keeper: Dictionary=actor(place,attack_target(game,place))
 	var store: Dictionary=service(place)
 	var kind: String=incident().get("action",command)
 	var scene: Dictionary=odds(game,place,"murder" if kind in ["shoot","assault"] else "robbery")
@@ -459,7 +497,9 @@ func choose(game,command: String) -> bool:
 		if command == "assault": unarmed_mishap(game)
 		if current.attempt!="unseen":store.alarmed=true
 		if current.attempt in ["unseen","complied","killed","raided"]:current.stage="loot"
-		game.journal.append("Day %d · %s incident %d: %s; %s %s. Nearby staff %s." % [game.state.day,kind(place).journal,id,command,keeper.role,current.attempt,"were alerted" if store.alarmed else "did not notice the attempt"])
+		# Attacking a supporting worker does not seize the keeper's stock or passage.
+		if keeper.uid!=owner_id(place):current.stage="escape"
+		game.journal.append("Day %d · %s incident %d: %s; %s %s. Nearby staff %s." % [game.state.day,kind(place).journal,id,command,display_name(game,place,keeper.uid),current.attempt,"were alerted" if store.alarmed else "did not notice the attempt"])
 		observe(game,current,"attempt",current.attempt!="unseen")
 		game.characters.react_to_incident(game,"murder" if command in ["shoot","assault"] else "robbery",id)
 		if not advance(game):return true
@@ -922,7 +962,8 @@ func valid(value: Variant,game) -> bool:
 	var previous_day: int=-1
 	for index in range(r.incidents.size()):
 		var current: Variant=r.incidents[index]
-		if not current is Dictionary or current.size()!=12 or current.get("id")!=index+1 or not whole(current.get("day"),0,int(game.state.day)) or not (current.get("place") is String and r.services.has(current.place) and not TEMPLATE_KINDS.has(current.place)) or current.get("target")!=owner_id(current.place):return false
+		if not current is Dictionary or current.size()!=12 or current.get("id")!=index+1 or not whole(current.get("day"),0,int(game.state.day)) or not (current.get("place") is String and r.services.has(current.place) and not TEMPLATE_KINDS.has(current.place)) or current.get("target") not in staff_ids(current.place):return false
+		if current.get("action") not in ["shoot","assault"] and current.target!=owner_id(current.place):return false
 		if current.get("action") not in ["theft","robbery","shoot","assault","raid","pursuit"] or current.get("attempt") not in ATTEMPTS or current.get("stage") not in STAGES or current.get("resolution") not in RESOLUTIONS:return false
 		if current.day<previous_day:return false
 		previous_day=int(current.day)
@@ -936,9 +977,10 @@ func valid(value: Variant,game) -> bool:
 		if current.stage=="standoff" and rules(current.place).kind!="fort":return false
 		if current.stage=="loot" and current.attempt not in ["unseen","complied","killed","raided"]:return false
 		if current.attempt!="unseen" and not r.services[current.place].alarmed:return false
-		if current.attempt=="killed" and r.actors[owner_id(current.place)].health!=0:return false
+		if current.attempt=="killed" and r.actors[current.target].health!=0:return false
 		for key in ["food","cash_cents","shots"]:
 			if not whole(current.get(key),0,100000):return false
+		if current.target!=owner_id(current.place) and (current.stage=="loot" or current.food>0 or current.cash_cents>0):return false
 		# Only soldiers force the extra shots of a breakout.
 		var extra: int=int(current.shots)-(1 if current.action=="shoot" else 0)
 		if extra<0 or extra>(int(rules(current.place).breakout_shots) if rules(current.place).kind=="fort" else 0) or not current.get("knowledge") is Dictionary or current.knowledge.size()>game.party_health.members.size()+staff_ids(current.place).size():return false

@@ -1,6 +1,6 @@
 # Oxen, grazing and emergency meat
 
-October 22, 2026. **Options → Provisions / Cargo** now offers shooting/butchering a spare ox or butchering by hand. A review dialog shows the permanent loss, remaining team, food, ammunition/time and possible injury before committing. Cancelling spends nothing.
+October 22, 2026. **Supplies → Provisions / Cargo** now offers shooting/butchering a spare ox or butchering by hand. A review dialog shows the permanent loss, remaining team, food, ammunition/time and possible injury before committing. Cancelling spends nothing.
 
 - Shooting costs exactly one bullet and one camp day per animal.
 - Hand butchering uses the assumed household tools and no ammunition. It takes a day and has an authored 35% chance of wounding a living traveler; an existing wound may worsen. Guns, knives and a hatchet are assumed equipment, rather than separately priced purchases.

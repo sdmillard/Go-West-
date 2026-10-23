@@ -81,13 +81,15 @@ func _ready() -> void:
 	hint.add_theme_font_size_override("font_size", 8)
 	add_child(hint)
 	close_button = Button.new()
-	close_button.text = "BACK TO THE TRAIL"
-	close_button.position = Vector2(500, 340)
-	close_button.size = Vector2(128, 18)
+	close_button.text = "X"
+	close_button.tooltip_text="Close map (Escape)"
+	close_button.position = Vector2(618, 6)
+	close_button.size = Vector2(14, 14)
 	close_button.add_theme_font_size_override("font_size", 8)
+	for state in ["normal","hover","pressed","focus"]:close_button.add_theme_stylebox_override(state,StyleBoxEmpty.new())
 	close_button.pressed.connect(close)
 	add_child(close_button)
-	close_button.size = Vector2(128, 18)
+	close_button.size = Vector2(14, 14)
 	tooltip_text = " "
 
 ## Latitude/longitude pair to a pixel on the map picture.
@@ -214,11 +216,11 @@ func _draw() -> void:
 		draw_rect(Rect2(0, y, 640, 11), Color("45372f" if y % 24 == 0 else "4e3c31"))
 	draw_string(PIXEL_FONT, Vector2(14, 21), "THE ROUTE TO OREGON, 1848", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, PAPER)
 	# Legend, top right: the red road taken, the dotted roads not (yet) taken.
-	draw_rect(Rect2(452, 15, 12, 2), JOURNEY)
-	draw_string(PIXEL_FONT, Vector2(468, 20), "YOUR ROAD", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, PAPER)
-	for x in range(536, 548, 2):
+	draw_rect(Rect2(428, 15, 12, 2), JOURNEY)
+	draw_string(PIXEL_FONT, Vector2(444, 20), "YOUR ROAD", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, PAPER)
+	for x in range(512, 524, 2):
 		draw_rect(Rect2(x, 15, 1, 1), PAPER)
-	draw_string(PIXEL_FONT, Vector2(552, 20), "OTHER ROADS", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, PAPER)
+	draw_string(PIXEL_FONT, Vector2(528, 20), "OTHER ROADS", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, PAPER)
 
 func _draw_map() -> void:
 	if data.is_empty(): return

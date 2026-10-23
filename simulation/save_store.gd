@@ -387,9 +387,20 @@ func restore(value: Variant):
 		if commands.call(game.pending)!=commands.call(authoritative) or not game.Remains.within_reach(game):return null
 		game.pending=authoritative
 	if game.pending.get("crime_menu",false):
+		if game.pending.has("crime_place"):
+			var selected_place: Variant=game.pending.crime_place
+			if not selected_place is String:return null
+			if game.crime.record.active.is_empty():
+				if selected_place not in game.crime.local_places(game,game.service_return):return null
+			elif selected_place!=game.crime.incident().place:return null
 		# The menu must still have a target: the active incident, this stop's venue, or the traders on the road.
 		var target: String=game.crime.target(game)
 		if target.is_empty() or (game.crime.record.active.is_empty() and not game.crime.transient(target) and game.service_return.get("landmark","")!=game.state.landmark):return null
+		if game.pending.has("crime_target"):
+			var uid: Variant=game.pending.crime_target
+			if not uid is String or uid not in game.crime.staff_ids(target):return null
+			if game.crime.record.active.is_empty() and game.crime.actor(target,uid).health<=0:return null
+			if not game.crime.record.active.is_empty() and uid!=game.crime.incident().target:return null
 		# Commands must match the authoritative stage; descriptive text is regenerated so it can change between versions.
 		var authoritative: Dictionary=game.crime.menu(game)
 		var saved_commands: Array = game.pending.choices.map(func(choice):return choice.get("crime_command",""))

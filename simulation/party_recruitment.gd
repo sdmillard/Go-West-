@@ -14,7 +14,8 @@ func site(game) -> String:
 		var node: Dictionary=game.route.nodes[game.state.landmark]
 		if (node.kind in ["town","fort"] or node.get("trade_bulk",false)) and game.crime.staffed(game,str(node.id)):return "post:"+str(node.id)
 	var market: Dictionary=game.context.market(game)
-	return str(market.key) if market.available and not market.post else ""
+	if market.available and not market.post:return str(market.key)
+	return game.crime.camp(game)
 func candidate(game) -> Dictionary:
 	return record.searches.get(site(game),{}).get("candidate",{})
 func open(game) -> bool:
@@ -33,10 +34,10 @@ func menu(game) -> Dictionary:
 	var place:=site(game)
 	var visit: Dictionary=record.searches.get(place,{})
 	var options: Array=[]
-	var text: String="Look for someone willing to join at a populated stop or nearby trading camp. Searching costs one day and meals. One search per place; returning to this panel does not reroll a candidate."
+	var text: String="Look for someone willing to join at a populated stop or nearby trading or emigrant camp. Searching costs one day and meals. One search per place; returning to this panel does not reroll a candidate."
 	if not slots(game).has(-1):text="Your five-person party is full. Departed and dead travelers remain in the history, leaving vacancies when they go."
 	elif game.party_health.members.size()>=game.MAX_TRAVELERS:text="This journey's traveler record is full; no further recruits can be added."
-	elif place.is_empty():text="No settled stop or trading camp is nearby. Look again at a town, staffed fort or passing-trader camp."
+	elif place.is_empty():text="No settled stop or trading camp is nearby. Look again at a town, staffed fort or passing-trader/emigrant camp."
 	elif blocked(game,place):text="People here will not join after the incidents involving your party."
 	elif visit.is_empty() and record.searches.size()>=128:text="No further contacts can be recorded on this journey."
 	elif visit.is_empty():options.append(option("Look for a companion · 1 day and meals","search"))
@@ -139,7 +140,7 @@ func valid_open_menu(game) -> bool:
 	return true
 func valid_site(game,key: String) -> bool:
 	if key.begins_with("post:"):return game.route.nodes.has(key.trim_prefix("post:")) and (game.route.nodes[key.trim_prefix("post:")].kind in ["town","fort"] or game.route.nodes[key.trim_prefix("post:")].get("trade_bulk",false))
-	return key.begins_with("passing:") and key.length()<=64
+	return (key.begins_with("passing:") or key.begins_with("emigrants:")) and key.length()<=64
 func valid(value: Variant,game) -> bool:
 	if not value is Dictionary or value.size()!=2 or not value.get("slots") is Array or value.slots.size()!=5 or not value.get("searches") is Dictionary or value.searches.size()>128:return false
 	var seen: Array=[]

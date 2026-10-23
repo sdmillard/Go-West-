@@ -17,7 +17,7 @@ func run() -> void:
 	root.add_child(screen)
 	await process_frame
 	check(screen.departure_view.visible and screen.game.state.status == "outfitting", "New game opens departure setup")
-	check(root.content_scale_size == Vector2i(640, 360), "Native pixel canvas is 640 by 360")
+	check(root.content_scale_size == Vector2i(800, 360), "Native pixel canvas includes the 800 by 360 action ribbon")
 	await capture("departure")
 	screen.game.route.truncate_at("platte")
 	var setup = screen.departure_view
@@ -163,7 +163,7 @@ func run() -> void:
 	screen.notice("TRAIL RECORD", "A short notice.")
 	await process_frame
 	var short_rect := Rect2(screen.record_notice.position, screen.record_notice.size)
-	check(Rect2(0, 0, 640, 360).encloses(short_rect), "A notice opens centered on screen")
+	check(Rect2(0, 0, 800, 360).encloses(short_rect), "A notice opens centered on screen")
 	screen.record_notice.hide()
 	await check_map()
 	print("UI: %d failures" % failures)
@@ -205,7 +205,7 @@ func check_map() -> void:
 	check(map.status.text.contains("62 OF 124 MILES"), "Map footer says where the party is")
 	check(map._get_tooltip(map.ORIGIN + map.stops.greenwood_cutoff).contains("Green River"), "Hovering a stop names it")
 	await process_frame
-	check(map.status.get_rect().end.y <= map.close_button.position.y, "Map footer never overlaps the control row")
+	check(map.status.get_rect().end.y <= 340 and map.close_button.get_rect().end.y < map.ORIGIN.y, "Map footer clears its controls and X stays above the picture")
 	var anchor: Vector2 = map.ORIGIN + map.MAP_SIZE / 2
 	var before: Vector2 = map.screen_to_map(anchor)
 	var wheel := InputEventMouseButton.new()

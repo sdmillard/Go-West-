@@ -1305,3 +1305,12 @@ func open_companions() -> bool:
 
 func open_dismiss(target: int) -> bool:
 	return recruitment.open_dismiss(self,target)
+
+
+func open_local_attack(uid: String) -> bool:
+	var people: Array=crime.local_targets(self).filter(func(person):return person.uid==uid)
+	if people.is_empty():return false
+	service_return=pending.duplicate(true)
+	pending={"crime_menu":true,"crime_target":uid,"crime_place":people[0].place}
+	pending=crime.menu(self)
+	return true
