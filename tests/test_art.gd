@@ -9,7 +9,7 @@ func check(condition: bool, message: String) -> void:
 		printerr("FAIL: " + message)
 
 func _initialize() -> void:
-	for name in ["prairie", "river", "wagon", "oxen", "elder", "corolla", "lightsaber", "location_independence", "location_town_setup", "location_store", "location_elm_grove", "location_wakarusa", "location_kansas_river", "location_big_blue", "location_platte", "location_camp", "travel_horizon", "travel_ground", "hunt_bison", "hunt_deer", "hunt_rabbit", "hunt_cover", "hunt_hunter", "gravestone_frame", "ledger_icons"]:
+	for name in ["prairie", "river", "wagon", "oxen", "walker", "elder", "corolla", "lightsaber", "location_independence", "location_town_setup", "location_store", "location_elm_grove", "location_wakarusa", "location_kansas_river", "location_big_blue", "location_platte", "location_camp", "travel_horizon", "travel_ground", "hunt_bison", "hunt_deer", "hunt_rabbit", "hunt_cover", "hunt_hunter", "gravestone_frame", "ledger_icons"]:
 		var texture: Texture2D = load("res://art/pixels/" + name + ".png")
 		check(texture != null, name + " texture imports")
 		var image := texture.get_image()
@@ -21,9 +21,9 @@ func _initialize() -> void:
 				if alpha != 0.0 and alpha != 1.0 and absf(alpha - 0.4) > 0.005 and absf(alpha - 0.5333) > 0.005:
 					soft_alpha = true
 		check(not soft_alpha, name + " has crisp edges without antialiased alpha")
-		if name in ["wagon", "oxen"]:
-			var frame_width: int = 96 if name == "wagon" else 48
-			check(image.get_width() == frame_width * 4, name + " has four exact frames")
+		if name in ["wagon", "oxen", "walker"]:
+			var frame_width: int = {"wagon": 96, "oxen": 48, "walker": 16}[name]
+			check(image.get_width() == frame_width * 8, name + " has eight exact frames")
 			check(image.get_region(Rect2i(0, 0, frame_width, image.get_height())).get_data() != image.get_region(Rect2i(frame_width, 0, frame_width, image.get_height())).get_data(), name + " frames actually animate")
 	# Hunting sheets hold two frames exactly the size of each species' hitbox.
 	var species: Array = JSON.parse_string(FileAccess.get_file_as_string("res://data/hunting.json")).species

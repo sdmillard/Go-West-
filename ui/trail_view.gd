@@ -4,6 +4,9 @@ const PRAIRIE = preload("res://art/pixels/prairie.png")
 const RIVER = preload("res://art/pixels/river.png")
 const WAGON = preload("res://art/pixels/wagon.png")
 const OXEN = preload("res://art/pixels/oxen.png")
+const WALKER = preload("res://art/pixels/walker.png")
+const FRAMES := 8 # wagon, oxen and walker sheets hold eight frames side by side
+const FPS := 12.0
 const CAR = preload("res://art/pixels/corolla.png")
 const ELDER = preload("res://art/pixels/elder.png")
 const SABER = preload("res://art/pixels/lightsaber.png")
@@ -101,8 +104,8 @@ func _draw() -> void:
 		draw_texture(RIVER if river_scene else PRAIRIE, Vector2.ZERO)
 		_tile(HORIZON, 65, int(scroll_distance / 7.0) % 432)
 		_tile(GROUND, 100, int(scroll_distance) % 432)
-	var frame := int(clock_time * 8) % 4 if scrolling or motion > 0 else 0
-	var bob := -1 if frame == 1 or frame == 3 else 0
+	var frame := int(clock_time * FPS) % FRAMES if scrolling or motion > 0 else 0
+	var bob := -1 if frame % 4 >= 2 else 0
 	var shift := int(sin(clock_time * 3) * 3) if motion > 0 else 0
 	if vehicle=="foot":
 		_draw_walkers(Vector2(150+shift,132+bob),scrolling or motion>0)
@@ -112,7 +115,7 @@ func _draw() -> void:
 		draw_texture_rect_region(WAGON, Rect2(137 + shift, 75 + bob, 96, 64), Rect2(frame * 96, 0, 96, 64))
 		draw_line(Vector2(220 + shift, 117), Vector2(262 + shift, 117), Color("76503c"), 1)
 		draw_texture_rect_region(OXEN, Rect2(227 + shift, 103, 48, 32), Rect2(frame * 48, 0, 48, 32))
-		draw_texture_rect_region(OXEN, Rect2(261 + shift, 103, 48, 32), Rect2(((frame + 2) % 4) * 48, 0, 48, 32))
+		draw_texture_rect_region(OXEN, Rect2(261 + shift, 103, 48, 32), Rect2(((frame + 4) % FRAMES) * 48, 0, 48, 32))
 	match encounter:
 		"elder_god":
 			draw_texture(ELDER, Vector2(51, 48))
@@ -130,13 +133,8 @@ func _draw_walkers(origin: Vector2,moving: bool) -> void:
 	for index in range(walkers):
 		var x:=origin.x+index*19
 		var y:=origin.y-(index%2)*3
-		var stride:=2 if moving and int(clock_time*6+index)%2==0 else -1
-		draw_rect(Rect2(x,y-20,5,5),Color("ecd097"))
-		draw_rect(Rect2(x-1,y-22,8,2),Color("76503c"))
-		draw_rect(Rect2(x,y-15,6,9),Color("37688e") if index%2==0 else Color("a16b43"))
-		draw_rect(Rect2(x-3,y-14,3,7),Color("76503c"))
-		draw_line(Vector2(x+1,y-6),Vector2(x+1+stride,y),Color("45372f"),2)
-		draw_line(Vector2(x+4,y-6),Vector2(x+4-stride,y),Color("45372f"),2)
+		var step:=int(clock_time*FPS+index*3)%FRAMES if moving else 0
+		draw_texture_rect_region(WALKER,Rect2(x-5,y-23,16,24),Rect2(step*16,(index%2)*24,16,24))
 
 func _draw_weather() -> void:
 	if weather_id in ["rain", "heavy_rain", "hail", "blizzard"]:
@@ -233,11 +231,11 @@ func _draw_crossing() -> void:
 		draw_rect(Rect2(x + 98, 103, 5, 13), Color("37688e"))
 		draw_line(Vector2(x + 102, 91), Vector2(x + 117, 137), Color("76503c"), 2)
 	else:
-		var frame := int(crossing_elapsed * 8) % 4 if method == "ford" else 0
+		var frame := int(crossing_elapsed * FPS) % FRAMES if method == "ford" else 0
 		draw_texture_rect_region(WAGON, Rect2(x, 64 + bob, 96, 64), Rect2(frame * 96, 0, 96, 64))
 		var ox_x := x + 86 if method == "ford" else x - 52
 		var ox_y := 100 if method == "ford" else 103
-		draw_texture_rect_region(OXEN, Rect2(ox_x, ox_y, 48, 32), Rect2((int(crossing_elapsed * 8) % 4) * 48, 0, 48, 32))
+		draw_texture_rect_region(OXEN, Rect2(ox_x, ox_y, 48, 32), Rect2((int(crossing_elapsed * FPS) % FRAMES) * 48, 0, 48, 32))
 		if method == "ford":
 			draw_line(Vector2(x + 83, 111), Vector2(ox_x + 14, 114), Color("76503c"), 1)
 		# Floating wagon is unhitched; livestock move separately in the water.
