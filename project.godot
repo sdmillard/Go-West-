@@ -9,11 +9,11 @@ config/use_custom_user_dir=true
 config/custom_user_dir_name="WestwardProbably"
 
 [display]
-window/size/viewport_width=640
+window/size/viewport_width=800
 window/size/viewport_height=360
-window/size/window_width_override=1280
+window/size/window_width_override=1600
 window/size/window_height_override=720
-window/size/min_width=640
+window/size/min_width=800
 window/size/min_height=360
 window/stretch/mode="viewport"
 window/stretch/scale_mode="integer"

@@ -36,7 +36,7 @@ Alternatively, import `project.godot` in [Godot 4.5.1](https://github.com/godote
 2. Set pace and rations. Click **Continue** to travel automatically or **Pause** to stop. **Camp** lets you type 1–30 rest days, then confirm. Daily meals, spoilage, weather and health still apply; events, health news or new food warnings interrupt the rest. The same prompt is available at stops.
 3. Encounters stop travel. Resolve them, then click Continue when ready. Guide and Journal also pause the wagon. Unaffordable choices are disabled.
 4. Use **Save / Load** on the bottom bar to keep a journey and resume it paused. The previous save remains as a backup.
-5. Use **View Party** to inspect travelers, and **Options** to hunt, trade or give care. Clothing protects against exposure; working the team without rest slows it down. Hunt between landmarks: **left-click fires, right-click walks**. Cover blocks shots; animals flee and the rifle needs reloading. See [hunting](docs/HUNTING.md).
+5. Use **Party** to inspect travelers. The right ribbon groups actions under **Travel**, **Supplies**, **Camp & Care**, **Hunt & Forage**, **People & Places**, **Villainy** and **History**. **Options** holds display and automatic-travel preferences. Clothing protects against exposure; working the team without rest slows it down. Hunt between landmarks: **left-click fires, right-click walks**. Cover blocks shots; animals flee and the rifle needs reloading. See [hunting](docs/HUNTING.md).
 6. Follow the Platte, Fort John/Laramie, South Pass, Bridger, Hall and Boise, then cross the Blue Mountains and take the Barlow Road to Oregon City. Rest and resupply at stops before continuing. The suggested outfit includes 1,700 lb of food; plan additional provisions for the full journey. The journey ends if no one survives. You can then **Leave a Gravestone** with your own epitaph; later journeys can find it. A companion you bury on the trail can get a stone of their own.
 
 One continuous southern/Barlow itinerary is playable; Greenwood’s Cutoff, the Walla Walla detour and Columbia rafting offer alternative roads. Classic contains only historical-style content. Reusing a seed **and the same decisions** repeats the run on the tested Godot version. [The mechanics ledger](docs/MECHANICS_LEDGER.md) identifies verified source behavior, provisional tuning and missing classic systems.
@@ -132,7 +132,7 @@ Local Git repository initialized. Nothing has been published to GitHub. Third-pa
 
 The [full-trail balance experiment](docs/FULL_TRAIL_BALANCE.md) archives 2,700 automated journeys and a current mechanics-coverage matrix. That archived diagnosis is followed by the [economy and preservation pass](docs/ECONOMY_AND_PRESERVATION.md): period-informed starting staples and budgets, drying, optional salt, lighter dried cargo, and 3,600 matched journeys including a new-seed sample. Farmer survival is now demonstrably viable under tested strategies; difficulty and history still need human and regional calibration.
 
-The screen renders at **640 × 360** and starts at a crisp **2× scale**. Resize using whole-pixel multiples; spare window space is letterboxed. [Art notes](art/README.md) describe the palette, animations and rebuild procedure. The trail journal opens from the bottom toolbar; hover over pace/rations for their resource effects.
+The screen renders at **800 × 360** and starts at a crisp **2× scale** (1600 × 720), falling back to 1× on smaller displays. Resize using whole-pixel multiples; spare window space is letterboxed. [Art notes](art/README.md) describe the palette, animations and rebuild procedure. The trail journal opens from the bottom toolbar; use **Travel** to adjust pace/rations and hover for their resource effects.
 
 [Oxen and emergency camp meat](docs/OXEN_AND_CAMP_MEAT.md): replacement animals, grazing assumptions, one-bullet slaughter or risky hand tools, full usable meat recovery and remaining-team consequences.
 
@@ -140,7 +140,7 @@ The screen renders at **640 × 360** and starts at a crisp **2× scale**. Resize
 
 [Team size and emergency survival](docs/TEAM_SIZE.md): four oxen as the baseline, a capped five/six-animal speed bonus, matched bonus/no-bonus journeys, walking abandonment, last-animal slaughter and real cache-return scenarios.
 
-[Regional travel, scarce trading and stop activities](docs/REGIONAL_TRAVEL.md): regional weather and grazing strain, passing trading windows, finite stock/demand, original conversations, grazing camps and crossing preparation. Open **Options → Local Conditions / Stop Activities** or **Look for Traders / Trade**.
+[Regional travel, scarce trading and stop activities](docs/REGIONAL_TRAVEL.md): regional weather and grazing strain, passing trading windows, finite stock/demand, original conversations, grazing camps and crossing preparation. Open **People & Places → Local Conditions / Stop Activities** or **Supplies → Buy / Trade**.
 
 [Care access, dangerous defense and the recent-save review](docs/CARE_COMBAT_AND_SAVE_REVIEW.md): location-bound paid care, party condition and capped defense experience, serious/fatal wounds, and spoilage-aware low-food pauses.
 
@@ -157,4 +157,6 @@ The screen renders at **640 × 360** and starts at a crisp **2× scale**. Resize
 
 [Traveler appearance](docs/TRAVELER_APPEARANCE.md) adds editable skin, hair, clothes, outfit and personal heritage, with a live sprite preview. Generated companions receive varied looks; View Party portraits, walkers, hunters and river figures reflect their appearance. Use EDIT > Appearance & Personal Background, or LOOK for the leader.
 
-Companion vacancies, generated recruits and nonviolent dismissal: see [Recruitment and dismissal](docs/RECRUITMENT_AND_DISMISSAL.md). Use **View Party > Ask to leave**, or **Options > Look for companions** at populated stops.
+Companion vacancies, generated recruits and nonviolent dismissal: see [Recruitment and dismissal](docs/RECRUITMENT_AND_DISMISSAL.md). Use **View Party > Ask to leave**, or **People & Places > Look for companions** at populated stops.
+
+See [Action ribbon and preferences](docs/ACTION_RIBBON.md) for the expanded layout and menu tree.

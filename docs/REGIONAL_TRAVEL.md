@@ -4,7 +4,7 @@ October 22, 2026. First connected implementation, with original art and original
 
 ## How to use it
 
-Open **Options → Local Conditions / Stop Activities** for regional guidance, current trader availability and activities at the present landmark. Open **Look for Traders / Trade** for offers or the option to wait. Existing stop backgrounds remain in use.
+Open **People & Places → Local Conditions / Stop Activities** for regional guidance, current trader availability and activities at the present landmark. Open **Supplies → Buy / Trade** for offers or the option to wait. Existing stop backgrounds remain in use.
 
 ## Regional conditions
 

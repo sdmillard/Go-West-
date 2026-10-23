@@ -20,7 +20,7 @@ You may slaughter the last ox with the same one-bullet or risky hand-tool choice
 
 ## Leave the wagon and choose packs
 
-Between stops, open **Options → Provisions / Cargo → Abandon Wagon / Choose What to Carry**. An unresolved event must be handled first. The pack screen lists the available quantities and previews weight. Nothing transfers until **Leave Wagon** is pressed; cancellation costs nothing.
+Between stops, open **Supplies → Provisions / Cargo → Abandon Wagon / Choose What to Carry**. An unresolved event must be handled first. The pack screen lists the available quantities and previews weight. Nothing transfers until **Leave Wagon** is pressed; cancellation costs nothing.
 
 - Each living traveler provides a 40-lb carry allowance, including an assumed 15 lb of personal tools/bedding. Five travelers have 200 lb total capacity, of which 75 lb is personal gear. Clothing, ammunition, care kits, salt, food and any selected heavy spares use the remaining capacity.
 - Dried food retains the existing distinction between meal-equivalent food and physical mass. A pound of dried meal value does not consume a full pound of pack capacity.

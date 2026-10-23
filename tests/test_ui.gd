@@ -17,7 +17,7 @@ func run() -> void:
 	root.add_child(screen)
 	await process_frame
 	check(screen.departure_view.visible and screen.game.state.status == "outfitting", "New game opens departure setup")
-	check(root.content_scale_size == Vector2i(640, 360), "Native pixel canvas is 640 by 360")
+	check(root.content_scale_size == Vector2i(800, 360), "Native pixel canvas includes the 800 by 360 action ribbon")
 	await capture("departure")
 	screen.game.route.truncate_at("platte")
 	var setup = screen.departure_view
@@ -163,7 +163,7 @@ func run() -> void:
 	screen.notice("TRAIL RECORD", "A short notice.")
 	await process_frame
 	var short_rect := Rect2(screen.record_notice.position, screen.record_notice.size)
-	check(Rect2(0, 0, 640, 360).encloses(short_rect), "A notice opens centered on screen")
+	check(Rect2(0, 0, 800, 360).encloses(short_rect), "A notice opens centered on screen")
 	screen.record_notice.hide()
 	await check_map()
 	print("UI: %d failures" % failures)

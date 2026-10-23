@@ -34,7 +34,7 @@ The suggested cart weighs 2,359 lb against the 2,500-lb guideline; bulk food add
 
 ## Preservation in play
 
-After hunting, open **Options → Provisions / Cargo**. The menu previews the batch, retained meals, salt and one-day cost. Drying works without salt. Salt is an optional improvement, purchased at departure or through trading; it is real carried inventory.
+After hunting, open **Supplies → Provisions / Cargo**. The menu previews the batch, retained meals, salt and one-day cost. Drying works without salt. Salt is an optional improvement, purchased at departure or through trading; it is real carried inventory.
 
 | Authored rule | Dry | Salt-assisted dry |
 | --- | ---: | ---: |
