@@ -34,6 +34,9 @@ func _initialize() -> void:
 	check(load("res://art/pixels/hunt_hunter.png").get_size() == Vector2(128, 36), "Hunter sheet holds standing and walking rows of 16 x 18 frames")
 	check(load("res://art/pixels/hunt_smoke.png").get_size() == Vector2(128, 16), "Rifle smoke holds eight 16 x 16 frames")
 	check(load("res://art/pixels/gravestone_frame.png").get_size() == Vector2(432, 150), "Headstone fills the memorial view")
+	# Weather and event overlays keep the frame layouts ui/trail_view.gd slices them by.
+	for sheet in [["storm_clouds", 432, 56], ["weather_bolt", 96, 96], ["dust_devil", 64, 40], ["trail_dust", 48, 12], ["stampede_ox", 104, 16], ["flotsam", 48, 12]]:
+		check(load("res://art/pixels/%s.png" % sheet[0]).get_size() == Vector2(sheet[1], sheet[2]), "Overlay sheet keeps its layout: " + sheet[0])
 	var scenes = preload("res://ui/location_scenes.gd").new()
 	# Ambient effects sit inside the pictures they decorate.
 	var ambience: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/scene_ambience.json"))
