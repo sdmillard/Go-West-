@@ -31,7 +31,7 @@ func capture(game) -> Dictionary:
 		"last_crossing":game.last_crossing.duplicate(true), "crossing_history":game.crossing_history.duplicate(true),
 		"supply_history":game.supply_history.duplicate(true), "service_return":game.service_return.duplicate(true),
 		"party":game.party_health.members.duplicate(true), "health_events":Array(game.health_events),
-		"fresh":game.provisions.fresh.duplicate(true), "outings":game.hunting_outings, "days_without_fresh":game.party_health.days_without_fresh,
+		"fresh":game.provisions.fresh.duplicate(true), "outings":game.hunting_outings, "days_without_fresh":game.party_health.days_without_fresh, "route_path":game.travelled_path().duplicate(),
 		"random":str(game.rng.state), "health_random":str(game.party_health.rng.state),
 		"survival_random":str(game.survival.rng.state),
 		"weather":game.survival.weather.duplicate(true), "wet_ground":game.survival.wet_ground,
@@ -126,6 +126,7 @@ func valid_menu(menu: Dictionary, game) -> bool:
 	for choice in menu.choices:
 		if not choice is Dictionary or not choice.get("label") is String:
 			return false
+		if choice.has("edge") and (choice.get("action","")!="leave" or not menu.has("landmark") or not integer(choice.edge,1,game.route.nodes[menu.landmark].next.size()-1)):return false
 		if menu.has("crime_menu") and (menu.crime_menu!=true or menu.id!="crime" or not menu.get("service_menu",false) or choice.get("crime_command","") not in game.crime.COMMANDS):return false
 		if choice.has("crime_command") and not menu.get("crime_menu",false):return false
 		if menu.has("attack_menu") and (menu.attack_menu!=true or menu.id!="attack" or not menu.get("service_menu",false) or not integer(choice.get("attack_target"),-1,4)):return false
@@ -225,8 +226,12 @@ func restore(value: Variant):
 			return null
 	if s.mode not in ["classic", "unhinged"] or not integer(s.pace,0,2) or not integer(s.rations,0,2) or not integer(s.departure_month,3,8) or not integer(s.health,0,100) or not integer(s.ox_health,0,100) or not integer(s.fatigue,0,100) or not strings(s.party,5) or s.party.size() != 5 or not strings(s.items,100):
 		return null
-	if not game.route.nodes.has(s.landmark) or (s.next_landmark != "" and not game.route.nodes.has(s.next_landmark)) or not integer(s.day,0,100000) or not integer(s.miles,0,game.destination()) or s.leg_miles > s.leg_length:
+	if not game.route.nodes.has(s.landmark) or (s.next_landmark != "" and not game.route.nodes.has(s.next_landmark)) or not integer(s.day,0,100000) or not integer(s.miles,0,game.route.longest_miles) or s.leg_miles > s.leg_length:
 		return null
+	# Saves from before road choices were on the main road.
+	var path: Variant=value.get("route_path",game.route.main_path_to(s.landmark))
+	if not game.route.valid_path(path) or path[-1]!=s.landmark:return null
+	if s.next_landmark!="" and s.next_landmark!=s.landmark and game.route.edge_between(s.landmark,s.next_landmark).is_empty():return null
 	if not game.combat.valid(value.get("combat_history",[]),int(s.day)):return null
 	if not game.context.valid_record(value.get("context",{"spent":{},"activities":[],"prepared":[]}),game.route):return null
 	if not Simulation.CacheSupport.valid(value.get("wagon_cache",{}),game,int(s.day)):return null
@@ -333,6 +338,7 @@ func restore(value: Variant):
 	game.last_crossing = normalize(value.last_crossing)
 	game.hunting_outings = int(value.outings)
 	game.party_health.days_without_fresh = int(value.get("days_without_fresh",0))
+	game.route_path = normalize(value.get("route_path",game.route.main_path_to(str(game.state.landmark))))
 	game.rng.state = int(value.random)
 	game.party_health.rng.state = int(value.health_random)
 	game.survival.rng.state = int(value.survival_random)
