@@ -311,7 +311,8 @@ protects people in rough weather. Inspect individual travelers.
 Options offers hunting, trading and medical care. Hunting
 costs a day and ammunition. Left-click fires; right-click walks.
 Cover blocks shots. Game flees; reload between shots. Carry
-back up to 100 lb. Buying, selling,
+back what your health and willing helpers allow (200 lb maximum).
+Broken legs prevent hauling. Buying, selling,
 bartering and care take a day each; check costs first.
 
 Recent rain can raise a river while you wait. Low water favors
@@ -324,8 +325,9 @@ The southern road via Bridger and the Barlow Road is playable.
 The suggested staples provision most of the journey, with resupply.
 Plan bulk resupply at trading posts; allow for weather delays.
 Options > Provisions lets you dry fresh meat, with optional salt.
-This takes a day. Food uses ration-equivalent pounds; dried meat
-weighs less in cargo. Preserved meat also eventually spoils.
+This takes a day. Food units and physical weight are separate:
+two pounds of new meat supply one food unit. Dried meat weighs
+less in cargo. Preserved meat also eventually spoils.
 Northern shortcuts and Columbia rafting are not yet playable.
 Weather, medical effects and other survival values remain
 simplified game rules, not reconstructed conditions for 1848."""
@@ -543,7 +545,13 @@ func _show_service() -> void:
 		child.queue_free()
 	service_window.title = game.pending.title
 	service_window.get_ok_button().text="CLOSE PANEL" if game.pending.get("crime_menu",false) and not game.crime.record.active.is_empty() else "BACK TO TRAIL"
-	var explanation := label(game.pending.text)
+	var description: String=game.pending.text
+	if game.pending.get("crime_menu",false) and game.crime.incident().get("stage","")=="loot":
+		var current: Dictionary=game.crime.incident()
+		if int(game.crime.rules(current.place).loot_limit)>0:
+			var quote: Dictionary=game.crime.loot_quote(game,current.place)
+			description+="\n"+("The wagon is alongside for loading." if quote.wagon_access else "Carry it away on foot: willing helpers can haul up to %d lb at their current health. Broken legs prevent hauling." % quote.haul_limit_lb)
+	var explanation := label(description)
 	explanation.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	service_rows.add_child(explanation)
 	for index in range(game.pending.choices.size() - 1):
@@ -583,7 +591,7 @@ func _start_hunt() -> void:
 
 func _update_hunt_report() -> void:
 	if not game.hunt.is_empty():
-		hunt_report.text = "%s · %ds · %s · SHOTS %d/5 · AMMO %d\nLEFT: FIRE · RIGHT: WALK · MEAT %d / 100 LB\n%s" % [game.hunt.region_label.to_upper(), ceili(30 - game.hunt.elapsed), "RELOAD" if game.hunt.reload > 0 else "READY", game.hunt.shots, game.state.bullets, game.hunt.meat, game.hunt.message]
+		hunt_report.text = "%s · %ds · %s · SHOTS %d/5 · AMMO %d\nLEFT: FIRE · RIGHT: WALK · MEAT %d LB / HAUL LIMIT %d LB\n%s" % [game.hunt.region_label.to_upper(), ceili(30 - game.hunt.elapsed), "RELOAD" if game.hunt.reload > 0 else "READY", game.hunt.shots, game.state.bullets, game.hunt.meat, game.hunting_capacity(), game.hunt.message]
 
 
 func _finish_hunt() -> void:

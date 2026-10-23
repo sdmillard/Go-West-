@@ -50,7 +50,7 @@ func run():
 					var identity: Dictionary={"profession":profession,"month":month,"roster":roster,"strategy":strategy,"seed":seed_value}
 					if not game.depart(profession,["A","B","C","D","E"],month,cart,{"profiles":people.profiles.duplicate(true),"contracts":terms}):
 						errors.append({"run":identity,"error":game.departure_error});continue
-					var policy: Dictionary={"id":strategy,"pace":0,"rations":1,"rest":true,"hunt":strategy!="no_hunt","accuracy":0.65,"hunt_below":45,"adaptive_rations":true,"preserve":"dry" if strategy=="dry" else "salt","slaughter":true,"rest_below":rest_below}
+					var policy: Dictionary={"id":strategy,"pace":0,"rations":1,"rest":true,"hunt":strategy!="no_hunt","accuracy":0.65,"hunt_below":45,"adaptive_rations":true,"preserve":"dry" if strategy=="dry" else "salt","slaughter":true,"slaughter_team_floor":4,"rest_below":rest_below}
 					if strategy=="no_hunt":policy.preserve=""
 					var count: Dictionary={"hunts":0,"rests":0,"trades":0,"travel_days":0,"empty_food_days":0,"care":0,"last_care":-100,"shots":0,"meat_obtained":0,"meat_carried":0,"empty_hunts":0,"preservations":0,"oxen_slaughtered":0}
 					var aim:=RandomNumberGenerator.new()

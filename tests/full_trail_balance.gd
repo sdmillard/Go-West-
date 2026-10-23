@@ -135,7 +135,7 @@ func act(game, profile: Dictionary, aim: RandomNumberGenerator, count: Dictionar
 		if not game.preservation_offer(salted).is_empty():
 			count.preservations+=1
 			return game.preserve_meat(salted)
-	if profile.get("slaughter",false) and game.state.oxen > 1 and game.state.food < 90 and not game.ox_slaughter_offer().is_empty():
+	if profile.get("slaughter",false) and game.state.oxen > int(profile.get("slaughter_team_floor",1)) and game.state.food < 90 and not game.ox_slaughter_offer().is_empty():
 		count.oxen_slaughtered+=1
 		return game.slaughter_ox()
 	if game.state.food < resupply_below and game.state.money >= (25 if adaptive else 15):
