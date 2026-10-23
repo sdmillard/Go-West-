@@ -5,7 +5,7 @@ const FORMAT := "westward-probably"
 const VERSION := 1
 const DEFAULT_PATH := "user://journey.json"
 const MAX_BYTES := 2097152
-const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes"]
+const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes", "social_rules"]
 var error := ""
 var rules_signature := ""
 var load_note := ""
@@ -24,7 +24,7 @@ func capture(game) -> Dictionary:
 	if not game.state.extended_route or not game.hunt.is_empty() or game.state.status not in ["traveling", "arrived", "lost"]:
 		return {}
 	return normalize({"format": FORMAT, "version": VERSION, "rules": fingerprint(),
-		"crime":game.crime.snapshot(),
+		"social":game.social.snapshot(),"crime":game.crime.snapshot(),
 		"characters_version":3,"characters":game.characters.profiles.duplicate(true),
 		"combat_history":game.combat.history.duplicate(true),"context":game.context.record.duplicate(true),"route_end":game.route.end_id,"wagon_cache":game.wagon_cache.duplicate(true), "state":game.state.duplicate(true), "pending":game.pending.duplicate(true),
 		"seen":game.seen.duplicate(), "journal":Array(game.journal),
@@ -355,6 +355,11 @@ func restore(value: Variant):
 		game.crime.record=normalize(crime.record)
 		game.crime.rng.state=int(crime.random)
 	elif migrated or economy_migrated:game.crime.bind_party(game)
+	else:return null
+	if value.has("social"):
+		if not game.social.valid(value.social,int(s.day)):return null
+		game.social.restore(normalize(value.social))
+	elif economy_migrated or migrated:game.social.start(game)
 	else:return null
 	# An open attack menu must still be possible; its text is regenerated.
 	if game.pending.get("attack_menu",false):
