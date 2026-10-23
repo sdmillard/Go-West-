@@ -1401,11 +1401,13 @@ func journey_summary() -> String:
 ## Stop choices that depend on what the party has done here: tolls, and a ferry crew it robbed or that has heard of it.
 func refresh_stop_offers() -> void:
 	_refresh_toll_offer()
-	if not pending.has("landmark") or pending.landmark!=state.landmark or not crime.scenes.has(state.landmark):
+	if not pending.has("landmark") or pending.landmark!=state.landmark:
 		return
 	for choice in pending.choices:
 		if choice.get("method","")=="ferry" and crime.ferry_refused(self,str(state.landmark)):
 			choice.label="The ferry crew will not carry your party"
+	if not crime.scenes.has(state.landmark):
+		return
 	if crime.passage(str(state.landmark)) and crime.scenes[state.landmark].kind=="ferry" and not pending.choices.any(func(choice):return choice.get("method","")=="seized"):
 		# Appended so the stop's existing choice indices never shift.
 		pending.choices.append({"label":"Cross on the taken ferry, without its crew · 1 day, risk to supplies","action":"cross","method":"seized","effects":{"days":1},"risk":crime.seized_risk(self,str(state.landmark))})

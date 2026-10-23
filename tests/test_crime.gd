@@ -675,6 +675,18 @@ func trader_checks(store) -> void:
 	game.state.day=game.crime.arrival(game,report,"fort_hall")
 	check(game.open_trade() and "robbed a trading party on the road through the" in game.pending.text,"News of robbed traders names the stretch of road")
 	choose_back(game)
+	# The Green River ferrymen cannot be robbed, but word reaches them like anyone else.
+	var news_day: int=int(game.state.day)
+	at(game,"green_river")
+	var ferry: int=stop_choice(game,func(choice):return choice.get("method","")=="ferry")
+	game.state.day=game.crime.arrival(game,report,"green_river")-1
+	check(ferry>=0 and game.can_choose(ferry),"The Green River ferry carries a party before the news arrives")
+	game.state.day+=1
+	game.refresh_stop_offers()
+	check(not game.can_choose(ferry) and game.pending.choices[ferry].label=="The ferry crew will not carry your party","Once word arrives, the Green River ferrymen refuse the party")
+	check(game.pending.choices.any(func(choice):return choice.get("method","") in ["ford","float"]),"The party can still ford or float")
+	at(game,"fort_hall")
+	game.state.day=maxi(news_day,int(game.state.day))
 	# Other traders on the road hear it too: past Fort Hall, once word has reached them, they will not deal.
 	var talk: int=stop_choice(game,func(choice):return choice.get("action","")=="notes")
 	check(talk>=0 and game.choose(talk) and "Talk around the fires: " in game.pending.text and "robbed a trading party" in game.pending.text,"Travelers camped at a stop repeat the news")
