@@ -204,7 +204,7 @@ func run() -> void:
 		war_on_main = war_on_main or calm.pending.get("id", "") in war_ids
 	check(not war_on_main, "Cayuse War encounters never happen on the main road")
 	drive_to(game, "fort_walla_walla")
-	check(game.state.landmark == "fort_walla_walla" and game.pending.choices.any(func(choice): return choice.get("action", "") == "trade"), "Fort Walla Walla is a trading post")
+	check(game.state.landmark == "fort_walla_walla" and game.context.market(game).post and not game.post_store().is_empty(), "Fort Walla Walla is a trading post")
 	game.choose(game.pending.choices.find(game.pending.choices.filter(func(choice): return choice.get("action", "") == "leave")[0]))
 	drive_to(game, "john_day")
 	check(game.state.landmark == "john_day" and game.route_path.has("fort_walla_walla") and not game.route_path.has("umatilla") and game.state.miles == 1760, "The detour rejoins at the John Day, 20 miles later than the main road")

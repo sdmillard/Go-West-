@@ -420,12 +420,13 @@ func _draw_crossing() -> void:
 	var progress := clampf(crossing_elapsed / crossing_duration, 0.0, 1.0)
 	# A ferry taken by force crosses the same way as a hired one.
 	var method: String = "ferry" if crossing.method == "seized" else crossing.method
-	# Ferried rivers (the Kansas above all) run yellow-brown with silt, matching their location pictures.
-	var water := Color("a38b64") if method == "ferry" else Color("3d7f99")
+	# The Kansas runs yellow-brown with silt, matching its location picture; the others run clearer.
+	var silty: bool = crossing.get("place", "") == "Kansas River"
+	var water := Color("a38b64") if silty else Color("3d7f99")
 	# Snowmelt high water runs fast, swollen and muddier, over the gravel at its edges.
 	var high: bool = crossing.get("stage", "") == "high"
 	if high:
-		water = Color("8f7a58") if method == "ferry" else Color("5a7c7c")
+		water = Color("8f7a58") if silty else Color("5a7c7c")
 	var cam := _camera()
 	draw_set_transform(-cam)
 	draw_rect(Rect2(cam, Vector2(432, 150)), water)

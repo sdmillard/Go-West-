@@ -472,7 +472,9 @@
       "id": "green_river",
       "name": "Green River crossing",
       "kind": "river",
-      "text": "You reach the Green River on Palmer's southern route, downstream of the crossing used by Greenwood's Cutoff. Judge the current before committing.",
+      "text": "You reach the Green River on Palmer's southern route, downstream of the crossing used by Greenwood's Cutoff. Mountain men and Mormon ferrymen take wagons over for pay; the fare doubles in high water.",
+      "ferry_dollars": 3,
+      "ferry_high_dollars": 6,
       "terrain": "plains",
       "next": [
         {

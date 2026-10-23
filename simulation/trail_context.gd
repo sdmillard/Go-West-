@@ -66,7 +66,11 @@ func decorate(game,options: Array,offer: Dictionary) -> void:
 func can_trade(choice: Dictionary) -> bool:
 	return not choice.has("market_key") or int(record.spent.get(choice.market_key,0))<int(choice.stock_limit)
 func consume(choice: Dictionary) -> void:
-	if choice.has("market_key"):record.spent[choice.market_key]=int(record.spent.get(choice.market_key,0))+1
+	if choice.has("market_key"):
+		record.spent[choice.market_key]=int(record.spent.get(choice.market_key,0))+1
+		# Once the store counter has sold by the unit, the unit ledger is the exact count; a whole lot adds its amount.
+		var units: String=choice.market_key+"|units"
+		if record.spent.has(units):record.spent[units]=int(record.spent[units])+absi(int(choice.effects.get(choice.market_key.substr(choice.market_key.rfind("|")+1).get_slice("_",1),0)))
 	if choice.has("visit_key"):record.spent[choice.visit_key]=1
 ## A trading visit costs one day, charged on its first transaction, at a post or with passing traders.
 func trade_days(offer: Dictionary) -> int:
@@ -98,5 +102,5 @@ func valid_record(value: Variant,route) -> bool:
 			if key=="prepared" and (data.activities[id].kind!="prepare" or id not in value.activities):return false
 			unique.append(id)
 	for key in value.spent:
-		if not key is String or key.length()>128 or not numeric(value.spent[key]) or value.spent[key]!=int(value.spent[key]) or value.spent[key]<0 or value.spent[key]>int(data.post_lots):return false
+		if not key is String or key.length()>128 or not numeric(value.spent[key]) or value.spent[key]!=int(value.spent[key]) or value.spent[key]<0 or value.spent[key]>int(data.post_lots)*(1000 if key.ends_with("|units") else 1):return false
 	return true

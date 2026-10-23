@@ -126,17 +126,15 @@ func run() -> void:
 		screen.game.state.next_landmark = "fort_laramie"
 		screen.game._arrive_landmark()
 		screen._refresh()
-		for index in range(screen.game.pending.choices.size()):
-			if screen.game.pending.choices[index].get("action","") == "trade":
-				screen._choose(index)
-				break
-		check(screen.service_window.visible and screen.landscape.scene_id == "fort_laramie", "Post trading menu retains its own arrival background")
+		check(not screen.game.pending.choices.any(func(choice): return choice.get("action","") == "trade"), "The post's store opens from the STORE button only, not a second stop choice")
+		screen._open_trade()
+		check(screen.post_store_window.visible and screen.landscape.scene_id == "fort_laramie", "Post store counter retains its own arrival background")
 		if "--capture" in OS.get_cmdline_user_args():
 			await process_frame
 			await RenderingServer.frame_post_draw
 			root.get_texture().get_image().save_png("res://docs/fort-trade.png")
-		screen._cancel_service()
-		check(screen.game.pending.landmark == "fort_laramie", "Closing the post returns to the unresolved landmark")
+		screen._close_post_store()
+		check(screen.game.pending.landmark == "fort_laramie" and not screen.post_store_window.visible, "Closing the post returns to the unresolved landmark")
 		screen.queue_free()
 		await process_frame
 	print("Full trail: %d checks, %d failures" % [checks,failures])

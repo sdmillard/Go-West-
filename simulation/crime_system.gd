@@ -234,7 +234,7 @@ func food_capacity(game,place: String) -> int:
 	return int(game.context.data.passing_lots if trader(place) else game.context.data.post_lots)*int(rules(place).food_lot)
 func food_left(game,place: String) -> int:
 	# Food bought from traders not yet in the record still left their packs.
-	var sold: int=int(service(place).food_sold) if record.services.has(place) else int(game.context.record.spent.get(market_prefix(place)+"|buy_food",0))*int(rules(place).food_lot)
+	var sold: int=int(service(place).food_sold) if record.services.has(place) else int(game.context.record.spent.get(market_prefix(place)+"|buy_food|units",int(game.context.record.spent.get(market_prefix(place)+"|buy_food",0))*int(rules(place).food_lot)))
 	# An emigrant family's food traded away on a peaceful visit is no longer in their wagon.
 	if rules(place).kind=="emigrants":sold+=int(game.context.record.spent.get(place+"|barter_food",0))*int(game.context.data.emigrant_camp.barter_food)
 	return maxi(0,food_capacity(game,place)-sold-int(service(place).food_taken))
@@ -955,7 +955,8 @@ func valid(value: Variant,game) -> bool:
 		if r.actors[owner_id(place)].health==0 and not store.alarmed:return false
 		if store.food_taken+store.food_sold>lots:return false
 		var offers: int=game.context.record.spent.get(market_prefix(place)+"|buy_food",0)
-		if store.food_sold<offers*40 or store.food_sold>offers*int(rules(place).food_lot):return false
+		# Lots record whole offers; the store counter sells by the pound, so a lot it opened may be only partly sold.
+		if (offers>0)!=(store.food_sold>0) or store.food_sold>offers*int(rules(place).food_lot):return false
 	if r.actors.size()!=actor_count:return false
 	var food_totals: Dictionary={}
 	var cash_totals: Dictionary={}

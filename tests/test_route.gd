@@ -110,5 +110,19 @@ func _initialize() -> void:
 		var ford: float = crossing.pending.choices[0].risk
 		var floating: float = crossing.pending.choices[1].risk
 		check((ford < floating) if stage == "low" else (ford > floating), "Water stage changes relative crossing risk: " + stage)
+	# The southern Green River crossing had paid ferries (mountain men from 1843, Mormon rafts from 1847); Greenwood's upper crossing did not until 1849.
+	check(not route.nodes.greenwood_cutoff.has("ferry_dollars"), "Greenwood's upper Green River crossing has no 1848 ferry")
+	for stage in ["low", "high"]:
+		var green = Simulation.new(5, "classic", true)
+		green.state.status = "traveling"
+		green.state.money = 100.0
+		for seed_value in range(40):
+			green.rng.seed = seed_value
+			green.state.next_landmark = "green_river"
+			green._arrive_landmark()
+			if green.state.river_stage == stage:
+				break
+		var ferry: Dictionary = green.pending.choices[0]
+		check(green.state.river_stage == stage and ferry.get("method", "") == "ferry" and is_equal_approx(-float(ferry.effects.money), 3.0 if stage == "low" else 6.0), "Green River ferry fare follows the current: " + stage)
 	print("Route: %d checks, %d failures" % [checks, failures])
 	quit(1 if failures else 0)
