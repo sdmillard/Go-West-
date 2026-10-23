@@ -33,6 +33,8 @@ func load_data(data: Variant) -> bool:
 				return _fail("Invalid ferry fare.")
 		if node.get("terrain", "plains") not in ["plains","mountains","desert","forest"] or node.get("hunting_region","plains") not in ["woodland","plains","highcountry","sagebrush","forest"]:
 			return _fail("Invalid regional terrain.")
+		if node.get("river_source","rain") not in ["rain","snowmelt"]:
+			return _fail("Invalid river source.")
 		for key in ["trade_bulk","descent"]:
 			if node.has(key) and not node[key] is bool:
 				return _fail("Invalid landmark activity flag.")

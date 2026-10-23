@@ -178,7 +178,8 @@ func _arrive_landmark() -> void:
 	var description: String = node.text
 	if node.kind == "river":
 		# Assigned play conditions, not measured/reconstructed weather for a day in 1848.
-		state.river_stage = "high" if rng.randf() < 0.45 or survival.wet_ground >= 4 else "low"
+		# Snow-fed rivers run high in the June melt; rain-fed ones with spring rains.
+		state.river_stage = "high" if rng.randf() < survival.river_high_chance(int(calendar().month), node.get("river_source","rain")) or survival.wet_ground >= 4 else "low"
 		description += river_conditions()
 		if node.has("ferry_dollars"):
 			options.append({"label": "Hire the ferry · $%.2f, 1 day" % node.ferry_dollars,
@@ -433,7 +434,9 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 	var sick_before: bool=characters.has_sick(self)
 	state.day += 1
 	if state.extended_route:
-		survival.advance(int(calendar().month), state.terrain, context.region(self))
+		var climate: Dictionary=context.region(self).duplicate()
+		climate.id=context.region_id(self)
+		survival.advance(int(calendar().month), state.terrain, climate)
 		state.weather = survival.weather.label
 		state.fatigue = clampi(int(state.fatigue) + (2 + int(state.pace) * 2 if team_working else (-14 if resting else -6)), 0, 100)
 		if not team_working:
@@ -441,6 +444,7 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 		elif state.vehicle!="foot":
 			var strain: int=int(context.region(self).strain)+int(seasonal_pressure().working_strain)
 			if context.region_id(self) in ["plains","sagebrush"] and int(calendar().month) in [7,8,9]:strain+=1
+			strain+=int(survival.weather.get("ox_strain",0))
 			state.ox_health=maxi(0,int(state.ox_health)-strain)
 	if state.extended_route:
 		var spoiled := provisions.spoil(int(state.day), int(state.food))
@@ -476,7 +480,7 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 					party_health.affect(member, -int(survival.weather.exposure), state.day, "exposure")
 					exposed += 1
 		var nutrition: int = state.rations if fed else 0
-		var risk_multiplier: float = [2.0, 1.3, 0.7][nutrition] * (0.6 if resting else 1.0) * (1.4 if unprotected and survival.weather.exposure else 1.0)
+		var risk_multiplier: float = [2.0, 1.3, 0.7][nutrition] * (0.6 if resting else 1.0) * (1.4 if unprotected and survival.weather.exposure else 1.0) * float(survival.weather.get("illness_risk",1.0))
 		party_health.tick(state.day, resting, risk_multiplier, nutrition, int(calendar().year), int(calendar().month) if state.extended_route else 0, context.region_id(self) if state.extended_route else "", party_health.days_without_fresh)
 		_collect_health_events()
 		state.health = party_health.average_health()
@@ -583,6 +587,7 @@ func _roll_trail_event() -> void:
 	for event in trail_events.events:
 		if state.vehicle=="foot" and event.id in ["breakdown","wagon_fire","swamped_load"]:continue
 		if state.oxen==0 and event.id=="ox_injury":continue
+		if state.oxen<2 and event.id=="stampede":continue
 		if not survival.eligible(event, state.day) or (event.id == "wandering_ox" and state.oxen == 0):
 			continue
 		candidates.append(event)

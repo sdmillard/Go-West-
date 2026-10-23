@@ -179,7 +179,8 @@
           ]
         }
       ],
-      "hunting_region": "plains"
+      "hunting_region": "plains",
+      "river_source": "snowmelt"
     },
     {
       "id": "ash_hollow",
@@ -333,7 +334,8 @@
           ]
         }
       ],
-      "hunting_region": "highcountry"
+      "hunting_region": "highcountry",
+      "river_source": "snowmelt"
     },
     {
       "id": "independence_rock",
@@ -442,7 +444,8 @@
           ]
         }
       ],
-      "hunting_region": "sagebrush"
+      "hunting_region": "sagebrush",
+      "river_source": "snowmelt"
     },
     {
       "id": "fort_bridger",
@@ -581,7 +584,8 @@
           ]
         }
       ],
-      "hunting_region": "sagebrush"
+      "hunting_region": "sagebrush",
+      "river_source": "snowmelt"
     },
     {
       "id": "fort_boise",
@@ -608,7 +612,8 @@
       "trade_bulk": true,
       "bulk_food_cents": 4000,
       "hunting_region": "sagebrush",
-      "advice": "This is the old Hudson's Bay Company post near the river confluence, not the United States Army post built near modern Boise in 1863."
+      "advice": "This is the old Hudson's Bay Company post near the river confluence, not the United States Army post built near modern Boise in 1863.",
+      "river_source": "snowmelt"
     },
     {
       "id": "burnt_river",

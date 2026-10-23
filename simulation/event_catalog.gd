@@ -39,7 +39,7 @@ func load_data(data: Variant, repeatable: bool = false) -> bool:
 		if event.has("weather") and (not event.weather is Array or event.weather.is_empty()):
 			return _fail("Invalid weather eligibility")
 		for weather in event.get("weather", []):
-			if weather not in ["clear", "rain", "heavy_rain", "fog", "hail", "cold", "blizzard"]:
+			if weather not in ["clear", "rain", "heavy_rain", "fog", "hail", "cold", "blizzard", "thunderstorm", "heat"]:
 				return _fail("Unknown weather eligibility")
 		if event.get("condition", "") not in ["", "broken_arm", "broken_leg", "dysentery", "cholera", "typhoid", "measles", "exhaustion", "snakebite", "wound"]:
 			return _fail("Invalid personal condition")

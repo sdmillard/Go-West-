@@ -165,9 +165,17 @@ func _draw_walkers(origin: Vector2,moving: bool) -> void:
 		draw_texture_rect_region(WALKER,Rect2(x-5,y-23,16,24),Rect2(step*16,(index%2)*24,16,24))
 
 func _draw_weather() -> void:
-	if weather_id in ["rain", "heavy_rain", "hail", "blizzard"]:
+	# Placeholder thunderstorm and heat effects until the Aseprite overlays land.
+	if weather_id == "thunderstorm" and posmod(int(clock_time * 10), 37) == 0:
+		draw_rect(Rect2(0, 0, 432, 150), Color(1, 1, 0.9, 0.35))
+	if weather_id == "heat":
+		for y in [92, 104, 116]:
+			var x := posmod(int(clock_time * 9) + y * 5, 48)
+			for band in range(0, 432, 48):
+				draw_rect(Rect2(band + x, y, 18, 1), Color(1, 0.93, 0.7, 0.25))
+	if weather_id in ["rain", "heavy_rain", "hail", "blizzard", "thunderstorm"]:
 		var snow := weather_id in ["hail", "blizzard"]
-		for index in range(45 if weather_id in ["heavy_rain", "blizzard"] else 22):
+		for index in range(45 if weather_id in ["heavy_rain", "blizzard", "thunderstorm"] else 22):
 			var x := posmod(index * 37 - int(clock_time * 13), 432)
 			var y := posmod(index * 19 + int(clock_time * (24 if snow else 70)), 150)
 			draw_rect(Rect2(x, y, 2 if snow else 1, 2 if snow else 4), Color("f6e7bc") if snow else Color("8db8c3"))
