@@ -1,6 +1,6 @@
 # Wanted system: build plan
 
-Status: approved by Spencer on October 23, 2026 ("build the wanted system"). Nothing is built yet. This is the handoff for whoever builds it.
+Status: approved by Spencer on October 23, 2026 ("build the wanted system"). Implemented on `codex/wanted-system`; see [implementation and historical limits](WANTED_SYSTEM.md). The sections below preserve the original plan.
 
 ## Goal
 

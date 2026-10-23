@@ -288,3 +288,7 @@ Personal existing health specials still affect any actual injury damage. Paid tr
 
 Reproduce using project-local APPDATA as in `test.ps1`: run `tests/test_crime.gd` for targeted checks or `tests/store_crime_journeys.gd` for the 24-route sample. Both use the actual engine. Keep previous balance reports archived.
 
+
+## Wanted encounters and frontier sentences
+
+See [WANTED_SYSTEM.md](WANTED_SYSTEM.md). Later pursuers now draw on arrived crime reports and companions' tales. Regional posse/regulator/reward encounters offer surrender, flight, fighting or a bounty payoff. Original captures and later encounters share recorded trials; nonfatal crimes impose restitution, wounds, banishment or seizure, while known killings can lead to hanging. Crime record v9 preserves postings and trial outcomes, with a compatible v8 upgrade. Existing terminal custody saves are not revived. Historical scope and authored rates are explicitly documented there.

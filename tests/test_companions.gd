@@ -70,6 +70,7 @@ func betrayal(store) -> void:
 	var old: Dictionary=game.crime.snapshot()
 	old.record.version=7
 	old.record.erase("betrayals")
+	old.record.erase("bounties")
 	var upgraded: Variant=game.crime.upgrade(old,game)
 	check(upgraded.record.version==game.crime.VERSION and upgraded.record.betrayals.is_empty(),"Version 7 records gain an empty betrayal list")
 	# Someone wakes: the theft is stopped, but the thief still runs.

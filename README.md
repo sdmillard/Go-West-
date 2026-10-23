@@ -4,6 +4,8 @@ A growing Oregon Trail-inspired game in **Godot 4 / GDScript**. Lead five travel
 
 ![The playable travel screen](docs/preview.png)
 
+[Wanted encounters and frontier sentences](docs/WANTED_SYSTEM.md) build on witnessed crimes and spreading news, with regional pursuers, rewards, escape choices and save-compatible trials.
+
 [Historically scaled wages and economy](docs/HISTORICAL_ECONOMY.md) now distinguish cash plus party food from unboarded labor, with period price anchors and an explicit list of remaining abstractions.
 
 The [full survival campaign](docs/BALANCE_CAMPAIGN.md) records the matched development/validation matrix, policy fixes and remaining [human playtest](docs/PLAYTEST_CHECKLIST.md).

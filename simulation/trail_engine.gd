@@ -293,7 +293,7 @@ func _choose_landmark(index: int) -> bool:
 		_tick_day(true)
 		_update_river_stage()
 		journal.append("Day %d · Rested at %s." % [state.day, route.nodes[state.landmark].name])
-		crime.check_pursuit(self)
+		if not crime.check_pursuit(self):crime.check_wanted(self)
 		return true
 	last_crossing = {}
 	if choice.action == "cross":
@@ -406,7 +406,7 @@ func travel() -> bool:
 		state.miles = mini(DESTINATION, state.miles + distance)
 		_tick_day(false)
 	journal.append("Day %d · Traveled to mile %d. Food remaining: %d units." % [state.day, state.miles, state.food])
-	if state.status == "traveling" and not crime.check_pursuit(self):
+	if state.status == "traveling" and not crime.check_pursuit(self) and not crime.check_wanted(self):
 		_schedule_event()
 	return true
 
@@ -415,7 +415,7 @@ func rest() -> bool:
 		return false
 	_tick_day(true)
 	journal.append("Day %d · Rested in camp. Food remaining: %d units." % [state.day, state.food])
-	if state.status == "traveling" and not crime.check_pursuit(self):
+	if state.status == "traveling" and not crime.check_pursuit(self) and not crime.check_wanted(self):
 		_schedule_event()
 	return true
 

@@ -1,13 +1,14 @@
 extends RefCounted
 ## Persistent local people, finite loot and staged incidents. No UI or global RNG.
-const COMMANDS=["theft","robbery","shoot","assault","raid","take","flee","breakout","surrender","finish","back"]
+const COMMANDS=["theft","robbery","shoot","assault","raid","take","flee","breakout","surrender","finish","payoff","back"]
 const STAGES=["loot","escape","standoff","report","done"]
 const ATTEMPTS=["unseen","noticed","complied","resisted","missed","wounded","killed","raided","caught"]
-const RESOLUTIONS=["","left","escaped","captured","surrendered","party_lost"]
-const VERSION:=8
+const RESOLUTIONS=["","left","escaped","captured","surrendered","party_lost","tried","paid"]
+const VERSION:=9
 const FACTS=["attempt","loot","escape"]
 ## Venue wording. A store yields food and cash; a toll gate or ferry yields its cash box and passage.
 const KINDS={
+	"pursuers":{"journal":"Wanted","noun":"the pursuers"},
 	"store":{"journal":"Store","noun":"the store","theft":"Take supplies without paying · 1 day","raid":"Enter the store and search for remaining supplies · 1 day"},
 	"toll":{"journal":"Toll gate","noun":"the toll gate","theft":"Slip the wagons past the gate without paying · 1 day","raid":"Search the gatekeeper's cabin for the toll money · 1 day","take":"Take $%.2f from the toll box and pass the gate · 1 day","passage":"the gate will be behind you"},
 	"fort":{"journal":"Fort","noun":"the army post","theft":"Take rations from the commissary tent · 1 day","raid":"Search the commissary tent for rations and the cash box · 1 day"},
@@ -27,8 +28,10 @@ const BETRAYAL_RESULTS={"theft":["stole","stopped"],"attack":["missed","wounded"
 const TRADERS:="passing_traders"
 ## Emigrant families camped near the road work the same way, named by their camp.
 const EMIGRANTS:="passing_emigrants"
-const TEMPLATES={"passing:":TRADERS,"emigrants:":EMIGRANTS}
-const TEMPLATE_KINDS={TRADERS:"traders",EMIGRANTS:"emigrants"}
+const TEMPLATES={"passing:":TRADERS,"emigrants:":EMIGRANTS,"wanted_posse:":"posse","wanted_regulators:":"regulators","wanted_hunters:":"bounty_hunters"}
+const TEMPLATE_KINDS={TRADERS:"traders",EMIGRANTS:"emigrants","posse":"pursuers","regulators":"pursuers","bounty_hunters":"pursuers"}
+const Wanted=preload("res://simulation/wanted_system.gd")
+var wanted_data: Dictionary={}
 const Remains=preload("res://simulation/remains.gd")
 var scenes: Dictionary={}
 var modifiers: Dictionary={}
@@ -44,6 +47,8 @@ func _init():load_data(JSON.parse_string(FileAccess.get_file_as_string("res://da
 func load_data(value: Variant) -> bool:
 	error="Invalid crime scene rules"
 	if not value is Dictionary or value.get("version")!=1 or not value.get("scenes") is Dictionary or value.scenes.is_empty() or not value.get("modifiers") is Dictionary:return false
+	if not Wanted.valid_rules(value.get("wanted")):return false
+	wanted_data=value.wanted.duplicate(true)
 	var unarmed: Variant = value.get("unarmed")
 	if not unarmed is Dictionary:return false
 	for key in ["hit_penalty","fatal_factor","mishap_chance"]:
@@ -91,9 +96,9 @@ func load_data(value: Variant) -> bool:
 		# A fort's commissary holds its own stock; soldiers who stop an escape force a standoff.
 		var fort_keys: Array=["food_stock","breakout","breakout_shots"]
 		for key in fort_keys:
-			if scene.has(key)!=(scene.kind=="fort" or (key=="food_stock" and scene.kind=="emigrants")):return false
+			if scene.has(key)!=((scene.kind in ["fort","pursuers"] and key!="food_stock") or scene.kind=="fort" or (key=="food_stock" and scene.kind=="emigrants")):return false
 		if scene.has("food_stock") and not whole(scene.food_stock,1,2000):return false
-		if scene.kind=="fort" and ( not number(scene.breakout) or scene.breakout<0 or scene.breakout>1 or not whole(scene.breakout_shots,1,5)):return false
+		if scene.kind in ["fort","pursuers"] and ( not number(scene.breakout) or scene.breakout<0 or scene.breakout>1 or not whole(scene.breakout_shots,1,5)):return false
 		# Only soldiers ride after a party; a chase ends in the same standoff as a blocked escape.
 		if scene.has("pursuit"):
 			var chase: Variant=scene.pursuit
@@ -122,7 +127,7 @@ func load_data(value: Variant) -> bool:
 	return true
 func start(seed_value: int) -> void:
 	rng.seed=seed_value ^ 0x4352494d
-	record={"version":VERSION,"people":{},"actors":{},"services":{},"incidents":[],"active":{},"reports":[],"bonds":[],"attacks":[],"remains":[],"human_food":[],"meals":{},"betrayals":[]}
+	record={"version":VERSION,"people":{},"actors":{},"services":{},"incidents":[],"active":{},"reports":[],"bonds":[],"attacks":[],"remains":[],"human_food":[],"meals":{},"betrayals":[],"bounties":[]}
 	for place in venues():
 		for uid in staff_ids(place):record.actors[uid]=fresh_actor(place,uid)
 		record.services[place]=fresh_service(place,0)
@@ -318,6 +323,7 @@ func menu(game) -> Dictionary:
 	var scene: Dictionary=rules(place)
 	var words: Dictionary=kind(place)
 	var current:=incident()
+	if current.get("action","")=="wanted":return Wanted.menu(self,game,current)
 	var text: String="Your active companions are present and can observe your actions. Theft or an attack uses one day and ordinary meals. A shot spends one bullet. Nearby staff may resist."
 	var options: Array=[]
 	if current.is_empty():
@@ -342,12 +348,15 @@ func menu(game) -> Dictionary:
 			text="%s. You can take up to %d lb food and $%.2f from what remains. Cargo space limits food; collecting it uses one more day. Nearby staff can respond as you leave." % [current.attempt.capitalize(),loot.food,loot.money/100.0]
 			options=[option("Take %d lb food and $%.2f · 1 day" % [loot.food,loot.money/100.0],"take"),option("Leave the supplies and try to get away","flee")]
 	elif current.stage=="escape":
-		text="%s. Staff have been alerted. Attempting escape costs one day; you may be injured or captured. Surrender ends this journey in custody." % current.attempt.capitalize()
+		text="%s. Staff have been alerted. Attempting escape costs one day; you may be injured or captured. Surrender brings a trial; a known killing can mean hanging." % current.attempt.capitalize()
 		options=[option("Try to escape · 1 day","flee"),option("Surrender","surrender")]
 	elif current.stage=="standoff":
 		var shots: int=mini(int(scene.breakout_shots),int(game.state.bullets))
-		text=("Soldiers from %s rode after you and have caught up. " % game.route.nodes[place].name if current.action=="pursuit" else "Soldiers have blocked the way out. ")+"Shooting your way out spends up to %d bullets; some of you will likely be hurt, and you may still be taken. Surrender ends this journey in custody." % int(scene.breakout_shots)
+		text=("Soldiers from %s rode after you and have caught up. " % game.route.nodes[place].name if current.action=="pursuit" else "Soldiers have blocked the way out. ")+"Shooting your way out spends up to %d bullets; some of you will likely be hurt, and you may still be taken. Surrender brings a trial; a known killing can mean hanging." % int(scene.breakout_shots)
 		options=[option("Shoot your way out · %d bullet(s)" % shots,"breakout"),option("Surrender","surrender")]
+	elif current.has("sentence"):
+		text=current.sentence.text
+		options=[option("Acknowledge the sentence","finish")]
 	else:
 		text="Incident %d: %s; %s. Food taken: %d lb. Cash taken: $%.2f. Shots: %d. People here who saw it: %d. See the journal and party records for injuries and reactions." % [current.id,current.attempt,current.resolution,current.food,current.cash_cents/100.0,current.shots,local_witnesses(current).size()]
 		options=[option("Acknowledge the outcome","finish")]
@@ -362,6 +371,7 @@ func menu(game) -> Dictionary:
 	return result_menu
 func can_choose(game,command: String) -> bool:
 	var current:=incident()
+	if current.get("action","")=="wanted":return Wanted.can_choose(self,game,current,command)
 	if current.is_empty():
 		if command=="back":return true
 		if record.incidents.size()>=10000:return false
@@ -404,7 +414,7 @@ func tale(game,slot: int) -> Dictionary:
 	var uid:=person_id(int(game.state.seed),slot)
 	var member: Dictionary=game.party_health.members[slot]
 	var objects:=func(action):return game.characters.response(slot,action) in ["forbidden","reluctant","disapproved"]
-	var acts: Array=record.incidents.filter(func(current):return current.knowledge.has(uid) and current.action!="pursuit" and objects.call("murder" if current.action in ["shoot","assault"] else "robbery")).map(func(current):return int(current.id))
+	var acts: Array=record.incidents.filter(func(current):return current.knowledge.has(uid) and current.action not in ["pursuit","wanted"] and objects.call("murder" if current.action in ["shoot","assault"] else "robbery")).map(func(current):return int(current.id))
 	var attacks: Array=record.attacks.filter(func(attack):return int(attack.day)<=int(member.departure_day) and (int(attack.target)==slot or attack.responses.has(str(slot))) and (int(attack.target)==slot or bond(slot,int(attack.target)) in CLOSE or objects.call("murder"))).map(func(attack):return int(attack.id))
 	var bodies: Array=record.remains.filter(func(item):return slot in item.witnesses and (objects.call("cannibalism") or (record.people.has(item.person) and bond(slot,int(record.people[item.person].slot)) in CLOSE))).map(func(item):return int(item.id))
 	return {"teller":slot,"origin":member.departure_place,"day":int(member.departure_day),"incidents":acts,"attacks":attacks,"remains":bodies}
@@ -425,7 +435,7 @@ func news_text(game,place: String) -> String:
 	var lines: Array=[]
 	for report in heard(game,place):
 		if report.origin==place:continue
-		var act: String={"theft":"stole from","robbery":"robbed","shoot":"shot at","assault":"attacked unarmed","raid":"looted","pursuit":"fought off soldiers from"}[record.incidents[int(report.incident)-1].action]
+		var act: String={"theft":"stole from","robbery":"robbed","shoot":"shot at","assault":"attacked unarmed","raid":"looted","pursuit":"fought off soldiers from","wanted":"fought"}[record.incidents[int(report.incident)-1].action]
 		var origin: String=where(game,report.origin)
 		var noun: String=kind(report.origin).noun
 		if report.identified:lines.append("Word reached here by day %d that your party %s %s %s. The people here will not trade with you or help you." % [arrival(game,report,place),act,noun,origin])
@@ -454,10 +464,15 @@ func observe(game,current: Dictionary,fact: String,staff: bool) -> void:
 func result(game,resolution: String) -> void:
 	Remains.sync(game)
 	var current:=incident()
+	if resolution in ["captured","surrendered"]:
+		Wanted.trial(self,game,current,resolution=="surrendered")
+		if game.state.status=="traveling":game.pending=menu(game)
+		return
+	if current.action=="wanted":current.ended_day=int(game.state.day)
 	current.resolution=resolution
 	current.stage="report"
 	game.journal.append("Day %d · %s incident %d: %s; %s. Took %d lb food and $%.2f; fired %d shot(s)." % [game.state.day,kind(current.place).journal,current.id,current.attempt,resolution,current.food,current.cash_cents/100.0,current.shots])
-	if resolution in ["left","escaped"] and not local_witnesses(current).is_empty():record.reports.append(report_for(current,int(game.state.day)))
+	if resolution in ["left","escaped"] and (current.action!="wanted" or int(current.shots)>0) and not local_witnesses(current).is_empty():record.reports.append(report_for(current,int(game.state.day)))
 	if resolution in ["captured","surrendered","party_lost"]:
 		current.stage="done"
 		record.active={}
@@ -473,6 +488,7 @@ func advance(game,days: int=1) -> bool:
 	return true
 func choose(game,command: String) -> bool:
 	if not can_choose(game,command):return false
+	if incident().get("action","")=="wanted":return Wanted.choose(self,game,incident(),command)
 	if command in ["back","finish"]:
 		if command=="finish":
 			incident().stage="done"
@@ -491,6 +507,7 @@ func choose(game,command: String) -> bool:
 	if incident().is_empty():
 		var id: int=record.incidents.size()+1
 		var current: Dictionary={"id":id,"day":int(game.state.day),"place":place,"target":keeper.uid,"action":command,"attempt":"raided","resolution":"","stage":"escape","food":0,"cash_cents":0,"shots":0,"knowledge":{}}
+		current["joining"]=game.party_health.members.filter(func(member):return game.party_health.is_active(member) and game.characters.willing(int(member.id),"murder" if command in ["shoot","assault"] else "robbery")).map(func(member):return int(member.id))
 		record.incidents.append(current)
 		record.active={"id":id}
 		if command=="theft":current.attempt="unseen" if rng.randf()<scene.theft_success else "noticed"
@@ -555,7 +572,10 @@ func choose(game,command: String) -> bool:
 			var soldier: Dictionary=record.actors[targets[0]]
 			soldier.health=0 if soldier.health<=40 or rng.randf()<scene.shot_fatal else int(soldier.health)-40
 			# A soldier killed here carries nothing onward, as a keeper killed by the first shot never does.
-			if soldier.health==0:current.knowledge.erase(soldier.uid)
+			if soldier.health==0:
+				current.knowledge.erase(soldier.uid)
+				if not current.has("kills"):current["kills"]=[]
+				current.kills.append(soldier.uid)
 		if not advance(game):return true
 		var chance: float=bounded(float(rules(place).breakout),float(rules(place).breakout)+scene.edge,float(modifiers.floor),float(modifiers.ceiling))
 		# Soldiers fire back either way; one or two of the party are hurt.
@@ -579,8 +599,9 @@ func pursuer(game) -> String:
 		if chase.is_empty() or living_staff(place).filter(func(uid):return uid!=owner_id(place)).is_empty():continue
 		if record.incidents.any(func(current):return current.place==place and current.action=="pursuit"):continue
 		# The chase starts from the day of the getaway, which is the day its report left.
-		var getaways: Array=record.reports.filter(func(report):return report.origin==place and record.incidents[int(report.incident)-1].resolution=="escaped")
-		if not getaways.is_empty() and int(game.state.day)-int(getaways.back().day)<=int(chase.days):return place
+		var answered: Array=Wanted.settled(self)
+		var getaways: Array=record.reports.filter(func(report):return report.origin==place and "incident:%d" % int(report.incident) not in answered and record.incidents[int(report.incident)-1].resolution=="escaped")
+		if not getaways.is_empty() and int(game.state.day)-int(getaways.back().day)<=Wanted.pursuit_days(self,game,place):return place
 	return ""
 ## Rolled once for each day the party travels or rests; a catch opens the standoff where the party must surrender or shoot its way out.
 func check_pursuit(game) -> bool:
@@ -792,7 +813,7 @@ func betray(game,slot: int) -> void:
 func snapshot() -> Dictionary:return {"record":record.duplicate(true),"random":str(rng.state)}
 ## Converts a version 1 snapshot (one keeper record per place and an aggregate "staff:<place>"
 ## observer) into separate staff people. Anything malformed is returned unchanged for valid() to reject.
-func upgrade(value: Variant,game=null) -> Variant:return add_venues(upgrade_v7(upgrade_v6(upgrade_v5(upgrade_v4(upgrade_v3(upgrade_v2(upgrade_v1(value))))))),game)
+func upgrade(value: Variant,game=null) -> Variant:return add_venues(upgrade_v8(upgrade_v7(upgrade_v6(upgrade_v5(upgrade_v4(upgrade_v3(upgrade_v2(upgrade_v1(value)))))))),game)
 ## Version 4 kept no remains. Deaths already recorded join the ledger as lost when the save is restored; nobody knows where they lie.
 func upgrade_v4(value: Variant) -> Variant:
 	if not value is Dictionary or not value.get("record") is Dictionary or value.record.get("version")!=4 or value.record.has("remains"):return value
@@ -826,9 +847,21 @@ func upgrade_v6(value: Variant) -> Variant:
 func upgrade_v7(value: Variant) -> Variant:
 	if not value is Dictionary or not value.get("record") is Dictionary or value.record.get("version")!=7 or value.record.has("betrayals"):return value
 	var r: Dictionary=value.record.duplicate(true)
-	r.version=VERSION
+	r.version=8
 	r.betrayals=[]
 	return {"record":r,"random":value.get("random")}
+## Version 8 predates posted rewards. Existing evidence and random state stay intact.
+func upgrade_v8(value: Variant) -> Variant:
+	if not value is Dictionary or not value.get("record") is Dictionary or value.record.get("version")!=8 or value.record.has("bounties"):return value
+	var r: Dictionary=value.record.duplicate(true)
+	r.version=VERSION
+	r.bounties=[]
+	return {"record":r,"random":value.get("random")}
+func notoriety(game,place_or_mile: Variant="") -> float:return Wanted.notoriety(self,game,place_or_mile)
+func wanted_label(game) -> String:
+	var score:=notoriety(game,int(game.state.miles))
+	return "Wanted: "+("not known" if score<=0 else ("talked about" if score<4 else ("wanted" if score<9 else "notorious")))
+func check_wanted(game) -> bool:return Wanted.check_wanted(self,game)
 ## Version 3 had no companion bonds or attacks. Existing travelers are never given invented bonds.
 func upgrade_v3(value: Variant) -> Variant:
 	if not value is Dictionary or not value.get("record") is Dictionary or value.record.get("version")!=3:return value
@@ -858,7 +891,7 @@ func upgrade_v2(value: Variant) -> Variant:
 	r.reports=[]
 	for current in r.incidents:
 		if not current is Dictionary or not current.get("knowledge") is Dictionary or not scenes.has(current.get("place","")):return value
-		if current.get("resolution") in ["left","escaped"] and not local_witnesses(current).is_empty():r.reports.append(report_for(current,int(current.get("day",0))))
+		if current.get("resolution") in ["left","escaped"] and (current.action!="wanted" or int(current.shots)>0) and not local_witnesses(current).is_empty():r.reports.append(report_for(current,int(current.get("day",0))))
 	return {"record":r,"random":value.get("random")}
 func upgrade_v1(value: Variant) -> Variant:
 	if not value is Dictionary or not value.get("record") is Dictionary or value.record.get("version")!=1:return value
@@ -917,7 +950,7 @@ func valid_party(r: Dictionary,game) -> bool:
 	if not valid_betrayals(r,game):return false
 	# Nobody fled the party except in answer to an attack, or after turning on it.
 	for member in members:
-		if member.get("fled",false) and not r.attacks.any(func(attack):return attack is Dictionary and attack.get("responses") is Dictionary and attack.responses.get(str(int(member.id)),"") in ["fled","retaliated"] and attack.day==member.departure_day) and not r.betrayals.any(func(item):return int(item.member)==int(member.id) and int(item.day)==int(member.departure_day)):return false
+		if member.get("fled",false) and not r.attacks.any(func(attack):return attack is Dictionary and attack.get("responses") is Dictionary and attack.responses.get(str(int(member.id)),"") in ["fled","retaliated"] and attack.day==member.departure_day) and not r.betrayals.any(func(item):return int(item.member)==int(member.id) and int(item.day)==int(member.departure_day)) and not r.incidents.any(func(item):return item.get("sentence",{}).get("banished",[]).any(func(id):return number(id) and int(id)==int(member.id)) and int(item.sentence.day)==int(member.departure_day)):return false
 	return true
 func valid_betrayals(r: Dictionary,game) -> bool:
 	var members: Array=game.party_health.members
@@ -945,7 +978,7 @@ func valid_betrayals(r: Dictionary,game) -> bool:
 func valid(value: Variant,game) -> bool:
 	if not value is Dictionary or value.size()!=2 or not value.get("record") is Dictionary or not value.get("random") is String or not value.random.is_valid_int() or str(int(value.random))!=value.random:return false
 	var r: Dictionary=value.record
-	if r.size()!=13 or not valid_party(r,game) or not r.get("reports") is Array or r.get("version")!=VERSION or not r.get("people") is Dictionary or r.people.size()!=game.party_health.members.size() or not r.get("actors") is Dictionary or not r.get("services") is Dictionary or not r.services.keys().all(func(place):return scenes.has(place) and not TEMPLATE_KINDS.has(place) or transient(place)) or not r.get("incidents") is Array or r.incidents.size()>10000 or not r.get("active") is Dictionary:return false
+	if r.size()!=14 or not valid_party(r,game) or not r.get("reports") is Array or r.get("version")!=VERSION or not r.get("people") is Dictionary or r.people.size()!=game.party_health.members.size() or not r.get("actors") is Dictionary or not r.get("services") is Dictionary or not r.services.keys().all(func(place):return scenes.has(place) and not TEMPLATE_KINDS.has(place) or transient(place)) or not r.get("incidents") is Array or r.incidents.size()>10000 or not r.get("active") is Dictionary or not r.get("bounties") is Array:return false
 	for member in game.party_health.members:
 		var uid:=person_id(int(game.state.seed),int(member.id))
 		var person: Variant=r.people.get(uid)
@@ -974,7 +1007,12 @@ func valid(value: Variant,game) -> bool:
 	var previous_day: int=-1
 	for index in range(r.incidents.size()):
 		var current: Variant=r.incidents[index]
-		if not current is Dictionary or current.size()!=12 or current.get("id")!=index+1 or not whole(current.get("day"),0,int(game.state.day)) or not (current.get("place") is String and r.services.has(current.place) and not TEMPLATE_KINDS.has(current.place)) or current.get("target") not in staff_ids(current.place):return false
+		if not current is Dictionary or (current.get("action")!="wanted" and current.size()!=12+int(current.has("sentence"))+int(current.has("joining"))+int(current.has("kills"))) or current.get("id")!=index+1 or not whole(current.get("day"),0,int(game.state.day)) or not (current.get("place") is String and r.services.has(current.place) and not TEMPLATE_KINDS.has(current.place)) or current.get("target") not in staff_ids(current.place):return false
+		if not Wanted.valid_extras(self,r,current,game):return false
+		if current.get("action")=="wanted":
+			if not Wanted.valid_incident(self,r,current,game,index,previous_day):return false
+			previous_day=int(current.day)
+			continue
 		if current.get("action") not in ["shoot","assault"] and current.target!=owner_id(current.place):return false
 		if current.get("action") not in ["theft","robbery","shoot","assault","raid","pursuit"] or current.get("attempt") not in ATTEMPTS or current.get("stage") not in STAGES or current.get("resolution") not in RESOLUTIONS:return false
 		if current.day<previous_day:return false
@@ -984,7 +1022,7 @@ func valid(value: Variant,game) -> bool:
 		if current.action=="pursuit":
 			var chase: Dictionary=rules(current.place).get("pursuit",{})
 			if chase.is_empty() or current.stage in ["loot","escape"] or r.incidents.slice(0,index).any(func(other):return other.get("place")==current.place and other.get("action")=="pursuit"):return false
-			if not r.reports.any(func(report):return report is Dictionary and report.get("origin")==current.place and whole(report.get("incident"),1,index) and r.incidents[int(report.incident)-1].get("resolution")=="escaped" and int(current.day)-int(report.get("day",0))<=int(chase.days) and int(current.day)>=int(report.get("day",0))):return false
+			if not r.reports.any(func(report):return report is Dictionary and report.get("origin")==current.place and whole(report.get("incident"),1,index) and r.incidents[int(report.incident)-1].get("resolution")=="escaped" and int(current.day)-int(report.get("day",0))<=int(wanted_data.army_max_days) and int(current.day)>=int(report.get("day",0))):return false
 		if (current.stage in ["loot","escape","standoff"])!=(current.resolution==""):return false
 		if current.stage=="standoff" and rules(current.place).kind!="fort":return false
 		if current.stage=="loot" and current.attempt not in ["unseen","complied","killed","raided"]:return false
@@ -1016,7 +1054,7 @@ func valid(value: Variant,game) -> bool:
 	for place in venues()+targeted:
 		if int(food_totals.get(place,0))!=r.services[place].food_taken or int(cash_totals.get(place,0))+r.services[place].cash_cents!=rules(place).cash_cents:return false
 	# Every resolved, witnessed getaway has exactly one report, in incident order, saying exactly what its witnesses know.
-	var expected: Array=r.incidents.filter(func(current):return current.resolution in ["left","escaped"] and not local_witnesses(current).is_empty())
+	var expected: Array=r.incidents.filter(func(current):return current.resolution in ["left","escaped"] and (current.action!="wanted" or int(current.shots)>0) and not local_witnesses(current).is_empty())
 	if r.reports.size()!=expected.size():return false
 	for index in range(expected.size()):
 		var report: Variant=r.reports[index]
@@ -1024,6 +1062,7 @@ func valid(value: Variant,game) -> bool:
 		if not report is Dictionary or report.size()!=6 or not whole(report.get("day"),int(current.day),int(game.state.day)):return false
 		var derived: Dictionary=report_for(current,int(report.day))
 		if report.get("incident")!=derived.incident or report.get("origin")!=derived.origin or report.get("identified")!=derived.identified or report.get("senders")!=derived.senders or report.get("facts")!=derived.facts:return false
+	if not Wanted.valid_bounties(self,r,game):return false
 	if not r.active.is_empty():
 		if r.active.size()!=1 or not whole(r.active.get("id"),1,r.incidents.size()) or r.active.id!=r.incidents.size() or r.incidents[int(r.active.id)-1].stage=="done" or not game.pending.get("crime_menu",false):return false
 	return Remains.valid(r,game)
