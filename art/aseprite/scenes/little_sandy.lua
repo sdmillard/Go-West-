@@ -1,83 +1,68 @@
--- Little Sandy River Crossing & Parting of the Ways (432x150).
--- Historical reference: 1848 trail context (Sublette Cutoff vs. Fort Bridger route).
--- Shallow high-desert stream winding across the sagebrush plain, with the forking
--- wagon traces and a rustic wooden junction signpost.
+-- Little Sandy (432x150).
+-- West of South Pass the road crosses dry sage plain to the willow-fringed Little Sandy, a small
+-- creek. Near here the road forked: the shorter northern cutoff struck straight across the
+-- desert, while this journey keeps to the longer southern road toward Bridger's post.
+-- The Wind River Range still shows white to the north.
 local K = dofile(app.params.kit)
 local W, H = 432, 150
-local tau = math.pi * 2.0
 
-K.canvas(W, H, 184816)
+K.canvas(W, H, 184834)
 
------------------------------------------------------------------ 1. Sky & Distant Wind River Foothills
 K.layer("sky", function()
-  K.rect(0, 0, W, 16, "blue")
-  K.blend(0, 16, W, "blue", "sky_top")
-  K.rect(0, 19, W, 18, "sky_top")
-  K.blend(0, 37, W, "sky_top", "sky")
-  K.rect(0, 40, W, 16, "sky")
-  K.blend(0, 56, W, "sky", "light_blue")
-  K.rect(0, 59, W, 14, "light_blue")
+  K.sky(W, 98, {{288, 12, 0.8}, {120, 24, 0.5}}, "mist")
+end)
 
-  K.cloud(42, 16, 1.35)
-  K.cloud(304, 14, 1.4)
+K.layer("ranges", function()
+  local tops = {{280, 18}, {312, 26}, {344, 22}, {376, 30}, {410, 26}, {440, 30}}
+  K.peaks(240, W - 1, 92, 94, function(x)
+    local h = 4 * math.max(0, math.min(1, (x - 240) / 40))
+    for _, p in ipairs(tops) do h = math.max(h, p[2] - math.abs(x - p[1]) * 0.8) end
+    return h
+  end, 18)
+  K.ridge(0, 260, 0, 94, function(x) return -(86 + 2 * math.sin(x / 19)) end, "far_hill", "mist", "haze")
+end)
 
-  for x = 0, W - 1 do
-    local hy = 65 + math.floor(4 * math.sin(tau * x / 432.0 + 0.3) + 2 * math.cos(tau * x / 144.0))
-    for y = hy, 88 do
-      K.px(x, y, (y == hy) and "mist" or "far_hill")
-    end
+K.layer("plain", function()
+  K.rect(0, 90, W, H - 90, "clap_sh")
+  for x = 0, W - 1 do K.px(x, 90, "sand") end
+  for i = 1, 2200 do
+    local x, y = K.rnd(W), 90 + K.rnd(60)
+    K.px(x, y, ({"sage", "teal", "ochre", "haze", "clap_sh", "sand"})[i % 6 + 1])
+  end
+  -- the creek: small, willow-lined, cut a few feet below the plain
+  local creek = K.smooth({{-6, 112, 2}, {70, 116, 2}, {140, 112, 3}, {200, 120, 3}, {260, 116, 3}, {330, 124, 4}, {440, 120, 4}})
+  K.ribbon(creek, "ochre", 3)
+  K.ribbon(creek, "grass", 2)
+  K.river(creek, false)
+  -- the fork: the cutoff runs off right across the desert, the main road bends left to the ford
+  local main = K.smooth({{300, 158, 7}, {286, 138, 5}, {250, 126, 4}, {210, 120, 3}, {150, 106, 2}, {80, 98, 1}, {-6, 94, 1}})
+  K.ribbon(main, "ochre", 1); K.ribbon(main, "sand", 0)
+  local cutoff = K.smooth({{286, 138, 4}, {330, 124, 3}, {380, 110, 2}, {440, 100, 1}})
+  K.ribbon(cutoff, "ochre", 0)
+  for i = 1, 30 do
+    local x, y = K.rnd(W), 120 + K.rnd(30)
+    local c = K.at(x, y)
+    if c ~= "sand" and c ~= "ochre" and c ~= "blue" and c ~= "sky_top" and c ~= "grass" and c ~= "light_blue" and c ~= "white" then K.sage(x, y) end
   end
 end)
 
------------------------------------------------------------------ 2. High Sagebrush Plain & Little Sandy Creek
-K.layer("plain_and_stream", function()
-  K.rect(0, 86, W, 14, "sage")
-  K.dither(0, 96, W, 6, "sage", "grass")
-  K.rect(0, 102, W, 48, "grass")
-  K.dither(0, 140, W, 10, "grass", "pine")
-
-  -- Shallow sandy channel of the Little Sandy River winding across the plain
-  K.poly({{0, 105}, {165, 94}, {432, 106}, {432, 118}, {162, 107}, {0, 119}}, "sand")
-  K.poly({{0, 107}, {165, 96}, {432, 108}, {432, 116}, {162, 105}, {0, 117}}, "sky_top")
-  K.poly({{0, 109}, {165, 98}, {432, 110}, {432, 114}, {162, 103}, {0, 115}}, "sky")
-  for x = 12, W - 12, 18 do
-    local wy = 112 - math.floor(11 * math.sin(math.pi * x / W))
-    K.rect(x, wy, 4, 1, (x % 36 == 0) and "white" or "light_blue")
-  end
-
-  -- Forking wagon road ("Parting of the Ways"): main Fort Bridger branch + right Sublette Cutoff
-  K.poly({{194, 150}, {197, 118}, {262, 92}, {274, 93}, {218, 122}, {222, 150}}, "ochre")
-  K.poly({{198, 150}, {201, 118}, {264, 92}, {270, 93}, {214, 122}, {216, 150}}, "gold")
-  -- Left fork towards Fort Bridger
-  K.poly({{197, 118}, {148, 92}, {158, 92}, {208, 118}}, "ochre")
-  K.line(197, 149, 200, 118, "rust")
-  K.line(217, 149, 214, 120, "rust")
-  K.line(200, 118, 265, 92, "rust")
-  K.line(214, 120, 272, 93, "rust")
-  K.line(199, 118, 152, 92, "rust")
-
-  for i = 1, 700 do
-    local x = K.rnd(W)
-    local y = 86 + K.rnd(64)
-    local cur = K.at(x, y)
-    if cur == "grass" or cur == "sage" then
-      K.px(x, y, (i % 3 == 0) and "leaf" or ((i % 2 == 0) and "sage" or "gold"))
-    elseif cur == "ochre" or cur == "gold" then
-      K.px(x, y, (i % 3 == 0) and "sand" or "rust")
-    end
-  end
+K.layer("willows", function()
+  for _, w in ipairs({{30, 112}, {58, 115}, {120, 111}, {176, 117}, {236, 116}, {250, 118}, {312, 122}, {352, 124}, {400, 121}}) do K.willow(w[1], w[2], 1) end
 end)
 
------------------------------------------------------------------ 3. Fork Signpost & Arriving Wagon
-K.layer("signpost_and_wagon", function()
-  -- Rustic wooden junction signpost at the fork between the two branches
-  K.shadow(186, 120, 8)
-  K.rect(189, 108, 2, 12, "wood")
-  K.poly({{183, 109}, {191, 109}, {191, 112}, {183, 112}, {181, 110}}, "sand")
-  K.poly({{189, 111}, {197, 111}, {199, 112}, {197, 114}, {189, 114}}, "ochre")
-
-  K.wagon(24, 143, 1)
-  K.person(82, 142, "blue", "wood", false)
+K.layer("figures", function()
+  -- a wagon fording the creek, the water barely over the felloes
+  K.wagon(190, 121, -1)
+  K.team(180, 117, -1, {"dark"}, {"light", true})
+  K.wade(186, 238, 121, 4)
+  K.wade(150, 180, 118, 3)
+  -- a small party far off, taking the cutoff into the desert
+  K.far_wagon(386, 109, 1)
+  K.far_wagon(410, 104, 1)
+  -- near the fork, a man pointing the way down the southern road
+  K.person(270, 146, "red", "deep")
+  K.line(266, 136, 260, 134, "red")
+  K.person(282, 148, "teal", "bonnet", true)
 end)
 
 K.save("location_little_sandy")

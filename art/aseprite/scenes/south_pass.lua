@@ -1,91 +1,73 @@
--- South Pass (Continental Divide) (432x150).
--- Historical reference: NPS South Pass landscape description & WESTERN_REFERENCES.md.
--- A wide, open, gently rolling high-elevation sagebrush saddle—deliberately omitting
--- any implausible narrow alpine gorge at the wagon crossing, with only distant low
--- Wind River / Pacific Butte swells on the horizon.
+-- South Pass (432x150).
+-- The Continental Divide here is a broad sage saddle, so gentle that diarists were surprised to
+-- learn they had crossed it. The snowy Wind River Range stands to the north and the Oregon
+-- Buttes to the southwest. A wagon train strings out small along the road; Pacific Springs
+-- shows as a green marsh just west of the summit.
 local K = dofile(app.params.kit)
 local W, H = 432, 150
-local tau = math.pi * 2.0
 
-K.canvas(W, H, 184815)
+K.canvas(W, H, 184833)
 
------------------------------------------------------------------ 1. High-Altitude Sky & Distant Wind River Horizon
 K.layer("sky", function()
-  K.rect(0, 0, W, 16, "blue")
-  K.blend(0, 16, W, "blue", "sky_top")
-  K.rect(0, 19, W, 18, "sky_top")
-  K.blend(0, 37, W, "sky_top", "sky")
-  K.rect(0, 40, W, 16, "sky")
-  K.blend(0, 56, W, "sky", "light_blue")
-  K.rect(0, 59, W, 14, "light_blue")
+  K.sky(W, 98, {{40, 10, 0.9}, {214, 20, 0.6}}, "mist")
+end)
 
-  K.cloud(44, 16, 1.35)
-  K.cloud(300, 14, 1.45)
+K.layer("ranges", function()
+  -- Wind River Range to the north (right), with snow on the high peaks
+  local tops = {{236, 26}, {262, 34}, {290, 30}, {318, 44}, {344, 40}, {372, 52}, {398, 46}, {424, 50}}
+  local wind = function(x)
+    local h = 8 * math.max(0, math.min(1, (x - 190) / 60))
+    for _, p in ipairs(tops) do h = math.max(h, p[2] - math.abs(x - p[1]) * 0.9) end
+    return h
+  end
+  K.peaks(190, W - 1, 96, 98, wind, 28)
+  -- Oregon Buttes far to the southwest: flat-topped and blue
+  K.ridge(10, 110, 0, 96, function(x)
+    local d = math.abs(x - 60) / 50
+    return -(96 - ((d < 0.55) and 22 or 22 * (1 - (d - 0.55) / 0.45)))
+  end, "far_hill", "mist", "haze")
+end)
 
-  -- Very distant, low hazy Wind River range on the far left and Oregon Buttes on the far right,
-  -- leaving the broad central Continental Divide saddle wide open
+K.layer("saddle", function()
+  -- the long sage swell of the divide
+  local swell = function(x) return 92 - 6 * math.exp(-((x - 230) / 120) ^ 2) + 2 * math.sin(x / 31) end
   for x = 0, W - 1 do
-    local saddle = 70 - math.floor(11 * math.exp(-((x - 68) / 48.0) ^ 2) + 9 * math.exp(-((x - 364) / 46.0) ^ 2))
-    for y = saddle, 76 do
-      K.px(x, y, (y == saddle) and "mist" or "far_hill")
+    local top = math.floor(swell(x) + 0.5)
+    for y = top, H - 1 do K.px(x, y, "clap_sh") end
+    K.px(x, top, "sand")
+  end
+  for i = 1, 2400 do
+    local x, y = K.rnd(W), 86 + K.rnd(64)
+    if K.at(x, y) == "clap_sh" then
+      local near = (y - 86) / 64
+      K.px(x, y, ({"sage", "teal", "ochre", "haze", "clap_sh"})[i % 5 + 1])
+      if near > 0.5 and i % 3 == 0 then K.px(x, y - 1, "haze") end
     end
+  end
+  -- Pacific Springs marsh
+  K.ellipse(110, 104, 30, 3, "grass"); K.ellipse(108, 103, 22, 2, "sage")
+  for i = 0, 6 do K.px(92 + i * 5, 104, "light_blue") end
+  -- the road over the summit, worn into several parallel ruts
+  local road = K.smooth({{440, 150, 9}, {360, 132, 6}, {290, 112, 4}, {230, 100, 2}, {160, 98, 2}, {100, 102, 1}, {-6, 104, 1}})
+  K.ribbon(road, "ochre", 1); K.ribbon(road, "sand", 0)
+  for i = 1, #road - 1, 2 do K.px(math.floor(road[i][1]), math.floor(road[i][2]), "dirt_dk") end
+  for i = 1, 26 do
+    local x, y = K.rnd(W), 116 + K.rnd(34)
+    if K.at(x, y) ~= "sand" and K.at(x, y) ~= "ochre" then K.sage(x, y) end
   end
 end)
 
------------------------------------------------------------------ 2. Wide Sagebrush Saddle & Twin Mounds
-K.layer("wide_saddle", function()
-  -- Rolling sagebrush slopes flanking the broad central pass
-  for x = 0, W - 1 do
-    local h_mid = 74 - math.floor(12 * math.exp(-((x - 74) / 62.0) ^ 2) + 10 * math.exp(-((x - 358) / 60.0) ^ 2))
-    for y = h_mid, 102 do
-      K.px(x, y, (y == h_mid) and "gold" or "sage")
-    end
+K.layer("figures", function()
+  -- the train strung out over the summit, smaller with distance
+  for _, w in ipairs({{196, 100}, {218, 101}, {240, 102}, {262, 106}}) do K.far_wagon(w[1], w[2], -1) end
+  for _, w in ipairs({{138, 99}, {160, 99}}) do
+    K.rect(w[1], w[2] - 5, 6, 3, "cream"); K.rect(w[1], w[2] - 2, 6, 1, "blue"); K.rect(w[1] - 5, w[2] - 3, 4, 2, "ox_dk")
   end
-
-  -- Sandy high-basin floor across the divide (y = 92..150)
-  K.poly({{0, 102}, {158, 90}, {282, 92}, {432, 103}, {432, 150}, {0, 150}}, "sand")
-  K.dither(0, 98, W, 6, "sage", "sand")
-
-  -- Wide emigrant road crossing the Continental Divide
-  K.poly({{184, 92}, {204, 92}, {308, 150}, {232, 150}}, "ochre")
-  K.poly({{190, 92}, {198, 92}, {292, 150}, {248, 150}}, "gold")
-  K.line(188, 93, 244, 149, "rust")
-  K.line(199, 93, 292, 149, "rust")
-  K.line(187, 93, 243, 149, "cream")
-  K.line(198, 93, 291, 149, "cream")
-
-  -- Alkali grit, desert pebbles & low sagebrush clumps
-  for i = 1, 900 do
-    local x = K.rnd(W)
-    local y = 76 + K.rnd(74)
-    local cur = K.at(x, y)
-    if cur == "sand" then
-      K.px(x, y, (i % 4 == 0) and "sage" or ((i % 2 == 0) and "ochre" or "cream"))
-    elseif cur == "sage" then
-      K.px(x, y, (i % 3 == 0) and "leaf" or "gold")
-    elseif cur == "ochre" or cur == "gold" then
-      K.px(x, y, (i % 3 == 0) and "sand" or "rust")
-    end
-  end
-
-  -- Low wind-sculpted sagebrush bushes across the divide floor
-  for _, pt in ipairs({{42, 112}, {114, 106}, {152, 118}, {318, 110}, {362, 122}, {404, 114}, {136, 138}, {346, 140}}) do
-    K.shadow(pt[1] - 4, pt[2] + 1, 9)
-    K.ellipse(pt[1], pt[2] - 2, 4, 2, "leaf")
-    K.ellipse(pt[1] - 1, pt[2] - 3, 3, 2, "sage")
-    K.px(pt[1], pt[2], "wood")
-  end
-end)
-
------------------------------------------------------------------ 3. Divide Cairn & Arriving Wagon
-K.layer("wagon", function()
-  -- Small stone cairn marking the Pacific watershed divide beside the road
-  K.boulder(172, 114, 5, 2)
-  K.boulder(172, 111, 3, 2)
-  K.px(172, 109, "cream")
-
-  K.wagon(24, 143, 1)
-  K.person(82, 142, "blue", "sand", false)
+  -- near the viewer, the last wagon and a man walking beside the team
+  K.wagon(340, 136, -1)
+  K.team(330, 132, -1, {"red"}, {"light", true})
+  K.person(316, 140, "blue", "deep")
+  K.person(392, 142, "teal", "bonnet", true)
 end)
 
 K.save("location_south_pass")
