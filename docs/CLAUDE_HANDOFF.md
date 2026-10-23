@@ -291,3 +291,16 @@ Spencer asked for the store's barter screen everywhere you can trade, with each 
 - One engine API for all three: `trade_counter(venue)`, `counter_quote(cart, venue)` and `counter_checkout(cart, venue)`; `post_store`/`post_quote`/`post_checkout` remain for posts. Rows carry `buy_key`/`sell_key`, and the cash a party has paid out lives in `<key>|purse|units`. The study bots still use the lot menus (`open_trade`) for traders, so balance runs do not yet see trader moods or stock. The balance pass needs a counter policy.
 - New Aseprite scenes (622×273): `trader_camp.lua` (light wagon, goods on a robe, mountain-man trader, pack mules) and `camp_trade.lua` (family noon camp, quilt of spare goods, a second family's wagon and tent at the right for the menu crop). Both are approved by Spencer.
 - Next (Spencer, October 23): ASK FOR NEWS at stores and with traders: general 1848 news, trail tips, road and river conditions ahead, prices ahead, and word of the party's crimes.
+
+## ASK FOR NEWS at trading counters (October 23)
+
+Spencer asked for news at stores and with traders: 1848 news, trail tips and word of the party's crimes.
+
+- **Where:** an ASK FOR NEWS button beside SETTLE UP on every counter (post store, passing traders, emigrant camp). It swaps the goods panels for a news sheet. BACK TO TRADING swaps them back. It takes no time, money or RNG (`ask_news(venue)` in `simulation/trail_engine.gd`, which only answers when `trade_counter(venue)` is open).
+- **Content** (`simulation/trail_news.gd`, data in `data/trail_news.json`):
+  - *From the States and Oregon:* 18 dated headlines, each with a `from` stop. A headline reaches a place `base_days` (4) plus distance ÷ `miles_per_day` (20, or the item's own speed) after its `known` date. The newest arrivals come first. A post tells 3, a camp 2, traders 1.
+  - *The road ahead:* a road note for each of the next stops (every fork at a branch stop), a river forecast from `survival.wet_ground` and `river_high_chance`, the next store and its regional price compared to here, a food warning at the current rations (15 miles a day), and a season line (snow after September before the Blue Mountains, or short grass in May on the plains).
+  - *About your party:* only shown once the party has an incident or a departed companion's tale. It shows `crime.news_text` for this venue, or says nobody here has heard anything.
+- `trail_news.json` is information only and is deliberately **not** a rule file, so the rules fingerprint is unchanged. Sources are listed in the file.
+- The camp's older "Share news of the road" menu choice (which posts ahead refuse the party) is unchanged.
+- Tests: `tests/test_news.gd` covers data validation, news lag (border vs Fort Hall, gold talk from Oregon, the territory act), post, trader and camp telling, no side effects, food, season and crime lines, forks, and the counter UI toggle.

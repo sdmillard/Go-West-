@@ -15,6 +15,7 @@ var social=preload("res://simulation/party_social.gd").new()
 var context=preload("res://simulation/trail_context.gd").new()
 var combat=preload("res://simulation/combat.gd").new()
 var crime=preload("res://simulation/crime_system.gd").new()
+var news=preload("res://simulation/trail_news.gd").new()
 const DESTINATION := 102
 const ABSURD_CHANCE := 0.01
 const PACE_MILES = [12, 18, 24]
@@ -877,6 +878,12 @@ func trade_counter(venue: String="") -> Dictionary:
 		var can_sell: int=int(goods.wants.get(item,0))-_units_used(sell.market_key,amount) if crime.can_trade(self,sell) else 0
 		rows.append(_counter_row(lot,maxi(1,buy_cents),roundi(float(lot.sell_cents)*float(goods.sell)),can_buy,can_sell,buy.market_key,sell.market_key,goods.stock.has(item),goods.wants.has(item)))
 	return {"name":"Passing traders","kind":"traders","key":str(offer.key),"mood":goods.mood,"late_food":late,"rows":rows,"days":context.trade_days(offer),"money_cents":roundi(float(state.money)*100.0),"purse_cents":_purse_left(str(offer.key),int(goods.purse_cents)),"rumor":"","discount":characters.available(self,"Trading")}
+
+## ASK FOR NEWS at an open counter: what the post, the traders or the family have heard. Takes no time.
+func ask_news(venue: String="") -> Dictionary:
+	var counter: Dictionary=trade_counter(venue)
+	if counter.is_empty():return {}
+	return news.report(self,str(counter.kind),str(state.landmark) if counter.kind=="post" else str(counter.key))
 
 ## The emigrant family's spare goods: not traders, so whatever they happen to have, priced by what each thing is worth to them.
 ## They part with goods reluctantly and pay well for what they are short of. Trading with them takes no time.

@@ -14,6 +14,10 @@ var purse_cents := -1
 var totals: Label
 var feedback: Label
 var settle_button: Button
+var news_button: Button
+var news_panel: Panel
+var news_rows: VBoxContainer
+var news_scroll: ScrollContainer
 var background: TextureRect
 var rows_layer: Control
 var scenes = preload("res://ui/location_scenes.gd").new()
@@ -70,13 +74,35 @@ func _ready() -> void:
 	rows_layer = Control.new()
 	put(rows_layer, Rect2(0, 0, 622, 236))
 	totals = text("", Rect2(POST_X, 207, 362, 26))
-	feedback = text("", Rect2(10, 240, 440, 30))
+	feedback = text("", Rect2(10, 240, 322, 30))
 	feedback.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	settle_button = Button.new()
 	settle_button.text = "SETTLE UP"
 	settle_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	settle_button.pressed.connect(settle)
 	put(settle_button, Rect2(478, 242, 130, 25))
+	news_button = Button.new()
+	news_button.text = "ASK FOR NEWS"
+	news_button.tooltip_text = "Hear what they know: news from the States and Oregon, the road ahead, and any word of your party. Takes no time."
+	news_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	news_button.pressed.connect(toggle_news)
+	put(news_button, Rect2(340, 242, 130, 25))
+	# The news sheet lies over both goods panels; the picture stays in view on the left.
+	news_panel = Panel.new()
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color("ecd097")
+	box.border_color = Color("a16b43")
+	box.set_border_width_all(1)
+	news_panel.add_theme_stylebox_override("panel", box)
+	put(news_panel, Rect2(POST_X - 6, 6, 374, 228))
+	news_scroll = ScrollContainer.new()
+	news_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	put(news_scroll, Rect2(6, 4, 364, 220), news_panel)
+	news_rows = VBoxContainer.new()
+	news_rows.custom_minimum_size = Vector2(350, 0)
+	news_rows.add_theme_constant_override("separation", 3)
+	news_scroll.add_child(news_rows)
+	news_panel.hide()
 
 func columns(x: int, count: String, action: String) -> void:
 	text("GOODS", Rect2(x, 26, 50, 12))
@@ -94,6 +120,7 @@ func open(where: String = "") -> void:
 	sells.clear()
 	held.clear()
 	counts.clear()
+	show_news(false)
 	var store: Dictionary = game.trade_counter(venue)
 	if store.is_empty():
 		return
@@ -178,3 +205,40 @@ func settle() -> void:
 		open(venue)
 		feedback.text = "Settled." if kind == "camp" else "Settled. Further trades at this stop take no extra time."
 		settled.emit()
+
+func toggle_news() -> void:
+	show_news(not news_panel.visible)
+
+## Swap the goods panels for what the people here have heard, and back.
+func show_news(open_news: bool) -> void:
+	if open_news:
+		var told: Dictionary = game.ask_news(venue)
+		if told.is_empty():
+			return
+		for child in news_rows.get_children():
+			news_rows.remove_child(child)
+			child.queue_free()
+		paragraph(told.intro, Color("5a3b22"))
+		for section in told.sections:
+			var gap := Control.new()
+			gap.custom_minimum_size = Vector2(0, 3)
+			news_rows.add_child(gap)
+			paragraph(section.heading, Color("8c2b1c"))
+			for said in section.lines:
+				paragraph("- " + said, Color("2b1d12"))
+		news_scroll.scroll_vertical = 0
+		feedback.text = "They tell you what they know. Asking takes no time. Scroll for more."
+	news_panel.visible = open_news
+	rows_layer.visible = not open_news
+	settle_button.visible = not open_news
+	news_button.text = "BACK TO TRADING" if open_news else "ASK FOR NEWS"
+	if not open_news:
+		update_quote()
+
+func paragraph(value: String, color: Color) -> void:
+	var node := Label.new()
+	node.text = value
+	node.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	node.custom_minimum_size = Vector2(350, 0)
+	node.add_theme_color_override("font_color", color)
+	news_rows.add_child(node)
