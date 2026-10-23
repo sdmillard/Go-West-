@@ -111,6 +111,7 @@ func run():
 			var record: Dictionary=game.crime.record
 			rows.append({"strategy":strategy,"seed":seed_value,"outcome":outcome,"days":game.state.day,"miles":game.state.miles,"survivors":game.state.party_size,
 				"deaths":game.party_health.members.filter(func(member):return not member.alive).size(),"departures":game.party_health.members.filter(func(member):return member.get("departed",false)).size(),
+				"wanted_encounters":record.incidents.filter(func(current):return current.action=="wanted").size(),"sentences":record.incidents.filter(func(current):return current.has("sentence")).map(func(current):return current.sentence.kind),
 				"incidents":record.incidents.map(func(current):return "%s:%s:%s" % [current.action,current.attempt,current.resolution]),"attacks":record.attacks.map(func(attack):return attack.attempt),
 				"remains":record.remains.map(func(item):return item.state),"camps_visited":acts.visited.size(),"tales":game.crime.tales(game).size(),"betrayals":record.betrayals.map(func(item):return "%s:%s" % [item.act,item.attempt])})
 			print("%s: %s on day %d at mile %d, %d with the party" % [label,outcome,game.state.day,game.state.miles,game.state.party_size])

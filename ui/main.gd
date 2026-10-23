@@ -1079,7 +1079,7 @@ func _refresh_party() -> void:
 		party_rows.add_child(history)
 		if show_past_travelers:
 			for member in past:_add_party_row(member)
-	member_details.text = game.party_health.description(selected_member).replace("PERSONAL HISTORY",game.characters.description(selected_member)+("\n\n"+game.social.description(game,selected_member) if selected_member>0 else "")+"\n\nHEALTH HISTORY")
+	member_details.text = game.crime.wanted_label(game)+"\n\n"+game.party_health.description(selected_member).replace("PERSONAL HISTORY",game.characters.description(selected_member)+("\n\n"+game.social.description(game,selected_member) if selected_member>0 else "")+"\n\nHEALTH HISTORY")
 	if selected_member<game.characters.profiles.size():
 		var contract: Dictionary=game.characters.profiles[selected_member].contract
 		if not contract.is_empty():

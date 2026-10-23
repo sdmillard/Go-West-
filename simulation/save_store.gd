@@ -406,7 +406,8 @@ func restore(value: Variant):
 		var authoritative: Dictionary=game.crime.menu(game)
 		var saved_commands: Array = game.pending.choices.map(func(choice):return choice.get("crime_command",""))
 		var current_commands: Array = authoritative.choices.map(func(choice):return choice.crime_command)
-		if saved_commands != current_commands and not (economy_migrated and saved_commands == current_commands.filter(func(command):return command!="assault")):return null
+		var previous_pursuit: bool=economy_migrated and game.crime.incident().get("action","")=="pursuit" and saved_commands==current_commands.filter(func(command):return command!="flee")
+		if saved_commands != current_commands and not previous_pursuit and not (economy_migrated and saved_commands == current_commands.filter(func(command):return command!="assault")):return null
 		game.pending=authoritative
 	for profile in game.characters.profiles:
 		for memory in profile.memories:

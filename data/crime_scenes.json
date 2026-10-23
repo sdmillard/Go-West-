@@ -349,6 +349,102 @@
       "every_days": 7,
       "window_days": 2,
       "wagon_access": true
+    },
+    "posse": {
+      "kind": "pursuers",
+      "title": "A Missouri posse",
+      "note": "An authored encounter, not a named historical group.",
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "posse rider"
+        },
+        {
+          "id": "rider",
+          "role": "posse rider"
+        },
+        {
+          "id": "guard",
+          "role": "posse rider"
+        }
+      ],
+      "cash_cents": 1,
+      "food_lot": 0,
+      "loot_limit": 0,
+      "injury_damage": 20,
+      "theft_success": 0.0,
+      "compliance": 0.0,
+      "shot_hit": 0.6,
+      "shot_fatal": 0.35,
+      "escape_capture": 0.8,
+      "escape_injury": 0.4,
+      "breakout": 0.3,
+      "breakout_shots": 3,
+      "wagon_access": false
+    },
+    "regulators": {
+      "kind": "pursuers",
+      "title": "Emigrant regulators",
+      "note": "An authored encounter, not a named historical group.",
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "company regulator"
+        },
+        {
+          "id": "rider",
+          "role": "company regulator"
+        },
+        {
+          "id": "guard",
+          "role": "company regulator"
+        }
+      ],
+      "cash_cents": 1,
+      "food_lot": 0,
+      "loot_limit": 0,
+      "injury_damage": 20,
+      "theft_success": 0.0,
+      "compliance": 0.0,
+      "shot_hit": 0.6,
+      "shot_fatal": 0.35,
+      "escape_capture": 0.55,
+      "escape_injury": 0.4,
+      "breakout": 0.45,
+      "breakout_shots": 3,
+      "wagon_access": false
+    },
+    "bounty_hunters": {
+      "kind": "pursuers",
+      "title": "Reward seekers",
+      "note": "An authored encounter, not a named historical group.",
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "reward seeker"
+        },
+        {
+          "id": "rider",
+          "role": "reward seeker"
+        },
+        {
+          "id": "guard",
+          "role": "reward seeker"
+        }
+      ],
+      "cash_cents": 1,
+      "food_lot": 0,
+      "loot_limit": 0,
+      "injury_damage": 20,
+      "theft_success": 0.0,
+      "compliance": 0.0,
+      "shot_hit": 0.6,
+      "shot_fatal": 0.35,
+      "escape_capture": 0.65,
+      "escape_injury": 0.4,
+      "breakout": 0.4,
+      "breakout_shots": 3,
+      "wagon_access": false
     }
   },
   "unarmed": {
@@ -357,5 +453,22 @@
     "fatal_factor": 0.5,
     "mishap_chance": 0.45,
     "mishap_damage": 25
+  },
+  "wanted": {
+    "note": "Authored frontier-justice game rules, not measured historical probabilities. Missouri authority ends at the state line; regulators and rewards are extrapolations from emigrant accounts.",
+    "posse_max_mile": 5,
+    "daily_base": 0.018,
+    "daily_cap": 0.25,
+    "decay_days": 20,
+    "cooldown_days": 10,
+    "army_max_days": 10,
+    "bounty_min_cents": 5000,
+    "bounty_max_cents": 50000,
+    "bounty_step_cents": 2500,
+    "robbery_reward_cents": 5000,
+    "payoff_factor": 1.2,
+    "seizure_chance": 0.25,
+    "helper_banish_chance": 0.5,
+    "flogging_damage": 30
   }
 }

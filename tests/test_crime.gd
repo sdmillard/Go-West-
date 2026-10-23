@@ -555,7 +555,7 @@ func fort_checks(store) -> void:
 	copy.crime.scenes.fort_kearny.breakout=0
 	check(choose(copy,"breakout") and copy.state.status=="lost","A failed breakout ends the journey in custody")
 	copy=store.restore(JSON.parse_string(JSON.stringify(saved)))
-	check(choose(copy,"surrender") and copy.state.status=="lost","The party can surrender to the soldiers")
+	check(choose(copy,"surrender") and copy.crime.record.incidents.back().resolution=="tried","Surrender to soldiers leads to a trial")
 	copy=store.restore(JSON.parse_string(JSON.stringify(saved)))
 	copy.state.bullets=0
 	copy.pending=copy.crime.menu(copy)
@@ -578,7 +578,7 @@ func fort_checks(store) -> void:
 	chased.choose(leave_index(chased))
 	chased.pending={}
 	check(chased.travel() and chased.pending.get("crime_menu",false) and chased.crime.incident().action=="pursuit" and chased.crime.incident().stage=="standoff","Riders catch up on the road and force a standoff")
-	check("rode after you" in chased.pending.text and chased.pending.choices.map(func(choice):return choice.crime_command)==["breakout","surrender","back"],"The chase offers shooting out or surrender")
+	check("rode after you" in chased.pending.text and chased.pending.choices.map(func(choice):return choice.crime_command)==["breakout","surrender","flee","back"],"The chase offers fighting, surrender or flight")
 	var chase_saved: Dictionary=store.capture(chased)
 	check(store.restore(JSON.parse_string(JSON.stringify(chase_saved)))!=null,"A chase round-trips through saves")
 	bad=chase_saved.duplicate(true)
@@ -614,7 +614,7 @@ func fort_checks(store) -> void:
 	game.open_crime()
 	choose(game,"robbery")
 	choose(game,"flee")
-	check(game.state.status=="lost","A store's staff simply catch the party; only soldiers force a standoff")
+	check(game.state.status=="traveling" and game.crime.incident().resolution=="tried","Store capture leads to a nonfatal trial; only soldiers force a standoff")
 	var rules: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/crime_scenes.json"))
 	var crime=game.crime.get_script().new()
 	var broken: Dictionary=rules.duplicate(true)
