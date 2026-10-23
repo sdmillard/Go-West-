@@ -64,14 +64,17 @@ func run():
     var heard: int=told.filter(func(said):return said in headline_texts).size()
     check(heard>0 and heard<=3,"A post's clerk passes on up to three headlines")
     check(told.has(game.news.data.road.snake_river),"The road ahead describes the next stop")
-    check(told.any(func(said):return said.contains("next store is at Fort Boise")),"The road ahead names the next store and its prices")
-    check(not told.any(func(said):return said.contains("your party")),"A party with nothing to hide hears nothing about itself")
+    check(told.any(func(said):return said.contains("Next store's at Fort Boise,")),"The road ahead names the next store and its prices")
+    check(not told.any(func(said):return said.contains("you folks") or said.contains("your outfit")),"A party with nothing to hide hears nothing about itself")
     game.state.food=10
-    check(game.news.fragments(game,"post","fort_hall").any(func(said):return said.contains("food lasts about")),"Short food for the road to the next store is mentioned")
+    check(game.news.fragments(game,"post","fort_hall").any(func(said):return said.contains("your food will hold out")),"Short food for the road to the next store is mentioned")
     game.state.day=125
     check(game.news.fragments(game,"post","fort_hall").any(func(said):return said.contains("Blue Mountains and the Cascades")),"Late in the year the people warn of snow in the mountains")
     game.crime.record.incidents.append({"id":1,"action":"theft","place":"fort_laramie","knowledge":{}})
-    check(game.news.fragments(game,"post","fort_hall").has("Nobody here has said anything about your party."),"A party with a past hears whether word has reached here")
+    check(game.news.fragments(game,"post","fort_hall").has("Can't say I've heard a word about you folks."),"A party with a past hears whether word has reached here")
+    game.crime.record.reports.append({"incident":1,"origin":"fort_laramie","day":40,"senders":[],"facts":[],"identified":false})
+    check(game.news.fragments(game,"post","fort_hall").has("Somebody stole from the store at Fort John a while back. Folks say they looked a lot like your outfit."),"Unproven word of a theft is told as gossip, with the stop named as people say it")
+    game.crime.record.reports.clear()
     game.crime.record.incidents.clear()
 
     # Asking: one fragment at a time, a fair clerk answers three times, and it costs nothing else.

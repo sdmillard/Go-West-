@@ -1071,8 +1071,8 @@ func open_camp() -> bool:
 ## What a family met on the road heard at the posts behind it: which posts ahead already know of the party.
 func camp_news() -> String:
 	var warned: Array=crime.venues().filter(func(place):return crime.mile(self,place)>int(state.miles) and crime.refuses(self,place)).map(func(place):return route.nodes[place].name)
-	if warned.is_empty():return "We heard no talk of your party at the posts we passed."
-	return "Word of your party has already reached %s." % ", ".join(warned)
+	if warned.is_empty():return "We didn't hear any talk about you folks at the posts we passed."
+	return "Folks at %s have already heard about you. I'd watch yourselves there." % " and ".join(warned.map(func(name):return news.spoken(name)))
 
 func news_label(venue: String) -> String:
 	var left: int=news_left(venue)

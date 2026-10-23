@@ -99,27 +99,27 @@ func road_ahead(game) -> Array:
 	# The first river ahead: what the weather and the season are doing to it.
 	for stop in ahead:
 		if nodes[stop[0]].kind!="river":continue
-		var name: String=nodes[stop[0]].name
+		var name: String=river(nodes[stop[0]].name)
 		var chance: float=game.survival.river_high_chance(month,nodes[stop[0]].get("river_source","rain"))
-		if game.survival.wet_ground>=4:lines.append("The rains have the rivers up. Expect high water at %s." % name)
-		elif chance>=0.5:lines.append("At this time of year the river at %s usually runs high." % name)
-		elif game.survival.wet_ground==0 and chance<0.25:lines.append("The weather has been dry. The river at %s should be low." % name)
+		if game.survival.wet_ground>=4:lines.append("It's been raining, and the rivers are up. I'd expect high water at %s." % name)
+		elif chance>=0.5:lines.append("This time of year %s usually runs high." % name)
+		elif game.survival.wet_ground==0 and chance<0.25:lines.append("It's been dry, so %s ought to be low when you get there." % name)
 		break
 	var post: Array=next_post(game)
 	var price: float=float(game.context.region(game).price)
 	if not post.is_empty():
 		var there: float=float(game.context.data.regions[nodes[post[0]].hunting_region].price)
 		var change: int=roundi((there/price-1.0)*100.0)
-		var compare: String="about the same as here" if absi(change)<5 else ("about %d%% %s than here" % [absi(change),"higher" if change>0 else "lower"])
-		lines.append("The next store is at %s, about %d miles on. Prices there run %s." % [nodes[post[0]].name,post[1],compare])
+		var compare: String="about what you'd pay here" if absi(change)<5 else ("about %d percent %s than here" % [absi(change),"more" if change>0 else "less"])
+		lines.append("Next store's at %s, about %d miles on. They charge %s." % [spoken(nodes[post[0]].name),post[1],compare])
 	# Whether the food will last to the next store (or the end of the road), at the party's rations and a train's pace.
 	var reach: int=int(post[1]) if not post.is_empty() else maxi(0,game.destination()-int(game.state.miles))
 	var lasts: int=game.provisions.expected_days(int(game.state.food),int(game.state.party_size),int(game.state.rations))
 	var needed: int=ceili(float(reach)/MILES_PER_DAY)
-	if reach>0 and lasts<needed:lines.append("At your rations your food lasts about %d days. %s is about %d days off." % [lasts,nodes[post[0]].name if not post.is_empty() else "The end of the road",needed])
+	if reach>0 and lasts<needed:lines.append("I don't think your food will hold out. At the rate you're eating it'll last maybe %d days, and %s is a good %d days off." % [lasts,spoken(nodes[post[0]].name) if not post.is_empty() else "the end of the road",needed])
 	var miles: Dictionary=game.route.node_miles()
-	if month>=9 and int(game.state.miles)<int(miles.get("blue_mountains",0)):lines.append("It is getting late in the year. Snow can close the Blue Mountains and the Cascades in October.")
-	elif month<=5 and int(game.state.miles)<int(miles.get("fort_kearny",0)):lines.append("The grass on the plains is still short this early. Let the teams graze when you can.")
+	if month>=9 and int(game.state.miles)<int(miles.get("blue_mountains",0)):lines.append("You're getting a late start on the mountains. Snow can shut the Blue Mountains and the Cascades by October.")
+	elif month<=5 and int(game.state.miles)<int(miles.get("fort_kearny",0)):lines.append("The grass is still short on the plains this early. Let your teams graze every chance you get.")
 	return lines
 
 ## The next post with a store on the main road ahead, as [id, miles from here], or [].
@@ -136,10 +136,33 @@ func next_post(game) -> Array:
 		id=nodes[id].next[0].to
 	return []
 
-## Word of the party's crimes that has reached this place. Silent for a party with nothing to hide.
+## Word of the party's crimes that has reached this place, as people here would tell it. Silent for a party with nothing to hide.
 ## A family on the road also says which posts ahead have heard of the party.
 func about_party(game,place: String,kind: String="post") -> Array:
 	if game.crime.record.incidents.is_empty() and game.crime.tales(game).is_empty():return []
-	var said: String=game.crime.news_text(game,place)
-	if kind=="camp":return ([said] if not said.is_empty() else [])+[game.camp_news()]
-	return [said] if not said.is_empty() else ["Nobody here has said anything about your party."]
+	var lines: Array=gossip(game,place)
+	# A departed companion's story has no spoken form of its own; it is told as the crime system words it.
+	if lines.is_empty() and not game.crime.news_text(game,place).is_empty():lines.append(game.crime.news_text(game,place))
+	if kind=="camp":return lines+[game.camp_news()]
+	return lines if not lines.is_empty() else ["Can't say I've heard a word about you folks."]
+
+## Reports of the party's crimes that have reached this place, in a speaker's words.
+func gossip(game,place: String) -> Array:
+	var lines: Array=[]
+	for report in game.crime.heard(game,place):
+		if report.origin==place:continue
+		var incident: Dictionary=game.crime.record.incidents[int(report.incident)-1]
+		var act: String={"theft":"stole from","robbery":"robbed","shoot":"shot at","assault":"beat on","raid":"cleaned out","pursuit":"fought off soldiers from"}[incident.action]
+		var target: String="%s %s" % [game.crime.kind(report.origin).noun,spoken(game.crime.where(game,report.origin))]
+		if report.identified:lines.append("Word came through that you folks %s %s. Nobody here wants anything to do with you." % [act,target])
+		else:lines.append("Somebody %s %s a while back. Folks say they looked a lot like your outfit." % [act,target])
+	return lines
+
+## A stop's name as people say it: "Fort John / Laramie" is just Fort John.
+func spoken(name: String) -> String:
+	return name.get_slice(" / ",0)
+
+## A river stop as people name the river: "North Platte crossing" is the North Platte.
+func river(name: String) -> String:
+	var said: String=spoken(name).trim_suffix(" crossing")
+	return said if said.ends_with(" Creek") else "the "+said
