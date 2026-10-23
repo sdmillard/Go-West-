@@ -476,6 +476,7 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 		state.party_size = party_health.living_count()
 	_check_health()
 	characters.daily(self,resting,team_working,sick_before)
+	if state.extended_route:crime.check_betrayal(self)
 	if state.extended_route:
 		journal.append("Day %d · %s. Team condition %s; %s." % [state.day, state.weather, PartyHealth.condition_label(state.ox_health).to_lower(), "working" if team_working else "resting"])
 
@@ -692,6 +693,30 @@ func open_crime() -> bool:
 	service_return=pending.duplicate(true)
 	pending=crime.menu(self)
 	return true
+
+## A peaceful visit to the emigrant family camped near the road today, if any. They trade a little food for ammunition,
+## help nurse one traveler and pass on news of the posts ahead. A family the party wronged, or one that has heard it named, turns it away.
+func open_camp() -> bool:
+	var place: String=crime.camp(self)
+	if place.is_empty() or not can_service():return false
+	var rules: Dictionary=context.data.emigrant_camp
+	if crime.record.services.has(place):return _service_menu("An emigrant camp","The family your party wronged keeps its rifles close and will not let you near.",[])
+	if crime.refuses(self,place):return _service_menu("An emigrant camp",crime.news_text(self,place),[])
+	var options: Array=[]
+	var lots: int=int(rules.barter_lots)
+	var left: int=lots-int(context.record.spent.get(place+"|barter_food",0))
+	options.append({"label":"Trade %d bullets for %d lb of their food · %d offer(s) left" % [int(rules.barter_bullets),int(rules.barter_food),maxi(0,left)],"market_key":place+"|barter_food","stock_limit":lots,"requires":{"bullets":int(rules.barter_bullets)},"effects":{"bullets":-int(rules.barter_bullets),"food":int(rules.barter_food)},"result":"Traded ammunition for food with an emigrant family."})
+	for member in party_health.members:
+		if party_health.is_active(member) and (not member.conditions.is_empty() or member.health<100):
+			options.append({"label":"Ask their help nursing %s · 1 day, once per camp" % member.name,"member_id":member.id,"care":int(rules.care),"market_key":place+"|care","stock_limit":1,"effects":{"days":1},"result":"An emigrant family helped nurse %s." % member.name})
+	options.append({"label":"Share news of the road · once per camp","market_key":place+"|news","stock_limit":1,"effects":{},"result":camp_news()})
+	return _service_menu("An emigrant camp","An emigrant family is camped near the road and is glad of company. Their food in the wagon: %d lb. Trading and news cost no time; nursing takes a day." % crime.food_left(self,place),options)
+
+## What a family met on the road heard at the posts behind it: which posts ahead already know of the party.
+func camp_news() -> String:
+	var warned: Array=crime.venues().filter(func(place):return crime.mile(self,place)>int(state.miles) and crime.refuses(self,place)).map(func(place):return route.nodes[place].name)
+	if warned.is_empty():return "Swapped news with an emigrant family. They heard no talk of your party at the posts they passed."
+	return "Swapped news with an emigrant family. Word of your party has already reached %s." % ", ".join(warned)
 
 func open_care() -> bool:
 	var options: Array = []

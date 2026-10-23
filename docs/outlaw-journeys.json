@@ -1,25 +1,31 @@
 {
 	"errors": [],
-	"policy": "20 full-route journeys: 5 strategies x 4 seeds (banker suggested outfit; June, May, August, July). Lawful control; robbing up to three roadside parties; robbing the Fort Kearny commissary; shooting a companion on day 20, then butchering any accessible dead openly and offering the meat, or in secret and serving it without telling. Otherwise the cautious salted-hunt survival policy. An integration check, not balance evidence.",
-	"rules_signature": "57a97bc768fa220d23be35ab9c4da8e1b4b5896eeacc7861abbbc4f5da07bea6",
+	"policy": "20 full-route journeys: 5 strategies x 4 seeds (banker suggested outfit; June, May, August, July). Lawful control that visits each emigrant camp peacefully (trading bullets for food, nursing, news); robbing up to three roadside parties; robbing the Fort Kearny commissary; shooting a companion on day 20, then butchering any accessible dead openly and offering the meat, or in secret and serving it without telling. Otherwise the cautious salted-hunt survival policy. An integration check, not balance evidence.",
+	"rules_signature": "26170f01a650385ddc81ef0e899a22c397b899dc44e467e8b00f95370f5b7303",
 	"runs": [
 		{
 			"attacks": [],
-			"days": 203,
-			"deaths": 0,
+			"betrayals": [],
+			"camps_visited": 34,
+			"days": 234,
+			"deaths": 1,
 			"departures": 0,
 			"incidents": [],
 			"miles": 1938,
 			"outcome": "arrived",
-			"remains": [],
+			"remains": [
+				"lying"
+			],
 			"seed": 0,
 			"strategy": "lawful",
-			"survivors": 5,
+			"survivors": 4,
 			"tales": 0
 		},
 		{
 			"attacks": [],
-			"days": 210,
+			"betrayals": [],
+			"camps_visited": 27,
+			"days": 185,
 			"deaths": 0,
 			"departures": 0,
 			"incidents": [],
@@ -33,7 +39,9 @@
 		},
 		{
 			"attacks": [],
-			"days": 210,
+			"betrayals": [],
+			"camps_visited": 28,
+			"days": 199,
 			"deaths": 0,
 			"departures": 0,
 			"incidents": [],
@@ -47,7 +55,9 @@
 		},
 		{
 			"attacks": [],
-			"days": 221,
+			"betrayals": [],
+			"camps_visited": 32,
+			"days": 226,
 			"deaths": 0,
 			"departures": 0,
 			"incidents": [],
@@ -61,6 +71,8 @@
 		},
 		{
 			"attacks": [],
+			"betrayals": [],
+			"camps_visited": 0,
 			"days": 9,
 			"deaths": 0,
 			"departures": 0,
@@ -79,6 +91,8 @@
 		},
 		{
 			"attacks": [],
+			"betrayals": [],
+			"camps_visited": 0,
 			"days": 365,
 			"deaths": 1,
 			"departures": 0,
@@ -99,6 +113,8 @@
 		},
 		{
 			"attacks": [],
+			"betrayals": [],
+			"camps_visited": 0,
 			"days": 199,
 			"deaths": 0,
 			"departures": 2,
@@ -117,6 +133,8 @@
 		},
 		{
 			"attacks": [],
+			"betrayals": [],
+			"camps_visited": 0,
 			"days": 365,
 			"deaths": 1,
 			"departures": 0,
@@ -137,6 +155,8 @@
 		},
 		{
 			"attacks": [],
+			"betrayals": [],
+			"camps_visited": 0,
 			"days": 31,
 			"deaths": 0,
 			"departures": 0,
@@ -153,6 +173,8 @@
 		},
 		{
 			"attacks": [],
+			"betrayals": [],
+			"camps_visited": 0,
 			"days": 210,
 			"deaths": 0,
 			"departures": 0,
@@ -167,6 +189,8 @@
 		},
 		{
 			"attacks": [],
+			"betrayals": [],
+			"camps_visited": 0,
 			"days": 35,
 			"deaths": 0,
 			"departures": 0,
@@ -184,6 +208,8 @@
 		},
 		{
 			"attacks": [],
+			"betrayals": [],
+			"camps_visited": 0,
 			"days": 365,
 			"deaths": 0,
 			"departures": 0,
@@ -205,6 +231,8 @@
 			"attacks": [
 				"killed"
 			],
+			"betrayals": [],
+			"camps_visited": 0,
 			"days": 195,
 			"deaths": 1,
 			"departures": 2,
@@ -223,6 +251,8 @@
 			"attacks": [
 				"wounded"
 			],
+			"betrayals": [],
+			"camps_visited": 0,
 			"days": 222,
 			"deaths": 0,
 			"departures": 3,
@@ -239,6 +269,8 @@
 			"attacks": [
 				"missed"
 			],
+			"betrayals": [],
+			"camps_visited": 0,
 			"days": 251,
 			"deaths": 0,
 			"departures": 4,
@@ -255,6 +287,8 @@
 			"attacks": [
 				"wounded"
 			],
+			"betrayals": [],
+			"camps_visited": 0,
 			"days": 365,
 			"deaths": 0,
 			"departures": 1,
@@ -271,6 +305,8 @@
 			"attacks": [
 				"killed"
 			],
+			"betrayals": [],
+			"camps_visited": 0,
 			"days": 195,
 			"deaths": 1,
 			"departures": 2,
@@ -289,6 +325,8 @@
 			"attacks": [
 				"wounded"
 			],
+			"betrayals": [],
+			"camps_visited": 0,
 			"days": 222,
 			"deaths": 0,
 			"departures": 3,
@@ -305,6 +343,8 @@
 			"attacks": [
 				"missed"
 			],
+			"betrayals": [],
+			"camps_visited": 0,
 			"days": 251,
 			"deaths": 0,
 			"departures": 4,
@@ -321,6 +361,8 @@
 			"attacks": [
 				"wounded"
 			],
+			"betrayals": [],
+			"camps_visited": 0,
 			"days": 365,
 			"deaths": 0,
 			"departures": 1,

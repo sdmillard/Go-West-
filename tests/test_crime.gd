@@ -679,6 +679,51 @@ func at_camp(game):
 		var offer: Dictionary=game.context.market(game)
 		if not (offer.available and not offer.post) and not game.crime.camp(game).is_empty():return game
 	return game
+func camp_choice(game,key: String,member: int=-1) -> int:
+	for index in range(game.pending.choices.size()):
+		var choice: Dictionary=game.pending.choices[index]
+		if str(choice.get("market_key","")).ends_with("|"+key) and (member<0 or int(choice.get("member_id",-1))==member):return index
+	return -1
+## A peaceful visit: food for ammunition, help nursing one traveler, and news of the posts ahead.
+func camp_visit_checks(store) -> void:
+	var game=at_camp(outfit())
+	# Scripted trail events would interrupt the visit between choices.
+	game.seen.append("muddy_trail")
+	var key: String=game.crime.camp(game)
+	var rules: Dictionary=game.context.data.emigrant_camp
+	var bullets: int=game.state.bullets
+	var food: int=game.state.food
+	var day: int=game.state.day
+	check(game.open_camp() and game.pending.title=="An emigrant camp" and "Their food in the wagon: 300 lb" in game.pending.text,"A nearby camp can be visited peacefully")
+	check(store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))!=null,"An open camp visit round-trips through saves")
+	check(game.choose(camp_choice(game,"barter_food")) and game.state.bullets==bullets-int(rules.barter_bullets) and game.state.food==food+int(rules.barter_food) and game.state.day==day,"They trade food for ammunition without costing a day")
+	check(game.crime.food_left(game,key)==300-int(rules.barter_food),"What they trade away is no longer in their wagon")
+	game.open_camp()
+	game.choose(camp_choice(game,"barter_food"))
+	game.open_camp()
+	check(not game.can_choose(camp_choice(game,"barter_food")),"They have only a little food to spare")
+	check(game.choose(camp_choice(game,"news")) and game.journal.any(func(text):return text.ends_with("They heard no talk of your party at the posts they passed.")),"Lawful travelers hear no talk of themselves")
+	game.open_camp()
+	check(not game.can_choose(camp_choice(game,"news")),"News is shared once per camp")
+	choose_back(game)
+	var patient: Dictionary=game.party_health.members[2]
+	game.party_health.affect(patient,-30,game.state.day,"injuries")
+	var health: int=patient.health
+	game.open_camp()
+	check(game.choose(camp_choice(game,"care",2)) and patient.health>health and game.state.day==day+1,"They help nurse a traveler for a day")
+	game.state.day=day
+	game.party_health.affect(game.party_health.members[3],-30,game.state.day,"injuries")
+	game.open_camp()
+	check(not game.can_choose(camp_choice(game,"care",3)),"They nurse only one traveler per camp")
+	choose_back(game)
+	game.state.day+=30
+	game.pending={}
+	game=at_camp(game)
+	check(game.crime.camp(game)!=key and game.open_camp() and game.can_choose(camp_choice(game,"barter_food")),"The next camp has its own food and goodwill")
+	choose_back(game)
+	var broken: Dictionary=game.context.data.duplicate(true)
+	broken.emigrant_camp.care=12
+	check(not game.context.get_script().new().load_data(broken),"Camp nursing is never better than a post's paid care")
 func emigrant_checks(store) -> void:
 	var game=at_camp(willing(outfit()))
 	var key: String=game.crime.camp(game)
@@ -691,6 +736,7 @@ func emigrant_checks(store) -> void:
 		game.state.day=day
 		if not game.crime.camp(game).is_empty():camps[game.crime.camp(game)]=true
 	check(camps.size()>=9 and camps.size()<=11,"About one camp a week is met along the road")
+	camp_visit_checks(store)
 	game=at_camp(willing(outfit()))
 	key=game.crime.camp(game)
 	game.crime.scenes.passing_emigrants.shot_hit=1
@@ -707,6 +753,14 @@ func emigrant_checks(store) -> void:
 	var report: Dictionary=game.crime.record.reports[0]
 	check(report.origin==key and report.senders.size()==3 and report.identified,"The rest of the family reports the killing")
 	choose(game,"finish")
+	var day: int=game.state.day
+	game.state.day=int(game.crime.record.incidents[0].day)
+	check(game.crime.camp(game)==key and game.open_camp() and "wronged" in game.pending.text and game.pending.choices.size()==1,"The family the party wronged will not receive it")
+	check(not game.crime.can_trade(game,{"market_key":key+"|barter_food","effects":{"food":40}}),"Nor will it trade")
+	choose_back(game)
+	game.state.day=game.crime.arrival(game,report,"fort_hall")
+	check("Fort Hall" in game.camp_news(),"Families met later can say which posts ahead have heard")
+	game.state.day=day
 	var saved: Dictionary=store.capture(game)
 	check(store.restore(JSON.parse_string(JSON.stringify(saved)))!=null,"A robbed camp round-trips through saves")
 	at(game,"fort_hall")
