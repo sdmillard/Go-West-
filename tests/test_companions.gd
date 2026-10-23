@@ -202,6 +202,11 @@ func run():
 	check(screen.attack_button.visible and not screen.attack_button.disabled and screen.attack_button.text=="SHOOT BEN","The party view offers the attack for a companion")
 	screen._attack_selected()
 	check(screen.service_window.visible and screen.service_window.title=="Attack Ben","The attack menu opens in the native UI")
+	screen.game.crime.companion_rules.hit=0
+	screen._service_choice(0)
+	check(screen.record_notice.visible and screen.record_notice.title=="YOU SHOT AT BEN" and "You shot at Ben: missed." in screen.record_notice.dialog_text and "Ben fled after you shot at Ben" in screen.record_notice.dialog_text and not "(trust" in screen.record_notice.dialog_text,"The result of the shot is shown at once: the miss and who left")
+	check("Joined you: Ada, Cora, Dell." in screen.record_notice.dialog_text,"Those who joined are named too")
+	screen.record_notice.hide()
 	screen.queue_free()
 	await process_frame
 	print("Companions: %d checks, %d failures" % [checks,failures])

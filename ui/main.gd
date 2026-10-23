@@ -573,13 +573,38 @@ func _show_service() -> void:
 func _service_choice(index: int) -> void:
 	service_window.hide()
 	var burial: int = int(game.pending.choices[index].get("remains_id",-1)) if game.pending.get("remains_menu",false) and game.pending.choices[index].get("remains_command","")=="bury" else -1
+	var shooting: bool = game.pending.get("attack_menu",false) and int(game.pending.choices[index].get("attack_target",-1)) >= 0
+	var attacks: int = game.crime.record.attacks.size()
+	var written: int = game.journal.size()
 	_choose(index)
+	if shooting and game.crime.record.attacks.size() > attacks:
+		_show_attack_result(game.journal.slice(written))
 	if burial >= 0 and game.state.status == "traveling":
 		var grave: Dictionary = game.Remains.entry(game,burial)
 		if grave.get("state","") == "buried":
 			# One dialog at a time: the remains panel returns once the stone is set or declined.
 			service_window.hide()
 			_edit_gravestone(grave)
+
+## Everything the shot set off, at once: the result, who fought back, who objected and who left with what.
+func _show_attack_result(lines: Array) -> void:
+	var attack: Dictionary = game.crime.record.attacks.back()
+	var said: Array = []
+	for line in lines:
+		var text: String = str(line)
+		# Trust changes stay in the journal and View Party; this notice is what happened.
+		if "(trust " in text:
+			continue
+		said.append(text.substr(text.find(" · ") + 3) if text.begins_with("Day ") and " · " in text else text)
+	var helpers: Array = attack.joining.filter(func(id): return int(id) > 0).map(func(id): return game.party_health.members[int(id)].name)
+	if not helpers.is_empty():
+		said.append("Joined you: %s." % ", ".join(helpers))
+	var standing: Array = attack.responses.keys().filter(func(key): return attack.responses[key] == "stood by").map(func(key): return game.party_health.members[int(key)].name)
+	if not standing.is_empty():
+		said.append("Stood by: %s." % ", ".join(standing))
+	record_notice.title = "YOU SHOT AT %s" % str(game.party_health.members[int(attack.target)].name).to_upper()
+	record_notice.dialog_text = "\n".join(said)
+	record_notice.popup_centered()
 
 func _cancel_service() -> void:
 	service_window.hide()
