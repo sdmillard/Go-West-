@@ -420,7 +420,7 @@ func can_choose(index: int) -> bool:
 		return false
 	var choice: Dictionary = pending.choices[index]
 	if pending.get("crime_menu",false):return crime.can_choose(self,str(choice.get("crime_command","")))
-	if pending.get("attack_menu",false):return int(choice.get("attack_target",-1))<0 or crime.attack_ready(self,int(choice.attack_target))
+	if pending.get("attack_menu",false):return int(choice.get("attack_target",-1))<0 or (crime.attack_ready(self,int(choice.attack_target)) and (choice.get("unarmed",false) or state.bullets>0))
 	if pending.get("remains_menu",false):return Remains.can_choose(self,str(choice.get("remains_command","")),int(choice.get("remains_id",0)),int(choice.get("member",-1)))
 	if choice.get("care",0)==12 and not context.local_care(self):return false
 	if choice.get("method","")=="ferry" and crime.ferry_refused(self,str(state.landmark)):return false
@@ -514,9 +514,9 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 	var fed: bool = state.food >= needed
 	var eaten := mini(int(state.food), needed)
 	if state.extended_route:
-		# Fresh (undried) meat at a meal keeps scurvy away; staples and dried meat do not.
-		party_health.days_without_fresh = 0 if eaten > 0 and provisions.fresh_pounds(int(state.food)) > 0 else party_health.days_without_fresh + 1
-		provisions.remove(eaten)
+		# Count vitamin-C produce actually consumed, never merely carried or fresh meat.
+		var produce_eaten: float = provisions.remove(eaten)
+		party_health.days_without_fresh = 0 if produce_eaten >= state.party_size * float(provisions.data.foraging.vitamin_c_lb_per_person) else party_health.days_without_fresh + 1
 	state.food = maxi(0, state.food - needed)
 	if not fed:
 		_change_health(-maxi(1, ceili(18.0 * (1.0 - float(eaten) / maxi(1, needed)))) if state.extended_route else -18, "lack of food")
@@ -728,6 +728,37 @@ func _service_menu(title: String, text: String, options: Array) -> bool:
 	pending = {"id": "trail_service", "service_menu": true, "title": title, "text": text, "choices": options}
 	return true
 
+## Read-only seasonal offer. Empty searches still cost a day; river legs cannot be foraged.
+func forage_offer() -> Dictionary:
+	var rules: Dictionary = provisions.data.foraging
+	var season: float = rules.months[int(calendar().month)-1]
+	var factor: float = season * float(rules.regions.get(context.region_id(self),0))
+	var workers := 0.0
+	for member in party_health.members:
+		if party_health.is_active(member) and not member.conditions.any(func(c): return c.id == "broken_leg"):
+			workers += member.health / 100.0
+	var blocked: bool = current_edge().get("hazard", "") in ["river", "waterless"] or survival.weather.id in ["blizzard", "snow"]
+	return {"available": factor > 0 and workers > 0 and not blocked, "factor": factor, "workers": workers}
+
+func open_forage() -> bool:
+	var offer := forage_offer()
+	var options: Array = []
+	if offer.available:
+		options.append({"label":"Search for greens and berries · 1 day and meals", "foraging":true, "effects":{"days":1}, "result":""})
+	return _service_menu("Foraging", "Gather seasonal greens and berries nearby. Yield depends on the season, region and healthy walkers; a search may find little. This supplements meals rather than replacing staple provisions. Produce spoils in three days and provides vitamin C only when eaten. No gathering on waterless or rafting legs, in snow, or outside the growing season." + (" Nothing suitable is available here now." if not offer.available else ""), options)
+
+func _gather_forage(offer: Dictionary) -> void:
+	if state.status != "traveling": return
+	var rules: Dictionary = provisions.data.foraging
+	var pounds := mini(int(rules.maximum_lb), floori(rng.randi_range(int(rules.lb_per_worker[0]),int(rules.lb_per_worker[1])) * float(offer.workers) * float(offer.factor)))
+	var room := maxf(0, provisions.storage_capacity(state) - provisions.cargo(state))
+	pounds = mini(pounds, floori(room))
+	var units: int = provisions.add_produce(pounds,int(state.day))
+	state.food += units
+	var report := "Foraged %d lb of greens and berries (%d food units)." % [units * int(rules.mass_ratio),units] if units > 0 else "The search yielded no usable food within your carrying room."
+	journal.append("Day %d · %s" % [state.day,report])
+	health_events.append(report)
+
 func open_trade() -> bool:
 	if not can_service():return false
 	var offer: Dictionary=context.market(self)
@@ -917,6 +948,8 @@ func _choose_service(index: int) -> bool:
 		service_return={}
 		_depart(departure_plan(),"")
 		return true
+	var forage: Dictionary = forage_offer() if choice.get("foraging",false) else {}
+	if choice.get("foraging",false) and not forage.available: return false
 	crime.consume_trade(choice)
 	context.consume(choice)
 	if choice.has("care"):
@@ -929,6 +962,7 @@ func _choose_service(index: int) -> bool:
 		characters.care(self,int(choice.member_id))
 		state.health = party_health.average_health()
 	_apply(choice.effects, "injuries", choice.has("care"))
+	if choice.get("foraging",false): _gather_forage(forage)
 	if not choice.result.is_empty():
 		journal.append("Day %d · %s" % [state.day, choice.result])
 	pending = service_return if state.status == "traveling" else {}

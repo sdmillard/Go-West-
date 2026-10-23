@@ -22,7 +22,7 @@ The [first store action slice](docs/STORE_CRIME_SLICE.md) is playable at Fort Br
 
 ## Play on this computer
 
-Companions have traits, backgrounds, trust in your leadership and memories of selected decisions. View Party shows these beside their health records. The [party framework](docs/PARTY_FRAMEWORK.md) also supports action boundaries, relationships, Loyal's half-rate losses and explicit mercenary wage agreements; the [departure party editor](docs/PARTY_SETUP.md) lets you choose these before setting out. [Creation limits and flaws](docs/PARTY_FLAWS.md) allow two specials per companion, or three with one real drawback. [The expanded character catalog](docs/CHARACTER_CATALOG.md) provides eight temperaments, eight value systems, sixteen specials, twelve flaws, thirteen relationships and reproducible candidate generation for future recruits. Hiring during travel remains deferred.
+Companions have traits, backgrounds, trust in your leadership and memories of selected decisions. View Party shows these beside their health records. The [party framework](docs/PARTY_FRAMEWORK.md) also supports action boundaries, relationships, Stoic's reduced hardship losses and Loyal's lower departure threshold and explicit mercenary wage agreements; the [departure party editor](docs/PARTY_SETUP.md) lets you choose these before setting out. [Creation limits and flaws](docs/PARTY_FLAWS.md) allow two specials per companion, or three with one real drawback. [The expanded character catalog](docs/CHARACTER_CATALOG.md) provides eight temperaments, eight value systems, sixteen specials, twelve flaws, thirteen relationships and reproducible candidate generation for future recruits. Hiring during travel remains deferred.
 
 [Background benefits and companion news](docs/BACKGROUND_BENEFITS.md) now add practical hunting, repair, care and purchase benefits, a bounded Veteran combat bonus, visible objections and trust warnings. No skill progression is required.
 
@@ -39,13 +39,13 @@ Alternatively, import `project.godot` in [Godot 4.5.1](https://github.com/godote
 5. Use **View Party** to inspect travelers, and **Options** to hunt, trade or give care. Clothing protects against exposure; working the team without rest slows it down. Hunt between landmarks: **left-click fires, right-click walks**. Cover blocks shots; animals flee and the rifle needs reloading. See [hunting](docs/HUNTING.md).
 6. Follow the Platte, Fort John/Laramie, South Pass, Bridger, Hall and Boise, then cross the Blue Mountains and take the Barlow Road to Oregon City. Rest and resupply at stops before continuing. The suggested outfit includes 1,700 lb of food; plan additional provisions for the full journey. The journey ends if no one survives. You can then **Leave a Gravestone** with your own epitaph; later journeys can find it. A companion you bury on the trail can get a stone of their own.
 
-One continuous southern/Barlow itinerary is playable; northern shortcuts, the Walla Walla detour and Columbia rafting remain future branches. Classic contains only historical-style content. Reusing a seed **and the same decisions** repeats the run on the tested Godot version. [The mechanics ledger](docs/MECHANICS_LEDGER.md) identifies verified source behavior, provisional tuning and missing classic systems.
+One continuous southern/Barlow itinerary is playable; Greenwood’s Cutoff, the Walla Walla detour and Columbia rafting offer alternative roads. Classic contains only historical-style content. Reusing a seed **and the same decisions** repeats the run on the tested Godot version. [The mechanics ledger](docs/MECHANICS_LEDGER.md) identifies verified source behavior, provisional tuning and missing classic systems.
 
 The experimental absurd-event code and sprites remain available for future development and regression tests, but the player interface currently starts Classic only. Set a seed and click **New Journey** to return to outfitting. The priority is completing the classic survival loop before extending the unusual examples.
 
 ## What's playable
 
-- Original Western pixel art: wood-and-parchment menus, a bitmap font, prairie/river backgrounds, four-frame wagon and oxen animation, and matching encounter sprites. All pixels are authored directly in code and exported as PNG assets.
+- Original Western pixel art: wood-and-parchment menus, a bitmap font, prairie/river backgrounds, eight-frame wagon and oxen animation, and matching encounter sprites. All pixels are authored directly in code and exported as PNG assets.
 - Illustrated town preparation, store interior, resting camp and every current landmark. [Dated visual references](art/LOCATION_REFERENCES.md) separate archival pictures, museum comparisons, written evidence and interpretation.
 - Scrolling ground and slower-moving distant scenery during travel; paused and arrival views stay still. Ford, float and ferry choices play distinct, skippable crossing animations before returning to paused travel.
 - Crossing mishaps show cargo washing away, then an acknowledgement screen with exact food losses and an injury report. Dated crossing outcomes remain in the trail journal and structured simulation history; ordinary daily rations are separate from accident losses.
@@ -62,7 +62,7 @@ The experimental absurd-event code and sprites remain available for future devel
 - Parked experimental JSON examples and sprites are retained for a later optional mode.
 - Mouse controls, journey seed, field guide, trail journal and restart.
 
-This is a complete playable overland corridor with provisional balancing. Guide miles are estimates from Palmer's 1847 publication, not surveyed lengths. Optional route branches, Columbia transport and scoring remain future work. Regional weather, forage, trading schedules, stock and survival formulas are authored gameplay models requiring further historical and player calibration. See [historical accuracy](docs/HISTORICAL_ACCURACY.md).
+This is a complete playable overland corridor with provisional balancing. Guide miles are estimates from Palmer's 1847 publication, not surveyed lengths. Optional route branches and Columbia rafting are playable; scoring remains future work. Regional weather, forage, trading schedules, stock and survival formulas are authored gameplay models requiring further historical and player calibration. See [historical accuracy](docs/HISTORICAL_ACCURACY.md).
 
 The [first source-grounded balance pass](docs/BALANCE_PASS_01.md) records BASIC/historical comparisons and deterministic before/after experiments. Cautious movement now averages about 12.1 miles per moving day in that experiment. Rest recovery depends on rations; spontaneous illness no longer causes fractures; automatic cholera onset respects the later epidemic chronology. These are starting bounds and corrections, not final historical calibration.
 
@@ -150,3 +150,5 @@ The screen renders at **640 × 360** and starts at a crisp **2× scale**. Resize
 
 
 
+
+[Foraging and unarmed attacks](docs/FORAGING_AND_UNARMED.md) add seasonal greens/berries, vitamin C from food actually eaten, and a higher-risk unarmed choice even when bullets are available. The map supports scroll zoom, drag panning, FIT and WAGON controls.

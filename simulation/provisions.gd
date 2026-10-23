@@ -45,6 +45,16 @@ func load_data(value: Variant) -> bool:
 			return false
 		previous = int(amount)
 	if not number(value.get("meat_food_per_lb")) or value.meat_food_per_lb<=0 or value.meat_food_per_lb>1:return false
+	var forage: Variant = value.get("foraging")
+	if not forage is Dictionary or not forage.get("months") is Array or forage.months.size()!=12 or not forage.get("regions") is Dictionary or not forage.get("lb_per_worker") is Array or forage.lb_per_worker.size()!=2:return false
+	for factor in forage.months + forage.regions.values():
+		if not number(factor) or factor<0 or factor>1:return false
+	for key in ["maximum_lb","fresh_days","mass_ratio","vitamin_c_lb_per_person"]:
+		if not number(forage.get(key)) or forage[key]<=0:return false
+	if forage.fresh_days!=floor(forage.fresh_days):return false
+	for amount in forage.lb_per_worker:
+		if not number(amount) or amount<0 or amount!=floor(amount):return false
+	if forage.lb_per_worker[0]>forage.lb_per_worker[1]:return false
 	data = value.duplicate(true)
 	error = ""
 	return true
@@ -106,7 +116,7 @@ func fresh_mass(amount: int) -> float:
 	var left:=amount
 	var mass:=0.0
 	for batch in fresh:
-		if batch.get("preserved",false):continue
+		if batch.get("preserved",false) or batch.get("vitamin_c",false):continue
 		var used:=mini(left,int(batch.pounds))
 		mass+=used*mass_ratio(batch)
 		left-=used
@@ -115,7 +125,7 @@ func processable() -> int:
 	var room: float=data.preservation.batch_lb
 	var amount:=0
 	for batch in fresh:
-		if batch.get("preserved",false):continue
+		if batch.get("preserved",false) or batch.get("vitamin_c",false):continue
 		var used:=mini(int(batch.pounds),floori((room+0.000001)/mass_ratio(batch)))
 		amount+=used
 		room-=used*mass_ratio(batch)
@@ -136,7 +146,7 @@ func preserve(amount: int, day: int, salted: bool) -> Dictionary:
 	var mass:=fresh_mass(input)
 	var remaining:=input
 	for batch in fresh:
-		if batch.get("preserved",false):continue
+		if batch.get("preserved",false) or batch.get("vitamin_c",false):continue
 		var used:=mini(remaining,int(batch.pounds))
 		batch.pounds-=used
 		remaining-=used
@@ -152,14 +162,23 @@ func add_meat(physical_lb: int,day: int) -> int:
 	var units:=meat_units(physical_lb)
 	if units>0:fresh.append({"pounds":units,"expires":day+int(data.fresh_days)+1,"mass_ratio":float(physical_lb)/units})
 	return units
-func remove(amount: int) -> void:
-	# Eat/remove oldest meat first, then use the undifferentiated trail staples.
+func add_produce(physical_lb: int, day: int) -> int:
+	var units := floori(physical_lb / float(data.foraging.mass_ratio))
+	if units > 0:
+		fresh.append({"pounds": units, "expires": day + int(data.foraging.fresh_days) + 1, "mass_ratio": float(data.foraging.mass_ratio), "vitamin_c": true})
+	return units
+
+func remove(amount: int) -> float:
+	# Eat/remove oldest tracked food first, then use the undifferentiated trail staples.
+	var vitamin_c_eaten := 0.0
 	fresh.sort_custom(func(a,b):return a.expires<b.expires)
 	for batch in fresh:
 		var used := mini(amount, int(batch.pounds))
+		if batch.get("vitamin_c",false): vitamin_c_eaten += used * mass_ratio(batch)
 		batch.pounds -= used
 		amount -= used
 	fresh = fresh.filter(func(batch): return batch.pounds > 0)
+	return vitamin_c_eaten
 func reconcile(total: int) -> void:
 	var tracked := 0
 	for batch in fresh:

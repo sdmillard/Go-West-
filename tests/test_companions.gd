@@ -139,7 +139,7 @@ func run():
 	var before: Dictionary=store.capture(game)
 	check(game.open_attack(2) and game.pending.title=="Attack Ben" and "Joining you: Lead, Cora, Dell" in game.pending.text and "Refusing: Ada" in game.pending.text and "Ada and Ben: family" in game.pending.text,"The attack menu names the target, helpers, refusers and bonds")
 	check(round_trip(store,game),"An open attack menu restores")
-	check(game.choose(1) and store.capture(game)==before,"Backing out of an attack changes nothing")
+	check(game.choose(game.pending.choices.size()-1) and store.capture(game)==before,"Backing out of an attack changes nothing")
 	# A killing: the bold family member fights back and leaves; objectors who saw a death flee.
 	game=party(["Ruthless","Compassionate","Compassionate","Compassionate"],[{"a":1,"b":2,"kind":"family"}],["Bold","Cautious","Cautious","Cautious"])
 	game.crime.companion_rules.hit=1
@@ -185,10 +185,11 @@ func run():
 	check(game.party_health.members[2].get("fled",false) and game.party_health.members[2].history.back().contains("fled after you shot at Ben"),"The target's own history says why they left")
 	check(attack(game,3) and game.characters.profiles[3].memories.filter(func(memory):return memory.get("attack_id",0)>0).size()==2,"A second attack the same day is remembered separately")
 	check(round_trip(store,game),"Two attacks round-trip through saves")
-	# Without a bullet there is no attack.
+	# Without a bullet an unarmed attack is still available.
 	game=party(["Ruthless","Ruthless","Ruthless","Ruthless"])
 	game.state.bullets=0
-	check(not game.open_attack(1),"No bullets, no attack")
+	check(game.open_attack(1) and not game.can_choose(0) and game.can_choose(1),"Without bullets only unarmed attack is available")
+	game.choose(game.pending.choices.size()-1)
 	game.state.bullets=5
 	check(not game.open_attack(0) and not game.open_attack(9),"Only a companion with the party can be attacked")
 	betrayal(store)

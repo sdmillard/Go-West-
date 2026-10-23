@@ -132,6 +132,7 @@ func valid_menu(menu: Dictionary, game) -> bool:
 		if choice.has("crime_command") and not menu.get("crime_menu",false):return false
 		if menu.has("attack_menu") and (menu.attack_menu!=true or menu.id!="attack" or not menu.get("service_menu",false) or not integer(choice.get("attack_target"),-1,4)):return false
 		if choice.has("attack_target") and not menu.get("attack_menu",false):return false
+		if choice.has("unarmed") and (choice.unarmed != true or not menu.get("attack_menu",false) or int(choice.get("attack_target",-1)) < 0):return false
 		if menu.has("remains_menu") and (menu.remains_menu!=true or menu.id!="remains" or not menu.get("service_menu",false) or choice.get("remains_command","") not in game.Remains.COMMANDS or not integer(choice.get("remains_id"),0,200) or not integer(choice.get("member",-1),-1,4)):return false
 		if choice.has("remains_command") and not menu.get("remains_menu",false):return false
 		if choice.has("action") and choice.action not in ["cross", "rest", "leave", "trade", "notes", "activity"]:
@@ -155,6 +156,7 @@ func valid_menu(menu: Dictionary, game) -> bool:
 		if choice.get("combat","") not in ["","defend","circle"]:return false
 		if choice.has("combat") and not choice.get("risk") is Dictionary:return false
 		if choice.has("quoted_risk") and (not (choice.quoted_risk is int or choice.quoted_risk is float) or not is_finite(float(choice.quoted_risk)) or choice.quoted_risk<0 or choice.quoted_risk>1):return false
+		if choice.has("foraging") and (choice.foraging != true or menu.get("title","") != "Foraging" or choice.get("effects",{}).size()!=1 or not integer(choice.get("effects",{}).get("days"),1,1)):return false
 		if choice.has("care") and (not integer(choice.care,0,100) or not integer(choice.get("member_id"),0,4)):
 			return false
 		for bonus in ["care_bonus","recovery_bonus"]:
@@ -294,6 +296,7 @@ func restore(value: Variant):
 	var fresh := 0
 	for batch in value.fresh:
 		if not batch is Dictionary:return null
+		if batch.has("vitamin_c") and (not batch.vitamin_c is bool or (batch.vitamin_c and batch.get("preserved",false))):return null
 		if batch.has("preserved") and not batch.preserved is bool:return null
 		if not game.provisions.valid_mass_ratio(batch):return null
 		if not integer(batch.get("pounds"),1,1000000) or not integer(batch.get("expires"),int(s.day)+1,1000100):
@@ -370,7 +373,9 @@ func restore(value: Variant):
 		if target.is_empty() or (game.crime.record.active.is_empty() and not game.crime.transient(target) and game.service_return.get("landmark","")!=game.state.landmark):return null
 		# Commands must match the authoritative stage; descriptive text is regenerated so it can change between versions.
 		var authoritative: Dictionary=game.crime.menu(game)
-		if game.pending.choices.map(func(choice):return choice.get("crime_command","")) != authoritative.choices.map(func(choice):return choice.crime_command):return null
+		var saved_commands: Array = game.pending.choices.map(func(choice):return choice.get("crime_command",""))
+		var current_commands: Array = authoritative.choices.map(func(choice):return choice.crime_command)
+		if saved_commands != current_commands and not (economy_migrated and saved_commands == current_commands.filter(func(command):return command!="assault")):return null
 		game.pending=authoritative
 	for profile in game.characters.profiles:
 		for memory in profile.memories:
@@ -384,7 +389,7 @@ func restore(value: Variant):
 			if memory.has("incident_id"):
 				if memory.incident_id>game.crime.record.incidents.size():return null
 				var incident: Dictionary=game.crime.record.incidents[int(memory.incident_id)-1]
-				if memory.kind!="action_"+("murder" if incident.action=="shoot" else "robbery") or not incident.knowledge.has(game.crime.person_id(int(s.seed),int(profile.id))):return null
+				if memory.kind!="action_"+("murder" if incident.action in ["shoot","assault"] else "robbery") or not incident.knowledge.has(game.crime.person_id(int(s.seed),int(profile.id))):return null
 	# Deaths from before the ledger existed are known, but not where the bodies lie.
 	game.Remains.sync(game,true)
 	if migrated:

@@ -388,7 +388,7 @@ Continue advances days; Pause stops the wagon. Encounters and landmarks stop tra
 
 Camp rests people and livestock, using food. Faster travel strains the team; low rations raise illness risk. Clothing protects people in rough weather. Inspect individual travelers.
 
-Options offers hunting, trading and medical care. Hunting costs a day and ammunition. Left-click fires; right-click walks. Cover blocks shots. Game flees; reload between shots. Carry back what your health and willing helpers allow (200 lb maximum). Broken legs prevent hauling.
+Options offers hunting, foraging, trading and medical care. Foraging costs one day and meals. Seasonal greens and berries supplement food and supply vitamin C when eaten; fresh meat alone does not prevent scurvy. Hunting costs a day and ammunition. Left-click fires; right-click walks. Cover blocks shots. Game flees; reload between shots. Carry back what your health and willing helpers allow (200 lb maximum). Broken legs prevent hauling.
 
 Each trading visit costs one day, however many trades you make. Trading posts keep a store counter with limited stock; passing traders offer fixed lots at higher prices. Care takes a day each; check costs first.
 
@@ -450,6 +450,7 @@ Northern shortcuts and Columbia rafting are not yet playable. Weather, medical e
 	actions.add_child(button("ROB, STEAL OR ATTACK HERE", _open_crime))
 	actions.add_child(button("THE DEAD: BURY, CARRY OR SEARCH", _open_remains))
 	actions.add_child(button("VISIT AN EMIGRANT CAMP", _open_camp))
+	actions.add_child(button("FORAGE FOR GREENS AND BERRIES", _open_forage))
 	actions.add_child(button("CARE / MEDICAL ATTENTION", _open_care))
 	actions.add_child(button("PROVISIONS / CARGO", _show_supplies))
 	actions.add_child(button("MEMORIAL BOOK", _show_memorials))
@@ -571,6 +572,12 @@ func _close_post_store() -> void:
 	post_store_window.hide()
 	_refresh()
 
+func _open_forage() -> void:
+	options_window.hide()
+	crossing_result = {}
+	if game.open_forage(): _show_service()
+	_refresh()
+
 func _open_care() -> void:
 	options_window.hide()
 	crossing_result = {}
@@ -667,7 +674,8 @@ func _show_attack_result(lines: Array) -> void:
 	var members: Array = game.party_health.members
 	var target: String = members[int(attack.target)].name
 	var names := func(ids: Array) -> String: return ", ".join(ids.map(func(id): return members[int(id)].name))
-	var said: Array = ["You shot at %s: %s." % [target, attack.attempt]]
+	var verb: String = "attacked unarmed" if attack.get("weapon","gun") == "unarmed" else "shot at"
+	var said: Array = ["You %s %s: %s." % [verb, target, attack.attempt]]
 	for line in lines:
 		var text: String = str(line)
 		if " fought back" in text:
@@ -694,7 +702,7 @@ func _show_attack_result(lines: Array) -> void:
 	if not standing.is_empty():
 		said.append("Stood by: %s." % names.call(standing))
 	said.append("One bullet used. The journal and View Party have the details.")
-	notice("YOU SHOT AT %s" % target.to_upper(), "\n".join(said))
+	notice("YOU %s %s" % [verb.to_upper(),target.to_upper()], "\n".join(said))
 
 func _cancel_service() -> void:
 	service_window.hide()
@@ -1138,9 +1146,10 @@ func _show_supplies() -> void:
 	var dried: int = game.provisions.preserved_pounds(int(game.state.food))
 	var storage_limit: float=game.provisions.storage_capacity(game.state)
 	var gear: float=float(game.provisions.data.walking.personal_gear_lb_per_person)*game.state.party_size if game.state.vehicle=="foot" else float(game.provisions.data.household_gear_lb)-float(game.state.get("departed_gear_lb",0))
-	var text := "CARGO %.1f / %.0f LB · %s\nSTAPLES %d · FRESH %d · DRIED %d FOOD UNITS\nSALT %d LB · UP TO %d PARTY-DAYS BEFORE SPOILAGE\nFood value and physical meat weight are counted separately.\nFresh lasts two days. Drying costs one day and some food;\nsalt improves yield/storage. Meals are eaten before processing.\nCargo includes %.0f lb personal/household gear. Discards are permanent." % [game.provisions.cargo(game.state), storage_limit,"OVERLOADED" if game.provisions.cargo(game.state) > storage_limit else "WITHIN GUIDELINE", game.state.food - fresh - dried, fresh, dried, game.state.salt, game.provisions.expected_days(game.state.food, game.state.party_size, game.state.rations),gear]
+	var text := "CARGO %.1f / %.0f LB · %s\nSTAPLES %d · FRESH %d · DRIED %d FOOD UNITS\nSALT %d LB · UP TO %d PARTY-DAYS BEFORE SPOILAGE\nFood value and physical meat weight are counted separately.\nFresh meat lasts two days; foraged produce lasts three.\nDrying meat costs one day and some food;\nsalt improves yield/storage. Meals are eaten before processing.\nCargo includes %.0f lb personal/household gear. Discards are permanent." % [game.provisions.cargo(game.state), storage_limit,"OVERLOADED" if game.provisions.cargo(game.state) > storage_limit else "WITHIN GUIDELINE", game.state.food - fresh - dried, fresh, dried, game.state.salt, game.provisions.expected_days(game.state.food, game.state.party_size, game.state.rations),gear]
 	supplies_rows.add_child(label(text))
-	supplies_rows.add_child(label("TRACKED MEAT %.1f LB / %d FOOD UNITS" % [game.provisions.tracked_mass(game.state.food),fresh+dried]))
+	supplies_rows.add_child(label("Greens and berries supply vitamin C only when eaten.\nUse Options > Forage; meat alone does not prevent scurvy."))
+	supplies_rows.add_child(label("TRACKED FOOD %.1f LB / %d FOOD UNITS" % [game.provisions.tracked_mass(game.state.food),fresh+dried]))
 	supplies_rows.add_child(label("HUNTING HAUL %d LB / HEALTH & WILLING HELPERS" % game.hunting_capacity()))
 	supplies_rows.add_child(label("Health scales loads on foot and hunts. Broken legs prevent hauling."))
 	supplies_rows.add_child(label("OXEN %d · GRAZE; DO NOT USE THE PARTY'S FOOD\n%s" % [game.state.oxen,"PACK LIMIT %.0f LB; REDUCE EXCESS BEFORE WALKING" % storage_limit if game.state.vehicle=="foot" else "TEAM LOAD GUIDELINE %.0f LB; EXCESS LOAD SLOWS TRAVEL" % game.provisions.team_capacity(game.state.oxen)]))

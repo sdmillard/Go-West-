@@ -13,3 +13,7 @@ The MAP button (top right) opens a map of the West in 1848. Every road in `data/
 
 - `ui/map_view.gd` draws the roads, the journey and the wagon over the picture; the journey comes from `game.travelled_path()` plus the part of the current road given by `leg_miles / leg_length`.
 - `tests/test_ui.gd` (`check_map`) checks that every stop is on the map, waypoints follow real roads, the branch taken is the one drawn, and the wagon stands partway along the current road.
+
+## Zoom and navigation
+
+Use the mouse wheel or +/- buttons for 1x through 4x pixel zoom. Wheel zoom keeps the point under the cursor; drag the map to pan, with bounds preventing empty space. FIT restores the overview; WAGON zooms and finds the party. Stop tooltips follow the transformed map. The map is clipped to its frame; status text has its own row above the controls, with the full status available on hover if shortened.
