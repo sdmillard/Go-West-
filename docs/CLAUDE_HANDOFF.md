@@ -291,3 +291,12 @@ Spencer asked for the store's barter screen everywhere you can trade, with each 
 - One engine API for all three: `trade_counter(venue)`, `counter_quote(cart, venue)` and `counter_checkout(cart, venue)`; `post_store`/`post_quote`/`post_checkout` remain for posts. Rows carry `buy_key`/`sell_key`, and the cash a party has paid out lives in `<key>|purse|units`. The study bots still use the lot menus (`open_trade`) for traders, so balance runs do not yet see trader moods or stock. The balance pass needs a counter policy.
 - New Aseprite scenes (622×273): `trader_camp.lua` (light wagon, goods on a robe, mountain-man trader, pack mules) and `camp_trade.lua` (family noon camp, quilt of spare goods, a second family's wagon and tent at the right for the menu crop). Both are approved by Spencer.
 - Next (Spencer, October 23): ASK FOR NEWS at stores and with traders: general 1848 news, trail tips, road and river conditions ahead, prices ahead, and word of the party's crimes.
+
+## One VILLAINY tree for every crime (October 23)
+
+Spencer: crimes against emigrant camps opened a separate menu instead of branching inside VILLAINY like ATTACK SOMEONE. Audit result: STEAL and ROB had one "...SOMEONE HERE >" row that opened the crime preview with its own STEAL >/ROB >/ATTACK > menu (OTHER ACTIONS HERE <), and only reached the stop's own venue, so a camp beside a post could not be robbed at all. Attack previews also fell back into that second menu. No other crime or hostile action lives outside VILLAINY (the camp, store, trader and party menus have none; companion attacks are only under ATTACK SOMEONE > PARTY MEMBER).
+
+- STEAL > and ROB > now list every place within reach (`crime.local_places`, labelled by `crime.place_label`), and `open_crime(place)` opens that place's preview with a validated `crime_place` that saves and loads.
+- Previews opened from VILLAINY show only the chosen act and a back link to their branch (`crime_back` in `ui/main.gd`); the in-preview STEAL/ROB/ATTACK menu is gone. The camp's ASK FOR CARE branch is unchanged. See `docs/ACTION_RIBBON.md`.
+- Tests: `tests/test_local_targets.gd` `villainy_places`.
+

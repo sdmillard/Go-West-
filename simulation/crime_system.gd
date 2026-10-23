@@ -188,6 +188,10 @@ func local_places(game,stop: Dictionary) -> Array:
 	var nearby_camp:=camp(game)
 	if not nearby_camp.is_empty():places_here.append(nearby_camp)
 	return places_here
+## How a place reads in the VILLAINY lists: the post's name for a fixed venue, the scene's own title on the road.
+func place_label(game,place: String) -> String:
+	if transient(place):return rules(place).title
+	return "%s · %s" % [game.route.nodes[place].name,str(rules(place).title).trim_prefix("The ")]
 func local_targets(game) -> Array:
 	if not game.can_service() or not incident().is_empty():return []
 	var people: Array=[]
@@ -347,6 +351,8 @@ func menu(game) -> Dictionary:
 		options=[option("Acknowledge the outcome","finish")]
 	options.append(option(({"traders":"Leave the traders alone","emigrants":"Leave the family be"}.get(scene.kind,"Back to the stop")) if current.is_empty() else "Encounter in progress","back"))
 	var result_menu: Dictionary={"id":"crime","crime_menu":true,"service_menu":true,"title":scene.title,"text":text,"choices":options}
+	# A place picked from the VILLAINY lists stays picked while the preview is open.
+	if game.pending.has("crime_place"):result_menu["crime_place"]=place
 	if game.pending.has("crime_target"):
 		result_menu["crime_target"]=keeper.uid
 		result_menu["crime_place"]=place

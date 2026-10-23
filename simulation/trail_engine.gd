@@ -1005,10 +1005,13 @@ static func _unit_name(item: String,n: int) -> String:
 	var names: Dictionary={"food":["lb of food","lb of food"],"salt":["lb of salt","lb of salt"],"bullets":["bullet","bullets"],"medicine":["care kit","care kits"],"clothing":["clothing set","clothing sets"],"oxen":["ox","oxen"],"wheels":["wheel","wheels"],"axles":["axle","axles"],"tongues":["tongue","tongues"]}
 	return names.get(item,[item,item])[0 if n==1 else 1]
 
-func open_crime() -> bool:
+## The crime preview for this stop's target, or (place) one chosen from crime.local_places, as VILLAINY > STEAL lists them.
+func open_crime(place: String="") -> bool:
 	if pending.get("crime_menu",false):return true
 	if not crime.eligible(self):return false
+	if not place.is_empty() and place not in crime.local_places(self,pending):return false
 	service_return=pending.duplicate(true)
+	if not place.is_empty():pending={"crime_menu":true,"crime_place":place}
 	pending=crime.menu(self)
 	return true
 

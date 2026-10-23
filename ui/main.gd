@@ -45,6 +45,8 @@ var section_window: AcceptDialog
 var section_rows: VBoxContainer
 var ribbon_buttons: Dictionary={}
 var crime_category := ""
+## The VILLAINY section a crime, attack or remains preview was opened from; its back button returns there.
+var crime_back := ""
 const SECTION_PARENTS={"Attack someone":"Villainy","Party member":"Attack someone","Someone here":"Attack someone","Steal":"Villainy","Rob":"Villainy","Preserve meat":"Camp"}
 var window_scale: OptionButton
 var fullscreen: CheckBox
@@ -667,7 +669,7 @@ func _show_section(section: String) -> void:
 				section_rows.add_child(preserve)
 			if not available:section_rows.add_child(label("No suitable fresh meat can be preserved now.\nSalt-assisted drying also requires enough salt."))
 		"Hunt & forage":entries=[["HUNT · 1 DAY, UP TO 5 SHOTS",_start_hunt],["FORAGE FOR GREENS AND BERRIES",_open_forage]]
-		"Villainy":entries=[["ATTACK SOMEONE >",_show_section.bind("Attack someone")],["STEAL >",_show_section.bind("Steal")],["ROB >",_show_section.bind("Rob")],["THE DEAD: BURY, CARRY OR SEARCH >",_open_remains]]
+		"Villainy":entries=[["ATTACK SOMEONE >",_show_section.bind("Attack someone")],["STEAL >",_show_section.bind("Steal")],["ROB >",_show_section.bind("Rob")],["THE DEAD: BURY, CARRY OR SEARCH >",_open_villainy_remains]]
 		"Attack someone":
 			entries=[["PARTY MEMBER >",_show_section.bind("Party member")],["SOMEONE HERE >",_show_section.bind("Someone here")]]
 		"Someone here":
@@ -687,8 +689,20 @@ func _show_section(section: String) -> void:
 				target.disabled=not game.crime.can_attack(game,int(member.id))
 				section_rows.add_child(target)
 			if section_rows.get_child_count()==0:section_rows.add_child(label("No companion is here to target."))
-		"Steal":entries=[["STEAL FROM SOMEONE HERE >",_open_crime_category.bind("theft")]]
-		"Rob":entries=[["ROB SOMEONE HERE >",_open_crime_category.bind("robbery")]]
+		"Steal","Rob":
+			# Every store, post, gate, ferry, trading party or camp within reach is its own branch, like ATTACK SOMEONE > SOMEONE HERE.
+			var category: String="theft" if section=="Steal" else "robbery"
+			var places: Array=game.crime.local_places(game,game.pending) if game.crime.incident().is_empty() else []
+			for place in places:
+				var target:=button(game.crime.place_label(game,place).to_upper()+" >",_section_action.bind(_open_crime_at.bind(place,category)))
+				target.custom_minimum_size.y=27
+				target.set_meta("crime_place",place)
+				section_rows.add_child(target)
+			if places.is_empty():
+				var none:=label("Nobody here to %s. Stop at a trading post, the Kansas River ferry, Fort Kearny once soldiers are there, or the Barlow Road toll gate, or meet passing traders or an emigrant camp on the road." % ("steal from" if section=="Steal" else "rob"))
+				none.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+				none.custom_minimum_size.x=330
+				section_rows.add_child(none)
 		"History":entries=[["TRAIL JOURNAL",_show_journal],["MEMORIAL BOOK",_show_memorials]]
 	for item in entries:
 		var entry:=button(item[0],_section_action.bind(item[1]))
@@ -725,17 +739,37 @@ func _section_back() -> void:
 func _open_party_attack(id: int) -> void:
 	section_window.hide()
 	selected_member=id
+	crime_back="Party member"
 	_attack_selected()
 
 func _open_local_attack(uid: String) -> void:
 	section_window.hide()
 	crime_category="attack"
+	crime_back="Someone here"
 	if game.open_local_attack(uid):_show_service()
 	_refresh()
 
 func _open_crime_category(category: String) -> void:
 	crime_category=category
 	_open_crime()
+
+## VILLAINY > STEAL or ROB > a place: the preview shows only that act against that place.
+func _open_crime_at(place: String,category: String) -> void:
+	crime_category=category
+	crime_back="Steal" if category=="theft" else "Rob"
+	if game.open_crime(place):_show_service()
+	_refresh()
+
+func _open_villainy_remains() -> void:
+	crime_back="Villainy"
+	_open_remains()
+
+## Leave a preview opened from VILLAINY without acting and return to the branch it came from.
+func _villainy_back() -> void:
+	var section:=crime_back
+	crime_category=""
+	_cancel_service()
+	if game.pending.is_empty() or not game.pending.get("service_menu",false):_show_section(section)
 
 func _filter_crime(category: String) -> void:
 	crime_category=category
@@ -865,9 +899,8 @@ func _show_service() -> void:
 			picture.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			service_rows.add_child(picture)
 	var crime_preview: bool=game.pending.get("crime_menu",false) and game.crime.record.active.is_empty()
-	if crime_preview and crime_category.is_empty():
-		for branch in [["STEAL >","theft"],["ROB >","robbery"],["ATTACK >","attack"]]:
-			service_rows.add_child(button(branch[0],_filter_crime.bind(branch[1])))
+	# Only a preview reached through VILLAINY keeps its way back there.
+	if not (crime_preview or game.pending.get("attack_menu",false) or game.pending.get("remains_menu",false)):crime_back=""
 	# At an emigrant camp, nursing requests sit behind one ASK FOR CARE branch listing the travelers.
 	var camp_menu: bool=game.pending.has("camp")
 	var care_offered:=false
@@ -881,13 +914,15 @@ func _show_service() -> void:
 			if crime_category=="care" and not care:continue
 		if crime_preview:
 			var command: String=game.pending.choices[index].get("crime_command","")
-			if crime_category.is_empty() or (command not in (["shoot","assault"] if crime_category=="attack" else [crime_category,"raid"])):continue
+			# VILLAINY picked the act; a preview restored from a save without one lists every act.
+			if not crime_category.is_empty() and command not in (["shoot","assault"] if crime_category=="attack" else [crime_category,"raid"]):continue
 		# Fixed offers the trading counter already covers are kept for the study policies only.
 		if game.pending.choices[index].get("policy_only",false):continue
 		var option := button(game.pending.choices[index].label, _service_choice.bind(index))
 		option.disabled = not game.can_choose(index)
 		service_rows.add_child(option)
-	if (crime_preview or camp_menu) and not crime_category.is_empty():service_rows.add_child(button("OTHER ACTIONS HERE <",_filter_crime.bind("")))
+	if not crime_back.is_empty():service_rows.add_child(button("< "+crime_back.to_upper(),_villainy_back))
+	elif camp_menu and not crime_category.is_empty():service_rows.add_child(button("OTHER ACTIONS HERE <",_filter_crime.bind("")))
 	elif camp_menu:service_rows.add_child(button("LEAVE CAMP <",_cancel_service))
 	service_window.popup_centered()
 
