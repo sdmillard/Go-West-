@@ -296,6 +296,8 @@ func _build_ui() -> void:
 	pace.selected = 1
 	pace.item_selected.connect(_settings_changed)
 	pace.tooltip_text = "Nominal 22/26/30 miles per day before weather, load, team condition and stops. Faster travel costs health."
+	for index in range(3):
+		pace.get_popup().set_item_tooltip(index, ["Steady: about 22 miles a day. Easiest on people and oxen.", "Strenuous: about 26 miles a day. More strain on the party and team.", "Grueling: about 30 miles a day. Hard on health; sick travelers suffer most."][index])
 	place(pace, Rect2(508, 226, 115, 21))
 	place(label("RATIONS"), Rect2(459, 257, 46, 10))
 	rations = OptionButton.new()
@@ -304,6 +306,8 @@ func _build_ui() -> void:
 	rations.selected = 1
 	rations.item_selected.connect(_settings_changed)
 	rations.tooltip_text = "Bare 1, meager 2, filling 3 food units per living traveler per day. Low rations slow recovery even in camp."
+	for index in range(3):
+		rations.get_popup().set_item_tooltip(index, ["Bare: 1 food unit per traveler a day. Recovery slows and illness risk rises.", "Meager: 2 food units per traveler a day.", "Filling: 3 food units per traveler a day. Best for health and recovery."][index])
 	place(rations, Rect2(508, 251, 115, 21))
 	travel_button = button("CONTINUE >", _travel)
 	place(travel_button, Rect2(459, 282, 91, 37))

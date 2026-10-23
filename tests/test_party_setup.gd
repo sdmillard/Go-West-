@@ -15,6 +15,7 @@ func run():
 	await process_frame
 	var setup=screen.departure_view
 	check(setup.interval.value==7,"Default wage interval stays weekly before any edits")
+	check(setup.personality.get_popup().get_item_tooltip(1)==screen.game.characters.catalog.data.temperaments[setup.personality.get_item_text(1)].description and setup.flaw_choice.get_popup().get_item_tooltip(1)!="" and setup.background_choice.get_popup().get_item_tooltip(0)!="","Open trait lists describe every option on hover")
 	var initial: Dictionary=screen.game.state.duplicate(true)
 	var random: int=screen.game.rng.state
 	setup.names[1].text="JANE"

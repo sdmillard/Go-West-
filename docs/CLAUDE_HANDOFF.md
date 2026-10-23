@@ -47,6 +47,7 @@ Last updated October 23, 2026, after merged PR #34 (UI readability). Sections be
   - Notices go through `notice(title, text)`: the label wraps at `NOTICE_WIDTH` (460 px) and `popup_fitted` resizes to the text and centers it. A bare `popup_centered()` on a resized AcceptDialog centers a zero-size window, which then grows off the right edge; use `popup_fitted` for dialogs whose text changes.
   - The shot notice is now a summary: result, fought back, joined, one "Fled:" line with the combined food/clothing/gear taken, objected, stood by. The journal keeps the per-person lines.
   - The guide scrolls in a fixed 500x250 frame (it was cut off at the bottom) and its trading paragraph now matches PR #33.
+  - Drop-down lists explain each entry on hover, not just the selected one: companion temperament, values, background, relationship and flaw (`departure_view.gd` `describe_items`), plus pace and rations (follow-up PR to #34).
   - SpinBox arrows are brown (they were near-white on parchment); the fort store counter columns were widened so prices no longer touch the item names.
 - Visual check: every window and several tooltips were captured under Xvfb at 640x360 before and after. The capture script is not in the repo; `tests/test_ui.gd` now checks tooltip theme and wrapping, notice centering and guide height.
 
