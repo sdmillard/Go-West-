@@ -58,7 +58,7 @@ func _initialize() -> void:
 	var fingerprints: Dictionary = {}
 	for id in scenes.textures:
 		var texture: Texture2D = scenes.texture_for(id)
-		var expected := Vector2(622, 273) if id in ["town_setup", "store", "post_store"] else Vector2(432, 150)
+		var expected := Vector2(622, 273) if id in ["town_setup", "store", "post_store", "trader_camp", "camp_trade"] else Vector2(432, 150)
 		check(texture.get_size() == expected, "Scene has exact native-pixel dimensions: " + id)
 		var fingerprint := texture.get_image().get_data().hex_encode().sha256_text()
 		check(not fingerprints.has(fingerprint), "Location art is distinct, not another name for the same image: " + id)

@@ -839,27 +839,99 @@ func post_store() -> Dictionary:
 	var offer: Dictionary=context.market(self)
 	if crime.closed(str(state.landmark)) or crime.refuses(self,str(state.landmark)):return {}
 	var rows: Array=[]
-	var options: Array=_trade_options(offer,true)
-	for i in range(0,options.size(),2):
-		var buy: Dictionary=options[i]
-		var sell: Dictionary=options[i+1]
+	for pair in _lot_pairs(offer,true):
+		var buy: Dictionary=pair[0]
+		var sell: Dictionary=pair[1]
 		var lot: Dictionary=buy.lot
 		var amount: int=int(lot.amount)
-		var can_buy: int=int(buy.stock_limit)*amount-_counter_used(buy) if crime.can_trade(self,buy) else 0
+		var can_buy: int=int(buy.stock_limit)*amount-_units_used(buy.market_key,amount) if crime.can_trade(self,buy) else 0
 		if lot.item=="food":can_buy=mini(can_buy,crime.food_left(self,str(state.landmark)))
-		var can_sell: int=int(sell.stock_limit)*amount-_counter_used(sell) if crime.can_trade(self,sell) else 0
-		rows.append({"item":lot.item,"label":lot.label,"amount":amount,"buy_cents":int(lot.buy_cents),"sell_cents":int(lot.sell_cents),"can_buy":maxi(0,can_buy),"can_sell":maxi(0,mini(can_sell,int(state.get(lot.item,0)))),"held":int(state.get(lot.item,0))})
+		var can_sell: int=int(sell.stock_limit)*amount-_units_used(sell.market_key,amount) if crime.can_trade(self,sell) else 0
+		rows.append(_counter_row(lot,int(lot.buy_cents),int(lot.sell_cents),can_buy,can_sell,buy.market_key,sell.market_key,true,true))
 	var name: String=str(route.nodes[state.landmark].get("name",state.landmark))
-	return {"name":name,"rows":rows,"days":context.trade_days(offer),"money_cents":roundi(float(state.money)*100.0),"rumor":crime.news_text(self,str(state.landmark)),"discount":characters.available(self,"Trading")}
+	return {"name":name,"kind":"post","key":str(offer.key),"rows":rows,"days":context.trade_days(offer),"money_cents":roundi(float(state.money)*100.0),"purse_cents":-1,"rumor":crime.news_text(self,str(state.landmark)),"discount":characters.available(self,"Trading")}
 
-## Units of a post's stock (or buying demand) already used: whole lots from the lot menu, or single units from the counter.
-func _counter_used(choice: Dictionary) -> int:
-	return int(context.record.spent.get(choice.market_key+"|units",int(context.record.spent.get(choice.market_key,0))*int(choice.lot.amount)))
+## The trading counter where the party can trade by the unit: a post's store, a passing trading party, or (venue "camp")
+## the emigrant family camped nearby. A party met on the road sells only what it carries and buys only what it wants,
+## at its own prices, and pays out of its own purse. Empty when nobody here will trade.
+func trade_counter(venue: String="") -> Dictionary:
+	if venue=="camp":return _camp_counter()
+	if _at_post():return post_store()
+	if not can_service():return {}
+	var offer: Dictionary=context.market(self)
+	if not offer.available or offer.post or crime.closed(str(offer.key)) or crime.refuses(self,str(offer.key)):return {}
+	var goods: Dictionary=context.barter_goods(self,str(offer.key))
+	var rules: Dictionary=context.data.passing_goods
+	var late: bool=int(calendar().month)>=int(rules.late_food_month)
+	var rows: Array=[]
+	for pair in _lot_pairs(offer,false):
+		var buy: Dictionary=pair[0]
+		var sell: Dictionary=pair[1]
+		var lot: Dictionary=buy.lot
+		var item: String=lot.item
+		var amount: int=int(lot.amount)
+		# Food runs dear once the season turns toward winter.
+		var buy_cents: int=roundi(float(lot.buy_cents)*float(goods.buy)*(float(rules.late_food_factor) if item=="food" and late else 1.0))
+		var can_buy: int=int(goods.stock.get(item,0))-_units_used(buy.market_key,amount) if crime.can_trade(self,buy) else 0
+		if item=="food":can_buy=mini(can_buy,crime.food_left(self,str(offer.key)))
+		var can_sell: int=int(goods.wants.get(item,0))-_units_used(sell.market_key,amount) if crime.can_trade(self,sell) else 0
+		rows.append(_counter_row(lot,maxi(1,buy_cents),roundi(float(lot.sell_cents)*float(goods.sell)),can_buy,can_sell,buy.market_key,sell.market_key,goods.stock.has(item),goods.wants.has(item)))
+	return {"name":"Passing traders","kind":"traders","key":str(offer.key),"mood":goods.mood,"late_food":late,"rows":rows,"days":context.trade_days(offer),"money_cents":roundi(float(state.money)*100.0),"purse_cents":_purse_left(str(offer.key),int(goods.purse_cents)),"rumor":"","discount":characters.available(self,"Trading")}
+
+## The emigrant family's spare goods: not traders, so whatever they happen to have, priced by what each thing is worth to them.
+## They part with goods reluctantly and pay well for what they are short of. Trading with them takes no time.
+func _camp_counter() -> Dictionary:
+	var place: String=crime.camp(self)
+	var open: bool=can_service() or (pending.get("service_menu",false) and pending.get("camp","")==place)
+	if place.is_empty() or not open or crime.record.services.has(place) or crime.refuses(self,place):return {}
+	var goods: Dictionary=context.camp_goods(self,place)
+	var price: float=float(context.region(self).price)
+	var rows: Array=[]
+	for lot in survival.data.trade_lots:
+		var item: String=lot.item
+		var amount: int=int(lot.amount)
+		var buy_key: String=place+"|buy_"+item
+		var sell_key: String=place+"|sell_"+item
+		var can_buy: int=int(goods.stock.get(item,0))-_units_used(buy_key,amount)
+		if item=="food":can_buy=mini(can_buy,crime.food_left(self,place))
+		var can_sell: int=int(goods.wants.get(item,0))-_units_used(sell_key,amount)
+		var buy_cents: int=roundi(float(lot.buy_cents)*price*float(goods.reluctance))
+		var sell_cents: int=roundi(float(lot.sell_cents)*float(goods.need.get(item,1.0)))
+		rows.append(_counter_row(lot,maxi(1,buy_cents),sell_cents,can_buy,can_sell,buy_key,sell_key,goods.stock.has(item),goods.wants.has(item)))
+		rows[-1]["premium"]=float(goods.need.get(item,1.0))
+	return {"name":"Emigrant camp","kind":"camp","key":place,"needs":goods.need.keys(),"rows":rows,"days":0,"money_cents":roundi(float(state.money)*100.0),"purse_cents":_purse_left(place,int(goods.purse_cents)),"rumor":"","discount":false}
+
+func _counter_row(lot: Dictionary,buy_cents: int,sell_cents: int,can_buy: int,can_sell: int,buy_key: String,sell_key: String,sells: bool,buys: bool) -> Dictionary:
+	var held: int=int(state.get(lot.item,0))
+	return {"item":lot.item,"label":lot.label,"amount":int(lot.amount),"buy_cents":buy_cents,"sell_cents":sell_cents,"can_buy":maxi(0,can_buy),"can_sell":maxi(0,mini(can_sell,held)),"held":held,"buy_key":buy_key,"sell_key":sell_key,"sells":sells,"buys":buys}
+
+## Cash a party met on the road still has to pay out, after what it has already paid this party.
+func _purse_left(key: String,purse_cents: int) -> int:
+	return maxi(0,purse_cents-int(context.record.spent.get(key+"|purse|units",0)))
+
+## The buy and sell choice for each lot on offer here, paired; barter-only choices are left out.
+func _lot_pairs(offer: Dictionary,at_post: bool) -> Array:
+	var lots: Array=_trade_options(offer,at_post).filter(func(choice):return choice.has("lot"))
+	var pairs: Array=[]
+	for i in range(0,lots.size(),2):pairs.append([lots[i],lots[i+1]])
+	return pairs
+
+## Units of a counter's stock (or buying demand) already used: whole lots from the lot menu, or single units from the counter.
+func _units_used(key: String,amount: int) -> int:
+	return int(context.record.spent.get(key+"|units",int(context.record.spent.get(key,0))*amount))
 
 ## Price a basket at the post: positive counts buy, negative counts sell, in units (pounds of food, single bullets). Read-only.
 func post_quote(cart: Dictionary) -> Dictionary:
-	var store: Dictionary=post_store()
-	var result: Dictionary={"valid":false,"message":"The post is not open for trade.","net_cents":0,"days":int(store.get("days",0)),"effects":{}}
+	return counter_quote(cart)
+
+func post_checkout(cart: Dictionary) -> bool:
+	return counter_checkout(cart)
+
+## Price a basket at the trading counter here: positive counts buy, negative counts sell, in units. Read-only.
+## Selling more than buying is paid in cash only as far as the other side's purse allows; a post's purse is unlimited.
+func counter_quote(cart: Dictionary,venue: String="") -> Dictionary:
+	var store: Dictionary=trade_counter(venue)
+	var result: Dictionary={"valid":false,"message":"Nobody here is open for trade.","net_cents":0,"days":int(store.get("days",0)),"effects":{}}
 	if store.is_empty():return result
 	var effects: Dictionary={}
 	var moved:=0
@@ -870,7 +942,7 @@ func post_quote(cart: Dictionary) -> Dictionary:
 			return result
 		var n: int=int(count)
 		if n>row.can_buy or -n>row.can_sell:
-			result.message=("The post cannot sell that much %s." if n>0 else "The post will not buy that much %s.") % row.item
+			result.message=("They cannot sell that much %s." if n>0 else "They will not buy that much %s.") % row.item
 			return result
 		if n==0:continue
 		moved+=absi(n)
@@ -885,6 +957,8 @@ func post_quote(cart: Dictionary) -> Dictionary:
 		result.message="Choose goods to buy or sell."
 	elif store.money_cents+result.net_cents<0:
 		result.message="You cannot afford that."
+	elif store.purse_cents>=0 and result.net_cents>store.purse_cents:
+		result.message="They have only $%.2f in cash. Take more of their goods for the rest." % (store.purse_cents/100.0)
 	else:
 		result.valid=true
 		result.message="Settle up · %s" % ("1 day and meals" if result.days>0 else "no extra time")
@@ -897,29 +971,30 @@ func post_quote(cart: Dictionary) -> Dictionary:
 	result.capacity_after_lb=provisions.capacity(after)
 	return result
 
-## Settle a basket at the post as one visit: stock and demand move by the unit, and the visit's day is charged once.
-func post_checkout(cart: Dictionary) -> bool:
-	var quote: Dictionary=post_quote(cart)
+## Settle a basket at the counter as one visit: stock and demand move by the unit, and the visit's day is charged once.
+func counter_checkout(cart: Dictionary,venue: String="") -> bool:
+	var quote: Dictionary=counter_quote(cart,venue)
 	if not quote.valid:return false
-	var offer: Dictionary=context.market(self)
-	var options: Array=_trade_options(offer,true)
+	var store: Dictionary=trade_counter(venue)
 	var lines: Array[String]=[]
-	for i in range(0,options.size(),2):
-		var n: int=int(cart.get(options[i].lot.item,0))
+	for row in store.rows:
+		var n: int=int(cart.get(row.item,0))
 		if n==0:continue
-		var choice: Dictionary=options[i] if n>0 else options[i+1]
-		var amount: int=int(choice.lot.amount)
-		# The unit ledger keeps exact amounts; the lot ledger rounds up so the lot menu never sells stock the counter took.
-		var used: int=_counter_used(choice)+absi(n)
-		context.record.spent[choice.market_key+"|units"]=used
-		context.record.spent[choice.market_key]=ceili(float(used)/amount)
-		crime.consume_trade({"market_key":choice.market_key,"effects":{choice.lot.item:n}})
-		lines.append(("bought %d %s" if n>0 else "sold %d %s") % [absi(n),_unit_name(choice.lot.item,absi(n))])
-	context.record.spent[offer.key+"|visit"]=1
+		var key: String=row.buy_key if n>0 else row.sell_key
+		# The unit ledger keeps exact amounts; the lot count rounds up so the lot menu never sells stock the counter took.
+		var used: int=_units_used(key,int(row.amount))+absi(n)
+		context.record.spent[key+"|units"]=used
+		context.record.spent[key]=ceili(float(used)/int(row.amount))
+		crime.consume_trade({"market_key":key,"effects":{row.item:n}})
+		lines.append(("bought %d %s" if n>0 else "sold %d %s") % [absi(n),_unit_name(row.item,absi(n))])
+	if quote.net_cents>0 and store.purse_cents>=0:
+		var purse_key: String=str(store.key)+"|purse|units"
+		context.record.spent[purse_key]=int(context.record.spent.get(purse_key,0))+int(quote.net_cents)
+	if store.days>0:context.record.spent[str(store.key)+"|visit"]=1
 	var effects: Dictionary=quote.effects.duplicate()
 	effects["money"]=quote.net_cents/100.0
 	effects["days"]=quote.days
-	journal.append("Day %d · At %s: %s." % [state.day,route.nodes[state.landmark].get("name",state.landmark),", ".join(lines)])
+	journal.append("Day %d · %s: %s." % [state.day,{"post":"At "+str(store.name),"traders":"Traded with passing traders","camp":"Traded with an emigrant family"}[store.kind],", ".join(lines)])
 	_apply(effects)
 	refresh_stop_offers()
 	if quote.days>0:_update_river_stage()
@@ -948,12 +1023,16 @@ func open_camp() -> bool:
 	var options: Array=[]
 	var lots: int=int(rules.barter_lots)
 	var left: int=lots-int(context.record.spent.get(place+"|barter_food",0))
-	options.append({"label":"Trade %d bullets for %d lb of their food · %d offer(s) left" % [int(rules.barter_bullets),int(rules.barter_food),maxi(0,left)],"market_key":place+"|barter_food","stock_limit":lots,"requires":{"bullets":int(rules.barter_bullets)},"effects":{"bullets":-int(rules.barter_bullets),"food":int(rules.barter_food)},"result":"Traded ammunition for food with an emigrant family."})
+	# Their spare goods open on the trading counter; the fixed bullets-for-food offer stays for the study policies.
+	options.append({"label":"Trade goods with them · no time","counter":"camp","effects":{},"result":""})
+	options.append({"label":"Trade %d bullets for %d lb of their food · %d offer(s) left" % [int(rules.barter_bullets),int(rules.barter_food),maxi(0,left)],"market_key":place+"|barter_food","stock_limit":lots,"requires":{"bullets":int(rules.barter_bullets)},"effects":{"bullets":-int(rules.barter_bullets),"food":int(rules.barter_food)},"result":"Traded ammunition for food with an emigrant family.","policy_only":true})
 	for member in party_health.members:
 		if party_health.is_active(member) and (not member.conditions.is_empty() or member.health<100):
 			options.append({"label":"Ask their help nursing %s · 1 day, once per camp" % member.name,"member_id":member.id,"care":int(rules.care),"market_key":place+"|care","stock_limit":1,"effects":{"days":1},"result":"An emigrant family helped nurse %s." % member.name})
 	options.append({"label":"Share news of the road · once per camp","market_key":place+"|news","stock_limit":1,"effects":{},"result":camp_news()})
-	return _service_menu("An emigrant camp","An emigrant family is camped near the road and is glad of company. Their food in the wagon: %d lb. Trading and news cost no time; nursing takes a day." % crime.food_left(self,place),options)
+	if not _service_menu("An emigrant camp","An emigrant family is camped near the road and is glad of company. Their food in the wagon: %d lb. Trading and news cost no time; nursing takes a day." % crime.food_left(self,place),options):return false
+	pending["camp"]=place
+	return true
 
 ## What a family met on the road heard at the posts behind it: which posts ahead already know of the party.
 func camp_news() -> String:
@@ -979,6 +1058,8 @@ func open_care() -> bool:
 
 func _choose_service(index: int) -> bool:
 	var choice: Dictionary = pending.choices[index]
+	# The trading counter is its own screen; choosing it here changes nothing.
+	if choice.has("counter"):return true
 	if choice.get("departure_review",false):
 		pending=service_return.duplicate(true)
 		service_return={}
