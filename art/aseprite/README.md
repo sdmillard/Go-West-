@@ -78,9 +78,10 @@ K.save("location_elm_grove")   -- must match the art/pixels/ file it replaces
 | --- | --- |
 | Canvas | `canvas(w, h, seed)`, `layer(name, fn)`, `save(name)`, `rnd(n)`, `at(x, y)` returns the colour name already painted |
 | Primitives | `px`, `rect`, `line`, `ellipse(cx, cy, rx, ry, c)`, `poly({{x, y}, ...}, c)`, `dither(x, y, w, h, a, b)` (checkerboard), `blend(x, y, w, a, b)` (3-row 25/50/75% band) |
-| Sky | `cloud(x, y, scale)` |
+| Sky | `cloud(x, y, scale)`, `sky(w, bottom, clouds, haze)` (banded sky; vary the cloud list per scene) |
 | Buildings | `bricks`, `clapboard`, `side_wall` (receding shaded wall), `hip_roof`, `chimney`, `windows(x, y, w, n, frame, shutter)`, `door`, `sign` |
-| Nature | `elm(x, y, scale)` |
+| Landscape | `smooth(pts)` (Catmull-Rom over `{x, y, half_width}`), `ribbon(pts, c, grow)`, `river(pts, bank, glints)`, `ridge(x0, x1, base, floor, height_fn, fill, lit, shade)` |
+| Nature | `elm(x, y, scale)`, `conifer`, `boulder`, `sage`, `willow`, `basalt` |
 | Figures | `wagon(x, y, facing)`, `wheel`, `ox(x, y, facing, coat, pale)`, `team(x, y, facing, far, near)`, `person(x, y, coat, hat, skirt)`, `barrel`, `crate`, `shadow` |
 
 Coordinates for figures are ground contact points, so things line up on the street. `facing` is `1` for right and `-1` for left. Ox coats are `light`, `dark` and `red`.
@@ -94,7 +95,7 @@ When you draw something two scenes could share, such as a river bank, rock face,
 | 1 | Pipeline, kit, build and install scripts, this guide | Done |
 | 2 | First screens: Independence, town setup, store | Independence drafted (not installed) |
 | 3 | Travel: wagon and oxen frames, travel backgrounds | Not started |
-| 4 | Route scenes, about 10 per pass: Kansas, Platte, Rockies, Oregon | Not started |
+| 4 | Route scenes, about 10 per pass: Kansas, Platte, Rockies, Oregon | All rebuilt once; weak scenes being redone (batch 1: burnt_river, devils_gate, deschutes, john_day, the_dalles, wakarusa) |
 | 5 | Runtime-drawn figures (walkers, hunt animals, swimmers, graves) as sprite sheets; needs small changes in `ui/trail_view.gd` and `ui/hunt_view.gd` | Not started |
 | 6 | Optional ambient animation (smoke, water) | Not started |
 

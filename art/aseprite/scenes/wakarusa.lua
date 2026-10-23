@@ -1,133 +1,126 @@
--- Wakarusa River Crossing (432x150).
--- Historical reference: NPS Bluejacket Crossings of the Wakarusa River archival photo.
--- Wooded ravine channel enclosed by irregular horizontal limestone ledges & shelves,
--- overhanging bur oaks/elms, shallow rocky riffle ford, and emigrant wagon on the left bank.
--- No later bridge, ferry, or inn is shown.
+-- Wakarusa River crossing (432x150).
+-- The Wakarusa was the first real crossing out of Independence: a small, muddy stream in a
+-- timbered ravine with steep, slick banks. Diarists describe letting wagons down the bank
+-- with ropes and doubling teams to haul them up the far side. No later bridge, ferry or
+-- inn is shown.
 local K = dofile(app.params.kit)
 local W, H = 432, 150
 
 K.canvas(W, H, 248)
 
------------------------------------------------------------------ 1. Sky & Ravine Canopy
-K.layer("sky_and_woods", function()
-  K.rect(0, 0, W, 16, "blue")
-  K.blend(0, 16, W, "blue", "sky_top")
-  K.rect(0, 19, W, 18, "sky_top")
-  K.blend(0, 37, W, "sky_top", "sky")
-  K.rect(0, 40, W, 16, "sky")
-  K.blend(0, 56, W, "sky", "light_blue")
-  K.rect(0, 59, W, 14, "light_blue")
+local creek = {{318, 88, 2}, {300, 96, 3}, {276, 106, 5}, {248, 114, 6}, {218, 124, 7}, {186, 134, 9}, {166, 146, 11}, {140, 158, 13}}
+local function shifted(pts, dx, dw)
+  local out = {}
+  for i, q in ipairs(pts) do out[i] = {q[1] + dx, q[2], q[3] + dw * (i / #pts)} end
+  return K.smooth(out)
+end
 
-  K.cloud(48, 17, 1.3)
-  K.cloud(304, 13, 1.4)
+-- an oak or elm with a dark under-canopy and sunlit upper left
+local function tree(x, y, s, far)
+  local dk, md, lt = "pine", "leaf", "grass"
+  if far then dk, md, lt = "teal", "grass", "sage" end
+  K.rect(x - 1, y - 12 * s, 2 + s, 12 * s, far and "wood" or "deep")
+  K.px(x - 1, y - 8 * s, "wood")
+  K.line(x, y - 9 * s, x - 5 * s, y - 14 * s, "deep"); K.line(x + 1, y - 10 * s, x + 6 * s, y - 15 * s, "deep")
+  local clumps = {{-7, -16, 7, 5}, {6, -18, 8, 6}, {0, -23, 9, 6}, {-5, -27, 6, 4}, {5, -28, 6, 4}}
+  for _, c in ipairs(clumps) do K.ellipse(x + c[1] * s, y + c[2] * s, c[3] * s, c[4] * s, dk) end
+  for _, c in ipairs(clumps) do K.ellipse(x + c[1] * s - 1, y + c[2] * s - 1, c[3] * s - 2, c[4] * s - 2, md) end
+  for _, c in ipairs(clumps) do K.ellipse(x + c[1] * s - 2 * s, y + c[2] * s - 2 * s, math.max(1, c[3] * s - 5), math.max(1, c[4] * s - 4), lt) end
+end
 
-  -- Dense riparian woodland enclosing the Wakarusa valley
-  for x = 0, W - 1 do
-    local wy = 54 + math.floor(4 * math.sin(x * 0.04) + 3 * math.cos(x * 0.09))
-    for y = wy, 78 do
-      K.px(x, y, (y < wy + 3) and "sage" or ((y < wy + 9) and "leaf" or "pine"))
-    end
-  end
-  K.rect(0, 74, W, 76, "leaf")
-  K.dither(0, 72, W, 6, "pine", "leaf")
+K.layer("sky", function()
+  K.sky(W, 74, {{228, 12, 0.8}, {12, 26, 0.6}}, "mist")
 end)
 
------------------------------------------------------------------ 2. Wakarusa Creek Channel & Riffles
-K.layer("channel", function()
-  -- Deep shaded creek water flowing from upper center-left toward lower center-right
-  K.poly({{126, 68}, {218, 70}, {272, 102}, {296, 150}, {94, 150}, {148, 102}}, "blue")
-  K.poly({{134, 68}, {210, 70}, {262, 102}, {284, 150}, {106, 150}, {156, 102}}, "sky_top")
-  K.poly({{144, 68}, {200, 70}, {248, 102}, {268, 150}, {122, 150}, {166, 102}}, "sky")
-
-  -- Shallow limestone riffle bars & whitewater foam across the ford (y = 104..132)
-  for y = 72, 148, 2 do
-    local t = (y - 72) / 76.0
-    local lx = math.floor(134 - t * 26)
-    local rx = math.floor(210 + t * 72)
-    local is_ford = (y >= 106 and y <= 128)
-    local step = is_ford and 13 or 19
-    for x = lx + 6, rx - 8, step do
-      local wx = x + ((y * 7 + x * 3) % 9) - 4
-      if wx > lx + 3 and wx < rx - 6 then
-        K.rect(wx, y, is_ford and (3 + (y % 3)) or 2, 1, is_ford and "white" or "light_blue")
-        if is_ford and ((wx + y) % 3 == 0) then
-          K.rect(wx + 1, y + 1, 2, 1, "sand") -- submerged limestone cobbles at the ford
-        end
-      end
-    end
-  end
+K.layer("prairie", function()
+  -- open prairie rolling away above the ravine
+  K.ridge(0, W - 1, 0, 96, function(x) return -(66 + 3 * math.sin(x / 47) + 2 * math.sin(x / 15)) end, "sage", "far_hill", "grass")
 end)
 
------------------------------------------------------------------ 3. Stepped Horizontal Limestone Ledges
-K.layer("limestone_banks", function()
-  -- Left & right banks built from irregular, stratified horizontal limestone shelves
-  for y = 74, 144, 8 do
-    local t = (y - 74) / 70.0
-    -- Left bank ledges stepping down toward the creek
-    local l_edge = math.floor(136 - t * 32 + 6 * math.sin(y * 0.35))
-    K.poly({
-      {0, y},
-      {l_edge - 4, y},
-      {l_edge + 4, y + 3},
-      {l_edge - 2, y + 7},
-      {0, y + 7}
-    }, "sand")
-    -- Sunlit upper limestone cap & horizontal bedding joint
-    K.rect(0, y, math.max(1, l_edge - 4), 1, "cream")
-    K.rect(0, y + 3, math.max(1, l_edge), 2, "ochre")
-    K.rect(0, y + 5, math.max(1, l_edge - 2), 2, "wood")
-    K.rect(0, y + 7, math.max(1, l_edge - 4), 1, "deep")
-    -- Vertical limestone fracture joints
-    for jx = 18 + (y % 11), l_edge - 8, 22 do
-      K.rect(jx, y + 1, 1, 6, "wood")
-      K.px(jx + 1, y + 1, "cream")
-    end
-
-    -- Right bank ledges in deeper afternoon shade
-    local r_edge = math.floor(214 + t * 72 + 5 * math.cos(y * 0.4))
-    K.poly({
-      {r_edge, y},
-      {W, y},
-      {W, y + 7},
-      {r_edge - 5, y + 7},
-      {r_edge - 2, y + 3}
-    }, "ochre")
-    K.rect(r_edge, y, W - r_edge, 1, "sand")
-    K.rect(r_edge - 2, y + 3, W - r_edge + 2, 2, "rust")
-    K.rect(r_edge - 4, y + 5, W - r_edge + 4, 2, "wood")
-    K.rect(r_edge - 5, y + 7, W - r_edge + 5, 1, "deep")
-    for jx = r_edge + 12 + (y % 9), W - 10, 24 do
-      K.rect(jx, y + 1, 1, 6, "deep")
-    end
+K.layer("timber", function()
+  -- a line of timber marking the creek, thickest where the ravine deepens
+  -- a continuous mass of crowns, with a few taller trees standing out of it
+  for x = -4, W + 4, 6 do
+    local y = 74 + math.floor(3 * math.sin(x / 23) + K.rnd(3))
+    if not (x > 304 and x < 328) then K.ellipse(x, y, 8, 8, "pine"); K.ellipse(x - 1, y - 1, 6, 6, "leaf") end
   end
-
-  -- Notched dirt-and-gravel wagon cut descending the left bank to the water's edge
-  K.poly({{48, 118}, {86, 118}, {132, 138}, {96, 144}}, "ochre")
-  K.line(52, 120, 124, 138, "rust")
-  K.line(68, 119, 130, 136, "sand")
-
-  -- Moss, leaf litter & grass tufts on top of the limestone shelves
-  for x = 0, 118, 4 do
-    K.rect(x, 73 + (x % 3), 3, 2, (x % 8 == 0) and "grass" or "leaf")
+  for x = -4, W + 4, 6 do
+    local y = 72 + math.floor(3 * math.sin(x / 23) + K.rnd(3))
+    if not (x > 304 and x < 328) then K.ellipse(x - 2, y - 2, 4, 3, "grass"); K.px(x - 4, y - 4, "sage") end
   end
-  for x = 226, W - 4, 4 do
-    K.rect(x, 73 + (x % 3), 3, 2, (x % 8 == 0) and "sage" or "pine")
+  for _, t in ipairs({{40, 84}, {104, 86}, {176, 84}, {252, 88}, {370, 84}, {420, 86}}) do tree(t[1], t[2], 1, true) end
+  K.rect(0, 82, W, 14, "grass")
+  for i = 1, 300 do K.px(K.rnd(W), 82 + K.rnd(14), (i % 2 == 0) and "leaf" or "sage") end
+end)
+
+K.layer("ravine", function()
+  -- grass on both banks, the cut of the ravine, slick mud, then the creek
+  K.rect(0, 94, W, H - 94, "grass")
+  for i = 1, 900 do
+    local x, y = K.rnd(W), 94 + K.rnd(H - 94)
+    K.px(x, y, ({"leaf", "sage", "grass", "gold"})[i % 4 + 1])
+    if i % 3 == 0 then K.px(x, y - 1, "sage") end
+  end
+  K.ribbon(shifted(creek, 4, 12), "wood", 7)
+  K.ribbon(shifted(creek, -2, 10), "rust", 6)
+  K.ribbon(shifted(creek, -4, 5), "ochre", 4)
+  K.ribbon(shifted(creek, 1, 4), "deep", 3)
+  -- the water: low, muddy and slow
+  local water = K.smooth(creek)
+  K.ribbon(water, "teal", 0)
+  local inner = {}
+  for i, q in ipairs(water) do inner[i] = {q[1] - 1, q[2], q[3] * 0.5} end
+  K.ribbon(inner, "haze", 0)
+  for i = 1, 40 do
+    local x, y = 110 + K.rnd(220), 88 + K.rnd(62)
+    if K.at(x, y) == "teal" then K.rect(x, y, 2 + K.rnd(3), 1, "light_blue") end
+  end
+  -- muddy wheel tracks down both banks to the ford
+  for _, t in ipairs({{{440, 104, 5}, {380, 106, 5}, {310, 116, 5}, {262, 124, 4}, {232, 130, 3}},
+                      {{176, 138, 4}, {150, 130, 5}, {104, 128, 6}, {44, 134, 7}, {-10, 142, 8}}}) do
+    local track = K.smooth(t)
+    K.ribbon(track, "wood", 1)
+    K.ribbon(track, "rust", -1)
+    local rut = {}
+    for i, q in ipairs(track) do rut[i] = {q[1], q[2], 0.5} end
+    K.ribbon(rut, "deep", 0)
+  end
+  -- slick, shining mud and exposed roots on the cut banks
+  for i = 1, 220 do
+    local x, y = K.rnd(W), 90 + K.rnd(60)
+    local c = K.at(x, y)
+    if c == "rust" then K.px(x, y, (i % 3 == 0) and "ochre" or "wood")
+    elseif c == "wood" then K.px(x, y, (i % 2 == 0) and "deep" or "rust")
+    elseif c == "deep" and i % 4 == 0 then K.px(x, y, "gold") end
   end
 end)
 
------------------------------------------------------------------ 4. Overhanging Oaks, Elms & Waiting Wagon
-K.layer("trees_and_wagon", function()
-  -- Back-rank ravine trees
-  for _, tx in ipairs({98, 138, 252, 308}) do
-    K.elm(tx, 76, 1)
-  end
-  -- Large overhanging bur oaks / elms framing left and right limestone bluffs
-  K.elm(34, 96, 2)
-  K.elm(376, 94, 2)
+K.layer("trees", function()
+  -- big timber leaning over the ravine on both banks
+  for _, t in ipairs({{132, 112, 1}, {268, 104, 1}, {352, 100, 1}, {396, 106, 1}, {84, 116, 1}, {212, 98, 1}}) do tree(t[1], t[2], t[3]) end
+  tree(28, 148, 2)
+  tree(414, 150, 2)
+  -- underbrush along the cut
+  for _, w in ipairs({{106, 132, 1}, {152, 124, 1}, {242, 108, 1}, {300, 94, 1}, {326, 92, 1}, {182, 148, 2}, {232, 140, 1}}) do K.willow(w[1], w[2], w[3]) end
+end)
 
-  -- Emigrant wagon halted on the upper left bank while driver scouts the steep limestone notch
-  K.wagon(12, 124, 1)
-  K.person(82, 126, "blue", "wood", false)
+K.layer("figures", function()
+  -- a wagon mired at the ford, team straining up the far bank with a double hitch
+  K.wagon(176, 136, -1)
+  K.team(164, 132, -1, {"dark"}, {"red", true})
+  K.team(130, 128, -1, {"light"}, {"dark", true})
+  K.line(136, 117, 160, 121, "deep")
+  for i = 0, 6 do K.px(178 + i * 6, 137 + (i % 2), "haze") end
+  -- teamster with a whip on the far bank, a man shoving the rear wheel
+  K.person(116, 124, "blue", "deep")
+  K.line(118, 112, 106, 106, "deep")
+  K.person(224, 136, "red", "roof")
+  -- the next wagon waiting at the top of the near bank, rope ready to let it down
+  K.wagon(346, 110, -1)
+  K.team(336, 110, -1, {"red"}, {"light", true})
+  K.line(394, 102, 404, 110, "cream")
+  K.person(404, 112, "teal", "deep")
+  K.person(392, 114, "rust", "bonnet", true)
 end)
 
 K.save("location_wakarusa")

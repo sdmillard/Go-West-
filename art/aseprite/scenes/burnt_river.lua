@@ -1,113 +1,102 @@
--- Burnt River Canyon (432x150).
--- Historical reference: Joel Palmer's 1845 journal & WESTERN_REFERENCES.md.
--- Steep, narrow rust-and-dark-basalt canyon walls closing in around the twisting rocky
--- Burnt River stream, where wagons had to cross and recross the creek bed.
+-- Burnt River canyon (432x150).
+-- Palmer (1845) and later diarists describe a narrow, crooked valley between steep, dry
+-- brown hills, with the trail crossing and recrossing the creek among willows.
+-- The view looks up the creek through interlocking spurs, with a wagon at a ford.
 local K = dofile(app.params.kit)
 local W, H = 432, 150
 
 K.canvas(W, H, 184823)
 
------------------------------------------------------------------ 1. Sky & Distant Canyon Ridge
+local function curve(a, b, x0, x1, bend)
+  -- top line from (x0, a) to (x1, b) with a convex shoulder
+  return function(x)
+    local t = math.max(0, math.min(1, (x - x0) / (x1 - x0)))
+    return a + (b - a) * (t ^ bend)
+  end
+end
+
 K.layer("sky", function()
-  K.rect(0, 0, W, 16, "sky_top")
-  K.blend(0, 16, W, "sky_top", "sky")
-  K.rect(0, 19, W, 18, "sky")
-  K.blend(0, 37, W, "sky", "light_blue")
-  K.rect(0, 40, W, 16, "light_blue")
-  K.blend(0, 56, W, "light_blue", "sand")
-  K.rect(0, 59, W, 24, "sand")
-
-  K.cloud(44, 16, 1.35)
-  K.cloud(300, 14, 1.4)
-
-  -- Distant arid ridge seen through the V-shaped Burnt River gorge
-  K.poly({{96, 80}, {198, 56}, {326, 78}, {326, 98}, {96, 98}}, "ochre")
-  K.poly({{120, 82}, {204, 62}, {308, 82}, {308, 98}, {120, 98}}, "rust")
+  K.sky(W, 60, {{70, 12, 0.9}, {262, 7, 0.7}}, "mist")
 end)
 
------------------------------------------------------------------ 2. Canyon Floor, Twisting Burnt River & Trail
-K.layer("canyon_floor", function()
-  K.rect(0, 80, W, 70, "sand")
-  K.dither(110, 80, 210, 6, "ochre", "sand")
+K.layer("far hills", function()
+  -- distant dry ridge closing the head of the valley
+  K.ridge(0, W - 1, 0, 90, function(x) return -(52 + 5 * math.sin(x / 31) + 3 * math.sin(x / 11 + 2)) end, "far_hill", "mist", "haze")
+  K.ridge(120, 360, 0, 90, function(x) return -(60 + 6 * math.sin(x / 23 + 1)) end, "clap_sh", "sand", "ochre")
+end)
 
-  -- Narrow rocky wagon trace winding beside the stream
-  K.poly({{168, 84}, {184, 84}, {208, 150}, {162, 150}}, "ochre")
-  K.poly({{172, 84}, {180, 84}, {200, 150}, {170, 150}}, "gold")
-  K.line(170, 85, 168, 149, "rust")
-  K.line(181, 85, 202, 149, "rust")
+K.layer("valley floor", function()
+  K.rect(0, 72, W, H - 72, "ochre")
+  for i = 1, 500 do
+    local x, y = K.rnd(W), 74 + K.rnd(H - 74)
+    K.px(x, y, (i % 3 == 0) and "gold" or "rust")
+  end
+  -- green strip of grass and rushes following the creek
+  local pts = K.smooth({{232, 74, 2}, {218, 86, 4}, {246, 100, 7}, {262, 112, 9}, {222, 128, 13}, {204, 140, 15}, {214, 154, 17}})
+  K.ribbon(pts, "grass", 7)
+  K.ribbon(pts, "sage", 4)
+  -- the trail: down the left side, across the ford, then away up the right
+  K.ribbon(K.smooth({{-4, 150, 9}, {60, 140, 8}, {140, 136, 7}, {218, 132, 6}}), "rust", 1)
+  K.ribbon(K.smooth({{-4, 150, 9}, {60, 140, 8}, {140, 136, 7}, {218, 132, 6}}), "sand", 0)
+  K.ribbon(K.smooth({{226, 130, 5}, {280, 112, 4}, {300, 96, 3}, {276, 86, 2}, {250, 78, 1}}), "rust", 1)
+  K.ribbon(K.smooth({{226, 130, 5}, {280, 112, 4}, {300, 96, 3}, {276, 86, 2}, {250, 78, 1}}), "sand", 0)
+  -- the creek itself, twisting toward the viewer
+  K.river(K.smooth({{232, 74, 1}, {218, 86, 2}, {246, 100, 3}, {262, 112, 4}, {222, 128, 6}, {204, 140, 7}, {214, 154, 8}}), "clap_sh")
+  -- ford riffles where the trail crosses
+  for i = 0, 7 do K.rect(196 + i * 4, 133 + (i % 2), 2, 1, "white") end
+end)
 
-  -- Twisting rocky Burnt River stream bed
-  K.poly({{184, 82}, {208, 79}, {246, 150}, {206, 150}}, "blue")
-  K.poly({{187, 82}, {205, 79}, {242, 150}, {210, 150}}, "sky_top")
-  K.poly({{190, 82}, {201, 79}, {236, 150}, {215, 150}}, "sky")
-  for y = 84, 148, 3 do
-    local t = (y - 82) / 68.0
-    local cx = math.floor(194 + t * 28)
-    K.rect(cx - 2 + (y % 3), y, 4, 1, (y % 6 == 0) and "white" or "light_blue")
+K.layer("spurs", function()
+  -- far left spur, sunlit
+  K.ridge(0, 246, 0, 84, function(x) return -curve(40, 80, 0, 246, 1.8)(x) end, "ochre", "gold", "rust")
+  -- far right spur, turned away from the light
+  K.ridge(238, W - 1, 0, 92, function(x) return -curve(84, 46, 238, W - 1, 0.55)(x) end, "rust", "ochre", "wood")
+  -- strata lines on the far spurs
+  for y = 50, 84, 6 do
+    for x = 0, W - 1 do
+      local c = K.at(x, y)
+      local on = math.sin(x / 9 + y) > 0.2
+      if on and c == "ochre" then K.px(x, y, "rust") elseif on and c == "rust" then K.px(x, y, "wood") end
+    end
+  end
+  -- near left spur sweeping down to the creek
+  K.ridge(0, 196, 0, 124, function(x) return -curve(62, 120, 0, 196, 2.2)(x) end, "rust", "ochre", "wood")
+  -- nearest right spur, deep in shadow
+  K.ridge(286, W - 1, 0, 150, function(x) return -curve(118, 66, 286, W - 1, 0.5)(x) end, "wood", "rust", "deep")
+  -- talus and gullies
+  for i = 1, 260 do
+    local x, y = K.rnd(W), 46 + K.rnd(104)
+    local c = K.at(x, y)
+    if c == "rust" then K.px(x, y, (i % 2 == 0) and "wood" or "ochre")
+    elseif c == "wood" then K.px(x, y, (i % 2 == 0) and "deep" or "rust")
+    elseif c == "ochre" then K.px(x, y, "gold") end
+  end
+  for i = 1, 90 do
+    local x, y = K.rnd(W), 50 + K.rnd(100)
+    local c = K.at(x, y)
+    if c == "ochre" or c == "rust" or c == "wood" or c == "gold" then K.sage(x, y) end
+  end
+  for _, g in ipairs({{40, 70, 52, 90}, {110, 90, 120, 108}, {350, 96, 340, 118}, {404, 82, 396, 104}}) do
+    K.line(g[1], g[2], g[3], g[4], "deep")
+    K.line(g[1] + 1, g[2], g[3] + 1, g[4], "wood")
   end
 end)
 
------------------------------------------------------------------ 3. Steep Rust & Dark-Wood Basalt Canyon Walls
-K.layer("canyon_walls", function()
-  -- Left canyon wall (sunlit upper-left rust/ochre volcanic talus & ledges)
-  for y = 42, 149 do
-    local t = (y - 42) / 107.0
-    local rx
-    if y <= 86 then
-      rx = math.floor((y - 42) * 123 / 44.0 + 4 * math.sin(y * 0.22))
-    else
-      rx = math.floor(123 + (y - 86) * 57 / 63.0 + 4 * math.sin(y * 0.18))
-    end
-    for x = 0, rx do
-      local c = "rust"
-      if x >= rx - 3 then
-        c = "ochre"
-      elseif y % 7 == 0 then
-        c = "ochre"
-      elseif y % 7 == 3 then
-        c = "wood"
-      elseif (x + y * 2) % 11 == 0 then
-        c = "sand"
-      end
-      K.px(x, y, c)
-    end
+K.layer("brush", function()
+  -- willows along the water
+  for _, w in ipairs({{226, 84, 1}, {254, 96, 1}, {272, 116, 1}, {200, 118, 1}, {150, 146, 1}, {262, 146, 2}, {214, 76, 1}, {262, 104, 1}}) do
+    K.willow(w[1], w[2], w[3])
   end
+end)
 
-  -- Right canyon wall (steep shaded dark basalt/wood & rust cliff slopes)
-  for y = 34, 149 do
-    local t = (y - 34) / 115.0
-    local lx
-    if y <= 73 then
-      lx = math.floor(432 - (y - 34) * 112 / 39.0 + 4 * math.cos(y * 0.24))
-    else
-      lx = math.floor(320 - (y - 73) * 70 / 76.0 + 4 * math.cos(y * 0.19))
-    end
-    for x = lx, W - 1 do
-      local c = "wood"
-      if x <= lx + 3 then
-        c = "rust"
-      elseif y % 7 == 0 then
-        c = "rust"
-      elseif y % 7 == 4 then
-        c = "deep"
-      elseif (x - y * 2) % 13 == 0 then
-        c = "deep"
-      end
-      K.px(x, y, c)
-    end
-  end
-
-  -- Canyon boulders & burnt/charred deadwood stumps along the rocky creek margins
-  for _, bx in ipairs({152, 182, 248, 272}) do
-    K.boulder(bx, 118 + (bx % 22), 5, 2)
-  end
-  K.line(144, 108, 147, 98, "deep")
-  K.line(146, 102, 151, 99, "deep")
-  K.line(266, 114, 263, 103, "deep")
-
-  -- Arriving wagon at the mouth of the gorge
-  K.wagon(24, 143, 1)
-  K.person(84, 142, "blue", "wood", false)
+K.layer("figures", function()
+  -- wagon halfway through the ford, the driver wading beside the team
+  K.wagon(178, 138, 1)
+  K.team(232, 132, 1, {"dark"}, {"light", true})
+  K.line(224, 131, 250, 118, "deep")
+  K.person(266, 128, "blue", "deep")
+  -- splash at the wheels
+  for i = 0, 9 do K.px(184 + i * 4, 139 + (i % 2), "white") end
 end)
 
 K.save("location_burnt_river")
