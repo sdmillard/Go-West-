@@ -45,7 +45,7 @@ var section_window: AcceptDialog
 var section_rows: VBoxContainer
 var ribbon_buttons: Dictionary={}
 var crime_category := ""
-const SECTION_PARENTS={"Attack someone":"Villainy","Party member":"Attack someone","Someone here":"Attack someone","Steal":"Villainy","Rob":"Villainy","Preserve meat":"Camp","Drop supplies":"Supplies"}
+const SECTION_PARENTS={"Attack someone":"Villainy","Party member":"Attack someone","Someone here":"Attack someone","Steal":"Villainy","Rob":"Villainy","Preserve meat":"Camp"}
 var window_scale: OptionButton
 var fullscreen: CheckBox
 var travel_speed: OptionButton
@@ -55,6 +55,7 @@ var hunt_view: Control
 var hunt_report: Label
 var supplies_window: AcceptDialog
 var supplies_rows: VBoxContainer
+var drop_window: ConfirmationDialog
 var slaughter_confirmation: ConfirmationDialog
 var slaughter_by_hand := false
 var packing_window: AcceptDialog
@@ -558,6 +559,10 @@ Northern shortcuts and Columbia rafting are not yet playable. Weather, medical e
 	var supplies_scroll := ScrollContainer.new()
 	supplies_scroll.custom_minimum_size = Vector2(580,250)
 	supplies_window.add_child(supplies_scroll)
+	drop_window=preload("res://ui/drop_supplies.gd").new()
+	add_child(drop_window)
+	drop_window.discarded.connect(func():_refresh();_show_supplies())
+	drop_window.inventory_requested.connect(_show_supplies)
 	supplies_rows = VBoxContainer.new()
 	supplies_rows.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	supplies_scroll.add_child(supplies_rows)
@@ -613,6 +618,9 @@ func _section_action(action: Callable) -> void:
 
 func _show_section(section: String) -> void:
 	if section!="History" and (not game.can_service() or not landscape.crossing.is_empty() or _reviewing_crossing()):return
+	if section=="Drop supplies":
+		_show_drop_supplies()
+		return
 	if section=="Supplies":
 		_show_supplies()
 		return
@@ -628,7 +636,7 @@ func _show_section(section: String) -> void:
 		section_rows.remove_child(child)
 		child.queue_free()
 	map_view.hide()
-	section_window.get_child(0).custom_minimum_size.y=190 if section in ["Camp","Drop supplies"] else 150
+	section_window.get_child(0).custom_minimum_size.y=190 if section=="Camp" else 150
 	section_window.title=section.to_upper()
 	section_window.get_ok_button().text="BACK" if SECTION_PARENTS.has(section) else "BACK TO TRAIL"
 	var entries: Array=[]
@@ -641,16 +649,11 @@ func _show_section(section: String) -> void:
 				setting[1].show()
 				setting[1].custom_minimum_size=Vector2(350,24)
 			section_rows.add_child(label("Choices take effect on the next trail day."))
-		"Drop supplies":
-			section_rows.add_child(label("Left-behind supplies are lost permanently.\nDropping them spends no trail day."))
-			for item in game.provisions.data.weights_lb:
-				var amount:=mini(int(game.state.get(item,0)),50 if item=="food" else (20 if item=="bullets" else 1))
-				if amount>0:section_rows.add_child(button("DROP %d %s" % [amount,str(item).to_upper()],_section_action.bind(_drop_supply.bind(item,amount))))
 		"Camp":
 			var note:=label("Opening camp spends no time or supplies.\nChoose an activity; rest is optional.")
 			note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 			section_rows.add_child(note)
-			entries=[["REST · CHOOSE DAYS",_rest],["PRESERVE MEAT >",_show_section.bind("Preserve meat")],["CARE / MEDICAL ATTENTION",_open_care],["PROVISIONS / CARGO",_show_supplies]]
+			entries=[["REST · CHOOSE DAYS",_rest],["PRESERVE MEAT >",_show_section.bind("Preserve meat")],["CARE / MEDICAL ATTENTION",_open_care]]
 		"Preserve meat":
 			section_rows.add_child(label("Processing uses a work day, not a rest day.\nMeals and spoilage happen before processing."))
 			var available:=false
@@ -699,10 +702,12 @@ func _show_section(section: String) -> void:
 func _enter_camp() -> void:
 	_show_section("Camp")
 
-func _drop_supply(item: String,amount: int) -> void:
-	if game.discard_supply(item,amount):
-		_refresh()
-		_show_section("Drop supplies")
+func _show_drop_supplies() -> void:
+	if not game.can_service() or not landscape.crossing.is_empty() or _reviewing_crossing():return
+	_pause_travel()
+	section_window.hide()
+	supplies_window.hide()
+	drop_window.open(game)
 
 func _preserve_in_camp(salted: bool) -> void:
 	if not camping:return
@@ -1072,6 +1077,7 @@ func _show_journal() -> void:
 	journal_window.popup_centered()
 
 func _new_journey() -> void:
+	drop_window.hide()
 	section_window.hide()
 	rest_window.hide()
 	food_notice.hide()
@@ -1269,7 +1275,7 @@ func _acknowledge_crossing() -> void:
 	_refresh()
 
 func _update_animation_pause() -> void:
-	landscape.crossing_paused = map_view.visible or section_window.visible or guide.visible or journal_window.visible or party_window.visible or options_window.visible or service_window.visible or supplies_window.visible or grave_window.visible or memorial_window.visible or record_notice.visible
+	landscape.crossing_paused = map_view.visible or drop_window.visible or section_window.visible or guide.visible or journal_window.visible or party_window.visible or options_window.visible or service_window.visible or supplies_window.visible or grave_window.visible or memorial_window.visible or record_notice.visible
 
 func _refresh() -> void:
 	var s: Dictionary = game.state
@@ -1410,7 +1416,7 @@ func _show_supplies() -> void:
 	supplies_rows.add_child(actions)
 	var drop:=button("DROP SUPPLIES >",func():
 		supplies_window.hide()
-		_show_section("Drop supplies"))
+		_show_drop_supplies())
 	drop.name="DropSupplies"
 	actions.add_child(drop)
 	if game.CacheSupport.can_pack(game,false):
@@ -1541,7 +1547,7 @@ func _load_journey() -> void:
 	_pause_travel()
 	var result: Dictionary = save_store.load_game(save_path)
 	if not result.is_empty():
-		for window in [guide,journal_window,party_window,section_window,options_window,food_notice,rest_window,stop_window,service_window,hunt_window,supplies_window,grave_window,memorial_window]:
+		for window in [guide,journal_window,party_window,drop_window,section_window,options_window,food_notice,rest_window,stop_window,service_window,hunt_window,supplies_window,grave_window,memorial_window]:
 			window.hide()
 		hunt_view.active = false
 		landscape.cancel_crossing()
@@ -1578,7 +1584,7 @@ func _grave_window_closed() -> void:
 		_return_to_remains.call_deferred()
 
 func _return_to_remains() -> void:
-	var open: bool = [guide,journal_window,party_window,section_window,options_window,service_window,supplies_window,grave_window,memorial_window,record_notice].any(func(window): return window.visible)
+	var open: bool = [guide,journal_window,party_window,drop_window,section_window,options_window,service_window,supplies_window,grave_window,memorial_window,record_notice].any(func(window): return window.visible)
 	if not open and game.state.status == "traveling" and game.pending.get("remains_menu",false):
 		_show_service()
 

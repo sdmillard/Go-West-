@@ -1328,3 +1328,11 @@ func adapt_travel_event(content: Dictionary) -> void:
 	elif content.get("id","")=="wandering_ox":
 		content.text="One animal is missing when you count the oxen travelling alongside your party."
 		content.choices[1].result="You keep walking with fewer oxen."
+
+
+func discard_supplies(cart: Dictionary) -> bool:
+	var plan: Dictionary=preload("res://simulation/discard_plan.gd").quote(self,cart)
+	if not plan.valid:return false
+	for item in cart:
+		if int(cart[item])>0:discard_supply(item,int(cart[item]))
+	return true
