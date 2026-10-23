@@ -473,7 +473,7 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 					exposed += 1
 		var nutrition: int = state.rations if fed else 0
 		var risk_multiplier: float = [2.0, 1.3, 0.7][nutrition] * (0.6 if resting else 1.0) * (1.4 if unprotected and survival.weather.exposure else 1.0)
-		party_health.tick(state.day, resting, risk_multiplier, nutrition, int(calendar().year))
+		party_health.tick(state.day, resting, risk_multiplier, nutrition, int(calendar().year), int(calendar().month) if state.extended_route else 0, context.region_id(self) if state.extended_route else "")
 		_collect_health_events()
 		state.health = party_health.average_health()
 		state.party_size = party_health.living_count()

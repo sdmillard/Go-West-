@@ -277,6 +277,10 @@ func restore(value: Variant):
 		for condition in member.conditions:
 			if not condition is Dictionary or not game.party_health.conditions.has(condition.get("id")) or not integer(condition.get("started_day"),0,int(s.day)) or not integer(condition.get("elapsed"),0,100000) or not integer(condition.get("severity"),1,3):
 				return null
+		if member.has("immune"):
+			if not member.immune is Array:return null
+			for id in member.immune:
+				if not game.party_health.conditions.has(id) or not game.party_health.conditions[id].get("immunizing",false):return null
 	if s.extended_route and (s.party_size != alive or s.health != (roundi(float(health) / alive) if alive else 0)):
 		return null
 	if not integer(s.get("departed_gear_lb",0),0,4*int(game.provisions.data.walking.personal_gear_lb_per_person)) or s.get("departed_gear_lb",0)!=departed*int(game.provisions.data.walking.personal_gear_lb_per_person):return null

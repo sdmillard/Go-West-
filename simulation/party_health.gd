@@ -34,8 +34,32 @@ func load_data(data: Variant) -> bool:
 		for key in ["daily_damage", "recovery_days"]:
 			if not _number(entry.get(key)) or entry[key] != floor(entry[key]) or entry[key] <= 0:
 				return _fail("Invalid health progression")
+		if not _valid_spread(entry):
+			return _fail("Invalid disease onset or spread")
 		conditions[entry.id] = entry.duplicate(true)
 	daily_onset_chance = float(chance)
+	return true
+
+func _valid_spread(entry: Dictionary) -> bool:
+	for key in ["weight", "region_default"]:
+		if entry.has(key) and (not _number(entry[key]) or entry[key] < 0):
+			return false
+	if entry.has("spread_chance") and (not _number(entry.spread_chance) or entry.spread_chance < 0 or entry.spread_chance > 1):
+		return false
+	if entry.has("immunizing") and not entry.immunizing is bool:
+		return false
+	if entry.has("months"):
+		if not entry.months is Array or entry.months.size() != 12:
+			return false
+		for factor in entry.months:
+			if not _number(factor) or factor < 0:
+				return false
+	if entry.has("regions"):
+		if not entry.regions is Dictionary:
+			return false
+		for region in entry.regions:
+			if not region is String or not _number(entry.regions[region]) or entry.regions[region] < 0:
+				return false
 	return true
 
 func _number(value: Variant) -> bool:
@@ -106,7 +130,7 @@ func affect_all(delta: int, day: int, cause: String) -> void:
 	for member in members:
 		affect(member, delta, day, cause)
 
-func begin_condition(member_id: int, condition_id: String, day: int, severity: int = 1) -> bool:
+func begin_condition(member_id: int, condition_id: String, day: int, severity: int = 1, source: String = "") -> bool:
 	if member_id < 0 or member_id >= members.size() or not conditions.has(condition_id):
 		return false
 	var member: Dictionary = members[member_id]
@@ -116,8 +140,10 @@ func begin_condition(member_id: int, condition_id: String, day: int, severity: i
 		if active.id == condition_id:
 			return false
 	var definition: Dictionary = conditions[condition_id]
+	if condition_id in member.get("immune", []):
+		return false
 	member.conditions.append({"id": condition_id, "started_day": day, "elapsed": 0, "severity": clampi(severity, 1, 3)})
-	_record(member, day, "%s has %s." % [member.name, definition.name.to_lower()])
+	_record(member, day, ("%s has %s." % [member.name, definition.name.to_lower()]) if source.is_empty() else ("%s caught %s from %s." % [member.name, definition.name.to_lower(), source]))
 	return true
 
 func roll_severity(rations: int) -> int:
@@ -133,7 +159,46 @@ func automatic_conditions(year: int) -> Array[String]:
 			candidates.append(id)
 	return candidates
 
-func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 2, year: int = 1848) -> void:
+# Relative chance that a spontaneous illness is this one, given the month and
+# the broad region. Month 0 or an empty region skips that factor.
+func onset_weight(id: String, month: int = 0, region: String = "") -> float:
+	var definition: Dictionary = conditions[id]
+	var weight := float(definition.get("weight", 1.0))
+	if month >= 1 and month <= 12 and definition.has("months"):
+		weight *= float(definition.months[month - 1])
+	if not region.is_empty():
+		weight *= float(definition.get("regions", {}).get(region, definition.get("region_default", 1.0)))
+	return weight
+
+func _pick_condition(available: Array[String], month: int, region: String) -> String:
+	var total := 0.0
+	for id in available:
+		total += onset_weight(id, month, region)
+	var roll := rng.randf() * total
+	if total <= 0.0:
+		return ""
+	for id in available:
+		roll -= onset_weight(id, month, region)
+		if roll < 0.0:
+			return id
+	return available[-1]
+
+# Contagious illness can pass to anyone in the party who is currently well and
+# not immune. People who fell ill today do not pass it on until tomorrow.
+func _spread(day: int, rations: int) -> void:
+	var sources: Array = []
+	for member in members:
+		if is_active(member):
+			for active in member.conditions:
+				if float(conditions[active.id].get("spread_chance", 0.0)) > 0.0:
+					sources.append([member.name, active.id])
+	for source in sources:
+		var chance := float(conditions[source[1]].spread_chance)
+		for member in members:
+			if is_active(member) and member.conditions.is_empty() and source[1] not in member.get("immune", []) and rng.randf() < chance:
+				begin_condition(int(member.id), source[1], day, roll_severity(rations), source[0])
+
+func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 2, year: int = 1848, month: int = 0, region: String = "") -> void:
 	for member in members:
 		if not is_active(member):
 			continue
@@ -146,6 +211,11 @@ func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 
 			if active.elapsed >= definition.recovery_days:
 				member.conditions.erase(active)
 				_record(member, day, "%s recovered from %s." % [member.name, definition.name.to_lower()])
+				if definition.get("immunizing", false):
+					if not member.has("immune"):
+						member.immune = []
+					member.immune.append(active.id)
+	_spread(day, rations)
 	# One provisional party-level onset roll per day; a separate seeded stream
 	# keeps watching the party and opening dialogs from changing any outcomes.
 	if living_count() == 0 or rng.randf() >= clampf(daily_onset_chance * risk_multiplier, 0, 1):
@@ -156,8 +226,10 @@ func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 
 			candidates.append(int(member.id))
 	var available: Array[String] = automatic_conditions(year)
 	if not candidates.is_empty() and not available.is_empty():
-		begin_condition(candidates[rng.randi_range(0, candidates.size() - 1)],
-			available[rng.randi_range(0, available.size() - 1)], day, roll_severity(rations))
+		var person: int = candidates[rng.randi_range(0, candidates.size() - 1)]
+		var picked := _pick_condition(available, month, region)
+		if not picked.is_empty():
+			begin_condition(person, picked, day, roll_severity(rations))
 
 func description(member_id: int) -> String:
 	var member: Dictionary = members[member_id]
