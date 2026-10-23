@@ -398,13 +398,13 @@
         }
       ],
       "hunting_region": "highcountry",
-      "advice": "The road followed here goes south by Bridger. Palmer also described a shorter northern road with a long dry interval; shorter did not mean easier."
+      "advice": "Past Pacific Spring the road forks. The southern road goes by Bridger's post; Greenwood's northern cutoff is shorter but crosses forty miles without water. Shorter did not mean easier."
     },
     {
       "id": "little_sandy",
-      "name": "Little Sandy / southern road",
+      "name": "Little Sandy / parting of the roads",
       "kind": "camp",
-      "text": "Beyond Pacific Spring the guide describes a fork. This journey follows the longer southern road toward Bridger's trading post. The shorter northern road remains outside this playable corridor.",
+      "text": "Beyond Pacific Spring the road forks. Palmer's southern road runs by Bridger's trading post to Bear River. Greenwood's northern cutoff strikes the Green River about forty miles upstream and saves two and a half days of driving, but forty of its miles have no water and little grass.",
       "terrain": "plains",
       "next": [
         {
@@ -417,16 +417,62 @@
           "source_table_rows": [
             55,
             56
+          ],
+          "label": "Take the southern road toward Green River crossing and Fort Bridger"
+        },
+        {
+          "to": "greenwood_cutoff",
+          "miles": 46,
+          "label": "Take Greenwood's Cutoff · 46 miles to the Green, 40 without water",
+          "hazard": "waterless",
+          "source_rows": [
+            6,
+            40
+          ],
+          "source_table_rows": [
+            51,
+            52
           ]
         }
       ],
       "hunting_region": "highcountry"
     },
     {
+      "id": "greenwood_cutoff",
+      "name": "Green River / Greenwood's Cutoff",
+      "kind": "river",
+      "text": "After the long dry drive from the Big Sandy, the cutoff strikes the Green River about forty miles above the southern crossing. Animals smell the water before you see it. The current here is swift and cold.",
+      "terrain": "mountains",
+      "next": [
+        {
+          "to": "soda_springs",
+          "miles": 124,
+          "source_rows": [
+            64,
+            10,
+            7,
+            3,
+            4,
+            36
+          ],
+          "source_table_rows": [
+            53,
+            66,
+            67,
+            69,
+            70,
+            72
+          ]
+        }
+      ],
+      "hunting_region": "sagebrush",
+      "river_source": "snowmelt"
+    },
+    {
       "id": "green_river",
       "name": "Green River crossing",
       "kind": "river",
-      "text": "You reach the Green River on Palmer's southern route. This is not the northern shortcut crossing shown by every later map. Judge the current before committing.",
+      "text": "You reach the Green River on Palmer's southern route, downstream of the crossing used by Greenwood's Cutoff. Judge the current before committing.",
       "terrain": "plains",
       "next": [
         {

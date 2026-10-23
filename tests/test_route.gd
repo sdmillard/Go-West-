@@ -17,10 +17,13 @@ func _initialize() -> void:
 	var table: Array = JSON.parse_string(FileAccess.get_file_as_string("res://research/PALMER_DISTANCE_TABLE.json"))
 	var mileage := 0
 	var at: String = data.start
+	var edges: Array = []
 	for node in data.nodes:
-		if node.next.is_empty():
-			continue
-		var edge: Dictionary = node.next[0]
+		for road in node.next:
+			edges.append([node, road])
+	for pair in edges:
+		var node: Dictionary = pair[0]
+		var edge: Dictionary = pair[1]
 		var sum := 0
 		for row in edge.source_rows:
 			sum += int(row)

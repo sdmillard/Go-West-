@@ -58,7 +58,7 @@ Two subdivisions are explicitly authored: Fort Kearny is allocated 10 miles into
 | Chimney Rock | Retained; Courthouse Rock, Ash Hollow and the Robidoux approach add context |
 | Fort Laramie | Retained as the private adobe Fort John in 1848 |
 | Independence Rock and South Pass | Retained; Devil's Gate is also a stop |
-| Green River / Fort Bridger choices | Continuous southern road through both; northern shortcut remains unimplemented |
+| Green River / Fort Bridger choices | Southern road through both is the main road; Greenwood's Cutoff is a choice at the Little Sandy (see [Route branches](ROUTE_BRANCHES.md)) |
 | Soda Springs, Fort Hall, Snake crossing and Fort Boise | Retained, with a second Snake crossing at the old Boise post |
 | Blue Mountains / Fort Walla Walla choice | Direct Umatilla corridor from Palmer; Walla Walla detour remains unimplemented, not declared historically nonexistent |
 | The Dalles, Barlow Road / Columbia rafting | Continuous Barlow wagon road; Columbia boat/portage activity remains unimplemented |

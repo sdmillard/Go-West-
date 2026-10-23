@@ -85,15 +85,20 @@ static func spoil_cache(game) -> void:
 	game.wagon_cache.fresh=model.fresh.duplicate(true)
 	if lost>0:game.journal.append("Day %d · %d ration-lb of food spoiled in the abandoned wagon." % [game.state.day,lost])
 static func relocate(game,miles: int) -> void:
-	var id: String=game.route.start
+	# Walk back along the road actually taken, then the leg in progress.
+	var stops: Array=game.travelled_path().duplicate()
+	if game.state.next_landmark!="" and game.state.next_landmark!=game.state.landmark:stops.append(game.state.next_landmark)
+	# Beyond that (scenario fixtures), the main road onward.
+	while not game.route.nodes[stops[-1]].next.is_empty():stops.append(game.route.nodes[stops[-1]].next[0].to)
 	var base:=0
-	while not game.route.nodes[id].next.is_empty():
-		var edge: Dictionary=game.route.nodes[id].next[0]
+	for index in range(stops.size()-1):
+		var id: String=stops[index]
+		var edge: Dictionary=game.route.edge_between(id,stops[index+1])
 		if miles<base+int(edge.miles):
 			game.state.merge({"miles":miles,"landmark":id,"next_landmark":edge.to,"leg_length":int(edge.miles),"leg_miles":miles-base,"terrain":game.route.nodes[id].get("terrain","plains"),"river_stage":""},true)
+			game.route_path=stops.slice(0,index+1)
 			return
 		base+=int(edge.miles)
-		id=edge.to
 static func recover(game) -> bool:
 	if not game._can_act() or game.state.vehicle!="foot" or game.wagon_cache.is_empty():return false
 	var target: int=game.wagon_cache.mile
@@ -132,7 +137,7 @@ static func valid(value: Variant,game,day: int) -> bool:
 	if value.is_empty():return true
 	for field in ["mile","day"]:
 		if (not value.get(field) is int and not value.get(field) is float) or not is_finite(float(value[field])) or value[field]!=floor(value[field]) or value[field]<0:return false
-	if value.mile>game.destination() or value.day>day or not value.get("found") is bool or not value.get("inventory") is Dictionary or not value.get("fresh") is Array:return false
+	if value.mile>game.route.longest_miles or value.day>day or not value.get("found") is bool or not value.get("inventory") is Dictionary or not value.get("fresh") is Array:return false
 	if value.inventory.size()!=game.provisions.data.weights_lb.size():return false
 	for key in game.provisions.data.weights_lb:
 		var count=value.inventory.get(key)
