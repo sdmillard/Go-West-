@@ -372,6 +372,7 @@ func restore(value: Variant):
 		if not game.recruitment.valid(value.recruitment,game):return null
 		game.recruitment.restore(normalize(value.recruitment))
 	elif value.party.size()!=5:return null
+	if game.pending.get("id","") in ["ox_injury","wandering_ox"]:game.adapt_travel_event(game.pending)
 	if game.pending.get("recruit_menu",false) or game.pending.get("dismiss_menu",false):
 		if not game.recruitment.valid_open_menu(game):return null
 		game.pending=game.recruitment.menu(game) if game.pending.get("recruit_menu",false) else game.recruitment.dismiss_menu(game,int(game.pending.dismiss_target))

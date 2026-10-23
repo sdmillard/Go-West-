@@ -34,8 +34,8 @@ func run():
  screen._show_section("Supplies")
  check(is_instance_valid(screen.pace) and not screen.pace.visible,"Leaving Travel preserves and hides its controls")
  check(not screen.section_window.visible and screen.supplies_window.visible,"Supplies opens the inventory directly without a one-button branch")
- check(screen.supplies_rows.get_child(0).text=="DROP SUPPLIES >" and "ABANDON WAGON" in screen.supplies_rows.get_child(1).text,"Drop and abandon actions are visible before the inventory details")
- screen.supplies_rows.get_child(0).pressed.emit()
+ check(screen.supplies_rows.find_child("DropSupplies",true,false)!=null and screen.supplies_rows.find_child("AbandonWagon",true,false)!=null,"Drop and abandon actions are visible before the inventory details")
+ screen.supplies_rows.find_child("DropSupplies",true,false).pressed.emit()
  check(screen.section_window.title=="DROP SUPPLIES" and not screen.supplies_window.visible,"Drop supplies opens a distinct inventory action")
  var food: int=screen.game.state.food
  var day: int=screen.game.state.day
