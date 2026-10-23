@@ -61,7 +61,7 @@ Two subdivisions are explicitly authored: Fort Kearny is allocated 10 miles into
 | Green River / Fort Bridger choices | Southern road through both is the main road; Greenwood's Cutoff is a choice at the Little Sandy (see [Route branches](ROUTE_BRANCHES.md)) |
 | Soda Springs, Fort Hall, Snake crossing and Fort Boise | Retained, with a second Snake crossing at the old Boise post |
 | Blue Mountains / Fort Walla Walla choice | Direct Umatilla corridor from Palmer; Walla Walla detour remains unimplemented, not declared historically nonexistent |
-| The Dalles, Barlow Road / Columbia rafting | Continuous Barlow wagon road; Columbia boat/portage activity remains unimplemented |
+| The Dalles, Barlow Road / Columbia rafting | Barlow wagon road is the main road; a Columbia raft with a Cascades portage is a choice at The Dalles (see [Route branches](ROUTE_BRANCHES.md)) |
 | Willamette Valley endpoint | Oregon City beside the Willamette, with named survivor and supply results |
 
 This completes one supported overland itinerary, **not all classic branches or all historic alternatives**. There are no false buttons promising an unimplemented alternate route. Whitman Mission is not offered as a functioning 1848 resupply station.

@@ -126,6 +126,7 @@ func valid_menu(menu: Dictionary, game) -> bool:
 	for choice in menu.choices:
 		if not choice is Dictionary or not choice.get("label") is String:
 			return false
+		if choice.has("portage_risk") and (choice.get("action","")!="leave" or not (choice.portage_risk is int or choice.portage_risk is float) or not is_finite(float(choice.portage_risk)) or choice.portage_risk<0 or choice.portage_risk>1):return false
 		if choice.has("edge") and (choice.get("action","")!="leave" or not menu.has("landmark") or not integer(choice.edge,1,game.route.nodes[menu.landmark].next.size()-1)):return false
 		if menu.has("crime_menu") and (menu.crime_menu!=true or menu.id!="crime" or not menu.get("service_menu",false) or choice.get("crime_command","") not in game.crime.COMMANDS):return false
 		if choice.has("crime_command") and not menu.get("crime_menu",false):return false

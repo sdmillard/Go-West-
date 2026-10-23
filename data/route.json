@@ -815,7 +815,7 @@
       "id": "the_dalles",
       "name": "The Dalles",
       "kind": "camp",
-      "text": "The Columbia narrows among exposed rock and rapids. Your itinerary takes the Barlow wagon road south of Mount Hood, avoiding the boat passages and portages down the river.",
+      "text": "The Columbia narrows among exposed rock and rapids. Here the overland road ends for many: the Barlow wagon road climbs south of Mount Hood, while others build rafts or hire boats and take their chances on the river.",
       "terrain": "mountains",
       "next": [
         {
@@ -825,11 +825,49 @@
             70
           ],
           "source_table_rows": [],
-          "allocation_note": "Authored subdivision of a period-guide aggregate; not a separately surveyed distance."
+          "allocation_note": "Authored subdivision of a period-guide aggregate; not a separately surveyed distance.",
+          "label": "Take the Barlow road south of Mount Hood"
+        },
+        {
+          "to": "columbia_raft",
+          "miles": 40,
+          "label": "Build a raft and float the Columbia · 3 days building",
+          "hazard": "river",
+          "effects": {
+            "days": 3
+          },
+          "source_rows": [
+            40
+          ],
+          "source_table_rows": [],
+          "allocation_note": "NPS Columbia Gorge narrative: the river flowed smoothly for about forty miles below The Dalles to the Cascades. Not a Palmer table row."
         }
       ],
       "hunting_region": "forest",
-      "advice": "The river route used boats, portages and livestock paths. A raft was not an uninterrupted ride through every rapid. This build follows the Barlow wagon road instead."
+      "advice": "The river route used rafts, boats and portages, with livestock driven along trails. A raft was not an uninterrupted ride: wind pins boats to the shore and the Cascades must be portaged or run. The Barlow road is longer, costs a toll and ends at Laurel Hill."
+    },
+    {
+      "id": "columbia_raft",
+      "name": "Cascades of the Columbia",
+      "kind": "camp",
+      "text": "The river that carried your raft from The Dalles breaks white over the Cascades, about six miles of rapids. Parties unload and carry their goods around on a rough portage path, often with Chinookan or Hudson's Bay Company help, or gamble on running the water.",
+      "terrain": "forest",
+      "portage": true,
+      "next": [
+        {
+          "to": "oregon_city",
+          "miles": 76,
+          "hazard": "river",
+          "source_rows": [
+            6,
+            44,
+            26
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Six miles of rapids (NPS) plus authored modern river-mile estimates: about 44 from the lower Cascades to the Willamette's mouth and about 26 up the Willamette to the falls at Oregon City."
+        }
+      ],
+      "hunting_region": "forest"
     },
     {
       "id": "barlow_pass",

@@ -128,5 +128,48 @@ func run() -> void:
 	Cache.relocate(game, 1000)
 	check(game.state.landmark == "greenwood_cutoff" and game.state.next_landmark == "soda_springs" and game.state.leg_miles == 28 and game.route_path[-1] == "greenwood_cutoff", "Walking back retraces the road actually taken")
 
+	# The Columbia: raft from The Dalles, portage or run the Cascades.
+	game = outfit(7)
+	game.route_path = game.route.main_path_to("deschutes")
+	game.state.merge({"landmark": "deschutes", "next_landmark": "the_dalles", "leg_length": 16, "leg_miles": 16, "miles": 1778}, true)
+	game._schedule_event(false)
+	leaves = game.pending.choices.filter(func(choice): return choice.get("action", "") == "leave")
+	check(game.pending.get("landmark", "") == "the_dalles" and leaves.size() == 2 and "Barlow" in leaves[0].label and "raft" in leaves[1].label and int(leaves[1].effects.days) == 3, "The Dalles offers the Barlow road first and the raft second, with building days")
+	var day: int = game.state.day
+	game.choose(game.pending.choices.find(leaves[1]))
+	check(int(game.state.day) == day + 3 and game.state.next_landmark == "columbia_raft" and game.destination() == 1894, "Building the raft takes three days; the river route is 1894 guide miles")
+	while not game.pending.is_empty():
+		game.choose(0)
+	var team_before: int = game.state.ox_health
+	game.state.oxen = 0
+	var miles_before: int = game.state.miles
+	game.travel()
+	check(game.pending.get("id", "") != "no_team" and int(game.state.miles) > miles_before and int(game.state.ox_health) >= team_before, "On the river the current carries the party without a working team")
+	game.state.oxen = 6
+	drive_to(game, "columbia_raft")
+	leaves = game.pending.choices.filter(func(choice): return choice.get("action", "") == "leave")
+	check(game.state.landmark == "columbia_raft" and leaves.size() == 2 and "Portage" in leaves[0].label and leaves[1].has("portage_risk"), "The Cascades offer a portage or running the rapids")
+	copy = store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))
+	check(copy != null and copy.pending.choices == game.pending.choices, "The Cascades choice survives a save")
+	bad = JSON.parse_string(JSON.stringify(store.capture(game)))
+	for choice in bad.pending.choices:
+		if choice.has("portage_risk"):
+			choice.portage_risk = 5
+	check(store.restore(bad) == null, "A malformed rapids risk is rejected")
+	var wreck = store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))
+	for choice in wreck.pending.choices:
+		if choice.has("portage_risk"):
+			choice.portage_risk = 1.0
+	var food_before: int = wreck.state.food
+	wreck.choose(wreck.pending.choices.find(wreck.pending.choices.filter(func(choice): return choice.has("portage_risk"))[0]))
+	check(food_before - int(wreck.state.food) >= 60 and wreck.journal.any(func(entry): return "breaks up in the Cascades" in entry), "Running the rapids can wreck the raft")
+	day = game.state.day
+	food_before = game.state.food
+	var cash: float = game.state.money
+	game.choose(game.pending.choices.find(leaves[0]))
+	check(int(game.state.day) == day + 2 and game.state.next_landmark == "oregon_city", "Portaging takes two days")
+	drive_to(game, "oregon_city")
+	check(game.state.status == "arrived" and game.state.miles == 1894 and game.route_path.has("columbia_raft") and not game.route_path.has("barlow_pass") and is_equal_approx(float(game.state.money), cash), "The river reaches Oregon City without the Barlow road or its toll")
+
 	print("Branch checks: %d, failures: %d" % [checks, failures])
 	quit(1 if failures else 0)
