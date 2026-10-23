@@ -159,7 +159,7 @@ func valid(value: Variant,game) -> bool:
 			if visit.declined or visit.hired_id>=0:return false
 			continue
 		var person: Dictionary=visit.candidate
-		if person.size()!=4 or not person.get("candidate_id") is String or not person.get("name") is String or person.name.is_empty() or person.name.length()>64 or not person.get("profile") is Dictionary or not person.get("terms") is Dictionary:return false
+		if person.size()!=4 or not person.get("candidate_id") is String or not person.get("name") is String or person.name.is_empty() or person.name.length()>64 or not person.get("profile") is Dictionary or not person.profile.has("appearance") or not person.get("terms") is Dictionary:return false
 		var profiles: Array=game.characters.profiles.duplicate(true)
 		var profile: Dictionary=person.profile.duplicate(true)
 		profile.id=profiles.size()
@@ -169,5 +169,5 @@ func valid(value: Variant,game) -> bool:
 			if person.terms.size()!=2 or not game.characters.acceptable_terms(person.terms.get("wage_cents"),person.terms.get("interval_days"),profile):return false
 		elif not person.terms.is_empty():return false
 	if hired.size()!=game.party_health.members.size()-5:return false
-	if int(game.state.get("recruited_gear_lb",0))!=hired.size()*int(rules.personal_gear_lb):return false
+	if not game.crime.whole(game.state.get("recruited_gear_lb",0),0,game.MAX_TRAVELERS*int(rules.personal_gear_lb)) or game.state.get("recruited_gear_lb",0)!=hired.size()*int(rules.personal_gear_lb):return false
 	return true

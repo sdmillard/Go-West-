@@ -57,6 +57,9 @@ func run():
 	damaged=Store.new().capture(game)
 	damaged.recruitment.searches[game.recruitment.site(game)].candidate.terms={"wage_cents":1,"interval_days":7}
 	check(restored_data(damaged)==null,"Invalid or underpriced candidate contracts cannot load")
+	damaged=Store.new().capture(game)
+	damaged.recruitment.searches[game.recruitment.site(game)].candidate.profile.erase("appearance")
+	check(restored_data(damaged)==null,"A candidate must retain the appearance their preview requires")
 	var offer: Dictionary=game.recruitment.candidate(game).duplicate(true)
 	before=Store.new().capture(game)
 	command(game,"back")
