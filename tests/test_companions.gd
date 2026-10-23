@@ -204,7 +204,8 @@ func run():
 	check(screen.service_window.visible and screen.service_window.title=="Attack Ben","The attack menu opens in the native UI")
 	screen.game.crime.companion_rules.hit=0
 	screen._service_choice(0)
-	check(screen.record_notice.visible and screen.record_notice.title=="YOU SHOT AT BEN" and "You shot at Ben: missed." in screen.record_notice.dialog_text and "Ben fled after you shot at Ben" in screen.record_notice.dialog_text and not "(trust" in screen.record_notice.dialog_text,"The result of the shot is shown at once: the miss and who left")
+	check(screen.record_notice.visible and screen.record_notice.title=="YOU SHOT AT BEN" and "You shot at Ben: missed." in screen.record_notice.dialog_text and "Fled: Ben. They took " in screen.record_notice.dialog_text and not "(trust" in screen.record_notice.dialog_text,"The result of the shot is shown at once: the miss and who left")
+	check(screen.record_notice.size.x<=640 and screen.record_notice.size.y<=330,"The shot notice fits the 640 x 360 screen")
 	check("Joined you: Ada, Cora, Dell." in screen.record_notice.dialog_text,"Those who joined are named too")
 	screen.record_notice.hide()
 	screen.queue_free()

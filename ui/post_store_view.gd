@@ -50,8 +50,8 @@ func _ready() -> void:
 	paper(Rect2(0, 236, 622, 37))
 	title = text("", Rect2(278, 6, 330, 12))
 	text("GOODS", Rect2(278, 24, 150, 12))
-	text("BUY", Rect2(388, 24, 90, 12))
-	text("SELL", Rect2(492, 24, 90, 12))
+	text("BUY", Rect2(396, 24, 90, 12))
+	text("SELL", Rect2(494, 24, 90, 12))
 	rows_layer = Control.new()
 	put(rows_layer, Rect2(0, 0, 622, 236))
 	totals = text("", Rect2(278, 204, 330, 30))
@@ -79,13 +79,13 @@ func open() -> void:
 	for i in range(store.rows.size()):
 		var row: Dictionary = store.rows[i]
 		var y := 40 + i * 18
-		var name := text(row.label.to_upper(), Rect2(278, y + 2, 108, 16), rows_layer)
-		text("$%.2f" % (row.buy_cents / 100.0), Rect2(388, y + 2, 40, 16), rows_layer)
-		text("$%.2f" % (row.sell_cents / 100.0), Rect2(492, y + 2, 40, 16), rows_layer)
+		var name := text(row.label.to_upper(), Rect2(278, y + 2, 116, 16), rows_layer)
+		text("$%.2f" % (row.buy_cents / 100.0), Rect2(396, y + 2, 38, 16), rows_layer)
+		text("$%.2f" % (row.sell_cents / 100.0), Rect2(494, y + 2, 38, 16), rows_layer)
 		name.tooltip_text = "Buy at $%.2f or sell at $%.2f per lot. You hold %d. The post can sell %d more and buy %d." % [row.buy_cents / 100.0, row.sell_cents / 100.0, row.held, row.can_buy, row.can_sell]
 		name.mouse_filter = Control.MOUSE_FILTER_PASS
-		buys[row.item] = spin(row.can_buy, Rect2(430, y, 56, 18))
-		sells[row.item] = spin(row.can_sell, Rect2(534, y, 56, 18))
+		buys[row.item] = spin(row.can_buy, Rect2(436, y, 54, 18))
+		sells[row.item] = spin(row.can_sell, Rect2(534, y, 54, 18))
 		held[row.item] = row
 	refreshing = false
 	update_quote()

@@ -146,8 +146,24 @@ func run() -> void:
 	screen._show_guide()
 	await process_frame
 	check(screen.guide.visible, "Guide opens")
+	check(screen.guide.size.y <= 340, "The guide scrolls inside the 360 px screen instead of running off it")
 	await capture("guide")
 	screen.guide.hide()
+	# Readability: tooltips are parchment with dark ink and wrap to a fixed width; notices fit the screen.
+	check(screen.theme.has_stylebox("panel", "TooltipPanel") and screen.theme.get_color("font_color", "TooltipLabel") == Color("45372f"), "Tooltips use the parchment theme")
+	var hint: String = screen.wrap_text("Replaces this draft companion's personality, background, relationship, specials, flaw and wage offer. No journey time or money passes.", screen.TOOLTIP_WIDTH)
+	check(hint.split("\n").size() > 1 and Array(hint.split("\n")).all(func(line): return screen.PIXEL_FONT.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1, 8).x <= screen.TOOLTIP_WIDTH), "Long tooltips wrap within the tooltip width")
+	var tip := Label.new()
+	tip.theme_type_variation = &"TooltipLabel"
+	tip.text = "Bare 1, meager 2, filling 3 food units per living traveler per day. Low rations slow recovery even in camp."
+	screen.add_child(tip)
+	check("\n" in tip.text, "Godot's tooltip label is wrapped as it appears")
+	tip.queue_free()
+	screen.notice("TRAIL RECORD", "A short notice.")
+	await process_frame
+	var short_rect := Rect2(screen.record_notice.position, screen.record_notice.size)
+	check(Rect2(0, 0, 640, 360).encloses(short_rect), "A notice opens centered on screen")
+	screen.record_notice.hide()
 	print("UI: %d failures" % failures)
 	screen.queue_free()
 	await process_frame
