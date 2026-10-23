@@ -46,6 +46,10 @@ const RAIN_CLOUDS = preload("res://art/pixels/rain_clouds.png") # 432x56, tiles 
 const RAIN_SPLASH = preload("res://art/pixels/rain_splash.png") # four 8x4 frames
 const FOG_BANK = preload("res://art/pixels/fog_bank.png") # 432x40, tiles sideways
 const SNOW_SQUALL = preload("res://art/pixels/snow_squall.png") # 432x150, tiles both ways
+# The crossing is seen from above at three-quarters with no sky, so its weather lies on the ground.
+const CROSS_RIPPLE = preload("res://art/pixels/cross_ripple.png") # four 12x6 frames, flat on the water
+const CLOUD_SHADOW = preload("res://art/pixels/cloud_shadow.png") # two 128x64 shadows
+const MIST_WISP = preload("res://art/pixels/mist_wisp.png") # two 128x48 wisps
 const NEAR_BANK = [Vector2(0, 178), Vector2(25, 189), Vector2(50, 204), Vector2(75, 212), Vector2(100, 220), Vector2(125, 237), Vector2(150, 248), Vector2(175, 269), Vector2(200, 275), Vector2(225, 288), Vector2(250, 295), Vector2(260, 300), Vector2(0, 300)]
 const FAR_BANK = [Vector2(330, 0), Vector2(360, 21), Vector2(390, 26), Vector2(420, 43), Vector2(450, 62), Vector2(480, 77), Vector2(510, 90), Vector2(540, 99), Vector2(570, 125), Vector2(600, 136), Vector2(630, 150), Vector2(660, 161), Vector2(690, 182), Vector2(720, 200), Vector2(720, 0)]
 signal crossing_finished
@@ -127,7 +131,7 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	if not crossing.is_empty():
 		_draw_crossing()
-		_draw_weather()
+		_draw_crossing_sky()
 		return
 	if not scene_id.is_empty():
 		draw_texture(scenes.texture_for(scene_id), Vector2.ZERO)
@@ -273,6 +277,59 @@ func _draw_fog_banks() -> void:
 	if weather_id == "fog":
 		_tile(FOG_BANK, 44, posmod(int(clock_time * 4.0), 432))
 		_tile(FOG_BANK, 70, posmod(int(clock_time * 7.0) + 150, 432))
+
+func _draw_crossing_weather(cam: Vector2) -> void:
+	# World coordinates: what the weather leaves on the ground and water of the crossing.
+	if weather_id in ["rain", "heavy_rain", "thunderstorm", "hail"]:
+		# Shadows of the clouds sliding over water and banks alike.
+		for i in range(5):
+			var at := Vector2(fposmod(clock_time * 8.0 + i * 197.0, WORLD.x + 256.0) - 128.0, i * 62.0 - 10.0).round()
+			draw_texture_rect_region(CLOUD_SHADOW, Rect2(at, Vector2(128, 64)), Rect2((i % 2) * 128, 0, 128, 64), Color(1, 1, 1, 0.28))
+		# Drops ring the water and splash on the banks; hailstones bounce white.
+		var count: int = {"rain": 30, "heavy_rain": 60, "thunderstorm": 60, "hail": 40}[weather_id]
+		for index in range(count):
+			var beat := clock_time * 3.0 + index * 0.37
+			var cycle := int(beat)
+			var frame := int(fposmod(beat, 1.0) * 4.0)
+			var spot := (cam + Vector2(posmod(index * 71 + cycle * 37, 432), posmod(index * 43 + cycle * 29, 150))).round()
+			if weather_id == "hail" and not _in_water(spot):
+				draw_rect(Rect2(spot.x, spot.y - (2 if frame == 1 else 0), 2, 1), Color("fff4d4"))
+			elif _in_water(spot):
+				draw_texture_rect_region(CROSS_RIPPLE, Rect2(spot - Vector2(6, 3), Vector2(12, 6)), Rect2(frame * 12, 0, 12, 6))
+			else:
+				draw_texture_rect_region(RAIN_SPLASH, Rect2(spot - Vector2(4, 3), Vector2(8, 4)), Rect2(frame * 8, 0, 8, 4))
+	elif weather_id == "fog":
+		# Low wisps lying on the river, drifting down it with the current.
+		for i in range(12):
+			var lane := Vector2(1, -2) * (i % 4 - 1.5) * 40.0
+			var at := (Vector2(-110, 20) + lane + Vector2(2, 1) * fposmod(clock_time * 5.0 + i * 83.0, 460.0)).round()
+			draw_texture_rect_region(MIST_WISP, Rect2(at, Vector2(128, 48)), Rect2((i % 2) * 128, 0, 128, 48), Color(1, 1, 1, 0.45))
+
+func _draw_crossing_sky() -> void:
+	# Screen coordinates: light and falling weather over the crossing. There is no sky in this
+	# view, so no cloud banks, horizon mirage or dust devils.
+	var full := Rect2(0, 0, 432, 150)
+	match weather_id:
+		"thunderstorm", "hail", "heavy_rain", "rain":
+			draw_rect(full, Color(0.13, 0.15, 0.2, {"thunderstorm": 0.3, "hail": 0.28, "heavy_rain": 0.26, "rain": 0.16}[weather_id]))
+			if weather_id == "thunderstorm":
+				var into := fmod(clock_time, 4.3)
+				if into < 0.07 or (into > 0.12 and into < 0.17):
+					draw_rect(full, Color(1, 1, 0.92, 0.3))
+			var hail: bool = weather_id == "hail"
+			for index in range(40 if weather_id == "rain" else 70):
+				var x := posmod(index * 37 - int(clock_time * 20), 432)
+				var y := posmod(index * 19 + int(clock_time * (120 if hail else 100)), 150)
+				if hail:
+					draw_rect(Rect2(x, y, 2, 2), Color("fff4d4"))
+				else:
+					draw_line(Vector2(x, y), Vector2(x - 1, y + 5), Color(0.55, 0.72, 0.76, 0.85))
+		"heat":
+			draw_rect(full, Color(1, 0.88, 0.6, 0.1))
+		"fog":
+			draw_rect(full, Color(0.8, 0.83, 0.78, 0.25))
+		"blizzard":
+			_draw_weather()
 
 func _draw_stampede() -> void:
 	# Two oxen broken loose and running off ahead of the wagon in their own dust.
@@ -469,4 +526,5 @@ func _draw_crossing() -> void:
 			_water_rect(Rect2(box.x, box.y, 7, 5), Color("76503c"))
 			_water_rect(Rect2(box.x + 1, box.y + 1, 5, 2), Color("c18d4d"))
 			_water_rect(Rect2(box.x - 3, box.y + 5, 12, 1), Color("afd5ce"))
+	_draw_crossing_weather(cam)
 	draw_set_transform(Vector2.ZERO)

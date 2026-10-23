@@ -16,6 +16,13 @@
 --                          edges so the picture shows through; tiles left to right
 --   snow_squall    432x150 one tile of wind-driven snow streaks and flakes, transparent
 --                          between them; tiles both ways as it scrolls
+-- River crossings are seen from above at three-quarters, with no sky, so they get their own:
+--   cross_ripple    48x6   four 12x6 frames of a raindrop ring spreading on the water, drawn
+--                          2:1 to lie flat in the crossing's ground plane
+--   cloud_shadow   256x64  two 128x64 shadows of passing cloud, dithered so the ground shows
+--                          through; ui/trail_view.gd draws them half transparent
+--   mist_wisp      256x48  two 128x48 low wisps of river mist lying flat on the water,
+--                          dithered thin at their edges
 local K = dofile(app.params.kit)
 
 -------------------------------------------------------------------- storm clouds
@@ -285,3 +292,49 @@ K.layer("snow", function()
 end)
 K.wrap = false
 K.save("snow_squall")
+
+-------------------------------------------------------------------- crossing: rain rings
+K.canvas(48, 6, 1859)
+K.layer("rings", function()
+  -- each frame a wider, fainter ellipse, twice as wide as tall like the crossing's ground
+  for f = 0, 3 do
+    local ox, rx, ry = f * 12 + 6, 1 + f * 1.6, 0.5 + f * 0.8
+    for a = 0, 31 do
+      local t = a / 32 * 2 * math.pi
+      local x, y = math.floor(ox + rx * math.cos(t) + 0.5), math.floor(3 + ry * math.sin(t) + 0.5)
+      if f < 2 or (a % 2 == 0) then K.px(x, y, (f == 0 or math.sin(t) < 0) and "white" or "light_blue") end
+    end
+  end
+end)
+K.save("cross_ripple")
+
+-- An irregular blob lying in the 2:1 ground plane, filled by ordered dither so it can thin out.
+local BAYER = {{0, 8, 2, 10}, {12, 4, 14, 6}, {3, 11, 1, 9}, {15, 7, 13, 5}}
+local function flat_blob(ox, w, h, lobes, core, edge)
+  for y = 0, h - 1 do
+    for x = 0, w - 1 do
+      local d = 0
+      for _, l in ipairs(lobes) do
+        local dx, dy = (x - l[1]) / l[3], (y - l[2]) / (l[3] / 2)
+        d = math.max(d, 1 - math.sqrt(dx * dx + dy * dy))
+      end
+      if d > 0 and d * 40 > BAYER[y % 4 + 1][x % 4 + 1] then K.px(ox + x, y, (d > 0.35) and core or edge) end
+    end
+  end
+end
+
+-------------------------------------------------------------------- crossing: cloud shadows
+K.canvas(256, 64, 1860)
+K.layer("shadows", function()
+  flat_blob(0, 128, 64, {{40, 30, 34}, {74, 26, 40}, {100, 36, 26}, {58, 42, 24}}, "ink", "ink")
+  flat_blob(128, 128, 64, {{36, 34, 28}, {66, 28, 36}, {92, 32, 30}}, "ink", "ink")
+end)
+K.save("cloud_shadow")
+
+-------------------------------------------------------------------- crossing: river mist
+K.canvas(256, 48, 1861)
+K.layer("mist", function()
+  flat_blob(0, 128, 48, {{30, 24, 28}, {62, 22, 36}, {96, 26, 28}}, "stone_lt", "mist")
+  flat_blob(128, 128, 48, {{40, 22, 34}, {80, 26, 32}, {104, 20, 20}}, "stone_lt", "mist")
+end)
+K.save("mist_wisp")
