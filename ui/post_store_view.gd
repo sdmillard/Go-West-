@@ -15,9 +15,10 @@ var totals: Label
 var feedback: Label
 var settle_button: Button
 var news_button: Button
-var news_panel: Panel
-var news_rows: VBoxContainer
-var news_scroll: ScrollContainer
+var bubble: PanelContainer
+var bubble_text: Label
+var bubble_tail: Polygon2D
+var bubble_edge: Line2D
 var background: TextureRect
 var rows_layer: Control
 var scenes = preload("res://ui/location_scenes.gd").new()
@@ -83,26 +84,36 @@ func _ready() -> void:
 	put(settle_button, Rect2(478, 242, 130, 25))
 	news_button = Button.new()
 	news_button.text = "ASK FOR NEWS"
-	news_button.tooltip_text = "Hear what they know: news from the States and Oregon, the road ahead, and any word of your party. Takes no time."
+	news_button.tooltip_text = "Hear a bit of what they know: news from the States and Oregon, the road ahead, or word of your party. Ask again for more. Takes no time."
 	news_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	news_button.pressed.connect(toggle_news)
+	news_button.pressed.connect(say_news)
 	put(news_button, Rect2(340, 242, 130, 25))
-	# The news sheet lies over both goods panels; the picture stays in view on the left.
-	news_panel = Panel.new()
+	# News comes as a speech bubble over the picture, from the keeper, the trader or the family.
+	bubble = PanelContainer.new()
 	var box := StyleBoxFlat.new()
-	box.bg_color = Color("ecd097")
-	box.border_color = Color("a16b43")
+	box.bg_color = Color("fbf3dc")
+	box.border_color = Color("2b1d12")
 	box.set_border_width_all(1)
-	news_panel.add_theme_stylebox_override("panel", box)
-	put(news_panel, Rect2(POST_X - 6, 6, 374, 228))
-	news_scroll = ScrollContainer.new()
-	news_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	put(news_scroll, Rect2(6, 4, 364, 220), news_panel)
-	news_rows = VBoxContainer.new()
-	news_rows.custom_minimum_size = Vector2(350, 0)
-	news_rows.add_theme_constant_override("separation", 3)
-	news_scroll.add_child(news_rows)
-	news_panel.hide()
+	box.set_corner_radius_all(4)
+	box.set_content_margin_all(5)
+	bubble.add_theme_stylebox_override("panel", box)
+	bubble.mouse_filter = Control.MOUSE_FILTER_STOP
+	bubble.gui_input.connect(_bubble_input)
+	add_child(bubble)
+	bubble_text = Label.new()
+	bubble_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	bubble_text.custom_minimum_size = Vector2(206, 0)
+	bubble_text.add_theme_color_override("font_color", Color("2b1d12"))
+	bubble.add_child(bubble_text)
+	bubble_tail = Polygon2D.new()
+	bubble_tail.color = Color("fbf3dc")
+	add_child(bubble_tail)
+	bubble_edge = Line2D.new()
+	bubble_edge.width = 1
+	bubble_edge.default_color = Color("2b1d12")
+	bubble_tail.add_child(bubble_edge)
+	bubble.hide()
+	bubble_tail.hide()
 
 func columns(x: int, count: String, action: String) -> void:
 	text("GOODS", Rect2(x, 26, 50, 12))
@@ -120,7 +131,7 @@ func open(where: String = "") -> void:
 	sells.clear()
 	held.clear()
 	counts.clear()
-	show_news(false)
+	hide_bubble()
 	var store: Dictionary = game.trade_counter(venue)
 	if store.is_empty():
 		return
@@ -148,6 +159,7 @@ func open(where: String = "") -> void:
 		counts[row.item] = [have, stock]
 		held[row.item] = row
 	refreshing = false
+	update_news_button()
 	update_quote()
 
 func line(x: int, y: int, goods: String, cents: float, tip: String) -> Label:
@@ -206,39 +218,37 @@ func settle() -> void:
 		feedback.text = "Settled." if kind == "camp" else "Settled. Further trades at this stop take no extra time."
 		settled.emit()
 
-func toggle_news() -> void:
-	show_news(not news_panel.visible)
+## Where each picture's speaker stands: the tip of the bubble's tail.
+const SPEAKERS := {"post": Vector2(150, 104), "traders": Vector2(186, 170), "camp": Vector2(150, 166)}
 
-## Swap the goods panels for what the people here have heard, and back.
-func show_news(open_news: bool) -> void:
-	if open_news:
-		var told: Dictionary = game.ask_news(venue)
-		if told.is_empty():
-			return
-		for child in news_rows.get_children():
-			news_rows.remove_child(child)
-			child.queue_free()
-		paragraph(told.intro, Color("5a3b22"))
-		for section in told.sections:
-			var gap := Control.new()
-			gap.custom_minimum_size = Vector2(0, 3)
-			news_rows.add_child(gap)
-			paragraph(section.heading, Color("8c2b1c"))
-			for said in section.lines:
-				paragraph("- " + said, Color("2b1d12"))
-		news_scroll.scroll_vertical = 0
-		feedback.text = "They tell you what they know. Asking takes no time. Scroll for more."
-	news_panel.visible = open_news
-	rows_layer.visible = not open_news
-	settle_button.visible = not open_news
-	news_button.text = "BACK TO TRADING" if open_news else "ASK FOR NEWS"
-	if not open_news:
-		update_quote()
+## One fragment of what they have heard. How many times they answer depends on how generous they are.
+func say_news() -> void:
+	var said: String = game.ask_news(venue)
+	update_news_button()
+	if said.is_empty():
+		return
+	bubble_text.text = said
+	bubble.show()
+	bubble.size = Vector2.ZERO
+	bubble.reset_size()
+	var tip: Vector2 = SPEAKERS.get(kind, SPEAKERS.post)
+	bubble.position = Vector2(12, maxf(6.0, tip.y - 12.0 - bubble.size.y))
+	var base: float = bubble.position.y + bubble.size.y - 1.0
+	bubble_tail.polygon = PackedVector2Array([Vector2(tip.x - 14, base), Vector2(tip.x - 4, base), tip])
+	bubble_edge.points = PackedVector2Array([Vector2(tip.x - 14, base + 0.5), tip, Vector2(tip.x - 4, base + 0.5)])
+	bubble_tail.show()
 
-func paragraph(value: String, color: Color) -> void:
-	var node := Label.new()
-	node.text = value
-	node.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	node.custom_minimum_size = Vector2(350, 0)
-	node.add_theme_color_override("font_color", color)
-	news_rows.add_child(node)
+func update_news_button() -> void:
+	var left: int = game.news_left(venue)
+	news_button.disabled = left <= 0
+	news_button.text = "ASK FOR NEWS (%d)" % left if left > 0 else "NO MORE NEWS"
+	news_button.tooltip_text = "Hear a bit of what they know: news from the States and Oregon, the road ahead, or word of your party. Generous people tell more. Takes no time." if left > 0 else "They have told you all they care to."
+
+func _bubble_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		hide_bubble()
+
+func hide_bubble() -> void:
+	if bubble:
+		bubble.hide()
+		bubble_tail.hide()

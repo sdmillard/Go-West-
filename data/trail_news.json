@@ -9,11 +9,7 @@
   ],
   "lag": {"base_days": 4, "miles_per_day": 20},
   "limits": {"post": 3, "traders": 1, "camp": 2},
-  "intro": {
-    "post": "The clerk passes on what has come up the road with the last trains and the express riders.",
-    "traders": "The traders have been up and down this country all season and know the road better than the news.",
-    "camp": "The family tells you what they heard before they left home and what they have picked up on the road."
-  },
+  "asks": {"generous": 4, "fair": 3, "stingy": 1},
   "headlines": [
     {"id": "mexico_city", "known": "1848-01-10", "from": "independence", "text": "General Scott's army holds Mexico City. Commissioners are talking peace with the Mexican government."},
     {"id": "treaty_ratified", "known": "1848-03-12", "from": "independence", "text": "The Senate has ratified the peace treaty with Mexico. California and New Mexico are to be ceded to the United States for fifteen million dollars."},

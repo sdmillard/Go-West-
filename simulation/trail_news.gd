@@ -1,6 +1,6 @@
 extends RefCounted
-## What people at a trading counter tell the party (ASK FOR NEWS): news from the States and Oregon as it travels
-## the road, notes on the road ahead, and whatever word of the party itself has reached them. Information only;
+## What people at a trading counter tell the party (ASK FOR NEWS), a fragment at a time: news from the States and
+## Oregon as it travels the road, notes on the road ahead, and whatever word of the party itself has reached them. Information only;
 ## nothing here changes the game, so data/trail_news.json is not one of the rule files.
 const MILES_PER_DAY := 15
 var data: Dictionary={}
@@ -10,10 +10,13 @@ func _init():
 func load_data(value: Variant) -> bool:
 	data={}
 	error="Invalid trail news"
-	if not value is Dictionary or not value.get("headlines") is Array or not value.get("road") is Dictionary or not value.get("intro") is Dictionary or not value.get("lag") is Dictionary or not value.get("limits") is Dictionary:return false
+	if not value is Dictionary or not value.get("headlines") is Array or not value.get("road") is Dictionary or not value.get("lag") is Dictionary or not value.get("limits") is Dictionary:return false
 	for kind in ["post","traders","camp"]:
-		if not value.intro.get(kind) is String or not numeric(value.limits.get(kind)) or value.limits[kind]!=int(value.limits[kind]) or value.limits[kind]<1:return false
+		if not numeric(value.limits.get(kind)) or value.limits[kind]!=int(value.limits[kind]) or value.limits[kind]<1:return false
 	if not numeric(value.lag.get("base_days")) or value.lag.base_days<0 or not numeric(value.lag.get("miles_per_day")) or value.lag.miles_per_day<=0:return false
+	if not value.get("asks") is Dictionary:return false
+	for mood in ["generous","fair","stingy"]:
+		if not numeric(value.asks.get(mood)) or value.asks[mood]!=int(value.asks[mood]) or value.asks[mood]<1 or value.asks[mood]>8:return false
 	var ids: Array=[]
 	for item in value.headlines:
 		if not item is Dictionary or not item.get("id") is String or item.id in ids or not item.get("text") is String or not item.get("from") is String or not dated(item.get("known")):return false
@@ -39,16 +42,22 @@ func valid_for(route) -> bool:
 		if not route.nodes.has(id):return false
 	return not data.is_empty()
 
-## The whole telling at a counter of this kind ("post", "traders" or "camp"); place is the venue's key for word of crimes.
-func report(game,kind: String,place: String) -> Dictionary:
-	var sections: Array=[]
-	var told: Array=headlines(game).slice(0,int(data.limits[kind]))
-	if not told.is_empty():sections.append({"heading":"FROM THE STATES AND OREGON","lines":told})
-	var road: Array=road_ahead(game)
-	if not road.is_empty():sections.append({"heading":"THE ROAD AHEAD","lines":road})
-	var party: Array=about_party(game,place)
-	if not party.is_empty():sections.append({"heading":"ABOUT YOUR PARTY","lines":party})
-	return {"kind":kind,"intro":data.intro[kind],"sections":sections}
+## Everything the people at a counter of this kind ("post", "traders" or "camp") might say; ASK FOR NEWS shows one
+## fragment at a time. place is the venue's key for word of the party's crimes.
+func fragments(game,kind: String,place: String) -> Array:
+	return headlines(game).slice(0,int(data.limits[kind]))+road_ahead(game)+about_party(game,place)
+
+## The fragment told at the given ask: a seeded order per counter, so asking again tells something else.
+func pick(told: Array,key: String,asked: int) -> String:
+	var rng:=RandomNumberGenerator.new()
+	rng.seed=hash(key+"|news")
+	var order: Array=range(told.size())
+	for i in range(order.size()-1,0,-1):
+		var j: int=rng.randi_range(0,i)
+		var swap: int=order[i]
+		order[i]=order[j]
+		order[j]=swap
+	return told[order[asked%order.size()]]
 
 ## Headlines that have reached the party's place on the road by today, newest arrival first.
 ## News travels from where it happened (the Missouri border, Oregon City, a post) at about a train's pace.
@@ -85,7 +94,7 @@ func road_ahead(game) -> Array:
 	var lines: Array=[]
 	var ahead: Array=stops_ahead(game)
 	for stop in ahead:
-		if data.road.has(stop[0]):lines.append("%s, %d miles on: %s" % [nodes[stop[0]].name,stop[1],data.road[stop[0]]])
+		if data.road.has(stop[0]):lines.append(data.road[stop[0]])
 	var month: int=int(game.calendar().month)
 	# The first river ahead: what the weather and the season are doing to it.
 	for stop in ahead:
