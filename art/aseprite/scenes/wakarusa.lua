@@ -71,6 +71,10 @@ K.layer("ravine", function()
   local inner = {}
   for i, q in ipairs(water) do inner[i] = {q[1] - 1, q[2], q[3] * 0.5} end
   K.ribbon(inner, "haze", 0)
+  -- the creek spreads out over the ford
+  K.ellipse(200, 140, 36, 8, "deep")
+  K.ellipse(200, 140, 33, 7, "teal")
+  K.ellipse(197, 141, 22, 3, "haze")
   for i = 1, 40 do
     local x, y = 110 + K.rnd(220), 88 + K.rnd(62)
     if K.at(x, y) == "teal" then K.rect(x, y, 2 + K.rnd(3), 1, "light_blue") end
@@ -110,7 +114,8 @@ K.layer("figures", function()
   K.team(164, 132, -1, {"dark"}, {"red", true})
   K.team(130, 128, -1, {"light"}, {"dark", true})
   K.line(136, 117, 160, 121, "deep")
-  for i = 0, 6 do K.px(178 + i * 6, 137 + (i % 2), "haze") end
+  -- shallow, muddy water; it's the slick banks that stop wagons here
+  K.wade(174, 224, 137, 5, "teal", "haze")
   -- teamster with a whip on the far bank, a man shoving the rear wheel
   K.person(116, 124, "blue", "deep")
   K.line(118, 112, 106, 106, "deep")

@@ -494,6 +494,36 @@ function K.person(x, y, coat, hat, skirt)
   end
 end
 
+-- Water lapping over feet and wheels from x0 to x1 at ground line y, `depth` pixels deep
+-- (5 is about knee-deep at figure scale). Draw it after the figures that stand in the water.
+function K.wade(x0, x1, y, depth, water, light)
+  water, light = water or "blue", light or "light_blue"
+  depth = depth or 3
+  for x = x0 - 3, x1 + 3 do
+    -- taper at the ends so the water meets the scene's river without a hard edge
+    local edge = math.min(x - (x0 - 3), (x1 + 3) - x)
+    local d = math.min(depth, edge + 1)
+    if d > 0 then
+      for yy = y - d + 1, y + 1 + ((edge > 2) and 1 or 0) do px(x, yy, water) end
+      if (x + y) % 3 ~= 0 then px(x, y - d, light) end
+      if K.rnd(6) == 0 then px(x, y - d, "white") end
+      if K.rnd(4) == 0 then px(x, y - d + 2, light) end
+    end
+  end
+  rect(x0 - 6, y, 3, 1, "white"); rect(x1 + 4, y, 4, 1, light)
+end
+
+-- A distant wagon and team about 20 px long, for showing scale against big landforms.
+function K.far_wagon(x, y, facing)
+  local ox = (facing == -1) and x - 9 or x + 11
+  K.rect(x, y - 6, 10, 3, "blue"); K.rect(x, y - 10, 10, 4, "cream"); K.px(x, y - 10, "white")
+  K.rect(x + 9, y - 9, 1, 3, "clap_sh")
+  K.rect(x + 1, y - 3, 2, 2, "deep"); K.rect(x + 7, y - 3, 2, 2, "deep")
+  K.rect(ox, y - 5, 8, 3, "ox_dk"); K.px(ox + ((facing == -1) and 0 or 7), y - 6, "ox_dk")
+  K.rect(ox + 1, y - 2, 1, 2, "deep"); K.rect(ox + 6, y - 2, 1, 2, "deep")
+  K.rect(x, y - 1, 19, 1, "shadow")
+end
+
 function K.barrel(x, y)
   rect(x, y - 7, 6, 7, "wood"); rect(x + 1, y - 7, 2, 7, "rust")
   rect(x, y - 6, 6, 1, "ink"); rect(x, y - 2, 6, 1, "ink")
