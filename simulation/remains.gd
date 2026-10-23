@@ -28,6 +28,10 @@ static func whole(value: Variant,low: int,high: int) -> bool:
 static func sync(game,lost: bool=false) -> void:
 	var crime=game.crime
 	if not crime.record.has("remains"):return
+	# Death or departure after the morning meal must not leave a standing order
+	# attached to an inactive traveler until tomorrow (including terminal saves).
+	for key in crime.record.meals.keys():
+		if not game.party_health.is_active(game.party_health.members[int(key)]):crime.record.meals.erase(key)
 	var known: Array=crime.record.remains.map(func(entry):return entry.person)
 	for member in game.party_health.members:
 		var uid: String=crime.person_id(int(game.state.seed),int(member.id))
@@ -128,7 +132,7 @@ static func menu(game) -> Dictionary:
 	choices.append(option("Back","back",0))
 	return {"id":"remains","remains_menu":true,"service_menu":true,"title":"The dead","text":"\n".join(lines) if not lines.is_empty() else "Nobody's remains are within reach.","choices":choices}
 
-static func salt_needed(game,item: Dictionary) -> int:return ceili(int(item.pounds)*float(game.provisions.data.preservation.salt_per_food_lb))
+static func salt_needed(game,item: Dictionary) -> int:return ceili(int(item.pounds)*game.provisions.mass_ratio(item)*float(game.provisions.data.preservation.salt_per_food_lb))
 
 static func can_choose(game,command: String,id: int,member: int=-1) -> bool:
 	if command=="back":return true
@@ -217,9 +221,9 @@ static func butcher(game,item: Dictionary,secret: bool) -> void:
 	var rules: Dictionary=game.crime.remains_rules
 	var day: int=int(game.state.day)
 	item.state="processed"
-	var meat: Dictionary={"remains":int(item.id),"pounds":int(rules.yield_lb),"expires":day+1+int(game.provisions.data.fresh_days)+1,"preserved":false,"known":[0]}
+	var meat: Dictionary={"remains":int(item.id),"pounds":game.provisions.meat_units(int(rules.yield_lb)),"mass_ratio":float(rules.yield_lb)/game.provisions.meat_units(int(rules.yield_lb)),"expires":day+1+int(game.provisions.data.fresh_days)+1,"preserved":false,"known":[0]}
 	game.crime.record.human_food.append(meat)
-	game.journal.append("Day %d · Butchered %s's remains%s: %d ration-lb of fresh meat, kept apart from the ordinary food." % [day,item.name," in secret" if secret else "",int(rules.yield_lb)])
+	game.journal.append("Day %d · Butchered %s's remains%s: %d ration-lb of fresh meat, kept apart from the ordinary food." % [day,item.name," in secret" if secret else "",int(meat.pounds)])
 	for member in game.party_health.members:
 		var slot: int=int(member.id)
 		if slot==0 or not game.party_health.is_active(member):continue
@@ -258,6 +262,7 @@ static func preserve(game,meat: Dictionary,salted: bool) -> void:
 	if int(game.state.salt)<salt:return
 	game.state.salt-=salt
 	meat.pounds=floori(before*float(rules.salted_retained_food if salted else rules.retained_food))
+	meat.mass_ratio=game.provisions.mass_ratio(meat)*float(rules.dried_weight)
 	meat.preserved=true
 	meat.expires=int(game.state.day)+int(rules.salted_days if salted else rules.days)+1
 	game.journal.append("Day %d · %s the meat from %s: %d ration-lb became %d; %d lb salt used. It is still human meat and stays apart." % [game.state.day,"Salted and dried" if salted else "Dried",entry(game,int(meat.remains)).name,before,meat.pounds,salt])
@@ -377,7 +382,7 @@ static func valid(r: Dictionary,game) -> bool:
 
 static func weight_of(r: Dictionary,game) -> int:
 	var pounds: int=r.remains.filter(func(item):return item.state=="carried").size()*int(game.crime.remains_rules.body_lb)
-	for item in r.human_food:pounds+=ceili(int(item.pounds)*(float(game.provisions.data.preservation.dried_weight) if item.preserved else 1.0))
+	for item in r.human_food:pounds+=ceili(int(item.pounds)*game.provisions.mass_ratio(item))
 	return pounds
 
 ## One batch per butchered body, never more than it yielded; each eater either knows where every batch came from or knows of none.
@@ -390,9 +395,11 @@ static func valid_food(r: Dictionary,game) -> bool:
 	var sources: Array=[]
 	var members: Array=game.party_health.members
 	for meat in batches:
-		if not meat is Dictionary or meat.size()!=5 or not whole(meat.get("remains"),1,r.remains.size()) or int(meat.remains) in sources or r.remains[int(meat.remains)-1].state!="processed":return false
+		if not meat is Dictionary or meat.size() not in [5,6] or not whole(meat.get("remains"),1,r.remains.size()) or int(meat.remains) in sources or r.remains[int(meat.remains)-1].state!="processed":return false
 		sources.append(int(meat.remains))
 		if not whole(meat.get("pounds"),1,int(game.crime.remains_rules.yield_lb)) or not meat.get("preserved") is bool:return false
+		if not game.provisions.valid_mass_ratio(meat):return false
+		if int(meat.pounds)*game.provisions.mass_ratio(meat)>float(game.crime.remains_rules.yield_lb)+0.001:return false
 		var longest: int=int(rules.salted_days) if meat.preserved else int(game.provisions.data.fresh_days)+1
 		if not whole(meat.get("expires"),day+1,day+longest+1):return false
 		if not meat.get("known") is Array or meat.known.is_empty() or meat.known[0]!=0:return false

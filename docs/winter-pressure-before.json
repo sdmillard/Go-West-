@@ -1,0 +1,600 @@
+{
+	"policy": "Same weather seed for every terrain/month; 36 independent monthly scenario samples, not chronological annual climate. Healthy six-ox team, zero fatigue, before cargo. Month-specific ground factor included where implemented. Authored model comparison, not historical climate reconstruction.",
+	"rows": [
+		{
+			"mean_movement_factor": 0.908929999999994,
+			"month": 1,
+			"season": {
+
+			},
+			"terrain": "plains",
+			"weather": {
+				"blizzard": 66,
+				"clear": 283,
+				"cold": 403,
+				"fog": 58,
+				"hail": 27,
+				"heavy_rain": 42,
+				"rain": 121
+			}
+		},
+		{
+			"mean_movement_factor": 0.911514999999996,
+			"month": 2,
+			"season": {
+
+			},
+			"terrain": "plains",
+			"weather": {
+				"blizzard": 53,
+				"clear": 297,
+				"cold": 355,
+				"fog": 73,
+				"hail": 31,
+				"heavy_rain": 51,
+				"rain": 140
+			}
+		},
+		{
+			"mean_movement_factor": 0.93247,
+			"month": 3,
+			"season": {
+
+			},
+			"terrain": "plains",
+			"weather": {
+				"blizzard": 35,
+				"clear": 426,
+				"cold": 172,
+				"fog": 86,
+				"hail": 33,
+				"heavy_rain": 81,
+				"rain": 167
+			}
+		},
+		{
+			"mean_movement_factor": 0.955845000000003,
+			"month": 4,
+			"season": {
+
+			},
+			"terrain": "plains",
+			"weather": {
+				"clear": 497,
+				"cold": 75,
+				"fog": 104,
+				"hail": 32,
+				"heavy_rain": 98,
+				"rain": 194
+			}
+		},
+		{
+			"mean_movement_factor": 0.942205000000004,
+			"month": 5,
+			"season": {
+
+			},
+			"terrain": "plains",
+			"weather": {
+				"clear": 494,
+				"cold": 22,
+				"fog": 124,
+				"hail": 41,
+				"heavy_rain": 121,
+				"rain": 198
+			}
+		},
+		{
+			"mean_movement_factor": 0.946935000000004,
+			"month": 6,
+			"season": {
+
+			},
+			"terrain": "plains",
+			"weather": {
+				"clear": 510,
+				"fog": 111,
+				"hail": 49,
+				"heavy_rain": 125,
+				"rain": 205
+			}
+		},
+		{
+			"mean_movement_factor": 0.946935000000004,
+			"month": 7,
+			"season": {
+
+			},
+			"terrain": "plains",
+			"weather": {
+				"clear": 510,
+				"fog": 111,
+				"hail": 49,
+				"heavy_rain": 125,
+				"rain": 205
+			}
+		},
+		{
+			"mean_movement_factor": 0.946935000000004,
+			"month": 8,
+			"season": {
+
+			},
+			"terrain": "plains",
+			"weather": {
+				"clear": 510,
+				"fog": 111,
+				"hail": 49,
+				"heavy_rain": 125,
+				"rain": 205
+			}
+		},
+		{
+			"mean_movement_factor": 0.952985000000003,
+			"month": 9,
+			"season": {
+
+			},
+			"terrain": "plains",
+			"weather": {
+				"clear": 506,
+				"cold": 39,
+				"fog": 105,
+				"hail": 35,
+				"heavy_rain": 114,
+				"rain": 201
+			}
+		},
+		{
+			"mean_movement_factor": 0.954029999999999,
+			"month": 10,
+			"season": {
+
+			},
+			"terrain": "plains",
+			"weather": {
+				"clear": 444,
+				"cold": 156,
+				"fog": 89,
+				"hail": 36,
+				"heavy_rain": 86,
+				"rain": 189
+			}
+		},
+		{
+			"mean_movement_factor": 0.919764999999997,
+			"month": 11,
+			"season": {
+
+			},
+			"terrain": "plains",
+			"weather": {
+				"blizzard": 48,
+				"clear": 344,
+				"cold": 293,
+				"fog": 78,
+				"hail": 23,
+				"heavy_rain": 61,
+				"rain": 153
+			}
+		},
+		{
+			"mean_movement_factor": 0.903374999999994,
+			"month": 12,
+			"season": {
+
+			},
+			"terrain": "plains",
+			"weather": {
+				"blizzard": 73,
+				"clear": 272,
+				"cold": 421,
+				"fog": 55,
+				"hail": 26,
+				"heavy_rain": 45,
+				"rain": 108
+			}
+		},
+		{
+			"mean_movement_factor": 0.708840000000005,
+			"month": 1,
+			"season": {
+
+			},
+			"terrain": "mountains",
+			"weather": {
+				"blizzard": 98,
+				"clear": 197,
+				"cold": 550,
+				"fog": 38,
+				"hail": 13,
+				"heavy_rain": 34,
+				"rain": 70
+			}
+		},
+		{
+			"mean_movement_factor": 0.716056000000005,
+			"month": 2,
+			"season": {
+
+			},
+			"terrain": "mountains",
+			"weather": {
+				"blizzard": 83,
+				"clear": 218,
+				"cold": 496,
+				"fog": 42,
+				"hail": 21,
+				"heavy_rain": 38,
+				"rain": 102
+			}
+		},
+		{
+			"mean_movement_factor": 0.735108000000004,
+			"month": 3,
+			"season": {
+
+			},
+			"terrain": "mountains",
+			"weather": {
+				"blizzard": 52,
+				"clear": 339,
+				"cold": 299,
+				"fog": 70,
+				"hail": 22,
+				"heavy_rain": 63,
+				"rain": 155
+			}
+		},
+		{
+			"mean_movement_factor": 0.758516000000004,
+			"month": 4,
+			"season": {
+
+			},
+			"terrain": "mountains",
+			"weather": {
+				"blizzard": 2,
+				"clear": 378,
+				"cold": 263,
+				"fog": 73,
+				"hail": 41,
+				"heavy_rain": 78,
+				"rain": 165
+			}
+		},
+		{
+			"mean_movement_factor": 0.764148000000003,
+			"month": 5,
+			"season": {
+
+			},
+			"terrain": "mountains",
+			"weather": {
+				"blizzard": 2,
+				"clear": 432,
+				"cold": 186,
+				"fog": 71,
+				"hail": 35,
+				"heavy_rain": 94,
+				"rain": 180
+			}
+		},
+		{
+			"mean_movement_factor": 0.762652000000003,
+			"month": 6,
+			"season": {
+
+			},
+			"terrain": "mountains",
+			"weather": {
+				"blizzard": 3,
+				"clear": 441,
+				"cold": 158,
+				"fog": 83,
+				"hail": 37,
+				"heavy_rain": 87,
+				"rain": 191
+			}
+		},
+		{
+			"mean_movement_factor": 0.762652000000003,
+			"month": 7,
+			"season": {
+
+			},
+			"terrain": "mountains",
+			"weather": {
+				"blizzard": 3,
+				"clear": 441,
+				"cold": 158,
+				"fog": 83,
+				"hail": 37,
+				"heavy_rain": 87,
+				"rain": 191
+			}
+		},
+		{
+			"mean_movement_factor": 0.762652000000003,
+			"month": 8,
+			"season": {
+
+			},
+			"terrain": "mountains",
+			"weather": {
+				"blizzard": 3,
+				"clear": 441,
+				"cold": 158,
+				"fog": 83,
+				"hail": 37,
+				"heavy_rain": 87,
+				"rain": 191
+			}
+		},
+		{
+			"mean_movement_factor": 0.764280000000004,
+			"month": 9,
+			"season": {
+
+			},
+			"terrain": "mountains",
+			"weather": {
+				"blizzard": 2,
+				"clear": 426,
+				"cold": 211,
+				"fog": 71,
+				"hail": 40,
+				"heavy_rain": 85,
+				"rain": 165
+			}
+		},
+		{
+			"mean_movement_factor": 0.752796000000004,
+			"month": 10,
+			"season": {
+
+			},
+			"terrain": "mountains",
+			"weather": {
+				"blizzard": 5,
+				"clear": 331,
+				"cold": 319,
+				"fog": 76,
+				"hail": 35,
+				"heavy_rain": 67,
+				"rain": 167
+			}
+		},
+		{
+			"mean_movement_factor": 0.719664000000005,
+			"month": 11,
+			"season": {
+
+			},
+			"terrain": "mountains",
+			"weather": {
+				"blizzard": 79,
+				"clear": 264,
+				"cold": 429,
+				"fog": 53,
+				"hail": 27,
+				"heavy_rain": 42,
+				"rain": 106
+			}
+		},
+		{
+			"mean_movement_factor": 0.708840000000005,
+			"month": 12,
+			"season": {
+
+			},
+			"terrain": "mountains",
+			"weather": {
+				"blizzard": 98,
+				"clear": 197,
+				"cold": 550,
+				"fog": 38,
+				"hail": 13,
+				"heavy_rain": 34,
+				"rain": 70
+			}
+		},
+		{
+			"mean_movement_factor": 0.803929500000002,
+			"month": 1,
+			"season": {
+
+			},
+			"terrain": "forest",
+			"weather": {
+				"blizzard": 68,
+				"clear": 237,
+				"cold": 401,
+				"fog": 64,
+				"hail": 22,
+				"heavy_rain": 68,
+				"rain": 140
+			}
+		},
+		{
+			"mean_movement_factor": 0.804820500000002,
+			"month": 2,
+			"season": {
+
+			},
+			"terrain": "forest",
+			"weather": {
+				"blizzard": 56,
+				"clear": 252,
+				"cold": 356,
+				"fog": 79,
+				"hail": 25,
+				"heavy_rain": 83,
+				"rain": 149
+			}
+		},
+		{
+			"mean_movement_factor": 0.816007500000002,
+			"month": 3,
+			"season": {
+
+			},
+			"terrain": "forest",
+			"weather": {
+				"blizzard": 37,
+				"clear": 334,
+				"cold": 173,
+				"fog": 102,
+				"hail": 30,
+				"heavy_rain": 102,
+				"rain": 222
+			}
+		},
+		{
+			"mean_movement_factor": 0.835411500000003,
+			"month": 4,
+			"season": {
+
+			},
+			"terrain": "forest",
+			"weather": {
+				"blizzard": 3,
+				"clear": 400,
+				"cold": 76,
+				"fog": 115,
+				"hail": 36,
+				"heavy_rain": 123,
+				"rain": 247
+			}
+		},
+		{
+			"mean_movement_factor": 0.839817000000003,
+			"month": 5,
+			"season": {
+
+			},
+			"terrain": "forest",
+			"weather": {
+				"clear": 432,
+				"cold": 24,
+				"fog": 122,
+				"hail": 46,
+				"heavy_rain": 115,
+				"rain": 261
+			}
+		},
+		{
+			"mean_movement_factor": 0.831897000000003,
+			"month": 6,
+			"season": {
+
+			},
+			"terrain": "forest",
+			"weather": {
+				"clear": 423,
+				"fog": 142,
+				"hail": 37,
+				"heavy_rain": 125,
+				"rain": 273
+			}
+		},
+		{
+			"mean_movement_factor": 0.831897000000003,
+			"month": 7,
+			"season": {
+
+			},
+			"terrain": "forest",
+			"weather": {
+				"clear": 423,
+				"fog": 142,
+				"hail": 37,
+				"heavy_rain": 125,
+				"rain": 273
+			}
+		},
+		{
+			"mean_movement_factor": 0.831897000000003,
+			"month": 8,
+			"season": {
+
+			},
+			"terrain": "forest",
+			"weather": {
+				"clear": 423,
+				"fog": 142,
+				"hail": 37,
+				"heavy_rain": 125,
+				"rain": 273
+			}
+		},
+		{
+			"mean_movement_factor": 0.838678500000003,
+			"month": 9,
+			"season": {
+
+			},
+			"terrain": "forest",
+			"weather": {
+				"clear": 426,
+				"cold": 41,
+				"fog": 116,
+				"hail": 41,
+				"heavy_rain": 129,
+				"rain": 247
+			}
+		},
+		{
+			"mean_movement_factor": 0.833580000000002,
+			"month": 10,
+			"season": {
+
+			},
+			"terrain": "forest",
+			"weather": {
+				"blizzard": 1,
+				"clear": 351,
+				"cold": 158,
+				"fog": 106,
+				"hail": 26,
+				"heavy_rain": 122,
+				"rain": 236
+			}
+		},
+		{
+			"mean_movement_factor": 0.810463500000002,
+			"month": 11,
+			"season": {
+
+			},
+			"terrain": "forest",
+			"weather": {
+				"blizzard": 51,
+				"clear": 291,
+				"cold": 291,
+				"fog": 79,
+				"hail": 23,
+				"heavy_rain": 99,
+				"rain": 166
+			}
+		},
+		{
+			"mean_movement_factor": 0.806553000000002,
+			"month": 12,
+			"season": {
+
+			},
+			"terrain": "forest",
+			"weather": {
+				"blizzard": 73,
+				"clear": 250,
+				"cold": 418,
+				"fog": 64,
+				"hail": 11,
+				"heavy_rain": 59,
+				"rain": 125
+			}
+		}
+	],
+	"samples_per_row": 1000
+}

@@ -49,7 +49,7 @@ func run():
 	game.start_hunt()
 	game.hunt_shot(-1)
 	check(is_equal_approx(game.hunt.reload,game.hunting.data.reload_seconds*0.8) and game.hunt.shots==1,"Actual hunt reload is shortened without extra shots")
-	check(game.hunting.data.carry_limit==100,"Hunter leaves classic retrieval limit unchanged")
+	check(game.hunting.data.carry_limit==200,"Hunter leaves shared party retrieval cap unchanged")
 	game=outfit()
 	game.characters.profiles[1].skill="Carpentry"
 	encounter(game,"breakdown")

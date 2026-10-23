@@ -1,0 +1,20 @@
+{
+  "reviewed": "2026-10-22",
+  "setting_year": 1848,
+  "purpose": "Dated price comparisons and explicit assumptions for the five-cent departure food estimate; not a recovered Independence tariff.",
+  "sources": {
+    "guardian_march": {"url":"https://byustudies.byu.edu/online-book/the-frontier-guardian/march-20-1850-volume-2-number-4-146","date":"1850-03-20","place":"Kanesville","section":"page 3 column 4, Kanesville Market","type":"primary newspaper in scholarly transcription","limits":"Two years after setting and a different departure market. Published quotations, not evidence that every buyer obtained unlimited quantities."},
+    "guardian_may": {"url":"https://byustudies.byu.edu/online-book/the-frontier-guardian/may-1-1850-volume-2-number-7-146","date":"1850-05-01","place":"Kanesville","section":"page 3 column 4, Kanesville Market","type":"primary newspaper in scholarly transcription","limits":"Shortage comparison after setting. The paper attributes high prices to demand, cold weather and animal feed scarcity; not a permanent universal price multiplier."},
+    "merchants_1848": {"url":"https://fraser.stlouisfed.org/files/docs/publications/merchmag/merchmag_v20_184904.pdf","publication_date":"1849-04","observation_year":1848,"place":"St. Louis","local":"local/history/merchants-1849-04.pdf","sha256":"f95023f184d7f030d3b74d6810d2df2c7cf9ce1a645a907901a36506c24ef3d8","section":"printed p438, PDF page87, visually verified","type":"contemporary commercial statistics","observation":"Values flour at $4.25/barrel for an estimated annual produce-receipts total.","limits":"Valuation for aggregate trade, not a departure-store retail quote. Do not treat package prices as per-pound quotes or trust misaligned OCR sums."},
+    "palmer": {"url":"https://www.gutenberg.org/cache/epub/46906/pg46906-images.html#NECESSARY_OUTFITS_FOR_EMIGRANTS","date":"1847 guide in 1906 reprint","section":"pp258-263","limits":"One guide's advice and reported prices, not a representative survey. Existing source hash is in ECONOMY_PRESERVATION_SOURCES.json."},
+    "marcy": {"url":"https://www.gutenberg.org/cache/epub/23066/pg23066-images.html","date":"1859","section":"chapter I provisions; chapter V jerking meat","limits":"Later expedition advice; not an 1848 family diet, validated recipe, or source of exact game probabilities."},
+    "fao_composition": {"url":"https://www.fao.org/4/x9892e/X9892e05.htm","section":"Annex I, food composition per100g as purchased","observation":{"wheat_flour_kcal_100g":364,"game_meat_kcal_100g":104},"limits":"Modern broad food groups in as-purchased weights; not field-recovered species-specific edible yields or a complete nutritional model."}
+  },
+  "comparison_basket_lb": {"flour":200,"bacon":75,"sugar":25,"rice":10},
+  "basket_limits": "A deliberately partial 310-lb comparison using four weighed foods from the earlier guide, not a complete outfit. Omits pilot bread, beans, fruit, coffee, tea, salt and other goods. The blend is not the exact recipe of every in-game food unit.",
+  "markets": [
+    {"source":"guardian_march","dollars_per_lb":{"flour":["0.025","0.0275"],"bacon":["0.06","0.06"],"sugar":["0.09","0.10"],"rice":["0.08","0.08"]}},
+    {"source":"guardian_may","dollars_per_lb":{"flour":["0.06","0.065"],"bacon":["0.08","0.09"],"sugar":["0.09","0.10"],"rice":["0.08","0.08"]}}
+  ],
+  "decision": {"departure_dollars_per_food_unit":"0.05","basis":"An authored nominal-dollar mixed-provision estimate above the March partial basket and below the later shortage comparison. Broader provisions, preparation and local merchant variation justify a provisional allowance; no exact historical markup is claimed.","funds":"Retain $600/$900/$1400 asset-sale/difficulty scenarios with wagon, gun and basic gear owned. Historical household wealth has not established exact profession-specific starting cash. Do not increase funds to cancel costs.","unchanged":"Rations, yields, spoilage, travel, wages, resupply offers, event odds and cargo quantities are unchanged in this pass."}
+}

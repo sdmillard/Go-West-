@@ -89,7 +89,7 @@ func run() -> void:
 		injuries_mild = injuries_mild and patient.conditions[0].severity == 1
 	check("broken_arm" in injury_types and "broken_leg" in injury_types and injuries_mild, "Accidents can injure either limb independently of the nutrition-severity formula")
 	var game = outfit()
-	check(game.state.medicine == 4 and is_equal_approx(game.state.money, 1064.0), "Care kits are purchased and charged at departure")
+	check(game.state.medicine == 4 and is_equal_approx(game.state.money, 1070.0), "Care kits are purchased and charged at departure")
 	var dry = outfit(1)
 	var wet = outfit(1)
 	wet.survival.forced_weather = "heavy_rain"
@@ -182,7 +182,7 @@ func run() -> void:
 		game.advance_hunt(1.5)
 		check(game.hunt_shot(target), "Distinct available target resolves after reload")
 	check(not game.hunt_shot(0) and game.state.bullets == ammo - 4, "Already-taken target cannot duplicate meat or ammunition use")
-	check(game.finish_hunt() and game.state.food == food - 15 + 100, "Hunt carries back at most 100 lb")
+	check(game.finish_hunt() and game.state.food == food - 15 + 100, "Healthy willing party hauls up to two hundred physical pounds for one hundred meal units")
 	before = game.state.duplicate(true)
 	check(not game.finish_hunt() and game.state == before, "Finishing hunting twice cannot duplicate food or time")
 	game = outfit()

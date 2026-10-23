@@ -125,6 +125,8 @@ func run():
 	check(profile.contract.arrears_cents==debt and game.characters.pay_wages(game,1),"Left mercenary stops accruing but can receive final debt at the same settlement")
 	check(game.party_health.members[1].get("departed",false),"Final payment does not silently rehire")
 	game=angry()
+	for member in game.party_health.members:member.health=100
+	game.state.health=100
 	game.state.vehicle="foot"
 	game.state.food=89
 	game.state.bullets=10
@@ -152,6 +154,8 @@ func run():
 	game=outfit()
 	game.characters.profiles[1].trust=20
 	game.characters.review_exit(game,game.characters.profiles[1])
+	for member in game.party_health.members:member.health=100
+	game.state.health=100
 	check(game.abandon_wagon({"food":90,"clothing":5,"bullets":10}),"Cache integration test packs a valid walking party")
 	stop(game)
 	var cache: Dictionary=game.wagon_cache.duplicate(true)

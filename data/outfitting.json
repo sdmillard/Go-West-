@@ -27,8 +27,8 @@
     },
     {
       "id": "food",
-      "label": "FOOD  $0.06 / LB",
-      "price_cents": 6,
+      "label": "FOOD  $0.05 / LB",
+      "price_cents": 5,
       "maximum": 2000,
       "step": 25,
       "suggested": 1700

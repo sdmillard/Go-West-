@@ -4,6 +4,8 @@ extends RefCounted
 var data: Dictionary = {}
 var error := ""
 var fresh: Array[Dictionary] = []
+var carriers: Array[Dictionary] = []
+const Carrying=preload("res://simulation/carrying.gd")
 func _init() -> void:
 	load_data(JSON.parse_string(FileAccess.get_file_as_string("res://data/provisions.json")))
 func load_data(value: Variant) -> bool:
@@ -42,6 +44,7 @@ func load_data(value: Variant) -> bool:
 		if not number(amount) or amount <= previous or amount != int(amount):
 			return false
 		previous = int(amount)
+	if not number(value.get("meat_food_per_lb")) or value.meat_food_per_lb<=0 or value.meat_food_per_lb>1:return false
 	data = value.duplicate(true)
 	error = ""
 	return true
@@ -56,7 +59,7 @@ func cargo(inventory: Dictionary) -> float:
 		pounds += maxf(0, float(inventory.get(key, 0))) * float(data.weights_lb[key])
 	# Food is staple-equivalent ration weight. Dried meat supplies the same
 	# retained meals with less physical cargo; water loss is not calorie loss.
-	pounds -= preserved_pounds(int(inventory.get("food",0))) * (1.0-float(data.preservation.dried_weight))
+	pounds += tracked_mass(int(inventory.get("food",0)))-tracked_food(int(inventory.get("food",0)))
 	return snappedf(pounds, 0.1)
 func cart_cargo(cart: Dictionary) -> float:
 	var inventory := cart.duplicate()
@@ -65,7 +68,8 @@ func cart_cargo(cart: Dictionary) -> float:
 func team_capacity(oxen: int) -> float:
 	return minf(float(data.cargo_guideline_lb),maxi(0,oxen)*float(data.working_load_per_ox_lb))
 func capacity(inventory: Dictionary) -> float:
-	return float(data.walking.carry_lb_per_person)*int(inventory.party_size) if inventory.get("vehicle","")=="foot" else team_capacity(int(inventory.oxen))
+	if inventory.get("vehicle","")!="foot":return team_capacity(int(inventory.oxen))
+	return Carrying.capacity(carriers,float(data.walking.carry_lb_per_person)) if not carriers.is_empty() else float(data.walking.carry_lb_per_person)*int(inventory.party_size)
 func storage_capacity(inventory: Dictionary) -> float:
 	return capacity(inventory) if inventory.get("vehicle","")=="foot" else float(data.cargo_guideline_lb)
 func movement_factor(pounds: float, oxen: int = 4) -> float:
@@ -84,24 +88,70 @@ func preserved_pounds(total: int) -> int:
 	for batch in fresh:
 		if batch.get("preserved",false):count += int(batch.pounds)
 	return mini(total,count)
-func preservable_next_day(day: int, total: int, meal: int) -> int:
-	var count := 0
+func tracked_food(total: int) -> int:
+	return mini(total,fresh_pounds(total)+preserved_pounds(total))
+func mass_ratio(batch: Dictionary) -> float:
+	return float(batch.get("mass_ratio",data.preservation.dried_weight if batch.get("preserved",false) else 1.0))
+func valid_mass_ratio(batch: Dictionary) -> bool:
+	return not batch.has("mass_ratio") or (number(batch.mass_ratio) and batch.mass_ratio>=0.01 and batch.mass_ratio<=10)
+func tracked_mass(total: int) -> float:
+	var left:=total
+	var mass:=0.0
 	for batch in fresh:
-		if not batch.get("preserved",false) and batch.expires > day+1:count+=int(batch.pounds)
-	return mini(int(data.preservation.batch_lb),maxi(0,mini(total,count)-meal))
-func preserve(amount: int, day: int, salted: bool) -> Dictionary:
-	var input := maxi(0,mini(amount,fresh_pounds(2147483647)))
-	var remaining := input
+		var used:=mini(left,int(batch.pounds))
+		mass+=used*mass_ratio(batch)
+		left-=used
+	return mass
+func fresh_mass(amount: int) -> float:
+	var left:=amount
+	var mass:=0.0
 	for batch in fresh:
 		if batch.get("preserved",false):continue
-		var used := mini(remaining,int(batch.pounds))
+		var used:=mini(left,int(batch.pounds))
+		mass+=used*mass_ratio(batch)
+		left-=used
+	return mass
+func processable() -> int:
+	var room: float=data.preservation.batch_lb
+	var amount:=0
+	for batch in fresh:
+		if batch.get("preserved",false):continue
+		var used:=mini(int(batch.pounds),floori((room+0.000001)/mass_ratio(batch)))
+		amount+=used
+		room-=used*mass_ratio(batch)
+		if used<int(batch.pounds):break
+	return amount
+func preservation_plan(day: int,total: int,meal: int) -> Dictionary:
+	var model=get_script().new()
+	model.data=data.duplicate(true)
+	model.fresh.assign(fresh.duplicate(true))
+	var spoiled: int=model.spoil(day+1,total)
+	model.remove(mini(meal,maxi(0,total-spoiled)))
+	var amount: int=model.processable()
+	return {"input":amount,"mass":model.fresh_mass(amount)}
+func preservable_next_day(day: int, total: int, meal: int) -> int:
+	return int(preservation_plan(day,total,meal).input)
+func preserve(amount: int, day: int, salted: bool) -> Dictionary:
+	var input:=mini(maxi(0,amount),processable())
+	var mass:=fresh_mass(input)
+	var remaining:=input
+	for batch in fresh:
+		if batch.get("preserved",false):continue
+		var used:=mini(remaining,int(batch.pounds))
 		batch.pounds-=used
 		remaining-=used
-	fresh = fresh.filter(func(batch):return batch.pounds>0)
-	var kept := floori(input*float(data.preservation.salted_retained_food if salted else data.preservation.retained_food))
-	var expires := day+int(data.preservation.salted_days if salted else data.preservation.days)+1
-	if kept > 0:fresh.append({"pounds":kept,"expires":expires,"preserved":true})
-	return {"input":input,"kept":kept,"lost":input-kept,"expires":expires,"weight":snappedf(kept*float(data.preservation.dried_weight),0.1)}
+	fresh=fresh.filter(func(batch):return batch.pounds>0)
+	var kept:=floori(input*float(data.preservation.salted_retained_food if salted else data.preservation.retained_food))
+	var ratio: float=(mass/input if input>0 else 1.0)*float(data.preservation.dried_weight)
+	var expires:=day+int(data.preservation.salted_days if salted else data.preservation.days)+1
+	if kept>0:fresh.append({"pounds":kept,"expires":expires,"preserved":true,"mass_ratio":ratio})
+	return {"input":input,"mass":mass,"kept":kept,"lost":input-kept,"expires":expires,"weight":snappedf(kept*ratio,0.1),"salt":ceili(mass*float(data.preservation.salt_per_food_lb)) if salted else 0}
+func meat_units(physical_lb: int) -> int:
+	return maxi(1,roundi(physical_lb*float(data.meat_food_per_lb))) if physical_lb>0 else 0
+func add_meat(physical_lb: int,day: int) -> int:
+	var units:=meat_units(physical_lb)
+	if units>0:fresh.append({"pounds":units,"expires":day+int(data.fresh_days)+1,"mass_ratio":float(physical_lb)/units})
+	return units
 func remove(amount: int) -> void:
 	# Eat/remove oldest meat first, then use the undifferentiated trail staples.
 	fresh.sort_custom(func(a,b):return a.expires<b.expires)
@@ -116,6 +166,7 @@ func reconcile(total: int) -> void:
 		tracked += int(batch.pounds)
 	if tracked > total:
 		remove(tracked - total)
+# Compatibility helper for old one-pound-per-unit ledgers; new meat uses add_meat.
 func add_fresh(pounds: int, day: int) -> void:
 	if pounds > 0:
 		fresh.append({"pounds": pounds, "expires": day + int(data.fresh_days) + 1})
