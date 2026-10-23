@@ -26,6 +26,12 @@ var outfitter = Outfitting.new()
 var departure_error := ""
 ## Authored placeholder costs of a waterless leg (Palmer: "No water and but little grass between").
 const WATERLESS := {"ox_strain": 3, "thirst": 1}
+## Placeholder trouble on an unsettled road: trail events twice as likely,
+## and these encounters three times as likely among them.
+const UNREST := {"chance_factor": 2.0, "weight_factor": 3, "events": ["riders", "bandits"]}
+## Placeholder river travel: raft or boat miles per day before wind, and the
+## cost of a wreck when running the Cascades instead of portaging.
+const RIVER := {"miles": 15, "portage_days": 2, "portage_risk": 0.3, "wreck": {"food": -60, "clothing": -1, "health": -15}}
 var route = Route.new()
 # Stops reached so far, in order, from the start; records which road was taken.
 var route_path: Array = []
@@ -224,11 +230,16 @@ func _arrive_landmark() -> void:
 			var leave := {"label": road.get("label", "Continue toward " + route.nodes[road.to].name), "action": "leave"}
 			if index > 0:
 				leave["edge"] = index
+			if road.has("effects"):
+				leave["effects"] = road.effects.duplicate()
 			options.append(leave)
 	if node.get("descent",false):
 		options[0] = {"label":"Lower wagons carefully · 2 days", "action":"leave", "effects":{"days":2}}
 		if state.vehicle=="foot":options[0]={"label":"Descend carefully on foot · 1 day","action":"leave","effects":{"days":1}}
 		else:options.insert(1,{"label":"Hurry the descent · 1 day, cargo/injury risk", "action":"leave", "effects":{"days":1}, "descent_risk":0.25})
+	if node.get("portage",false):
+		options[0] = {"label":"Portage around the rapids · %d days" % int(RIVER.portage_days), "action":"leave", "effects":{"days":int(RIVER.portage_days)}}
+		options.insert(1,{"label":"Run the rapids · 1 day, risk of wreck", "action":"leave", "effects":{"days":1}, "portage_risk":float(RIVER.portage_risk)})
 	if node.has("toll_dollars"):
 		var toll := (0.0 if state.vehicle=="foot" else float(node.toll_dollars)) + float(node.get("toll_per_ox",0)) * int(state.oxen)
 		options[0].label = "Pay Barlow toll · $%.2f, then continue" % toll
@@ -275,6 +286,10 @@ func _choose_landmark(index: int) -> bool:
 	if choice.action == "cross":
 		last_crossing = {"method": choice.method, "place": route.nodes[state.landmark].name, "mishap": false, "lost": false, "stage": state.river_stage}
 	_apply(choice.get("effects", {}), "injuries", choice.get("rest", false))
+	if state.status == "traveling" and choice.has("portage_risk") and rng.randf() < float(choice.portage_risk):
+		var wreck_food: int = state.food
+		_apply(RIVER.wreck,"near drowning")
+		journal.append("Day %d · The raft breaks up in the Cascades. Lost %d lb food; the party is half drowned." % [state.day,wreck_food-int(state.food)])
 	if state.status == "traveling" and choice.has("descent_risk") and rng.randf() < choice.descent_risk:
 		var descent_food_before: int = state.food
 		var descent_wheels_before: int = state.wheels
@@ -348,7 +363,8 @@ func travel() -> bool:
 	if not _can_act():
 		return false
 	if walking_overloaded():return true
-	if state.extended_route and state.vehicle!="foot" and (state.oxen == 0 or state.ox_health == 0):
+	var on_river: bool = state.extended_route and current_edge().get("hazard","") == "river"
+	if state.extended_route and not on_river and state.vehicle!="foot" and (state.oxen == 0 or state.ox_health == 0):
 		pending = {"id": "no_team", "title": "No team to pull the wagon", "text": "Trade for an ox, rest a worn team, or abandon the wagon through Provisions / Cargo.", "choices": [{"label": "Return to camp", "effects": {}, "result": "The wagon stays in camp."}]}
 		return true
 	var pace_miles: int = int(survival.data.pace_miles[state.pace]) if state.extended_route else PACE_MILES[state.pace]
@@ -361,11 +377,13 @@ func travel() -> bool:
 			state.vehicle = "wagon"
 			journal.append("The Corolla is out of fuel. You unhitch the wagon and continue with oxen.")
 	if state.extended_route:
-		_tick_day(false, true)
+		# On the river the current carries the party; the team rides or is driven alongside.
+		_tick_day(false, not on_river)
 		if state.status != "traveling":
 			return true
 		if walking_overloaded():return true
-		if state.vehicle=="foot":distance=walking_distance()
+		if on_river:distance=maxi(1,roundi((int(RIVER.miles)+rng.randi_range(-2,2))*float(survival.weather.speed)))
+		elif state.vehicle=="foot":distance=walking_distance()
 		else:distance = maxi(1, roundi(distance * survival.movement_factor(state.oxen, state.ox_health, state.fatigue, 0, state.terrain, int(calendar().month), context.region(self)) * provisions.movement_factor(provisions.cargo(state),int(state.oxen))))
 		distance = mini(distance, state.leg_length - state.leg_miles)
 		state.leg_miles += distance
@@ -600,7 +618,7 @@ func _schedule_event(allow_random: bool = true) -> void:
 		var event := roll_absurd(rng.randf())
 		if not event.is_empty():
 			_present(event)
-	if allow_random and state.extended_route and pending.is_empty() and survival.rng.randf() < survival.data.event_chance:
+	if allow_random and state.extended_route and pending.is_empty() and survival.rng.randf() < survival.data.event_chance * (float(UNREST.chance_factor) if current_edge().get("hazard","")=="unrest" else 1.0):
 		_roll_trail_event()
 
 func roll_absurd(roll: float) -> Dictionary:
@@ -627,10 +645,16 @@ func _roll_trail_event() -> void:
 		if state.vehicle=="foot" and event.id in ["breakdown","wagon_fire","swamped_load"]:continue
 		if state.oxen==0 and event.id=="ox_injury":continue
 		if state.oxen<2 and event.id=="stampede":continue
+		if current_edge().get("hazard","")=="river" and event.id in ["breakdown","ox_injury","wandering_ox","stampede"]:continue
 		if not survival.eligible(event, state.day) or (event.id == "wandering_ox" and state.oxen == 0):
 			continue
-		candidates.append(event)
-		weight += int(event.weight)
+		var weighted: Dictionary=event
+		# Unsettled country (the Cayuse War detour): more trouble on the road.
+		if current_edge().get("hazard","")=="unrest" and event.id in UNREST.events:
+			weighted=event.duplicate(true)
+			weighted.weight=int(event.weight)*int(UNREST.weight_factor)
+		candidates.append(weighted)
+		weight += int(weighted.weight)
 	if weight == 0:
 		return
 	var roll: int = survival.rng.randi_range(1, weight)

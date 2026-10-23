@@ -37,7 +37,7 @@ func load_data(data: Variant) -> bool:
 			return _fail("Invalid regional terrain.")
 		if node.get("river_source","rain") not in ["rain","snowmelt"]:
 			return _fail("Invalid river source.")
-		for key in ["trade_bulk","descent"]:
+		for key in ["trade_bulk","descent","portage"]:
 			if node.has(key) and not node[key] is bool:
 				return _fail("Invalid landmark activity flag.")
 		for key in ["toll_dollars","toll_per_ox","bulk_food_cents"]:
@@ -66,7 +66,9 @@ func load_data(data: Variant) -> bool:
 				return _fail("Invalid road destination or distance.")
 			if not is_finite(float(edge.miles)) or edge.miles <= 0 or edge.miles != floor(edge.miles):
 				return _fail("Road distance must be positive whole miles.")
-			if edge.to in targets or (edge.has("label") and (not edge.label is String or edge.label.is_empty())) or edge.get("hazard", "") not in ["", "waterless"]:
+			if edge.to in targets or (edge.has("label") and (not edge.label is String or edge.label.is_empty())) or edge.get("hazard", "") not in ["", "waterless", "river", "unrest"]:
+				return _fail("Invalid road choice.")
+			if edge.has("effects") and (not edge.effects is Dictionary or edge.effects.keys() != ["days"] or not (edge.effects.days is int or edge.effects.days is float) or edge.effects.days != floor(edge.effects.days) or edge.effects.days < 1 or edge.effects.days > 5):
 				return _fail("Invalid road choice.")
 			targets.append(edge.to)
 	if ends.size() != 1:

@@ -10,7 +10,7 @@ October 23, 2026. Third part of the expanded mechanics, after [Disease](DISEASE.
 - `game.route_path` records the stops actually reached. It is saved as a top-level `route_path` field and validated against real roads; older saves are placed on the main road. Walking back to an abandoned wagon retraces the road actually taken.
 - `destination()` is the journey length along the road taken so far plus the main road onward, so the progress bar and guide-mile total follow the choice.
 - Crime news distances use `route.node_miles()`: branch stops take their branch distance.
-- A road may carry `"hazard": "waterless"`: each day on that leg the team takes 3 extra strain points when working and gets no grazing recovery, and every traveler loses 1 health to thirst. These are placeholders.
+- A road may carry `"hazard": "waterless"` (or `river`, `unrest`, below): each day on that leg the team takes 3 extra strain points when working and gets no grazing recovery, and every traveler loses 1 health to thirst. These are placeholders.
 
 ## Greenwood's Cutoff (Little Sandy to Soda Springs)
 
@@ -23,6 +23,22 @@ Palmer's 1847 table (rows 50–53) gives both roads from the Little Sandy: the n
 
 The cutoff saves 55 guide miles and skips Fort Bridger's post. Its crossing is a new snow-fed river stop, `greenwood_cutoff`, with no ferry. The name "Sublette Cutoff" belongs to 1849 and later, so the game uses Greenwood's name. The Aseprite thread supplied the location picture.
 
+## The Columbia by raft (The Dalles to Oregon City)
+
+At The Dalles the Barlow road stays first. The second choice builds a raft (3 days) and floats the Columbia:
+
+| Leg | Miles | Basis |
+| --- | ---: | --- |
+| The Dalles to the Cascades (`columbia_raft`) | 40 | NPS: the river "flowed smoothly for about forty miles" below The Dalles |
+| Cascades to Oregon City | 76 | 6 miles of rapids (NPS) + about 44 to the Willamette's mouth + about 26 up the Willamette to the falls (modern river-mile estimates, authored) |
+
+The river route totals 1,894 guide miles against 1,938 by the Barlow road, and it avoids the Barlow toll and Laurel Hill.
+
+- Road hazard `river`: the current carries the party at about 15 miles a day times the day's weather speed (wind). The team does not pull, a party with no oxen can still float, and wagon and ox trail events are skipped. In reality livestock were usually driven along trails; the game keeps the animals with the party.
+- The Cascades stop (`portage` flag) offers **Portage around the rapids · 2 days** or **Run the rapids · 1 day** with a 30% wreck chance: up to 60 lb food, a clothing set and 15 health from everyone ("near drowning"). The rapids risk is validated in saves.
+- Road `effects` (days only, 1 to 5) are copied onto the leave choice; that is how raft building costs time.
+- Sources: [NPS, Overlanders in the Columbia River Gorge](https://www.nps.gov/articles/000/overlanders-in-the-columbia-river-gorge-1840-1870-a-narrative-history.htm) (rafts, Chinookan and HBC help, wind, livestock trails) and [Historic Oregon City, The Final Leg of the Trail](https://historicoregoncity.org/2019/04/02/the-final-leg-of-the-trail/) (HBC bateau about $80, rafts overturned by wind, about one in four took the river after the Barlow Road opened). Hiring an HBC boat is not offered yet.
+
 ## Still to come
 
-The Columbia River by raft from The Dalles (the alternative to the Barlow Road) and the Fort Walla Walla detour, once their distances are sourced.
+The Fort Walla Walla detour from the Blue Mountains, as a dangerous Cayuse War road with its own encounters (Spencer's choice). The plan is in `docs/CLAUDE_HANDOFF.md`.
