@@ -7,6 +7,7 @@ const GraveView = preload("res://ui/grave_view.gd")
 const SaveStore = preload("res://simulation/save_store.gd")
 const HuntView = preload("res://ui/hunt_view.gd")
 const PostStoreView = preload("res://ui/post_store_view.gd")
+const SpeechBubble = preload("res://ui/speech_bubble.gd")
 const MapView = preload("res://ui/map_view.gd")
 const PIXEL_FONT = preload("res://art/pixels/trail_font.fnt")
 const LEDGER_ICONS = preload("res://art/pixels/ledger_icons.png")
@@ -851,6 +852,7 @@ func _open_crime() -> void:
 func _open_camp() -> void:
 	options_window.hide()
 	crime_category=""
+	game.last_news=""
 	if game.open_camp():_show_service()
 	else:
 		notice("NO CAMP NEARBY","Emigrant families camp near the road every so often. When one is close, you can visit, trade, ask for help or swap news.")
@@ -882,7 +884,14 @@ func _show_service() -> void:
 		camp_picture.texture=camp_atlas
 		camp_picture.custom_minimum_size=Vector2(432,134)
 		camp_picture.stretch_mode=TextureRect.STRETCH_KEEP_CENTERED
+		camp_picture.size_flags_horizontal=Control.SIZE_SHRINK_CENTER
 		service_rows.add_child(camp_picture)
+		# ASK FOR NEWS answers in a speech bubble from the husband.
+		if not game.last_news.is_empty():
+			var bubble:=SpeechBubble.new()
+			camp_picture.add_child(bubble)
+			bubble.size=Vector2(432,134)
+			bubble.say(game.last_news,Vector2(150,70),8.0,250.0)
 	var explanation := label(description)
 	explanation.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	service_rows.add_child(explanation)
@@ -918,6 +927,8 @@ func _show_service() -> void:
 			if not crime_category.is_empty() and command not in (["shoot","assault"] if crime_category=="attack" else [crime_category,"raid"]):continue
 		# Fixed offers the trading counter already covers are kept for the study policies only.
 		if game.pending.choices[index].get("policy_only",false):continue
+		# Questions spent at the family's counter count here too, so the camp's news label is read fresh.
+		if game.pending.choices[index].has("news"):game.pending.choices[index].label=game.news_label(str(game.pending.choices[index].news))
 		var option := button(game.pending.choices[index].label, _service_choice.bind(index))
 		option.disabled = not game.can_choose(index)
 		service_rows.add_child(option)
@@ -931,6 +942,10 @@ func _service_choice(index: int) -> void:
 	service_window.hide()
 	if game.pending.choices[index].has("counter"):
 		_open_counter(str(game.pending.choices[index].counter))
+		return
+	if game.pending.choices[index].has("news"):
+		game.choose(index)
+		_show_service()
 		return
 	var burial: int = int(game.pending.choices[index].get("remains_id",-1)) if game.pending.get("remains_menu",false) and game.pending.choices[index].get("remains_command","")=="bury" else -1
 	var shooting: bool = game.pending.get("attack_menu",false) and int(game.pending.choices[index].get("attack_target",-1)) >= 0
