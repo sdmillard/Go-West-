@@ -27,6 +27,13 @@ func run():
 	screen._refresh()
 	var store=Store.new()
 	var before=store.capture(screen.game)
+	screen.rest_button.pressed.emit()
+	await process_frame
+	check(screen.camping and screen.landscape.scene_id=="camp" and screen.section_window.visible,"Camp button enters the camp location and activities")
+	check(not screen.rest_window.visible and store.capture(screen.game)==before,"Entering camp does not rest, heal, feed, pay wages or advance RNG")
+	check(not screen.ribbon_buttons.has("CAMP & CARE"),"There is one camp entry rather than a duplicate ribbon button")
+	screen.section_window.hide()
+	check(screen.camping and store.capture(screen.game)==before,"Closing camp activities leaves the party camped without time passing")
 	screen._rest()
 	await process_frame
 	check(screen.rest_window.visible and store.capture(screen.game)==before,"Opening duration prompt spends no time, resources or randomness")

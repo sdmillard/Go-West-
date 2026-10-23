@@ -247,3 +247,8 @@ Window exits now use a small shared font-glyph X with14px hit area and Escape, i
 
 
 Final ribbon/local-target/exit validation: feature commit **e0779d4** passed all **42 Godot suites** in a clean isolated checkout, including53ribbon,29local-target/place,46recruitment and119companion checks. The same checkout completed **24store and20outlaw full-route journeys with0reported errors**. Native800x360 setup, trail, contextual stop options, each tree, actual local staff, toll collector, preferences and map were inspected. Reports stay in ignored `.tools` validation storage; tracked older balance reports, three debug pilots and player saves remain untouched. The new local-target rule is covered directly (supporting worker death, keeper preserved, no free stock, witness/remains/escape and save validation); the journey bots still use their existing owner-target policy. This is integration evidence, not a new survival-balance campaign. Restart a running game instance to load the new code.
+
+
+## Camp location and direct inventory (October23 follow-up)
+
+Main Camp now enters a free paused camp location with optional activities. Removed the duplicate Camp & Care rail entry. Rest is chosen/confirmed inside; preservation moved from inventory to Camp > Preserve meat and still uses the existing non-rest processing day. Camp presentation persists after closing the panel or ordinary care/acknowledgment actions; Continue or leaving/crossing a landmark departs camp. Actual landmark context remains intact. Supplies opens inventory directly instead of a one-button section. Drop supplies opens its own list; Abandon wagon / Choose what to carry is a top action with existing confirmation. No simulation or save-rule changes; no free rest/healing from opening Camp.

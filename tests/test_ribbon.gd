@@ -19,7 +19,7 @@ func run():
  var before: Dictionary=Store.new().capture(screen.game)
  for key in screen.ribbon_buttons:
   check(Rect2(640,9,150,342).encloses(screen.ribbon_buttons[key].get_global_rect()),key+" fits the right rail")
- var groups: Array=["Travel","Supplies","Camp & care","Hunt & forage","Villainy","History"]
+ var groups: Array=["Travel","Camp","Hunt & forage","Villainy","History"]
  for group in groups:
   screen._show_section(group)
   await process_frame
@@ -33,8 +33,15 @@ func run():
  check(screen.game.state.pace==2,"The moved pace control changes the actual journey setting")
  screen._show_section("Supplies")
  check(is_instance_valid(screen.pace) and not screen.pace.visible,"Leaving Travel preserves and hides its controls")
- screen.section_rows.get_child(0).pressed.emit()
- check(not screen.section_window.visible and screen.supplies_window.visible,"A section child opens the existing cargo panel")
+ check(not screen.section_window.visible and screen.supplies_window.visible,"Supplies opens the inventory directly without a one-button branch")
+ check(screen.supplies_rows.get_child(0).text=="DROP SUPPLIES >" and "ABANDON WAGON" in screen.supplies_rows.get_child(1).text,"Drop and abandon actions are visible before the inventory details")
+ screen.supplies_rows.get_child(0).pressed.emit()
+ check(screen.section_window.title=="DROP SUPPLIES" and not screen.supplies_window.visible,"Drop supplies opens a distinct inventory action")
+ var food: int=screen.game.state.food
+ var day: int=screen.game.state.day
+ screen.section_rows.get_children().filter(func(row):return row is Button and row.text=="DROP 50 FOOD")[0].pressed.emit()
+ check(screen.game.state.food==food-50 and screen.game.state.day==day,"Dropping supplies changes the real inventory without spending time")
+ screen.section_window.hide()
  screen.supplies_window.hide()
  screen._show_section("Hunt & forage")
  screen.section_rows.get_child(1).pressed.emit()
