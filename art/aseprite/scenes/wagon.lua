@@ -1,9 +1,10 @@
--- 4-frame emigrant wagon sprite sheet (384x64, four 96x64 frames).
+-- 8-frame emigrant wagon sprite sheet (768x64, eight 96x64 frames).
 -- 1848 prairie schooner / heavy farm wagon with boat-edged blue/wood bed, iron hardware,
 -- lashed rear water barrel, swinging tar bucket under the axle, billowing canvas tilt over
 -- hickory bows, front driver seat, wagon tongue, and rotating spoked wheels (rear r=9, front r=7).
 local K = dofile(app.params.kit)
-local W, H = 384, 64
+local W, H = 768, 64
+local FRAMES = 8
 
 K.canvas(W, H, 1848)
 
@@ -24,9 +25,9 @@ local function draw_wheel(cx, cy, r, frame)
   K.px(cx - r + 1, cy - r + 3, "gold")
   -- Cut out interior between felloe and hub so spokes are distinct
   circle(cx, cy, r - 2, "deep")
-  -- 6 rotating wooden spokes (stepping 15 degrees per frame across 4 frames)
+  -- 6 rotating wooden spokes (stepping 7.5 degrees per frame, a full spoke gap over 8 frames)
   for s = 0, 5 do
-    local ang = s * (math.pi / 3.0) + (frame - 1) * (math.pi / 12.0)
+    local ang = s * (math.pi / 3.0) + (frame - 1) * (math.pi / 24.0)
     for rad = 2, r - 2 do
       local sx = cx + math.floor(math.cos(ang) * rad + 0.5)
       local sy = cy + math.floor(math.sin(ang) * rad + 0.5)
@@ -49,7 +50,7 @@ local function draw_wagon_frame(fx, frame)
     end
   end
 
-  local sway = (frame == 2) and 1 or ((frame == 4) and -1 or 0)
+  local sway = math.floor(1.2 * math.sin((frame - 1) / FRAMES * 2 * math.pi) + 0.5)
 
   -- 2. Undercarriage: hounds, reach pole, axles, and swinging tar/grease bucket
   K.rect(fx + 14, 48, 42, 2, "ink")
@@ -163,7 +164,7 @@ local function draw_wagon_frame(fx, frame)
 end
 
 K.layer("wagon", function()
-  for f = 1, 4 do
+  for f = 1, FRAMES do
     draw_wagon_frame((f - 1) * 96, f)
   end
 end)

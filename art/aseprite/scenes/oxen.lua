@@ -1,8 +1,10 @@
--- 4-frame oxen travel sprite sheet (192x32, four 48x32 frames).
+-- 8-frame oxen travel sprite sheet (384x32, eight 48x32 frames).
 -- Devon/Shorthorn draft ox with shoulder hump (withers), deep barrel & brisket, dewlap,
--- wooden neck yoke + curved hickory ox-bow + iron hitch ring, and 4-phase rotary walk cycle.
+-- wooden neck yoke + curved hickory ox-bow + iron hitch ring, and an 8-frame four-beat walk
+-- (near hind, near fore, far hind, far fore, a quarter cycle apart, as cattle walk).
 local K = dofile(app.params.kit)
-local W, H = 192, 32
+local W, H = 384, 32
+local FRAMES = 8
 
 K.canvas(W, H, 1848)
 
@@ -83,23 +85,36 @@ local function draw_ox_frame(fx, frame)
     end
   end
 
-  local bob = (frame == 2 or frame == 4) and 1 or 0
+  -- the body dips twice per stride, as each hind foot takes the weight
+  local cyc = (frame - 1) / FRAMES
+  local bob = (math.cos(cyc * 4 * math.pi) < -0.3) and 1 or 0
 
-  -- 4-phase rotary walk cycle with natural knee/hock flexion on lifted legs
-  local walk = {
-    { hf={12,  0,  3, 0}, hn={ 8, -1, -3, 0}, ff={26, -1, -3, 0}, fn={30,  1,  3, 0} },
-    { hf={11, -1, -1, 0}, hn={ 9, -1,  2, 1}, ff={29,  3,  0, 2}, fn={28,  0, -1, 0} },
-    { hf={ 8, -1, -3, 0}, hn={12,  0,  3, 0}, ff={30,  1,  3, 0}, fn={26, -1, -3, 0} },
-    { hf={ 9, -1,  2, 1}, hn={11, -1, -1, 0}, ff={28,  0, -1, 0}, fn={29,  3,  0, 2} },
+  -- One leg's pose at phase t: three quarters of the cycle on the ground, the hoof sliding
+  -- back as the body passes over it, then a quick swing forward with the joint folded.
+  local function leg(base, t, hind)
+    t = t % 1
+    local hoof, lift, joint
+    if t < 0.75 then
+      hoof = math.floor(4 - 8 * (t / 0.75) + 0.5); lift = 0
+      joint = (hoof < -2) and -1 or 0
+    else
+      local u = (t - 0.75) / 0.25
+      hoof = math.floor(-4 + 8 * u + 0.5); lift = math.floor(3 * math.sin(u * math.pi) + 0.5)
+      joint = hind and -1 or ((u < 0.6) and 3 or 1)
+    end
+    return {base, joint, hoof, lift}
+  end
+  local p = {
+    hn = leg(9, cyc, true), fn = leg(30, cyc + 0.75, false),
+    hf = leg(12, cyc + 0.5, true), ff = leg(27, cyc + 0.25, false),
   }
-  local p = walk[frame]
 
   -- 1. Far legs (behind torso)
   draw_hind_leg(fx, p.hf[1], p.hf[2], p.hf[3], p.hf[4], true)
   draw_front_leg(fx, p.ff[1], p.ff[2], p.ff[3], p.ff[4], true)
 
   -- 2. Tail (hanging from the high tailhead with a gentle walk sway)
-  local sway = (frame == 1) and -1 or ((frame == 3) and 1 or 0)
+  local sway = math.floor(1.4 * math.sin(cyc * 2 * math.pi) + 0.5)
   local tx = fx + 5
   K.rect(tx, 10 + bob, 2, 3, "ink")
   K.px(tx + 1, 10 + bob, "ox_dk")
@@ -185,7 +200,7 @@ local function draw_ox_frame(fx, frame)
 end
 
 K.layer("oxen", function()
-  for f = 1, 4 do
+  for f = 1, FRAMES do
     draw_ox_frame((f - 1) * 48, f)
   end
 end)
