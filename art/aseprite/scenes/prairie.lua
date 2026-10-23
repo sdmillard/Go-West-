@@ -5,6 +5,7 @@ local K = dofile(app.params.kit)
 local W, H = 432, 150
 
 K.canvas(W, H, 73421)
+K.wrap = true
 
 K.layer("sky", function()
   K.rect(0, 0, W, 18, "blue")
@@ -16,7 +17,9 @@ K.layer("sky", function()
   K.rect(0, 61, W, 12, "light_blue")
   K.blend(0, 73, W, "light_blue", "mist")
   K.rect(0, 76, W, 10, "mist")
+end)
 
+K.layer("clouds", function()
   K.cloud(28, 22, 1.35)
   K.cloud(116, 41, 0.75)
   K.cloud(182, 16, 1.05)
@@ -54,3 +57,4 @@ K.layer("prairie_floor", function()
 end)
 
 K.save("prairie")
+K.save_layers({sky = "prairie_sky", clouds = "prairie_clouds", distant_range = "prairie_far", prairie_floor = "prairie_floor"})

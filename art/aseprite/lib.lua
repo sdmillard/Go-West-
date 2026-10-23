@@ -62,8 +62,25 @@ function K.save(name)
   print("built " .. name .. " (" .. W .. "x" .. H .. ", " .. #spr.layers .. " layers)")
 end
 
+-- Also write chosen layers on their own: names maps layer name -> output name (<out>/<name>.png).
+function K.save_layers(names)
+  local out = app.params.out or "."
+  local shown = {}
+  for _, l in ipairs(spr.layers) do shown[l] = l.isVisible end
+  for layer_name, file in pairs(names) do
+    for _, l in ipairs(spr.layers) do l.isVisible = (l.name == layer_name) end
+    spr:saveCopyAs(out .. "/" .. file .. ".png")
+    print("built " .. file .. " (layer " .. layer_name .. ")")
+  end
+  for _, l in ipairs(spr.layers) do l.isVisible = shown[l] end
+end
+
 ---------------------------------------------------------------- primitives
+-- With K.wrap set, marks past the left or right edge come round the other side, so a layer
+-- tiles seamlessly when the travel view scrolls it.
+K.wrap = false
 function K.px(x, y, c)
+  if K.wrap then x = x % W end
   if x >= 0 and y >= 0 and x < W and y < H then img:drawPixel(x, y, col[c]) end
 end
 function K.rect(x, y, w, h, c)

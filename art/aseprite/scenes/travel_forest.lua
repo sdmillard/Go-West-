@@ -1,14 +1,17 @@
 -- Regional Conifer Forest Travel Scene (432x150).
 -- Used when terrain == "forest" (Blue Mountains / Barlow Road / Cascade forests).
--- Bottom strip (y = 100..150) is seamlessly tileable horizontally for trail_view.gd scrolling.
+-- Every layer tiles horizontally (K.wrap) and is also written on its own, so trail_view.gd
+-- scrolls clouds, the distant ridges, the forest and the trail strip (y = 100..150) at
+-- different speeds. The flattened picture backs the hunting screen.
 local K = dofile(app.params.kit)
 local W, H = 432, 150
 local tau = math.pi * 2.0
 
 K.canvas(W, H, 1851)
+K.wrap = true
 
 ----------------------------------------------------------------- 1. Sky & Distant Timbered Ridges
-K.layer("sky_and_ridge", function()
+K.layer("sky", function()
   K.rect(0, 0, W, 16, "sky_top")
   K.blend(0, 16, W, "sky_top", "sky")
   K.rect(0, 19, W, 18, "sky")
@@ -16,10 +19,14 @@ K.layer("sky_and_ridge", function()
   K.rect(0, 40, W, 18, "light_blue")
   K.blend(0, 58, W, "light_blue", "mist")
   K.rect(0, 61, W, 14, "mist")
+end)
 
+K.layer("clouds", function()
   K.cloud(38, 16, 1.3)
   K.cloud(304, 14, 1.4)
+end)
 
+K.layer("far", function()
   -- Distant timbered Blue Mountains / Cascade ridges
   for x = 0, W - 1 do
     local r1 = 46 + math.floor(8 * math.sin(tau * x / 432.0 + 0.3) + 4 * math.cos(tau * x / 216.0))
@@ -31,7 +38,7 @@ K.layer("sky_and_ridge", function()
 end)
 
 ----------------------------------------------------------------- 2. Deep Layered Douglas-Fir & Ponderosa Forest
-K.layer("forest", function()
+K.layer("mid", function()
   -- Dark forest under-canopy & fern floor (y = 84..99)
   K.rect(0, 84, W, 10, "ink")
   K.rect(0, 94, W, 6, "pine")
@@ -71,7 +78,7 @@ K.layer("forest", function()
 end)
 
 ----------------------------------------------------------------- 3. Horizontally Tileable Forest Trail (y = 100..150)
-K.layer("scrolling_ground", function()
+K.layer("ground", function()
   K.rect(0, 100, W, 50, "leaf")
   K.dither(0, 100, W, 5, "pine", "leaf")
   K.dither(0, 142, W, 8, "leaf", "pine")
@@ -127,3 +134,4 @@ K.layer("scrolling_ground", function()
 end)
 
 K.save("travel_forest")
+K.save_layers({sky = "travel_forest_sky", clouds = "travel_forest_clouds", far = "travel_forest_far", mid = "travel_forest_mid", ground = "travel_forest_ground"})

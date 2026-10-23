@@ -1,11 +1,14 @@
 -- Regional High-Desert / Sagebrush Plain Travel Scene (432x150).
 -- Used when terrain == "desert" (Great Divide Basin / Green River / Snake River Plain).
--- Bottom strip (y = 100..150) is seamlessly tileable horizontally for trail_view.gd scrolling.
+-- Every layer tiles horizontally (K.wrap) and is also written on its own, so trail_view.gd
+-- scrolls clouds, the far bench, the buttes and basin, and the trail strip (y = 100..150)
+-- at different speeds. The flattened picture backs the hunting screen.
 local K = dofile(app.params.kit)
 local W, H = 432, 150
 local tau = math.pi * 2.0
 
 K.canvas(W, H, 1850)
+K.wrap = true
 
 ----------------------------------------------------------------- 1. Sun-bleached Desert Sky
 K.layer("sky", function()
@@ -18,13 +21,15 @@ K.layer("sky", function()
   K.rect(0, 61, W, 10, "mist")
   K.blend(0, 71, W, "mist", "sand")
   K.rect(0, 74, W, 16, "sand")
+end)
 
+K.layer("clouds", function()
   K.cloud(42, 16, 1.35)
   K.cloud(298, 14, 1.45)
 end)
 
 ----------------------------------------------------------------- 2. Stepped Rimrock Buttes & Alkali Basin
-K.layer("mesas", function()
+K.layer("far", function()
   -- Far hazy badlands bench
   for x = 0, W - 1 do
     local hy = 68 + math.floor(3 * math.sin(tau * x / 432.0 + 0.5) + 2 * math.cos(tau * x / 144.0))
@@ -32,6 +37,9 @@ K.layer("mesas", function()
       K.px(x, y, (y == hy) and "sand" or "clap_sh")
     end
   end
+end)
+
+K.layer("mid", function()
 
   -- Stepped Western sandstone mesa/butte with vertical cliff wall + eroded talus skirt
   local function butte(x0, x1, top_y, base_y, shoulder_x, notch_x)
@@ -117,7 +125,7 @@ K.layer("mesas", function()
 end)
 
 ----------------------------------------------------------------- 3. Horizontally Tileable Desert Trail (y = 100..150)
-K.layer("scrolling_ground", function()
+K.layer("ground", function()
   K.rect(0, 100, W, 50, "sand")
   K.dither(0, 100, W, 4, "clap_sh", "sand")
 
@@ -169,3 +177,4 @@ K.layer("scrolling_ground", function()
 end)
 
 K.save("travel_desert")
+K.save_layers({sky = "travel_desert_sky", clouds = "travel_desert_clouds", far = "travel_desert_far", mid = "travel_desert_mid", ground = "travel_desert_ground"})
