@@ -1,11 +1,13 @@
 extends Panel
-## A trading post's store counter: buy and sell by the lot within the post's stock and buying demand, settled as one visit.
+## A trading post's store counter: buy and sell by the unit within the post's stock and buying demand, settled as one visit.
 signal settled
 var game
 var buys: Dictionary = {}
 var sells: Dictionary = {}
 var held: Dictionary = {}
 var title: Label
+var wagon_title: Label
+var counts: Dictionary = {}
 var totals: Label
 var feedback: Label
 var settle_button: Button
@@ -13,6 +15,9 @@ var background: TextureRect
 var rows_layer: Control
 var scenes = preload("res://ui/location_scenes.gd").new()
 var refreshing := false
+const GOODS := {"food": "FOOD LB", "bullets": "BULLETS", "medicine": "CARE KITS", "clothing": "CLOTHES", "oxen": "OXEN", "wheels": "WHEELS", "axles": "AXLES", "tongues": "TONGUES", "salt": "SALT LB"}
+const POST_X := 250
+const PARTY_X := 440
 
 func _init(simulation) -> void:
 	game = simulation
@@ -27,6 +32,10 @@ func text(value: String, bounds: Rect2, parent: Node = self) -> Label:
 	var node := Label.new()
 	node.text = value
 	put(node, bounds, parent)
+	return node
+
+func right(node: Label) -> Label:
+	node.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	return node
 
 func paper(bounds: Rect2) -> void:
@@ -45,16 +54,19 @@ func _ready() -> void:
 	background.texture = scenes.texture_for("post_store")
 	background.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	put(background, Rect2(0, 0, 622, 273))
-	# The counter and keeper stay visible on the left, as in the Independence store.
-	paper(Rect2(267, 0, 355, 236))
+	# Laid out like a barter screen: the post's goods on the left, the party's on the right, the reckoning below.
+	# Both sit to the right so the keeper and the room stay in view.
+	paper(Rect2(POST_X - 6, 6, 184, 194))
+	paper(Rect2(PARTY_X - 6, 6, 184, 194))
+	paper(Rect2(POST_X - 6, 204, 374, 30))
 	paper(Rect2(0, 236, 622, 37))
-	title = text("", Rect2(278, 6, 330, 12))
-	text("GOODS", Rect2(278, 24, 150, 12))
-	text("BUY", Rect2(396, 24, 90, 12))
-	text("SELL", Rect2(494, 24, 90, 12))
+	title = text("", Rect2(POST_X, 10, 172, 12))
+	wagon_title = text("", Rect2(PARTY_X, 10, 172, 12))
+	columns(POST_X, "STOCK", "BUY")
+	columns(PARTY_X, "HAVE", "SELL")
 	rows_layer = Control.new()
 	put(rows_layer, Rect2(0, 0, 622, 236))
-	totals = text("", Rect2(278, 204, 330, 30))
+	totals = text("", Rect2(POST_X, 207, 362, 26))
 	feedback = text("", Rect2(10, 240, 440, 30))
 	feedback.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	settle_button = Button.new()
@@ -62,6 +74,12 @@ func _ready() -> void:
 	settle_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	settle_button.pressed.connect(settle)
 	put(settle_button, Rect2(478, 242, 130, 25))
+
+func columns(x: int, count: String, action: String) -> void:
+	text("GOODS", Rect2(x, 26, 50, 12))
+	right(text(count, Rect2(x + 46, 26, 36, 12)))
+	text("EACH", Rect2(x + 88, 26, 34, 12))
+	text(action, Rect2(x + 126, 26, 46, 12))
 
 ## Rebuild the counter from the post's current stock; quantities reset to zero.
 func open() -> void:
@@ -71,24 +89,34 @@ func open() -> void:
 	buys.clear()
 	sells.clear()
 	held.clear()
+	counts.clear()
 	var store: Dictionary = game.post_store()
 	if store.is_empty():
 		return
-	title.text = store.name.to_upper() + " · TRADING POST"
+	title.text = store.name.to_upper()
 	refreshing = true
 	for i in range(store.rows.size()):
 		var row: Dictionary = store.rows[i]
-		var y := 40 + i * 18
-		var name := text(row.label.to_upper(), Rect2(278, y + 2, 116, 16), rows_layer)
-		text("$%.2f" % (row.buy_cents / 100.0), Rect2(396, y + 2, 38, 16), rows_layer)
-		text("$%.2f" % (row.sell_cents / 100.0), Rect2(494, y + 2, 38, 16), rows_layer)
-		name.tooltip_text = "Buy at $%.2f or sell at $%.2f per lot. You hold %d. The post can sell %d more and buy %d." % [row.buy_cents / 100.0, row.sell_cents / 100.0, row.held, row.can_buy, row.can_sell]
-		name.mouse_filter = Control.MOUSE_FILTER_PASS
-		buys[row.item] = spin(row.can_buy, Rect2(436, y, 54, 18))
-		sells[row.item] = spin(row.can_sell, Rect2(534, y, 54, 18))
+		var y := 40 + i * 17
+		var goods: String = GOODS.get(row.item, row.item.to_upper())
+		var unit: String = "lb" if row.item in ["food", "salt"] else "each"
+		var tip := "Buy at $%.3f or sell at $%.3f %s. You hold %d. The post can sell %d more and buy %d." % [row.buy_cents / 100.0 / row.amount, row.sell_cents / 100.0 / row.amount, "a pound" if unit == "lb" else "each", row.held, row.can_buy, row.can_sell]
+		# Goods move by the unit (a pound, a bullet, an ox). Counts follow the basket, so goods cross over as you choose them.
+		var stock := line(POST_X, y, goods, row.buy_cents / float(row.amount), tip)
+		var have := line(PARTY_X, y, goods, row.sell_cents / float(row.amount), tip)
+		buys[row.item] = spin(row.can_buy, Rect2(POST_X + 128, y, 46, 17))
+		sells[row.item] = spin(row.can_sell, Rect2(PARTY_X + 128, y, 46, 17))
+		counts[row.item] = [have, stock]
 		held[row.item] = row
 	refreshing = false
 	update_quote()
+
+func line(x: int, y: int, goods: String, cents: float, tip: String) -> Label:
+	var name := text(goods, Rect2(x, y + 2, 58, 16), rows_layer)
+	name.tooltip_text = tip
+	name.mouse_filter = Control.MOUSE_FILTER_PASS
+	text("$%.2f" % (cents / 100.0), Rect2(x + 88, y + 2, 38, 16), rows_layer)
+	return right(text("", Rect2(x + 58, y + 2, 24, 16), rows_layer))
 
 func spin(limit: int, bounds: Rect2) -> SpinBox:
 	var box := SpinBox.new()
@@ -115,7 +143,19 @@ func update_quote() -> void:
 		return
 	var quote: Dictionary = game.post_quote(cart())
 	var cents: int = roundi(float(game.state.money) * 100.0)
-	totals.text = "%s $%.2f · CASH AFTER $%.2f\nTRADING TIME: %s" % ["YOU RECEIVE" if quote.net_cents > 0 else "YOU PAY", absi(quote.net_cents) / 100.0, (cents + quote.net_cents) / 100.0, ("ONE DAY FOR THIS VISIT" if quote.days > 0 else "ALREADY SPENT TODAY")]
+	for item in counts:
+		var row: Dictionary = held[item]
+		var n: int = int(buys[item].value) - int(sells[item].value)
+		counts[item][0].text = str(row.held + n)
+		counts[item][1].text = str(row.can_buy - int(buys[item].value))
+	wagon_title.text = "YOUR PACKS" if game.state.vehicle == "foot" else "YOUR WAGON"
+	var cargo: float = quote.get("cargo_after_lb", game.provisions.cargo(game.state))
+	var capacity: float = quote.get("capacity_after_lb", game.provisions.capacity(game.state))
+	totals.text = "%s $%.2f · CASH $%.2f > $%.2f · %s\n%s %.0f / %.0f LB%s" % ["YOU GET" if quote.net_cents > 0 else "YOU PAY", absi(quote.net_cents) / 100.0, cents / 100.0, (cents + quote.net_cents) / 100.0, ("1 DAY" if quote.days > 0 else "NO EXTRA TIME"), ("PACKS" if game.state.vehicle == "foot" else "CARGO") + (" AFTER" if not quote.effects.is_empty() else ""), cargo, capacity, " · OVERLOADED" if cargo > capacity else ""]
+	if cargo > capacity:
+		totals.add_theme_color_override("font_color", Color("8c2b1c"))
+	else:
+		totals.remove_theme_color_override("font_color")
 	feedback.text = quote.message
 	settle_button.disabled = not quote.valid
 

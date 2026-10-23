@@ -40,7 +40,7 @@ func run():
 					attempted=true
 					# A gun offense requires ammunition: use the real counter before the attempt.
 					if action in ["robbery","shoot"] and game.state.bullets==0:
-						okay=game.post_checkout({"bullets":1})
+						okay=game.post_checkout({"bullets":20})
 					if okay and game.state.status=="traveling":okay=game.open_crime() and crime_choice(game,action)
 				else:okay=act(game,policy,aim,count)
 				if not okay:

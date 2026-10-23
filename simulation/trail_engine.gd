@@ -226,8 +226,10 @@ func _arrive_landmark() -> void:
 		state.river_stage = "high" if rng.randf() < survival.river_high_chance(int(calendar().month), node.get("river_source","rain")) or survival.wet_ground >= 4 else "low"
 		description += river_conditions()
 		if node.has("ferry_dollars"):
-			options.append({"label": "Hire the ferry · $%.2f, 1 day" % node.ferry_dollars,
-				"action": "cross", "method": "ferry", "requires": {"money": node.ferry_dollars}, "effects": {"money": -node.ferry_dollars, "days": 1}})
+			# Ferrymen on the snow-fed rivers charged by the current: high water could double the fare.
+			var fare: float=float(node.get("ferry_high_dollars",node.ferry_dollars)) if state.river_stage=="high" else float(node.ferry_dollars)
+			options.append({"label": "Hire the ferry · $%.2f, 1 day" % fare,
+				"action": "cross", "method": "ferry", "requires": {"money": fare}, "effects": {"money": -fare, "days": 1}})
 		options.append({"label": "Attempt a ford · 1 day, risk to supplies", "action": "cross", "method": "ford", "effects": {"days": 1}, "risk": 0.65 if state.river_stage == "high" else 0.08})
 		options.append({"label": "Prepare and float · 1 day, risk to supplies", "action": "cross", "method": "float", "effects": {"days": 1}, "risk": 0.35 if state.river_stage == "high" else 0.2})
 		if state.vehicle=="foot":
@@ -255,8 +257,7 @@ func _arrive_landmark() -> void:
 		if state.vehicle=="foot":options[0].label="Continue on foot · no wagon toll" if toll==0 else "Pay stock toll · $%.2f" % toll
 		options[0]["requires"] = {"money":toll}
 		options[0]["effects"] = {"money":-toll}
-	if node.get("trade_bulk",false):
-		options.append({"label":"Visit the trading post", "action":"trade"})
+	# A post's store counter opens from the STORE button beside the stop, not from this menu.
 	if node.has("advice"):
 		options.append({"label":"Read trail notes", "action":"notes"})
 	if node.id == "fort_kearny" and int(calendar().month) < 6 and int(calendar().year) == 1848:
@@ -830,8 +831,9 @@ func _trade_options(offer: Dictionary,at_post: bool) -> Array:
 	context.decorate(self,options,offer)
 	return options
 
-## The post's store counter: per lot, its price, how many the post can still sell or buy, and what the party holds.
-## Empty unless the party is stopped at an open trading post that will deal with it.
+## The post's store counter: per item, its unit price, how many units the post can still sell or buy, and what the party holds.
+## Goods move by the unit (a pound of food, a single bullet); prices are the lot prices divided out. Empty unless the party
+## is stopped at an open trading post that will deal with it.
 func post_store() -> Dictionary:
 	if not can_service() or not _at_post():return {}
 	var offer: Dictionary=context.market(self)
@@ -842,48 +844,60 @@ func post_store() -> Dictionary:
 		var buy: Dictionary=options[i]
 		var sell: Dictionary=options[i+1]
 		var lot: Dictionary=buy.lot
-		var can_buy: int=int(buy.stock_limit)-int(context.record.spent.get(buy.market_key,0)) if crime.can_trade(self,buy) else 0
-		if lot.item=="food":can_buy=mini(can_buy,crime.food_left(self,str(state.landmark))/int(lot.amount))
-		var can_sell: int=int(sell.stock_limit)-int(context.record.spent.get(sell.market_key,0)) if crime.can_trade(self,sell) else 0
-		rows.append({"item":lot.item,"label":lot.label,"amount":int(lot.amount),"buy_cents":int(lot.buy_cents),"sell_cents":int(lot.sell_cents),"can_buy":maxi(0,can_buy),"can_sell":maxi(0,mini(can_sell,int(state.get(lot.item,0))/int(lot.amount))),"held":int(state.get(lot.item,0))})
+		var amount: int=int(lot.amount)
+		var can_buy: int=int(buy.stock_limit)*amount-_counter_used(buy) if crime.can_trade(self,buy) else 0
+		if lot.item=="food":can_buy=mini(can_buy,crime.food_left(self,str(state.landmark)))
+		var can_sell: int=int(sell.stock_limit)*amount-_counter_used(sell) if crime.can_trade(self,sell) else 0
+		rows.append({"item":lot.item,"label":lot.label,"amount":amount,"buy_cents":int(lot.buy_cents),"sell_cents":int(lot.sell_cents),"can_buy":maxi(0,can_buy),"can_sell":maxi(0,mini(can_sell,int(state.get(lot.item,0)))),"held":int(state.get(lot.item,0))})
 	var name: String=str(route.nodes[state.landmark].get("name",state.landmark))
 	return {"name":name,"rows":rows,"days":context.trade_days(offer),"money_cents":roundi(float(state.money)*100.0),"rumor":crime.news_text(self,str(state.landmark)),"discount":characters.available(self,"Trading")}
 
-## Price a basket of lots at the post: positive counts buy, negative counts sell. Read-only.
+## Units of a post's stock (or buying demand) already used: whole lots from the lot menu, or single units from the counter.
+func _counter_used(choice: Dictionary) -> int:
+	return int(context.record.spent.get(choice.market_key+"|units",int(context.record.spent.get(choice.market_key,0))*int(choice.lot.amount)))
+
+## Price a basket at the post: positive counts buy, negative counts sell, in units (pounds of food, single bullets). Read-only.
 func post_quote(cart: Dictionary) -> Dictionary:
 	var store: Dictionary=post_store()
 	var result: Dictionary={"valid":false,"message":"The post is not open for trade.","net_cents":0,"days":int(store.get("days",0)),"effects":{}}
 	if store.is_empty():return result
 	var effects: Dictionary={}
-	var lots_moved:=0
+	var moved:=0
 	for row in store.rows:
 		var count: Variant=cart.get(row.item,0)
 		if not (count is int or count is float) or count!=floor(count):
-			result.message="Check the quantity of %s." % row.label
+			result.message="Check the quantity of %s." % row.item
 			return result
 		var n: int=int(count)
 		if n>row.can_buy or -n>row.can_sell:
-			result.message=("The post cannot sell that many: %s." if n>0 else "The post will not buy that many: %s.") % row.label
+			result.message=("The post cannot sell that much %s." if n>0 else "The post will not buy that much %s.") % row.item
 			return result
 		if n==0:continue
-		lots_moved+=absi(n)
-		result.net_cents+=(-n*int(row.buy_cents)) if n>0 else (-n*int(row.sell_cents))
-		effects[row.item]=n*int(row.amount)
+		moved+=absi(n)
+		result.net_cents+=-roundi(float(n*int(row.buy_cents))/int(row.amount)) if n>0 else roundi(float(-n*int(row.sell_cents))/int(row.amount))
+		effects[row.item]=n
 	for key in cart:
 		if not store.rows.any(func(row):return row.item==key):
 			result.message="Unknown goods: %s." % str(key)
 			return result
 	result.effects=effects
-	if lots_moved==0:
+	if moved==0:
 		result.message="Choose goods to buy or sell."
 	elif store.money_cents+result.net_cents<0:
 		result.message="You cannot afford that."
 	else:
 		result.valid=true
 		result.message="Settle up · %s" % ("1 day and meals" if result.days>0 else "no extra time")
+	# What the wagon (or the packs) would weigh after this basket, so the party can see the load before settling.
+	var after: Dictionary=state.duplicate()
+	for item in effects:after[item]=int(after.get(item,0))+int(effects[item])
+	result.cargo_lb=provisions.cargo(state)
+	result.capacity_lb=provisions.capacity(state)
+	result.cargo_after_lb=provisions.cargo(after)
+	result.capacity_after_lb=provisions.capacity(after)
 	return result
 
-## Settle a basket at the post as one visit: stock and demand move per lot, and the visit's day is charged once.
+## Settle a basket at the post as one visit: stock and demand move by the unit, and the visit's day is charged once.
 func post_checkout(cart: Dictionary) -> bool:
 	var quote: Dictionary=post_quote(cart)
 	if not quote.valid:return false
@@ -892,11 +906,15 @@ func post_checkout(cart: Dictionary) -> bool:
 	var lines: Array[String]=[]
 	for i in range(0,options.size(),2):
 		var n: int=int(cart.get(options[i].lot.item,0))
+		if n==0:continue
 		var choice: Dictionary=options[i] if n>0 else options[i+1]
-		for _lot in range(absi(n)):
-			crime.consume_trade(choice)
-			context.consume(choice)
-		if n!=0:lines.append(("bought %d × %s" if n>0 else "sold %d × %s") % [absi(n),choice.lot.label])
+		var amount: int=int(choice.lot.amount)
+		# The unit ledger keeps exact amounts; the lot ledger rounds up so the lot menu never sells stock the counter took.
+		var used: int=_counter_used(choice)+absi(n)
+		context.record.spent[choice.market_key+"|units"]=used
+		context.record.spent[choice.market_key]=ceili(float(used)/amount)
+		crime.consume_trade({"market_key":choice.market_key,"effects":{choice.lot.item:n}})
+		lines.append(("bought %d %s" if n>0 else "sold %d %s") % [absi(n),_unit_name(choice.lot.item,absi(n))])
 	context.record.spent[offer.key+"|visit"]=1
 	var effects: Dictionary=quote.effects.duplicate()
 	effects["money"]=quote.net_cents/100.0
@@ -906,6 +924,11 @@ func post_checkout(cart: Dictionary) -> bool:
 	refresh_stop_offers()
 	if quote.days>0:_update_river_stage()
 	return true
+
+## How a counter quantity reads in the journal and on the store screen.
+static func _unit_name(item: String,n: int) -> String:
+	var names: Dictionary={"food":["lb of food","lb of food"],"salt":["lb of salt","lb of salt"],"bullets":["bullet","bullets"],"medicine":["care kit","care kits"],"clothing":["clothing set","clothing sets"],"oxen":["ox","oxen"],"wheels":["wheel","wheels"],"axles":["axle","axles"],"tongues":["tongue","tongues"]}
+	return names.get(item,[item,item])[0 if n==1 else 1]
 
 func open_crime() -> bool:
 	if pending.get("crime_menu",false):return true
