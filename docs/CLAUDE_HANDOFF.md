@@ -1,6 +1,6 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 22, 2026, after merged PR #19. **Continue the existing project; do not restart it. Spencer requested a break. This is a saved checkpoint, not a request to continue working now.**
+Last updated October 23, 2026, after merged PR #34 (UI readability). Sections below cover PRs #19 to #34. **Continue the existing project; do not restart it. Spencer requested a break. This is a saved checkpoint, not a request to continue working now.**
 
 ## Resume here
 
@@ -39,6 +39,16 @@ Last updated October 22, 2026, after merged PR #19. **Continue the existing proj
 - Fort posts (`trade_bulk`: Laramie, Bridger, Hall, Boise) open a **store counter** (`ui/post_store_view.gd`, engine `post_store` / `post_quote` / `post_checkout`): buy and sell any number of lots within the post's stock and buying demand, settled as one basket. Food sells by the 200 lb barrel-and-sack lot. Posts deal in cash only; barter stays with passing traders. Background is the new `location_post_store.png` (`post_store.lua`, an adobe fur-trade room).
 - Passing traders keep fixed lot trades plus barter, and charge `passing_price_markup` (1.2) over regional prices. Save-rule fingerprint is now `dc09cc2cd670ca48cbd3e2d782101f203412ab54a7954aa66fed692538b14f0e` (previous one whitelisted in `economy_v1`).
 - Balance check (`tests/full_trail_balance.gd`, 720 journeys): arrivals 369 before, 364 after; 370 with the time change alone (markup 1.0). Cell changes are within the noise of 20 runs. The study bots mostly sell at posts for tolls, so the saved days barely show; a shopping policy at posts belongs in the combined balance pass.
+
+## UI readability sweep (PR #34)
+
+- Spencer: the shot notice ran off the screen and tooltips were grey-on-black and unwrapped. Fixed across the UI in `ui/main.gd` (inherited by every child view):
+  - Tooltips use theme types `TooltipPanel` (parchment `f6e7bc`, brown border) and `TooltipLabel` (dark ink). Godot's tooltip label never wraps, so `_wrap_tooltip` (hooked to `node_added`) hard-wraps every tooltip to `TOOLTIP_WIDTH` (240 px) as it appears. New `tooltip_text` anywhere needs no extra work.
+  - Notices go through `notice(title, text)`: the label wraps at `NOTICE_WIDTH` (460 px) and `popup_fitted` resizes to the text and centers it. A bare `popup_centered()` on a resized AcceptDialog centers a zero-size window, which then grows off the right edge; use `popup_fitted` for dialogs whose text changes.
+  - The shot notice is now a summary: result, fought back, joined, one "Fled:" line with the combined food/clothing/gear taken, objected, stood by. The journal keeps the per-person lines.
+  - The guide scrolls in a fixed 500x250 frame (it was cut off at the bottom) and its trading paragraph now matches PR #33.
+  - SpinBox arrows are brown (they were near-white on parchment); the fort store counter columns were widened so prices no longer touch the item names.
+- Visual check: every window and several tooltips were captured under Xvfb at 640x360 before and after. The capture script is not in the repo; `tests/test_ui.gd` now checks tooltip theme and wrapping, notice centering and guide height.
 
 ## Suggested order when Spencer resumes
 

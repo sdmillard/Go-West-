@@ -9,6 +9,8 @@ const HuntView = preload("res://ui/hunt_view.gd")
 const PostStoreView = preload("res://ui/post_store_view.gd")
 const PIXEL_FONT = preload("res://art/pixels/trail_font.fnt")
 const LEDGER_ICONS = preload("res://art/pixels/ledger_icons.png")
+const TOOLTIP_WIDTH := 240.0
+const NOTICE_WIDTH := 460
 var game = Simulation.new(1848, "classic", true)
 var landscape: Control
 var date_label: Label
@@ -94,6 +96,7 @@ func _ready() -> void:
 	party_window.visibility_changed.connect(_update_animation_pause)
 	options_window.visibility_changed.connect(_update_animation_pause)
 	service_window.visibility_changed.connect(_update_animation_pause)
+	get_tree().node_added.connect(_wrap_tooltip)
 	grave_store.read_records()
 	_open_departure()
 	_refresh()
@@ -145,6 +148,18 @@ func _build_theme() -> void:
 	skin.set_stylebox("panel", "PopupMenu", style("45372f", "ddb461", 5))
 	skin.set_stylebox("hover", "PopupMenu", style("a16b43", "ddb461", 2))
 	skin.set_color("font_color", "PopupMenu", Color("f6e7bc"))
+	skin.set_color("font_disabled_color", "PopupMenu", Color("aa947b"))
+	# Tooltips: dark ink on parchment, like the panels they describe. Wrapping happens in _wrap_tooltip.
+	skin.set_stylebox("panel", "TooltipPanel", style("f6e7bc", "76503c", 4))
+	skin.set_color("font_color", "TooltipLabel", Color("45372f"))
+	skin.set_color("font_shadow_color", "TooltipLabel", Color(0, 0, 0, 0))
+	skin.set_font_size("font_size", "TooltipLabel", 8)
+	# SpinBox arrows default to near-white, which vanishes on parchment.
+	for arrow in ["up", "down"]:
+		skin.set_color(arrow + "_icon_modulate", "SpinBox", Color("76503c"))
+		skin.set_color(arrow + "_hover_icon_modulate", "SpinBox", Color("a16b43"))
+		skin.set_color(arrow + "_pressed_icon_modulate", "SpinBox", Color("45372f"))
+		skin.set_color(arrow + "_disabled_icon_modulate", "SpinBox", Color("c9ad7a"))
 	skin.set_stylebox("panel", "AcceptDialog", style("ecd097", "76503c", 10))
 	var window_border := style("76503c", "ddb461", 3)
 	window_border.expand_margin_top = 15
@@ -156,6 +171,43 @@ func _build_theme() -> void:
 	skin.set_stylebox("background", "ProgressBar", style("302b2c", "76503c", 0))
 	skin.set_stylebox("fill", "ProgressBar", style("ddb461", "f6e7bc", 0))
 	theme = skin
+
+## Breaks text into lines no wider than width pixels in the pixel font, keeping existing line breaks.
+static func wrap_text(text: String, width: float, font_size: int = 8) -> String:
+	var lines: Array = []
+	for paragraph in text.split("\n"):
+		var line := ""
+		for word in paragraph.split(" ", false):
+			var trial: String = word if line.is_empty() else line + " " + word
+			if not line.is_empty() and PIXEL_FONT.get_string_size(trial, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x > width:
+				lines.append(line)
+				line = word
+			else:
+				line = trial
+		lines.append(line)
+	return "\n".join(lines)
+
+## Godot's own tooltip label never wraps, so every hint is broken into lines before its popup sizes itself.
+func _wrap_tooltip(node: Node) -> void:
+	if node is Label and node.theme_type_variation == &"TooltipLabel":
+		node.text = wrap_text(node.text, TOOLTIP_WIDTH)
+
+## Notices wrap to a fixed reading width; the height follows the text.
+func wrap_dialog(dialog: AcceptDialog, width: int = NOTICE_WIDTH) -> void:
+	dialog.get_label().autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	dialog.get_label().custom_minimum_size.x = width
+
+## The shared trail notice, resized to its text so a short message never keeps an earlier long one's size.
+func notice(heading: String, text: String) -> void:
+	record_notice.title = heading
+	record_notice.dialog_text = text
+	popup_fitted(record_notice)
+
+## Shrinks a dialog to its current content, then centers it at that size. A bare popup_centered()
+## centers a zero-sized window and lets it grow rightward and down off the screen.
+func popup_fitted(dialog: Window) -> void:
+	dialog.reset_size()
+	dialog.popup_centered(dialog.size)
 
 func place(node: Control, bounds: Rect2, parent: Node = self) -> Control:
 	parent.add_child(node)
@@ -281,6 +333,7 @@ func _build_ui() -> void:
 	place(button("JOURNAL", _show_journal), Rect2(474, 334, 67, 17))
 	record_notice = AcceptDialog.new()
 	record_notice.title = "TRAIL RECORD"
+	wrap_dialog(record_notice)
 	add_child(record_notice)
 	options_button = button("OPTIONS", _show_options)
 	options_button.tooltip_text = "Hunt, trade, and care for travelers"
@@ -310,40 +363,31 @@ func _build_ui() -> void:
 	memorial_scroll.add_child(memorial_rows)
 	guide = AcceptDialog.new()
 	guide.title = "THE OVERLAND GUIDE"
-	guide.dialog_text = """Name five travelers, choose a profession and month, then buy
-supplies. Care kits are optional; keep cash for the road.
+	# The guide is longer than the screen is tall, so it scrolls inside a fixed frame.
+	var guide_scroll := ScrollContainer.new()
+	guide_scroll.custom_minimum_size = Vector2(500, 250)
+	guide_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	guide.add_child(guide_scroll)
+	var guide_text := label("""Name five travelers, choose a profession and month, then buy supplies. Care kits are optional; keep cash for the road.
 
-Continue advances days; Pause stops the wagon. Encounters
-and landmarks stop travel. Guide, Journal, View Party and
-Options let you take stock without spending another day.
+Continue advances days; Pause stops the wagon. Encounters and landmarks stop travel. Guide, Journal, View Party and Options let you take stock without spending another day. Hover over a control for a short explanation.
 
-Camp rests people and livestock, using food. Faster travel
-strains the team; low rations raise illness risk. Clothing
-protects people in rough weather. Inspect individual travelers.
+Camp rests people and livestock, using food. Faster travel strains the team; low rations raise illness risk. Clothing protects people in rough weather. Inspect individual travelers.
 
-Options offers hunting, trading and medical care. Hunting
-costs a day and ammunition. Left-click fires; right-click walks.
-Cover blocks shots. Game flees; reload between shots. Carry
-back what your health and willing helpers allow (200 lb maximum).
-Broken legs prevent hauling. Buying, selling,
-bartering and care take a day each; check costs first.
+Options offers hunting, trading and medical care. Hunting costs a day and ammunition. Left-click fires; right-click walks. Cover blocks shots. Game flees; reload between shots. Carry back what your health and willing helpers allow (200 lb maximum). Broken legs prevent hauling.
 
-Recent rain can raise a river while you wait. Low water favors
-fording; high water is dangerous. Watch team condition and
-supplies as well as the weather.
+Each trading visit costs one day, however many trades you make. Trading posts keep a store counter with limited stock; passing traders offer fixed lots at higher prices. Care takes a day each; check costs first.
 
-This chapter follows Palmer's reported opening route from
-Independence to Oregon City: 1,938 reported guide miles.
-The southern road via Bridger and the Barlow Road is playable.
-The suggested staples provision most of the journey, with resupply.
-Plan bulk resupply at trading posts; allow for weather delays.
-Options > Provisions lets you dry fresh meat, with optional salt.
-This takes a day. Food units and physical weight are separate:
-two pounds of new meat supply one food unit. Dried meat weighs
-less in cargo. Preserved meat also eventually spoils.
-Northern shortcuts and Columbia rafting are not yet playable.
-Weather, medical effects and other survival values remain
-simplified game rules, not reconstructed conditions for 1848."""
+Recent rain can raise a river while you wait. Low water favors fording; high water is dangerous. Watch team condition and supplies as well as the weather.
+
+This chapter follows Palmer's reported opening route from Independence to Oregon City: 1,938 reported guide miles. The southern road via Bridger and the Barlow Road is playable. The suggested staples provision most of the journey, with resupply. Plan bulk resupply at trading posts; allow for weather delays.
+
+Options > Provisions lets you dry fresh meat, with optional salt. This takes a day. Food units and physical weight are separate: two pounds of new meat supply one food unit. Dried meat weighs less in cargo. Preserved meat also eventually spoils.
+
+Northern shortcuts and Columbia rafting are not yet playable. Weather, medical effects and other survival values remain simplified game rules, not reconstructed conditions for 1848.""")
+	guide_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	guide_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	guide_scroll.add_child(guide_text)
 	add_child(guide)
 	journal_window = AcceptDialog.new()
 	journal_window.title = "TRAIL JOURNAL"
@@ -398,9 +442,7 @@ simplified game rules, not reconstructed conditions for 1848."""
 	actions.add_child(label("Each activity stops travel.\nCheck costs before committing."))
 	food_notice=AcceptDialog.new()
 	food_notice.title="FOOD WARNING"
-	food_notice.min_size=Vector2i(520,170)
-	food_notice.get_label().autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
-	food_notice.get_label().custom_minimum_size.x=500
+	wrap_dialog(food_notice)
 	food_notice.get_ok_button().text="RETURN TO CAMP"
 	add_child(food_notice)
 	rest_window=ConfirmationDialog.new()
@@ -454,6 +496,7 @@ simplified game rules, not reconstructed conditions for 1848."""
 		game.advance_hunt(delta)
 		_update_hunt_report())
 	hunt_report = label("")
+	hunt_report.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	place(hunt_report, Rect2(0, 154, 432, 57), hunt_content)
 	supplies_window = AcceptDialog.new()
 	supplies_window.title = "PROVISIONS AND WAGON CARGO"
@@ -552,25 +595,19 @@ func _open_crime() -> void:
 	options_window.hide()
 	if game.open_crime():_show_service()
 	else:
-		record_notice.title="NOTHING TO TAKE HERE"
-		record_notice.dialog_text="Stop at a trading post, the Kansas River ferry, Fort Kearny once soldiers are there, or the Barlow Road toll gate, or meet passing traders on the road, to use these actions."
-		record_notice.popup_centered()
+		notice("NOTHING TO TAKE HERE","Stop at a trading post, the Kansas River ferry, Fort Kearny once soldiers are there, or the Barlow Road toll gate, or meet passing traders on the road, to use these actions.")
 
 func _open_camp() -> void:
 	options_window.hide()
 	if game.open_camp():_show_service()
 	else:
-		record_notice.title="NO CAMP NEARBY"
-		record_notice.dialog_text="Emigrant families camp near the road every so often. When one is close, you can visit, trade, ask for help or swap news."
-		record_notice.popup_centered()
+		notice("NO CAMP NEARBY","Emigrant families camp near the road every so often. When one is close, you can visit, trade, ask for help or swap news.")
 
 func _open_remains() -> void:
 	options_window.hide()
 	if game.open_remains():_show_service()
 	else:
-		record_notice.title="NOBODY TO TEND"
-		record_notice.dialog_text="There are no remains here or in the wagon. A body stays where its person died unless you carry it."
-		record_notice.popup_centered()
+		notice("NOBODY TO TEND","There are no remains here or in the wagon. A body stays where its person died unless you carry it.")
 
 func _show_service() -> void:
 	for child in service_rows.get_children():
@@ -610,24 +647,40 @@ func _service_choice(index: int) -> void:
 			_edit_gravestone(grave)
 
 ## Everything the shot set off, at once: the result, who fought back, who objected and who left with what.
+## The journal keeps the full per-person record; this notice summarizes it in a few short lines.
 func _show_attack_result(lines: Array) -> void:
 	var attack: Dictionary = game.crime.record.attacks.back()
-	var said: Array = []
+	var members: Array = game.party_health.members
+	var target: String = members[int(attack.target)].name
+	var names := func(ids: Array) -> String: return ", ".join(ids.map(func(id): return members[int(id)].name))
+	var said: Array = ["You shot at %s: %s." % [target, attack.attempt]]
 	for line in lines:
 		var text: String = str(line)
-		# Trust changes stay in the journal and View Party; this notice is what happened.
-		if "(trust " in text:
-			continue
-		said.append(text.substr(text.find(" · ") + 3) if text.begins_with("Day ") and " · " in text else text)
-	var helpers: Array = attack.joining.filter(func(id): return int(id) > 0).map(func(id): return game.party_health.members[int(id)].name)
+		if " fought back" in text:
+			said.append(text.substr(text.find(" · ") + 3) if " · " in text else text)
+	var helpers: Array = attack.joining.filter(func(id): return int(id) > 0)
 	if not helpers.is_empty():
-		said.append("Joined you: %s." % ", ".join(helpers))
-	var standing: Array = attack.responses.keys().filter(func(key): return attack.responses[key] == "stood by").map(func(key): return game.party_health.members[int(key)].name)
+		said.append("Joined you: %s." % names.call(helpers))
+	var by_answer := func(answers: Array) -> Array: return attack.responses.keys().filter(func(key): return attack.responses[key] in answers).map(func(key): return int(key))
+	var gone: Array = by_answer.call(["fled", "retaliated"]).filter(func(id): return members[id].get("departed", false))
+	if not gone.is_empty():
+		var food := 0
+		var clothing := 0
+		var gear := 0
+		for id in gone:
+			var share: Dictionary = members[id].get("departure_supplies", {})
+			food += int(share.get("food", 0))
+			clothing += int(share.get("clothing", 0))
+			gear += int(share.get("gear_lb", 0))
+		said.append("Fled: %s. They took %d ration-lb food, %d clothing set%s and %d lb personal gear." % [names.call(gone), food, clothing, "" if clothing == 1 else "s", gear])
+	var objecting: Array = by_answer.call(["objected"])
+	if not objecting.is_empty():
+		said.append("Objected: %s." % names.call(objecting))
+	var standing: Array = by_answer.call(["stood by"])
 	if not standing.is_empty():
-		said.append("Stood by: %s." % ", ".join(standing))
-	record_notice.title = "YOU SHOT AT %s" % str(game.party_health.members[int(attack.target)].name).to_upper()
-	record_notice.dialog_text = "\n".join(said)
-	record_notice.popup_centered()
+		said.append("Stood by: %s." % names.call(standing))
+	said.append("One bullet used. The journal and View Party have the details.")
+	notice("YOU SHOT AT %s" % target.to_upper(), "\n".join(said))
 
 func _cancel_service() -> void:
 	service_window.hide()
@@ -662,9 +715,7 @@ func _finish_hunt() -> void:
 	var before: int = game.state.food
 	if game.finish_hunt():
 		var carried: int = game.state.food - before
-		record_notice.title = "HUNTING REPORT"
-		record_notice.dialog_text = "%d shots · %d lb meat obtained\n%d lb brought to camp · %d lb left behind\nUse fresh meat within two trail days, or dry it through\nOptions > Provisions. Salt improves the result.\nRecovered meat supplies %d food units.\nThe outing used one day and that day's rations." % [outing.shots,outing.meat,recovered.mass,recovered.left,carried]
-		record_notice.popup_centered()
+		notice("HUNTING REPORT","%d shots · %d lb meat obtained\n%d lb brought to camp · %d lb left behind\nUse fresh meat within two trail days, or dry it through Options > Provisions. Salt improves the result.\nRecovered meat supplies %d food units.\nThe outing used one day and that day's rations." % [outing.shots,outing.meat,recovered.mass,recovered.left,carried])
 	camping = true
 	_refresh()
 
@@ -826,7 +877,7 @@ func _warn_food() -> bool:
 	_refresh()
 	food_notice.title="NO FOOD — STARVATION RISK" if level==2 else "LOW FOOD / SPOILAGE WARNING"
 	food_notice.dialog_text=("There is no food. Another day can cause starvation damage. " if level==2 else "Your supplies cannot cover three full days at the current ration setting, including known spoilage. ")+"Resting and waiting also use meals.\nConsider hunting, available traders, or emergency slaughter through Provisions / Cargo.\nTravel is paused. No extra day passed for this warning."
-	food_notice.popup_centered(Vector2i(540,190))
+	popup_fitted(food_notice)
 	return true
 
 func _advance_day() -> void:
@@ -844,11 +895,7 @@ func _advance_day() -> void:
 	if game.characters.due_total()>wages_before:
 		_pause_travel()
 		_refresh()
-		record_notice.title="WAGES DUE"
-		record_notice.dialog_text="Agreed wages are due. Open View Party and select the mercenary to pay. Another day without full payment counts as a missed payment."
-		record_notice.get_label().autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
-		record_notice.get_label().custom_minimum_size.x=500
-		record_notice.popup_centered(Vector2i(530,180))
+		notice("WAGES DUE","Agreed wages are due. Open View Party and select the mercenary to pay. Another day without full payment counts as a missed payment.")
 	_check_roadside_graves(before, int(game.state.miles))
 
 func _rest() -> void:
@@ -913,11 +960,7 @@ func _confirm_rest() -> void:
 		_show_service()
 		return
 	if not food_notice.visible:
-		record_notice.title="CAMP REST"
-		record_notice.get_label().autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
-		record_notice.get_label().custom_minimum_size.x=500
-		record_notice.dialog_text=report+"\nFood remaining: %d units. See the journal and party details for daily changes." % game.state.food
-		record_notice.popup_centered(Vector2i(530,180))
+		notice("CAMP REST",report+"\nFood remaining: %d units. See the journal and party details for daily changes." % game.state.food)
 
 func _choose(index: int) -> void:
 	if not landscape.crossing.is_empty() or _reviewing_crossing():
@@ -1088,9 +1131,7 @@ func _show_supplies() -> void:
 			var day: int=game.state.day
 			if game.recover_wagon():
 				_refresh()
-				record_notice.title="WAGON RECOVERY"
-				record_notice.dialog_text="%d day(s) passed. Now at mile %d.\n%s\nRead the Journal for the journey and supply losses." % [game.state.day-day,game.state.miles,"Wagon recovered." if game.state.vehicle=="wagon" else ("The wagon and its supplies were lost." if game.wagon_cache.is_empty() else "Wagon found. Repack supplies or trade for an ox.")]
-				record_notice.popup_centered())
+				notice("WAGON RECOVERY","%d day(s) passed. Now at mile %d.\n%s\nRead the Journal for the journey and supply losses." % [game.state.day-day,game.state.miles,"Wagon recovered." if game.state.vehicle=="wagon" else ("The wagon and its supplies were lost." if game.wagon_cache.is_empty() else "Wagon found. Repack supplies or trade for an ox.")]))
 		recover.disabled=not game._can_act()
 		supplies_rows.add_child(recover)
 		if game.CacheSupport.can_pack(game,true):supplies_rows.add_child(button("REPACK FROM THE CACHED WAGON",func():_show_packing(true)))
@@ -1186,6 +1227,7 @@ func _confirm_slaughter(by_hand: bool = false) -> void:
 		slaughter_confirmation=ConfirmationDialog.new()
 		slaughter_confirmation.title="SLAUGHTER AN OX?"
 		slaughter_confirmation.get_ok_button().text="SLAUGHTER"
+		wrap_dialog(slaughter_confirmation)
 		slaughter_confirmation.confirmed.connect(func():
 			slaughter_confirmation.hide()
 			if game.slaughter_ox(slaughter_by_hand):
@@ -1200,7 +1242,7 @@ func _confirm_slaughter(by_hand: bool = false) -> void:
 	elif offer.remaining==1:slaughter_confirmation.dialog_text+="\nONE OX: very slow; load guideline %.0f lb." % game.provisions.team_capacity(1)
 	if by_hand:slaughter_confirmation.dialog_text+="\nHousehold tools included; %d%% chance of wounding a traveler." % roundi(offer.injury_chance*100)
 	supplies_window.hide()
-	slaughter_confirmation.popup_centered()
+	popup_fitted(slaughter_confirmation)
 
 
 func _save_journey() -> void:
@@ -1209,15 +1251,12 @@ func _save_journey() -> void:
 	_pause_travel()
 	options_window.hide()
 	_refresh()
-	record_notice.title = "TRAIL RECORD"
-	record_notice.dialog_text = "Journey saved. The previous record is kept as a backup." if save_store.save_game(game, save_path) else save_store.error
-	record_notice.popup_centered()
+	notice("TRAIL RECORD","Journey saved. The previous record is kept as a backup." if save_store.save_game(game, save_path) else save_store.error)
 
 func _load_journey() -> void:
 	if load_button.disabled:
 		return
 	_pause_travel()
-	record_notice.title = "TRAIL RECORD"
 	var result: Dictionary = save_store.load_game(save_path)
 	if not result.is_empty():
 		for window in [guide,journal_window,party_window,options_window,food_notice,rest_window,stop_window,service_window,hunt_window,supplies_window,grave_window,memorial_window]:
@@ -1235,8 +1274,7 @@ func _load_journey() -> void:
 		_open_departure()
 		_refresh()
 	visited_graves.clear()
-	record_notice.dialog_text = result.message if not result.is_empty() else save_store.error
-	record_notice.popup_centered()
+	notice("TRAIL RECORD",result.message if not result.is_empty() else save_store.error)
 
 ## With a buried companion's remains entry, marks that grave; otherwise the lost party's own stone.
 func _edit_gravestone(grave: Dictionary = {}) -> void:
@@ -1279,8 +1317,7 @@ func _leave_gravestone() -> void:
 		grave_remains = {}
 		_refresh()
 	else:
-		record_notice.dialog_text = grave_store.error
-		record_notice.popup_centered()
+		notice("A GRAVESTONE ON THE TRAIL",grave_store.error)
 
 func _read_gravestone(record: Dictionary) -> void:
 	_pause_travel()
