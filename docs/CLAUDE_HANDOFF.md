@@ -1,6 +1,6 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 23, 2026, after the trail map PR #50 (see Trail map). Sections below cover PRs #19 to #34. **Continue the existing project; do not restart it. Spencer requested a break. This is a saved checkpoint, not a request to continue working now.**
+Last updated October 23, 2026, after map navigation, foraging/vitamin C and unarmed attacks (see final checkpoint). Sections below cover PRs #19 to #34. **Continue the existing project; do not restart it. Spencer requested a break. This is a saved checkpoint, not a request to continue working now.**
 
 ## Resume here
 
@@ -211,3 +211,5 @@ Publication: survival/accounting, research and balance reports were pushed and m
 ## Map navigation, foraging and unarmed attacks (October 23)
 
 See `docs/FORAGING_AND_UNARMED.md` and `docs/TRAIL_MAP.md`. Spencer requested the map overlap fixed and zoom added, then the scurvy bug fixed, foraging added, and unarmed attacks available as a choice regardless of ammunition. Map has a separate status/control row, clipped 1x–4x zoom, cursor anchoring, drag bounds, FIT/WAGON and transformed hover. Seasonal foraging costs an ordinary day; modest produce yields account for region, season, health, broken legs and storage. Tagged produce expires, keeps physical mass and only counts for vitamin C when actually eaten; fresh meat no longer prevents scurvy. Legacy counter save name retained. Unarmed companion and venue attacks preserve moral/witness/news consequences; lower hit/fatal odds, extra injury risk, no bullets. The previous master fingerprint migrates. These features require a new combined balance campaign; no old archived survival result validates the new rules.
+
+Validation: committed feature code `12657a2` passed all37 suites in an isolated clean checkout (336 field-action checks,118 companion checks), plus24store and20outlaw full journeys with0reported errors. Native 640x360 map overview/zoom, options, forage and attack confirmations were inspected. Store journey actors now buy one ammunition lot through the actual post counter when their planned gun offense otherwise lacks bullets; the original script reported two policy blocks for that legitimate ammo shortage. No gun requirement was weakened. These integration policies do not yet plan foraging; this is regression coverage, not a new balance study. Generated journey reports stayed in the ignored validation area; archived reports, debug pilots and real player saves were preserved.
