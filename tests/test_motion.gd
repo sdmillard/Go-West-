@@ -147,16 +147,19 @@ func capture_animation(method: String) -> void:
 	DirAccess.make_dir_recursive_absolute(folder)
 	screen.landscape.crossing_paused = true
 	for frame in range(42):
-		screen.landscape.crossing_elapsed = float(frame) / 41.0 * 2.79
+		screen.landscape.crossing_elapsed = float(frame) / 41.0 * (screen.landscape.crossing_duration - 0.01)
 		screen.landscape.queue_redraw()
 		await process_frame
 		await RenderingServer.frame_post_draw
 		var capture: Image = root.get_texture().get_image()
 		var origin := Vector2i(screen.landscape.global_position)
+		# Bank pixels away from the party show the crossing picture itself, never water.
+		var world: Image = screen.landscape.CROSSING.get_image()
+		var camera := Vector2i(screen.landscape._camera())
 		if frame == 0:
-			check(capture.get_pixelv(origin + Vector2i(10, 140)).is_equal_approx(Color("ecd097")), "Near-bank pixels stay dry as sprites enter: " + method)
+			check(capture.get_pixelv(origin + Vector2i(10, 140)).is_equal_approx(world.get_pixelv(camera + Vector2i(10, 140))), "Near-bank pixels stay dry as sprites enter: " + method)
 		if frame == 35 or frame == 41:
-			check(capture.get_pixelv(origin + Vector2i(400, 140)).is_equal_approx(Color("8d9b53")), "Far-bank pixels stay dry as sprites leave: " + method)
+			check(capture.get_pixelv(origin + Vector2i(380, 20)).is_equal_approx(world.get_pixelv(camera + Vector2i(380, 20))), "Far-bank pixels stay dry as sprites leave: " + method)
 		capture.save_png(folder + "/%03d.png" % frame)
 		if frame == 21:
 			capture.save_png("res://docs/crossing-" + method + ".png")
