@@ -25,12 +25,14 @@ func _initialize() -> void:
 			var frame_width: int = {"wagon": 96, "oxen": 48, "walker": 16, "cross_wagon": 64, "cross_swim_ox": 32, "cross_ferryman": 32, "cross_people": 16, "cross_swimmer": 16}[name]
 			check(image.get_width() == frame_width * 8, name + " has eight exact frames")
 			check(image.get_region(Rect2i(0, 0, frame_width, image.get_height())).get_data() != image.get_region(Rect2i(frame_width, 0, frame_width, image.get_height())).get_data(), name + " frames actually animate")
-	# Hunting sheets hold two frames exactly the size of each species' hitbox.
+	# Hunting sheets hold eight frames exactly the size of each species' hitbox, in three rows.
 	var species: Array = JSON.parse_string(FileAccess.get_file_as_string("res://data/hunting.json")).species
 	for index in range(3):
 		var sheet: Texture2D = load("res://art/pixels/hunt_" + ["bison", "deer", "rabbit"][index] + ".png")
-		check(sheet.get_size() == Vector2(species[index].width * 2, species[index].height), "Hunting sprite matches its hitbox: " + species[index].id)
+		check(sheet.get_size() == Vector2(species[index].width * 8, species[index].height * 3), "Hunting sprite matches its hitbox: " + species[index].id)
 	check(load("res://art/pixels/hunt_cover.png").get_size() == Vector2(24, 14), "Cover sheet holds two 12 x 14 frames")
+	check(load("res://art/pixels/hunt_hunter.png").get_size() == Vector2(128, 36), "Hunter sheet holds standing and walking rows of 16 x 18 frames")
+	check(load("res://art/pixels/hunt_smoke.png").get_size() == Vector2(128, 16), "Rifle smoke holds eight 16 x 16 frames")
 	check(load("res://art/pixels/gravestone_frame.png").get_size() == Vector2(432, 150), "Headstone fills the memorial view")
 	var scenes = preload("res://ui/location_scenes.gd").new()
 	check(scenes.error.is_empty(), "Scene registry loads every image")

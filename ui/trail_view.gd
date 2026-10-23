@@ -254,7 +254,7 @@ func _crossing_phase() -> Dictionary:
 	# An accident stalls the crossing midstream while the current carries cargo away.
 	if crossing.get("mishap", false):
 		progress = progress * 1.4 if progress < 0.3 else (0.42 if progress < 0.6 else lerpf(0.42, 1.0, (progress - 0.6) / 0.4))
-	if crossing.get("method", "") == "ferry":
+	if crossing.get("method", "") in ["ferry", "seized"]:
 		var dock := NEAR_SHORE - 2.0
 		var land := FAR_SHORE - RAFT_LENGTH
 		if progress < 0.15:
@@ -268,7 +268,8 @@ func _crossing_phase() -> Dictionary:
 
 func _draw_crossing() -> void:
 	var progress := clampf(crossing_elapsed / crossing_duration, 0.0, 1.0)
-	var method: String = crossing.method
+	# A ferry taken by force crosses the same way as a hired one.
+	var method: String = "ferry" if crossing.method == "seized" else crossing.method
 	var water := Color("927e62") if method == "ferry" else Color("3d7f99")
 	var cam := _camera()
 	draw_set_transform(-cam)
