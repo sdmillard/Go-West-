@@ -5,14 +5,14 @@
 -- flats toward the viewer while the trail swings round the ridge's end.
 local K = dofile(app.params.kit)
 local W, H = 432, 150
-local GROUND = 96
+local GROUND = 104
 local GAP = 218
 
 K.canvas(W, H, 184826)
 
 local function dome(x, c, w, h) local d = (x - c) / w; return (math.abs(d) < 1) and h * (1 - d * d) ^ 0.7 or 0 end
 local function ridge_height(x)
-  local h = math.max(dome(x, 120, 64, 36), dome(x, 190, 40, 56), dome(x, 248, 42, 58), dome(x, 318, 60, 40), dome(x, 70, 40, 22), dome(x, 390, 44, 22))
+  local h = math.max(dome(x, 120, 70, 52), dome(x, 188, 46, 82), dome(x, 250, 48, 86), dome(x, 322, 66, 58), dome(x, 64, 46, 30), dome(x, 392, 48, 30))
   -- crags break the smooth domes
   return h + ((h > 6) and (2 * math.sin(x / 3.1) + 1.5 * math.sin(x / 1.7 + 1)) or 0)
 end
@@ -34,12 +34,12 @@ K.layer("plain", function()
     K.px(x, y, ({"sand", "ochre", "sage", "clap_sh"})[i % 4 + 1])
   end
   -- grassy bottomland along the river
-  local course = K.smooth({{GAP, 96, 3}, {200, 104, 5}, {150, 114, 8}, {108, 126, 11}, {150, 140, 14}, {120, 156, 16}})
+  local course = K.smooth({{GAP, 104, 3}, {204, 110, 4}, {166, 117, 6}, {124, 127, 9}, {150, 140, 12}, {116, 156, 15}})
   K.ribbon(course, "sage", 9)
   K.ribbon(course, "grass", 5)
-  K.river(K.smooth({{GAP, 96, 2}, {200, 104, 3}, {150, 114, 4}, {108, 126, 6}, {150, 140, 7}, {120, 156, 8}}), "sand")
-  -- the trail rounds the east end of the ridge
-  local trail = K.smooth({{440, 128, 7}, {370, 124, 6}, {330, 112, 4}, {372, 100, 3}, {420, 94, 2}})
+  K.river(K.smooth({{GAP, 104, 1}, {204, 110, 2}, {166, 117, 3}, {124, 127, 5}, {150, 140, 6}, {116, 156, 8}}), "sand")
+  -- the trail runs along the foot of the ridge, then swings south toward the viewer
+  local trail = K.smooth({{440, 108, 1}, {360, 110, 2}, {290, 113, 3}, {256, 124, 5}, {244, 140, 7}, {250, 158, 9}})
   K.ribbon(trail, "ochre", 1)
   K.ribbon(trail, "sand", 0)
   for i = 1, 60 do
@@ -51,10 +51,24 @@ end)
 
 K.layer("granite ridge", function()
   K.ridge(30, 430, GROUND + 2, GROUND + 2, ridge_height, "stone_dk", "stone", "stone_ink")
+  -- broad light and shade: faces turned to the upper-left sun are pale, the rest falls into shadow
+  local base = function(x) return math.max(dome(x, 120, 70, 52), dome(x, 188, 46, 82), dome(x, 250, 48, 86), dome(x, 322, 66, 58), dome(x, 64, 46, 30), dome(x, 392, 48, 30)) end
+  for x = 30, 430 do
+    local top = math.floor(GROUND + 2 - ridge_height(x) + 0.5)
+    local slope = base(x + 3) - base(x - 3)
+    local reach = math.floor(math.min(40, base(x) * 0.6))
+    for y = top, math.min(GROUND + 1, top + reach) do
+      if slope < -3 then K.px(x, y, ((y - top) > reach - 6 and (x + y) % 2 == 0) and "stone_dk" or "stone_ink")
+      elseif slope < -1 and (x + y) % 2 == 0 then K.px(x, y, "stone_ink")
+      elseif slope > 2 and y < top + reach * 0.5 then K.px(x, y, ((y - top) > reach * 0.4 and (x + y) % 2 == 0) and "stone_dk" or "stone")
+      end
+    end
+  end
   -- jointed granite blocks: dark cracks with a lit upper-left lip
-  for i = 1, 260 do
-    local x, y = 40 + K.rnd(380), 38 + K.rnd(60)
-    if K.at(x, y) == "stone_dk" then
+  for i = 1, 240 do
+    local x, y = 30 + K.rnd(390), 18 + K.rnd(86)
+    local here = K.at(x, y)
+    if here == "stone_dk" or here == "stone" then
       local len = 3 + K.rnd(6)
       if i % 2 == 0 then
         K.line(x, y, x + len, y + K.rnd(3) - 1, "stone_ink"); K.line(x, y - 1, x + len - 1, y - 1 + K.rnd(2), "stone")
@@ -64,8 +78,8 @@ K.layer("granite ridge", function()
     end
   end
   -- warm lichen and sage pockets on ledges
-  for i = 1, 90 do
-    local x, y = 40 + K.rnd(380), 46 + K.rnd(52)
+  for i = 1, 150 do
+    local x, y = 30 + K.rnd(390), 26 + K.rnd(78)
     if K.at(x, y) == "stone_dk" then K.px(x, y, ({"clap_sh", "sage", "rust"})[i % 3 + 1]) end
   end
   -- the cleft: deep shadow, a shaded west wall and a sunlit east wall
@@ -80,7 +94,7 @@ K.layer("granite ridge", function()
   end
   K.rect(GAP - 2, GROUND - 3, 5, 5, "blue")
   -- boulder apron at the foot
-  for _, b in ipairs({{60, 98, 4, 2}, {96, 99, 5, 3}, {248, 98, 4, 2}, {300, 99, 6, 3}, {356, 98, 4, 2}, {186, 99, 3, 2}}) do
+  for _, b in ipairs({{60, 106, 4, 2}, {96, 107, 5, 3}, {270, 106, 4, 2}, {300, 107, 6, 3}, {356, 106, 4, 2}, {186, 107, 3, 2}}) do
     K.ellipse(b[1], b[2], b[3], b[4], "stone_dk")
     K.ellipse(b[1] - 1, b[2] - 1, b[3] - 1, b[4] - 1, "stone")
     K.px(b[1] - b[3] + 1, b[2] - 1, "stone_lt")
@@ -88,12 +102,15 @@ K.layer("granite ridge", function()
 end)
 
 K.layer("figures", function()
-  -- a wagon rounding the ridge, and two emigrants walking back from a look into the gap
-  K.wagon(316, 124, -1)
-  K.team(306, 124, -1, {"red"}, {"dark", true})
-  K.line(304, 117, 291, 110, "deep")
-  K.person(236, 112, "red", "bonnet", true)
-  K.person(244, 113, "deep", "roof")
+  -- the gap is some 370 feet deep: a wagon train at the ridge's foot is tiny against it
+  K.far_wagon(330, 111, -1)
+  K.far_wagon(362, 110, -1)
+  K.far_wagon(396, 109, -1)
+  -- near the viewer, a wagon has pulled off the road while two emigrants look back at the gate
+  K.wagon(356, 146, -1)
+  K.team(346, 146, -1, {"red"}, {"dark", true})
+  K.person(286, 144, "red", "bonnet", true)
+  K.person(296, 145, "deep", "roof")
 end)
 
 K.save("location_devils_gate")

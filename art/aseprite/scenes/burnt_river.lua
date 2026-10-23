@@ -42,7 +42,11 @@ K.layer("valley floor", function()
   K.ribbon(K.smooth({{226, 130, 5}, {280, 112, 4}, {300, 96, 3}, {276, 86, 2}, {250, 78, 1}}), "sand", 0)
   -- the creek itself, twisting toward the viewer
   K.river(K.smooth({{232, 74, 1}, {218, 86, 2}, {246, 100, 3}, {262, 112, 4}, {222, 128, 6}, {204, 140, 7}, {214, 154, 8}}), "clap_sh")
-  -- ford riffles where the trail crosses
+  -- the creek spreads into a shallow ford where the trail crosses
+  K.ellipse(204, 141, 42, 9, "clap_sh")
+  K.ellipse(204, 141, 39, 8, "blue")
+  K.ellipse(201, 142, 28, 4, "sky_top")
+  -- ford riffles
   for i = 0, 7 do K.rect(196 + i * 4, 133 + (i % 2), 2, 1, "white") end
 end)
 
@@ -95,8 +99,9 @@ K.layer("figures", function()
   K.team(232, 132, 1, {"dark"}, {"light", true})
   K.line(224, 131, 250, 118, "deep")
   K.person(266, 128, "blue", "deep")
-  -- splash at the wheels
-  for i = 0, 9 do K.px(184 + i * 4, 139 + (i % 2), "white") end
+  -- knee-deep: the creek covers the hubs' lower rims and the oxen's hocks
+  K.wade(174, 226, 139, 5)
+  K.wade(228, 262, 133, 5)
 end)
 
 K.save("location_burnt_river")

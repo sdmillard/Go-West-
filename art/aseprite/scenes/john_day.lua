@@ -115,8 +115,11 @@ K.layer("figures", function()
   K.wagon(176, 128, 1)
   K.team(230, 125, 1, {"dark"}, {"red", true})
   K.line(222, 125, 246, 114, "deep")
-  for i = 0, 9 do K.px(182 + i * 6, 129 + (i % 2), "white") end
   K.person(262, 124, "blue", "deep")
+  -- low summer water, a foot or so over the gravel
+  K.wade(174, 224, 129, 5)
+  K.wade(228, 258, 126, 5)
+  K.wade(260, 265, 125, 5)
   -- the wagon ahead, small on the climb
   local fx, fy = 344, 84
   K.rect(fx, fy - 6, 10, 4, "blue"); K.rect(fx, fy - 10, 10, 4, "cream"); K.px(fx, fy - 10, "white")
