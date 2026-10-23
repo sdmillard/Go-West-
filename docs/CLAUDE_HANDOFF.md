@@ -1,6 +1,6 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 23, 2026, after merged PR #34 (UI readability). Sections below cover PRs #19 to #34. **Continue the existing project; do not restart it. Spencer requested a break. This is a saved checkpoint, not a request to continue working now.**
+Last updated October 23, 2026, after the disease part 1 PR (see Expanded mechanics). Sections below cover PRs #19 to #34. **Continue the existing project; do not restart it. Spencer requested a break. This is a saved checkpoint, not a request to continue working now.**
 
 ## Resume here
 
@@ -52,6 +52,12 @@ Last updated October 23, 2026, after merged PR #34 (UI readability). Sections be
   - Party setup: the companion character sheet is closed by default. Each companion name has an EDIT button that opens that companion's sheet (`departure_view.gd` `open_editor`), with DONE to close (Spencer's request). The old TRAVELER 2-5 selector is gone. Entering the store closes the sheet.
   - SpinBox arrows are brown (they were near-white on parchment); the fort store counter columns were widened so prices no longer touch the item names.
 - Visual check: every window and several tooltips were captured under Xvfb at 640x360 before and after. The capture script is not in the repo; `tests/test_ui.gd` now checks tooltip theme and wrapping, notice centering and guide height.
+
+## Expanded mechanics: disease, climate, route branches (October 23, 2026)
+
+Spencer's order: crime follow-ups and these expanded mechanics first, the big balance pass last. Do not tune balance in these PRs; mark new numbers as placeholders. Plan: disease (causes and contagion, then scurvy), climate (Platte storms and stampedes, heat and dry stretches, snowmelt rivers), then route branches open in 1848 (Greenwood Cutoff, Columbia raft vs Barlow Road, Fort Walla Walla detour).
+
+- Disease part 1: illness is picked by month and region, measles/dysentery/typhoid spread within the party, measles leaves immunity (saved per traveler as `immune`), new non-contagious mountain fever in high country, cholera still locked to 1849+. See `docs/DISEASE.md` and `tests/test_disease.gd` (suite 34). Previous fingerprint `a76bde0b…81b7` whitelisted in `economy_v1`.
 
 ## Stoic vs. Loyal (Spencer's choice, October 23, 2026)
 

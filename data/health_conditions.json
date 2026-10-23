@@ -1,14 +1,16 @@
 {
   "daily_onset_chance": 0.03,
   "conditions": [
-    {"id": "dysentery", "name": "Dysentery", "kind": "illness", "daily_damage": 6, "recovery_days": 9},
+    {"id": "dysentery", "name": "Dysentery", "kind": "illness", "daily_damage": 6, "recovery_days": 9, "weight": 4, "months": [0.6, 0.6, 0.8, 1, 1.2, 1.5, 1.6, 1.6, 1.3, 1, 0.8, 0.6], "regions": {"plains": 1.3, "sagebrush": 1.3, "highcountry": 0.7, "forest": 0.8}, "spread_chance": 0.02},
     {"id": "cholera", "name": "Cholera", "kind": "illness", "daily_damage": 9, "recovery_days": 7, "from_year": 1849},
-    {"id": "typhoid", "name": "Typhoid fever", "kind": "illness", "daily_damage": 5, "recovery_days": 12},
-    {"id": "measles", "name": "Measles", "kind": "illness", "daily_damage": 4, "recovery_days": 10},
-    {"id": "exhaustion", "name": "Exhaustion", "kind": "illness", "daily_damage": 3, "recovery_days": 5},
+    {"id": "typhoid", "name": "Typhoid fever", "kind": "illness", "daily_damage": 5, "recovery_days": 12, "weight": 2, "months": [0.6, 0.6, 0.7, 0.8, 1, 1.2, 1.5, 1.6, 1.5, 1.2, 0.8, 0.6], "regions": {"plains": 1.2, "sagebrush": 1.1}, "spread_chance": 0.015},
+    {"id": "measles", "name": "Measles", "kind": "illness", "daily_damage": 4, "recovery_days": 10, "weight": 1.5, "months": [1, 1.2, 1.5, 1.5, 1.4, 1.2, 0.8, 0.6, 0.6, 0.6, 0.8, 1], "regions": {"woodland": 1.6, "plains": 1.2, "highcountry": 0.6, "sagebrush": 0.6, "forest": 0.6}, "spread_chance": 0.08, "immunizing": true},
+    {"id": "mountain_fever", "name": "Mountain fever", "kind": "illness", "daily_damage": 3, "recovery_days": 10, "weight": 4, "months": [0.1, 0.1, 0.3, 0.8, 1, 1, 1, 0.8, 0.4, 0.2, 0.1, 0.1], "regions": {"highcountry": 1, "sagebrush": 0.3}, "region_default": 0},
+    {"id": "exhaustion", "name": "Exhaustion", "kind": "illness", "daily_damage": 3, "recovery_days": 5, "weight": 2},
     {"id": "broken_arm", "name": "Broken arm", "kind": "injury", "daily_damage": 1, "recovery_days": 28},
     {"id": "broken_leg", "name": "Broken leg", "kind": "injury", "daily_damage": 2, "recovery_days": 35},
     {"id": "snakebite", "name": "Snakebite", "kind": "injury", "daily_damage": 8, "recovery_days": 8},
     {"id": "wound", "name": "Wound", "kind": "injury", "daily_damage": 5, "recovery_days": 12}
-  ]
+  ],
+  "note": "Onset weights, monthly and regional factors and spread chances are authored placeholders for the balance pass, not fitted epidemiology. Waterborne illness peaks in hot months on the Platte and in sagebrush country; measles spreads early on the trail and leaves survivors immune; mountain fever (the emigrants' name for a usually non-fatal fever met in the Rockies; its modern identity is uncertain) appears in high country in spring and summer and does not pass person to person. Cholera stays locked until the 1849 epidemic."
 }
