@@ -211,8 +211,18 @@ func run() -> void:
 	pick(game,"flee")
 	pick(game,"finish")
 	check(game.crime.check_pursuit(game),"The original army pursuit still creates a standoff")
+	var army_save: Dictionary=Store.new().capture(game)
+	check(game.pending.choices.any(func(choice):return choice.crime_command=="flee"),"A pursuing army detachment offers flight")
 	check(pick(game,"surrender") and game.crime.incident().sentence.kind=="robbery","Being pursued without fighting is not charged as an assault")
 	roundtrip(game,"Army surrender sentence")
+	game=Store.new().restore(JSON.parse_string(JSON.stringify(army_save)))
+	check(game!=null and pick(game,"flee"),"Flight from the army resolves through a public action")
+	if game!=null:roundtrip(game,"Army flight result")
+	army_save.rules="7b11c6894279c30b4dfe0a8cb9333dee8bc16853aa02b4ec7c5ce04a24dd8e81"
+	army_save.crime.record.version=8
+	army_save.crime.record.erase("bounties")
+	army_save.pending.choices=army_save.pending.choices.filter(func(choice):return choice.crime_command!="flee")
+	check(Store.new().restore(JSON.parse_string(JSON.stringify(army_save)))!=null,"An older pending army pursuit gains flight on migration")
 	var screen=Main.instantiate()
 	root.add_child(screen)
 	await process_frame

@@ -354,6 +354,7 @@ func menu(game) -> Dictionary:
 		var shots: int=mini(int(scene.breakout_shots),int(game.state.bullets))
 		text=("Soldiers from %s rode after you and have caught up. " % game.route.nodes[place].name if current.action=="pursuit" else "Soldiers have blocked the way out. ")+"Shooting your way out spends up to %d bullets; some of you will likely be hurt, and you may still be taken. Surrender brings a trial; a known killing can mean hanging." % int(scene.breakout_shots)
 		options=[option("Shoot your way out · %d bullet(s)" % shots,"breakout"),option("Surrender","surrender")]
+		if current.action=="pursuit":options.append(option("Flee the detachment · 1 day, risk of capture","flee"))
 	elif current.has("sentence"):
 		text=current.sentence.text
 		options=[option("Acknowledge the sentence","finish")]
@@ -384,7 +385,7 @@ func can_choose(game,command: String) -> bool:
 		var quote:=loot_quote(game,current.place)
 		# Passage is itself the prize at a gate or ferry, even with an empty cash box.
 		return command=="flee" or (command=="take" and (quote.food>0 or quote.money>0 or rules(current.place).kind in ["toll","ferry"]))
-	if current.stage=="standoff":return command=="surrender" or (command=="breakout" and game.state.bullets>0)
+	if current.stage=="standoff":return command=="surrender" or (command=="flee" and current.action=="pursuit") or (command=="breakout" and game.state.bullets>0)
 	return current.stage=="escape" and command in ["flee","surrender"]
 ## Local people who hold any knowledge of this incident; later reports can only come from them.
 func local_witnesses(current: Dictionary) -> Array:
@@ -472,7 +473,7 @@ func result(game,resolution: String) -> void:
 	current.resolution=resolution
 	current.stage="report"
 	game.journal.append("Day %d · %s incident %d: %s; %s. Took %d lb food and $%.2f; fired %d shot(s)." % [game.state.day,kind(current.place).journal,current.id,current.attempt,resolution,current.food,current.cash_cents/100.0,current.shots])
-	if resolution in ["left","escaped"] and (current.action!="wanted" or int(current.shots)>0) and not local_witnesses(current).is_empty():record.reports.append(report_for(current,int(game.state.day)))
+	if resolution in ["left","escaped"] and (current.action not in ["wanted","pursuit"] or int(current.shots)>0) and not local_witnesses(current).is_empty():record.reports.append(report_for(current,int(game.state.day)))
 	if resolution in ["captured","surrendered","party_lost"]:
 		current.stage="done"
 		record.active={}
@@ -489,6 +490,7 @@ func advance(game,days: int=1) -> bool:
 func choose(game,command: String) -> bool:
 	if not can_choose(game,command):return false
 	if incident().get("action","")=="wanted":return Wanted.choose(self,game,incident(),command)
+	if incident().get("action","")=="pursuit" and command=="flee":return Wanted.flee_pursuit(self,game,incident())
 	if command in ["back","finish"]:
 		if command=="finish":
 			incident().stage="done"
@@ -891,7 +893,7 @@ func upgrade_v2(value: Variant) -> Variant:
 	r.reports=[]
 	for current in r.incidents:
 		if not current is Dictionary or not current.get("knowledge") is Dictionary or not scenes.has(current.get("place","")):return value
-		if current.get("resolution") in ["left","escaped"] and (current.action!="wanted" or int(current.shots)>0) and not local_witnesses(current).is_empty():r.reports.append(report_for(current,int(current.get("day",0))))
+		if current.get("resolution") in ["left","escaped"] and (current.action not in ["wanted","pursuit"] or int(current.shots)>0) and not local_witnesses(current).is_empty():r.reports.append(report_for(current,int(current.get("day",0))))
 	return {"record":r,"random":value.get("random")}
 func upgrade_v1(value: Variant) -> Variant:
 	if not value is Dictionary or not value.get("record") is Dictionary or value.record.get("version")!=1:return value
@@ -1054,7 +1056,7 @@ func valid(value: Variant,game) -> bool:
 	for place in venues()+targeted:
 		if int(food_totals.get(place,0))!=r.services[place].food_taken or int(cash_totals.get(place,0))+r.services[place].cash_cents!=rules(place).cash_cents:return false
 	# Every resolved, witnessed getaway has exactly one report, in incident order, saying exactly what its witnesses know.
-	var expected: Array=r.incidents.filter(func(current):return current.resolution in ["left","escaped"] and (current.action!="wanted" or int(current.shots)>0) and not local_witnesses(current).is_empty())
+	var expected: Array=r.incidents.filter(func(current):return current.resolution in ["left","escaped"] and (current.action not in ["wanted","pursuit"] or int(current.shots)>0) and not local_witnesses(current).is_empty())
 	if r.reports.size()!=expected.size():return false
 	for index in range(expected.size()):
 		var report: Variant=r.reports[index]

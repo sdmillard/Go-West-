@@ -195,6 +195,22 @@ static func choose(crime,game,current: Dictionary,command: String) -> bool:
 	game.Remains.sync(game)
 	if game.state.status=="traveling":game.pending=menu(crime,game,current)
 	return true
+## A later army detachment can be fled, unlike soldiers already blocking a fort gate.
+static func flee_pursuit(crime,game,current: Dictionary) -> bool:
+	if not crime.advance(game):return true
+	var scene: Dictionary=crime.rules(current.place)
+	var speed: float=float(game.state.ox_health)/100.0 if game.state.vehicle!="foot" and int(game.state.oxen)>0 else 0.25
+	var chance: float=clampf(1.0-float(scene.escape_capture)+(speed-0.5)*0.2+int(game.state.pace)*0.04,0.05,0.85)
+	if crime.rng.randf()<chance:
+		crime.observe(game,current,"escape",true)
+		crime.result(game,"escaped")
+	else:
+		crime.wound(game,int(scene.injury_damage),1)
+		if game.state.status=="traveling":trial(crime,game,current,false)
+		else:crime.result(game,"party_lost")
+	game.Remains.sync(game)
+	if game.state.status=="traveling":game.pending=crime.menu(game)
+	return true
 ## Captures at an original crime scene and later pursuits use the same sentencing rules.
 static func trial(crime,game,current: Dictionary,surrendered: bool) -> void:
 	var known:=charges(crime,game,int(game.state.miles),current)
