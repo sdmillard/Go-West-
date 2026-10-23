@@ -272,12 +272,13 @@ func run() -> void:
 			break
 		screen._choose(0)
 	screen._open_trade()
-	check(screen.service_window.visible and screen.service_rows.get_child_count() > 10, "Trading opens a readable scrolling offers dialog")
+	check((screen.post_store_window.visible and not screen.post_store_view.held.is_empty()) or (screen.service_window.visible and screen.game.pending.title == "No traders nearby"), "Trading opens the traders' barter counter, or the wait-for-traders choice")
 	if "--capture" in OS.get_cmdline_user_args():
 		await capture("trail-trade")
 	before = screen.game.state.duplicate(true)
-	screen._cancel_service()
-	check(not screen.service_window.visible and screen.game.state == before, "Closing trade costs no time or supplies")
+	if screen.post_store_window.visible:screen._close_post_store()
+	else:screen._cancel_service()
+	check(not screen.service_window.visible and not screen.post_store_window.visible and screen.game.state == before, "Closing trade costs no time or supplies")
 	screen._new_journey()
 	check(screen.game.hunt.is_empty() and not screen.hunt_window.visible and not screen.options_window.visible, "Restart cancels activity UI without stale completion")
 	screen.queue_free()
