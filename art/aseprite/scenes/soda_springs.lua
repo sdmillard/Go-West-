@@ -79,8 +79,8 @@ K.layer("springs", function()
   mound(146, 121, 10, 3, false)
   mound(300, 128, 26, 7, true)
   mound(258, 134, 12, 4, true)
-  -- Steamboat Spring by the river: a puffing jet of spray
-  local sx, sy = 206, 104
+  -- Steamboat Spring on the riverbank: a puffing jet of spray
+  local sx, sy = 206, 116
   mound(sx, sy, 10, 3, false)
   for i = 0, 9 do
     local w = 1 + math.floor(i / 3)
