@@ -678,7 +678,7 @@ func _show_attack_result(lines: Array) -> void:
 	var said: Array = ["You %s %s: %s." % [verb, target, attack.attempt]]
 	for line in lines:
 		var text: String = str(line)
-		if " fought back" in text:
+		if " fought back" in text or "unarmed struggle" in text:
 			said.append(text.substr(text.find(" · ") + 3) if " · " in text else text)
 	var helpers: Array = attack.joining.filter(func(id): return int(id) > 0)
 	if not helpers.is_empty():
@@ -701,7 +701,7 @@ func _show_attack_result(lines: Array) -> void:
 	var standing: Array = by_answer.call(["stood by"])
 	if not standing.is_empty():
 		said.append("Stood by: %s." % names.call(standing))
-	said.append("One bullet used. The journal and View Party have the details.")
+	said.append(("No ammunition used." if attack.get("weapon","gun")=="unarmed" else "One bullet used.")+" The journal and View Party have the details.")
 	notice("YOU %s %s" % [verb.to_upper(),target.to_upper()], "\n".join(said))
 
 func _cancel_service() -> void:
@@ -787,7 +787,7 @@ func _refresh_party() -> void:
 	if selected_member>0 and game.party_health.is_active(game.party_health.members[selected_member]):
 		member_details.size.y=188
 		attack_button.show()
-		attack_button.text="SHOOT %s" % game.party_health.members[selected_member].name.to_upper()
+		attack_button.text="ATTACK %s" % game.party_health.members[selected_member].name.to_upper()
 		attack_button.disabled=not game.crime.can_attack(game,selected_member)
 		# Share the row with wages when both apply.
 		if wages_button.visible:

@@ -200,7 +200,7 @@ func run():
 	screen.game=party(["Ruthless","Ruthless","Ruthless","Ruthless"])
 	screen._refresh()
 	screen._select_member(2)
-	check(screen.attack_button.visible and not screen.attack_button.disabled and screen.attack_button.text=="SHOOT BEN","The party view offers the attack for a companion")
+	check(screen.attack_button.visible and not screen.attack_button.disabled and screen.attack_button.text=="ATTACK BEN","The party view offers the attack for a companion")
 	screen._attack_selected()
 	check(screen.service_window.visible and screen.service_window.title=="Attack Ben","The attack menu opens in the native UI")
 	screen.game.crime.companion_rules.hit=0
@@ -208,6 +208,13 @@ func run():
 	check(screen.record_notice.visible and screen.record_notice.title=="YOU SHOT AT BEN" and "You shot at Ben: missed." in screen.record_notice.dialog_text and "Fled: Ben. They took " in screen.record_notice.dialog_text and not "(trust" in screen.record_notice.dialog_text,"The result of the shot is shown at once: the miss and who left")
 	check(screen.record_notice.size.x<=640 and screen.record_notice.size.y<=330,"The shot notice fits the 640 x 360 screen")
 	check("Joined you: Ada, Cora, Dell." in screen.record_notice.dialog_text,"Those who joined are named too")
+	screen.record_notice.hide()
+	screen.game=party(["Ruthless","Ruthless","Ruthless","Ruthless"])
+	screen._refresh()
+	screen._select_member(2)
+	screen._attack_selected()
+	screen._service_choice(1)
+	check(screen.record_notice.title=="YOU ATTACKED UNARMED BEN" and "No ammunition used." in screen.record_notice.dialog_text and not "One bullet used" in screen.record_notice.dialog_text,"Unarmed result names the method and correct ammunition cost")
 	screen.record_notice.hide()
 	screen.queue_free()
 	await process_frame

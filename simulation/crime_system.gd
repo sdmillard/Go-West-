@@ -385,7 +385,7 @@ func news_text(game,place: String) -> String:
 	for told in heard_tales(game,place):
 		var said: Array=[]
 		for id in told.incidents:said.append("%s %s %s" % [{"theft":"stole from","robbery":"robbed","shoot":"shot at","assault":"attacked unarmed","raid":"looted"}[record.incidents[id-1].action],kind(record.incidents[id-1].place).noun,where(game,record.incidents[id-1].place)])
-		for id in told.attacks:said.append("shot at "+("them" if int(record.attacks[id-1].target)==int(told.teller) else game.party_health.members[int(record.attacks[id-1].target)].name))
+		for id in told.attacks:said.append(("attacked unarmed " if record.attacks[id-1].get("weapon","gun")=="unarmed" else "shot at ")+("them" if int(record.attacks[id-1].target)==int(told.teller) else game.party_health.members[int(record.attacks[id-1].target)].name))
 		for id in told.remains:said.append("butchered %s's remains for food" % Remains.entry(game,id).name)
 		lines.append("%s, who left your party on day %d, has told people here that you %s. They will not trade with you or help you." % [game.party_health.members[int(told.teller)].name,told.day,", ".join(said)])
 	return " ".join(lines)
@@ -983,3 +983,4 @@ func unarmed_mishap(game) -> void:
 		game.state.party_size=game.party_health.living_count()
 		game._check_health()
 		game.journal.append("Day %d · Hurt in the unarmed struggle." % game.state.day)
+		game.health_events.append("You were hurt in the unarmed struggle.")
