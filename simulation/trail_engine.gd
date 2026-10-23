@@ -8,6 +8,7 @@ const Survival = preload("res://simulation/survival_rules.gd")
 const CacheSupport=preload("res://simulation/wagon_cache.gd")
 const Remains=preload("res://simulation/remains.gd")
 var wagon_cache: Dictionary={}
+var social=preload("res://simulation/party_social.gd").new()
 var context=preload("res://simulation/trail_context.gd").new()
 var combat=preload("res://simulation/combat.gd").new()
 var crime=preload("res://simulation/crime_system.gd").new()
@@ -92,6 +93,9 @@ func _init(seed_value: int = 1848, mode: String = "classic", setup: bool = false
 	if not crime.error.is_empty():
 		error=crime.error
 		state.status="error"
+	if not social.error.is_empty():
+		error=social.error
+		state.status="error"
 	if not context.error.is_empty():
 		error=context.error
 		state.status="error"
@@ -140,6 +144,8 @@ func depart(profession: String, names: Array, month: int, cart: Dictionary, cust
 	if not customization.is_empty():characters.profiles.assign(customization.profiles.duplicate(true))
 	crime.bind_party(self)
 	crime.make_bonds(self)
+	if customization.has("bonds"):crime.record.bonds=customization.bonds.duplicate(true)
+	social.start(self,customization.get("romance",true))
 	survival.start(int(state.seed))
 	state.profession = profession
 	state.departure_month = month
@@ -543,6 +549,7 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 		state.health = party_health.average_health()
 		state.party_size = party_health.living_count()
 	_check_health()
+	if state.extended_route:social.tick(self,resting,fed)
 	characters.daily(self,resting,team_working,sick_before)
 	if state.extended_route:crime.check_betrayal(self)
 	if state.extended_route:
@@ -978,7 +985,7 @@ func swimming_risk() -> float:
 	# Authored gameplay odds, higher than either wagon option at the same stage.
 	return 0.8 if state.river_stage == "high" else 0.3
 
-func departure_plan() -> Array[Dictionary]:return plan_for(characters.departure_candidates(self))
+func departure_plan() -> Array[Dictionary]:return plan_for(social.departure_group(self,characters.departure_candidates(self)))
 ## Each leaving companion takes an equal share of a few days' food and a clothing set, never the wagon, stock, cash, ammunition or kits.
 func plan_for(candidates: Array) -> Array[Dictionary]:
 	var plan: Array[Dictionary]=[]
@@ -1032,7 +1039,11 @@ func open_departure_review() -> bool:
 	var plan:=departure_plan()
 	if plan.is_empty():return false
 	var lines: Array[String]=["These companions intend to leave here. You can return to the stop and settle wages through View Party before deciding. No day passes for this review."]
-	for transfer in plan:lines.append("%s: %d ration-lb food, %d clothing set(s), %d lb personal gear." % [party_health.members[transfer.id].name,transfer.food,transfer.clothing,transfer.gear_lb])
+	var candidates: Array=characters.departure_candidates(self)
+	for transfer in plan:
+		if int(transfer.id) not in candidates:
+			lines.append("%s will leave with their partner; they will not separate." % party_health.members[int(transfer.id)].name)
+		lines.append("%s: %d ration-lb food, %d clothing set(s), %d lb personal gear." % [party_health.members[transfer.id].name,transfer.food,transfer.clothing,transfer.gear_lb])
 	lines.append("They take no wagon, oxen, communal cash, ammunition or care kits. Unpaid wages stay recorded. On foot, fewer travelers also means less carrying capacity.")
 	return _service_menu("Companions intend to leave","\n".join(lines),[{"label":"Acknowledge departures and remain at this stop","departure_review":true,"effects":{},"result":"Reviewed companion departures."}])
 

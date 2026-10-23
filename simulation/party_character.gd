@@ -127,14 +127,15 @@ func willing(index: int, action: String) -> bool:
 	var profile: Dictionary=profiles[index]
 	return response(index,action)!="forbidden" and profile.trust>breaking_point(profile)
 
-func exit_reason(profile: Dictionary) -> String:
+func exit_reason(profile: Dictionary, game = null) -> String:
 	if profile.trust<=breaking_point(profile):return "lost trust"
 	if not profile.contract.is_empty() and profile.contract.arrears_cents>0 and profile.contract.misses>=benefits.missed_payments_before_departure:return "repeated unpaid wages"
+	if game!=null:return game.social.exit_reason(game,int(profile.id))
 	return ""
 
 func review_exit(game, profile: Dictionary) -> void:
 	if profile.id==0 or not game.party_health.is_active(game.party_health.members[profile.id]):return
-	var reason:=exit_reason(profile)
+	var reason:=exit_reason(profile,game)
 	if reason.is_empty():
 		if not profile.exit_warning.is_empty():
 			var message: String="%s is staying: the immediate reason for leaving has been resolved." % game.party_health.members[profile.id].name
@@ -153,7 +154,7 @@ func departure_candidates(game) -> Array[int]:
 	if game.pending.landmark=="fort_kearny" and game.calendar().year==1848 and game.calendar().month<6:return result
 	for profile in profiles:
 		review_exit(game,profile)
-		if profile.id>0 and game.party_health.is_active(game.party_health.members[profile.id]) and not profile.exit_warning.is_empty() and not exit_reason(profile).is_empty() and game.state.day-profile.exit_warning.day>=benefits.departure_notice_days:result.append(int(profile.id))
+		if profile.id>0 and game.party_health.is_active(game.party_health.members[profile.id]) and not profile.exit_warning.is_empty() and not exit_reason(profile,game).is_empty() and game.state.day-profile.exit_warning.day>=benefits.departure_notice_days:result.append(int(profile.id))
 	return result
 
 func set_relationship(game, index: int, relationship: String) -> bool:
@@ -210,6 +211,9 @@ func has_sick(game) -> bool:
 
 func valid_setup(setup: Dictionary) -> bool:
 	if not setup.get("profiles") is Array or not valid(setup.profiles,5,0) or not setup.get("contracts") is Dictionary:return false
+	if setup.has("bonds") and not preload("res://simulation/party_social.gd").valid_bonds(setup.bonds):return false
+	if setup.has("bonds") and not preload("res://simulation/party_social.gd").valid_commitments(setup.bonds,setup.profiles):return false
+	if setup.has("romance") and not setup.romance is bool:return false
 	for profile in setup.profiles:
 		if profile.specials.size()>creation_special_limit(profile):return false
 		if profile.trust!=RELATIONSHIPS[profile.relationship] or not profile.memories.is_empty() or not profile.contract.is_empty() or not profile.exit_warning.is_empty():return false
@@ -339,7 +343,7 @@ func valid(value: Variant, count: int, day: int, legacy: bool=false, framework_v
 		if not legacy and framework_version>=3:
 			var notice: Variant=profile.get("exit_warning")
 			if not notice is Dictionary:return false
-			if not notice.is_empty() and (index==0 or notice.size()!=2 or not whole(notice.get("day"),0,day) or notice.get("reason") not in ["lost trust","repeated unpaid wages"]):return false
+			if not notice.is_empty() and (index==0 or notice.size()!=2 or not whole(notice.get("day"),0,day) or notice.get("reason") not in ["lost trust","repeated unpaid wages","hostile companion"]):return false
 		if legacy and FRAMEWORK_FIELDS.any(func(key):return profile.has(key)):return false
 		if index==0 and (profile.trust!=50 or not profile.memories.is_empty()):return false
 		var seen: Array=[]

@@ -39,6 +39,10 @@ var wage_quote_label: Label
 var loading_companion:=false
 var generation_index:=0
 var generate_button: Button
+var bonds_layer: Control
+var bond_boxes: Array = []
+var romance_check: CheckBox
+var bond_feedback: Label
 var character_summary: Label
 
 func _init(simulation) -> void:
@@ -114,6 +118,7 @@ func _ready() -> void:
 	next_button.pressed.connect(show_store)
 	put(next_button, Rect2(420, 240, 190, 25), party_layer)
 	_build_companions()
+	_build_bonds()
 	# Keep the left half of the store painting visible: shelves, attendant and counter.
 	paper(Rect2(267, 0, 355, 236), shop_layer)
 	paper(Rect2(0, 236, 622, 37), shop_layer)
@@ -149,6 +154,7 @@ func _ready() -> void:
 
 func show_store() -> void:
 	if editor_layer.visible:close_editor()
+	bonds_layer.hide()
 	scene_id = "store"
 	background.texture = scenes.texture_for(scene_id)
 	party_layer.hide()
@@ -198,6 +204,9 @@ func _update_quote() -> void:
 			first_due=mini(first_due,int(terms.interval_days))
 		feedback.text="Wages average $%.2f/week; first bill day %d.\nWages come out of your remaining trail funds." % [weekly,first_due]
 	depart_button.disabled = not quote.valid
+	if bonds_layer!=null and not preload("res://simulation/party_social.gd").valid_commitments(selected_bonds(),draft.profiles):
+		depart_button.disabled=true
+		feedback.text="Conflicting partners: check PARTY RELATIONSHIPS and EDIT."
 	next_button.disabled = false
 	for entry in names:
 		if entry.text.strip_edges().is_empty():
@@ -299,6 +308,7 @@ func _build_companions() -> void:
 
 ## Opens the character sheet for one companion (1-4), saving whichever companion was open before.
 func open_editor(member: int) -> void:
+	bonds_layer.hide()
 	_store_companion()
 	edited_member=member
 	_load_companion()
@@ -422,4 +432,63 @@ func customization() -> Dictionary:
 	var contracts: Dictionary={}
 	for profile in draft.profiles:
 		if "Mercenary" in profile.specials:contracts[str(profile.id)]=draft_terms.get(str(profile.id),{"wage_cents":700,"interval_days":7}).duplicate(true)
-	return {"profiles":draft.profiles.duplicate(true),"contracts":contracts}
+	return {"profiles":draft.profiles.duplicate(true),"contracts":contracts,"bonds":selected_bonds(),"romance":romance_check.button_pressed}
+
+
+func _build_bonds() -> void:
+	var open_button := Button.new()
+	open_button.text="PARTY RELATIONSHIPS"
+	open_button.tooltip_text="Set bonds between your four companions. EDIT sets each companion’s relationship with you."
+	open_button.pressed.connect(open_bonds)
+	put(open_button,Rect2(267,240,145,25),party_layer)
+	bonds_layer=Control.new()
+	put(bonds_layer,Rect2(267,0,355,236),party_layer)
+	paper(Rect2(0,0,355,236),bonds_layer)
+	text("COMPANION RELATIONSHIPS",Rect2(10,9,280,14),bonds_layer)
+	var done := Button.new()
+	done.text="DONE"
+	done.pressed.connect(func():bonds_layer.hide())
+	put(done,Rect2(293,5,55,22),bonds_layer)
+	var initial: Array=game.crime.roll_bonds(int(game.state.seed))
+	for a in range(1,4):
+		for b in range(a+1,5):
+			var row: int=bond_boxes.size()
+			var label := text("",Rect2(10,34+row*27,172,22),bonds_layer)
+			label.clip_text=true
+			var box := OptionButton.new()
+			for title in ["Unrelated","Family","Friends","Partners / spouses","Rivals"]:box.add_item(title)
+			var chosen := 0
+			for item in initial:
+				if int(item.a)==a and int(item.b)==b:chosen=preload("res://simulation/party_social.gd").START_KINDS.find(item.kind)
+			box.select(chosen)
+			put(box,Rect2(187,32+row*27,158,22),bonds_layer)
+			bond_boxes.append({"a":a,"b":b,"label":label,"box":box,"previous":chosen})
+			box.item_selected.connect(_change_bond.bind(row))
+	bond_feedback=text("Partners plan settlement departures together.",Rect2(10,195,335,12),bonds_layer)
+	romance_check=CheckBox.new()
+	romance_check.text="Allow new romances on the trail"
+	romance_check.button_pressed=true
+	put(romance_check,Rect2(7,208,340,22),bonds_layer)
+	bonds_layer.hide()
+
+func open_bonds() -> void:
+	close_editor()
+	for pair in bond_boxes:
+		pair.label.text=names[int(pair.a)].text+" / "+names[int(pair.b)].text
+		pair.label.tooltip_text=pair.label.text
+	bonds_layer.show()
+
+func selected_bonds() -> Array:
+	var result := []
+	for pair in bond_boxes:
+		if pair.box.selected>0:result.append({"a":int(pair.a),"b":int(pair.b),"kind":preload("res://simulation/party_social.gd").START_KINDS[pair.box.selected]})
+	return result
+
+func _change_bond(_selected: int, row: int) -> void:
+	var pair: Dictionary=bond_boxes[row]
+	if not preload("res://simulation/party_social.gd").valid_bonds(selected_bonds()) or not preload("res://simulation/party_social.gd").valid_commitments(selected_bonds(),draft.profiles):
+		pair.box.select(int(pair.previous))
+		bond_feedback.text="Only one partner, including the leader."
+	else:
+		pair.previous=pair.box.selected
+		bond_feedback.text="Partners plan settlement departures together."

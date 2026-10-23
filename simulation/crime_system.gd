@@ -562,10 +562,13 @@ func wound(game,damage: int,count: int) -> void:
 ## Bonds are generated once, for new journeys only, from their own random stream.
 func make_bonds(game) -> void:
 	if not record.bonds.is_empty() or int(game.state.day)!=0:return
+	record.bonds=roll_bonds(int(game.state.seed),game.party_health.members.size())
+
+func roll_bonds(seed_value: int, count: int = 5) -> Array:
 	var random:=RandomNumberGenerator.new()
-	random.seed=int(game.state.seed) ^ 0x424f4e44
+	random.seed=seed_value ^ 0x424f4e44
 	var partnered: Array=[]
-	var count: int=game.party_health.members.size()
+	var result: Array=[]
 	for a in range(1,count):
 		for b in range(a+1,count):
 			var roll: float=random.randf()
@@ -574,9 +577,10 @@ func make_bonds(game) -> void:
 				if roll<chance:
 					if kind=="partner" and (a in partnered or b in partnered):break
 					if kind=="partner":partnered.append_array([a,b])
-					record.bonds.append({"a":a,"b":b,"kind":kind})
+					result.append({"a":a,"b":b,"kind":kind})
 					break
 				roll-=chance
+	return result
 func bond(a: int,b: int) -> String:
 	for item in record.bonds:
 		if (int(item.a)==a and int(item.b)==b) or (int(item.a)==b and int(item.b)==a):return item.kind
