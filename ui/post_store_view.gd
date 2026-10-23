@@ -15,7 +15,9 @@ var background: TextureRect
 var rows_layer: Control
 var scenes = preload("res://ui/location_scenes.gd").new()
 var refreshing := false
-const GOODS := {"food": "FOOD (LB)", "bullets": "BULLETS", "medicine": "CARE KITS", "clothing": "CLOTHING SETS", "oxen": "OXEN", "wheels": "WHEELS", "axles": "AXLES", "tongues": "TONGUES", "salt": "SALT (LB)"}
+const GOODS := {"food": "FOOD LB", "bullets": "BULLETS", "medicine": "CARE KITS", "clothing": "CLOTHES", "oxen": "OXEN", "wheels": "WHEELS", "axles": "AXLES", "tongues": "TONGUES", "salt": "SALT LB"}
+const POST_X := 250
+const PARTY_X := 440
 
 func _init(simulation) -> void:
 	game = simulation
@@ -52,18 +54,19 @@ func _ready() -> void:
 	background.texture = scenes.texture_for("post_store")
 	background.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	put(background, Rect2(0, 0, 622, 273))
-	# Laid out like a barter screen: the party's goods on the left, the post's on the right, the reckoning below.
-	paper(Rect2(6, 6, 302, 194))
-	paper(Rect2(314, 6, 302, 194))
-	paper(Rect2(6, 204, 610, 30))
+	# Laid out like a barter screen: the post's goods on the left, the party's on the right, the reckoning below.
+	# Both sit to the right so the keeper and the room stay in view.
+	paper(Rect2(POST_X - 6, 6, 184, 194))
+	paper(Rect2(PARTY_X - 6, 6, 184, 194))
+	paper(Rect2(POST_X - 6, 204, 374, 30))
 	paper(Rect2(0, 236, 622, 37))
-	wagon_title = text("", Rect2(14, 10, 290, 12))
-	title = text("", Rect2(322, 10, 290, 12))
-	columns(14, "HAVE", "SELL")
-	columns(322, "STOCK", "BUY")
+	title = text("", Rect2(POST_X, 10, 172, 12))
+	wagon_title = text("", Rect2(PARTY_X, 10, 172, 12))
+	columns(POST_X, "STOCK", "BUY")
+	columns(PARTY_X, "HAVE", "SELL")
 	rows_layer = Control.new()
 	put(rows_layer, Rect2(0, 0, 622, 236))
-	totals = text("", Rect2(14, 207, 600, 26))
+	totals = text("", Rect2(POST_X, 207, 362, 26))
 	feedback = text("", Rect2(10, 240, 440, 30))
 	feedback.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	settle_button = Button.new()
@@ -73,10 +76,10 @@ func _ready() -> void:
 	put(settle_button, Rect2(478, 242, 130, 25))
 
 func columns(x: int, count: String, action: String) -> void:
-	text("GOODS", Rect2(x, 26, 100, 12))
-	right(text(count, Rect2(x + 104, 26, 38, 12)))
-	text("PRICE", Rect2(x + 150, 26, 40, 12))
-	text(action, Rect2(x + 196, 26, 54, 12))
+	text("GOODS", Rect2(x, 26, 50, 12))
+	right(text(count, Rect2(x + 46, 26, 36, 12)))
+	text("EACH", Rect2(x + 88, 26, 34, 12))
+	text(action, Rect2(x + 126, 26, 46, 12))
 
 ## Rebuild the counter from the post's current stock; quantities reset to zero.
 func open() -> void:
@@ -90,7 +93,7 @@ func open() -> void:
 	var store: Dictionary = game.post_store()
 	if store.is_empty():
 		return
-	title.text = store.name.to_upper() + " · TRADING POST"
+	title.text = store.name.to_upper()
 	refreshing = true
 	for i in range(store.rows.size()):
 		var row: Dictionary = store.rows[i]
@@ -99,21 +102,21 @@ func open() -> void:
 		var unit: String = "lb" if row.item in ["food", "salt"] else "each"
 		var tip := "Buy at $%.3f or sell at $%.3f %s. You hold %d. The post can sell %d more and buy %d." % [row.buy_cents / 100.0 / row.amount, row.sell_cents / 100.0 / row.amount, "a pound" if unit == "lb" else "each", row.held, row.can_buy, row.can_sell]
 		# Goods move by the unit (a pound, a bullet, an ox). Counts follow the basket, so goods cross over as you choose them.
-		var have := line(14, y, goods, row.sell_cents / float(row.amount), tip)
-		var stock := line(322, y, goods, row.buy_cents / float(row.amount), tip)
-		sells[row.item] = spin(row.can_sell, Rect2(14 + 196, y, 54, 17))
-		buys[row.item] = spin(row.can_buy, Rect2(322 + 196, y, 54, 17))
+		var stock := line(POST_X, y, goods, row.buy_cents / float(row.amount), tip)
+		var have := line(PARTY_X, y, goods, row.sell_cents / float(row.amount), tip)
+		buys[row.item] = spin(row.can_buy, Rect2(POST_X + 128, y, 46, 17))
+		sells[row.item] = spin(row.can_sell, Rect2(PARTY_X + 128, y, 46, 17))
 		counts[row.item] = [have, stock]
 		held[row.item] = row
 	refreshing = false
 	update_quote()
 
 func line(x: int, y: int, goods: String, cents: float, tip: String) -> Label:
-	var name := text(goods, Rect2(x, y + 2, 104, 16), rows_layer)
+	var name := text(goods, Rect2(x, y + 2, 58, 16), rows_layer)
 	name.tooltip_text = tip
 	name.mouse_filter = Control.MOUSE_FILTER_PASS
-	text("$%.2f" % (cents / 100.0), Rect2(x + 150, y + 2, 44, 16), rows_layer)
-	return right(text("", Rect2(x + 104, y + 2, 38, 16), rows_layer))
+	text("$%.2f" % (cents / 100.0), Rect2(x + 88, y + 2, 38, 16), rows_layer)
+	return right(text("", Rect2(x + 58, y + 2, 24, 16), rows_layer))
 
 func spin(limit: int, bounds: Rect2) -> SpinBox:
 	var box := SpinBox.new()
@@ -145,10 +148,10 @@ func update_quote() -> void:
 		var n: int = int(buys[item].value) - int(sells[item].value)
 		counts[item][0].text = str(row.held + n)
 		counts[item][1].text = str(row.can_buy - int(buys[item].value))
-	wagon_title.text = "YOUR WAGON · CASH $%.2f" % (cents / 100.0) if game.state.vehicle != "foot" else "YOUR PACKS · CASH $%.2f" % (cents / 100.0)
+	wagon_title.text = "YOUR PACKS" if game.state.vehicle == "foot" else "YOUR WAGON"
 	var cargo: float = quote.get("cargo_after_lb", game.provisions.cargo(game.state))
 	var capacity: float = quote.get("capacity_after_lb", game.provisions.capacity(game.state))
-	totals.text = "%s $%.2f · CASH AFTER $%.2f · %s\n%s %.0f / %.0f LB%s" % ["YOU RECEIVE" if quote.net_cents > 0 else "YOU PAY", absi(quote.net_cents) / 100.0, (cents + quote.net_cents) / 100.0, ("ONE DAY FOR THIS VISIT" if quote.days > 0 else "TODAY ALREADY SPENT HERE"), ("PACKS" if game.state.vehicle == "foot" else "CARGO") + (" AFTER" if not quote.effects.is_empty() else ""), cargo, capacity, " · OVERLOADED" if cargo > capacity else ""]
+	totals.text = "%s $%.2f · CASH $%.2f > $%.2f · %s\n%s %.0f / %.0f LB%s" % ["YOU GET" if quote.net_cents > 0 else "YOU PAY", absi(quote.net_cents) / 100.0, cents / 100.0, (cents + quote.net_cents) / 100.0, ("1 DAY" if quote.days > 0 else "NO EXTRA TIME"), ("PACKS" if game.state.vehicle == "foot" else "CARGO") + (" AFTER" if not quote.effects.is_empty() else ""), cargo, capacity, " · OVERLOADED" if cargo > capacity else ""]
 	if cargo > capacity:
 		totals.add_theme_color_override("font_color", Color("8c2b1c"))
 	else:
