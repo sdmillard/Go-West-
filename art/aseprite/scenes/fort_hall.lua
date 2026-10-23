@@ -125,11 +125,8 @@ K.layer("fort_hall", function()
   K.rect(205, 98, 16, 22, "deep")
   K.rect(207, 99, 12, 21, "ink")
 
-  -- HBC red ensign flagstaff rising behind the wall
+  -- flagstaff rising behind the wall; ui/scene_ambience.gd flies the HBC red ensign from it
   K.rect(213, 46, 1, 18, "wood")
-  K.poly({{214, 47}, {226, 49}, {214, 52}}, "rust")
-  K.rect(214, 47, 5, 3, "blue")
-  K.px(216, 48, "white")
 end)
 
 ----------------------------------------------------------------- 4. Foreground Wagon & Trader
