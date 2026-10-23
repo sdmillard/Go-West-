@@ -140,7 +140,8 @@ func act(game, profile: Dictionary, aim: RandomNumberGenerator, count: Dictionar
 		return game.slaughter_ox()
 	if game.state.food < resupply_below and game.state.money >= (25 if adaptive else 15):
 		if game.open_trade():
-			if game.pending.title!="No traders nearby" and game.can_choose(0):
+			# Traders who refuse the party offer only the way back.
+			if game.pending.title!="No traders nearby" and game.pending.choices[0].get("effects",{}).get("food",0)>0 and game.can_choose(0):
 				count.trades += 1
 				return game.choose(0)
 			game.choose(game.pending.choices.size()-1)

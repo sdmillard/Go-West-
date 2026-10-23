@@ -1,6 +1,6 @@
 # Crime, cannibalism and survival balance roadmap
 
-October 22, 2026. **Planning document; these crime and cannibalism mechanics are not implemented yet.** The character catalog, personal health, defensive confrontations, finite trading, provisions, preservation, departures, route and compatible saves are the current foundation.
+October 22, 2026. **Planning document. Phases 1 to 6 are now implemented; see `docs/STORE_CRIME_SLICE.md` for what was built and `docs/CLAUDE_HANDOFF.md` for current status.** The character catalog, personal health, defensive confrontations, finite trading, provisions, preservation, departures, route and compatible saves are the current foundation.
 
 ## Design commitments
 

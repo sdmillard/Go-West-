@@ -673,6 +673,21 @@ func trader_checks(store) -> void:
 	game.state.day=game.crime.arrival(game,report,"fort_hall")
 	check(game.open_trade() and "robbed a trading party on the road through the" in game.pending.text,"News of robbed traders names the stretch of road")
 	choose_back(game)
+	# Other traders on the road hear it too: past Fort Hall, once word has reached them, they will not deal.
+	var talk: int=stop_choice(game,func(choice):return choice.get("action","")=="notes")
+	check(talk>=0 and game.choose(talk) and "Talk around the fires: " in game.pending.text and "robbed a trading party" in game.pending.text,"Travelers camped at a stop repeat the news")
+	game.pending={}
+	var met: bool=false
+	for day in range(int(game.state.day),int(game.state.day)+40):
+		game.state.day=day
+		var offer: Dictionary=game.context.market(game)
+		if not (offer.available and not offer.post):continue
+		met=true
+		check(game.crime.refuses(game,offer.key) and game.open_trade() and game.pending.title=="The traders will not deal with you" and game.pending.choices.size()==1,"Traders who have heard the news refuse the party")
+		check(not game.crime.can_trade(game,{"market_key":offer.key+"|buy_food","effects":{"food":50}}),"Nor can any of their offers be taken")
+		choose_back(game)
+		break
+	check(met,"The party meets other traders after the news spreads")
 ## Emigrant families camped near the road, with no traders about.
 func at_camp(game):
 	game.pending={}
