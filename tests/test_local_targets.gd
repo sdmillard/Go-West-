@@ -103,8 +103,11 @@ func run():
  var picked: String=rows[1].get_meta("local_target")
  rows[1].pressed.emit()
  check(screen.service_window.visible and screen.game.pending.crime_target==picked,"Clicking a named local opens that person's attack options")
+ check(screen.service_rows.get_children().any(func(row):return row is Button and row.text=="< SOMEONE HERE"),"An attack preview goes back to the list of people here")
+ check(not screen.service_rows.get_children().any(func(row):return row is Button and row.text in ["STEAL >","ROB >","ATTACK >","OTHER ACTIONS HERE <"]),"No second crime menu inside the preview")
  screen.service_window.hide()
  screen.game.choose(screen.game.pending.choices.size()-1)
+ await villainy_places(screen)
  screen.game.party_health.kill(screen.game.party_health.members[1],0,"test injury")
  screen.game.state.party_size=4
  screen.game.state.health=screen.game.party_health.average_health()
@@ -124,3 +127,32 @@ func run():
  await process_frame
  print("Local targets: %d checks, %d failures" % [checks,failures])
  quit(1 if failures else 0)
+
+## VILLAINY > STEAL and ROB list every place within reach (here a post and an emigrant camp) and go straight to that act.
+func villainy_places(screen) -> void:
+ var game=screen.game
+ var day_before: int=game.state.day
+ for day in range(day_before,day_before+40):
+  game.state.day=day
+  if not game.crime.camp(game).is_empty():break
+ var camp: String=game.crime.camp(game)
+ check(not camp.is_empty() and game.crime.local_places(game,game.pending)==["fort_bridger",camp],"A camp near a post is a second place to rob")
+ check(not game.open_crime("passing:nowhere:1") and not game.pending.get("crime_menu",false),"A place that is not here cannot be opened")
+ for section in ["Steal","Rob"]:
+  screen._show_section(section)
+  var rows: Array=screen.section_rows.get_children().filter(func(row):return row.has_meta("crime_place"))
+  check(rows.map(func(row):return row.get_meta("crime_place"))==["fort_bridger",camp],section+" lists the post and the camp as branches")
+  check(rows[0].text=="FORT BRIDGER · TRADING STORE >" and rows[1].text=="AN EMIGRANT CAMP >",section+" names each place")
+  var before: Dictionary=Store.new().capture(game)
+  rows[1].pressed.emit()
+  var act: String="theft" if section=="Steal" else "robbery"
+  var commands: Array=game.pending.get("choices",[]).map(func(choice):return choice.get("crime_command",""))
+  check(screen.service_window.visible and game.pending.get("crime_place","")==camp and game.crime.rules(camp).kind=="emigrants",section+" > camp opens the camp's preview")
+  var labels: Array=screen.service_rows.get_children().filter(func(row):return row is Button).map(func(row):return row.text)
+  check(labels.size()==2 and labels[0]==game.pending.choices[commands.find(act)].label and labels[1]=="< "+section.to_upper(),section+" > camp shows only that act and the way back")
+  check(restore(game)!=null and restore(game).pending.crime_place==camp,"A preview of a chosen place saves and loads")
+  check(game.state.day==before.state.day and game.crime.record.incidents.is_empty(),"Previewing commits nothing")
+  screen.service_rows.get_children().filter(func(row):return row is Button)[1].pressed.emit()
+  check(not screen.service_window.visible and screen.section_window.visible and screen.section_window.title==section.to_upper() and not game.pending.get("crime_menu",false),"Back returns to the "+section+" list")
+  screen.section_window.hide()
+ game.state.day=day_before
