@@ -157,7 +157,7 @@ func run():
 			check(not current.knowledge.has("staff:fort_bridger"),"No aggregate staff observer remains")
 	for outcome in ["unseen","noticed","killed"]:check(witnessed.has(outcome),"Witness sample exercises "+outcome)
 	game=outfit()
-	check(game.crime.record.actors.size()==16 and game.crime.service("fort_bridger").owner=="keeper:fort_bridger" and game.crime.service("fort_bridger").staff==["keeper:fort_bridger","hand:fort_bridger"],"Store service is owned by the keeper and staffed by separate people")
+	check(game.crime.record.actors.size()==18 and game.crime.service("fort_bridger").owner=="keeper:fort_bridger" and game.crime.service("fort_bridger").staff==["keeper:fort_bridger","hand:fort_bridger"],"Store service is owned by the keeper and staffed by separate people")
 	game.crime.scenes.fort_bridger.shot_hit=1
 	game.crime.scenes.fort_bridger.shot_fatal=1
 	game.open_crime()
