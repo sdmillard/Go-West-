@@ -7,6 +7,11 @@ const OXEN = preload("res://art/pixels/oxen.png")
 const WALKER = preload("res://art/pixels/walker.png")
 const FRAMES := 8 # wagon, oxen and walker sheets hold eight frames side by side
 const FPS := 12.0
+const CROSSING = preload("res://art/pixels/river_crossing.png")
+const SWIMMER = preload("res://art/pixels/swimmer.png") # 24x16 frames; rows: man, woman, in trouble
+const SWIM_OX = preload("res://art/pixels/swim_ox.png") # 48x24 frames, water surface at y 16
+const FERRY_RAFT = preload("res://art/pixels/ferry_raft.png")
+const FERRYMAN = preload("res://art/pixels/ferryman.png") # 32x48 frames
 const CAR = preload("res://art/pixels/corolla.png")
 const ELDER = preload("res://art/pixels/elder.png")
 const SABER = preload("res://art/pixels/lightsaber.png")
@@ -172,20 +177,20 @@ func _draw_swimming_party(x: int, rough: bool) -> void:
 			_draw_walkers(Vector2(px, py), true)
 			walkers = count
 			continue
-		var stroke := int(crossing_elapsed * 7 + index) % 4
-		var dip := 3 if rough and index == 0 else (1 if stroke == 2 else 0)
-		var shirt := Color("37688e") if index % 2 == 0 else Color("a16b43")
-		# Horizontal bodies, heads and packs sit at the water surface.
-		draw_rect(Rect2(px - 10, py - 3 + dip, 10, 3), shirt)
-		draw_rect(Rect2(px - 9, py - 6 + dip, 6, 4), Color("76503c"))
-		draw_rect(Rect2(px + 1, py - 7 + dip, 5, 5), Color("ecd097"))
-		draw_rect(Rect2(px, py - 9 + dip, 8, 2), Color("76503c"))
-		var reach := 8 if stroke < 2 else -5
-		draw_line(Vector2(px - 2, py - 2 + dip), Vector2(px + reach, py - 5 - stroke), Color("ecd097"), 2)
-		if rough and index == 0:
-			draw_line(Vector2(px, py - 1), Vector2(px + 4, py - 13), Color("ecd097"), 2)
-		_water_rect(Rect2(px - 14, py + dip, 25, 1), Color("afd5ce"))
-		_water_rect(Rect2(px + reach, py - 2 - stroke, 2, 2), Color("f6e7bc"))
+		var stroke := int(crossing_elapsed * FPS + index * 3) % FRAMES
+		var row := 2 if rough and index == 0 else index % 2
+		# The sheet's water surface is y 10 of each frame.
+		draw_texture_rect_region(SWIMMER, Rect2(px - 16, py - 10, 24, 16), Rect2(stroke * 24, row * 16, 24, 16))
+
+func _draw_ferry(x: int) -> void:
+	# Plank deck on two dugout hulls, worked across by a ferryman with a setting pole.
+	draw_texture(FERRY_RAFT, Vector2(x - 14, 119))
+	if vehicle == "foot":
+		_draw_walkers(Vector2(x + 3, 119), false)
+	else:
+		draw_texture_rect_region(WAGON, Rect2(x, 65, 96, 64), Rect2(0, 0, 96, 64))
+	var pole := int(crossing_elapsed * FPS * 0.75) % FRAMES
+	draw_texture_rect_region(FERRYMAN, Rect2(x + 84, 92, 32, 48), Rect2(pole * 32, 0, 32, 48))
 
 func _draw_crossing() -> void:
 	var progress := clampf(crossing_elapsed / crossing_duration, 0.0, 1.0)
@@ -196,11 +201,9 @@ func _draw_crossing() -> void:
 	var x := roundi(lerpf(-40, 420, travel_progress))
 	var method: String = crossing.method
 	var water := Color("927e62") if method == "ferry" else Color("3d7f99")
-	draw_rect(Rect2(0, 0, 432, 75), Color("8db8c3"))
-	draw_rect(Rect2(0, 64, 432, 14), Color("425e3b"))
-	draw_rect(Rect2(0, 78, 432, 72), water)
-	draw_colored_polygon(PackedVector2Array(NEAR_BANK), Color("ecd097"))
-	draw_colored_polygon(PackedVector2Array(FAR_BANK), Color("8d9b53"))
+	# The backdrop leaves the river transparent so the water colour can suit the method.
+	draw_rect(Rect2(0, 76, 432, 74), water)
+	draw_texture(CROSSING, Vector2.ZERO)
 	for i in range(30):
 		var ripple_x := posmod(i * 43 - int(crossing_elapsed * 18), 432)
 		_water_rect(Rect2(ripple_x, 86 + (i * 17) % 60, 5 + i % 8, 1), Color("afd5ce"))
@@ -208,42 +211,27 @@ func _draw_crossing() -> void:
 	var rough: bool = crossing.get("mishap", false) and progress > 0.4 and progress < 0.75
 	if rough:
 		bob += 7
-	if vehicle == "foot":
-		if method == "ferry":
-			for y in [126, 133]:
-				draw_rect(Rect2(x - 9, y, 115, 4), Color("45372f"))
-			draw_rect(Rect2(x - 12, 119, 121, 8), Color("c18d4d"))
-			for plank in range(0, 121, 9):
-				draw_rect(Rect2(x - 12 + plank, 119, 1, 8), Color("ecd097"))
-			_draw_walkers(Vector2(x + 3, 119), false)
-		else:
-			_draw_swimming_party(x, rough)
-	elif method == "ferry":
-		# Wooden platform supported by two dugout-like hulls; wheels stay aboard.
-		for y in [126, 133]:
-			draw_rect(Rect2(x - 9, y, 115, 4), Color("45372f"))
-		draw_rect(Rect2(x - 12, 119, 121, 11), Color("c18d4d"))
-		for plank in range(0, 121, 9):
-			draw_rect(Rect2(x - 12 + plank, 119, 1, 11), Color("ecd097"))
-		draw_texture_rect_region(WAGON, Rect2(x, 65, 96, 64), Rect2(0, 0, 96, 64))
-		draw_rect(Rect2(x + 98, 98, 5, 5), Color("ecd097"))
-		draw_rect(Rect2(x + 96, 96, 9, 2), Color("45372f"))
-		draw_rect(Rect2(x + 98, 103, 5, 13), Color("37688e"))
-		draw_line(Vector2(x + 102, 91), Vector2(x + 117, 137), Color("76503c"), 2)
+	if method == "ferry":
+		_draw_ferry(x)
+	elif vehicle == "foot":
+		_draw_swimming_party(x, rough)
 	else:
 		var frame := int(crossing_elapsed * FPS) % FRAMES if method == "ford" else 0
 		draw_texture_rect_region(WAGON, Rect2(x, 64 + bob, 96, 64), Rect2(frame * 96, 0, 96, 64))
-		var ox_x := x + 86 if method == "ford" else x - 52
-		var ox_y := 100 if method == "ford" else 103
-		draw_texture_rect_region(OXEN, Rect2(ox_x, ox_y, 48, 32), Rect2((int(crossing_elapsed * FPS) % FRAMES) * 48, 0, 48, 32))
+		var stride := int(crossing_elapsed * FPS) % FRAMES
 		if method == "ford":
-			draw_line(Vector2(x + 83, 111), Vector2(ox_x + 14, 114), Color("76503c"), 1)
+			draw_texture_rect_region(OXEN, Rect2(x + 86, 100, 48, 32), Rect2(stride * 48, 0, 48, 32))
+			draw_line(Vector2(x + 83, 111), Vector2(x + 100, 114), Color("76503c"), 1)
 		# Floating wagon is unhitched; livestock move separately in the water.
-		var waterline := 119 if method == "ford" else 111 + bob
+		var waterline := 116 if method == "ford" else 111 + bob
 		_water_rect(Rect2(x - 2, waterline, 98, 30), water)
+		if method == "ford":
+			# Knee-deep on the team, as on the wheels.
+			_water_rect(Rect2(x + 86, 123, 48, 12), water)
 		if method == "float":
-			_water_rect(Rect2(ox_x, 126, 48, 24), water)
-			_water_rect(Rect2(ox_x + 8, 125, 29, 1), Color("afd5ce"))
+			# The team swims behind the wagon bed, only heads and backs above water.
+			for i in range(2):
+				draw_texture_rect_region(SWIM_OX, Rect2(x - 52 - i * 30, 104 + i * 12, 48, 24), Rect2(((stride + i * 4) % FRAMES) * 48, 0, 48, 24))
 		for i in range(5):
 			_water_rect(Rect2(x + i * 19 - 4, waterline + 2 + i % 2, 13, 1), Color("afd5ce"))
 	if rough:
