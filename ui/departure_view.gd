@@ -199,6 +199,10 @@ func select_box(items: Array, parent: Node) -> OptionButton:
 	parent.add_child(box)
 	return box
 
+## Hover text for each entry of a drop-down list, in list order.
+func describe_items(box: OptionButton, descriptions: Array) -> void:
+	for index in range(mini(box.item_count,descriptions.size())):box.get_popup().set_item_tooltip(index,str(descriptions[index]))
+
 func _build_companions() -> void:
 	draft.start(int(game.state.seed),5)
 	paper(Rect2(267,0,355,230),party_layer)
@@ -236,6 +240,12 @@ func _build_companions() -> void:
 	flaw_description=text("",Rect2(),rows)
 	flaw_description.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	special_count_label=text("Special traits",Rect2(),rows)
+	# Each option in an open list explains itself on hover, not only the current choice.
+	describe_items(personality,draft.catalog.data.temperaments.keys().map(func(key):return draft.catalog.data.temperaments[key].description))
+	describe_items(values,draft.catalog.data.values.keys().map(func(key):return draft.catalog.data.values[key].description))
+	describe_items(background_choice,draft.SKILLS.map(func(skill):return draft.background_benefit(skill)))
+	describe_items(relationship,draft.catalog.data.relationships.keys().map(func(key):return draft.catalog.data.relationships[key].description))
+	describe_items(flaw_choice,["No flaw: two special slots."]+draft.FLAWS.values())
 	for special in draft.SPECIALS:
 		var check:=CheckBox.new()
 		check.text=special

@@ -150,6 +150,7 @@ func run() -> void:
 	await capture("guide")
 	screen.guide.hide()
 	# Readability: tooltips are parchment with dark ink and wrap to a fixed width; notices fit the screen.
+	check(screen.pace.get_popup().get_item_tooltip(2).begins_with("Grueling") and screen.rations.get_popup().get_item_tooltip(0).begins_with("Bare"), "Pace and ration lists explain each option on hover")
 	check(screen.theme.has_stylebox("panel", "TooltipPanel") and screen.theme.get_color("font_color", "TooltipLabel") == Color("45372f"), "Tooltips use the parchment theme")
 	var hint: String = screen.wrap_text("Replaces this draft companion's personality, background, relationship, specials, flaw and wage offer. No journey time or money passes.", screen.TOOLTIP_WIDTH)
 	check(hint.split("\n").size() > 1 and Array(hint.split("\n")).all(func(line): return screen.PIXEL_FONT.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1, 8).x <= screen.TOOLTIP_WIDTH), "Long tooltips wrap within the tooltip width")
