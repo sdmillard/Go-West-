@@ -10,16 +10,7 @@ K.canvas(W, H, 252)
 
 ----------------------------------------------------------------- 1. Sky & Far Wooded Kaw Bluffs
 K.layer("sky_and_bluffs", function()
-  K.rect(0, 0, W, 16, "blue")
-  K.blend(0, 16, W, "blue", "sky_top")
-  K.rect(0, 19, W, 18, "sky_top")
-  K.blend(0, 37, W, "sky_top", "sky")
-  K.rect(0, 40, W, 16, "sky")
-  K.blend(0, 56, W, "sky", "light_blue")
-  K.rect(0, 59, W, 14, "light_blue")
-
-  K.cloud(44, 16, 1.35)
-  K.cloud(298, 14, 1.4)
+  K.sky(W, 74, {{18, 26, 0.8}, {150, 10, 1.1}, {356, 30, 0.75}})
 
   -- Distant Kaw Valley bluffs & dense cottonwood gallery forest along the north shore
   for x = 0, W - 1 do
@@ -27,11 +18,19 @@ K.layer("sky_and_bluffs", function()
     for y = bh, 74 do
       K.px(x, y, (y == bh) and "mist" or "far_hill")
     end
-    local th = 67 + math.floor(3 * math.sin(x * 0.14) + 2 * math.cos(x * 0.27))
-    for y = th, 76 do
-      K.px(x, y, (y <= th + 1) and "sage" or ((y <= th + 3) and "leaf" or "pine"))
-    end
   end
+  -- cottonwood and oak crowns along the north shore, irregular and overlapping
+  local x = -4
+  while x < W + 6 do
+    local r = 4 + K.rnd(5)
+    local cy = 70 - K.rnd(4) + ((r > 6) and -2 or 0)
+    K.ellipse(x, cy, r, r - 1, "pine")
+    K.ellipse(x - 1, cy - 1, r - 1, r - 2, "leaf")
+    K.ellipse(x - 2, cy - 2, math.max(1, r - 3), math.max(1, r - 4), "sage")
+    x = x + r + K.rnd(4)
+  end
+  K.rect(0, 72, W, 5, "pine")
+  for i = 1, 60 do K.px(K.rnd(W), 72 + K.rnd(4), "leaf") end
   -- Far sandy riverbank & north ferry landing post
   K.rect(0, 76, W, 2, "sand")
   K.rect(0, 77, W, 1, "ochre")
@@ -41,18 +40,27 @@ end)
 
 ----------------------------------------------------------------- 2. Wide Muddy Kansas River
 K.layer("muddy_water", function()
-  -- Silt-laden tan/brown water ("clap_sh" #927e62 with ochre/wood current eddies & sand glints)
-  K.rect(0, 78, W, 72, "clap_sh")
-  K.rect(0, 78, W, 2, "wood")
-  K.rect(0, 80, W, 1, "ochre")
-
-  for i = 1, 140 do
+  -- Silty water: greener and darker near the far shore where the woods reflect, paler in
+  -- midstream where it takes the sky, with tan silt swirls and current lines.
+  K.rect(0, 78, W, 72, "teal")
+  K.rect(0, 78, W, 6, "leaf")
+  K.dither(0, 84, W, 4, "leaf", "teal")
+  for y = 96, 128 do
+    for x = 0, W - 1 do
+      if (x + y) % 2 == 0 and K.rnd(100) < 60 - math.abs(y - 112) * 3 then K.px(x, y, "haze") end
+    end
+  end
+  for i = 1, 170 do
     local rx = K.rnd(W - 10)
     local ry = 82 + K.rnd(67)
-    local len = 4 + K.rnd(6)
-    local col = (i % 4 == 0) and "sand" or ((i % 2 == 0) and "ochre" or "wood")
+    local len = 3 + K.rnd(8) + math.floor((ry - 80) / 12)
+    local col = (i % 5 == 0) and "clap_sh" or ((i % 3 == 0) and "light_blue" or "haze")
+    if ry < 90 then col = (i % 2 == 0) and "pine" or "teal" end
     K.rect(rx, ry, len, 1, col)
   end
+  for i = 1, 30 do K.px(K.rnd(W), 90 + K.rnd(58), "white") end
+  -- the far bank's reflection
+  K.rect(0, 78, W, 1, "pine")
 
   -- Floating driftwood branch in the current
   K.line(348, 134, 366, 132, "deep")

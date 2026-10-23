@@ -20,8 +20,8 @@ K.layer("sky", function()
   K.blend(0, 71, W, "light_blue", "mist")
   K.rect(0, 74, W, 6, "mist")
 
-  K.cloud(42, 17, 1.35)
-  K.cloud(298, 14, 1.45)
+  K.cloud(130, 10, 1.2)
+  K.cloud(360, 26, 0.8)
 
   for x = 0, W - 1 do
     local hy = 69 + math.floor(2 * math.sin(tau * x / 432.0 + 0.3) + 1.5 * math.cos(tau * x / 144.0))
@@ -120,7 +120,8 @@ K.layer("sod_post_and_camp", function()
 
   -- Soldier/workman in blue uniform coat & arriving emigrant wagon
   K.person(262, 118, "blue", "deep", false)
-  K.wagon(18, 142, 1)
+  K.wagon(330, 146, -1)
+  K.ox(390, 146, -1, "red")
 end)
 
 K.save("location_fort_kearny")

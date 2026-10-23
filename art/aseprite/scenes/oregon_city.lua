@@ -20,8 +20,8 @@ K.layer("sky_and_mount_hood", function()
   K.blend(0, 56, W, "sky", "light_blue")
   K.rect(0, 59, W, 32, "light_blue")
 
-  K.cloud(40, 16, 1.35)
-  K.cloud(316, 14, 1.4)
+  K.cloud(110, 20, 0.8)
+  K.cloud(300, 8, 0.9)
 
   -- Distant snow-crowned volcanic cone of Mount Hood rising above the Cascade skyline (cx = 228, y = 21..82)
   for y = 21, 82 do

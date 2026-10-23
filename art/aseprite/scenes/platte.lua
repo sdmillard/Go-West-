@@ -10,19 +10,7 @@ K.canvas(W, H, 246)
 
 ----------------------------------------------------------------- 1. Wide Prairie Sky & Low Horizon Bluffs
 K.layer("sky_and_horizon", function()
-  K.rect(0, 0, W, 16, "blue")
-  K.blend(0, 16, W, "blue", "sky_top")
-  K.rect(0, 19, W, 18, "sky_top")
-  K.blend(0, 37, W, "sky_top", "sky")
-  K.rect(0, 40, W, 16, "sky")
-  K.blend(0, 56, W, "sky", "light_blue")
-  K.rect(0, 59, W, 12, "light_blue")
-  K.blend(0, 71, W, "light_blue", "mist")
-  K.rect(0, 74, W, 6, "mist")
-
-  K.cloud(44, 18, 1.35)
-  K.cloud(192, 14, 1.05)
-  K.cloud(312, 16, 1.45)
+  K.sky(W, 76, {{30, 20, 0.85}, {214, 12, 1.25}, {380, 26, 0.7}})
 
   -- Very low, flat Platte valley horizon bluffs
   for x = 0, W - 1 do
@@ -39,38 +27,22 @@ K.layer("braided_platte", function()
   K.rect(0, 76, W, 60, "sand")
   K.dither(0, 76, W, 3, "cream", "sand")
 
-  -- Far braided channel (y = 78..94)
-  K.poly({{0, 81}, {180, 78}, {432, 76}, {432, 88}, {180, 92}, {0, 98}}, "sky_top")
-  K.poly({{0, 83}, {180, 80}, {432, 78}, {432, 86}, {180, 90}, {0, 96}}, "sky")
-
-  -- Near braided channel sweeping across the sandy bed
-  K.poly({{0, 118}, {168, 96}, {310, 102}, {432, 108}, {432, 121}, {310, 115}, {168, 108}, {0, 132}}, "sky_top")
-  K.poly({{0, 120}, {168, 98}, {310, 104}, {432, 110}, {432, 119}, {310, 113}, {168, 106}, {0, 130}}, "sky")
-
-  -- Exposed mid-stream sandbars & wet silt margins
-  K.poly({{28, 104}, {98, 97}, {142, 101}, {88, 108}}, "ochre")
-  K.poly({{34, 103}, {94, 98}, {132, 100}, {84, 106}}, "cream")
-  K.poly({{312, 92}, {388, 89}, {424, 94}, {378, 98}}, "ochre")
-  K.poly({{318, 91}, {384, 90}, {416, 93}, {374, 96}}, "cream")
-
-  -- Shallow water glints & ripples across both channels
-  for y = 78, 130 do
-    for x = 4, W - 8, 14 do
-      local rx = (x + y * 7) % (W - 10)
-      local cur = K.at(rx, y)
-      if cur == "sky" or cur == "sky_top" then
-        K.rect(rx, y, 3 + (y % 3), 1, (y % 3 == 0) and "white" or "light_blue")
-      end
-    end
-  end
+  -- "A mile wide and an inch deep": many shallow channels splitting and rejoining across
+  -- the sand, thinner with distance, separated by bars of wet and dry sand.
+  local function channel(pts) K.river(K.smooth(pts, 10), false) end
+  channel({{-10, 82, 1}, {90, 81, 1.5}, {200, 83, 1}, {330, 80, 1.5}, {440, 81, 1}})
+  channel({{-10, 90, 2}, {70, 87, 1.5}, {150, 91, 2.5}, {250, 88, 1.5}, {340, 91, 2}, {440, 87, 1.5}})
+  channel({{60, 87, 0.5}, {110, 94, 1.5}, {190, 103, 1}, {260, 103, 1.5}, {300, 100, 0.5}})
+  channel({{-10, 113, 4}, {60, 108, 3}, {150, 111, 4.5}, {240, 106, 3}, {330, 109, 4}, {440, 103, 3}})
+  channel({{150, 111, 1}, {200, 118, 2}, {270, 117, 1.5}, {320, 112, 1}})
+  channel({{-10, 124, 2}, {50, 122, 1.5}, {100, 118, 1}})
 
   -- Low grassy/sandy mid-river island with cottonwood trees
-  K.poly({{138, 94}, {172, 84}, {264, 86}, {314, 96}, {246, 102}, {154, 98}}, "ochre")
-  K.poly({{144, 93}, {174, 85}, {258, 87}, {304, 95}, {242, 100}, {158, 96}}, "sage")
-  K.poly({{154, 92}, {182, 87}, {248, 88}, {288, 94}, {236, 98}, {166, 95}}, "grass")
-  for _, tx in ipairs({182, 214, 244}) do
-    K.elm(tx, 93, 1)
-  end
+  K.poly({{150, 97}, {178, 92}, {250, 93}, {290, 97}, {246, 101}, {166, 101}}, "ochre")
+  K.poly({{158, 97}, {182, 93}, {246, 94}, {280, 97}, {242, 100}, {170, 100}}, "sage")
+  K.poly({{170, 97}, {190, 94}, {238, 95}, {266, 97}, {236, 99}, {180, 99}}, "grass")
+  for _, tx in ipairs({184, 204, 236}) do K.willow(tx, 98, 1) end
+  K.elm(220, 97, 1)
 end)
 
 ----------------------------------------------------------------- 3. South Bank Trail & Wagon
@@ -83,10 +55,9 @@ K.layer("south_bank", function()
   -- Sandy wheel ruts along the Great Platte River Road
   for x = 0, W - 1 do
     local ry = 134 - math.floor(14 * math.sin(math.pi * x / W))
-    if (x % 15) < 11 then
-      K.px(x, ry, "rust"); K.px(x, ry - 1, "cream")
-      K.px(x, ry + 7, "rust"); K.px(x, ry + 6, "cream")
-    end
+    K.px(x, ry, "dirt_dk"); K.px(x, ry - 1, "gold")
+    K.px(x, ry + 6, "dirt_dk"); K.px(x, ry + 5, "gold")
+    if K.rnd(3) > 0 then K.px(x, ry + 3, "ochre") end
   end
 
   -- Sand, pebble & bunchgrass texture
@@ -104,7 +75,7 @@ K.layer("south_bank", function()
   -- Emigrant wagon & ox team halted on the south bank overlooking the braided river
   K.wagon(324, 141, -1)
   K.team(282, 141, -1, {"light", true}, {"dark", false})
-  K.person(268, 141, "blue", "sand", false)
+  K.person(246, 142, "blue", "sand", false)
 end)
 
 K.save("location_platte")

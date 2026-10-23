@@ -9,6 +9,7 @@
     "independence_rock": {"smoke": [[100, 108]]},
     "fort_laramie": {"flag": [[208, 44, 1]]},
     "fort_hall": {"flag": [[213, 46, 0]]},
+    "fort_boise": {"flag": [[144, 46, 0]]},
     "umatilla": {"smoke": [[138, 99], [166, 97], [190, 99]]},
     "eagle_creek": {"smoke": [[290, 63]]}
   }
