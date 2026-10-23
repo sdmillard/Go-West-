@@ -112,10 +112,11 @@ K.layer("buildings", function()
   K.rect(cx - 9, cy - 33, 19, 2, "cream")
   K.poly({{cx - 9, cy - 33}, {cx, cy - 44}, {cx + 10, cy - 33}}, "roof")
   K.line(cx - 9, cy - 33, cx, cy - 44, "roof_lt")
-  K.line(cx, cy - 50, cx, cy - 44, "deep")
+  K.line(cx, cy - 48, cx, cy - 44, "deep")
   -- weathervane rather than a cross: this is a courthouse, not a church
   K.rect(cx - 3, cy - 48, 7, 1, "deep"); K.px(cx + 2, cy - 49, "deep"); K.px(cx + 2, cy - 47, "deep")
   K.px(cx - 3, cy - 49, "deep"); K.px(cx - 3, cy - 47, "deep")
+  K.px(cx, cy - 50, "gold")
 
   -- right: long low frame warehouse with gallery
   x, y = 282, 62
