@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c7etiwnfyal1n"
-path="res://.godot/imported/swim_ox.png-3f3e88f454c49e3bed377f187b2efe74.ctex"
+uid="uid://bmfgubavpc3fx"
+path="res://.godot/imported/cross_wagon.png-d2de2a5f832fb443c12bef17ddb1b068.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/pixels/swim_ox.png"
-dest_files=["res://.godot/imported/swim_ox.png-3f3e88f454c49e3bed377f187b2efe74.ctex"]
+source_file="res://art/pixels/cross_wagon.png"
+dest_files=["res://.godot/imported/cross_wagon.png-d2de2a5f832fb443c12bef17ddb1b068.ctex"]
 
 [params]
 

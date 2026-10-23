@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bxl2x3ypr7v6b"
-path="res://.godot/imported/ferryman.png-f68df43b0b6deac4b70a38509f226105.ctex"
+uid="uid://do5axilpcaeha"
+path="res://.godot/imported/cross_swimmer.png-c5117c8bcb9842a9e141830a51d3c184.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/pixels/ferryman.png"
-dest_files=["res://.godot/imported/ferryman.png-f68df43b0b6deac4b70a38509f226105.ctex"]
+source_file="res://art/pixels/cross_swimmer.png"
+dest_files=["res://.godot/imported/cross_swimmer.png-c5117c8bcb9842a9e141830a51d3c184.ctex"]
 
 [params]
 
