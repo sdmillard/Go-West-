@@ -238,7 +238,7 @@ func _build_ui() -> void:
 		rations.add_item(text)
 	rations.selected = 1
 	rations.item_selected.connect(_settings_changed)
-	rations.tooltip_text = "Bare 1, meager 2, filling 3 lb per living traveler per day. Low rations slow recovery even in camp."
+	rations.tooltip_text = "Bare 1, meager 2, filling 3 food units per living traveler per day. Low rations slow recovery even in camp."
 	place(rations, Rect2(508, 251, 115, 21))
 	travel_button = button("CONTINUE >", _travel)
 	place(travel_button, Rect2(459, 282, 91, 37))
@@ -311,7 +311,8 @@ protects people in rough weather. Inspect individual travelers.
 Options offers hunting, trading and medical care. Hunting
 costs a day and ammunition. Left-click fires; right-click walks.
 Cover blocks shots. Game flees; reload between shots. Carry
-back up to 100 lb. Buying, selling,
+back what your health and willing helpers allow (200 lb maximum).
+Broken legs prevent hauling. Buying, selling,
 bartering and care take a day each; check costs first.
 
 Recent rain can raise a river while you wait. Low water favors
@@ -324,8 +325,9 @@ The southern road via Bridger and the Barlow Road is playable.
 The suggested staples provision most of the journey, with resupply.
 Plan bulk resupply at trading posts; allow for weather delays.
 Options > Provisions lets you dry fresh meat, with optional salt.
-This takes a day. Food uses ration-equivalent pounds; dried meat
-weighs less in cargo. Preserved meat also eventually spoils.
+This takes a day. Food units and physical weight are separate:
+two pounds of new meat supply one food unit. Dried meat weighs
+less in cargo. Preserved meat also eventually spoils.
 Northern shortcuts and Columbia rafting are not yet playable.
 Weather, medical effects and other survival values remain
 simplified game rules, not reconstructed conditions for 1848."""
@@ -394,7 +396,7 @@ simplified game rules, not reconstructed conditions for 1848."""
 	rest_window.confirmed.connect(_confirm_rest)
 	add_child(rest_window)
 	var rest_rows:=Control.new()
-	rest_rows.custom_minimum_size=Vector2(460,153)
+	rest_rows.custom_minimum_size=Vector2(460,185)
 	place(label("How many days? Enter a whole number, 1–30."),Rect2(0,0,460,23),rest_rows)
 	rest_days_input=LineEdit.new()
 	rest_days_input.text="1"
@@ -407,7 +409,7 @@ simplified game rules, not reconstructed conditions for 1848."""
 	place(rest_days_input,Rect2(0,28,460,23),rest_rows)
 	rest_quote=Label.new()
 	rest_quote.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
-	place(rest_quote,Rect2(0,68,460,85),rest_rows)
+	place(rest_quote,Rect2(0,68,460,117),rest_rows)
 	rest_window.add_child(rest_rows)
 	stop_window=AcceptDialog.new()
 	stop_window.title="LOCAL CONDITIONS"
@@ -543,7 +545,13 @@ func _show_service() -> void:
 		child.queue_free()
 	service_window.title = game.pending.title
 	service_window.get_ok_button().text="CLOSE PANEL" if game.pending.get("crime_menu",false) and not game.crime.record.active.is_empty() else "BACK TO TRAIL"
-	var explanation := label(game.pending.text)
+	var description: String=game.pending.text
+	if game.pending.get("crime_menu",false) and game.crime.incident().get("stage","")=="loot":
+		var current: Dictionary=game.crime.incident()
+		if int(game.crime.rules(current.place).loot_limit)>0:
+			var quote: Dictionary=game.crime.loot_quote(game,current.place)
+			description+="\n"+("The wagon is alongside for loading." if quote.wagon_access else "Carry it away on foot: willing helpers can haul up to %d lb at their current health. Broken legs prevent hauling." % quote.haul_limit_lb)
+	var explanation := label(description)
 	explanation.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	service_rows.add_child(explanation)
 	for index in range(game.pending.choices.size() - 1):
@@ -583,7 +591,7 @@ func _start_hunt() -> void:
 
 func _update_hunt_report() -> void:
 	if not game.hunt.is_empty():
-		hunt_report.text = "%s · %ds · %s · SHOTS %d/5 · AMMO %d\nLEFT: FIRE · RIGHT: WALK · MEAT %d / 100 LB\n%s" % [game.hunt.region_label.to_upper(), ceili(30 - game.hunt.elapsed), "RELOAD" if game.hunt.reload > 0 else "READY", game.hunt.shots, game.state.bullets, game.hunt.meat, game.hunt.message]
+		hunt_report.text = "%s · %ds · %s · SHOTS %d/5 · AMMO %d\nLEFT: FIRE · RIGHT: WALK · MEAT %d LB / HAUL LIMIT %d LB\n%s" % [game.hunt.region_label.to_upper(), ceili(30 - game.hunt.elapsed), "RELOAD" if game.hunt.reload > 0 else "READY", game.hunt.shots, game.state.bullets, game.hunt.meat, game.hunting_capacity(), game.hunt.message]
 
 
 func _finish_hunt() -> void:
@@ -592,11 +600,12 @@ func _finish_hunt() -> void:
 	if game.hunt.is_empty():
 		return
 	var outing: Dictionary = game.hunt.duplicate(true)
+	var recovered: Dictionary=game.hunt_recovery()
 	var before: int = game.state.food
 	if game.finish_hunt():
 		var carried: int = game.state.food - before
 		record_notice.title = "HUNTING REPORT"
-		record_notice.dialog_text = "%d shots · %d lb meat obtained\n%d lb brought to camp · %d lb left behind\nUse fresh meat within two trail days, or dry it through\nOptions > Provisions. Salt improves the result.\nThe outing used one day and that day's rations." % [outing.shots,outing.meat,carried,int(outing.meat)-carried]
+		record_notice.dialog_text = "%d shots · %d lb meat obtained\n%d lb brought to camp · %d lb left behind\nUse fresh meat within two trail days, or dry it through\nOptions > Provisions. Salt improves the result.\nRecovered meat supplies %d food units.\nThe outing used one day and that day's rations." % [outing.shots,outing.meat,recovered.mass,recovered.left,carried]
 		record_notice.popup_centered()
 	camping = true
 	_refresh()
@@ -792,7 +801,7 @@ func _rest() -> void:
 	_pause_travel()
 	rest_days_input.text="1"
 	_update_rest_quote()
-	rest_window.popup_centered(Vector2i(490,220))
+	rest_window.popup_centered(Vector2i(490,252))
 	rest_days_input.grab_focus()
 	rest_days_input.select_all()
 
@@ -804,7 +813,11 @@ func _update_rest_quote() -> void:
 		rest_quote.text="Enter a whole number from 1 to 30. No days pass until you confirm."
 		return
 	var meal:=maxi(1,int(game.state.party_size)*int(game.provisions.data.rations_lb[game.state.rations]))
-	rest_quote.text="%d days: %d lb of meals at current rations (%d lb/day).\nFood on hand: %d lb; spoilage can reduce it. Weather, illness and recovery continue. Events, health news or new food warnings stop the rest early." % [value.to_int(),value.to_int()*meal,meal,game.state.food]
+	rest_quote.text="%d days: %d food units at current rations (%d/day).\nFood on hand: %d units; spoilage can reduce it. Weather, illness and recovery continue. Events, health news or new food warnings stop the rest early." % [value.to_int(),value.to_int()*meal,meal,game.state.food]
+
+	var season: String=game.season_notice()
+	if season.is_empty():season=game.season_notice(value.to_int())
+	if not season.is_empty():rest_quote.text+="\n"+season
 
 func _confirm_rest() -> void:
 	_update_rest_quote()
@@ -845,7 +858,7 @@ func _confirm_rest() -> void:
 		record_notice.title="CAMP REST"
 		record_notice.get_label().autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 		record_notice.get_label().custom_minimum_size.x=500
-		record_notice.dialog_text=report+"\nFood remaining: %d lb. See the journal and party details for daily changes." % game.state.food
+		record_notice.dialog_text=report+"\nFood remaining: %d units. See the journal and party details for daily changes." % game.state.food
 		record_notice.popup_centered(Vector2i(530,180))
 
 func _choose(index: int) -> void:
@@ -893,7 +906,7 @@ func _refresh() -> void:
 	date_label.text = "%s %d, %d   |   GUIDE MILES %d / %d   |   %s" % [months[date.month - 1], date.day, date.year, s.miles, game.destination(), s.mode.to_upper()]
 	if s.status == "outfitting":
 		date_label.text = "INDEPENDENCE, 1848   |   PREPARING FOR DEPARTURE   |   CLASSIC"
-	stats.text = "FOOD    %4d LB EQ\nHEALTH    %s\nCASH      $%.2f\nOXEN %d   CLOTHES %d\nBULLETS   %d\nSPARES W%d A%d T%d" % [s.food, game.party_condition(), s.money, s.oxen, s.clothing, s.bullets, s.wheels, s.axles, s.tongues]
+	stats.text = "FOOD    %4d UNITS\nHEALTH    %s\nCASH      $%.2f\nOXEN %d   CLOTHES %d\nBULLETS   %d\nSPARES W%d A%d T%d" % [s.food, game.party_condition(), s.money, s.oxen, s.clothing, s.bullets, s.wheels, s.axles, s.tongues]
 	stats.text += "\nCARE %d CARGO %.0f/%.0f\n%s\n%s" % [s.medicine, game.provisions.cargo(s),game.provisions.capacity(s), s.weather.to_upper(),"ON FOOT / PACKS" if s.vehicle=="foot" else "TEAM %s / %s" % [game.PartyHealth.condition_label(s.ox_health), "TIRED" if s.fatigue >= 50 else "FRESH"]]
 	if s.extended_route:
 		var nearby: Dictionary=game.context.market(game)
@@ -983,6 +996,8 @@ func _refresh() -> void:
 		event_text.text+="\n"+game.context.region(game).label+": "+game.context.region(game).note
 		if s.vehicle=="foot":event_text.text=("The party is walking." if traveling else "On foot. Continue or rest; supplies are limited to your packs.")+"\nNEXT: "+target+"\nPARTY: "+", ".join(game.party_health.members.filter(func(member):return game.party_health.is_active(member)).map(func(member):return member.name))+"\n"+game.context.region(game).note
 	if s.status=="traveling":
+		var season: String=game.season_notice()
+		if not season.is_empty():event_text.text+="\n"+season
 		var concern: String=""
 		if not game.pending.is_empty() and game.pending.get("choices",[]).any(func(option):return option.get("combat","")=="defend"):concern=game.characters.concern(game,"defend")
 		elif game.pending.is_empty() and s.pace==2 and game.characters.has_sick(game):concern=game.characters.concern(game,"push_sick")
@@ -1001,8 +1016,11 @@ func _show_supplies() -> void:
 	var dried: int = game.provisions.preserved_pounds(int(game.state.food))
 	var storage_limit: float=game.provisions.storage_capacity(game.state)
 	var gear: float=float(game.provisions.data.walking.personal_gear_lb_per_person)*game.state.party_size if game.state.vehicle=="foot" else float(game.provisions.data.household_gear_lb)-float(game.state.get("departed_gear_lb",0))
-	var text := "CARGO %.1f / %.0f LB · %s\nSTAPLES %d · FRESH %d · DRIED %d RATION-LB\nSALT %d LB · UP TO %d PARTY-DAYS BEFORE SPOILAGE\nFood uses staple-equivalent pounds; dried meat weighs less.\nFresh lasts two days. Drying costs one day and some food;\nsalt improves yield/storage. Meals are eaten before processing.\nCargo includes %.0f lb personal/household gear. Discards are permanent." % [game.provisions.cargo(game.state), storage_limit,"OVERLOADED" if game.provisions.cargo(game.state) > storage_limit else "WITHIN GUIDELINE", game.state.food - fresh - dried, fresh, dried, game.state.salt, game.provisions.expected_days(game.state.food, game.state.party_size, game.state.rations),gear]
+	var text := "CARGO %.1f / %.0f LB · %s\nSTAPLES %d · FRESH %d · DRIED %d FOOD UNITS\nSALT %d LB · UP TO %d PARTY-DAYS BEFORE SPOILAGE\nFood value and physical meat weight are counted separately.\nFresh lasts two days. Drying costs one day and some food;\nsalt improves yield/storage. Meals are eaten before processing.\nCargo includes %.0f lb personal/household gear. Discards are permanent." % [game.provisions.cargo(game.state), storage_limit,"OVERLOADED" if game.provisions.cargo(game.state) > storage_limit else "WITHIN GUIDELINE", game.state.food - fresh - dried, fresh, dried, game.state.salt, game.provisions.expected_days(game.state.food, game.state.party_size, game.state.rations),gear]
 	supplies_rows.add_child(label(text))
+	supplies_rows.add_child(label("TRACKED MEAT %.1f LB / %d FOOD UNITS" % [game.provisions.tracked_mass(game.state.food),fresh+dried]))
+	supplies_rows.add_child(label("HUNTING HAUL %d LB / HEALTH & WILLING HELPERS" % game.hunting_capacity()))
+	supplies_rows.add_child(label("Health scales loads on foot and hunts. Broken legs prevent hauling."))
 	supplies_rows.add_child(label("OXEN %d · GRAZE; DO NOT USE THE PARTY'S FOOD\n%s" % [game.state.oxen,"PACK LIMIT %.0f LB; REDUCE EXCESS BEFORE WALKING" % storage_limit if game.state.vehicle=="foot" else "TEAM LOAD GUIDELINE %.0f LB; EXCESS LOAD SLOWS TRAVEL" % game.provisions.team_capacity(game.state.oxen)]))
 	if game.state.vehicle!="foot":supplies_rows.add_child(label("TEAM PULLING SPEED %d%% · 4 NORMAL; 5 +5%%; 6+ +10%%" % roundi(game.survival.team_factor(game.state.oxen)*100)))
 	if game.CacheSupport.can_pack(game,false):supplies_rows.add_child(button("ABANDON WAGON / CHOOSE WHAT TO CARRY",func():_show_packing(false)))
@@ -1030,7 +1048,7 @@ func _show_supplies() -> void:
 		var offer: Dictionary = game.preservation_offer(salted)
 		if offer.is_empty():continue
 		var caption := "SALT + DRY" if salted else "DRY MEAT"
-		var preserve := button("%s %d LB > %d RATION-LB · 1 DAY · %d LB SALT" % [caption,offer.input,offer.kept,offer.salt],func():
+		var preserve := button("%s %.0f LB > %d FOOD UNITS · 1 DAY · %d LB SALT" % [caption,offer.mass,offer.kept,offer.salt],func():
 			if game.preserve_meat(salted):
 				_refresh()
 				_show_supplies())
@@ -1119,7 +1137,7 @@ func _confirm_slaughter(by_hand: bool = false) -> void:
 			slaughter_confirmation.hide()
 			_show_supplies())
 		add_child(slaughter_confirmation)
-	slaughter_confirmation.dialog_text="Lose one ox and use %d bullet; spend one camp day.\n%d oxen remain. Below four, pulling speed falls.\nRecover all %d lb usable meat without a hunting carry limit.\nMeals still count. Extra load slows travel; fresh meat spoils.\nYou may need to dry meat or discard cargo.\nThis cannot be undone within the current journey." % [offer.bullets,offer.remaining,offer.meat]
+	slaughter_confirmation.dialog_text="Lose one ox and use %d bullet; spend one camp day.\n%d oxen remain. Below four, pulling speed falls.\nRecover all %d lb usable meat without a hunting carry limit.\nMeat supplies %d food units before meals. Extra load slows travel; fresh meat spoils.\nYou may need to dry meat or discard cargo.\nThis cannot be undone within the current journey." % [offer.bullets,offer.remaining,offer.meat,game.provisions.meat_units(int(offer.meat))]
 	if offer.remaining==0:slaughter_confirmation.dialog_text+="\nNO TEAM REMAINS. Wagon stops until you acquire another ox."
 	elif offer.remaining==1:slaughter_confirmation.dialog_text+="\nONE OX: very slow; load guideline %.0f lb." % game.provisions.team_capacity(1)
 	if by_hand:slaughter_confirmation.dialog_text+="\nHousehold tools included; %d%% chance of wounding a traveler." % roundi(offer.injury_chance*100)

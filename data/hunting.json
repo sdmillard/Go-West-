@@ -2,7 +2,8 @@
   "duration": 30.0,
   "reload_seconds": 1.4,
   "shot_limit": 5,
-  "carry_limit": 100,
+  "carry_limit": 200,
+  "carry_per_person_lb": 50,
   "species": [
     {
       "id": "bison",

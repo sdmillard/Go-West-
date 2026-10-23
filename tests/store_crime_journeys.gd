@@ -23,13 +23,14 @@ func run():
 			var count: Dictionary={"hunts":0,"rests":0,"trades":0,"travel_days":0,"empty_food_days":0,"care":0,"last_care":-100,"shots":0,"meat_obtained":0,"meat_carried":0,"empty_hunts":0,"preservations":0,"oxen_slaughtered":0}
 			var attempted:=false
 			var outcome: String="limit"
-			var progress: Dictionary={}
+			var idle:=0
 			for step in range(2400):
-				progress[int(game.state.day)]=int(game.state.miles)
+				var previous_day: int=game.state.day
+				var previous_miles: int=game.state.miles
 				if game.state.status!="traveling":
 					outcome=game.state.status
 					break
-				if game.state.day>=365:break
+				if game.state.day>=365:outcome="out_of_time";break
 				var okay:=true
 				if game.pending.get("crime_menu",false):
 					var stage: String=game.crime.incident().get("stage","")
@@ -43,15 +44,16 @@ func run():
 					outcome="policy_blocked"
 					errors.append({"seed":seed_value,"action":action,"error":"blocked policy"})
 					break
+				idle=idle+1 if game.state.day==previous_day and game.state.miles==previous_miles else 0
+				if idle>32:
+					outcome="policy_stalled"
+					errors.append({"seed":seed_value,"action":action,"error":"33 actions without time or distance progress"})
+					break
 				if game.state.food<0 or game.state.money<0 or game.state.party_size!=game.party_health.living_count() or game.state.health!=game.party_health.average_health():errors.append({"seed":seed_value,"action":action,"error":"state invariant"})
 				if step%50==0 or game.pending.get("crime_menu",false):
 					var snapshot: Dictionary=store.capture(game)
 					if not snapshot.is_empty() and store.restore(JSON.parse_string(JSON.stringify(snapshot)))==null:errors.append({"seed":seed_value,"action":action,"error":"save round trip"})
-			# Running out of time after a crime's consequences is an outcome; making no progress at all is a policy loop.
-			if outcome=="limit":
-				var earlier: int=int(progress.get(int(game.state.day)-60,-1))
-				if action=="none" or earlier<0 or earlier>=int(game.state.miles):errors.append({"seed":seed_value,"action":action,"error":"journey limit"})
-				else:outcome="out_of_time"
+			if outcome=="limit":errors.append({"seed":seed_value,"action":action,"error":"action limit"})
 			if store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))==null:errors.append({"seed":seed_value,"action":action,"error":"final save"})
 			rows.append({"seed":seed_value,"action":action,"attempted":attempted,"outcome":outcome,"days":game.state.day,"survivors":game.state.party_size,"cash":game.state.money,"incidents":game.crime.record.incidents,"deaths":game.party_health.members.filter(func(member):return not member.alive).size(),"departures":game.party_health.members.filter(func(member):return member.get("departed",false)).size()})
 	var file=FileAccess.open("res://docs/first-store-journeys.json",FileAccess.WRITE)

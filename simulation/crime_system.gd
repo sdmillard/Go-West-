@@ -72,7 +72,7 @@ func load_data(value: Variant) -> bool:
 		if not place is String or not scene is Dictionary:return false
 		for key in ["title","note"]:
 			if not scene.get(key) is String or scene[key].is_empty():return false
-		if not KINDS.has(scene.get("kind")):return false
+		if not KINDS.has(scene.get("kind")) or not scene.get("wagon_access") is bool:return false
 		for key in ["cash_cents","food_lot","loot_limit","injury_damage"]:
 			if not whole(scene.get(key),0 if key in ["food_lot","loot_limit"] else 1,100000):return false
 		# Only stores sell or hold food; a gate or ferry holds only its cash box.
@@ -224,7 +224,13 @@ func incident() -> Dictionary:
 	return {} if record.active.is_empty() else record.incidents[int(record.active.id)-1]
 func loot_quote(game,place: String) -> Dictionary:
 	var room:=maxi(0,floori(game.provisions.storage_capacity(game.state)-game.provisions.cargo(game.state)))
-	return {"food":mini(mini(food_left(game,place),int(rules(place).loot_limit)),room) if rules(place).kind in ["store","fort","traders","emigrants"] else 0,"money":service(place).cash_cents if not incident().is_empty() and incident().action!="theft" else 0}
+	var current:=incident()
+	# Theft is carried away quietly. The commissary lies inside the post; roadside
+	# parties and ordinary stores allow loading alongside the wagon after a holdup.
+	var alongside: bool=game.state.vehicle=="wagon" and rules(place).wagon_access and current.get("action","")!="theft"
+	var hauling: int=game.hauling_capacity("murder" if current.get("action","")=="shoot" else "robbery")
+	var food_space:=floori(mini(room,room if alongside else hauling)/float(game.provisions.data.weights_lb.food))
+	return {"food":mini(mini(food_left(game,place),int(rules(place).loot_limit)),food_space) if rules(place).kind in ["store","fort","traders","emigrants"] else 0,"money":service(place).cash_cents if not current.is_empty() and current.action!="theft" else 0,"wagon_access":alongside,"haul_limit_lb":hauling}
 func option(label: String,command: String) -> Dictionary:
 	return {"label":label,"crime_command":command,"effects":{},"result":""}
 ## Distinct targets the party got away from, plus clean defensive victories. Capped; the same target never counts twice.
@@ -619,10 +625,11 @@ func attack(game,target: int) -> void:
 	game._apply({"bullets":-1})
 	var attempt: String="missed"
 	if rng.randf()<chance:attempt="killed" if victim.health<=int(companion_rules.wound_damage) or rng.randf()<float(companion_rules.fatal) else "wounded"
-	if attempt=="killed":game.party_health.affect(victim,-int(victim.health),day,"being shot by "+leader.name)
+	if attempt=="killed":game.party_health.kill(victim,day,"being shot by "+leader.name)
 	elif attempt=="wounded":
 		game.party_health.affect(victim,-int(companion_rules.wound_damage),day,"a gunshot wound from "+leader.name)
 		game.party_health.begin_condition(target,"wound",day,1)
+		if not victim.alive:attempt="killed"
 	var id: int=record.attacks.size()+1
 	var responses: Dictionary={}
 	var poor: int=int(game.combat.data.poor_health)
@@ -692,10 +699,11 @@ func betray(game,slot: int) -> void:
 		var chance: float=clampf(float(rules.ambush_hit)-float(rules.guard_step)*guards,float(modifiers.floor),float(modifiers.ceiling))
 		attempt="missed"
 		if rng.randf()<chance:attempt="killed" if leader.health<=int(companion_rules.wound_damage) or rng.randf()<float(companion_rules.fatal) else "wounded"
-		if attempt=="killed":game.party_health.affect(leader,-int(leader.health),day,"being shot by "+member.name)
+		if attempt=="killed":game.party_health.kill(leader,day,"being shot by "+member.name)
 		elif attempt=="wounded":
 			game.party_health.affect(leader,-int(companion_rules.wound_damage),day,"a gunshot wound from "+member.name)
 			game.party_health.begin_condition(0,"wound",day,1)
+			if not leader.alive:attempt="killed"
 	else:
 		for other in others:
 			if rng.randf()<float(rules.notice):noticed.append(other)

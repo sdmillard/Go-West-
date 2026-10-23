@@ -42,6 +42,7 @@ var provisions = preload("res://simulation/provisions.gd").new()
 ## setup=false retains the original pre-outfitted short-leg fixture for scripted simulations.
 ## The player interface always passes setup=true and must call depart before travel.
 func _init(seed_value: int = 1848, mode: String = "classic", setup: bool = false, end_at: String = "") -> void:
+	provisions.carriers=party_health.members
 	party_health.character_profiles=characters.profiles
 	party_health.character_catalog=characters.catalog
 	rng.seed = seed_value
@@ -326,7 +327,7 @@ func travel() -> bool:
 			return true
 		if walking_overloaded():return true
 		if state.vehicle=="foot":distance=walking_distance()
-		else:distance = maxi(1, roundi(distance * survival.movement_factor(state.oxen, state.ox_health, state.fatigue, 0, state.terrain) * provisions.movement_factor(provisions.cargo(state),int(state.oxen))))
+		else:distance = maxi(1, roundi(distance * survival.movement_factor(state.oxen, state.ox_health, state.fatigue, 0, state.terrain, int(calendar().month), context.region(self)) * provisions.movement_factor(provisions.cargo(state),int(state.oxen))))
 		distance = mini(distance, state.leg_length - state.leg_miles)
 		state.leg_miles += distance
 		state.miles += distance
@@ -334,7 +335,7 @@ func travel() -> bool:
 	else:
 		state.miles = mini(DESTINATION, state.miles + distance)
 		_tick_day(false)
-	journal.append("Day %d · Traveled to mile %d. Food remaining: %d lb." % [state.day, state.miles, state.food])
+	journal.append("Day %d · Traveled to mile %d. Food remaining: %d units." % [state.day, state.miles, state.food])
 	if state.status == "traveling" and not crime.check_pursuit(self):
 		_schedule_event()
 	return true
@@ -343,7 +344,7 @@ func rest() -> bool:
 	if not _can_act():
 		return false
 	_tick_day(true)
-	journal.append("Day %d · Rested in camp. Food remaining: %d lb." % [state.day, state.food])
+	journal.append("Day %d · Rested in camp. Food remaining: %d units." % [state.day, state.food])
 	if state.status == "traveling" and not crime.check_pursuit(self):
 		_schedule_event()
 	return true
@@ -434,9 +435,9 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 		state.weather = survival.weather.label
 		state.fatigue = clampi(int(state.fatigue) + (2 + int(state.pace) * 2 if team_working else (-14 if resting else -6)), 0, 100)
 		if not team_working:
-			state.ox_health = mini(100, int(state.ox_health) + (4 if resting else 2))
+			state.ox_health = mini(100, int(state.ox_health) + (int(seasonal_pressure().rest_ox_recovery) if resting else mini(2,int(seasonal_pressure().rest_ox_recovery))))
 		elif state.vehicle!="foot":
-			var strain: int=context.region(self).strain
+			var strain: int=int(context.region(self).strain)+int(seasonal_pressure().working_strain)
 			if context.region_id(self) in ["plains","sagebrush"] and int(calendar().month) in [7,8,9]:strain+=1
 			state.ox_health=maxi(0,int(state.ox_health)-strain)
 	if state.extended_route:
@@ -461,6 +462,8 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 	else:
 		_change_health([ -3, 0, 1 ][state.rations] - [0, 1, 4][state.pace], "exhaustion")
 	if not party_health.members.is_empty():
+		var storm_damage: int=int(seasonal_pressure().storm_damage) if state.extended_route else 0
+		if storm_damage>0:_change_health(-storm_damage,"winter exposure")
 		var unprotected: int = maxi(0, int(state.party_size) - int(state.clothing))
 		if unprotected > 0 and int(survival.weather.exposure) > 0:
 			var exposed := 0
@@ -799,6 +802,7 @@ func _depart(plan: Array,fled_reason: String) -> void:
 		supply_history.append({"day":int(state.day),"event":"companion_departure","changes":{"food":-transfer.food,"clothing":-transfer.clothing}})
 	state.party_size=party_health.living_count()
 	state.health=party_health.average_health()
+	Remains.sync(self)
 	_check_health()
 ## Companions who leave at once after violence, wherever the party is.
 func flee(ids: Array,reason: String) -> void:
@@ -908,15 +912,25 @@ func move_hunter(point: Vector2) -> void:
 	if not hunt.is_empty() and not hunt.ended and point.is_finite():
 		hunt.destination = point.clamp(Vector2(8, 65), Vector2(424, 143))
 
+func hauling_capacity(action: String="hunt") -> int:
+	var pounds:=0.0
+	for member in party_health.members:
+		if characters.willing(int(member.id),action):
+			pounds+=float(hunting.data.carry_per_person_lb)*provisions.Carrying.factor(member)
+	return mini(int(hunting.data.carry_limit),floori(pounds))
+func hunting_capacity() -> int:
+	return hauling_capacity("hunt")
+func hunt_recovery() -> Dictionary:
+	if hunt.is_empty():return {}
+	var carried:=mini(mini(hunting_capacity(),int(hunt.meat)),maxi(0,floori(provisions.storage_capacity(state)-provisions.cargo(state))))
+	return {"mass":carried,"food":provisions.meat_units(carried),"left":int(hunt.meat)-carried}
 func finish_hunt() -> bool:
-	if hunt.is_empty():
-		return false
-	var carried := mini(mini(int(hunting.data.carry_limit), int(hunt.meat)), maxi(0, floori(provisions.storage_capacity(state) - provisions.cargo(state))))
-	state.food += carried
-	provisions.add_fresh(carried, int(state.day))
-	journal.append("Day %d · Hunting: %d shots, %d lb meat obtained, %d lb brought back (100 lb carrying limit)." % [state.day, hunt.shots, hunt.meat, carried])
-	journal.append("%s · %d lb left behind. %s" % [hunt.region_label, int(hunt.meat) - carried, hunt.message])
-	hunt = {}
+	if hunt.is_empty():return false
+	var recovered:=hunt_recovery()
+	state.food+=provisions.add_meat(int(recovered.mass),int(state.day))
+	journal.append("Day %d · Hunting: %d shots, %d lb meat obtained, %d lb carried, %d food units (hauling limit %d lb)." % [state.day,hunt.shots,hunt.meat,recovered.mass,recovered.food,hunting_capacity()])
+	journal.append("%s · %d lb left behind. %s" % [hunt.region_label,recovered.left,hunt.message])
+	hunt={}
 	_schedule_event(false)
 	return true
 
@@ -924,7 +938,7 @@ func walking_distance() -> int:
 	var load:=provisions.cargo(state)/maxf(1,provisions.capacity(state))
 	var burden:=clampf(1.0-maxf(0,load-0.5)*0.5,0.25,1.0)
 	var terrain:=0.8 if state.terrain=="mountains" else (0.9 if state.terrain=="forest" else 1.0)
-	return maxi(1,roundi(float(provisions.data.walking.miles_per_day)*[1.0,1.15,1.3][state.pace]*float(survival.weather.speed)*terrain*burden*(1.0-float(state.fatigue)/300.0)))
+	return maxi(1,roundi(float(provisions.data.walking.miles_per_day)*[1.0,1.15,1.3][state.pace]*float(seasonal_pressure().travel)*float(survival.weather.speed)*terrain*burden*(1.0-float(state.fatigue)/300.0)))
 func walking_overloaded() -> bool:
 	if state.vehicle!="foot" or provisions.cargo(state)<=provisions.capacity(state):return false
 	pending={"id":"packs_too_heavy","title":"Too much to carry","text":"Your packs exceed the surviving party's carry limit. Discard goods or preserve fresh meat through Provisions / Cargo before walking on.","choices":[{"label":"Return to camp","effects":{},"result":"The party reorganizes its packs."}]}
@@ -946,11 +960,11 @@ func slaughter_ox(by_hand: bool = false) -> bool:
 	if offer.is_empty():return false
 	state.oxen-=1
 	state.bullets-=int(offer.bullets)
-	state.food+=int(offer.meat)
+	state.food+=provisions.add_meat(int(offer.meat),int(state.day)+1)
 	# At-camp meat is available for today's meals. All usable meat is recovered,
 	# even if it overloads the wagon; the hunting retrieval cap does not apply.
-	provisions.add_fresh(int(offer.meat),int(state.day)+1)
-	supply_history.append({"day":int(state.day)+1,"event":"slaughter_ox","changes":{"oxen":-1,"bullets":-int(offer.bullets),"food":int(offer.meat)}})
+
+	supply_history.append({"day":int(state.day)+1,"event":"slaughter_ox","changes":{"oxen":-1,"bullets":-int(offer.bullets),"food":provisions.meat_units(int(offer.meat))}})
 	journal.append("Day %d · Slaughtered one ox at camp: %d lb usable fresh meat, %d bullet(s), %d oxen remain. All meat recovered; meals and spoilage still apply." % [int(state.day)+1,offer.meat,offer.bullets,offer.remaining])
 	if by_hand:
 		journal.append("Used the household hand tools instead of ammunition.")
@@ -970,22 +984,25 @@ func slaughter_ox(by_hand: bool = false) -> bool:
 
 func preservation_offer(salted: bool = false) -> Dictionary:
 	if not can_service():return {}
-	var input := provisions.preservable_next_day(int(state.day),int(state.food),int(provisions.data.rations_lb[state.rations])*int(state.party_size))
+	var plan: Dictionary=provisions.preservation_plan(int(state.day),int(state.food),int(provisions.data.rations_lb[state.rations])*int(state.party_size))
+	var input: int=plan.input
 	if input < 1:return {}
-	var salt := ceili(input*float(provisions.data.preservation.salt_per_food_lb)) if salted else 0
+	var salt := ceili(float(plan.mass)*float(provisions.data.preservation.salt_per_food_lb)) if salted else 0
 	if state.salt < salt:return {}
-	return {"input":input,"salt":salt,"kept":floori(input*float(provisions.data.preservation.salted_retained_food if salted else provisions.data.preservation.retained_food)),"days":int(provisions.data.preservation.salted_days if salted else provisions.data.preservation.days)}
+	return {"input":input,"mass":plan.mass,"salt":salt,"kept":floori(input*float(provisions.data.preservation.salted_retained_food if salted else provisions.data.preservation.retained_food)),"days":int(provisions.data.preservation.salted_days if salted else provisions.data.preservation.days)}
 
 func preserve_meat(salted: bool = false) -> bool:
 	var offer := preservation_offer(salted)
 	if offer.is_empty():return false
 	_tick_day(false) # Meals and spoilage happen before processing; never rescue spoiled meat.
 	if state.status != "traveling":return true
-	var result := provisions.preserve(int(offer.input),int(state.day),salted)
+	var input: int=mini(int(offer.input),provisions.processable())
+	while salted and input>0 and ceili(provisions.fresh_mass(input)*float(provisions.data.preservation.salt_per_food_lb))>int(state.salt):input-=1
+	var result := provisions.preserve(input,int(state.day),salted)
 	state.food-=int(result.lost)
-	state.salt-=int(offer.salt)
-	supply_history.append({"day":state.day,"event":"preservation","changes":{"food":-int(result.lost),"salt":-int(offer.salt)},"processed":result.input,"retained":result.kept,"dried_weight_lb":result.weight,"expires":result.expires})
-	journal.append("Day %d · %s: %d lb fresh meat became %d ration-lb dried food (%.1f lb cargo); %d lb salt used. Processing lost %d ration-lb. Keeps up to %d days after today." % [state.day,"Salt-assisted drying" if salted else "Drying meat",result.input,result.kept,result.weight,offer.salt,result.lost,offer.days])
+	state.salt-=int(result.salt)
+	supply_history.append({"day":state.day,"event":"preservation","changes":{"food":-int(result.lost),"salt":-int(result.salt)},"processed":result.input,"processed_mass_lb":result.mass,"retained":result.kept,"dried_weight_lb":result.weight,"expires":result.expires})
+	journal.append("Day %d · %s: %.1f lb fresh meat became %d food units dried food (%.1f lb cargo); %d lb salt used. Processing lost %d ration-lb. Keeps up to %d days after today." % [state.day,"Salt-assisted drying" if salted else "Drying meat",result.mass,result.kept,result.weight,result.salt,result.lost,offer.days])
 	_update_river_stage()
 	if pending.is_empty():_schedule_event(false)
 	return true
@@ -1043,3 +1060,15 @@ func _refresh_toll_offer() -> void:
 			choice["requires"] = {"money":toll}
 			choice["effects"] = {"money":-toll}
 
+
+func seasonal_pressure() -> Dictionary:
+	return survival.seasonal(int(calendar().month),str(state.terrain),context.region(self))
+
+func season_notice(days_ahead: int=0) -> String:
+	if not state.extended_route:return ""
+	var date: Dictionary=Time.get_datetime_dict_from_unix_time(int(Time.get_unix_time_from_datetime_dict(calendar()))+maxi(0,days_ahead)*86400)
+	var month: int=int(date.month)
+	if month in survival.data.seasonal.winter_months:return "Winter: slow roads and poor grazing. Clothes reduce, but do not erase, blizzard exposure."
+	if month in [9,10]:return "Autumn: mountain snow is approaching. Longer stops risk worse roads and grazing."
+	if month in [3,4] and seasonal_pressure().upland:return "Spring: snow can still slow upland travel."
+	return ""

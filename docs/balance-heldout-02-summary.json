@@ -1,0 +1,801 @@
+{
+  "label": "heldout-02",
+  "rules_signature": "376c2029c6bbc9acc8338bb3a2d1f0a7eecfc1374cfd0c20fc07fd47d403e635",
+  "source_hashes": {
+    "simulation/carrying.gd": "e257982c3e0aaf3ededdf319cbdbff48896005c7d5d50b76f51c28126209077c",
+    "simulation/character_catalog.gd": "e793d5fcc92ccdc4af5056ae66f01d397cd7a722abadad1f612c83f9e2c4a6cd",
+    "simulation/combat.gd": "37a9f48c1c1055e2d2bdef745d1060cfeb789a981f7d68195246a8f437623c56",
+    "simulation/crime_system.gd": "6f3417b8454c01f01fe1e38f5bec592d27dec054bba3376d18adecf8fdc728ea",
+    "simulation/event_catalog.gd": "730aea9458ddcda6f1d27ff3230f8cb922c238ffdfebd2af5e503ba46206c49c",
+    "simulation/grave_store.gd": "ce13273ecee4d73114564c37908b7f3a2c473530672a265b0eae2c029a4ba71d",
+    "simulation/hunting.gd": "eec6cd067332c78f8c330ec71f7909e4942d33cd6c0f39989802a6f2ec9bf1a6",
+    "simulation/outfitting.gd": "25384265907fcd2e6478d7d595b14102090f624d5e2847a3cc655e1301acdf15",
+    "simulation/party_character.gd": "cb8091de68c318848291df626a35735bb8884553b59d864492b990c0a8094c89",
+    "simulation/party_health.gd": "6595cd42ed1016f7ca984a2d89ce61b983eb8ed518bdbe12884ae0674eeaa7b2",
+    "simulation/provisions.gd": "50b77020052d8c08607348d8044e56e4cbab9aabfb873457ed1e1687994686a4",
+    "simulation/remains.gd": "f6c942956538ddca8cf3dd28727a5113b411331c2a91f3281639604ff79f8fca",
+    "simulation/route_catalog.gd": "344a74e5e1dfc27bdd41a03e356f613ce3245f2e0eddc9f0a532073024839e7a",
+    "simulation/save_store.gd": "bc6a9ef32d2e4800553a9c7e257acf875508662571dbf1ee4c23c73d2b4d086a",
+    "simulation/survival_rules.gd": "e4729fbca3a6eb9fc412ed3622961a6a71ad1d7e0ff8db1d258bacaf8e3843ed",
+    "simulation/trail_context.gd": "5eaa08edcd7844695628121ad39fc2131fa7372293fc1f474fbee56c02b9d605",
+    "simulation/trail_engine.gd": "2846eed80f7f071e8b0ddd32ad088b7e73117e751051220ec3fca9286635a73e",
+    "simulation/wagon_cache.gd": "c78920fea41a8f5b468570b8c1e4bdb2c1886a9e5ad649d99b218201863dbaa1",
+    "tests/balance_campaign.gd": "ee2602614b3782fd953dd85080a6fb275fef9388791ca41f2fc4d42091e9da27",
+    "tests/full_trail_balance.gd": "a11db5c3ce41581f3fb20df880ecf3edd54bcf1963199664d52002e790142ca9",
+    "tests/outlaw_journeys.gd": "3417c883768c9809c189090a9f4b24692ffbbdd4ee60a385799ddadc2a82531e"
+  },
+  "seed_start": 2000,
+  "seed_count": 20,
+  "total": {
+    "n": 5040,
+    "arrived": 2925,
+    "intact": 1660,
+    "outcomes": {
+      "lost": 1900,
+      "arrived": 2925,
+      "year_limit": 215
+    },
+    "deaths": 10219,
+    "departures": 2005,
+    "captured": 108,
+    "mean_days": 243.48,
+    "mean_empty_food_action_days": 1.89,
+    "mean_hunts": 11.81,
+    "wages_paid_cents": 27185235,
+    "wages_owed_cents": 4556615,
+    "death_causes": {
+      "lack of food": 7657,
+      "wound": 24,
+      "measles": 159,
+      "typhoid fever": 428,
+      "dysentery": 368,
+      "exposure": 1021,
+      "being shot by A": 108,
+      "exhaustion": 134,
+      "broken leg": 32,
+      "crossing injuries": 16,
+      "broken arm": 4,
+      "snakebite": 79,
+      "winter exposure": 41,
+      "cholera": 147,
+      "confrontation injuries": 1
+    }
+  },
+  "errors": [],
+  "by_profession": {
+    "banker": {
+      "n": 1680,
+      "arrived": 1493,
+      "intact": 926,
+      "outcomes": {
+        "arrived": 1493,
+        "lost": 76,
+        "year_limit": 111
+      },
+      "deaths": 883,
+      "departures": 628,
+      "captured": 36,
+      "mean_days": 259.22,
+      "mean_empty_food_action_days": 0.57,
+      "mean_hunts": 6.03,
+      "wages_paid_cents": 11985295,
+      "wages_owed_cents": 192535,
+      "death_causes": {
+        "lack of food": 340,
+        "typhoid fever": 97,
+        "dysentery": 74,
+        "broken leg": 10,
+        "exposure": 212,
+        "being shot by A": 36,
+        "measles": 28,
+        "exhaustion": 25,
+        "snakebite": 30,
+        "cholera": 27,
+        "broken arm": 1,
+        "winter exposure": 3
+      }
+    },
+    "carpenter": {
+      "n": 1680,
+      "arrived": 1062,
+      "intact": 646,
+      "outcomes": {
+        "arrived": 1062,
+        "lost": 541,
+        "year_limit": 77
+      },
+      "deaths": 3008,
+      "departures": 664,
+      "captured": 36,
+      "mean_days": 251.52,
+      "mean_empty_food_action_days": 1.68,
+      "mean_hunts": 11.32,
+      "wages_paid_cents": 9022195,
+      "wages_owed_cents": 1904980,
+      "death_causes": {
+        "lack of food": 2113,
+        "exposure": 385,
+        "typhoid fever": 140,
+        "dysentery": 119,
+        "being shot by A": 36,
+        "broken leg": 12,
+        "exhaustion": 54,
+        "wound": 9,
+        "measles": 42,
+        "snakebite": 27,
+        "cholera": 55,
+        "winter exposure": 11,
+        "crossing injuries": 4,
+        "broken arm": 1
+      }
+    },
+    "farmer": {
+      "n": 1680,
+      "arrived": 370,
+      "intact": 88,
+      "outcomes": {
+        "lost": 1283,
+        "arrived": 370,
+        "year_limit": 27
+      },
+      "deaths": 6328,
+      "departures": 713,
+      "captured": 36,
+      "mean_days": 219.7,
+      "mean_empty_food_action_days": 3.43,
+      "mean_hunts": 18.09,
+      "wages_paid_cents": 6177745,
+      "wages_owed_cents": 2459100,
+      "death_causes": {
+        "lack of food": 5204,
+        "wound": 15,
+        "measles": 89,
+        "typhoid fever": 191,
+        "dysentery": 175,
+        "exposure": 424,
+        "being shot by A": 36,
+        "exhaustion": 55,
+        "broken leg": 10,
+        "crossing injuries": 12,
+        "broken arm": 2,
+        "snakebite": 22,
+        "winter exposure": 27,
+        "cholera": 65,
+        "confrontation injuries": 1
+      }
+    }
+  },
+  "by_month": {
+    "3": {
+      "n": 1680,
+      "arrived": 1212,
+      "intact": 864,
+      "outcomes": {
+        "lost": 430,
+        "arrived": 1212,
+        "year_limit": 38
+      },
+      "deaths": 2198,
+      "departures": 607,
+      "captured": 36,
+      "mean_days": 205.87,
+      "mean_empty_food_action_days": 1.22,
+      "mean_hunts": 7.29,
+      "wages_paid_cents": 8186885,
+      "wages_owed_cents": 1273895,
+      "death_causes": {
+        "lack of food": 1777,
+        "wound": 5,
+        "measles": 41,
+        "typhoid fever": 95,
+        "dysentery": 86,
+        "exposure": 118,
+        "being shot by A": 36,
+        "exhaustion": 17,
+        "broken leg": 7,
+        "crossing injuries": 7,
+        "broken arm": 1,
+        "snakebite": 4,
+        "winter exposure": 2,
+        "cholera": 2
+      }
+    },
+    "5": {
+      "n": 1680,
+      "arrived": 996,
+      "intact": 431,
+      "outcomes": {
+        "lost": 611,
+        "arrived": 996,
+        "year_limit": 73
+      },
+      "deaths": 3622,
+      "departures": 705,
+      "captured": 36,
+      "mean_days": 254.26,
+      "mean_empty_food_action_days": 1.78,
+      "mean_hunts": 13.02,
+      "wages_paid_cents": 9122680,
+      "wages_owed_cents": 1884645,
+      "death_causes": {
+        "exposure": 582,
+        "lack of food": 2442,
+        "typhoid fever": 175,
+        "measles": 62,
+        "dysentery": 135,
+        "winter exposure": 24,
+        "crossing injuries": 7,
+        "snakebite": 50,
+        "cholera": 30,
+        "exhaustion": 49,
+        "being shot by A": 36,
+        "broken leg": 18,
+        "wound": 10,
+        "broken arm": 2
+      }
+    },
+    "8": {
+      "n": 1680,
+      "arrived": 717,
+      "intact": 365,
+      "outcomes": {
+        "lost": 859,
+        "arrived": 717,
+        "year_limit": 104
+      },
+      "deaths": 4399,
+      "departures": 693,
+      "captured": 36,
+      "mean_days": 270.31,
+      "mean_empty_food_action_days": 2.68,
+      "mean_hunts": 15.13,
+      "wages_paid_cents": 9875670,
+      "wages_owed_cents": 1398075,
+      "death_causes": {
+        "lack of food": 3438,
+        "exposure": 321,
+        "cholera": 115,
+        "dysentery": 147,
+        "measles": 56,
+        "snakebite": 25,
+        "typhoid fever": 158,
+        "exhaustion": 68,
+        "winter exposure": 15,
+        "crossing injuries": 2,
+        "being shot by A": 36,
+        "wound": 9,
+        "broken leg": 7,
+        "confrontation injuries": 1,
+        "broken arm": 1
+      }
+    }
+  },
+  "by_roster": {
+    "fragile": {
+      "n": 1260,
+      "arrived": 780,
+      "intact": 411,
+      "outcomes": {
+        "lost": 435,
+        "year_limit": 45,
+        "arrived": 780
+      },
+      "deaths": 2464,
+      "departures": 474,
+      "captured": 27,
+      "mean_days": 247.47,
+      "mean_empty_food_action_days": 1.51,
+      "mean_hunts": 10.14,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "death_causes": {
+        "lack of food": 1739,
+        "dysentery": 123,
+        "typhoid fever": 144,
+        "exposure": 239,
+        "exhaustion": 49,
+        "measles": 62,
+        "crossing injuries": 3,
+        "being shot by A": 27,
+        "wound": 6,
+        "snakebite": 21,
+        "winter exposure": 9,
+        "cholera": 32,
+        "broken leg": 8,
+        "broken arm": 2
+      }
+    },
+    "mixed_paid": {
+      "n": 1260,
+      "arrived": 610,
+      "intact": 390,
+      "outcomes": {
+        "lost": 627,
+        "year_limit": 23,
+        "arrived": 610
+      },
+      "deaths": 3020,
+      "departures": 535,
+      "captured": 27,
+      "mean_days": 227.01,
+      "mean_empty_food_action_days": 2.21,
+      "mean_hunts": 13.23,
+      "wages_paid_cents": 27185235,
+      "wages_owed_cents": 4556615,
+      "death_causes": {
+        "lack of food": 2454,
+        "exposure": 196,
+        "dysentery": 90,
+        "exhaustion": 27,
+        "typhoid fever": 111,
+        "measles": 27,
+        "broken leg": 7,
+        "crossing injuries": 6,
+        "broken arm": 1,
+        "being shot by A": 27,
+        "cholera": 45,
+        "wound": 11,
+        "winter exposure": 12,
+        "snakebite": 6
+      }
+    },
+    "ordinary": {
+      "n": 1260,
+      "arrived": 809,
+      "intact": 501,
+      "outcomes": {
+        "lost": 414,
+        "arrived": 809,
+        "year_limit": 37
+      },
+      "deaths": 2190,
+      "departures": 489,
+      "captured": 27,
+      "mean_days": 242.13,
+      "mean_empty_food_action_days": 1.66,
+      "mean_hunts": 10.47,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "death_causes": {
+        "lack of food": 1725,
+        "wound": 4,
+        "measles": 29,
+        "typhoid fever": 76,
+        "dysentery": 77,
+        "exposure": 183,
+        "being shot by A": 27,
+        "winter exposure": 7,
+        "crossing injuries": 4,
+        "snakebite": 12,
+        "cholera": 30,
+        "exhaustion": 15,
+        "broken leg": 1
+      }
+    },
+    "selected": {
+      "n": 1260,
+      "arrived": 726,
+      "intact": 358,
+      "outcomes": {
+        "lost": 424,
+        "arrived": 726,
+        "year_limit": 110
+      },
+      "deaths": 2545,
+      "departures": 507,
+      "captured": 27,
+      "mean_days": 257.31,
+      "mean_empty_food_action_days": 2.2,
+      "mean_hunts": 13.4,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "death_causes": {
+        "lack of food": 1739,
+        "measles": 41,
+        "dysentery": 78,
+        "typhoid fever": 97,
+        "exhaustion": 43,
+        "exposure": 403,
+        "crossing injuries": 3,
+        "snakebite": 40,
+        "broken leg": 16,
+        "wound": 3,
+        "winter exposure": 13,
+        "being shot by A": 27,
+        "cholera": 40,
+        "confrontation injuries": 1,
+        "broken arm": 1
+      }
+    }
+  },
+  "by_strategy": {
+    "already_dead": {
+      "n": 720,
+      "arrived": 428,
+      "intact": 355,
+      "outcomes": {
+        "arrived": 428,
+        "lost": 275,
+        "year_limit": 17
+      },
+      "deaths": 1512,
+      "departures": 23,
+      "captured": 0,
+      "mean_days": 241.59,
+      "mean_empty_food_action_days": 1.95,
+      "mean_hunts": 11.29,
+      "wages_paid_cents": 3845625,
+      "wages_owed_cents": 850745,
+      "death_causes": {
+        "measles": 14,
+        "wound": 5,
+        "lack of food": 1171,
+        "dysentery": 50,
+        "typhoid fever": 52,
+        "exposure": 163,
+        "exhaustion": 24,
+        "cholera": 18,
+        "broken leg": 5,
+        "snakebite": 5,
+        "winter exposure": 4,
+        "crossing injuries": 1
+      }
+    },
+    "dry": {
+      "n": 720,
+      "arrived": 422,
+      "intact": 344,
+      "outcomes": {
+        "lost": 279,
+        "arrived": 422,
+        "year_limit": 19
+      },
+      "deaths": 1537,
+      "departures": 23,
+      "captured": 0,
+      "mean_days": 240.66,
+      "mean_empty_food_action_days": 1.4,
+      "mean_hunts": 11.93,
+      "wages_paid_cents": 3857385,
+      "wages_owed_cents": 850815,
+      "death_causes": {
+        "lack of food": 1183,
+        "wound": 5,
+        "measles": 17,
+        "typhoid fever": 56,
+        "dysentery": 59,
+        "exposure": 141,
+        "exhaustion": 20,
+        "snakebite": 11,
+        "winter exposure": 15,
+        "cholera": 24,
+        "broken leg": 6
+      }
+    },
+    "no_hunt": {
+      "n": 720,
+      "arrived": 398,
+      "intact": 333,
+      "outcomes": {
+        "lost": 321,
+        "arrived": 398,
+        "year_limit": 1
+      },
+      "deaths": 1713,
+      "departures": 22,
+      "captured": 0,
+      "mean_days": 217.19,
+      "mean_empty_food_action_days": 3.7,
+      "mean_hunts": 0,
+      "wages_paid_cents": 3776500,
+      "wages_owed_cents": 507675,
+      "death_causes": {
+        "lack of food": 1472,
+        "typhoid fever": 31,
+        "exposure": 106,
+        "dysentery": 31,
+        "broken leg": 2,
+        "crossing injuries": 14,
+        "exhaustion": 14,
+        "snakebite": 6,
+        "measles": 12,
+        "wound": 3,
+        "winter exposure": 2,
+        "cholera": 18,
+        "confrontation injuries": 1,
+        "broken arm": 1
+      }
+    },
+    "predation": {
+      "n": 720,
+      "arrived": 550,
+      "intact": 0,
+      "outcomes": {
+        "arrived": 550,
+        "lost": 128,
+        "year_limit": 42
+      },
+      "deaths": 732,
+      "departures": 1337,
+      "captured": 0,
+      "mean_days": 264.87,
+      "mean_empty_food_action_days": 0.86,
+      "mean_hunts": 11.49,
+      "wages_paid_cents": 3605315,
+      "wages_owed_cents": 389550,
+      "death_causes": {
+        "being shot by A": 108,
+        "dysentery": 45,
+        "lack of food": 330,
+        "exposure": 115,
+        "measles": 16,
+        "exhaustion": 18,
+        "typhoid fever": 62,
+        "snakebite": 17,
+        "cholera": 15,
+        "winter exposure": 2,
+        "broken leg": 3,
+        "wound": 1
+      }
+    },
+    "robbery": {
+      "n": 720,
+      "arrived": 230,
+      "intact": 36,
+      "outcomes": {
+        "lost": 392,
+        "arrived": 230,
+        "year_limit": 98
+      },
+      "deaths": 1887,
+      "departures": 142,
+      "captured": 108,
+      "mean_days": 243.59,
+      "mean_empty_food_action_days": 2.66,
+      "mean_hunts": 25.81,
+      "wages_paid_cents": 4058005,
+      "wages_owed_cents": 332045,
+      "death_causes": {
+        "lack of food": 1338,
+        "typhoid fever": 142,
+        "dysentery": 84,
+        "measles": 57,
+        "exposure": 164,
+        "wound": 3,
+        "winter exposure": 8,
+        "cholera": 30,
+        "snakebite": 32,
+        "broken leg": 5,
+        "exhaustion": 24
+      }
+    },
+    "salt": {
+      "n": 720,
+      "arrived": 434,
+      "intact": 355,
+      "outcomes": {
+        "lost": 270,
+        "arrived": 434,
+        "year_limit": 16
+      },
+      "deaths": 1514,
+      "departures": 23,
+      "captured": 0,
+      "mean_days": 240.28,
+      "mean_empty_food_action_days": 1.46,
+      "mean_hunts": 11.09,
+      "wages_paid_cents": 3847445,
+      "wages_owed_cents": 824425,
+      "death_causes": {
+        "lack of food": 1168,
+        "wound": 5,
+        "measles": 20,
+        "exposure": 164,
+        "dysentery": 57,
+        "exhaustion": 14,
+        "typhoid fever": 42,
+        "winter exposure": 8,
+        "cholera": 23,
+        "broken leg": 6,
+        "snakebite": 6,
+        "crossing injuries": 1
+      }
+    },
+    "theft": {
+      "n": 720,
+      "arrived": 463,
+      "intact": 237,
+      "outcomes": {
+        "arrived": 463,
+        "lost": 235,
+        "year_limit": 22
+      },
+      "deaths": 1324,
+      "departures": 435,
+      "captured": 0,
+      "mean_days": 256.18,
+      "mean_empty_food_action_days": 1.24,
+      "mean_hunts": 11.07,
+      "wages_paid_cents": 4194960,
+      "wages_owed_cents": 801360,
+      "death_causes": {
+        "lack of food": 995,
+        "measles": 23,
+        "exposure": 168,
+        "dysentery": 42,
+        "typhoid fever": 43,
+        "broken arm": 3,
+        "broken leg": 5,
+        "exhaustion": 20,
+        "cholera": 19,
+        "wound": 2,
+        "snakebite": 2,
+        "winter exposure": 2
+      }
+    }
+  },
+  "lawful_by_capital": {
+    "farmer": {
+      "n": 480,
+      "arrived": 76,
+      "intact": 40,
+      "outcomes": {
+        "lost": 398,
+        "arrived": 76,
+        "year_limit": 6
+      },
+      "deaths": 2058,
+      "departures": 32,
+      "captured": 0,
+      "mean_days": 219.34,
+      "mean_empty_food_action_days": 3.01,
+      "mean_hunts": 21.97,
+      "wages_paid_cents": 1641535,
+      "wages_owed_cents": 922495,
+      "death_causes": {
+        "lack of food": 1711,
+        "wound": 7,
+        "measles": 26,
+        "typhoid fever": 49,
+        "dysentery": 62,
+        "exposure": 141,
+        "exhaustion": 17,
+        "winter exposure": 16,
+        "snakebite": 5,
+        "cholera": 23,
+        "broken leg": 1
+      }
+    },
+    "carpenter": {
+      "n": 480,
+      "arrived": 322,
+      "intact": 276,
+      "outcomes": {
+        "arrived": 322,
+        "lost": 147,
+        "year_limit": 11
+      },
+      "deaths": 848,
+      "departures": 14,
+      "captured": 0,
+      "mean_days": 247.94,
+      "mean_empty_food_action_days": 1.13,
+      "mean_hunts": 9.83,
+      "wages_paid_cents": 2531550,
+      "wages_owed_cents": 701190,
+      "death_causes": {
+        "dysentery": 35,
+        "lack of food": 604,
+        "exposure": 111,
+        "snakebite": 7,
+        "typhoid fever": 35,
+        "cholera": 19,
+        "exhaustion": 13,
+        "winter exposure": 6,
+        "broken leg": 6,
+        "measles": 8,
+        "wound": 3,
+        "crossing injuries": 1
+      }
+    },
+    "banker": {
+      "n": 480,
+      "arrived": 458,
+      "intact": 383,
+      "outcomes": {
+        "arrived": 458,
+        "lost": 4,
+        "year_limit": 18
+      },
+      "deaths": 145,
+      "departures": 0,
+      "captured": 0,
+      "mean_days": 254.12,
+      "mean_empty_food_action_days": 0.13,
+      "mean_hunts": 2.73,
+      "wages_paid_cents": 3531745,
+      "wages_owed_cents": 51555,
+      "death_causes": {
+        "dysentery": 19,
+        "exposure": 53,
+        "lack of food": 36,
+        "cholera": 5,
+        "measles": 3,
+        "broken leg": 5,
+        "typhoid fever": 14,
+        "snakebite": 5,
+        "winter exposure": 1,
+        "exhaustion": 4
+      }
+    }
+  },
+  "timely_ordinary_lawful": {
+    "farmer": {
+      "n": 40,
+      "arrived": 11,
+      "intact": 1,
+      "outcomes": {
+        "lost": 29,
+        "arrived": 11
+      },
+      "deaths": 169,
+      "departures": 0,
+      "captured": 0,
+      "mean_days": 239.9,
+      "mean_empty_food_action_days": 2.6,
+      "mean_hunts": 25.32,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "death_causes": {
+        "exposure": 23,
+        "lack of food": 127,
+        "typhoid fever": 8,
+        "measles": 2,
+        "dysentery": 5,
+        "winter exposure": 4
+      }
+    },
+    "carpenter": {
+      "n": 40,
+      "arrived": 29,
+      "intact": 26,
+      "outcomes": {
+        "lost": 10,
+        "arrived": 29,
+        "year_limit": 1
+      },
+      "deaths": 58,
+      "departures": 0,
+      "captured": 0,
+      "mean_days": 249.4,
+      "mean_empty_food_action_days": 0.82,
+      "mean_hunts": 7.4,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "death_causes": {
+        "dysentery": 2,
+        "lack of food": 43,
+        "exposure": 13
+      }
+    },
+    "banker": {
+      "n": 40,
+      "arrived": 40,
+      "intact": 39,
+      "outcomes": {
+        "arrived": 40
+      },
+      "deaths": 1,
+      "departures": 0,
+      "captured": 0,
+      "mean_days": 250.72,
+      "mean_empty_food_action_days": 0.17,
+      "mean_hunts": 2.5,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "death_causes": {
+        "dysentery": 1
+      }
+    }
+  }
+}

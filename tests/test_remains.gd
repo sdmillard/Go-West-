@@ -169,7 +169,7 @@ func run():
 	day=game.state.day
 	check(act(game,"butcher_open",1) and game.crime.record.remains[0].state=="processed" and game.state.day==day+1,"Butchering takes a day")
 	var meat: Dictionary=game.crime.record.human_food[0]
-	check(meat.remains==1 and meat.pounds==40 and not meat.preserved and meat.known==[0,1,3,4],"Done openly, everyone with the wagon knows what the meat is")
+	check(meat.remains==1 and meat.pounds==20 and not meat.preserved and meat.known==[0,1,3,4],"Done openly, everyone with the wagon knows what the meat is")
 	check(game.state.food<food and game.state.food>=food-5*int(game.provisions.data.rations_lb[game.state.rations]) and game.state.remains_lb==40,"The meat is kept apart from ordinary food and weighs on the cargo")
 	profiles=game.characters.profiles
 	check(profiles[1].trust==trust[1]-24 and profiles[3].trust==trust[3]-12 and profiles[4].trust==trust[4],"Those who forbid it object; family also grieve the body; the Ruthless shrug")
@@ -215,7 +215,7 @@ func run():
 	check(game.crime.tales(game).is_empty(),"Nobody tells anything while they stay")
 	# Drying keeps it longer and lighter; it is still human meat.
 	game.open_remains()
-	check(act(game,"dry",1) and game.crime.record.human_food[0].preserved and game.state.remains_lb==ceili(game.crime.record.human_food[0].pounds*float(game.provisions.data.preservation.dried_weight)),"Dried human meat stays apart and weighs less")
+	check(act(game,"dry",1) and game.crime.record.human_food[0].preserved and game.state.remains_lb==ceili(game.crime.record.human_food[0].pounds*game.provisions.mass_ratio(game.crime.record.human_food[0])),"Dried human meat stays apart and weighs less")
 	check(round_trip(store,game)!=null,"Dried human meat round-trips")
 	var witness_day: int=game.state.day
 	game._depart(game.plan_for([1,4]),"")
@@ -258,6 +258,47 @@ func run():
 	Remains.sync(game)
 	check(game.open_remains() and act(game,"butcher_open",1) and game.crime.record.human_food.size()==1,"A dead stranger can be butchered")
 	check(round_trip(store,game)!=null,"A stranger's butchered remains round-trip")
+	# Standing meal orders end immediately on death, including a final save.
+	game=party()
+	kill(game,1)
+	game.open_remains()
+	act(game,"butcher_open",1)
+	act(game,"eat",0)
+	kill(game,0)
+	game.pending={}
+	game.service_return={}
+	check(not game.crime.record.meals.has("0") and round_trip(store,game)!=null,"A diner dying after a meal leaves no invalid standing order in the save")
+	var fatalities:=0
+	for seed_value in range(16):
+		var trial=party(["Pragmatic","Pragmatic","Pragmatic","Pragmatic"],[],seed_value)
+		trial.characters.profiles[4].specials=["Hardy"]
+		trial.crime.attack(trial,4)
+		if trial.crime.record.attacks[0].attempt=="killed":
+			fatalities+=1
+			check(not trial.party_health.members[4].alive and round_trip(store,trial)!=null,"Resolved fatal attack bypasses damage resistance and matches its saved history")
+	check(fatalities>0,"Sample exercises fatal attacks on Hardy travelers")
+	# Frailty can turn a nominal wound into a death; the outcome records reality.
+	var frail_deaths:=0
+	for seed_value in range(16):
+		var trial=party(["Pragmatic","Pragmatic","Pragmatic","Pragmatic"],[],seed_value)
+		trial.party_health.members[4].health=45
+		trial.state.health=trial.party_health.average_health()
+		trial.characters.profiles[4].flaws=["Frail"]
+		trial.crime.companion_rules.fatal=0
+		trial.crime.attack(trial,4)
+		if not trial.party_health.members[4].alive:
+			frail_deaths+=1
+			check(trial.crime.record.attacks[0].attempt=="killed" and round_trip(store,trial)!=null,"An amplified lethal wound records death and round-trips")
+	check(frail_deaths>0,"Sample exercises a wound made lethal by Frail")
+	game=party()
+	game.state.food=1000
+	kill(game,1)
+	game.open_remains()
+	act(game,"carry",1)
+	game.pending={}
+	game.service_return={}
+	var packs: Dictionary=game.pack_quote({})
+	check(not packs.valid and packs.cargo_lb==210,"A carried body cannot disappear from the walking pack quote")
 	# Native UI.
 	var screen=Main.instantiate()
 	root.add_child(screen)

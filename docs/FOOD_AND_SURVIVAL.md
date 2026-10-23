@@ -1,6 +1,6 @@
 # Food, cargo and survival baseline
 
-**Current update:** [Economy and preservation](ECONOMY_AND_PRESERVATION.md) supersedes this archived food baseline: the suggested cart is now $333 with 1,700 lb staples, two care kits and 10 lb salt. Drying and salt-assisted drying are implemented; dried food uses ration-equivalent meal value with separate cargo mass.
+**Current rules:** [Food value and hauling](FOOD_VALUE_AND_HAULING.md) supersede this archived opening baseline. The current suggested outfit costs$375.60 with 1,700 lb staples, two care kits and 10 lb salt. New meat has separate food-unit value and physical weight; drying and salt-assisted drying are implemented. Treat the old prices, carry cap and opening-only results below as an archive.
 
 **Full-route update:** [Route expansion](ROUTE_EXPANSION.md) now connects Oregon City and supersedes the opening-only movement tuning below. Archived chapter outcomes remain useful snapshots, not whole-trail predictions.
 

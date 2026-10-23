@@ -11,13 +11,14 @@ func load_data(value: Variant) -> bool:
 	error = "Invalid hunting rules"
 	if not value is Dictionary:
 		return false
-	for key in ["duration", "reload_seconds", "shot_limit", "carry_limit"]:
+	for key in ["duration", "reload_seconds", "shot_limit", "carry_limit", "carry_per_person_lb"]:
 		if not value.get(key) is float and not value.get(key) is int:
 			return false
 		if not is_finite(float(value[key])) or value[key] <= 0:
 			return false
 	if value.shot_limit != int(value.shot_limit) or value.carry_limit != int(value.carry_limit):
 		return false
+	if value.carry_per_person_lb!=int(value.carry_per_person_lb) or value.carry_per_person_lb>value.carry_limit:return false
 	if not value.get("species") is Array or value.species.size() != 3 or not value.get("regions") is Dictionary:
 		return false
 	var ids: Array = []

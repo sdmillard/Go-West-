@@ -41,7 +41,7 @@ func run():
 		check(screen.rest_window.get_ok_button().disabled and store.capture(screen.game)==before,"Reject invalid duration: "+invalid)
 	screen.rest_days_input.text="4"
 	screen._update_rest_quote()
-	check("60 lb" in screen.rest_quote.text,"Quote uses living party size and selected daily rations")
+	check("60 food units" in screen.rest_quote.text,"Quote uses living party size and selected daily rations")
 	if "--capture" in OS.get_cmdline_user_args():
 		screen.rest_window.popup_centered(Vector2i(490,220))
 		await process_frame

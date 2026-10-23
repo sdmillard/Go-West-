@@ -1,6 +1,6 @@
 # Hunting activity
 
-**Current update:** [Economy and preservation](ECONOMY_AND_PRESERVATION.md) adds usable post-hunt drying, optional salt, finite preserved-food expiry, separate dried cargo weight and 3,600 matched full-road policy journeys. The 100 lb hunting return cap is unchanged.
+**Current rules:** [Food value and hauling](FOOD_VALUE_AND_HAULING.md) supersede the fixed100 lb return cap: retrieval is health-scaled, counts willing helpers, excludes broken legs, and caps at 200 physical lb plus actual cargo room. Two physical pounds of new meat supply one food unit. Drying and salt-assisted preservation are implemented. Older experiments below retain their original rules and opening-corridor limits.
 
 **Current food/load update:** see [Food and survival baseline](FOOD_AND_SURVIVAL.md) for the 800 lb suggested outfit, total cargo, variable hunting yields and fresh-meat spoilage. Earlier balance numbers below are archived observations.
 
