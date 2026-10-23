@@ -113,13 +113,13 @@ func run() -> void:
 	screen.departure_view.hide()
 	screen.game=outfit()
 	screen._refresh()
-	screen._show_supplies()
+	screen._show_section("Preserve meat")
 	if "--capture" in OS.get_cmdline_user_args():
 		await process_frame
 		await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png("res://docs/preservation-options.png")
 	var pressed:=false
-	for child in screen.supplies_rows.get_children():
+	for child in screen.section_rows.get_children():
 		if child is Button and child.text.begins_with("SALT + DRY"):
 			child.pressed.emit()
 			pressed=true

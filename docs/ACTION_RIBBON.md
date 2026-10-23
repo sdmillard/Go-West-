@@ -8,8 +8,7 @@ The logical canvas is 800 × 360. The original 640-pixel travel area and art kee
 | Guide | Overland guide |
 | Party | Health, relationships, wages, dismissal and vacancies |
 | Travel | Pace and rations |
-| Supplies | Cargo, preservation, packing and oxen |
-| Camp & Care | Rest duration and medical care |
+| Supplies | Direct inventory, Drop supplies, Abandon/recover wagon, oxen |
 | Hunt & Forage | Hunting or foraging preview |
 | Villainy | Attack someone, steal, rob, handling the dead |
 | History | Journal and memorial book |
@@ -35,3 +34,9 @@ A small **X in the upper-right corner** closes dialogs and the map; Escape is th
 **Options** holds full-screen, 1×/2× window size and automatic-travel display speed (2.5, 1.25 or 0.75 seconds per simulated day). Display speed changes the delay between days, not distance, food, disease or other daily rules. Preferences live separately in `user://preferences.cfg`; no journey-rule fingerprint change is needed for the layout. Current pace/rations remain visible on the main ledger/control panel.
 
 The UI reuses the original parchment/wood theme, bitmap font and pixel scenes. No reference-game artwork was copied. Native checks cover setup, trail, place choices, all ribbon sections, local targets, preferences and map.
+
+## Camp is a location, not a rest command
+
+The main **Camp** button is the single camp entry; the duplicate Camp & Care ribbon entry is removed. Entering camp pauses travel, shows the camp background and opens optional activities, without changing day, supplies, health, wages or RNG. Closing the activities window leaves the party camped; Continue departs. Rest has its own duration/confirmation inside camp. **Preserve meat** is now a camp activity rather than an inventory action; it advances the existing work-day rules and grants no rest-day recovery. Medical care and cargo remain accessible there. Camping near a landmark retains the actual stop and its place opportunities.
+
+**Supplies** opens the inventory directly. Drop supplies and Abandon wagon / Choose what to carry are top actions, before the explanatory inventory text. Dropping opens a separate permanent-discard list and spends no day. Abandonment retains the existing pack preview and confirmation; opening it does not abandon anything.

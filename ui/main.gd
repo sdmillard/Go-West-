@@ -44,7 +44,7 @@ var section_window: AcceptDialog
 var section_rows: VBoxContainer
 var ribbon_buttons: Dictionary={}
 var crime_category := ""
-const SECTION_PARENTS={"Attack someone":"Villainy","Party member":"Attack someone","Someone here":"Attack someone","Steal":"Villainy","Rob":"Villainy"}
+const SECTION_PARENTS={"Attack someone":"Villainy","Party member":"Attack someone","Someone here":"Attack someone","Steal":"Villainy","Rob":"Villainy","Preserve meat":"Camp","Drop supplies":"Supplies"}
 var window_scale: OptionButton
 var fullscreen: CheckBox
 var travel_speed: OptionButton
@@ -349,10 +349,10 @@ func _build_ui() -> void:
 	rations.hide()
 	travel_button = button("CONTINUE >", _travel)
 	place(travel_button, Rect2(459, 282, 91, 37))
-	rest_button = button("CAMP", _rest)
+	rest_button = button("CAMP", _enter_camp)
 	place(rest_button, Rect2(557, 282, 66, 37))
 	travel_button.tooltip_text = "Travel automatically. Click Pause to stop; encounters stop the wagon."
-	rest_button.tooltip_text = "Choose how many days to rest in camp. Meals and daily health rules still apply."
+	rest_button.tooltip_text = "Set up camp without spending time. Choose rest, preservation or care inside."
 	mode = OptionButton.new()
 	mode.add_item("CLASSIC")
 	mode.disabled = true
@@ -414,9 +414,9 @@ func _build_ui() -> void:
 
 Continue advances days; Pause stops the wagon. Encounters and landmarks stop travel. Map, Guide, History, Party and the ribbon sections let you take stock without spending another day. The map shows where you are, with the road you have taken in red. Hover over a control for a short explanation.
 
-Camp rests people and livestock, using food. Faster travel strains the team; low rations raise illness risk. Clothing protects people in rough weather. Inspect individual travelers.
+Entering Camp spends no time. Choose Rest inside camp to rest people and livestock, using food. Faster travel strains the team; low rations raise illness risk. Clothing protects people in rough weather. Inspect individual travelers.
 
-The right ribbon groups trail actions under Supplies, Camp & care, Hunt & forage, and People & places. Foraging costs one day and meals. Seasonal greens and berries supplement food and supply vitamin C when eaten; fresh meat alone does not prevent scurvy. Hunting costs a day and ammunition. Left-click fires; right-click walks. Cover blocks shots. Game flees; reload between shots. Carry back what your health and willing helpers allow (200 lb maximum). Broken legs prevent hauling.
+The right ribbon groups trail actions under Supplies and Hunt & forage, with local opportunities below the picture. Foraging costs one day and meals. Seasonal greens and berries supplement food and supply vitamin C when eaten; fresh meat alone does not prevent scurvy. Hunting costs a day and ammunition. Left-click fires; right-click walks. Cover blocks shots. Game flees; reload between shots. Carry back what your health and willing helpers allow (200 lb maximum). Broken legs prevent hauling.
 
 Each trading visit costs one day, however many trades you make. Trading posts keep a store counter with limited stock; passing traders offer fixed lots at higher prices. Care takes a day each; check costs first.
 
@@ -424,7 +424,7 @@ Recent rain can raise a river while you wait. Low water favors fording; high wat
 
 This chapter follows Palmer's reported opening route from Independence to Oregon City: 1,938 reported guide miles. The southern road via Bridger and the Barlow Road is playable. The suggested staples provision most of the journey, with resupply. Plan bulk resupply at trading posts; allow for weather delays.
 
-Supplies > Provisions lets you dry fresh meat, with optional salt. This takes a day. Food units and physical weight are separate: two pounds of new meat supply one food unit. Dried meat weighs less in cargo. Preserved meat also eventually spoils.
+Camp > Preserve meat lets you dry fresh meat, with optional salt. This takes a day. Food units and physical weight are separate: two pounds of new meat supply one food unit. Dried meat weighs less in cargo. Preserved meat also eventually spoils.
 
 Northern shortcuts and Columbia rafting are not yet playable. Weather, medical effects and other survival values remain simplified game rules, not reconstructed conditions for 1848.""")
 	guide_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -585,8 +585,7 @@ func _build_ribbon() -> void:
 		["GUIDE",_show_guide,"Read the overland guide."],
 		["PARTY",_show_party,"Health, bonds, wages and dismissal."],
 		["TRAVEL",_show_section.bind("Travel"),"Choose pace and rations."],
-		["SUPPLIES",_show_section.bind("Supplies"),"Cargo, preservation, buying and trading."],
-		["CAMP & CARE",_show_section.bind("Camp & care"),"Rest, medical care and emigrant camps."],
+		["SUPPLIES",_show_supplies,"Inventory, drop supplies and abandon/recover the wagon."],
 		["HUNT & FORAGE",_show_section.bind("Hunt & forage"),"Find food; review time and ammunition costs."],
 		["VILLAINY",_show_section.bind("Villainy"),"Attacks, theft, robbery and handling the dead."],
 		["HISTORY",_show_section.bind("History"),"Journal and memorial book."]]
@@ -607,7 +606,11 @@ func _section_action(action: Callable) -> void:
 
 func _show_section(section: String) -> void:
 	if section!="History" and (not game.can_service() or not landscape.crossing.is_empty() or _reviewing_crossing()):return
+	if section=="Supplies":
+		_show_supplies()
+		return
 	_pause_travel()
+	if section in ["Camp","Preserve meat"]:camping=true
 	_refresh()
 	for setting in [pace,rations]:
 		if setting.get_parent()==section_rows:
@@ -618,6 +621,7 @@ func _show_section(section: String) -> void:
 		section_rows.remove_child(child)
 		child.queue_free()
 	map_view.hide()
+	section_window.get_child(0).custom_minimum_size.y=190 if section in ["Camp","Drop supplies"] else 150
 	section_window.title=section.to_upper()
 	section_window.get_ok_button().text="BACK" if SECTION_PARENTS.has(section) else "BACK TO TRAIL"
 	var entries: Array=[]
@@ -630,8 +634,28 @@ func _show_section(section: String) -> void:
 				setting[1].show()
 				setting[1].custom_minimum_size=Vector2(350,24)
 			section_rows.add_child(label("Choices take effect on the next trail day."))
-		"Supplies":entries=[["PROVISIONS / CARGO / PRESERVE",_show_supplies]]
-		"Camp & care":entries=[["REST IN CAMP",_rest],["CARE / MEDICAL ATTENTION",_open_care]]
+		"Drop supplies":
+			section_rows.add_child(label("Left-behind supplies are lost permanently.\nDropping them spends no trail day."))
+			for item in game.provisions.data.weights_lb:
+				var amount:=mini(int(game.state.get(item,0)),50 if item=="food" else (20 if item=="bullets" else 1))
+				if amount>0:section_rows.add_child(button("DROP %d %s" % [amount,str(item).to_upper()],_section_action.bind(_drop_supply.bind(item,amount))))
+		"Camp":
+			var note:=label("Opening camp spends no time or supplies.\nChoose an activity; rest is optional.")
+			note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+			section_rows.add_child(note)
+			entries=[["REST · CHOOSE DAYS",_rest],["PRESERVE MEAT >",_show_section.bind("Preserve meat")],["CARE / MEDICAL ATTENTION",_open_care],["PROVISIONS / CARGO",_show_supplies]]
+		"Preserve meat":
+			section_rows.add_child(label("Processing uses a work day, not a rest day.\nMeals and spoilage happen before processing."))
+			var available:=false
+			for salted in [false,true]:
+				var offer: Dictionary=game.preservation_offer(salted)
+				if offer.is_empty():continue
+				available=true
+				var caption := "SALT + DRY" if salted else "DRY MEAT"
+				var preserve:=button("%s %.0f LB > %d FOOD UNITS · 1 DAY · %d LB SALT" % [caption,offer.mass,offer.kept,offer.salt],_section_action.bind(_preserve_in_camp.bind(salted)))
+				preserve.tooltip_text="Keeps up to %d days after processing; meals are separate." % offer.days
+				section_rows.add_child(preserve)
+			if not available:section_rows.add_child(label("No suitable fresh meat can be preserved now.\nSalt-assisted drying also requires enough salt."))
 		"Hunt & forage":entries=[["HUNT · 1 DAY, UP TO 5 SHOTS",_start_hunt],["FORAGE FOR GREENS AND BERRIES",_open_forage]]
 		"Villainy":entries=[["ATTACK SOMEONE >",_show_section.bind("Attack someone")],["STEAL >",_show_section.bind("Steal")],["ROB >",_show_section.bind("Rob")],["THE DEAD: BURY, CARRY OR SEARCH >",_open_remains]]
 		"Attack someone":
@@ -662,7 +686,22 @@ func _show_section(section: String) -> void:
 		if item[1]==Callable(self,"_start_hunt"):entry.disabled=not game.pending.is_empty() or game.state.bullets==0
 		section_rows.add_child(entry)
 	if SECTION_PARENTS.has(section):section_rows.add_child(button("< "+str(SECTION_PARENTS[section]).to_upper(),_section_action.bind(_show_section.bind(SECTION_PARENTS[section]))))
+	section_window.reset_size()
 	section_window.popup_centered()
+
+func _enter_camp() -> void:
+	_show_section("Camp")
+
+func _drop_supply(item: String,amount: int) -> void:
+	if game.discard_supply(item,amount):
+		_refresh()
+		_show_section("Drop supplies")
+
+func _preserve_in_camp(salted: bool) -> void:
+	if not camping:return
+	if game.preserve_meat(salted):
+		_refresh()
+		if game.can_service():_show_section("Preserve meat")
 
 func _section_back() -> void:
 	var parent := ""
@@ -899,7 +938,7 @@ func _finish_hunt() -> void:
 	var before: int = game.state.food
 	if game.finish_hunt():
 		var carried: int = game.state.food - before
-		notice("HUNTING REPORT","%d shots · %d lb meat obtained\n%d lb brought to camp · %d lb left behind\nUse fresh meat within two trail days, or dry it through Supplies > Provisions. Salt improves the result.\nRecovered meat supplies %d food units.\nThe outing used one day and that day's rations." % [outing.shots,outing.meat,recovered.mass,recovered.left,carried])
+		notice("HUNTING REPORT","%d shots · %d lb meat obtained\n%d lb brought to camp · %d lb left behind\nUse fresh meat within two trail days, or dry it through Camp > Preserve meat. Salt improves the result.\nRecovered meat supplies %d food units.\nThe outing used one day and that day's rations." % [outing.shots,outing.meat,recovered.mass,recovered.left,carried])
 	camping = true
 	_refresh()
 
@@ -1200,7 +1239,7 @@ func _choose(index: int) -> void:
 		_rest()
 		return
 	_pause_travel()
-	camping = false
+	if game.can_choose(index) and (game.pending.choices[index].get("action","") in ["leave","cross"] or game.pending.choices[index].has("method")):camping=false
 	var is_crossing: bool = game.can_choose(index) and game.pending.has("landmark") and game.pending.choices[index].has("method")
 	var accepted: bool = game.choose(index)
 	if accepted and game.pending.get("service_menu",false):
@@ -1262,15 +1301,15 @@ func _refresh() -> void:
 	landscape.weather_id = str(game.survival.weather.get("id", "clear")) if s.extended_route else "clear"
 	landscape.scene_id = ""
 	if s.extended_route:
-		if game.pending.has("landmark") or s.status == "arrived":
+		if camping and s.status=="traveling":
+			landscape.scene_id="camp"
+		elif game.pending.has("landmark") or s.status == "arrived":
 			landscape.scene_id = s.landmark
-		elif camping and game.pending.is_empty() and s.status == "traveling":
-			landscape.scene_id = "camp"
 		elif s.miles == 0:
 			landscape.scene_id = "independence"
 		if _reviewing_crossing():
 			landscape.scene_id = crossing_result.landmark
-		elif game.service_return.has("landmark"):
+		elif game.service_return.has("landmark") and not camping:
 			landscape.scene_id = game.service_return.landmark
 		elif game.pending.get("service_menu", false):
 			landscape.scene_id = "camp"
@@ -1344,6 +1383,8 @@ func _refresh() -> void:
 	story_scroll.scroll_vertical = 0
 
 func _show_supplies() -> void:
+	if not game.can_service() or not landscape.crossing.is_empty() or _reviewing_crossing():return
+	for setting in [pace,rations]:setting.hide()
 	section_window.hide()
 	options_window.hide()
 	_pause_travel()
@@ -1355,6 +1396,10 @@ func _show_supplies() -> void:
 	var storage_limit: float=game.provisions.storage_capacity(game.state)
 	var gear: float=float(game.provisions.data.walking.personal_gear_lb_per_person)*game.state.party_size if game.state.vehicle=="foot" else float(game.provisions.data.household_gear_lb)-float(game.state.get("departed_gear_lb",0))
 	var text := "CARGO %.1f / %.0f LB · %s\nSTAPLES %d · FRESH %d · DRIED %d FOOD UNITS\nSALT %d LB · UP TO %d PARTY-DAYS BEFORE SPOILAGE\nFood value and physical meat weight are counted separately.\nFresh meat lasts two days; foraged produce lasts three.\nDrying meat costs one day and some food;\nsalt improves yield/storage. Meals are eaten before processing.\nCargo includes %.0f lb personal/household gear. Discards are permanent." % [game.provisions.cargo(game.state), storage_limit,"OVERLOADED" if game.provisions.cargo(game.state) > storage_limit else "WITHIN GUIDELINE", game.state.food - fresh - dried, fresh, dried, game.state.salt, game.provisions.expected_days(game.state.food, game.state.party_size, game.state.rations),gear]
+	supplies_rows.add_child(button("DROP SUPPLIES >",func():
+		supplies_window.hide()
+		_show_section("Drop supplies")))
+	if game.CacheSupport.can_pack(game,false):supplies_rows.add_child(button("ABANDON WAGON / CHOOSE WHAT TO CARRY",func():_show_packing(false)))
 	supplies_rows.add_child(label(text))
 	supplies_rows.add_child(label("Greens and berries supply vitamin C only when eaten.\nUse Hunt & forage > Forage; meat alone does not prevent scurvy."))
 	supplies_rows.add_child(label("TRACKED FOOD %.1f LB / %d FOOD UNITS" % [game.provisions.tracked_mass(game.state.food),fresh+dried]))
@@ -1362,7 +1407,6 @@ func _show_supplies() -> void:
 	supplies_rows.add_child(label("Health scales loads on foot and hunts. Broken legs prevent hauling."))
 	supplies_rows.add_child(label("OXEN %d · GRAZE; DO NOT USE THE PARTY'S FOOD\n%s" % [game.state.oxen,"PACK LIMIT %.0f LB; REDUCE EXCESS BEFORE WALKING" % storage_limit if game.state.vehicle=="foot" else "TEAM LOAD GUIDELINE %.0f LB; EXCESS LOAD SLOWS TRAVEL" % game.provisions.team_capacity(game.state.oxen)]))
 	if game.state.vehicle!="foot":supplies_rows.add_child(label("TEAM PULLING SPEED %d%% · 4 NORMAL; 5 +5%%; 6+ +10%%" % roundi(game.survival.team_factor(game.state.oxen)*100)))
-	if game.CacheSupport.can_pack(game,false):supplies_rows.add_child(button("ABANDON WAGON / CHOOSE WHAT TO CARRY",func():_show_packing(false)))
 	if game.state.vehicle=="foot" and not game.wagon_cache.is_empty():
 		var recover:=button("BACKTRACK TO WAGON · MILE %d · LOSS RISK" % game.wagon_cache.mile,func():
 			supplies_window.hide()
@@ -1381,25 +1425,6 @@ func _show_supplies() -> void:
 	var hand_offer: Dictionary = game.ox_slaughter_offer(true)
 	if not hand_offer.is_empty():
 		supplies_rows.add_child(button("BUTCHER BY HAND · NO AMMO · %d%% INJURY RISK · 1 DAY" % roundi(hand_offer.injury_chance*100),func():_confirm_slaughter(true)))
-	for salted in [false,true]:
-		var offer: Dictionary = game.preservation_offer(salted)
-		if offer.is_empty():continue
-		var caption := "SALT + DRY" if salted else "DRY MEAT"
-		var preserve := button("%s %.0f LB > %d FOOD UNITS · 1 DAY · %d LB SALT" % [caption,offer.mass,offer.kept,offer.salt],func():
-			if game.preserve_meat(salted):
-				_refresh()
-				_show_supplies())
-		preserve.tooltip_text = "Retained food keeps up to %d days after processing. The day's meals are separate." % offer.days
-		supplies_rows.add_child(preserve)
-	for item in game.provisions.data.weights_lb:
-		var amount := mini(int(game.state.get(item, 0)), 50 if item == "food" else (20 if item == "bullets" else 1))
-		if amount > 0:
-			var discard := button("LEAVE %d %s BEHIND" % [amount, str(item).to_upper()], func():
-				game.discard_supply(item, amount)
-				_refresh()
-				_show_supplies())
-			discard.disabled = not game.can_service()
-			supplies_rows.add_child(discard)
 	supplies_window.popup_centered()
 
 func _packing_cart() -> Dictionary:
