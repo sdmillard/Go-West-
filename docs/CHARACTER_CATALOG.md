@@ -36,7 +36,7 @@ Catalog definitions live in `data/character_catalog.json`; `simulation/character
 
 | Choice | Current effect |
 | --- | --- |
-| Loyal | Ordinary trust losses are halved; forbidden actions retain their full consequence. |
+| Loyal | Sticks with you: will not leave or refuse to help until trust falls 10 points lower than usual, and never betrays the party. Trust losses are normal. +10 cents/day if hired. |
 | Mercenary | Requires an agreed cash wage plus party food. Honored payments can build trust. |
 | Veteran | A fit, willing companion reduces confrontation injury risk by 3 percentage points, subject to its floor. |
 | Cannibal | Has no personal objection to eating human remains. Does not grant approval of murder or deception. |
@@ -47,7 +47,7 @@ Catalog definitions live in `data/character_catalog.json`; `simulation/character
 | Cool-headed | Personal confrontation injury damage is reduced by 25%; +10 cents/day if hired. |
 | Weatherwise | Personal exposure damage is reduced by 25%; does not replace warm clothing. +5 cents/day if hired. |
 | Tireless | Personal exhaustion damage is reduced by 25%; +10 cents/day if hired. |
-| Stoic | Ordinary trust losses are reduced by 25%; forbidden actions retain full force. +5 cents/day if hired. |
+| Stoic | Takes hardship in stride: trust lost to rest days, pushing the sick, stopping for the sick and armed defense is halved. Moral choices and wages count in full. +5 cents/day if hired. |
 | Field Medic | Provides the existing Caregiving party benefit even with another background; does not stack. +15 cents/day if hired. |
 | Wagonwright | Provides the existing Carpentry party benefit even with another background; does not stack. +15 cents/day if hired. |
 | Sharpshooter | Provides the existing Hunting reload benefit even with another background; does not stack. +15 cents/day if hired. |
@@ -94,7 +94,7 @@ Attachment lowers existing breaking/betrayal-warning thresholds; it does not era
 
 Personal health multipliers apply only to that living, active companion. Negative health losses round up in magnitude and never become zero. Positive gains round down with a minimum gain of one. Context-specific effects combine with general effects. Sickly affects the daily damage from illnesses, not injuries or the chance of contracting disease; no new diagnosis or illness model is implied. None of the health specials changes condition recovery timers.
 
-Trust factors affect ordinary gains/losses and round to the existing half-point precision, with memories bounded to the supported −12/+2 range. Forbidden-action penalties bypass reductions from Loyal, Stoic and temperament. A Restless rest-day objection can coexist with approval of resting for a sick traveler; both are explicit memories. Proud changes the trust reward for personal care, not whether medical treatment works.
+Trust factors affect ordinary gains/losses and round to the existing half-point precision, with memories bounded to the supported −12/+2 range. Forbidden-action penalties bypass reductions from Stoic and temperament. Since October 23, 2026 (Spencer): Stoic halves only hardship losses (rest days, resting or pushing with the sick, armed defense); Loyal no longer softens losses but lowers the breaking point by 10 and never betrays. A Restless rest-day objection can coexist with approval of resting for a sick traveler; both are explicit memories. Proud changes the trust reward for personal care, not whether medical treatment works.
 
 Field Medic, Wagonwright, Sharpshooter and Haggler let someone supply one of the existing background benefits with a different primary background. They require the same fit, living, willing helper as the original background; duplicate sources do not stack. Personal resilience and trust modifiers are not helper skills and stay active while the individual is alive and traveling with the party.
 

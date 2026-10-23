@@ -52,6 +52,10 @@ Last updated October 23, 2026, after merged PR #34 (UI readability). Sections be
   - SpinBox arrows are brown (they were near-white on parchment); the fort store counter columns were widened so prices no longer touch the item names.
 - Visual check: every window and several tooltips were captured under Xvfb at 640x360 before and after. The capture script is not in the repo; `tests/test_ui.gd` now checks tooltip theme and wrapping, notice centering and guide height.
 
+## Stoic vs. Loyal (Spencer's choice, October 23, 2026)
+
+- Loyal used to strictly beat Stoic (both cut ordinary trust losses, 50% vs 25%). Spencer chose to split them: **Stoic** halves trust lost to hardship only (`HARDSHIP` kinds in `party_character.gd`: rest days, resting/pushing with the sick, armed defense; catalog key `hardship_trust_loss`). **Loyal** takes losses in full but its breaking point is 10 lower (`LOYAL_STAY`) and it never betrays (`may_betray`). Wages and moral choices are not hardship. Previous fingerprint `dc09cc2c…f0e` whitelisted in `economy_v1`; current one is `a76bde0b…81b7`. Earlier balance studies that used Loyal rosters predate this change.
+
 ## Suggested order when Spencer resumes
 
 1. Read this checkpoint, `docs/BALANCE_CAMPAIGN.md`, `docs/FOOD_VALUE_AND_HAULING.md` and the local `docs/GUI_ART_HANDOFF.md`; inspect the actual working tree.

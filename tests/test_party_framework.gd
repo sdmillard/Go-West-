@@ -50,27 +50,43 @@ func run():
 	var agreement: Dictionary=hiring.characters.profiles[1].contract.duplicate(true)
 	hiring.characters.profiles[1].specials.erase("Veteran")
 	check(hiring.characters.profiles[1].contract==agreement,"Later character changes do not rewrite an existing agreement")
-	profile.specials=["Loyal"]
+	profile.specials=["Stoic"]
 	game.characters.remember(game,profile,"defend",-1,"Ordinary disagreement.")
-	check(profile.trust==49.5 and profile.memories.back().delta==-0.5,"Loyal preserves half-point ordinary losses")
+	check(profile.trust==49.5 and profile.memories.back().delta==-0.5,"Stoic preserves half-point hardship losses")
 	rest(game)
 	game.characters.remember(game,profile,"defend",-1,"Another disagreement.")
 	check(profile.trust==49,"Repeated halves accumulate instead of rounding away")
 	game.characters.remember(game,profile,"care",2,"Care.")
-	check(profile.trust==51,"Loyal does not halve gains")
+	check(profile.trust==51,"Stoic does not halve gains")
+	# Loyal stays through worse instead of softening losses, and never betrays.
+	var loyal: Dictionary=profile.duplicate(true)
+	loyal.specials=["Loyal"]
+	loyal.can_betray=true
+	check(game.characters.breaking_point(loyal)==game.characters.breaking_point(profile)-10 and not game.characters.may_betray(loyal),"Loyal lowers the breaking point by ten and rules out betrayal")
+	loyal.specials=[]
+	check(game.characters.may_betray(loyal),"Without Loyal, a capable companion can still betray")
+	var loyal_trust: float=profile.trust
+	profile.specials=["Loyal"]
+	game.characters.remember(game,profile,"rest_sick",-2,"A hard day.")
+	check(profile.trust==loyal_trust-2,"Loyal takes ordinary losses in full")
+	profile.trust=loyal_trust
+	profile.specials=["Stoic"]
+	game.characters.remember(game,profile,"wage_missed",-2,"Unpaid.")
+	check(profile.trust==loyal_trust-2,"Stoic does not soften losses outside hardship")
+	profile.trust=loyal_trust
 	profile.boundaries={"approved":[],"disapproved":[],"forbidden":["robbery"]}
 	profile.trust=90
 	var before=store.capture(game)
 	check(game.characters.response(1,"robbery")=="reluctant" and store.capture(game)==before,"High-trust forbidden-action preview is pure")
 	game.characters.react_to_action(game,"robbery")
-	check(profile.trust==78 and profile.memories.back().delta==-12,"Forbidden action bypasses Loyal mitigation even when reluctantly accepted")
+	check(profile.trust==78 and profile.memories.back().delta==-12,"Forbidden action bypasses mitigation even when reluctantly accepted")
 	check(game.characters.response(1,"robbery")=="forbidden","Crossing the loyalty threshold changes later willingness")
 	var snapshot=store.capture(game)
 	var restored=store.restore(JSON.parse_string(JSON.stringify(snapshot)))
 	check(restored!=null and store.capture(restored)==snapshot,"Boundary and special state round-trip")
 	game=outfit()
 	profile=game.characters.profiles[1]
-	profile.specials=["Loyal"]
+	profile.specials=["Stoic"]
 	game.characters.remember(game,profile,"defend",-1,"Half point.")
 	snapshot=store.capture(game)
 	restored=store.restore(JSON.parse_string(JSON.stringify(snapshot)))
@@ -109,22 +125,22 @@ func run():
 	check(profile.contract.arrears_cents==500 and profile.trust==50 and profile.contract.misses==0,"Due day gives an opportunity to pay before a penalty")
 	check(game.characters.pay_wages(game,1,200) and profile.contract.arrears_cents==300 and game.state.money==cash-2 and profile.trust==50,"Partial payment reduces real debt without granting full-payment reward")
 	rest(game)
-	check(profile.contract.misses==1 and profile.trust==49 and profile.contract.arrears_cents==300,"Missed wages lose half trust for Loyal but retain full debt")
+	check(profile.contract.misses==1 and profile.trust==48 and profile.contract.arrears_cents==300,"Missed wages lose full trust even for Loyal and retain full debt")
 	game.characters.advance_contracts(game)
-	check(profile.contract.misses==1 and profile.trust==49,"Repeated daily checks do not duplicate a missed installment")
-	check(game.characters.pay_wages(game,1) and profile.trust==50 and game.state.money==cash-5,"Paying arrears restores some trust and charges exact remaining cents")
+	check(profile.contract.misses==1 and profile.trust==48,"Repeated daily checks do not duplicate a missed installment")
+	check(game.characters.pay_wages(game,1) and profile.trust==49 and game.state.money==cash-5,"Paying arrears restores some trust and charges exact remaining cents")
 	rest(game)
 	check(profile.contract.arrears_cents==500,"Next scheduled wage still accrues after settling arrears")
-	check(game.characters.pay_wages(game,1) and profile.trust==50 and profile.contract.reward_days==2,"Short-interval on-time pay accrues days toward a weekly trust gain")
-	check(not game.characters.pay_wages(game,1) and profile.trust==50,"Paid bill cannot be rewarded twice")
+	check(game.characters.pay_wages(game,1) and profile.trust==49 and profile.contract.reward_days==2,"Short-interval on-time pay accrues days toward a weekly trust gain")
+	check(not game.characters.pay_wages(game,1) and profile.trust==49,"Paid bill cannot be rewarded twice")
 	rest(game)
 	rest(game)
 	rest(game)
-	check(profile.contract.misses==2 and profile.trust==48,"Repeated missed payment has a stronger penalty, still halved by Loyal")
+	check(profile.contract.misses==2 and profile.trust==45,"Repeated missed payment has a stronger penalty")
 	profile.boundaries.forbidden.append("miss_wages")
 	rest(game)
 	rest(game)
-	check(profile.contract.misses==3 and profile.trust==44,"Forbidden missed wage takes the full penalty")
+	check(profile.contract.misses==3 and profile.trust==41,"Forbidden missed wage takes the full penalty")
 	game.state.money=0
 	var debt: int=profile.contract.arrears_cents
 	check(not game.characters.pay_wages(game,1) and profile.contract.arrears_cents==debt,"Unaffordable payment cannot erase debt")
