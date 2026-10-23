@@ -7,10 +7,12 @@
     {"id": "measles", "name": "Measles", "kind": "illness", "daily_damage": 4, "recovery_days": 10, "weight": 1.5, "months": [1, 1.2, 1.5, 1.5, 1.4, 1.2, 0.8, 0.6, 0.6, 0.6, 0.8, 1], "regions": {"woodland": 1.6, "plains": 1.2, "highcountry": 0.6, "sagebrush": 0.6, "forest": 0.6}, "spread_chance": 0.08, "immunizing": true},
     {"id": "mountain_fever", "name": "Mountain fever", "kind": "illness", "daily_damage": 3, "recovery_days": 10, "weight": 4, "months": [0.1, 0.1, 0.3, 0.8, 1, 1, 1, 0.8, 0.4, 0.2, 0.1, 0.1], "regions": {"highcountry": 1, "sagebrush": 0.3}, "region_default": 0},
     {"id": "exhaustion", "name": "Exhaustion", "kind": "illness", "daily_damage": 3, "recovery_days": 5, "weight": 2},
+    {"id": "scurvy", "name": "Scurvy", "kind": "illness", "daily_damage": 2, "recovery_days": 14, "weight": 0, "deficiency": true, "needs_fresh_food": true},
     {"id": "broken_arm", "name": "Broken arm", "kind": "injury", "daily_damage": 1, "recovery_days": 28},
     {"id": "broken_leg", "name": "Broken leg", "kind": "injury", "daily_damage": 2, "recovery_days": 35},
     {"id": "snakebite", "name": "Snakebite", "kind": "injury", "daily_damage": 8, "recovery_days": 8},
     {"id": "wound", "name": "Wound", "kind": "injury", "daily_damage": 5, "recovery_days": 12}
   ],
-  "note": "Onset weights, monthly and regional factors and spread chances are authored placeholders for the balance pass, not fitted epidemiology. Waterborne illness peaks in hot months on the Platte and in sagebrush country; measles spreads early on the trail and leaves survivors immune; mountain fever (the emigrants' name for a usually non-fatal fever met in the Rockies; its modern identity is uncertain) appears in high country in spring and summer and does not pass person to person. Cholera stays locked until the 1849 epidemic."
+  "scurvy": {"condition": "scurvy", "onset_days": 45, "base_chance": 0.01, "chance_per_15_days": 0.01, "max_chance": 0.08},
+  "note": "Onset weights, monthly and regional factors and spread chances are authored placeholders for the balance pass, not fitted epidemiology. Waterborne illness peaks in hot months on the Platte and in sagebrush country; measles spreads early on the trail and leaves survivors immune; mountain fever (the emigrants' name for a usually non-fatal fever met in the Rockies; its modern identity is uncertain) appears in high country in spring and summer and does not pass person to person. Cholera stays locked until the 1849 epidemic. Scurvy comes only from a long run of meals without fresh meat (onset_days) and heals only on days the party eats fresh meat."
 }
