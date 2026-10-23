@@ -1,5 +1,6 @@
 extends RefCounted
 ## Companion backgrounds, trust, participation and warned settlement departures.
+const Appearance=preload("res://simulation/traveler_appearance.gd")
 const SKILLS=["Hunting", "Carpentry", "Caregiving", "Trading"]
 const KINDS=["rest_sick", "push_sick", "care", "defend"]
 const ACTIONS=["robbery", "murder", "cannibalism", "miss_wages", "hunt", "repair", "care", "trade", "defend"]
@@ -96,6 +97,7 @@ func start(seed_value: int, count: int) -> void:
 			traits=["Cautious" if random.randi_range(0,1)==0 else "Bold", "Compassionate" if random.randi_range(0,1)==0 else "Pragmatic"]
 		profiles.append({"id":index,"traits":traits,"skill":"Leadership" if index==0 else skills[(index-1)%skills.size()],"trust":50,"memories":[]})
 	upgrade()
+	for profile in profiles:profile["appearance"]=Appearance.generate(seed_value,int(profile.id))
 
 func upgrade() -> void:
 	# Existing travelers acquire neutral framework fields; never invent family, debt or specials.
@@ -237,6 +239,7 @@ func generate_candidate(seed_value: int, candidate_index: int, relationship: Str
 	var temperament: String=catalog.data.temperaments.keys()[random.randi_range(0,catalog.data.temperaments.size()-1)]
 	var values: String=catalog.data.values.keys()[random.randi_range(0,catalog.data.values.size()-1)]
 	var profile: Dictionary={"id":1,"traits":[temperament,values],"skill":SKILLS[random.randi_range(0,SKILLS.size()-1)],"trust":RELATIONSHIPS[relationship],"memories":[],"specials":[],"relationship":relationship,"boundaries":catalog.boundaries(values),"thresholds":{"loyalty":80,"breaking":20,"betrayal":10},"can_betray":values in ["Ruthless","Opportunistic"],"contract":{},"exit_warning":{}}
+	profile["appearance"]=Appearance.generate(seed_value,candidate_index)
 	if random.randi_range(0,2)==0:profile.flaws=[FLAWS.keys()[random.randi_range(0,FLAWS.size()-1)]]
 	var pool: Array=SPECIALS.duplicate()
 	for index in range(pool.size()-1,0,-1):
@@ -302,9 +305,9 @@ func remember(game, profile: Dictionary, kind: String, delta: float, text: Strin
 
 func description(index: int) -> String:
 	if index>=profiles.size():return ""
-	if index==0:return "PARTY LEADER · YOU\nYou choose your character's decisions and values."
+	if index==0:return "PARTY LEADER · YOU\nHeritage / upbringing: "+profiles[0].get("appearance",Appearance.default_for(0)).heritage+"\nYou choose your character's decisions and values."
 	var profile: Dictionary=profiles[index]
-	var lines: Array[String]=["COMPANION", "Traits: "+", ".join(profile.traits), "Background: "+profile.skill, "Trust in you: %s / 100" % trust_text(profile.trust),"Relationship: "+profile.relationship.replace("_"," "),"Specials: "+(", ".join(profile.specials) if not profile.specials.is_empty() else "None")]
+	var lines: Array[String]=["COMPANION", "Heritage / upbringing: "+profile.get("appearance",Appearance.default_for(int(profile.id))).heritage, "Traits: "+", ".join(profile.traits), "Background: "+profile.skill, "Trust in you: %s / 100" % trust_text(profile.trust),"Relationship: "+profile.relationship.replace("_"," "),"Specials: "+(", ".join(profile.specials) if not profile.specials.is_empty() else "None")]
 	for flaw in profile.get("flaws",[]):lines.append("Flaw: %s. %s" % [flaw,FLAWS[flaw]])
 	var forbidden: Array=effective_forbidden(profile)
 	if not forbidden.is_empty():lines.append("Forbidden: "+", ".join(forbidden))
@@ -330,6 +333,7 @@ func valid(value: Variant, count: int, day: int, legacy: bool=false, framework_v
 	for index in range(count):
 		var profile: Variant=value[index]
 		if not profile is Dictionary or profile.get("id")!=index or not profile.get("traits") is Array or profile.traits.size()!=(0 if index==0 else 2):return false
+		if profile.has("appearance") and not Appearance.valid(profile.appearance):return false
 		if index==0:
 			if profile.get("skill")!="Leadership":return false
 		elif profile.traits[0] not in catalog.data.temperaments or profile.traits[1] not in catalog.data.values or profile.get("skill") not in SKILLS:return false

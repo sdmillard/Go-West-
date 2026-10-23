@@ -43,6 +43,12 @@ var bonds_layer: Control
 var bond_boxes: Array = []
 var romance_check: CheckBox
 var bond_feedback: Label
+var appearance_window: AcceptDialog
+var appearance_member := 0
+var look_boxes: Dictionary={}
+var heritage_entry: LineEdit
+var look_preview: TextureRect
+var loading_look := false
 var character_summary: Label
 
 func _init(simulation) -> void:
@@ -91,7 +97,7 @@ func _ready() -> void:
 			_update_quote()
 			_title_editor())
 		# Companions get an EDIT button that opens their character sheet; the leader is defined by play.
-		put(entry, Rect2(95, 48 + i * 23, 150 if i == 0 else 108, 21), party_layer)
+		put(entry, Rect2(95, 48 + i * 23, 108, 21), party_layer)
 		names.append(entry)
 		if i > 0:
 			var edit := Button.new()
@@ -101,6 +107,11 @@ func _ready() -> void:
 			edit.pressed.connect(open_editor.bind(i))
 			put(edit, Rect2(207, 48 + i * 23, 38, 21), party_layer)
 			edit_buttons.append(edit)
+		else:
+			var look := Button.new()
+			look.text="LOOK"
+			look.pressed.connect(open_appearance.bind(0))
+			put(look,Rect2(207,48,38,21),party_layer)
 	text("PROFESSION / TRAIL FUNDS", Rect2(12, 169, 235, 12), party_layer)
 	profession = OptionButton.new()
 	for entry in game.outfitter.professions:
@@ -119,6 +130,7 @@ func _ready() -> void:
 	put(next_button, Rect2(420, 240, 190, 25), party_layer)
 	_build_companions()
 	_build_bonds()
+	_build_appearance()
 	# Keep the left half of the store painting visible: shelves, attendant and counter.
 	paper(Rect2(267, 0, 355, 236), shop_layer)
 	paper(Rect2(0, 236, 622, 37), shop_layer)
@@ -254,6 +266,10 @@ func _build_companions() -> void:
 	generate_button.tooltip_text="Replaces this draft companion's personality, background, relationship, specials, flaw and wage offer. No journey time or money passes."
 	rows.add_child(generate_button)
 	generate_button.pressed.connect(_generate_companion)
+	var appearance_button := Button.new()
+	appearance_button.text="APPEARANCE & PERSONAL BACKGROUND"
+	appearance_button.pressed.connect(open_appearance.bind(-1))
+	rows.add_child(appearance_button)
 	text("Temperament / values",Rect2(),rows)
 	personality=select_box(draft.catalog.data.temperaments.keys(),rows)
 	values=select_box(draft.catalog.data.values.keys(),rows)
@@ -464,9 +480,10 @@ func _build_bonds() -> void:
 			put(box,Rect2(187,32+row*27,158,22),bonds_layer)
 			bond_boxes.append({"a":a,"b":b,"label":label,"box":box,"previous":chosen})
 			box.item_selected.connect(_change_bond.bind(row))
-	bond_feedback=text("Partners plan settlement departures together.",Rect2(10,195,335,12),bonds_layer)
+	bond_feedback=text("Friends/rivals evolve; partners leave together.",Rect2(10,195,335,12),bonds_layer)
 	romance_check=CheckBox.new()
 	romance_check.text="Allow new romances on the trail"
+	romance_check.tooltip_text="This controls new romances only. Friendships and rivalries can develop whether it is checked or not."
 	romance_check.button_pressed=true
 	put(romance_check,Rect2(7,208,340,22),bonds_layer)
 	bonds_layer.hide()
@@ -491,4 +508,68 @@ func _change_bond(_selected: int, row: int) -> void:
 		bond_feedback.text="Only one partner, including the leader."
 	else:
 		pair.previous=pair.box.selected
-		bond_feedback.text="Partners plan settlement departures together."
+		bond_feedback.text="Friends/rivals evolve; partners leave together."
+
+
+func _build_appearance() -> void:
+	appearance_window=AcceptDialog.new()
+	appearance_window.title="APPEARANCE & PERSONAL BACKGROUND"
+	appearance_window.get_ok_button().text="DONE"
+	add_child(appearance_window)
+	var content := Control.new()
+	content.custom_minimum_size=Vector2(460,218)
+	appearance_window.add_child(content)
+	look_preview=TextureRect.new()
+	look_preview.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
+	look_preview.expand_mode=TextureRect.EXPAND_IGNORE_SIZE
+	look_preview.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	put(look_preview,Rect2(8,12,80,120),content)
+	var data: Dictionary=preload("res://simulation/traveler_appearance.gd").catalog()
+	var row := 0
+	for key in ["skin","hair","clothing","outfit"]:
+		text(key.capitalize(),Rect2(104,8+row*31,86,18),content)
+		var box := OptionButton.new()
+		var choices: Array=data.outfits if key=="outfit" else data[key].keys()
+		for title in choices:box.add_item(title)
+		put(box,Rect2(194,5+row*31,254,23),content)
+		look_boxes[key]=box
+		box.item_selected.connect(func(_index):_store_appearance())
+		row+=1
+	text("Heritage / upbringing (optional)",Rect2(104,134,340,16),content)
+	heritage_entry=LineEdit.new()
+	heritage_entry.max_length=64
+	heritage_entry.placeholder_text="Describe their personal background"
+	heritage_entry.text_changed.connect(func(_value):_store_appearance())
+	put(heritage_entry,Rect2(104,153,344,23),content)
+	var note := text("Appearance and heritage do not set traits or skills.\nGenerated companions get these details too.",Rect2(8,187,440,24),content)
+	note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+
+func open_appearance(member: int = -1) -> void:
+	_store_companion()
+	appearance_member=edited_member if member<0 else member
+	var profile: Dictionary=draft.profiles[appearance_member]
+	var data: Dictionary=preload("res://simulation/traveler_appearance.gd").catalog()
+	var look: Dictionary=profile.get("appearance",preload("res://simulation/traveler_appearance.gd").default_for(appearance_member))
+	loading_look=true
+	for key in look_boxes:
+		look_boxes[key].select(int(look.outfit) if key=="outfit" else data[key].keys().find(look[key]))
+	heritage_entry.text=look.heritage
+	loading_look=false
+	appearance_window.title="APPEARANCE: "+names[appearance_member].text.to_upper()
+	_update_look_preview()
+	appearance_window.popup_centered()
+
+func _store_appearance() -> void:
+	if loading_look:return
+	var data: Dictionary=preload("res://simulation/traveler_appearance.gd").catalog()
+	var look := {"heritage":heritage_entry.text.strip_edges() if not heritage_entry.text.strip_edges().is_empty() else "Not specified"}
+	for key in look_boxes:look[key]=look_boxes[key].selected if key=="outfit" else data[key].keys()[look_boxes[key].selected]
+	draft.profiles[appearance_member]["appearance"]=look
+	_update_look_preview()
+
+func _update_look_preview() -> void:
+	var profile: Dictionary=draft.profiles[appearance_member]
+	var atlas := AtlasTexture.new()
+	atlas.atlas=preload("res://ui/traveler_palette.gd").texture(preload("res://art/pixels/walker.png"),profile)
+	atlas.region=Rect2(0,int(profile.appearance.outfit)*24,16,24)
+	look_preview.texture=atlas

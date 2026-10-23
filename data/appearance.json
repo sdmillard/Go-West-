@@ -1,0 +1,83 @@
+{
+  "note": "Original pixel palettes. Generated appearance and descriptive heritage are independent of personality, abilities, wages and attraction. Equal palette/background sampling is variety, not historical population weighting.",
+  "skin": {
+    "Fair": [
+      "f0c8a0",
+      "d9a984"
+    ],
+    "Light": [
+      "e0a878",
+      "b77f58"
+    ],
+    "Medium": [
+      "c99062",
+      "9f6947"
+    ],
+    "Tan": [
+      "b77e55",
+      "905d3e"
+    ],
+    "Brown": [
+      "8d5b3c",
+      "68422e"
+    ],
+    "Deep": [
+      "63412f",
+      "482f25"
+    ]
+  },
+  "hair": {
+    "Black": "25211c",
+    "Brown": "594537",
+    "Chestnut": "824731",
+    "Blond": "c8a05c",
+    "Gray": "aaa395"
+  },
+  "clothing": {
+    "Blue": [
+      "37688e",
+      "8db8c3",
+      "47796b"
+    ],
+    "Red": [
+      "9e3f33",
+      "b4694a",
+      "6e3a2c"
+    ],
+    "Green": [
+      "667c44",
+      "8d9b53",
+      "425e3b"
+    ],
+    "Ochre": [
+      "c18d4d",
+      "ddb461",
+      "a16b43"
+    ],
+    "Plum": [
+      "79586d",
+      "a17c90",
+      "543b4b"
+    ],
+    "Charcoal": [
+      "555d68",
+      "7b8389",
+      "3b414c"
+    ]
+  },
+  "outfits": [
+    "Coat and hat",
+    "Dress and bonnet"
+  ],
+  "heritage": [
+    "Not specified",
+    "African American",
+    "English American",
+    "French Canadian",
+    "German American",
+    "Irish American",
+    "Mexican",
+    "Scottish American",
+    "Mixed heritage"
+  ]
+}

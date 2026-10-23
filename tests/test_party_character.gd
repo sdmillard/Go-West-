@@ -97,7 +97,9 @@ func run():
 	old.erase("characters")
 	old.erase("characters_version")
 	restored=store.restore(old)
-	check(restored!=null and restored.characters.profiles==outfit().characters.profiles and restored.state==store.normalize(game.state) and restored.rng.state==game.rng.state,"Old saves gain neutral profiles without fictional memories or simulation changes")
+	var neutral_profiles: Array=outfit().characters.profiles.duplicate(true)
+	for neutral_profile in neutral_profiles:neutral_profile.erase("appearance")
+	check(restored!=null and restored.characters.profiles==neutral_profiles and restored.state==store.normalize(game.state) and restored.rng.state==game.rng.state,"Old saves gain neutral profiles without fictional memories, invented identity or simulation changes")
 	for bad in [null,[],[{}]]:
 		var malformed=snapshot.duplicate(true)
 		malformed.characters=bad

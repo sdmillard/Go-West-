@@ -154,3 +154,5 @@ The screen renders at **640 × 360** and starts at a crisp **2× scale**. Resize
 [Foraging and unarmed attacks](docs/FORAGING_AND_UNARMED.md) add seasonal greens/berries, vitamin C from food actually eaten, and a higher-risk unarmed choice even when bullets are available. The map supports scroll zoom, drag panning, FIT and WAGON controls.
 
 [Companion relationships](docs/PARTY_SOCIAL.md) are editable before departure through PARTY RELATIONSHIPS. Friendships, rivalries and romances can develop on the trail; active partners plan warned settlement departures together. View Party shows their feelings and recent social memories.
+
+[Traveler appearance](docs/TRAVELER_APPEARANCE.md) adds editable skin, hair, clothes, outfit and personal heritage, with a live sprite preview. Generated companions receive varied looks; View Party portraits, walkers, hunters and river figures reflect their appearance. Use EDIT > Appearance & Personal Background, or LOOK for the leader.

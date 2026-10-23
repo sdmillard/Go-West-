@@ -3,6 +3,8 @@ extends Control
 signal aim(point: Vector2)
 signal move_requested(point: Vector2)
 signal elapsed(delta: float)
+var traveler_profile: Dictionary={}
+const Palette=preload("res://ui/traveler_palette.gd")
 const PRAIRIE = preload("res://art/pixels/prairie.png")
 # Eight-frame sheets sized to data/hunting.json species; rows walk, run (after a shot) and down.
 const ANIMALS = [preload("res://art/pixels/hunt_bison.png"), preload("res://art/pixels/hunt_deer.png"), preload("res://art/pixels/hunt_rabbit.png")]
@@ -74,7 +76,7 @@ func _draw() -> void:
 	# Feet on the hunter's position; he turns to face where the rifle points.
 	if direction.x < 0:
 		draw_set_transform(Vector2(hunter.x * 2, 0), 0, Vector2(-1, 1))
-	draw_texture_rect_region(HUNTER, Rect2(hunter - Vector2(8, 17), Vector2(16, 18)), Rect2(step * 16, (1 if walking else 0) * 18, 16, 18))
+	draw_texture_rect_region(Palette.texture(HUNTER,traveler_profile,true), Rect2(hunter - Vector2(8, 17), Vector2(16, 18)), Rect2(step * 16, (1 if walking else 0) * 18, 16, 18))
 	draw_set_transform(Vector2.ZERO)
 	# The rifle: walnut stock at the shoulder, a long dark barrel toward the aim.
 	var shoulder := hunter + Vector2(0, -9)

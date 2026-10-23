@@ -5,7 +5,7 @@ const FORMAT := "westward-probably"
 const VERSION := 1
 const DEFAULT_PATH := "user://journey.json"
 const MAX_BYTES := 2097152
-const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes", "social_rules"]
+const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes", "social_rules", "appearance"]
 var error := ""
 var rules_signature := ""
 var load_note := ""
@@ -325,6 +325,7 @@ func restore(value: Variant):
 		if value.has("characters_version"):return null
 		# Add a neutral starting profile to older records without inventing past decisions.
 		game.characters.start(int(s.seed),value.party.size())
+		for profile in game.characters.profiles:profile.erase("appearance")
 	game.combat.history.assign(normalize(value.get("combat_history",[])))
 	game.context.record=normalize(value.get("context",{"spent":{},"activities":[],"prepared":[]}))
 	game.wagon_cache=normalize(value.get("wagon_cache",{}))
