@@ -36,10 +36,13 @@ func run():
  check(not screen.section_window.visible and screen.supplies_window.visible,"Supplies opens the inventory directly without a one-button branch")
  check(screen.supplies_rows.find_child("DropSupplies",true,false)!=null and screen.supplies_rows.find_child("AbandonWagon",true,false)!=null,"Drop and abandon actions are visible before the inventory details")
  screen.supplies_rows.find_child("DropSupplies",true,false).pressed.emit()
- check(screen.section_window.title=="DROP SUPPLIES" and not screen.supplies_window.visible,"Drop supplies opens a distinct inventory action")
+ if not screen.drop_window.visible:await screen.drop_window.visibility_changed
+ check(screen.drop_window.visible and not screen.supplies_window.visible,"Drop supplies opens a distinct inventory action")
  var food: int=screen.game.state.food
  var day: int=screen.game.state.day
- screen.section_rows.get_children().filter(func(row):return row is Button and row.text=="DROP 50 FOOD")[0].pressed.emit()
+ screen.drop_window.quantities.food.value=50
+ await process_frame
+ screen.drop_window.get_ok_button().pressed.emit()
  check(screen.game.state.food==food-50 and screen.game.state.day==day,"Dropping supplies changes the real inventory without spending time")
  screen.section_window.hide()
  screen.supplies_window.hide()
