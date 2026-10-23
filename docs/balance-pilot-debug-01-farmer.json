@@ -1,0 +1,10642 @@
+{
+	"errors": [
+		{
+			"error": "final save: The trail record has invalid or incompatible data.",
+			"run": {
+				"month": 3,
+				"profession": "farmer",
+				"roster": "ordinary",
+				"seed": 100,
+				"strategy": "already_dead"
+			}
+		},
+		{
+			"error": "final save: The trail record has invalid or incompatible data.",
+			"run": {
+				"month": 3,
+				"profession": "farmer",
+				"roster": "mixed_paid",
+				"seed": 100,
+				"strategy": "already_dead"
+			}
+		},
+		{
+			"error": "final save: The trail record has invalid or incompatible data.",
+			"run": {
+				"month": 3,
+				"profession": "farmer",
+				"roster": "selected",
+				"seed": 100,
+				"strategy": "already_dead"
+			}
+		},
+		{
+			"error": "The trail record has invalid or incompatible data.",
+			"run": {
+				"month": 3,
+				"profession": "farmer",
+				"roster": "selected",
+				"seed": 100,
+				"strategy": "predation"
+			}
+		},
+		{
+			"error": "final save: The trail record has invalid or incompatible data.",
+			"run": {
+				"month": 3,
+				"profession": "farmer",
+				"roster": "selected",
+				"seed": 100,
+				"strategy": "predation"
+			}
+		},
+		{
+			"error": "final save: The trail record has invalid or incompatible data.",
+			"run": {
+				"month": 5,
+				"profession": "farmer",
+				"roster": "ordinary",
+				"seed": 100,
+				"strategy": "already_dead"
+			}
+		},
+		{
+			"error": "final save: The trail record has invalid or incompatible data.",
+			"run": {
+				"month": 5,
+				"profession": "farmer",
+				"roster": "mixed_paid",
+				"seed": 100,
+				"strategy": "already_dead"
+			}
+		},
+		{
+			"error": "The trail record has invalid or incompatible data.",
+			"run": {
+				"month": 5,
+				"profession": "farmer",
+				"roster": "selected",
+				"seed": 100,
+				"strategy": "predation"
+			}
+		},
+		{
+			"error": "final save: The trail record has invalid or incompatible data.",
+			"run": {
+				"month": 5,
+				"profession": "farmer",
+				"roster": "selected",
+				"seed": 100,
+				"strategy": "predation"
+			}
+		},
+		{
+			"error": "final save: The trail record has invalid or incompatible data.",
+			"run": {
+				"month": 8,
+				"profession": "farmer",
+				"roster": "mixed_paid",
+				"seed": 100,
+				"strategy": "already_dead"
+			}
+		},
+		{
+			"error": "The trail record has invalid or incompatible data.",
+			"run": {
+				"month": 8,
+				"profession": "farmer",
+				"roster": "selected",
+				"seed": 100,
+				"strategy": "predation"
+			}
+		},
+		{
+			"error": "final save: The trail record has invalid or incompatible data.",
+			"run": {
+				"month": 8,
+				"profession": "farmer",
+				"roster": "selected",
+				"seed": 100,
+				"strategy": "predation"
+			}
+		}
+	],
+	"rest_below": 55,
+	"rules_signature": "376c2029c6bbc9acc8338bb3a2d1f0a7eecfc1374cfd0c20fc07fd47d403e635",
+	"runs": [
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 7.3,
+			"counts": {
+				"activities": 2,
+				"care": 1,
+				"empty_food_days": 1,
+				"empty_hunts": 3,
+				"hunts": 15,
+				"last_care": 18,
+				"meat_carried": 487,
+				"meat_food_units": 247,
+				"meat_obtained": 894,
+				"oxen_slaughtered": 5,
+				"preservations": 18,
+				"rest_health": 14,
+				"rest_oxen": 2,
+				"rests": 16,
+				"shots": 31,
+				"trades": 3,
+				"travel_days": 135
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					317,
+					1265,
+					223.4,
+					200,
+					5
+				],
+				[
+					61,
+					706,
+					830,
+					223.4,
+					158,
+					5
+				],
+				[
+					91,
+					962,
+					394,
+					203.4,
+					158,
+					5
+				],
+				[
+					121,
+					1234,
+					509,
+					32.4,
+					116,
+					5
+				],
+				[
+					151,
+					1581,
+					83,
+					12.4,
+					76,
+					5
+				],
+				[
+					181,
+					1799,
+					108,
+					12.4,
+					73,
+					5
+				],
+				[
+					211,
+					1858,
+					23,
+					7.3,
+					62,
+					5
+				]
+			],
+			"days": 230,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1858,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 100,
+			"strategy": "dry",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 10.12,
+			"counts": {
+				"activities": 2,
+				"care": 1,
+				"empty_food_days": 1,
+				"empty_hunts": 3,
+				"hunts": 13,
+				"last_care": 18,
+				"meat_carried": 449,
+				"meat_food_units": 228,
+				"meat_obtained": 630,
+				"oxen_slaughtered": 5,
+				"preservations": 17,
+				"rest_health": 16,
+				"rest_oxen": 2,
+				"rests": 18,
+				"shots": 27,
+				"trades": 4,
+				"travel_days": 132
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					317,
+					1265,
+					223.4,
+					200,
+					5
+				],
+				[
+					61,
+					706,
+					830,
+					223.4,
+					158,
+					5
+				],
+				[
+					91,
+					962,
+					394,
+					203.4,
+					158,
+					5
+				],
+				[
+					121,
+					1234,
+					509,
+					32.4,
+					116,
+					5
+				],
+				[
+					151,
+					1581,
+					83,
+					12.4,
+					76,
+					5
+				],
+				[
+					181,
+					1778,
+					77,
+					12.4,
+					73,
+					5
+				],
+				[
+					211,
+					1820,
+					1,
+					10.12,
+					61,
+					5
+				]
+			],
+			"days": 224,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1820,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 100,
+			"strategy": "salt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 12.4,
+			"counts": {
+				"activities": 2,
+				"care": 1,
+				"empty_food_days": 7,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": 18,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 5,
+				"preservations": 0,
+				"rest_health": 14,
+				"rest_oxen": 2,
+				"rests": 16,
+				"shots": 0,
+				"trades": 3,
+				"travel_days": 123
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					317,
+					1265,
+					223.4,
+					200,
+					5
+				],
+				[
+					61,
+					706,
+					830,
+					223.4,
+					158,
+					5
+				],
+				[
+					91,
+					962,
+					394,
+					203.4,
+					158,
+					5
+				],
+				[
+					121,
+					1234,
+					509,
+					32.4,
+					116,
+					5
+				],
+				[
+					151,
+					1581,
+					83,
+					12.4,
+					76,
+					5
+				],
+				[
+					181,
+					1727,
+					0,
+					12.4,
+					71,
+					0
+				]
+			],
+			"days": 181,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1727,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 100,
+			"strategy": "no_hunt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 10.52,
+			"counts": {
+				"activities": 1,
+				"care": 3,
+				"empty_food_days": 5,
+				"empty_hunts": 3,
+				"hunts": 12,
+				"last_care": 67,
+				"meat_carried": 418,
+				"meat_food_units": 212,
+				"meat_obtained": 628,
+				"oxen_slaughtered": 5,
+				"preservations": 17,
+				"rest_health": 10,
+				"rests": 10,
+				"shots": 26,
+				"trades": 6,
+				"travel_days": 128
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					189,
+					1235,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					578,
+					845,
+					223.4,
+					198,
+					5
+				],
+				[
+					91,
+					882,
+					609,
+					106.4,
+					198,
+					5
+				],
+				[
+					121,
+					1213,
+					359,
+					49.4,
+					194,
+					5
+				],
+				[
+					151,
+					1491,
+					153,
+					49.4,
+					192,
+					5
+				],
+				[
+					181,
+					1648,
+					78,
+					49.4,
+					189,
+					5
+				],
+				[
+					211,
+					1667,
+					7,
+					12.92,
+					163,
+					2
+				]
+			],
+			"days": 214,
+			"death_causes": [
+				"exposure",
+				"lack of food",
+				"measles",
+				"lack of food",
+				"measles"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1667,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 100,
+			"strategy": "theft",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 8.21,
+			"counts": {
+				"activities": 1,
+				"care": 2,
+				"empty_food_days": 3,
+				"empty_hunts": 6,
+				"hunts": 25,
+				"last_care": 20,
+				"meat_carried": 560,
+				"meat_food_units": 286,
+				"meat_obtained": 816,
+				"oxen_slaughtered": 5,
+				"preservations": 19,
+				"rest_health": 16,
+				"rest_oxen": 2,
+				"rests": 18,
+				"shots": 43,
+				"trades": 12,
+				"travel_days": 114
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					191,
+					1235,
+					224.4,
+					198,
+					5
+				],
+				[
+					61,
+					578,
+					845,
+					224.4,
+					198,
+					5
+				],
+				[
+					91,
+					865,
+					355,
+					204.4,
+					158,
+					5
+				],
+				[
+					121,
+					1196,
+					257,
+					204.4,
+					156,
+					5
+				],
+				[
+					151,
+					1343,
+					129,
+					204.4,
+					153,
+					5
+				],
+				[
+					181,
+					1375,
+					13,
+					126.68,
+					138,
+					5
+				],
+				[
+					211,
+					1388,
+					2,
+					8.21,
+					120,
+					5
+				]
+			],
+			"days": 221,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1388,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 100,
+			"strategy": "robbery",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"processed",
+				"processed",
+				"processed",
+				"lying",
+				"lying"
+			],
+			"cash": 10.12,
+			"counts": {
+				"activities": 2,
+				"care": 1,
+				"empty_food_days": 2,
+				"empty_hunts": 3,
+				"hunts": 11,
+				"last_care": 18,
+				"meat_carried": 422,
+				"meat_food_units": 214,
+				"meat_obtained": 422,
+				"oxen_slaughtered": 5,
+				"preservations": 16,
+				"rest_health": 16,
+				"rest_oxen": 2,
+				"rests": 18,
+				"shots": 23,
+				"trades": 4,
+				"travel_days": 132
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					317,
+					1265,
+					223.4,
+					200,
+					5
+				],
+				[
+					61,
+					706,
+					830,
+					223.4,
+					158,
+					5
+				],
+				[
+					91,
+					962,
+					394,
+					203.4,
+					158,
+					5
+				],
+				[
+					121,
+					1234,
+					509,
+					32.4,
+					116,
+					5
+				],
+				[
+					151,
+					1581,
+					83,
+					12.4,
+					76,
+					5
+				],
+				[
+					181,
+					1778,
+					77,
+					12.4,
+					73,
+					5
+				],
+				[
+					211,
+					1820,
+					1,
+					10.12,
+					61,
+					5
+				]
+			],
+			"days": 223,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1820,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 100,
+			"strategy": "already_dead",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [
+				"killed"
+			],
+			"bodies": [
+				"processed"
+			],
+			"cash": 157.8,
+			"counts": {
+				"activities": 3,
+				"care": 1,
+				"empty_food_days": 0,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": 18,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 0,
+				"preservations": 0,
+				"rest_health": 21,
+				"rest_oxen": 9,
+				"rests": 30,
+				"shots": 0,
+				"trades": 2,
+				"travel_days": 144
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					317,
+					1349,
+					223.4,
+					199,
+					2
+				],
+				[
+					61,
+					578,
+					1183,
+					223.4,
+					199,
+					2
+				],
+				[
+					91,
+					901,
+					1017,
+					183.4,
+					199,
+					2
+				],
+				[
+					121,
+					1211,
+					857,
+					183.4,
+					197,
+					2
+				],
+				[
+					151,
+					1491,
+					677,
+					183.4,
+					195,
+					2
+				],
+				[
+					181,
+					1778,
+					535,
+					183.4,
+					195,
+					2
+				]
+			],
+			"days": 204,
+			"death_causes": [
+				"being shot by A"
+			],
+			"departures": 2,
+			"food": 433,
+			"incidents": [],
+			"loss_reason": "",
+			"miles": 1938,
+			"month": 3,
+			"outcome": "arrived",
+			"oxen": 6,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 100,
+			"strategy": "predation",
+			"survivors": 2,
+			"tales": 2,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 12.7,
+			"counts": {
+				"activities": 2,
+				"care": 1,
+				"empty_food_days": 6,
+				"empty_hunts": 5,
+				"hunts": 8,
+				"last_care": 18,
+				"meat_carried": 65,
+				"meat_food_units": 33,
+				"meat_obtained": 65,
+				"oxen_slaughtered": 5,
+				"preservations": 11,
+				"rest_health": 23,
+				"rest_oxen": 1,
+				"rests": 24,
+				"shots": 11,
+				"trades": 1,
+				"travel_days": 111
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					317,
+					1265,
+					184.2,
+					200,
+					5
+				],
+				[
+					61,
+					706,
+					830,
+					145.0,
+					158,
+					5
+				],
+				[
+					91,
+					962,
+					394,
+					85.8,
+					158,
+					5
+				],
+				[
+					121,
+					1285,
+					152,
+					12.7,
+					156,
+					4
+				],
+				[
+					151,
+					1491,
+					152,
+					12.7,
+					143,
+					4
+				],
+				[
+					182,
+					1560,
+					12,
+					12.7,
+					141,
+					4
+				]
+			],
+			"days": 192,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 1,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No travelers remain with the wagon. Departures and deaths are recorded separately in View Party.",
+			"miles": 1560,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "mixed_paid",
+			"seed": 100,
+			"strategy": "dry",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 5775,
+			"wages_paid_cents": 13370
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 10.42,
+			"counts": {
+				"activities": 3,
+				"care": 1,
+				"empty_food_days": 3,
+				"empty_hunts": 4,
+				"hunts": 29,
+				"last_care": 18,
+				"meat_carried": 1023,
+				"meat_food_units": 519,
+				"meat_obtained": 1536,
+				"oxen_slaughtered": 5,
+				"preservations": 26,
+				"rest_health": 15,
+				"rest_oxen": 3,
+				"rests": 18,
+				"shots": 61,
+				"trades": 2,
+				"travel_days": 128
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					317,
+					1265,
+					184.2,
+					200,
+					5
+				],
+				[
+					61,
+					706,
+					830,
+					145.0,
+					158,
+					5
+				],
+				[
+					91,
+					962,
+					394,
+					85.8,
+					158,
+					5
+				],
+				[
+					121,
+					1285,
+					152,
+					12.7,
+					156,
+					4
+				],
+				[
+					151,
+					1563,
+					242,
+					12.7,
+					153,
+					4
+				],
+				[
+					181,
+					1685,
+					146,
+					12.7,
+					151,
+					4
+				],
+				[
+					211,
+					1719,
+					1,
+					10.42,
+					128,
+					4
+				]
+			],
+			"days": 240,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 1,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No travelers remain with the wagon. Departures and deaths are recorded separately in View Party.",
+			"miles": 1719,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "mixed_paid",
+			"seed": 100,
+			"strategy": "salt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 7980,
+			"wages_paid_cents": 13370
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 12.7,
+			"counts": {
+				"activities": 2,
+				"care": 1,
+				"empty_food_days": 7,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": 18,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 5,
+				"preservations": 0,
+				"rest_health": 15,
+				"rest_oxen": 2,
+				"rests": 17,
+				"shots": 0,
+				"trades": 1,
+				"travel_days": 107
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					317,
+					1265,
+					184.2,
+					200,
+					5
+				],
+				[
+					61,
+					706,
+					830,
+					145.0,
+					158,
+					5
+				],
+				[
+					91,
+					962,
+					394,
+					85.8,
+					158,
+					5
+				],
+				[
+					121,
+					1285,
+					152,
+					12.7,
+					156,
+					4
+				],
+				[
+					151,
+					1498,
+					0,
+					12.7,
+					151,
+					4
+				]
+			],
+			"days": 157,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 1,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No travelers remain with the wagon. Departures and deaths are recorded separately in View Party.",
+			"miles": 1512,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "mixed_paid",
+			"seed": 100,
+			"strategy": "no_hunt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 4200,
+			"wages_paid_cents": 13370
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 8.4,
+			"counts": {
+				"care": 3,
+				"empty_food_days": 5,
+				"empty_hunts": 5,
+				"hunts": 8,
+				"last_care": 67,
+				"meat_carried": 64,
+				"meat_food_units": 33,
+				"meat_obtained": 64,
+				"oxen_slaughtered": 5,
+				"preservations": 11,
+				"rest_health": 26,
+				"rests": 26,
+				"shots": 11,
+				"trades": 1,
+				"travel_days": 118
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					189,
+					1235,
+					184.2,
+					198,
+					5
+				],
+				[
+					61,
+					578,
+					845,
+					145.0,
+					198,
+					5
+				],
+				[
+					91,
+					852,
+					609,
+					8.4,
+					196,
+					5
+				],
+				[
+					121,
+					1228,
+					173,
+					8.4,
+					152,
+					3
+				],
+				[
+					151,
+					1324,
+					127,
+					8.4,
+					140,
+					3
+				],
+				[
+					181,
+					1501,
+					257,
+					8.4,
+					137,
+					3
+				]
+			],
+			"days": 205,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 2,
+			"food": 0,
+			"incidents": [
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No travelers remain with the wagon. Departures and deaths are recorded separately in View Party.",
+			"miles": 1537,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "mixed_paid",
+			"seed": 100,
+			"strategy": "theft",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 3920,
+			"wages_paid_cents": 9800
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 11.9,
+			"counts": {
+				"activities": 1,
+				"care": 2,
+				"empty_food_days": 3,
+				"empty_hunts": 5,
+				"hunts": 15,
+				"last_care": 20,
+				"meat_carried": 289,
+				"meat_food_units": 148,
+				"meat_obtained": 430,
+				"oxen_slaughtered": 5,
+				"preservations": 14,
+				"rest_health": 10,
+				"rest_oxen": 3,
+				"rests": 13,
+				"shots": 25,
+				"trades": 1,
+				"travel_days": 106
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					191,
+					1235,
+					185.2,
+					198,
+					5
+				],
+				[
+					61,
+					578,
+					845,
+					146.0,
+					198,
+					5
+				],
+				[
+					91,
+					865,
+					355,
+					86.8,
+					158,
+					5
+				],
+				[
+					121,
+					1196,
+					257,
+					37.8,
+					156,
+					5
+				],
+				[
+					151,
+					1355,
+					129,
+					11.9,
+					153,
+					5
+				]
+			],
+			"days": 180,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1370,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "mixed_paid",
+			"seed": 100,
+			"strategy": "robbery",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 5250,
+			"wages_paid_cents": 19250
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"processed",
+				"processed",
+				"lying",
+				"lying"
+			],
+			"cash": 10.42,
+			"counts": {
+				"activities": 3,
+				"care": 1,
+				"empty_food_days": 4,
+				"empty_hunts": 4,
+				"hunts": 26,
+				"last_care": 18,
+				"meat_carried": 994,
+				"meat_food_units": 504,
+				"meat_obtained": 1298,
+				"oxen_slaughtered": 5,
+				"preservations": 25,
+				"rest_health": 15,
+				"rest_oxen": 3,
+				"rests": 18,
+				"shots": 55,
+				"trades": 2,
+				"travel_days": 128
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					317,
+					1265,
+					184.2,
+					200,
+					5
+				],
+				[
+					61,
+					706,
+					830,
+					145.0,
+					158,
+					5
+				],
+				[
+					91,
+					962,
+					394,
+					85.8,
+					158,
+					5
+				],
+				[
+					121,
+					1285,
+					152,
+					12.7,
+					156,
+					4
+				],
+				[
+					151,
+					1563,
+					242,
+					12.7,
+					153,
+					4
+				],
+				[
+					181,
+					1685,
+					146,
+					12.7,
+					151,
+					4
+				],
+				[
+					211,
+					1719,
+					1,
+					10.42,
+					128,
+					4
+				]
+			],
+			"days": 238,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 1,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No travelers remain with the wagon. Departures and deaths are recorded separately in View Party.",
+			"miles": 1719,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "mixed_paid",
+			"seed": 100,
+			"strategy": "already_dead",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 7665,
+			"wages_paid_cents": 13370
+		},
+		{
+			"attacks": [
+				"killed"
+			],
+			"bodies": [
+				"processed"
+			],
+			"cash": 46.5,
+			"counts": {
+				"activities": 3,
+				"care": 1,
+				"empty_food_days": 0,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": 18,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 0,
+				"preservations": 0,
+				"rest_health": 21,
+				"rest_oxen": 9,
+				"rests": 30,
+				"shots": 0,
+				"trades": 2,
+				"travel_days": 144
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					317,
+					1349,
+					190.85,
+					199,
+					2
+				],
+				[
+					61,
+					578,
+					1183,
+					178.25,
+					199,
+					2
+				],
+				[
+					91,
+					901,
+					1017,
+					125.65,
+					199,
+					2
+				],
+				[
+					121,
+					1211,
+					857,
+					109.9,
+					197,
+					2
+				],
+				[
+					151,
+					1491,
+					677,
+					97.3,
+					195,
+					2
+				],
+				[
+					181,
+					1778,
+					535,
+					84.7,
+					195,
+					2
+				]
+			],
+			"days": 204,
+			"death_causes": [
+				"being shot by A"
+			],
+			"departures": 2,
+			"food": 433,
+			"incidents": [],
+			"loss_reason": "",
+			"miles": 1938,
+			"month": 3,
+			"outcome": "arrived",
+			"oxen": 6,
+			"profession": "farmer",
+			"roster": "mixed_paid",
+			"seed": 100,
+			"strategy": "predation",
+			"survivors": 2,
+			"tales": 2,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 11130
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 15.3,
+			"counts": {
+				"activities": 2,
+				"care": 1,
+				"empty_food_days": 1,
+				"empty_hunts": 3,
+				"hunts": 12,
+				"last_care": 17,
+				"meat_carried": 381,
+				"meat_food_units": 194,
+				"meat_obtained": 628,
+				"oxen_slaughtered": 5,
+				"preservations": 16,
+				"rest_health": 18,
+				"rests": 18,
+				"shots": 26,
+				"trades": 4,
+				"travel_days": 132
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					316,
+					1265,
+					223.4,
+					200,
+					5
+				],
+				[
+					61,
+					702,
+					840,
+					223.4,
+					198,
+					5
+				],
+				[
+					91,
+					926,
+					390,
+					223.4,
+					198,
+					5
+				],
+				[
+					121,
+					1325,
+					540,
+					32.4,
+					196,
+					5
+				],
+				[
+					151,
+					1605,
+					167,
+					32.4,
+					155,
+					5
+				],
+				[
+					181,
+					1771,
+					95,
+					32.4,
+					152,
+					5
+				],
+				[
+					211,
+					1800,
+					17,
+					15.3,
+					133,
+					3
+				]
+			],
+			"days": 217,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"exposure",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1800,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "fragile",
+			"seed": 100,
+			"strategy": "dry",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 10.74,
+			"counts": {
+				"activities": 2,
+				"care": 1,
+				"empty_food_days": 4,
+				"empty_hunts": 3,
+				"hunts": 10,
+				"last_care": 17,
+				"meat_carried": 343,
+				"meat_food_units": 174,
+				"meat_obtained": 421,
+				"oxen_slaughtered": 5,
+				"preservations": 16,
+				"rest_health": 18,
+				"rests": 18,
+				"shots": 21,
+				"trades": 6,
+				"travel_days": 132
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					316,
+					1265,
+					223.4,
+					200,
+					5
+				],
+				[
+					61,
+					702,
+					840,
+					223.4,
+					198,
+					5
+				],
+				[
+					91,
+					926,
+					390,
+					223.4,
+					198,
+					5
+				],
+				[
+					121,
+					1325,
+					540,
+					32.4,
+					196,
+					5
+				],
+				[
+					151,
+					1605,
+					177,
+					32.4,
+					155,
+					5
+				],
+				[
+					181,
+					1771,
+					105,
+					32.4,
+					152,
+					5
+				],
+				[
+					211,
+					1801,
+					6,
+					10.74,
+					136,
+					5
+				]
+			],
+			"days": 217,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1801,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "fragile",
+			"seed": 100,
+			"strategy": "salt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 15.3,
+			"counts": {
+				"activities": 2,
+				"care": 1,
+				"empty_food_days": 5,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": 17,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 5,
+				"preservations": 0,
+				"rest_health": 17,
+				"rests": 17,
+				"shots": 0,
+				"trades": 4,
+				"travel_days": 126
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					316,
+					1265,
+					223.4,
+					200,
+					5
+				],
+				[
+					61,
+					702,
+					840,
+					223.4,
+					198,
+					5
+				],
+				[
+					91,
+					926,
+					390,
+					223.4,
+					198,
+					5
+				],
+				[
+					121,
+					1325,
+					540,
+					32.4,
+					196,
+					5
+				],
+				[
+					151,
+					1620,
+					187,
+					32.4,
+					155,
+					5
+				]
+			],
+			"days": 177,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1746,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "fragile",
+			"seed": 100,
+			"strategy": "no_hunt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying"
+			],
+			"cash": 6.9,
+			"counts": {
+				"activities": 1,
+				"care": 2,
+				"empty_food_days": 0,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": 18,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 2,
+				"preservations": 4,
+				"rest_health": 12,
+				"rest_oxen": 8,
+				"rests": 20,
+				"shots": 0,
+				"trades": 3,
+				"travel_days": 135
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					230,
+					1235,
+					223.4,
+					200,
+					5
+				],
+				[
+					61,
+					616,
+					895,
+					223.4,
+					198,
+					5
+				],
+				[
+					91,
+					831,
+					605,
+					166.4,
+					158,
+					5
+				],
+				[
+					121,
+					1249,
+					600,
+					32.4,
+					158,
+					5
+				],
+				[
+					151,
+					1508,
+					251,
+					32.4,
+					118,
+					4
+				],
+				[
+					181,
+					1798,
+					125,
+					32.4,
+					115,
+					4
+				]
+			],
+			"days": 199,
+			"death_causes": [
+				"dysentery"
+			],
+			"departures": 0,
+			"food": 85,
+			"incidents": [
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "",
+			"miles": 1938,
+			"month": 3,
+			"outcome": "arrived",
+			"oxen": 4,
+			"profession": "farmer",
+			"roster": "fragile",
+			"seed": 100,
+			"strategy": "theft",
+			"survivors": 4,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 8.97,
+			"counts": {
+				"care": 2,
+				"empty_food_days": 6,
+				"empty_hunts": 8,
+				"hunts": 26,
+				"last_care": 18,
+				"meat_carried": 678,
+				"meat_food_units": 345,
+				"meat_obtained": 815,
+				"oxen_slaughtered": 5,
+				"preservations": 21,
+				"rest_health": 25,
+				"rests": 25,
+				"shots": 45,
+				"trades": 13,
+				"travel_days": 105
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					199,
+					1235,
+					224.4,
+					200,
+					5
+				],
+				[
+					61,
+					581,
+					825,
+					224.4,
+					200,
+					5
+				],
+				[
+					91,
+					814,
+					375,
+					204.4,
+					198,
+					5
+				],
+				[
+					121,
+					1126,
+					145,
+					204.4,
+					156,
+					5
+				],
+				[
+					151,
+					1208,
+					84,
+					204.4,
+					153,
+					5
+				],
+				[
+					181,
+					1249,
+					12,
+					108.2,
+					141,
+					5
+				],
+				[
+					211,
+					1259,
+					18,
+					8.97,
+					118,
+					5
+				]
+			],
+			"days": 221,
+			"death_causes": [
+				"lack of food",
+				"measles",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1259,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "fragile",
+			"seed": 100,
+			"strategy": "robbery",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"processed",
+				"processed",
+				"processed",
+				"processed",
+				"lying"
+			],
+			"cash": 10.74,
+			"counts": {
+				"activities": 2,
+				"care": 1,
+				"empty_food_days": 8,
+				"empty_hunts": 9,
+				"hunts": 68,
+				"last_care": 17,
+				"meat_carried": 1056,
+				"meat_food_units": 544,
+				"meat_obtained": 4193,
+				"oxen_slaughtered": 5,
+				"preservations": 47,
+				"rest_health": 21,
+				"rests": 21,
+				"shots": 139,
+				"trades": 6,
+				"travel_days": 140
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					316,
+					1265,
+					223.4,
+					200,
+					5
+				],
+				[
+					61,
+					702,
+					840,
+					223.4,
+					198,
+					5
+				],
+				[
+					91,
+					926,
+					390,
+					223.4,
+					198,
+					5
+				],
+				[
+					121,
+					1325,
+					540,
+					32.4,
+					196,
+					5
+				],
+				[
+					151,
+					1605,
+					177,
+					32.4,
+					155,
+					5
+				],
+				[
+					181,
+					1771,
+					105,
+					32.4,
+					152,
+					5
+				],
+				[
+					211,
+					1801,
+					6,
+					10.74,
+					136,
+					5
+				],
+				[
+					241,
+					1801,
+					25,
+					10.74,
+					97,
+					1
+				],
+				[
+					271,
+					1809,
+					44,
+					10.74,
+					81,
+					1
+				],
+				[
+					301,
+					1816,
+					39,
+					10.74,
+					51,
+					1
+				]
+			],
+			"days": 325,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1816,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "fragile",
+			"seed": 100,
+			"strategy": "already_dead",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [
+				"killed"
+			],
+			"bodies": [
+				"processed"
+			],
+			"cash": 197.8,
+			"counts": {
+				"activities": 2,
+				"care": 1,
+				"empty_food_days": 0,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": 17,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 2,
+				"preservations": 4,
+				"rest_health": 63,
+				"rest_oxen": 6,
+				"rests": 69,
+				"shots": 0,
+				"trades": 3,
+				"travel_days": 137
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					298,
+					1349,
+					223.4,
+					199,
+					2
+				],
+				[
+					61,
+					520,
+					1143,
+					223.4,
+					157,
+					2
+				],
+				[
+					91,
+					747,
+					903,
+					223.4,
+					157,
+					2
+				],
+				[
+					121,
+					1044,
+					723,
+					223.4,
+					155,
+					2
+				],
+				[
+					151,
+					1318,
+					557,
+					223.4,
+					155,
+					2
+				],
+				[
+					181,
+					1620,
+					369,
+					223.4,
+					155,
+					2
+				],
+				[
+					211,
+					1848,
+					147,
+					217.8,
+					115,
+					2
+				],
+				[
+					241,
+					1896,
+					275,
+					217.8,
+					111,
+					2
+				]
+			],
+			"days": 257,
+			"death_causes": [
+				"being shot by A"
+			],
+			"departures": 2,
+			"food": 91,
+			"incidents": [],
+			"loss_reason": "",
+			"miles": 1938,
+			"month": 3,
+			"outcome": "arrived",
+			"oxen": 4,
+			"profession": "farmer",
+			"roster": "fragile",
+			"seed": 100,
+			"strategy": "predation",
+			"survivors": 2,
+			"tales": 2,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 15.3,
+			"counts": {
+				"activities": 2,
+				"care": 1,
+				"empty_food_days": 2,
+				"empty_hunts": 3,
+				"hunts": 13,
+				"last_care": 18,
+				"meat_carried": 446,
+				"meat_food_units": 226,
+				"meat_obtained": 630,
+				"oxen_slaughtered": 5,
+				"preservations": 17,
+				"rest_health": 21,
+				"rest_oxen": 6,
+				"rests": 27,
+				"shots": 27,
+				"trades": 4,
+				"travel_days": 121
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					317,
+					1265,
+					223.4,
+					200,
+					5
+				],
+				[
+					61,
+					705,
+					840,
+					223.4,
+					158,
+					5
+				],
+				[
+					91,
+					792,
+					388,
+					223.4,
+					158,
+					5
+				],
+				[
+					121,
+					1151,
+					538,
+					32.4,
+					158,
+					5
+				],
+				[
+					151,
+					1420,
+					214,
+					32.4,
+					157,
+					5
+				],
+				[
+					181,
+					1627,
+					198,
+					32.4,
+					154,
+					5
+				],
+				[
+					211,
+					1672,
+					41,
+					15.3,
+					138,
+					5
+				]
+			],
+			"days": 222,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1672,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "selected",
+			"seed": 100,
+			"strategy": "dry",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 10.74,
+			"counts": {
+				"activities": 2,
+				"care": 1,
+				"empty_food_days": 3,
+				"empty_hunts": 3,
+				"hunts": 14,
+				"last_care": 18,
+				"meat_carried": 451,
+				"meat_food_units": 229,
+				"meat_obtained": 841,
+				"oxen_slaughtered": 5,
+				"preservations": 17,
+				"rest_health": 21,
+				"rest_oxen": 6,
+				"rests": 27,
+				"shots": 30,
+				"trades": 6,
+				"travel_days": 126
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					317,
+					1265,
+					223.4,
+					200,
+					5
+				],
+				[
+					61,
+					705,
+					840,
+					223.4,
+					158,
+					5
+				],
+				[
+					91,
+					792,
+					388,
+					223.4,
+					158,
+					5
+				],
+				[
+					121,
+					1151,
+					538,
+					32.4,
+					158,
+					5
+				],
+				[
+					151,
+					1420,
+					219,
+					32.4,
+					157,
+					5
+				],
+				[
+					181,
+					1636,
+					217,
+					32.4,
+					154,
+					5
+				],
+				[
+					211,
+					1691,
+					1,
+					13.02,
+					144,
+					5
+				]
+			],
+			"days": 229,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1691,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "selected",
+			"seed": 100,
+			"strategy": "salt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 13.16,
+			"counts": {
+				"activities": 1,
+				"care": 1,
+				"empty_food_days": 8,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": 18,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 5,
+				"preservations": 0,
+				"rest_health": 22,
+				"rest_oxen": 6,
+				"rests": 28,
+				"shots": 0,
+				"trades": 4,
+				"travel_days": 111
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					317,
+					1265,
+					223.4,
+					200,
+					5
+				],
+				[
+					61,
+					705,
+					840,
+					223.4,
+					158,
+					5
+				],
+				[
+					91,
+					792,
+					388,
+					223.4,
+					158,
+					5
+				],
+				[
+					121,
+					1151,
+					538,
+					32.4,
+					158,
+					5
+				],
+				[
+					151,
+					1436,
+					224,
+					32.4,
+					157,
+					5
+				]
+			],
+			"days": 180,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1540,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "selected",
+			"seed": 100,
+			"strategy": "no_hunt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 10.92,
+			"counts": {
+				"activities": 1,
+				"care": 3,
+				"empty_food_days": 2,
+				"empty_hunts": 6,
+				"hunts": 22,
+				"last_care": 67,
+				"meat_carried": 485,
+				"meat_food_units": 247,
+				"meat_obtained": 735,
+				"oxen_slaughtered": 5,
+				"preservations": 17,
+				"rest_health": 28,
+				"rests": 28,
+				"shots": 38,
+				"trades": 4,
+				"travel_days": 113
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					189,
+					1235,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					578,
+					845,
+					223.4,
+					198,
+					5
+				],
+				[
+					91,
+					797,
+					609,
+					106.4,
+					196,
+					5
+				],
+				[
+					121,
+					1169,
+					364,
+					49.4,
+					194,
+					5
+				],
+				[
+					151,
+					1230,
+					244,
+					49.4,
+					192,
+					5
+				],
+				[
+					181,
+					1424,
+					128,
+					49.4,
+					187,
+					5
+				],
+				[
+					211,
+					1454,
+					43,
+					10.92,
+					163,
+					5
+				]
+			],
+			"days": 223,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1454,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "selected",
+			"seed": 100,
+			"strategy": "theft",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 9.43,
+			"counts": {
+				"care": 2,
+				"empty_food_days": 5,
+				"empty_hunts": 11,
+				"hunts": 40,
+				"last_care": 20,
+				"meat_carried": 971,
+				"meat_food_units": 494,
+				"meat_obtained": 1191,
+				"oxen_slaughtered": 5,
+				"preservations": 24,
+				"rest_health": 37,
+				"rests": 37,
+				"shots": 65,
+				"trades": 13,
+				"travel_days": 88
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					191,
+					1235,
+					224.4,
+					198,
+					5
+				],
+				[
+					61,
+					578,
+					845,
+					224.4,
+					198,
+					5
+				],
+				[
+					91,
+					797,
+					355,
+					204.4,
+					158,
+					5
+				],
+				[
+					121,
+					1117,
+					95,
+					204.4,
+					116,
+					5
+				],
+				[
+					151,
+					1164,
+					20,
+					204.4,
+					113,
+					5
+				],
+				[
+					181,
+					1175,
+					17,
+					88.96,
+					96,
+					5
+				],
+				[
+					211,
+					1175,
+					44,
+					9.43,
+					75,
+					4
+				]
+			],
+			"days": 235,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"measles"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1175,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "selected",
+			"seed": 100,
+			"strategy": "robbery",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"processed",
+				"processed",
+				"processed",
+				"lying",
+				"lying"
+			],
+			"cash": 10.62,
+			"counts": {
+				"activities": 2,
+				"care": 1,
+				"empty_food_days": 4,
+				"empty_hunts": 3,
+				"hunts": 14,
+				"last_care": 18,
+				"meat_carried": 496,
+				"meat_food_units": 252,
+				"meat_obtained": 841,
+				"oxen_slaughtered": 5,
+				"preservations": 17,
+				"rest_health": 21,
+				"rest_oxen": 6,
+				"rests": 27,
+				"shots": 30,
+				"trades": 6,
+				"travel_days": 126
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					317,
+					1265,
+					223.4,
+					200,
+					5
+				],
+				[
+					61,
+					705,
+					840,
+					223.4,
+					158,
+					5
+				],
+				[
+					91,
+					792,
+					388,
+					223.4,
+					158,
+					5
+				],
+				[
+					121,
+					1151,
+					538,
+					32.4,
+					158,
+					5
+				],
+				[
+					151,
+					1420,
+					219,
+					32.4,
+					157,
+					5
+				],
+				[
+					181,
+					1636,
+					217,
+					32.4,
+					154,
+					5
+				],
+				[
+					211,
+					1691,
+					1,
+					13.02,
+					144,
+					5
+				]
+			],
+			"days": 232,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"exposure",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1691,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "selected",
+			"seed": 100,
+			"strategy": "already_dead",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [
+				"killed"
+			],
+			"bodies": [],
+			"cash": 223.4,
+			"counts": {
+				"activities": 1,
+				"care": 1,
+				"empty_food_days": 0,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": 18,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 0,
+				"preservations": 0,
+				"rest_health": 11,
+				"rests": 11,
+				"shots": 0,
+				"trades": 0,
+				"travel_days": 38
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					317,
+					1328,
+					223.4,
+					199,
+					2
+				]
+			],
+			"days": 61,
+			"death_causes": [],
+			"departures": 3,
+			"food": 1148,
+			"incidents": [],
+			"loss_reason": "",
+			"miles": 560,
+			"month": 3,
+			"outcome": "save_failed",
+			"oxen": 6,
+			"profession": "farmer",
+			"roster": "selected",
+			"seed": 100,
+			"strategy": "predation",
+			"survivors": 2,
+			"tales": 3,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 14.4,
+			"counts": {
+				"activities": 2,
+				"care": 0,
+				"empty_food_days": 0,
+				"empty_hunts": 9,
+				"hunts": 63,
+				"last_care": -100,
+				"meat_carried": 2742,
+				"meat_food_units": 1383,
+				"meat_obtained": 3785,
+				"oxen_slaughtered": 5,
+				"preservations": 52,
+				"rest_health": 53,
+				"rest_oxen": 1,
+				"rests": 53,
+				"shots": 127,
+				"trades": 4,
+				"travel_days": 148
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					287,
+					1265,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					659,
+					1015,
+					166.4,
+					198,
+					5
+				],
+				[
+					91,
+					962,
+					525,
+					166.4,
+					158,
+					5
+				],
+				[
+					121,
+					1321,
+					695,
+					14.4,
+					158,
+					5
+				],
+				[
+					151,
+					1472,
+					215,
+					14.4,
+					146,
+					5
+				],
+				[
+					181,
+					1616,
+					140,
+					14.4,
+					143,
+					5
+				],
+				[
+					211,
+					1663,
+					16,
+					14.4,
+					121,
+					5
+				],
+				[
+					241,
+					1663,
+					19,
+					14.4,
+					79,
+					2
+				],
+				[
+					271,
+					1676,
+					62,
+					14.4,
+					64,
+					2
+				],
+				[
+					301,
+					1692,
+					53,
+					14.4,
+					51,
+					2
+				],
+				[
+					331,
+					1703,
+					29,
+					14.4,
+					25,
+					2
+				],
+				[
+					361,
+					1740,
+					9,
+					14.4,
+					4,
+					2
+				]
+			],
+			"days": 365,
+			"death_causes": [
+				"lack of food",
+				"exposure",
+				"exposure"
+			],
+			"departures": 0,
+			"food": 45,
+			"incidents": [],
+			"loss_reason": "",
+			"miles": 1740,
+			"month": 5,
+			"outcome": "year_limit",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 100,
+			"strategy": "dry",
+			"survivors": 2,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 12.12,
+			"counts": {
+				"activities": 2,
+				"care": 0,
+				"empty_food_days": 4,
+				"empty_hunts": 3,
+				"hunts": 9,
+				"last_care": -100,
+				"meat_carried": 280,
+				"meat_food_units": 142,
+				"meat_obtained": 372,
+				"oxen_slaughtered": 5,
+				"preservations": 14,
+				"rest_health": 38,
+				"rest_oxen": 1,
+				"rests": 38,
+				"shots": 18,
+				"trades": 5,
+				"travel_days": 116
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					287,
+					1265,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					659,
+					1015,
+					166.4,
+					198,
+					5
+				],
+				[
+					91,
+					962,
+					525,
+					166.4,
+					158,
+					5
+				],
+				[
+					121,
+					1321,
+					695,
+					14.4,
+					158,
+					5
+				],
+				[
+					151,
+					1472,
+					215,
+					14.4,
+					146,
+					5
+				],
+				[
+					181,
+					1616,
+					150,
+					14.4,
+					143,
+					5
+				],
+				[
+					211,
+					1663,
+					3,
+					12.12,
+					127,
+					5
+				]
+			],
+			"days": 221,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1663,
+			"month": 5,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 100,
+			"strategy": "salt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 14.4,
+			"counts": {
+				"activities": 2,
+				"care": 0,
+				"empty_food_days": 6,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": -100,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 5,
+				"preservations": 0,
+				"rest_health": 36,
+				"rest_oxen": 1,
+				"rests": 36,
+				"shots": 0,
+				"trades": 4,
+				"travel_days": 110
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					287,
+					1265,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					659,
+					1015,
+					166.4,
+					198,
+					5
+				],
+				[
+					91,
+					962,
+					525,
+					166.4,
+					158,
+					5
+				],
+				[
+					121,
+					1321,
+					695,
+					14.4,
+					158,
+					5
+				],
+				[
+					151,
+					1472,
+					215,
+					14.4,
+					146,
+					5
+				],
+				[
+					181,
+					1579,
+					0,
+					14.4,
+					141,
+					5
+				]
+			],
+			"days": 186,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1588,
+			"month": 5,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 100,
+			"strategy": "no_hunt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying"
+			],
+			"cash": 8.8,
+			"counts": {
+				"activities": 2,
+				"care": 2,
+				"empty_food_days": 0,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": 19,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 1,
+				"preservations": 2,
+				"rest_health": 9,
+				"rest_oxen": 2,
+				"rests": 11,
+				"shots": 0,
+				"trades": 4,
+				"travel_days": 133
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					255,
+					1263,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					676,
+					1027,
+					166.4,
+					198,
+					5
+				],
+				[
+					91,
+					1015,
+					777,
+					109.4,
+					198,
+					5
+				],
+				[
+					121,
+					1375,
+					752,
+					14.4,
+					198,
+					5
+				],
+				[
+					151,
+					1663,
+					397,
+					14.4,
+					158,
+					4
+				],
+				[
+					181,
+					1910,
+					145,
+					8.8,
+					155,
+					4
+				]
+			],
+			"days": 186,
+			"death_causes": [
+				"dysentery"
+			],
+			"departures": 0,
+			"food": 85,
+			"incidents": [
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "",
+			"miles": 1938,
+			"month": 5,
+			"outcome": "arrived",
+			"oxen": 5,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 100,
+			"strategy": "theft",
+			"survivors": 4,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 8.97,
+			"counts": {
+				"activities": 1,
+				"care": 2,
+				"empty_food_days": 10,
+				"empty_hunts": 12,
+				"hunts": 42,
+				"last_care": 19,
+				"meat_carried": 915,
+				"meat_food_units": 468,
+				"meat_obtained": 1197,
+				"oxen_slaughtered": 5,
+				"preservations": 25,
+				"rest_health": 21,
+				"rests": 21,
+				"shots": 69,
+				"trades": 12,
+				"travel_days": 108
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					255,
+					1263,
+					224.4,
+					198,
+					5
+				],
+				[
+					61,
+					692,
+					893,
+					224.4,
+					198,
+					5
+				],
+				[
+					91,
+					985,
+					413,
+					224.4,
+					196,
+					5
+				],
+				[
+					121,
+					1276,
+					153,
+					224.4,
+					154,
+					5
+				],
+				[
+					151,
+					1437,
+					62,
+					204.4,
+					151,
+					5
+				],
+				[
+					181,
+					1461,
+					12,
+					88.96,
+					99,
+					5
+				],
+				[
+					211,
+					1461,
+					21,
+					8.97,
+					76,
+					4
+				],
+				[
+					241,
+					1461,
+					0,
+					8.97,
+					42,
+					0
+				]
+			],
+			"days": 241,
+			"death_causes": [
+				"exposure",
+				"lack of food",
+				"exposure",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1461,
+			"month": 5,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 100,
+			"strategy": "robbery",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"processed",
+				"processed",
+				"processed",
+				"lying",
+				"lying"
+			],
+			"cash": 12.12,
+			"counts": {
+				"activities": 2,
+				"care": 0,
+				"empty_food_days": 5,
+				"empty_hunts": 2,
+				"hunts": 6,
+				"last_care": -100,
+				"meat_carried": 247,
+				"meat_food_units": 125,
+				"meat_obtained": 247,
+				"oxen_slaughtered": 5,
+				"preservations": 13,
+				"rest_health": 38,
+				"rest_oxen": 1,
+				"rests": 38,
+				"shots": 12,
+				"trades": 5,
+				"travel_days": 116
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					287,
+					1265,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					659,
+					1015,
+					166.4,
+					198,
+					5
+				],
+				[
+					91,
+					962,
+					525,
+					166.4,
+					158,
+					5
+				],
+				[
+					121,
+					1321,
+					695,
+					14.4,
+					158,
+					5
+				],
+				[
+					151,
+					1472,
+					215,
+					14.4,
+					146,
+					5
+				],
+				[
+					181,
+					1616,
+					150,
+					14.4,
+					143,
+					5
+				],
+				[
+					211,
+					1663,
+					3,
+					12.12,
+					127,
+					5
+				]
+			],
+			"days": 219,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1663,
+			"month": 5,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 100,
+			"strategy": "already_dead",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [
+				"killed"
+			],
+			"bodies": [
+				"processed"
+			],
+			"cash": 177.8,
+			"counts": {
+				"activities": 3,
+				"care": 0,
+				"empty_food_days": 0,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": -100,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 2,
+				"preservations": 4,
+				"rest_health": 33,
+				"rest_oxen": 19,
+				"rests": 52,
+				"shots": 0,
+				"trades": 3,
+				"travel_days": 147
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					243,
+					1328,
+					223.4,
+					197,
+					2
+				],
+				[
+					61,
+					585,
+					1148,
+					223.4,
+					195,
+					2
+				],
+				[
+					91,
+					786,
+					938,
+					223.4,
+					195,
+					2
+				],
+				[
+					121,
+					1150,
+					758,
+					203.4,
+					195,
+					2
+				],
+				[
+					151,
+					1450,
+					538,
+					203.4,
+					153,
+					2
+				],
+				[
+					181,
+					1740,
+					298,
+					183.4,
+					153,
+					2
+				],
+				[
+					211,
+					1864,
+					98,
+					177.8,
+					151,
+					2
+				],
+				[
+					241,
+					1927,
+					126,
+					177.8,
+					147,
+					2
+				]
+			],
+			"days": 247,
+			"death_causes": [
+				"being shot by A"
+			],
+			"departures": 2,
+			"food": 98,
+			"incidents": [],
+			"loss_reason": "",
+			"miles": 1938,
+			"month": 5,
+			"outcome": "arrived",
+			"oxen": 4,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 100,
+			"strategy": "predation",
+			"survivors": 2,
+			"tales": 2,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 13.1,
+			"counts": {
+				"activities": 2,
+				"care": 0,
+				"empty_food_days": 4,
+				"empty_hunts": 5,
+				"hunts": 11,
+				"last_care": -100,
+				"meat_carried": 107,
+				"meat_food_units": 55,
+				"meat_obtained": 237,
+				"oxen_slaughtered": 5,
+				"preservations": 12,
+				"rest_health": 16,
+				"rest_oxen": 2,
+				"rests": 18,
+				"shots": 17,
+				"trades": 1,
+				"travel_days": 109
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					287,
+					1265,
+					184.2,
+					198,
+					5
+				],
+				[
+					61,
+					659,
+					1015,
+					88.0,
+					198,
+					5
+				],
+				[
+					91,
+					962,
+					525,
+					48.8,
+					158,
+					5
+				],
+				[
+					121,
+					1374,
+					105,
+					13.1,
+					158,
+					5
+				],
+				[
+					151,
+					1491,
+					194,
+					13.1,
+					154,
+					4
+				],
+				[
+					181,
+					1546,
+					0,
+					13.1,
+					142,
+					4
+				]
+			],
+			"days": 186,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"dysentery"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1546,
+			"month": 5,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "mixed_paid",
+			"seed": 100,
+			"strategy": "dry",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 9835,
+			"wages_paid_cents": 15330
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 10.4,
+			"counts": {
+				"activities": 2,
+				"care": 0,
+				"empty_food_days": 9,
+				"empty_hunts": 14,
+				"hunts": 71,
+				"last_care": -100,
+				"meat_carried": 3124,
+				"meat_food_units": 1575,
+				"meat_obtained": 3902,
+				"oxen_slaughtered": 5,
+				"preservations": 54,
+				"rest_health": 28,
+				"rest_oxen": 6,
+				"rests": 31,
+				"shots": 141,
+				"trades": 2,
+				"travel_days": 159
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					287,
+					1265,
+					184.2,
+					198,
+					5
+				],
+				[
+					61,
+					659,
+					1015,
+					88.0,
+					198,
+					5
+				],
+				[
+					91,
+					962,
+					525,
+					48.8,
+					158,
+					5
+				],
+				[
+					121,
+					1374,
+					105,
+					13.1,
+					158,
+					5
+				],
+				[
+					151,
+					1504,
+					83,
+					13.1,
+					145,
+					4
+				],
+				[
+					181,
+					1606,
+					89,
+					13.1,
+					143,
+					3
+				],
+				[
+					211,
+					1615,
+					35,
+					10.4,
+					118,
+					3
+				],
+				[
+					241,
+					1626,
+					58,
+					10.4,
+					91,
+					3
+				],
+				[
+					271,
+					1639,
+					33,
+					10.4,
+					76,
+					3
+				],
+				[
+					301,
+					1641,
+					30,
+					10.4,
+					41,
+					3
+				],
+				[
+					331,
+					1667,
+					41,
+					10.4,
+					17,
+					3
+				]
+			],
+			"days": 359,
+			"death_causes": [
+				"lack of food",
+				"wound",
+				"lack of food",
+				"lack of food",
+				"dysentery"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1695,
+			"month": 5,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "mixed_paid",
+			"seed": 100,
+			"strategy": "salt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 24535,
+			"wages_paid_cents": 15330
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 13.1,
+			"counts": {
+				"activities": 2,
+				"care": 0,
+				"empty_food_days": 7,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": -100,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 5,
+				"preservations": 0,
+				"rest_health": 13,
+				"rest_oxen": 4,
+				"rests": 17,
+				"shots": 0,
+				"trades": 1,
+				"travel_days": 102
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					287,
+					1265,
+					184.2,
+					198,
+					5
+				],
+				[
+					61,
+					659,
+					1015,
+					88.0,
+					198,
+					5
+				],
+				[
+					91,
+					962,
+					525,
+					48.8,
+					158,
+					5
+				],
+				[
+					121,
+					1374,
+					105,
+					13.1,
+					158,
+					5
+				]
+			],
+			"days": 148,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"dysentery"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1497,
+			"month": 5,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "mixed_paid",
+			"seed": 100,
+			"strategy": "no_hunt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 5250,
+			"wages_paid_cents": 15330
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 10.53,
+			"counts": {
+				"activities": 1,
+				"care": 2,
+				"empty_food_days": 5,
+				"empty_hunts": 5,
+				"hunts": 8,
+				"last_care": 19,
+				"meat_carried": 65,
+				"meat_food_units": 33,
+				"meat_obtained": 65,
+				"oxen_slaughtered": 5,
+				"preservations": 11,
+				"rest_health": 10,
+				"rest_oxen": 5,
+				"rests": 15,
+				"shots": 11,
+				"trades": 2,
+				"travel_days": 110
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					255,
+					1263,
+					184.2,
+					198,
+					5
+				],
+				[
+					61,
+					676,
+					1027,
+					88.0,
+					198,
+					5
+				],
+				[
+					91,
+					1032,
+					577,
+					48.8,
+					198,
+					5
+				],
+				[
+					121,
+					1347,
+					127,
+					13.1,
+					186,
+					5
+				],
+				[
+					151,
+					1501,
+					147,
+					13.1,
+					140,
+					5
+				]
+			],
+			"days": 178,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1551,
+			"month": 5,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "mixed_paid",
+			"seed": 100,
+			"strategy": "theft",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 9170,
+			"wages_paid_cents": 15330
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 12.88,
+			"counts": {
+				"activities": 1,
+				"care": 2,
+				"empty_food_days": 6,
+				"empty_hunts": 2,
+				"hunts": 4,
+				"last_care": 19,
+				"meat_carried": 53,
+				"meat_food_units": 27,
+				"meat_obtained": 60,
+				"oxen_slaughtered": 5,
+				"preservations": 11,
+				"rest_health": 14,
+				"rests": 14,
+				"shots": 8,
+				"trades": 3,
+				"travel_days": 98
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					255,
+					1263,
+					185.2,
+					198,
+					5
+				],
+				[
+					61,
+					692,
+					893,
+					146.0,
+					198,
+					5
+				],
+				[
+					91,
+					985,
+					413,
+					106.8,
+					196,
+					5
+				],
+				[
+					121,
+					1276,
+					153,
+					57.8,
+					154,
+					5
+				],
+				[
+					151,
+					1430,
+					62,
+					18.6,
+					141,
+					5
+				]
+			],
+			"days": 161,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1430,
+			"month": 5,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "mixed_paid",
+			"seed": 100,
+			"strategy": "robbery",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 665,
+			"wages_paid_cents": 20895
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"processed",
+				"processed",
+				"processed",
+				"lying",
+				"lying"
+			],
+			"cash": 10.4,
+			"counts": {
+				"activities": 2,
+				"care": 0,
+				"empty_food_days": 6,
+				"empty_hunts": 5,
+				"hunts": 8,
+				"last_care": -100,
+				"meat_carried": 65,
+				"meat_food_units": 33,
+				"meat_obtained": 65,
+				"oxen_slaughtered": 5,
+				"preservations": 10,
+				"rest_health": 13,
+				"rest_oxen": 1,
+				"rests": 14,
+				"shots": 11,
+				"trades": 2,
+				"travel_days": 113
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					287,
+					1265,
+					184.2,
+					198,
+					5
+				],
+				[
+					61,
+					659,
+					1015,
+					88.0,
+					198,
+					5
+				],
+				[
+					91,
+					962,
+					525,
+					48.8,
+					158,
+					5
+				],
+				[
+					121,
+					1374,
+					105,
+					13.1,
+					158,
+					5
+				],
+				[
+					151,
+					1533,
+					136,
+					13.1,
+					114,
+					4
+				],
+				[
+					181,
+					1568,
+					0,
+					10.4,
+					102,
+					0
+				]
+			],
+			"days": 181,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"dysentery"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1568,
+			"month": 5,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "mixed_paid",
+			"seed": 100,
+			"strategy": "already_dead",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 9170,
+			"wages_paid_cents": 15330
+		},
+		{
+			"attacks": [
+				"killed"
+			],
+			"bodies": [
+				"processed"
+			],
+			"cash": 54.25,
+			"counts": {
+				"activities": 3,
+				"care": 0,
+				"empty_food_days": 0,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": -100,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 2,
+				"preservations": 4,
+				"rest_health": 33,
+				"rest_oxen": 19,
+				"rests": 52,
+				"shots": 0,
+				"trades": 3,
+				"travel_days": 147
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					243,
+					1328,
+					197.5,
+					197,
+					2
+				],
+				[
+					61,
+					585,
+					1148,
+					184.9,
+					195,
+					2
+				],
+				[
+					91,
+					786,
+					938,
+					172.3,
+					195,
+					2
+				],
+				[
+					121,
+					1150,
+					758,
+					136.55,
+					195,
+					2
+				],
+				[
+					151,
+					1450,
+					538,
+					123.95,
+					153,
+					2
+				],
+				[
+					181,
+					1740,
+					298,
+					91.35,
+					153,
+					2
+				],
+				[
+					211,
+					1864,
+					98,
+					70.0,
+					151,
+					2
+				],
+				[
+					241,
+					1927,
+					126,
+					57.4,
+					147,
+					2
+				]
+			],
+			"days": 247,
+			"death_causes": [
+				"being shot by A"
+			],
+			"departures": 2,
+			"food": 98,
+			"incidents": [],
+			"loss_reason": "",
+			"miles": 1938,
+			"month": 5,
+			"outcome": "arrived",
+			"oxen": 4,
+			"profession": "farmer",
+			"roster": "mixed_paid",
+			"seed": 100,
+			"strategy": "predation",
+			"survivors": 2,
+			"tales": 2,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 12355
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 14.4,
+			"counts": {
+				"activities": 3,
+				"care": 1,
+				"empty_food_days": 3,
+				"empty_hunts": 3,
+				"hunts": 20,
+				"last_care": 69,
+				"meat_carried": 769,
+				"meat_food_units": 390,
+				"meat_obtained": 1097,
+				"oxen_slaughtered": 5,
+				"preservations": 22,
+				"rest_health": 31,
+				"rest_oxen": 12,
+				"rests": 43,
+				"shots": 46,
+				"trades": 4,
+				"travel_days": 128
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					216,
+					1265,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					525,
+					785,
+					223.4,
+					198,
+					5
+				],
+				[
+					91,
+					767,
+					749,
+					89.4,
+					198,
+					5
+				],
+				[
+					121,
+					1029,
+					563,
+					32.4,
+					196,
+					5
+				],
+				[
+					151,
+					1312,
+					261,
+					32.4,
+					196,
+					4
+				],
+				[
+					181,
+					1544,
+					139,
+					32.4,
+					194,
+					4
+				],
+				[
+					211,
+					1664,
+					129,
+					32.4,
+					171,
+					4
+				],
+				[
+					241,
+					1676,
+					26,
+					14.4,
+					150,
+					3
+				]
+			],
+			"days": 261,
+			"death_causes": [
+				"typhoid fever",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"dysentery"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1676,
+			"month": 5,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "fragile",
+			"seed": 100,
+			"strategy": "dry",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 9.6,
+			"counts": {
+				"activities": 3,
+				"care": 1,
+				"empty_food_days": 2,
+				"empty_hunts": 10,
+				"hunts": 54,
+				"last_care": 69,
+				"meat_carried": 2086,
+				"meat_food_units": 1054,
+				"meat_obtained": 2737,
+				"oxen_slaughtered": 5,
+				"preservations": 39,
+				"rest_health": 46,
+				"rest_oxen": 12,
+				"rests": 58,
+				"shots": 103,
+				"trades": 6,
+				"travel_days": 154
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					216,
+					1265,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					525,
+					785,
+					223.4,
+					198,
+					5
+				],
+				[
+					91,
+					767,
+					749,
+					89.4,
+					198,
+					5
+				],
+				[
+					121,
+					1029,
+					563,
+					32.4,
+					196,
+					5
+				],
+				[
+					151,
+					1312,
+					261,
+					32.4,
+					196,
+					4
+				],
+				[
+					181,
+					1544,
+					149,
+					32.4,
+					194,
+					4
+				],
+				[
+					211,
+					1664,
+					139,
+					32.4,
+					171,
+					4
+				],
+				[
+					241,
+					1676,
+					23,
+					9.6,
+					153,
+					3
+				],
+				[
+					271,
+					1676,
+					51,
+					9.6,
+					117,
+					2
+				],
+				[
+					301,
+					1693,
+					48,
+					9.6,
+					106,
+					2
+				],
+				[
+					331,
+					1711,
+					34,
+					9.6,
+					95,
+					2
+				]
+			],
+			"days": 360,
+			"death_causes": [
+				"exposure",
+				"lack of food",
+				"dysentery",
+				"lack of food",
+				"dysentery"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1740,
+			"month": 5,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "fragile",
+			"seed": 100,
+			"strategy": "salt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 12.15,
+			"counts": {
+				"activities": 3,
+				"care": 1,
+				"empty_food_days": 9,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": 69,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 5,
+				"preservations": 0,
+				"rest_health": 31,
+				"rest_oxen": 15,
+				"rests": 43,
+				"shots": 0,
+				"trades": 4,
+				"travel_days": 127
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					216,
+					1265,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					525,
+					785,
+					223.4,
+					198,
+					5
+				],
+				[
+					91,
+					767,
+					749,
+					89.4,
+					198,
+					5
+				],
+				[
+					121,
+					1029,
+					563,
+					32.4,
+					196,
+					5
+				],
+				[
+					151,
+					1312,
+					261,
+					32.4,
+					196,
+					4
+				],
+				[
+					181,
+					1566,
+					207,
+					32.4,
+					192,
+					4
+				],
+				[
+					211,
+					1620,
+					2,
+					12.15,
+					191,
+					1
+				]
+			],
+			"days": 215,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"exhaustion",
+				"lack of food",
+				"dysentery"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1625,
+			"month": 5,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "fragile",
+			"seed": 100,
+			"strategy": "no_hunt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 4.65,
+			"counts": {
+				"activities": 2,
+				"care": 2,
+				"empty_food_days": 0,
+				"empty_hunts": 9,
+				"hunts": 60,
+				"last_care": 17,
+				"meat_carried": 2479,
+				"meat_food_units": 1254,
+				"meat_obtained": 3427,
+				"oxen_slaughtered": 5,
+				"preservations": 49,
+				"rest_health": 42,
+				"rest_oxen": 6,
+				"rests": 48,
+				"shots": 122,
+				"trades": 5,
+				"travel_days": 160
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					254,
+					1263,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					653,
+					1013,
+					166.4,
+					198,
+					5
+				],
+				[
+					91,
+					847,
+					533,
+					166.4,
+					196,
+					5
+				],
+				[
+					121,
+					1230,
+					488,
+					32.4,
+					196,
+					5
+				],
+				[
+					151,
+					1534,
+					130,
+					32.4,
+					196,
+					4
+				],
+				[
+					181,
+					1713,
+					124,
+					32.4,
+					151,
+					4
+				],
+				[
+					211,
+					1777,
+					72,
+					12.15,
+					147,
+					4
+				],
+				[
+					241,
+					1779,
+					61,
+					9.75,
+					111,
+					3
+				],
+				[
+					271,
+					1788,
+					33,
+					9.75,
+					88,
+					2
+				],
+				[
+					301,
+					1798,
+					61,
+					9.75,
+					74,
+					2
+				],
+				[
+					331,
+					1822,
+					49,
+					9.75,
+					57,
+					2
+				],
+				[
+					361,
+					1848,
+					42,
+					4.65,
+					21,
+					1
+				]
+			],
+			"days": 365,
+			"death_causes": [
+				"typhoid fever",
+				"exposure",
+				"wound",
+				"dysentery"
+			],
+			"departures": 0,
+			"food": 43,
+			"incidents": [
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "",
+			"miles": 1848,
+			"month": 5,
+			"outcome": "year_limit",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "fragile",
+			"seed": 100,
+			"strategy": "theft",
+			"survivors": 1,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 9.43,
+			"counts": {
+				"activities": 1,
+				"care": 2,
+				"empty_food_days": 5,
+				"empty_hunts": 7,
+				"hunts": 32,
+				"last_care": 17,
+				"meat_carried": 886,
+				"meat_food_units": 450,
+				"meat_obtained": 971,
+				"oxen_slaughtered": 5,
+				"preservations": 23,
+				"rest_health": 20,
+				"rests": 20,
+				"shots": 60,
+				"trades": 13,
+				"travel_days": 107
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					255,
+					1263,
+					224.4,
+					198,
+					5
+				],
+				[
+					61,
+					692,
+					858,
+					224.4,
+					198,
+					5
+				],
+				[
+					91,
+					949,
+					338,
+					224.4,
+					156,
+					5
+				],
+				[
+					121,
+					1268,
+					148,
+					224.4,
+					154,
+					5
+				],
+				[
+					151,
+					1401,
+					73,
+					204.4,
+					149,
+					5
+				],
+				[
+					181,
+					1427,
+					29,
+					108.2,
+					134,
+					5
+				],
+				[
+					211,
+					1440,
+					1,
+					9.43,
+					117,
+					4
+				]
+			],
+			"days": 231,
+			"death_causes": [
+				"broken leg",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1440,
+			"month": 5,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "fragile",
+			"seed": 100,
+			"strategy": "robbery",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"processed",
+				"processed",
+				"processed"
+			],
+			"cash": 9.6,
+			"counts": {
+				"activities": 3,
+				"care": 1,
+				"empty_food_days": 0,
+				"empty_hunts": 8,
+				"hunts": 51,
+				"last_care": 69,
+				"meat_carried": 2154,
+				"meat_food_units": 1089,
+				"meat_obtained": 2771,
+				"oxen_slaughtered": 5,
+				"preservations": 40,
+				"rest_health": 53,
+				"rest_oxen": 10,
+				"rests": 63,
+				"shots": 100,
+				"trades": 6,
+				"travel_days": 156
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					216,
+					1265,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					525,
+					785,
+					223.4,
+					198,
+					5
+				],
+				[
+					91,
+					767,
+					749,
+					89.4,
+					198,
+					5
+				],
+				[
+					121,
+					1029,
+					563,
+					32.4,
+					196,
+					5
+				],
+				[
+					151,
+					1315,
+					277,
+					32.4,
+					196,
+					4
+				],
+				[
+					181,
+					1588,
+					83,
+					32.4,
+					193,
+					4
+				],
+				[
+					211,
+					1663,
+					206,
+					32.4,
+					187,
+					4
+				],
+				[
+					241,
+					1675,
+					2,
+					9.6,
+					172,
+					4
+				],
+				[
+					271,
+					1675,
+					70,
+					9.6,
+					133,
+					2
+				],
+				[
+					301,
+					1698,
+					46,
+					9.6,
+					125,
+					2
+				],
+				[
+					331,
+					1722,
+					40,
+					9.6,
+					110,
+					2
+				],
+				[
+					361,
+					1758,
+					27,
+					9.6,
+					92,
+					2
+				]
+			],
+			"days": 365,
+			"death_causes": [
+				"typhoid fever",
+				"lack of food",
+				"dysentery"
+			],
+			"departures": 0,
+			"food": 13,
+			"incidents": [],
+			"loss_reason": "",
+			"miles": 1758,
+			"month": 5,
+			"outcome": "year_limit",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "fragile",
+			"seed": 100,
+			"strategy": "already_dead",
+			"survivors": 2,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [
+				"killed"
+			],
+			"bodies": [
+				"processed",
+				"processed"
+			],
+			"cash": 124.2,
+			"counts": {
+				"activities": 3,
+				"care": 0,
+				"empty_food_days": 0,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": -100,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 5,
+				"preservations": 10,
+				"rest_health": 102,
+				"rest_oxen": 15,
+				"rests": 117,
+				"shots": 0,
+				"trades": 6,
+				"travel_days": 170
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					225,
+					1328,
+					223.4,
+					197,
+					2
+				],
+				[
+					61,
+					542,
+					1118,
+					223.4,
+					197,
+					2
+				],
+				[
+					91,
+					854,
+					938,
+					223.4,
+					193,
+					2
+				],
+				[
+					121,
+					1128,
+					740,
+					203.4,
+					151,
+					2
+				],
+				[
+					151,
+					1335,
+					524,
+					203.4,
+					111,
+					2
+				],
+				[
+					181,
+					1642,
+					330,
+					203.4,
+					109,
+					2
+				],
+				[
+					211,
+					1778,
+					168,
+					203.4,
+					109,
+					2
+				],
+				[
+					241,
+					1822,
+					96,
+					203.4,
+					104,
+					2
+				],
+				[
+					271,
+					1845,
+					112,
+					183.4,
+					102,
+					2
+				],
+				[
+					301,
+					1860,
+					134,
+					178.2,
+					100,
+					1
+				],
+				[
+					331,
+					1892,
+					133,
+					142.2,
+					100,
+					1
+				]
+			],
+			"days": 353,
+			"death_causes": [
+				"typhoid fever",
+				"being shot by A"
+			],
+			"departures": 2,
+			"food": 117,
+			"incidents": [],
+			"loss_reason": "",
+			"miles": 1938,
+			"month": 5,
+			"outcome": "arrived",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "fragile",
+			"seed": 100,
+			"strategy": "predation",
+			"survivors": 1,
+			"tales": 2,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 13.16,
+			"counts": {
+				"activities": 2,
+				"care": 0,
+				"empty_food_days": 5,
+				"empty_hunts": 5,
+				"hunts": 11,
+				"last_care": -100,
+				"meat_carried": 79,
+				"meat_food_units": 41,
+				"meat_obtained": 237,
+				"oxen_slaughtered": 5,
+				"preservations": 12,
+				"rest_health": 35,
+				"rest_oxen": 3,
+				"rests": 38,
+				"shots": 17,
+				"trades": 4,
+				"travel_days": 112
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					174,
+					1279,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					479,
+					829,
+					203.4,
+					198,
+					5
+				],
+				[
+					91,
+					792,
+					749,
+					89.4,
+					196,
+					5
+				],
+				[
+					121,
+					1111,
+					509,
+					32.4,
+					196,
+					5
+				],
+				[
+					151,
+					1409,
+					186,
+					32.4,
+					195,
+					5
+				],
+				[
+					181,
+					1609,
+					88,
+					32.4,
+					192,
+					5
+				]
+			],
+			"days": 210,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"measles",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1617,
+			"month": 5,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "selected",
+			"seed": 100,
+			"strategy": "dry",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 10.62,
+			"counts": {
+				"activities": 3,
+				"care": 0,
+				"empty_food_days": 3,
+				"empty_hunts": 3,
+				"hunts": 9,
+				"last_care": -100,
+				"meat_carried": 311,
+				"meat_food_units": 157,
+				"meat_obtained": 372,
+				"oxen_slaughtered": 5,
+				"preservations": 14,
+				"rest_health": 36,
+				"rest_oxen": 3,
+				"rests": 39,
+				"shots": 18,
+				"trades": 6,
+				"travel_days": 114
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					174,
+					1279,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					479,
+					829,
+					203.4,
+					198,
+					5
+				],
+				[
+					91,
+					792,
+					749,
+					89.4,
+					196,
+					5
+				],
+				[
+					121,
+					1111,
+					509,
+					32.4,
+					196,
+					5
+				],
+				[
+					151,
+					1409,
+					196,
+					32.4,
+					195,
+					5
+				],
+				[
+					181,
+					1609,
+					93,
+					32.4,
+					192,
+					5
+				],
+				[
+					211,
+					1627,
+					5,
+					10.62,
+					176,
+					4
+				]
+			],
+			"days": 214,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1627,
+			"month": 5,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "selected",
+			"seed": 100,
+			"strategy": "salt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 12.4,
+			"counts": {
+				"activities": 2,
+				"care": 0,
+				"empty_food_days": 8,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": -100,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 5,
+				"preservations": 0,
+				"rest_health": 30,
+				"rest_oxen": 3,
+				"rests": 33,
+				"shots": 0,
+				"trades": 3,
+				"travel_days": 108
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					174,
+					1279,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					479,
+					829,
+					203.4,
+					198,
+					5
+				],
+				[
+					91,
+					792,
+					749,
+					89.4,
+					196,
+					5
+				],
+				[
+					121,
+					1111,
+					509,
+					32.4,
+					196,
+					5
+				],
+				[
+					151,
+					1443,
+					206,
+					32.4,
+					195,
+					5
+				]
+			],
+			"days": 177,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1526,
+			"month": 5,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "selected",
+			"seed": 100,
+			"strategy": "no_hunt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 9.7,
+			"counts": {
+				"activities": 1,
+				"care": 3,
+				"empty_food_days": 5,
+				"empty_hunts": 5,
+				"hunts": 10,
+				"last_care": 126,
+				"meat_carried": 83,
+				"meat_food_units": 42,
+				"meat_obtained": 235,
+				"oxen_slaughtered": 5,
+				"preservations": 11,
+				"rest_health": 18,
+				"rest_oxen": 2,
+				"rests": 20,
+				"shots": 15,
+				"trades": 4,
+				"travel_days": 116
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					225,
+					1249,
+					223.4,
+					196,
+					5
+				],
+				[
+					61,
+					621,
+					969,
+					166.4,
+					196,
+					5
+				],
+				[
+					91,
+					865,
+					489,
+					166.4,
+					192,
+					5
+				],
+				[
+					121,
+					1167,
+					474,
+					32.4,
+					190,
+					5
+				],
+				[
+					151,
+					1405,
+					216,
+					12.4,
+					108,
+					5
+				],
+				[
+					181,
+					1563,
+					93,
+					12.4,
+					105,
+					5
+				]
+			],
+			"days": 199,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1574,
+			"month": 5,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "selected",
+			"seed": 100,
+			"strategy": "theft",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 10.42,
+			"counts": {
+				"care": 2,
+				"empty_food_days": 7,
+				"empty_hunts": 15,
+				"hunts": 66,
+				"last_care": 20,
+				"meat_carried": 1335,
+				"meat_food_units": 680,
+				"meat_obtained": 2062,
+				"oxen_slaughtered": 5,
+				"preservations": 32,
+				"rest_health": 43,
+				"rests": 43,
+				"shots": 125,
+				"trades": 18,
+				"travel_days": 105
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					227,
+					1249,
+					224.4,
+					196,
+					5
+				],
+				[
+					61,
+					621,
+					769,
+					224.4,
+					196,
+					5
+				],
+				[
+					91,
+					863,
+					289,
+					224.4,
+					192,
+					5
+				],
+				[
+					121,
+					1167,
+					114,
+					224.4,
+					188,
+					5
+				],
+				[
+					151,
+					1197,
+					44,
+					224.4,
+					183,
+					5
+				],
+				[
+					181,
+					1197,
+					61,
+					125.17,
+					166,
+					3
+				],
+				[
+					211,
+					1231,
+					61,
+					23.92,
+					160,
+					3
+				],
+				[
+					241,
+					1246,
+					45,
+					18.52,
+					135,
+					3
+				],
+				[
+					271,
+					1248,
+					54,
+					13.12,
+					103,
+					2
+				],
+				[
+					301,
+					1248,
+					0,
+					10.42,
+					56,
+					1
+				]
+			],
+			"days": 302,
+			"death_causes": [
+				"typhoid fever",
+				"typhoid fever",
+				"lack of food",
+				"exhaustion",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1248,
+			"month": 5,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "selected",
+			"seed": 100,
+			"strategy": "robbery",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"processed",
+				"processed",
+				"processed",
+				"lying",
+				"lying"
+			],
+			"cash": 13.02,
+			"counts": {
+				"activities": 3,
+				"care": 0,
+				"empty_food_days": 4,
+				"empty_hunts": 3,
+				"hunts": 9,
+				"last_care": -100,
+				"meat_carried": 275,
+				"meat_food_units": 139,
+				"meat_obtained": 372,
+				"oxen_slaughtered": 5,
+				"preservations": 13,
+				"rest_health": 36,
+				"rest_oxen": 3,
+				"rests": 39,
+				"shots": 18,
+				"trades": 5,
+				"travel_days": 114
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					174,
+					1279,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					479,
+					829,
+					203.4,
+					198,
+					5
+				],
+				[
+					91,
+					792,
+					749,
+					89.4,
+					196,
+					5
+				],
+				[
+					121,
+					1111,
+					509,
+					32.4,
+					196,
+					5
+				],
+				[
+					151,
+					1409,
+					196,
+					32.4,
+					195,
+					5
+				],
+				[
+					181,
+					1609,
+					93,
+					32.4,
+					192,
+					5
+				],
+				[
+					211,
+					1627,
+					9,
+					13.02,
+					176,
+					4
+				]
+			],
+			"days": 214,
+			"death_causes": [
+				"lack of food",
+				"exposure",
+				"lack of food",
+				"lack of food",
+				"measles"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1627,
+			"month": 5,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "selected",
+			"seed": 100,
+			"strategy": "already_dead",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [
+				"killed"
+			],
+			"bodies": [],
+			"cash": 203.4,
+			"counts": {
+				"activities": 1,
+				"care": 0,
+				"empty_food_days": 0,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": -100,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 0,
+				"preservations": 0,
+				"rest_health": 13,
+				"rests": 13,
+				"shots": 0,
+				"trades": 0,
+				"travel_days": 35
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					263,
+					1341,
+					223.4,
+					199,
+					2
+				],
+				[
+					61,
+					523,
+					1121,
+					203.4,
+					159,
+					2
+				]
+			],
+			"days": 62,
+			"death_causes": [],
+			"departures": 3,
+			"food": 1115,
+			"incidents": [],
+			"loss_reason": "",
+			"miles": 538,
+			"month": 5,
+			"outcome": "save_failed",
+			"oxen": 6,
+			"profession": "farmer",
+			"roster": "selected",
+			"seed": 100,
+			"strategy": "predation",
+			"survivors": 2,
+			"tales": 3,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 13.92,
+			"counts": {
+				"activities": 3,
+				"care": 0,
+				"empty_food_days": 9,
+				"empty_hunts": 16,
+				"hunts": 73,
+				"last_care": -100,
+				"meat_carried": 2078,
+				"meat_food_units": 1055,
+				"meat_obtained": 2573,
+				"oxen_slaughtered": 5,
+				"preservations": 37,
+				"rest_health": 40,
+				"rest_oxen": 22,
+				"rests": 62,
+				"shots": 139,
+				"trades": 5,
+				"travel_days": 133
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					285,
+					1265,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					618,
+					825,
+					223.4,
+					198,
+					5
+				],
+				[
+					91,
+					851,
+					545,
+					166.4,
+					158,
+					5
+				],
+				[
+					121,
+					1043,
+					495,
+					52.4,
+					156,
+					5
+				],
+				[
+					151,
+					1112,
+					125,
+					52.4,
+					156,
+					5
+				],
+				[
+					181,
+					1160,
+					257,
+					52.4,
+					152,
+					5
+				],
+				[
+					211,
+					1173,
+					20,
+					13.92,
+					142,
+					4
+				],
+				[
+					241,
+					1177,
+					61,
+					13.92,
+					108,
+					3
+				],
+				[
+					271,
+					1181,
+					75,
+					13.92,
+					75,
+					2
+				],
+				[
+					301,
+					1200,
+					39,
+					13.92,
+					41,
+					2
+				],
+				[
+					331,
+					1239,
+					55,
+					13.92,
+					20,
+					2
+				]
+			],
+			"days": 351,
+			"death_causes": [
+				"lack of food",
+				"exposure",
+				"typhoid fever",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1259,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 100,
+			"strategy": "dry",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 11.35,
+			"counts": {
+				"activities": 3,
+				"care": 0,
+				"empty_food_days": 5,
+				"empty_hunts": 5,
+				"hunts": 15,
+				"last_care": -100,
+				"meat_carried": 233,
+				"meat_food_units": 119,
+				"meat_obtained": 431,
+				"oxen_slaughtered": 5,
+				"preservations": 15,
+				"rest_health": 27,
+				"rest_oxen": 22,
+				"rests": 49,
+				"shots": 25,
+				"trades": 6,
+				"travel_days": 106
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					285,
+					1265,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					618,
+					825,
+					223.4,
+					198,
+					5
+				],
+				[
+					91,
+					851,
+					545,
+					166.4,
+					158,
+					5
+				],
+				[
+					121,
+					1043,
+					495,
+					52.4,
+					156,
+					5
+				],
+				[
+					151,
+					1112,
+					125,
+					52.4,
+					156,
+					5
+				],
+				[
+					181,
+					1165,
+					80,
+					52.4,
+					153,
+					5
+				],
+				[
+					211,
+					1176,
+					20,
+					11.35,
+					142,
+					4
+				]
+			],
+			"days": 227,
+			"death_causes": [
+				"lack of food",
+				"measles",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1176,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 100,
+			"strategy": "salt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 11.9,
+			"counts": {
+				"activities": 3,
+				"care": 0,
+				"empty_food_days": 10,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": -100,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 5,
+				"preservations": 0,
+				"rest_health": 24,
+				"rest_oxen": 28,
+				"rests": 49,
+				"shots": 0,
+				"trades": 5,
+				"travel_days": 109
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					285,
+					1265,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					618,
+					825,
+					223.4,
+					198,
+					5
+				],
+				[
+					91,
+					851,
+					545,
+					166.4,
+					158,
+					5
+				],
+				[
+					121,
+					1043,
+					495,
+					52.4,
+					156,
+					5
+				],
+				[
+					151,
+					1112,
+					125,
+					52.4,
+					156,
+					5
+				],
+				[
+					181,
+					1164,
+					0,
+					52.4,
+					111,
+					3
+				]
+			],
+			"days": 196,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1169,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 100,
+			"strategy": "no_hunt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 11.35,
+			"counts": {
+				"activities": 1,
+				"care": 2,
+				"empty_food_days": 5,
+				"empty_hunts": 11,
+				"hunts": 40,
+				"last_care": 19,
+				"meat_carried": 954,
+				"meat_food_units": 486,
+				"meat_obtained": 1190,
+				"oxen_slaughtered": 5,
+				"preservations": 24,
+				"rest_health": 21,
+				"rest_oxen": 28,
+				"rests": 48,
+				"shots": 65,
+				"trades": 6,
+				"travel_days": 111
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					251,
+					1263,
+					223.4,
+					200,
+					5
+				],
+				[
+					61,
+					621,
+					878,
+					223.4,
+					200,
+					5
+				],
+				[
+					91,
+					835,
+					612,
+					166.4,
+					200,
+					5
+				],
+				[
+					121,
+					1005,
+					157,
+					166.4,
+					198,
+					5
+				],
+				[
+					151,
+					1063,
+					262,
+					52.4,
+					197,
+					5
+				],
+				[
+					181,
+					1139,
+					126,
+					52.4,
+					195,
+					5
+				],
+				[
+					211,
+					1162,
+					70,
+					13.92,
+					185,
+					4
+				],
+				[
+					241,
+					1164,
+					48,
+					11.35,
+					157,
+					3
+				]
+			],
+			"days": 268,
+			"death_causes": [
+				"lack of food",
+				"measles",
+				"typhoid fever",
+				"cholera",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1166,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 100,
+			"strategy": "theft",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 10.19,
+			"counts": {
+				"care": 2,
+				"empty_food_days": 5,
+				"empty_hunts": 10,
+				"hunts": 37,
+				"last_care": 19,
+				"meat_carried": 973,
+				"meat_food_units": 495,
+				"meat_obtained": 973,
+				"oxen_slaughtered": 5,
+				"preservations": 24,
+				"rest_health": 26,
+				"rest_oxen": 17,
+				"rests": 42,
+				"shots": 60,
+				"trades": 13,
+				"travel_days": 124
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					253,
+					1263,
+					224.4,
+					200,
+					5
+				],
+				[
+					61,
+					638,
+					918,
+					224.4,
+					200,
+					5
+				],
+				[
+					91,
+					848,
+					452,
+					224.4,
+					200,
+					5
+				],
+				[
+					121,
+					975,
+					122,
+					224.4,
+					197,
+					5
+				],
+				[
+					151,
+					1061,
+					200,
+					224.4,
+					191,
+					5
+				],
+				[
+					181,
+					1065,
+					29,
+					166.68,
+					176,
+					5
+				],
+				[
+					211,
+					1081,
+					74,
+					70.48,
+					166,
+					3
+				],
+				[
+					241,
+					1104,
+					40,
+					12.76,
+					157,
+					3
+				],
+				[
+					271,
+					1126,
+					17,
+					10.19,
+					135,
+					3
+				]
+			],
+			"days": 277,
+			"death_causes": [
+				"exposure",
+				"exposure",
+				"typhoid fever",
+				"lack of food",
+				"cholera"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1126,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 100,
+			"strategy": "robbery",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"processed",
+				"processed",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 11.35,
+			"counts": {
+				"activities": 3,
+				"care": 0,
+				"empty_food_days": 4,
+				"empty_hunts": 5,
+				"hunts": 13,
+				"last_care": -100,
+				"meat_carried": 161,
+				"meat_food_units": 82,
+				"meat_obtained": 292,
+				"oxen_slaughtered": 5,
+				"preservations": 14,
+				"rest_health": 27,
+				"rest_oxen": 22,
+				"rests": 49,
+				"shots": 21,
+				"trades": 6,
+				"travel_days": 106
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					285,
+					1265,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					618,
+					825,
+					223.4,
+					198,
+					5
+				],
+				[
+					91,
+					851,
+					545,
+					166.4,
+					158,
+					5
+				],
+				[
+					121,
+					1043,
+					495,
+					52.4,
+					156,
+					5
+				],
+				[
+					151,
+					1112,
+					125,
+					52.4,
+					156,
+					5
+				],
+				[
+					181,
+					1165,
+					80,
+					52.4,
+					153,
+					5
+				],
+				[
+					211,
+					1176,
+					20,
+					11.35,
+					142,
+					4
+				]
+			],
+			"days": 226,
+			"death_causes": [
+				"lack of food",
+				"measles",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1176,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 100,
+			"strategy": "already_dead",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [
+				"killed"
+			],
+			"bodies": [
+				"processed"
+			],
+			"cash": 92.3,
+			"counts": {
+				"activities": 2,
+				"care": 0,
+				"empty_food_days": 0,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": -100,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 5,
+				"preservations": 10,
+				"rest_health": 94,
+				"rest_oxen": 1,
+				"rests": 94,
+				"shots": 0,
+				"trades": 10,
+				"travel_days": 199
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					240,
+					1328,
+					223.4,
+					197,
+					2
+				],
+				[
+					61,
+					602,
+					1148,
+					223.4,
+					197,
+					2
+				],
+				[
+					91,
+					766,
+					896,
+					223.4,
+					157,
+					2
+				],
+				[
+					121,
+					917,
+					716,
+					223.4,
+					155,
+					2
+				],
+				[
+					151,
+					1015,
+					506,
+					223.4,
+					155,
+					2
+				],
+				[
+					181,
+					1073,
+					326,
+					223.4,
+					155,
+					2
+				],
+				[
+					211,
+					1190,
+					146,
+					223.4,
+					153,
+					2
+				],
+				[
+					241,
+					1469,
+					237,
+					223.4,
+					149,
+					2
+				],
+				[
+					271,
+					1659,
+					90,
+					223.4,
+					148,
+					2
+				],
+				[
+					301,
+					1762,
+					106,
+					223.4,
+					146,
+					2
+				],
+				[
+					331,
+					1818,
+					126,
+					151.4,
+					146,
+					2
+				],
+				[
+					361,
+					1877,
+					96,
+					92.3,
+					144,
+					2
+				]
+			],
+			"days": 365,
+			"death_causes": [
+				"being shot by A"
+			],
+			"departures": 2,
+			"food": 72,
+			"incidents": [],
+			"loss_reason": "",
+			"miles": 1888,
+			"month": 8,
+			"outcome": "year_limit",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 100,
+			"strategy": "predation",
+			"survivors": 2,
+			"tales": 2,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 13.1,
+			"counts": {
+				"activities": 2,
+				"care": 0,
+				"empty_food_days": 5,
+				"empty_hunts": 5,
+				"hunts": 8,
+				"last_care": -100,
+				"meat_carried": 65,
+				"meat_food_units": 33,
+				"meat_obtained": 65,
+				"oxen_slaughtered": 5,
+				"preservations": 11,
+				"rest_health": 20,
+				"rest_oxen": 12,
+				"rests": 32,
+				"shots": 11,
+				"trades": 1,
+				"travel_days": 97
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					285,
+					1265,
+					184.2,
+					198,
+					5
+				],
+				[
+					61,
+					618,
+					825,
+					145.0,
+					198,
+					5
+				],
+				[
+					91,
+					851,
+					545,
+					48.8,
+					158,
+					5
+				],
+				[
+					121,
+					1038,
+					95,
+					13.1,
+					156,
+					5
+				],
+				[
+					151,
+					1097,
+					189,
+					13.1,
+					152,
+					5
+				]
+			],
+			"days": 178,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1115,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "mixed_paid",
+			"seed": 100,
+			"strategy": "dry",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 9170,
+			"wages_paid_cents": 15330
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 10.53,
+			"counts": {
+				"activities": 2,
+				"care": 0,
+				"empty_food_days": 5,
+				"empty_hunts": 5,
+				"hunts": 8,
+				"last_care": -100,
+				"meat_carried": 65,
+				"meat_food_units": 33,
+				"meat_obtained": 65,
+				"oxen_slaughtered": 5,
+				"preservations": 11,
+				"rest_health": 20,
+				"rest_oxen": 11,
+				"rests": 31,
+				"shots": 11,
+				"trades": 2,
+				"travel_days": 97
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					285,
+					1265,
+					184.2,
+					198,
+					5
+				],
+				[
+					61,
+					618,
+					825,
+					145.0,
+					198,
+					5
+				],
+				[
+					91,
+					851,
+					545,
+					48.8,
+					158,
+					5
+				],
+				[
+					121,
+					1038,
+					95,
+					13.1,
+					156,
+					5
+				],
+				[
+					151,
+					1103,
+					206,
+					13.1,
+					152,
+					5
+				]
+			],
+			"days": 179,
+			"death_causes": [
+				"exposure",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1120,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "mixed_paid",
+			"seed": 100,
+			"strategy": "salt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 9170,
+			"wages_paid_cents": 15330
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 13.1,
+			"counts": {
+				"activities": 2,
+				"care": 0,
+				"empty_food_days": 7,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": -100,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 5,
+				"preservations": 0,
+				"rest_health": 17,
+				"rest_oxen": 12,
+				"rests": 28,
+				"shots": 0,
+				"trades": 1,
+				"travel_days": 90
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					285,
+					1265,
+					184.2,
+					198,
+					5
+				],
+				[
+					61,
+					618,
+					825,
+					145.0,
+					198,
+					5
+				],
+				[
+					91,
+					851,
+					545,
+					48.8,
+					158,
+					5
+				],
+				[
+					121,
+					1038,
+					95,
+					13.1,
+					156,
+					5
+				]
+			],
+			"days": 149,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1072,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "mixed_paid",
+			"seed": 100,
+			"strategy": "no_hunt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 4935,
+			"wages_paid_cents": 15330
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 10.53,
+			"counts": {
+				"care": 2,
+				"empty_food_days": 5,
+				"empty_hunts": 5,
+				"hunts": 11,
+				"last_care": 19,
+				"meat_carried": 76,
+				"meat_food_units": 40,
+				"meat_obtained": 237,
+				"oxen_slaughtered": 5,
+				"preservations": 11,
+				"rest_health": 34,
+				"rest_oxen": 8,
+				"rests": 42,
+				"shots": 17,
+				"trades": 2,
+				"travel_days": 95
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					251,
+					1263,
+					184.2,
+					200,
+					5
+				],
+				[
+					61,
+					621,
+					878,
+					145.0,
+					200,
+					5
+				],
+				[
+					91,
+					835,
+					612,
+					48.8,
+					200,
+					5
+				],
+				[
+					121,
+					1015,
+					157,
+					13.1,
+					198,
+					5
+				],
+				[
+					151,
+					1017,
+					265,
+					13.1,
+					195,
+					4
+				],
+				[
+					181,
+					1062,
+					53,
+					13.1,
+					191,
+					4
+				]
+			],
+			"days": 196,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"cholera",
+				"lack of food"
+			],
+			"departures": 1,
+			"food": 0,
+			"incidents": [
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No travelers remain with the wagon. Departures and deaths are recorded separately in View Party.",
+			"miles": 1064,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "mixed_paid",
+			"seed": 100,
+			"strategy": "theft",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 4480,
+			"wages_paid_cents": 15330
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 9.73,
+			"counts": {
+				"care": 2,
+				"empty_food_days": 6,
+				"empty_hunts": 5,
+				"hunts": 8,
+				"last_care": 19,
+				"meat_carried": 65,
+				"meat_food_units": 33,
+				"meat_obtained": 65,
+				"oxen_slaughtered": 5,
+				"preservations": 11,
+				"rest_health": 14,
+				"rest_oxen": 15,
+				"rests": 28,
+				"shots": 11,
+				"trades": 1,
+				"travel_days": 92
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					253,
+					1263,
+					185.2,
+					200,
+					5
+				],
+				[
+					61,
+					638,
+					918,
+					146.0,
+					200,
+					5
+				],
+				[
+					91,
+					848,
+					452,
+					106.8,
+					200,
+					5
+				],
+				[
+					121,
+					975,
+					122,
+					57.8,
+					197,
+					5
+				],
+				[
+					151,
+					1061,
+					200,
+					18.6,
+					191,
+					5
+				]
+			],
+			"days": 171,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1065,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "mixed_paid",
+			"seed": 100,
+			"strategy": "robbery",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 2310,
+			"wages_paid_cents": 21210
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"processed",
+				"processed",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 10.53,
+			"counts": {
+				"activities": 2,
+				"care": 0,
+				"empty_food_days": 6,
+				"empty_hunts": 4,
+				"hunts": 6,
+				"last_care": -100,
+				"meat_carried": 61,
+				"meat_food_units": 31,
+				"meat_obtained": 61,
+				"oxen_slaughtered": 5,
+				"preservations": 11,
+				"rest_health": 20,
+				"rest_oxen": 11,
+				"rests": 31,
+				"shots": 7,
+				"trades": 2,
+				"travel_days": 97
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					285,
+					1265,
+					184.2,
+					198,
+					5
+				],
+				[
+					61,
+					618,
+					825,
+					145.0,
+					198,
+					5
+				],
+				[
+					91,
+					851,
+					545,
+					48.8,
+					158,
+					5
+				],
+				[
+					121,
+					1038,
+					95,
+					13.1,
+					156,
+					5
+				],
+				[
+					151,
+					1103,
+					206,
+					13.1,
+					152,
+					5
+				]
+			],
+			"days": 179,
+			"death_causes": [
+				"exposure",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1120,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "mixed_paid",
+			"seed": 100,
+			"strategy": "already_dead",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 9170,
+			"wages_paid_cents": 15330
+		},
+		{
+			"attacks": [
+				"killed"
+			],
+			"bodies": [
+				"processed"
+			],
+			"cash": 11.2,
+			"counts": {
+				"activities": 2,
+				"care": 0,
+				"empty_food_days": 0,
+				"empty_hunts": 3,
+				"hunts": 12,
+				"last_care": -100,
+				"meat_carried": 447,
+				"meat_food_units": 226,
+				"meat_obtained": 628,
+				"oxen_slaughtered": 5,
+				"preservations": 17,
+				"rest_health": 99,
+				"rest_oxen": 1,
+				"rests": 99,
+				"shots": 26,
+				"trades": 6,
+				"travel_days": 181
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					240,
+					1328,
+					197.5,
+					197,
+					2
+				],
+				[
+					61,
+					602,
+					1148,
+					184.9,
+					197,
+					2
+				],
+				[
+					91,
+					766,
+					896,
+					172.3,
+					157,
+					2
+				],
+				[
+					121,
+					917,
+					716,
+					156.55,
+					155,
+					2
+				],
+				[
+					151,
+					1015,
+					506,
+					143.95,
+					155,
+					2
+				],
+				[
+					181,
+					1073,
+					326,
+					131.35,
+					155,
+					2
+				],
+				[
+					211,
+					1190,
+					146,
+					115.6,
+					153,
+					2
+				],
+				[
+					241,
+					1469,
+					237,
+					103.0,
+					149,
+					2
+				],
+				[
+					271,
+					1659,
+					90,
+					90.4,
+					148,
+					2
+				],
+				[
+					301,
+					1762,
+					106,
+					77.8,
+					146,
+					2
+				],
+				[
+					331,
+					1821,
+					76,
+					11.2,
+					146,
+					2
+				],
+				[
+					361,
+					1837,
+					49,
+					11.2,
+					125,
+					2
+				]
+			],
+			"days": 365,
+			"death_causes": [
+				"being shot by A"
+			],
+			"departures": 2,
+			"food": 60,
+			"incidents": [],
+			"loss_reason": "",
+			"miles": 1841,
+			"month": 8,
+			"outcome": "year_limit",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "mixed_paid",
+			"seed": 100,
+			"strategy": "predation",
+			"survivors": 2,
+			"tales": 2,
+			"wages_owed_cents": 1890,
+			"wages_paid_cents": 15820
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 12.48,
+			"counts": {
+				"activities": 1,
+				"care": 0,
+				"empty_food_days": 5,
+				"empty_hunts": 8,
+				"hunts": 31,
+				"last_care": -100,
+				"meat_carried": 802,
+				"meat_food_units": 408,
+				"meat_obtained": 908,
+				"oxen_slaughtered": 5,
+				"preservations": 22,
+				"rest_health": 53,
+				"rest_oxen": 6,
+				"rests": 58,
+				"shots": 53,
+				"trades": 9,
+				"travel_days": 83
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					215,
+					1265,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					585,
+					785,
+					223.4,
+					198,
+					5
+				],
+				[
+					91,
+					769,
+					509,
+					166.4,
+					158,
+					5
+				],
+				[
+					121,
+					926,
+					214,
+					166.4,
+					155,
+					5
+				],
+				[
+					151,
+					993,
+					109,
+					166.4,
+					152,
+					5
+				],
+				[
+					181,
+					1013,
+					0,
+					108.68,
+					144,
+					4
+				],
+				[
+					211,
+					1016,
+					27,
+					12.48,
+					125,
+					4
+				]
+			],
+			"days": 236,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"dysentery",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1016,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "fragile",
+			"seed": 100,
+			"strategy": "dry",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 9.91,
+			"counts": {
+				"activities": 1,
+				"care": 0,
+				"empty_food_days": 3,
+				"empty_hunts": 6,
+				"hunts": 23,
+				"last_care": -100,
+				"meat_carried": 544,
+				"meat_food_units": 277,
+				"meat_obtained": 737,
+				"oxen_slaughtered": 5,
+				"preservations": 19,
+				"rest_health": 49,
+				"rest_oxen": 6,
+				"rests": 54,
+				"shots": 39,
+				"trades": 10,
+				"travel_days": 87
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					215,
+					1265,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					585,
+					785,
+					223.4,
+					198,
+					5
+				],
+				[
+					91,
+					769,
+					509,
+					166.4,
+					158,
+					5
+				],
+				[
+					121,
+					926,
+					219,
+					166.4,
+					155,
+					5
+				],
+				[
+					151,
+					979,
+					119,
+					166.4,
+					152,
+					5
+				],
+				[
+					181,
+					997,
+					0,
+					108.68,
+					144,
+					4
+				],
+				[
+					211,
+					1014,
+					1,
+					9.91,
+					130,
+					4
+				]
+			],
+			"days": 227,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1014,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "fragile",
+			"seed": 100,
+			"strategy": "salt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 24.65,
+			"counts": {
+				"activities": 1,
+				"care": 0,
+				"empty_food_days": 10,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": -100,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 5,
+				"preservations": 0,
+				"rest_health": 45,
+				"rest_oxen": 8,
+				"rests": 52,
+				"shots": 0,
+				"trades": 8,
+				"travel_days": 89
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					215,
+					1265,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					585,
+					785,
+					223.4,
+					198,
+					5
+				],
+				[
+					91,
+					769,
+					509,
+					166.4,
+					158,
+					5
+				],
+				[
+					121,
+					937,
+					224,
+					166.4,
+					155,
+					5
+				],
+				[
+					151,
+					991,
+					0,
+					125.9,
+					151,
+					4
+				]
+			],
+			"days": 180,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"dysentery"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1007,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "fragile",
+			"seed": 100,
+			"strategy": "no_hunt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 13.16,
+			"counts": {
+				"care": 3,
+				"empty_food_days": 5,
+				"empty_hunts": 5,
+				"hunts": 8,
+				"last_care": 123,
+				"meat_carried": 65,
+				"meat_food_units": 33,
+				"meat_obtained": 65,
+				"oxen_slaughtered": 5,
+				"preservations": 11,
+				"rest_health": 26,
+				"rest_oxen": 17,
+				"rests": 41,
+				"shots": 11,
+				"trades": 4,
+				"travel_days": 104
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					251,
+					1263,
+					223.4,
+					200,
+					5
+				],
+				[
+					61,
+					621,
+					848,
+					223.4,
+					200,
+					5
+				],
+				[
+					91,
+					840,
+					568,
+					166.4,
+					198,
+					5
+				],
+				[
+					121,
+					997,
+					118,
+					166.4,
+					198,
+					5
+				],
+				[
+					151,
+					1061,
+					230,
+					32.4,
+					197,
+					5
+				],
+				[
+					181,
+					1125,
+					138,
+					32.4,
+					194,
+					5
+				]
+			],
+			"days": 209,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1136,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "fragile",
+			"seed": 100,
+			"strategy": "theft",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 8.21,
+			"counts": {
+				"care": 2,
+				"empty_food_days": 4,
+				"empty_hunts": 8,
+				"hunts": 34,
+				"last_care": 17,
+				"meat_carried": 869,
+				"meat_food_units": 442,
+				"meat_obtained": 973,
+				"oxen_slaughtered": 5,
+				"preservations": 23,
+				"rest_health": 29,
+				"rest_oxen": 12,
+				"rests": 41,
+				"shots": 62,
+				"trades": 10,
+				"travel_days": 96
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					253,
+					1263,
+					224.4,
+					200,
+					5
+				],
+				[
+					61,
+					638,
+					893,
+					224.4,
+					200,
+					5
+				],
+				[
+					91,
+					814,
+					427,
+					224.4,
+					200,
+					5
+				],
+				[
+					121,
+					962,
+					196,
+					224.4,
+					199,
+					5
+				],
+				[
+					151,
+					1030,
+					91,
+					204.4,
+					196,
+					5
+				],
+				[
+					181,
+					1042,
+					14,
+					126.68,
+					183,
+					4
+				],
+				[
+					211,
+					1049,
+					43,
+					8.21,
+					170,
+					4
+				],
+				[
+					241,
+					1049,
+					0,
+					8.21,
+					133,
+					0
+				]
+			],
+			"days": 241,
+			"death_causes": [
+				"exposure",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1049,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "fragile",
+			"seed": 100,
+			"strategy": "robbery",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"processed",
+				"processed",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 10.46,
+			"counts": {
+				"activities": 1,
+				"care": 0,
+				"empty_food_days": 6,
+				"empty_hunts": 9,
+				"hunts": 34,
+				"last_care": -100,
+				"meat_carried": 966,
+				"meat_food_units": 490,
+				"meat_obtained": 972,
+				"oxen_slaughtered": 5,
+				"preservations": 23,
+				"rest_health": 56,
+				"rest_oxen": 6,
+				"rests": 61,
+				"shots": 58,
+				"trades": 9,
+				"travel_days": 81
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					215,
+					1265,
+					223.4,
+					198,
+					5
+				],
+				[
+					61,
+					585,
+					785,
+					223.4,
+					198,
+					5
+				],
+				[
+					91,
+					769,
+					509,
+					166.4,
+					158,
+					5
+				],
+				[
+					121,
+					926,
+					219,
+					166.4,
+					155,
+					5
+				],
+				[
+					151,
+					979,
+					119,
+					166.4,
+					152,
+					5
+				],
+				[
+					181,
+					997,
+					0,
+					108.68,
+					144,
+					4
+				],
+				[
+					211,
+					1002,
+					62,
+					10.46,
+					127,
+					4
+				],
+				[
+					241,
+					1002,
+					0,
+					10.46,
+					95,
+					4
+				]
+			],
+			"days": 243,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1002,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "fragile",
+			"seed": 100,
+			"strategy": "already_dead",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [
+				"killed"
+			],
+			"bodies": [
+				"processed"
+			],
+			"cash": 59.4,
+			"counts": {
+				"activities": 1,
+				"care": 0,
+				"empty_food_days": 0,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": -100,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 5,
+				"preservations": 10,
+				"rest_health": 134,
+				"rests": 134,
+				"shots": 0,
+				"trades": 11,
+				"travel_days": 158
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					223,
+					1328,
+					223.4,
+					197,
+					2
+				],
+				[
+					61,
+					535,
+					1088,
+					223.4,
+					197,
+					2
+				],
+				[
+					91,
+					759,
+					882,
+					223.4,
+					157,
+					2
+				],
+				[
+					121,
+					916,
+					702,
+					223.4,
+					155,
+					2
+				],
+				[
+					151,
+					962,
+					522,
+					203.4,
+					155,
+					2
+				],
+				[
+					181,
+					1023,
+					342,
+					203.4,
+					151,
+					2
+				],
+				[
+					211,
+					1102,
+					132,
+					203.4,
+					149,
+					2
+				],
+				[
+					241,
+					1327,
+					235,
+					203.4,
+					147,
+					2
+				],
+				[
+					271,
+					1588,
+					266,
+					203.4,
+					145,
+					2
+				],
+				[
+					301,
+					1628,
+					92,
+					203.4,
+					144,
+					2
+				],
+				[
+					331,
+					1662,
+					112,
+					131.4,
+					144,
+					2
+				],
+				[
+					361,
+					1702,
+					132,
+					59.4,
+					144,
+					2
+				]
+			],
+			"days": 365,
+			"death_causes": [
+				"being shot by A"
+			],
+			"departures": 2,
+			"food": 108,
+			"incidents": [],
+			"loss_reason": "",
+			"miles": 1714,
+			"month": 8,
+			"outcome": "year_limit",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "fragile",
+			"seed": 100,
+			"strategy": "predation",
+			"survivors": 2,
+			"tales": 2,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 18.15,
+			"counts": {
+				"activities": 1,
+				"care": 0,
+				"empty_food_days": 6,
+				"empty_hunts": 6,
+				"hunts": 49,
+				"last_care": -100,
+				"meat_carried": 3281,
+				"meat_food_units": 1648,
+				"meat_obtained": 9352,
+				"oxen_slaughtered": 5,
+				"preservations": 46,
+				"rest_health": 126,
+				"rests": 126,
+				"shots": 103,
+				"trades": 13,
+				"travel_days": 44
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					174,
+					1265,
+					223.4,
+					200,
+					5
+				],
+				[
+					61,
+					327,
+					815,
+					203.4,
+					200,
+					5
+				],
+				[
+					91,
+					482,
+					265,
+					203.4,
+					160,
+					5
+				],
+				[
+					121,
+					482,
+					191,
+					203.4,
+					117,
+					5
+				],
+				[
+					151,
+					492,
+					100,
+					160.65,
+					111,
+					5
+				],
+				[
+					181,
+					504,
+					100,
+					32.4,
+					111,
+					5
+				],
+				[
+					211,
+					506,
+					53,
+					18.15,
+					93,
+					5
+				],
+				[
+					241,
+					506,
+					69,
+					18.15,
+					65,
+					4
+				],
+				[
+					271,
+					506,
+					62,
+					18.15,
+					53,
+					4
+				],
+				[
+					301,
+					516,
+					18,
+					18.15,
+					35,
+					4
+				]
+			],
+			"days": 316,
+			"death_causes": [
+				"typhoid fever",
+				"lack of food",
+				"exposure",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 516,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "selected",
+			"seed": 100,
+			"strategy": "dry",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 10.55,
+			"counts": {
+				"activities": 1,
+				"care": 0,
+				"empty_food_days": 6,
+				"empty_hunts": 6,
+				"hunts": 50,
+				"last_care": -100,
+				"meat_carried": 3953,
+				"meat_food_units": 1983,
+				"meat_obtained": 9687,
+				"oxen_slaughtered": 5,
+				"preservations": 53,
+				"rest_health": 131,
+				"rests": 131,
+				"shots": 107,
+				"trades": 17,
+				"travel_days": 33
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					174,
+					1265,
+					223.4,
+					200,
+					5
+				],
+				[
+					61,
+					327,
+					815,
+					203.4,
+					200,
+					5
+				],
+				[
+					91,
+					482,
+					265,
+					203.4,
+					160,
+					5
+				],
+				[
+					121,
+					482,
+					239,
+					203.4,
+					117,
+					5
+				],
+				[
+					151,
+					482,
+					110,
+					189.15,
+					109,
+					5
+				],
+				[
+					181,
+					482,
+					70,
+					103.65,
+					100,
+					5
+				],
+				[
+					211,
+					482,
+					75,
+					32.4,
+					93,
+					5
+				],
+				[
+					241,
+					482,
+					55,
+					14.35,
+					66,
+					5
+				],
+				[
+					271,
+					482,
+					112,
+					10.55,
+					49,
+					5
+				],
+				[
+					301,
+					482,
+					44,
+					10.55,
+					34,
+					5
+				]
+			],
+			"days": 324,
+			"death_causes": [
+				"exposure",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 490,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "selected",
+			"seed": 100,
+			"strategy": "salt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 12.4,
+			"counts": {
+				"activities": 1,
+				"care": 0,
+				"empty_food_days": 11,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": -100,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 5,
+				"preservations": 0,
+				"rest_health": 80,
+				"rests": 80,
+				"shots": 0,
+				"trades": 12,
+				"travel_days": 39
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					174,
+					1265,
+					223.4,
+					200,
+					5
+				],
+				[
+					61,
+					327,
+					815,
+					203.4,
+					200,
+					5
+				],
+				[
+					91,
+					482,
+					265,
+					203.4,
+					160,
+					5
+				],
+				[
+					121,
+					489,
+					14,
+					183.4,
+					113,
+					5
+				],
+				[
+					151,
+					496,
+					70,
+					40.9,
+					111,
+					5
+				]
+			],
+			"days": 169,
+			"death_causes": [
+				"lack of food",
+				"exposure",
+				"exposure",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 506,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "selected",
+			"seed": 100,
+			"strategy": "no_hunt",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 11.35,
+			"counts": {
+				"activities": 1,
+				"care": 2,
+				"empty_food_days": 6,
+				"empty_hunts": 5,
+				"hunts": 9,
+				"last_care": 20,
+				"meat_carried": 75,
+				"meat_food_units": 38,
+				"meat_obtained": 176,
+				"oxen_slaughtered": 5,
+				"preservations": 11,
+				"rest_health": 37,
+				"rest_oxen": 10,
+				"rests": 46,
+				"shots": 13,
+				"trades": 6,
+				"travel_days": 106
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					225,
+					1249,
+					223.4,
+					196,
+					5
+				],
+				[
+					61,
+					621,
+					799,
+					223.4,
+					196,
+					5
+				],
+				[
+					91,
+					849,
+					549,
+					166.4,
+					194,
+					5
+				],
+				[
+					121,
+					1049,
+					484,
+					52.4,
+					194,
+					5
+				],
+				[
+					151,
+					1124,
+					204,
+					52.4,
+					193,
+					5
+				],
+				[
+					181,
+					1194,
+					118,
+					52.4,
+					188,
+					5
+				],
+				[
+					211,
+					1202,
+					0,
+					11.35,
+					176,
+					3
+				]
+			],
+			"days": 213,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"theft",
+					"noticed",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1202,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "selected",
+			"seed": 100,
+			"strategy": "theft",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"cash": 10.19,
+			"counts": {
+				"care": 2,
+				"empty_food_days": 5,
+				"empty_hunts": 9,
+				"hunts": 37,
+				"last_care": 20,
+				"meat_carried": 948,
+				"meat_food_units": 483,
+				"meat_obtained": 975,
+				"oxen_slaughtered": 5,
+				"preservations": 23,
+				"rest_health": 15,
+				"rest_oxen": 19,
+				"rests": 32,
+				"shots": 65,
+				"trades": 14,
+				"travel_days": 108
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					225,
+					1249,
+					224.4,
+					196,
+					5
+				],
+				[
+					61,
+					621,
+					769,
+					224.4,
+					196,
+					5
+				],
+				[
+					91,
+					821,
+					293,
+					224.4,
+					156,
+					5
+				],
+				[
+					121,
+					1001,
+					103,
+					224.4,
+					152,
+					5
+				],
+				[
+					151,
+					1029,
+					28,
+					224.4,
+					149,
+					5
+				],
+				[
+					181,
+					1042,
+					35,
+					108.96,
+					135,
+					4
+				],
+				[
+					211,
+					1058,
+					63,
+					12.76,
+					132,
+					4
+				],
+				[
+					241,
+					1059,
+					43,
+					10.19,
+					96,
+					3
+				]
+			],
+			"days": 253,
+			"death_causes": [
+				"exposure",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1059,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "selected",
+			"seed": 100,
+			"strategy": "robbery",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"processed",
+				"processed",
+				"processed",
+				"processed",
+				"lying"
+			],
+			"cash": 10.55,
+			"counts": {
+				"activities": 1,
+				"care": 0,
+				"empty_food_days": 6,
+				"empty_hunts": 6,
+				"hunts": 50,
+				"last_care": -100,
+				"meat_carried": 3903,
+				"meat_food_units": 1958,
+				"meat_obtained": 9687,
+				"oxen_slaughtered": 5,
+				"preservations": 51,
+				"rest_health": 131,
+				"rests": 131,
+				"shots": 107,
+				"trades": 17,
+				"travel_days": 32
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					174,
+					1265,
+					223.4,
+					200,
+					5
+				],
+				[
+					61,
+					327,
+					815,
+					203.4,
+					200,
+					5
+				],
+				[
+					91,
+					482,
+					265,
+					203.4,
+					160,
+					5
+				],
+				[
+					121,
+					482,
+					239,
+					203.4,
+					117,
+					5
+				],
+				[
+					151,
+					482,
+					110,
+					189.15,
+					109,
+					5
+				],
+				[
+					181,
+					482,
+					70,
+					103.65,
+					100,
+					5
+				],
+				[
+					211,
+					482,
+					75,
+					32.4,
+					93,
+					5
+				],
+				[
+					241,
+					482,
+					55,
+					14.35,
+					66,
+					5
+				],
+				[
+					271,
+					482,
+					112,
+					10.55,
+					49,
+					5
+				],
+				[
+					301,
+					482,
+					44,
+					10.55,
+					34,
+					5
+				]
+			],
+			"days": 325,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"incidents": [],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 486,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 1,
+			"profession": "farmer",
+			"roster": "selected",
+			"seed": 100,
+			"strategy": "already_dead",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [
+				"killed"
+			],
+			"bodies": [],
+			"cash": 223.4,
+			"counts": {
+				"activities": 1,
+				"care": 0,
+				"empty_food_days": 0,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": -100,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 0,
+				"preservations": 0,
+				"rest_health": 14,
+				"rests": 14,
+				"shots": 0,
+				"trades": 0,
+				"travel_days": 37
+			},
+			"curve": [
+				[
+					1,
+					20,
+					1690,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					278,
+					1341,
+					223.4,
+					199,
+					2
+				],
+				[
+					61,
+					522,
+					1131,
+					223.4,
+					199,
+					2
+				]
+			],
+			"days": 63,
+			"death_causes": [],
+			"departures": 3,
+			"food": 1119,
+			"incidents": [],
+			"loss_reason": "",
+			"miles": 544,
+			"month": 8,
+			"outcome": "save_failed",
+			"oxen": 6,
+			"profession": "farmer",
+			"roster": "selected",
+			"seed": 100,
+			"strategy": "predation",
+			"survivors": 2,
+			"tales": 3,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		}
+	],
+	"seconds": 21.383,
+	"seed_count": 1,
+	"seed_start": 100,
+	"source_hashes": {
+		"simulation/carrying.gd": "e257982c3e0aaf3ededdf319cbdbff48896005c7d5d50b76f51c28126209077c",
+		"simulation/crime_system.gd": "5c70cd934ee4c64e28e1b584911b0423f8b05d9a463752c0a3e25b96af587628",
+		"simulation/provisions.gd": "50b77020052d8c08607348d8044e56e4cbab9aabfb873457ed1e1687994686a4",
+		"simulation/trail_engine.gd": "15e52e76a500e692d80e3cef2172395d9304890f41e487874e85fb3530c0e59a",
+		"tests/balance_campaign.gd": "78cfe78839efe9c4e51d03ffdeb64744e73acba7e9b10f00983a6da029759730",
+		"tests/full_trail_balance.gd": "3d6d597fa0cebaf839556d3f088c400f61c59bd67fa4f166265a05b60da3b321",
+		"tests/outlaw_journeys.gd": "3417c883768c9809c189090a9f4b24692ffbbdd4ee60a385799ddadc2a82531e"
+	}
+}

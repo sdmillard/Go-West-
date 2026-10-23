@@ -92,11 +92,15 @@ func affect(member: Dictionary, delta: int, day: int, cause: String) -> void:
 	member.health = clampi(int(member.health) + delta, 0, 100)
 	if delta < 0 and cause == "crossing injuries" and member.health > 0:
 		member.history.append("Day %d · Suffered injuries during a river crossing." % day)
-	if member.health == 0:
-		member.alive = false
-		member.death_day = day
-		member.cause = cause
-		_record(member, day, "%s died from %s." % [member.name, cause])
+	if member.health == 0:kill(member,day,cause)
+
+func kill(member: Dictionary,day: int,cause: String) -> void:
+	if not is_active(member):return
+	member.health=0
+	member.alive=false
+	member.death_day=day
+	member.cause=cause
+	_record(member,day,"%s died from %s." % [member.name,cause])
 
 func affect_all(delta: int, day: int, cause: String) -> void:
 	for member in members:

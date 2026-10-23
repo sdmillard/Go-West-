@@ -38,6 +38,21 @@ func load_data(value: Variant) -> bool:
 	for chance in value.monthly_cold_chance:
 		if not _number(chance) or chance < 0 or chance > 1:
 			return _fail("Invalid seasonal chance")
+	if not value.get("seasonal") is Dictionary:return _fail("Missing seasonal rules")
+	var season: Dictionary=value.seasonal
+	for key in ["travel","rest_ox_recovery","working_strain"]:
+		if not season.get(key) is Array or season[key].size()!=12:return _fail("Expected twelve seasonal values")
+		for amount in season[key]:
+			if not _number(amount) or amount<0 or (key=="travel" and (amount<=0 or amount>1)) or (key!="travel" and (amount!=int(amount) or amount>4)):return _fail("Invalid seasonal value")
+	for key in ["winter_months","snow_months"]:
+		if not season.get(key) is Array or season[key].is_empty():return _fail("Missing seasonal months")
+		var seen: Array=[]
+		for month in season[key]:
+			if not _integer(month,1) or month>12 or month in seen:return _fail("Invalid seasonal month")
+			seen.append(month)
+	for key in ["winter_snow_chance","autumn_snow_chance"]:
+		if not _number(season.get(key)) or season[key]<0 or season[key]>1:return _fail("Invalid snow chance")
+	if not _number(season.get("upland_severity")) or season.upland_severity<1 or season.upland_severity>2 or not _integer(season.get("clothed_blizzard_damage"),0) or season.clothed_blizzard_damage>3:return _fail("Invalid upland storm rules")
 	var ids: Array = []
 	for entry in value.weather:
 		if not entry is Dictionary or not entry.get("id") is String or not entry.get("label") is String or entry.id in ids or not _integer(entry.get("weight"), 1) or not _number(entry.get("speed")) or entry.speed <= 0 or entry.speed > 1 or not _integer(entry.get("exposure"), 0) or not _integer(entry.get("wet"), 0):
@@ -52,6 +67,7 @@ func load_data(value: Variant) -> bool:
 			return _fail("Invalid trade lot")
 		ids.append(lot.item)
 	data = value.duplicate(true)
+	for key in ["winter_months","snow_months"]:data.seasonal[key]=data.seasonal[key].map(func(month):return int(month))
 	weather = data.weather[0].duplicate()
 	return true
 
@@ -83,7 +99,7 @@ func advance(month: int, terrain: String = "plains", region: Dictionary = {}) ->
 	var candidates: Array = []
 	var total := 0
 	for entry in data.weather:
-		if not cold and entry.id in ["cold", "blizzard"]:
+		if (not cold and entry.id in ["cold", "blizzard"]) or (entry.id=="blizzard" and month not in data.seasonal.snow_months):
 			continue
 		var candidate: Dictionary=entry.duplicate()
 		var multiplier: float=float(region.get("cold",1.0)) if entry.id in ["cold","blizzard"] else (float(region.get("wet",1.0)) if entry.id in ["rain","heavy_rain","fog"] else 1.0)
@@ -98,7 +114,8 @@ func advance(month: int, terrain: String = "plains", region: Dictionary = {}) ->
 			break
 	# Cold days preferentially become cold or snowy, rather than always clear.
 	if cold and rng.randf() < 0.6:
-		set_weather("blizzard" if month in [1, 2, 3, 11, 12] and rng.randf() < 0.15 else "cold")
+		var snow: float=float(data.seasonal.winter_snow_chance) if month in data.seasonal.winter_months else float(data.seasonal.autumn_snow_chance)
+		set_weather("blizzard" if month in data.seasonal.snow_months and rng.randf()<snow else "cold")
 	if not forced_weather.is_empty():
 		set_weather(forced_weather)
 	wet_ground = clampi(wet_ground - 1 + int(weather.wet), 0, 12)
@@ -106,11 +123,19 @@ func advance(month: int, terrain: String = "plains", region: Dictionary = {}) ->
 func team_factor(oxen: int) -> float:
 	return float(data.team_speed_factors[clampi(oxen, 0, 6)])
 
-func movement_factor(oxen: int, ox_health: int, fatigue: int, _food: int, terrain: String = "plains") -> float:
+func movement_factor(oxen: int, ox_health: int, fatigue: int, _food: int, terrain: String = "plains", month: int=6, region: Dictionary={}) -> float:
 	var team := team_factor(oxen)
 	var condition := 0.45 + 0.55 * clampf(float(ox_health) / 100.0, 0, 1)
 	var tired := 1.0 - clampf(float(fatigue) / 300.0, 0, 0.35)
-	return float(weather.speed) * team * condition * tired * (0.8 if terrain == "mountains" else (0.9 if terrain == "forest" else (0.95 if terrain == "desert" else 1.0)))
+	return float(seasonal(month,terrain,region).travel) * float(weather.speed) * team * condition * tired * (0.8 if terrain == "mountains" else (0.9 if terrain == "forest" else (0.95 if terrain == "desert" else 1.0)))
 
 func eligible(event: Dictionary, day: int) -> bool:
 	return day - int(last_events.get(event.id, -1000)) >= int(data.event_cooldown_days) and (not event.has("weather") or weather.id in event.weather)
+
+## Pure calendar preview. It never consumes randomness or grants recovery.
+func seasonal(month: int,terrain: String="plains",region: Dictionary={}) -> Dictionary:
+	var index: int=clampi(month,1,12)-1
+	var upland: bool=terrain=="mountains" or float(region.get("cold",1.0))>=1.4
+	var rules: Dictionary=data.seasonal
+	var winter: bool=month in rules.winter_months
+	return {"travel":maxf(0.35,1.0-(1.0-float(rules.travel[index]))*(float(rules.upland_severity) if upland else 1.0)),"rest_ox_recovery":int(rules.rest_ox_recovery[index]),"working_strain":int(rules.working_strain[index])+(1 if winter and upland else 0),"storm_damage":int(rules.clothed_blizzard_damage) if winter and weather.get("id","")=="blizzard" else 0,"winter":winter,"upland":upland}

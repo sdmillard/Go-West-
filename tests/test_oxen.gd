@@ -48,10 +48,10 @@ func run():
 	check(game.state.oxen==7 and is_equal_approx(game.state.money,cash-42.75) and game.state.day==1,"Trading companion discounts the replacement ox; one day and ordinary meals still pass")
 	game=outfit()
 	check(game.ox_slaughter_offer().meat==400 and game.ox_slaughter_offer().remaining==5,"Healthy spare ox offers four hundred usable pounds")
-	check(game.slaughter_ox() and game.state.oxen==5 and game.state.bullets==199 and game.state.food==985 and game.state.day==1,"One animal costs exactly one bullet and one day; all meat credited before fifteen-pound meal")
-	check(game.provisions.fresh_pounds(game.state.food)==385,"At-camp meat is fresh and bypasses hunting's one hundred pound cap")
-	check(game.supply_history[0].event=="slaughter_ox" and game.supply_history[0].changes.food==400,"Journal ledger separates full yield from ordinary meals")
-	check(game.preserve_meat(true) and game.provisions.preserved_pounds(game.state.food)==90,"Ox meat enters the existing salt-preservation model")
+	check(game.slaughter_ox() and game.state.oxen==5 and game.state.bullets==199 and game.state.food==785 and game.state.day==1,"One animal costs exactly one bullet and one day; all meat credited before fifteen-pound meal")
+	check(game.provisions.fresh_pounds(game.state.food)==185,"At-camp meat is fresh and bypasses hunting's one hundred pound cap")
+	check(game.supply_history[0].event=="slaughter_ox" and game.supply_history[0].changes.food==200,"Journal ledger separates full yield from ordinary meals")
+	check(game.preserve_meat(true) and game.provisions.preserved_pounds(game.state.food)==45,"Ox meat enters the existing salt-preservation model")
 	var store=Store.new()
 	var snapshot:=store.capture(game)
 	var copy=store.restore(JSON.parse_string(JSON.stringify(snapshot)))
@@ -59,11 +59,11 @@ func run():
 	game=outfit()
 	game.state.food=1800
 	game.slaughter_ox()
-	check(game.state.food==2185 and game.provisions.cargo(game.state)>2500,"Camp slaughter recovers all meat even if wagon becomes overloaded")
+	check(game.state.food==1985 and game.provisions.cargo(game.state)>2500,"Camp slaughter recovers all meat even if wagon becomes overloaded")
 	game=outfit()
 	game.state.food=0
 	game.slaughter_ox()
-	check(game.state.food==385 and game.state.party_size==5,"Same-day slaughter can feed a currently empty camp")
+	check(game.state.food==185 and game.state.party_size==5,"Same-day slaughter can feed a currently empty camp")
 	game=outfit()
 	game.state.ox_health=50
 	check(game.ox_slaughter_offer().meat==300,"Worn team condition lowers the coarse usable-yield estimate")

@@ -71,3 +71,5 @@ Four ordinary hires retained 111 of 120 companion slots across carpenter runs ve
 Hiring now has a historically plausible cash scale and a functioning trust advantage when financed, while four-person payrolls remain a substantial undertaking. Starting cash, bundled commodity definitions, route delays and survival policy still influence affordability. No outcome percentage is used as a target historical death rate. Rules signature: `cbceaf523eb55ce31ca786db0e9bbcd147fb3422010753e94214049f77c9292e`.
 
 
+
+Current follow-up: [Food costs and survival](HISTORICAL_COST_AND_SURVIVAL_AUDIT.md) changes departure food from six to five cents after a dated basket comparison. Starting funds remain unchanged; suggested cart now costs $375.60. The figures above remain the earlier audit record.

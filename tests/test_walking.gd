@@ -14,6 +14,8 @@ func _initialize():call_deferred("run")
 func outfit():
 	var game=Simulation.new(57,"classic",true)
 	game.depart("farmer",["A","B","C","D","E"],5,{"oxen":6,"food":600,"clothing":5,"bullet_boxes":10,"wheels":1,"axles":1,"tongues":1,"medicine":2,"salt":10})
+	for member in game.party_health.members:member.health=100
+	game.state.health=100
 	game.party_health.daily_onset_chance=0
 	game.survival.data.event_chance=0
 	game.survival.forced_weather="clear"

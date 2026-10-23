@@ -1,4 +1,5 @@
 {
+  "meat_food_per_lb": 0.5,
   "cargo_guideline_lb": 2500,
   "household_gear_lb": 450,
   "weights_lb": {

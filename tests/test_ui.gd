@@ -43,7 +43,7 @@ func run() -> void:
 	await process_frame
 	setup.depart_button.pressed.emit()
 	check(not setup.visible and screen.game.state.status == "traveling", "Valid setup enters travel screen")
-	check(screen.game.state.party[0] == "ADA" and is_equal_approx(screen.game.state.money,273.4) and screen.game.state.salt == 10 and screen.game.state.bullets == 200, "UI forwards names and supplies")
+	check(screen.game.state.party[0] == "ADA" and is_equal_approx(screen.game.state.money,279.4) and screen.game.state.salt == 10 and screen.game.state.bullets == 200, "UI forwards names and supplies")
 	check(screen.date_label.text.begins_with("AUG 1, 1848"), "UI shows selected departure month")
 	await capture("preview")
 	screen.travel_timer.wait_time = 0.01

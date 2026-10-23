@@ -2,6 +2,7 @@ extends SceneTree
 ## Repeatable development experiment through public engine actions. No game rules changed.
 const Simulation = preload("res://simulation/trail_engine.gd")
 const Store = preload("res://simulation/save_store.gd")
+const JourneyTrade=preload("res://tests/journey_trade_policy.gd")
 const PROFILES = [
 	{"id":"cautious", "pace":0, "rations":2, "rest":true, "hunt":true},
 	{"id":"meager", "pace":0, "rations":1, "rest":true, "hunt":true},
@@ -53,21 +54,23 @@ func hunt_outing(game, profile: Dictionary, aim: RandomNumberGenerator, count: D
 	count.shots += before_bullets-int(game.state.bullets)
 	count.meat_obtained += int(game.hunt.meat)
 	if game.hunt.meat == 0:count.empty_hunts+=1
+	var recovered: Dictionary=game.hunt_recovery()
 	var finished: bool = game.finish_hunt()
-	count.meat_carried += int(game.state.food)-before_food
+	count.meat_carried += int(recovered.get("mass",0))
+	count["meat_food_units"]=int(count.get("meat_food_units",0))+int(game.state.food)-before_food
 	return finished
 
 func _initialize() -> void:
 	call_deferred("run")
 
-func _try_care(game,count: Dictionary) -> bool:
+func _try_care(game,count: Dictionary,below: int=55) -> bool:
 	var wanted: int=6 if game.state.medicine>0 else 12
 	if not game.open_care():return false
 	for index in range(game.pending.choices.size()):
 		var choice: Dictionary=game.pending.choices[index]
 		if choice.get("care",0)!=wanted or not game.can_choose(index):continue
 		var member: Dictionary=game.party_health.members[choice.member_id]
-		if game.party_health.is_active(member) and not member.conditions.is_empty() and member.health<55:
+		if game.party_health.is_active(member) and not member.conditions.is_empty() and member.health<below:
 			count.care+=1
 			count.last_care=game.state.day
 			return game.choose(index)
@@ -79,7 +82,7 @@ func act(game, profile: Dictionary, aim: RandomNumberGenerator, count: Dictionar
 	var resupply_below := 90
 	var hunt_below: int = profile.get("hunt_below",90 if adaptive else 45)
 	if game.state.vehicle == "foot":
-		var food_mass: float = game.state.food-game.provisions.preserved_pounds(game.state.food)*(1.0-float(game.provisions.data.preservation.dried_weight))
+		var food_mass: float = game.state.food-game.provisions.tracked_food(game.state.food)+game.provisions.tracked_mass(game.state.food)
 		var food_room: float = game.provisions.capacity(game.state)-(game.provisions.cargo(game.state)-food_mass)
 		resupply_below=maxi(1,mini(30,floori(food_room*0.5)))
 		hunt_below=mini(hunt_below,resupply_below)
@@ -89,7 +92,7 @@ func act(game, profile: Dictionary, aim: RandomNumberGenerator, count: Dictionar
 	game.configure(profile.pace, ration)
 	if not game.pending.is_empty():
 		if game.pending.has("landmark"):
-			if hunting_study and game.state.day-count.last_care>=3 and _try_care(game,count):return true
+			if hunting_study and game.state.day-count.last_care>=3 and _try_care(game,count,int(profile.get("care_below",55))):return true
 			for index in range(game.pending.choices.size()):
 				var choice: Dictionary=game.pending.choices[index]
 				if choice.get("action","")!="activity" or not game.can_choose(index):continue
@@ -116,11 +119,7 @@ func act(game, profile: Dictionary, aim: RandomNumberGenerator, count: Dictionar
 				return game.choose(index)
 		# A player can raise toll money through the same service menu.
 		if adaptive and game.pending.has("landmark") and game.route.nodes[game.state.landmark].has("toll_dollars"):
-			if game.open_trade():
-				for index in [3,11,13,15,1,9]:
-					if game.can_choose(index):
-						count.trades += 1
-						return game.choose(index)
+			return JourneyTrade.raise_toll_money(game,count)
 		# An unresolved choice is a policy block, not a death or arrival.
 		return false
 	if game.state.oxen == 0 and game.state.vehicle != "foot":
@@ -146,7 +145,7 @@ func act(game, profile: Dictionary, aim: RandomNumberGenerator, count: Dictionar
 				return game.choose(0)
 			game.choose(game.pending.choices.size()-1)
 			if not game.pending.is_empty() and not game.pending.has("landmark"):return true
-	if hunting_study and game.state.day-count.last_care >= 3 and _try_care(game,count):return true
+	if hunting_study and game.state.day-count.last_care >= 3 and _try_care(game,count,int(profile.get("care_below",55))):return true
 	if profile.hunt and game.state.food < hunt_below and game.state.bullets > 0:
 		if profile.get("preserve","") == "salt" and game.state.salt < 5 and game.state.money >= 12:
 			if game.open_trade():
@@ -161,7 +160,10 @@ func act(game, profile: Dictionary, aim: RandomNumberGenerator, count: Dictionar
 	if hunting_study:
 		for member in game.party_health.members:
 			if game.party_health.is_active(member):worst=mini(worst,int(member.health))
-	if profile.rest and (worst < 70 or game.state.fatigue > 50 or (game.state.vehicle!="foot" and game.state.ox_health<65)) and game.state.food >= game.state.party_size * (ration+1):
+	if profile.rest and (worst < int(profile.get("rest_below",70)) or game.state.fatigue > 50 or (game.state.vehicle!="foot" and game.state.ox_health<65)) and game.state.food >= game.state.party_size * (ration+1):
+		for reason in ["health","fatigue","oxen"]:
+			var triggered: bool=worst<int(profile.get("rest_below",70)) if reason=="health" else (game.state.fatigue>50 if reason=="fatigue" else game.state.vehicle!="foot" and game.state.ox_health<65)
+			if triggered:count["rest_"+reason]=int(count.get("rest_"+reason,0))+1
 		count.rests += 1
 		return game.rest()
 	return game.travel()

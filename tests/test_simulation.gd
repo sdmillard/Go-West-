@@ -28,7 +28,7 @@ func _initialize() -> void:
 	var names := ["Ada", "Sam", "Jo", "Lee", "Pat"]
 	check(setup_game.state.status == "outfitting" and not setup_game.travel() and not setup_game.rest(), "Setup blocks time advancement")
 	var quote: Dictionary = setup_game.outfitter.quote("farmer", cart)
-	check(quote.valid and quote.total_cents == 31600 and quote.remaining_cents == 28400, "600 lb fixture outfit totals $316 with $284 remaining")
+	check(quote.valid and quote.total_cents == 31000 and quote.remaining_cents == 29000, "600 lb fixture outfit totals $310 with $290 remaining")
 	var setup_before: Dictionary = setup_game.state.duplicate(true)
 	var original_rng: int = setup_game.rng.state
 	var expensive := cart.duplicate()
@@ -50,12 +50,12 @@ func _initialize() -> void:
 	check(setup_game.state == setup_before and setup_game.rng.state == original_rng, "Rejected setups preserve state and RNG")
 	cart.food = 601
 	check(setup_game.depart("farmer", names, 8, cart), "Valid departure accepted")
-	check(is_equal_approx(setup_game.state.money, 283.94) and setup_game.state.bullets == 200 and setup_game.state.parts == 3, "Cents, ammunition boxes and typed parts accounted")
+	check(is_equal_approx(setup_game.state.money, 289.95) and setup_game.state.bullets == 200 and setup_game.state.parts == 3, "Cents, ammunition boxes and typed parts accounted")
 	check(setup_game.calendar().month == 8 and setup_game.calendar().day == 1, "Chosen departure month drives calendar")
 	names[0] = "Changed"
 	cart.food = 0
 	check(setup_game.state.party[0] == "Ada" and setup_game.state.food == 601, "Caller cannot mutate committed inventory or names")
-	check(not setup_game.depart("banker", names, 3, cart) and is_equal_approx(setup_game.state.money, 283.94), "Departure cannot be charged twice")
+	check(not setup_game.depart("banker", names, 3, cart) and is_equal_approx(setup_game.state.money, 289.95), "Departure cannot be charged twice")
 	setup_game.travel()
 	setup_game.travel()
 	check(setup_game.state.food == 571 and setup_game.state.rations == 2 and setup_game.state.pace == 0, "Departure starts steady and filling; consumes 15 lb/day")
@@ -71,7 +71,7 @@ func _initialize() -> void:
 		else:
 			setup_game.choose(0)
 	setup_game.choose(0)
-	check(is_equal_approx(setup_game.state.money, 282.94), "Period ferry payment preserves cents")
+	check(is_equal_approx(setup_game.state.money, 288.95), "Period ferry payment preserves cents")
 	for occupation in ["banker", "carpenter", "farmer"]:
 		for seed_value in range(20):
 			var outfitted = Simulation.new(seed_value, "classic", true, "platte")

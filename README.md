@@ -6,6 +6,14 @@ A growing Oregon Trail-inspired game in **Godot 4 / GDScript**. Lead five travel
 
 [Historically scaled wages and economy](docs/HISTORICAL_ECONOMY.md) now distinguish cash plus party food from unboarded labor, with period price anchors and an explicit list of remaining abstractions.
 
+[Food value and hauling](docs/FOOD_VALUE_AND_HAULING.md) separate food units from meat weight and make hunting, walking and carried loot depend on health, injuries and willing helpers.
+
+[Seasonal pressure](docs/SEASONAL_PRESSURE.md) now makes autumn delays and winter roads, grazing and blizzards consequential, with warnings before long rests.
+
+The [food-cost investigation and matched survival diagnostic](docs/HISTORICAL_COST_AND_SURVIVAL_AUDIT.md) records the five-cent departure food estimate, unchanged starting funds and remaining calibration work.
+
+The [historical balance baseline](docs/HISTORICAL_BALANCE_BASELINE.md) compares the current food, travel, team and money rules with dated evidence before the full balance campaign.
+
 The [crime, cannibalism and survival balance roadmap](docs/CRIME_AND_CANNIBALISM_ROADMAP.md) defines the next implementation sequence, acceptance gates and final balance campaign.
 
 The [first store action slice](docs/STORE_CRIME_SLICE.md) is playable at Fort Bridger. [Claude handoff](docs/CLAUDE_HANDOFF.md) records the tested checkpoint and remaining roadmap.

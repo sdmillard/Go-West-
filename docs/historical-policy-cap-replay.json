@@ -1,0 +1,125 @@
+{
+	"counts": {
+		"activities": 2,
+		"care": 0,
+		"empty_food_days": 7,
+		"empty_hunts": 3,
+		"hunts": 15,
+		"last_care": -100,
+		"meat_carried": 780,
+		"meat_obtained": 844,
+		"oxen_slaughtered": 0,
+		"preservations": 10,
+		"rests": 37,
+		"shots": 34,
+		"trade_waits": 6,
+		"trades": 10,
+		"travel_days": 138
+	},
+	"day": 254,
+	"miles": 1848,
+	"outcome": "lost",
+	"recent_journal": [
+		"Leaving Barlow Road / Mount Hood.",
+		"The party takes stock before continuing.",
+		"Day 254 · B died from lack of food.",
+		"Day 254 · C died from lack of food.",
+		"Day 254 · E died from lack of food.",
+		"Day 254 · Cold wind. Team condition good; resting."
+	],
+	"setup": "Former six-cent departure quote only; farmer, April, four oxen, dry, seed0. Other current rules unchanged. This is an explicit historical setup replay, not a live rule change.",
+	"survivors": 0,
+	"toll_trace": [
+		{
+			"cash": 1.3,
+			"day": 242,
+			"food": 59,
+			"party": 5,
+			"pending": "stop_barlow_pass"
+		},
+		{
+			"cash": 2.3,
+			"day": 243,
+			"food": 49,
+			"party": 5,
+			"pending": "stop_barlow_pass"
+		},
+		{
+			"cash": 3.3,
+			"day": 244,
+			"food": 39,
+			"party": 5,
+			"pending": "stop_barlow_pass"
+		},
+		{
+			"cash": 3.3,
+			"day": 245,
+			"food": 29,
+			"party": 5,
+			"pending": "stop_barlow_pass"
+		},
+		{
+			"cash": 3.3,
+			"day": 246,
+			"food": 19,
+			"party": 5,
+			"pending": "stop_barlow_pass"
+		},
+		{
+			"cash": 3.3,
+			"day": 247,
+			"food": 9,
+			"party": 5,
+			"pending": "stop_barlow_pass"
+		},
+		{
+			"cash": 3.3,
+			"day": 248,
+			"food": 0,
+			"party": 5,
+			"pending": "stop_barlow_pass"
+		},
+		{
+			"cash": 3.3,
+			"day": 249,
+			"food": 0,
+			"party": 5,
+			"pending": "stop_barlow_pass"
+		},
+		{
+			"cash": 3.3,
+			"day": 250,
+			"food": 0,
+			"party": 5,
+			"pending": "stop_barlow_pass"
+		},
+		{
+			"cash": 4.3,
+			"day": 251,
+			"food": 0,
+			"party": 4,
+			"pending": "stop_barlow_pass"
+		},
+		{
+			"cash": 5.3,
+			"day": 252,
+			"food": 0,
+			"party": 3,
+			"pending": "stop_barlow_pass"
+		},
+		{
+			"cash": 6.3,
+			"day": 253,
+			"food": 0,
+			"party": 3,
+			"pending": "stop_barlow_pass"
+		},
+		{
+			"cash": 0.9,
+			"day": 254,
+			"food": 0,
+			"party": 0,
+			"pending": ""
+		}
+	]
+}

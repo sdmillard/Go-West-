@@ -45,9 +45,10 @@ static func quote(game,cart: Dictionary,from_cache: bool=false) -> Dictionary:
 		remaining-=take
 	var pack:=Provisions.new()
 	pack.data=game.provisions.data.duplicate(true)
+	pack.carriers=game.party_health.members
 	pack.fresh.assign(carried)
 	var inventory:=selected.duplicate(true)
-	inventory.merge({"vehicle":"foot","party_size":game.state.party_size})
+	inventory.merge({"vehicle":"foot","party_size":game.state.party_size,"remains_lb":int(game.state.get("remains_lb",0))})
 	var cargo: float=pack.cargo(inventory)
 	var capacity: float=pack.capacity(inventory)
 	result.merge({"valid":cargo<=capacity,"message":"Ready to walk. Money, tools and surviving oxen stay with you." if cargo<=capacity else "Reduce your pack to the walking carry limit.","cargo_lb":cargo,"capacity_lb":capacity,"inventory":selected,"carried":carried,"stored":stored,"stock":stock},true)
@@ -143,5 +144,6 @@ static func valid(value: Variant,game,day: int) -> bool:
 			var count=batch.get(field)
 			if (not count is int and not count is float) or not is_finite(float(count)) or count!=floor(count) or count<1 or count>1000100:return false
 		if batch.has("preserved") and not batch.preserved is bool:return false
+		if not Provisions.new().valid_mass_ratio(batch):return false
 		pounds+=int(batch.pounds)
 	return pounds<=value.inventory.food

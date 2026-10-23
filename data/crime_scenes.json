@@ -43,7 +43,7 @@
     }
   },
   "remains": {
-    "note": "Authored tuning. A wrapped adult body is counted as 150 lb of cargo; at most two ride with the party. Burying or opening a grave takes a day. A stranger killed by the party may carry a little money. Companions close to someone whose grave is opened take it as a grievous wrong; others mind less, and the callous not at all. Butchering takes a day and yields 40 ration-lb of meat, a deliberately modest game value with no claim to anatomical accuracy; it spoils and dries like other meat. In secret, each companion has a 35% chance to see it. Someone served it without being told has an 8% chance each day to find out.",
+    "note": "Authored tuning. A wrapped adult body is counted as 150 lb of cargo; at most two ride with the party. Burying or opening a grave takes a day. A stranger killed by the party may carry a little money. Companions close to someone whose grave is opened take it as a grievous wrong; others mind less, and the callous not at all. Butchering takes a day and yields 40 physical lb of meat, valued by the ordinary meat food conversion, a deliberately modest game value with no claim to anatomical accuracy; it spoils and dries like other meat. In secret, each companion has a 35% chance to see it. Someone served it without being told has an 8% chance each day to find out.",
     "body_lb": 150,
     "carry_limit": 2,
     "bury_days": 1,
@@ -82,7 +82,8 @@
       "escape_injury": 0.25,
       "injury_damage": 15,
       "seized_risk_low": 0.12,
-      "seized_risk_high": 0.3
+      "seized_risk_high": 0.3,
+      "wagon_access": true
     },
     "fort_kearny": {
       "kind": "fort",
@@ -123,7 +124,8 @@
         "note": "Authored tuning. After a party escapes the post, a few soldiers may ride after it for several days, once, while any are left who are not the commissary sergeant.",
         "days": 4,
         "daily": 0.35
-      }
+      },
+      "wagon_access": false
     },
     "fort_laramie": {
       "kind": "store",
@@ -152,7 +154,8 @@
       "shot_fatal": 0.5,
       "escape_capture": 0.16,
       "escape_injury": 0.3,
-      "injury_damage": 20
+      "injury_damage": 20,
+      "wagon_access": true
     },
     "fort_bridger": {
       "kind": "store",
@@ -177,7 +180,8 @@
       "shot_fatal": 0.5,
       "escape_capture": 0.12,
       "escape_injury": 0.3,
-      "injury_damage": 20
+      "injury_damage": 20,
+      "wagon_access": true
     },
     "fort_hall": {
       "kind": "store",
@@ -202,7 +206,8 @@
       "shot_fatal": 0.5,
       "escape_capture": 0.14,
       "escape_injury": 0.3,
-      "injury_damage": 20
+      "injury_damage": 20,
+      "wagon_access": true
     },
     "fort_boise": {
       "kind": "store",
@@ -227,7 +232,8 @@
       "shot_fatal": 0.5,
       "escape_capture": 0.12,
       "escape_injury": 0.3,
-      "injury_damage": 20
+      "injury_damage": 20,
+      "wagon_access": true
     },
     "barlow_pass": {
       "kind": "toll",
@@ -248,7 +254,8 @@
       "shot_fatal": 0.5,
       "escape_capture": 0.1,
       "escape_injury": 0.25,
-      "injury_damage": 15
+      "injury_damage": 15,
+      "wagon_access": true
     },
     "passing_traders": {
       "kind": "traders",
@@ -277,7 +284,8 @@
       "shot_fatal": 0.5,
       "escape_capture": 0.08,
       "escape_injury": 0.3,
-      "injury_damage": 20
+      "injury_damage": 20,
+      "wagon_access": true
     },
     "passing_emigrants": {
       "kind": "emigrants",
@@ -313,7 +321,8 @@
       "escape_injury": 0.4,
       "injury_damage": 25,
       "every_days": 7,
-      "window_days": 2
+      "window_days": 2,
+      "wagon_access": true
     }
   }
 }

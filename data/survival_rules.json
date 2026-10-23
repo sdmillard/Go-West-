@@ -1,4 +1,69 @@
 {
+  "seasonal": {
+  "travel": [
+    0.7,
+    0.75,
+    0.9,
+    0.97,
+    1,
+    1,
+    1,
+    1,
+    0.97,
+    0.9,
+    0.8,
+    0.7
+  ],
+  "rest_ox_recovery": [
+    2,
+    2,
+    3,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    3,
+    2,
+    2
+  ],
+  "working_strain": [
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1
+  ],
+  "winter_months": [
+    11,
+    12,
+    1,
+    2
+  ],
+  "snow_months": [
+    1,
+    2,
+    3,
+    4,
+    9,
+    10,
+    11,
+    12
+  ],
+  "upland_severity": 1.5,
+  "winter_snow_chance": 0.3,
+  "autumn_snow_chance": 0.08,
+  "clothed_blizzard_damage": 1,
+  "note": "Authored seasonal ground, forage and storm pressure, not reconstructed1848 climate. Winter is costly but has no automatic loss date."
+},
   "team_speed_factors": [0, 0.25, 0.5, 0.75, 1.0, 1.05, 1.1],
   "pace_miles": [
     22,
