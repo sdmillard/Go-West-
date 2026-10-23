@@ -111,7 +111,7 @@ func _initialize() -> void:
 		var floating: float = crossing.pending.choices[1].risk
 		check((ford < floating) if stage == "low" else (ford > floating), "Water stage changes relative crossing risk: " + stage)
 	# The southern Green River crossing had paid ferries (mountain men from 1843, Mormon rafts from 1847); Greenwood's upper crossing did not until 1849.
-	check(not route.nodes.greenwood_cutoff.has("ferry_dollars"), "Greenwood's upper Green River crossing has no 1848 ferry")
+	check(not Route.new().nodes.greenwood_cutoff.has("ferry_dollars"), "Greenwood's upper Green River crossing has no 1848 ferry")
 	for stage in ["low", "high"]:
 		var green = Simulation.new(5, "classic", true)
 		green.state.status = "traveling"
