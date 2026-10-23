@@ -138,6 +138,7 @@ func valid_menu(menu: Dictionary, game) -> bool:
 		if choice.get("action","")=="activity" and (choice.get("activity","")!=menu.get("landmark","") or not game.context.data.activities.get(choice.get("activity",""),{}).has("kind") or not choice.get("result") is String):return false
 		if choice.has("market_key")!=choice.has("stock_limit"):return false
 		if choice.has("market_key") and (not choice.market_key is String or choice.market_key.length()>128 or not integer(choice.get("stock_limit"),1,8)):return false
+		if choice.has("visit_key") and (not choice.visit_key is String or choice.visit_key.length()>128 or not choice.visit_key.ends_with("|visit") or not choice.has("effects") or int(choice.effects.get("days",0))!=1):return false
 		if choice.has("text") and not choice.text is String:return false
 		if choice.has("method") and choice.method not in ["ford", "float", "ferry", "seized", "swim", "wade"]:
 			return false

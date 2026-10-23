@@ -131,8 +131,13 @@ func run() -> void:
 	var food: int = game.state.food
 	var day: int = game.state.day
 	game.choose(0)
-	check(game.state.money == cash - 14.25 and game.state.food == food + 50 - 15 and game.state.day == day + 1, "Trading companion's resupply discount charges money, inventory and one day's rations once")
+	check(game.state.money == cash - 17.1 and game.state.food == food + 50 - 15 and game.state.day == day + 1, "Trading companion's discount on the passing traders' markup charges money, inventory and one day's rations once")
 	check(game.pending.landmark == landmark.landmark, "Trading returns to the unresolved river stop")
+	game.open_trade()
+	day = game.state.day
+	food = game.state.food
+	game.choose(0)
+	check(game.state.day == day and game.state.food == food + 50, "Further trades on the same visit to passing traders take no extra day or meals")
 	game.open_trade()
 	game.state.money = 0
 	var before: Dictionary = game.state.duplicate(true)

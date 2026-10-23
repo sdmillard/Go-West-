@@ -32,6 +32,7 @@ func run():
     var game=outfit()
     var rng_before: int=game.rng.state
     check(game.context.market(game).available and game.context.market(game)==game.context.market(game) and game.rng.state==rng_before,"Inspecting opportunity neither rerolls nor spends RNG")
+    var start_day: int=game.state.day
     for purchase in range(3):
         check(game.open_trade() and game.can_choose(0),"Initial passing stock allows purchase %d" % purchase)
         game.choose(0)
@@ -42,7 +43,8 @@ func run():
     game.open_trade()
     check(not game.can_choose(0),"Reopening trader cannot refill exhausted stock")
     game.choose(game.pending.choices.size()-1)
-    game.rest()
+    check(game.state.day==start_day+1,"The first trade with passing traders costs the visit's one day; later trades cost none")
+    while game.context.market(game).available:game.rest()
     game.open_trade()
     check(game.pending.title=="No traders nearby" and game.pending.choices[0].effects.days==1,"Outside the window, trading offers waiting rather than an instant store")
     var day: int=game.state.day
@@ -73,6 +75,19 @@ func run():
         game.choose(0)
         game.open_trade()
     check(not game.can_choose(0),"Post inventory does not regenerate by reopening or spending days")
+    game=outfit()
+    game.state.next_landmark="fort_hall"
+    game._arrive_landmark()
+    var counter: Dictionary=game.post_store()
+    check(counter.days==1 and counter.rows[0].item=="food" and counter.rows[0].can_buy==8,"The post's store counter lists its stock and charges a day for the visit")
+    check(not game.post_quote({"food":9}).valid and not game.post_quote({"clothing":-6}).valid and not game.post_quote({}).valid,"The counter refuses more than the stock, more than the party holds, or an empty basket")
+    var visit_day: int=game.state.day
+    var visit_cash: float=game.state.money
+    check(game.post_checkout({"food":2,"oxen":1,"clothing":-1}) and game.state.day==visit_day+1 and is_equal_approx(game.state.money,visit_cash-76-57.71+5),"One settlement moves a whole basket and costs one day")
+    check(game.post_checkout({"bullets":1}) and game.state.day==visit_day+1 and game.post_store().rows[0].can_buy==6,"Further settlements on the same visit take no time, and stock stays spent")
+    var counter_save: Dictionary=store.capture(game)
+    var counter_copy=store.restore(JSON.parse_string(JSON.stringify(counter_save)))
+    check(counter_copy!=null and counter_copy.post_store()==game.post_store(),"Counter stock and the paid visit round-trip through a save")
     game=outfit()
     game.state.next_landmark="kansas_river"
     game._arrive_landmark()

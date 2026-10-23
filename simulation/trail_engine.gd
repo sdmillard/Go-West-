@@ -661,8 +661,24 @@ func open_trade() -> bool:
 	if offer.post and crime.refuses(self,str(state.landmark)):return _service_menu("The post will not trade",crime.news_text(self,str(state.landmark)),[])
 	if not offer.available:
 		return _service_menu("No traders nearby","No trading party is available today. Waiting costs a day and meals; another trader may not arrive immediately.",[{"label":"Wait and watch for traders · 1 day","effects":{"days":1},"result":"Waited for passing traders. Check again or continue along the road."}])
+	var at_post: bool=_at_post()
+	var options: Array=_trade_options(offer,at_post)
+	for choice in options:choice.erase("lot")
+	var days: int=context.trade_days(offer)
+	var rumor: String=crime.news_text(self,str(state.landmark)) if at_post else ""
+	var terms: String=("The first trade costs a day and meals; further trades at this stop take no extra time." if days>0 else "You have spent the day here already; further trades take no extra time.")
+	if not at_post:
+		var markup: int=roundi((float(context.data.passing_price_markup)-1.0)*100.0)
+		terms=("Their camp is off the road: the first trade costs a day and meals, and further trades while they are nearby take no extra time." if days>0 else "You are camped with them already; further trades take no extra time.")+" Their prices run %d%% above the posts." % markup
+	return _service_menu("Trading post" if at_post else "Passing traders", "Stock and buying demand are limited. Regional prices apply. "+terms+(" Your trading companion negotiated 5% off cash purchases." if characters.available(self,"Trading") else "")+(" "+rumor if not rumor.is_empty() else ""), options)
+
+func _at_post() -> bool:
+	return not pending.is_empty() and pending.has("landmark") and route.nodes[state.landmark].get("trade_bulk",false)
+
+## Every trade on offer here: a buy and a sell choice per lot (plus barter with passing traders), priced and stock-limited.
+## A post sells staple food by the 200 lb barrel-and-sack lot. The first transaction of a visit carries its day.
+func _trade_options(offer: Dictionary,at_post: bool) -> Array:
 	var options: Array = []
-	var at_post: bool = not pending.is_empty() and pending.has("landmark") and route.nodes[state.landmark].get("trade_bulk",false)
 	var lots: Array = survival.data.trade_lots.duplicate(true)
 	for lot in lots:
 		lot.buy_cents=roundi(float(lot.buy_cents)*float(offer.price))
@@ -673,22 +689,103 @@ func open_trade() -> bool:
 		lots[0].sell_cents = 2000
 	if characters.available(self,"Trading"):
 		for lot in lots:lot.buy_cents=maxi(1,roundi(lot.buy_cents*characters.benefits.trade_buy_factor))
+	var days: int=context.trade_days(offer)
+	var when: String=", 1 day" if days>0 else ""
 	for lot in lots:
 		if lot.item == "salt":continue # Preserve the existing barter offer order.
 		var cost := float(lot.buy_cents) / 100.0
 		var payment := float(lot.sell_cents) / 100.0
-		options.append({"label": "Buy %s · $%.2f, 1 day" % [lot.label, cost], "requires": {"money": cost}, "effects": {"money": -cost, lot.item: lot.amount, "days": 1}, "result": "Bought " + lot.label + "."})
-		options.append({"label": "Sell %s · $%.2f, 1 day" % [lot.label, payment], "requires": {lot.item: lot.amount}, "effects": {"money": payment, lot.item: -lot.amount, "days": 1}, "result": "Sold " + lot.label + "."})
-	options.append({"label": "Trade 1 clothing set for 40 lb food · 1 day", "requires": {"clothing": 1}, "effects": {"clothing": -1, "food": 40, "days": 1}, "result": "Traded a clothing set for food."})
-	options.append({"label": "Trade 30 lb food for 1 care kit · 1 day", "requires": {"food": 30}, "effects": {"food": -30, "medicine": 1, "days": 1}, "result": "Traded food for a care kit."})
-	options.append({"label": "Trade 100 lb food for 1 ox · 1 day", "requires": {"food": 100}, "effects": {"food": -100, "oxen": 1, "days": 1}, "result": "Traded food for an ox."})
+		options.append({"label": "Buy %s · $%.2f%s" % [lot.label, cost, when], "lot": lot, "requires": {"money": cost}, "effects": {"money": -cost, lot.item: lot.amount, "days": days}, "result": "Bought " + lot.label + "."})
+		options.append({"label": "Sell %s · $%.2f%s" % [lot.label, payment, when], "lot": lot, "requires": {lot.item: lot.amount}, "effects": {"money": payment, lot.item: -lot.amount, "days": days}, "result": "Sold " + lot.label + "."})
+	if not at_post:
+		options.append({"label": "Trade 1 clothing set for 40 lb food" + when.replace(",", " ·"), "requires": {"clothing": 1}, "effects": {"clothing": -1, "food": 40, "days": days}, "result": "Traded a clothing set for food."})
+		options.append({"label": "Trade 30 lb food for 1 care kit" + when.replace(",", " ·"), "requires": {"food": 30}, "effects": {"food": -30, "medicine": 1, "days": days}, "result": "Traded food for a care kit."})
+		options.append({"label": "Trade 100 lb food for 1 ox" + when.replace(",", " ·"), "requires": {"food": 100}, "effects": {"food": -100, "oxen": 1, "days": days}, "result": "Traded food for an ox."})
 	for lot in lots:
 		if lot.item != "salt":continue
-		options.append({"label":"Buy %s · $%.2f, 1 day" % [lot.label,lot.buy_cents/100.0],"requires":{"money":lot.buy_cents/100.0},"effects":{"money":-lot.buy_cents/100.0,"salt":lot.amount,"days":1},"result":"Bought salt for preserving meat."})
-		options.append({"label":"Sell %s · $%.2f, 1 day" % [lot.label,lot.sell_cents/100.0],"requires":{"salt":lot.amount},"effects":{"money":lot.sell_cents/100.0,"salt":-lot.amount,"days":1},"result":"Sold salt."})
+		options.append({"label":"Buy %s · $%.2f%s" % [lot.label,lot.buy_cents/100.0,when],"lot":lot,"requires":{"money":lot.buy_cents/100.0},"effects":{"money":-lot.buy_cents/100.0,"salt":lot.amount,"days":days},"result":"Bought salt for preserving meat."})
+		options.append({"label":"Sell %s · $%.2f%s" % [lot.label,lot.sell_cents/100.0,when],"lot":lot,"requires":{"salt":lot.amount},"effects":{"money":lot.sell_cents/100.0,"salt":-lot.amount,"days":days},"result":"Sold salt."})
+	if days>0:
+		for choice in options:choice["visit_key"]=offer.key+"|visit"
 	context.decorate(self,options,offer)
-	var rumor: String=crime.news_text(self,str(state.landmark)) if at_post else ""
-	return _service_menu("Trading post" if at_post else "Passing traders", "Stock and buying demand are limited. Each transaction costs one day and meals. Regional prices apply."+(" Your trading companion negotiated 5% off cash purchases." if characters.available(self,"Trading") else "")+(" "+rumor if not rumor.is_empty() else ""), options)
+	return options
+
+## The post's store counter: per lot, its price, how many the post can still sell or buy, and what the party holds.
+## Empty unless the party is stopped at an open trading post that will deal with it.
+func post_store() -> Dictionary:
+	if not can_service() or not _at_post():return {}
+	var offer: Dictionary=context.market(self)
+	if crime.closed(str(state.landmark)) or crime.refuses(self,str(state.landmark)):return {}
+	var rows: Array=[]
+	var options: Array=_trade_options(offer,true)
+	for i in range(0,options.size(),2):
+		var buy: Dictionary=options[i]
+		var sell: Dictionary=options[i+1]
+		var lot: Dictionary=buy.lot
+		var can_buy: int=int(buy.stock_limit)-int(context.record.spent.get(buy.market_key,0)) if crime.can_trade(self,buy) else 0
+		if lot.item=="food":can_buy=mini(can_buy,crime.food_left(self,str(state.landmark))/int(lot.amount))
+		var can_sell: int=int(sell.stock_limit)-int(context.record.spent.get(sell.market_key,0)) if crime.can_trade(self,sell) else 0
+		rows.append({"item":lot.item,"label":lot.label,"amount":int(lot.amount),"buy_cents":int(lot.buy_cents),"sell_cents":int(lot.sell_cents),"can_buy":maxi(0,can_buy),"can_sell":maxi(0,mini(can_sell,int(state.get(lot.item,0))/int(lot.amount))),"held":int(state.get(lot.item,0))})
+	var name: String=str(route.nodes[state.landmark].get("name",state.landmark))
+	return {"name":name,"rows":rows,"days":context.trade_days(offer),"money_cents":roundi(float(state.money)*100.0),"rumor":crime.news_text(self,str(state.landmark)),"discount":characters.available(self,"Trading")}
+
+## Price a basket of lots at the post: positive counts buy, negative counts sell. Read-only.
+func post_quote(cart: Dictionary) -> Dictionary:
+	var store: Dictionary=post_store()
+	var result: Dictionary={"valid":false,"message":"The post is not open for trade.","net_cents":0,"days":int(store.get("days",0)),"effects":{}}
+	if store.is_empty():return result
+	var effects: Dictionary={}
+	var lots_moved:=0
+	for row in store.rows:
+		var count: Variant=cart.get(row.item,0)
+		if not (count is int or count is float) or count!=floor(count):
+			result.message="Check the quantity of %s." % row.label
+			return result
+		var n: int=int(count)
+		if n>row.can_buy or -n>row.can_sell:
+			result.message=("The post cannot sell that many: %s." if n>0 else "The post will not buy that many: %s.") % row.label
+			return result
+		if n==0:continue
+		lots_moved+=absi(n)
+		result.net_cents+=(-n*int(row.buy_cents)) if n>0 else (-n*int(row.sell_cents))
+		effects[row.item]=n*int(row.amount)
+	for key in cart:
+		if not store.rows.any(func(row):return row.item==key):
+			result.message="Unknown goods: %s." % str(key)
+			return result
+	result.effects=effects
+	if lots_moved==0:
+		result.message="Choose goods to buy or sell."
+	elif store.money_cents+result.net_cents<0:
+		result.message="You cannot afford that."
+	else:
+		result.valid=true
+		result.message="Settle up · %s" % ("1 day and meals" if result.days>0 else "no extra time")
+	return result
+
+## Settle a basket at the post as one visit: stock and demand move per lot, and the visit's day is charged once.
+func post_checkout(cart: Dictionary) -> bool:
+	var quote: Dictionary=post_quote(cart)
+	if not quote.valid:return false
+	var offer: Dictionary=context.market(self)
+	var options: Array=_trade_options(offer,true)
+	var lines: Array[String]=[]
+	for i in range(0,options.size(),2):
+		var n: int=int(cart.get(options[i].lot.item,0))
+		var choice: Dictionary=options[i] if n>0 else options[i+1]
+		for _lot in range(absi(n)):
+			crime.consume_trade(choice)
+			context.consume(choice)
+		if n!=0:lines.append(("bought %d × %s" if n>0 else "sold %d × %s") % [absi(n),choice.lot.label])
+	context.record.spent[offer.key+"|visit"]=1
+	var effects: Dictionary=quote.effects.duplicate()
+	effects["money"]=quote.net_cents/100.0
+	effects["days"]=quote.days
+	journal.append("Day %d · At %s: %s." % [state.day,route.nodes[state.landmark].get("name",state.landmark),", ".join(lines)])
+	_apply(effects)
+	refresh_stop_offers()
+	if quote.days>0:_update_river_stage()
+	return true
 
 func open_crime() -> bool:
 	if pending.get("crime_menu",false):return true

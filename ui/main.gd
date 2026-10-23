@@ -6,6 +6,7 @@ const GraveStore = preload("res://simulation/grave_store.gd")
 const GraveView = preload("res://ui/grave_view.gd")
 const SaveStore = preload("res://simulation/save_store.gd")
 const HuntView = preload("res://ui/hunt_view.gd")
+const PostStoreView = preload("res://ui/post_store_view.gd")
 const PIXEL_FONT = preload("res://art/pixels/trail_font.fnt")
 const LEDGER_ICONS = preload("res://art/pixels/ledger_icons.png")
 var game = Simulation.new(1848, "classic", true)
@@ -49,6 +50,8 @@ var packing_quantities: Dictionary={}
 var packing_quote: Label
 var packing_cache_mode:=false
 var service_window: AcceptDialog
+var post_store_window: AcceptDialog
+var post_store_view: Panel
 var service_rows: VBoxContainer
 var story_scroll: ScrollContainer
 var story_column: VBoxContainer
@@ -475,6 +478,14 @@ simplified game rules, not reconstructed conditions for 1848."""
 	service_rows.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	service_rows.add_theme_constant_override("separation", 4)
 	service_scroll.add_child(service_rows)
+	post_store_window = AcceptDialog.new()
+	post_store_window.get_ok_button().text = "BACK TO THE POST"
+	post_store_window.confirmed.connect(_close_post_store)
+	post_store_window.canceled.connect(_close_post_store)
+	add_child(post_store_window)
+	post_store_view = PostStoreView.new(game)
+	post_store_window.add_child(post_store_view)
+	post_store_view.settled.connect(_refresh)
 
 func _show_options() -> void:
 	if not game.can_service() or not landscape.crossing.is_empty() or _reviewing_crossing():
@@ -487,8 +498,20 @@ func _show_options() -> void:
 func _open_trade() -> void:
 	options_window.hide()
 	crossing_result = {}
+	# A post that will deal with the party opens its store counter; refusals and the road use the menu.
+	if not game.post_store().is_empty():
+		_pause_travel()
+		post_store_view.game = game
+		post_store_window.title = "TRADING AT " + game.post_store().name.to_upper()
+		post_store_view.open()
+		post_store_window.popup_centered()
+		return
 	if game.open_trade():
 		_show_service()
+	_refresh()
+
+func _close_post_store() -> void:
+	post_store_window.hide()
 	_refresh()
 
 func _open_care() -> void:
