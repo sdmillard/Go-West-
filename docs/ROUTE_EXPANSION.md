@@ -60,7 +60,7 @@ Two subdivisions are explicitly authored: Fort Kearny is allocated 10 miles into
 | Independence Rock and South Pass | Retained; Devil's Gate is also a stop |
 | Green River / Fort Bridger choices | Southern road through both is the main road; Greenwood's Cutoff is a choice at the Little Sandy (see [Route branches](ROUTE_BRANCHES.md)) |
 | Soda Springs, Fort Hall, Snake crossing and Fort Boise | Retained, with a second Snake crossing at the old Boise post |
-| Blue Mountains / Fort Walla Walla choice | Direct Umatilla corridor from Palmer; Walla Walla detour remains unimplemented, not declared historically nonexistent |
+| Blue Mountains / Fort Walla Walla choice | Direct Umatilla corridor from Palmer is the main road; a Fort Walla Walla detour through Cayuse War country is a choice at the Blue Mountains (see [Route branches](ROUTE_BRANCHES.md)) |
 | The Dalles, Barlow Road / Columbia rafting | Barlow wagon road is the main road; a Columbia raft with a Cascades portage is a choice at The Dalles (see [Route branches](ROUTE_BRANCHES.md)) |
 | Willamette Valley endpoint | Oregon City beside the Willamette, with named survivor and supply results |
 
@@ -88,4 +88,4 @@ The new suite exercises the actual full road, bulk trading, advice, toll changes
 
 ## Remaining depth
 
-Columbia transport/portages, northern road branches, a Walla Walla detour, more animals and landmark conversations remain future work. The weather model is seasonal/terrain-based game tuning, not a fitted historical climate series. Imported reference illustrations remain ignored research files; runtime artwork is original. This is a complete playable corridor with an ending, not a claim that all systems or every 1848 detail are finished.
+Hiring HBC boats on the Columbia, more animals and landmark conversations remain future work. The weather model is seasonal/terrain-based game tuning, not a fitted historical climate series. Imported reference illustrations remain ignored research files; runtime artwork is original. This is a complete playable corridor with an ending, not a claim that all systems or every 1848 detail are finished.

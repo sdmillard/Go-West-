@@ -39,6 +39,19 @@ The river route totals 1,894 guide miles against 1,938 by the Barlow road, and i
 - Road `effects` (days only, 1 to 5) are copied onto the leave choice; that is how raft building costs time.
 - Sources: [NPS, Overlanders in the Columbia River Gorge](https://www.nps.gov/articles/000/overlanders-in-the-columbia-river-gorge-1840-1870-a-narrative-history.htm) (rafts, Chinookan and HBC help, wind, livestock trails) and [Historic Oregon City, The Final Leg of the Trail](https://historicoregoncity.org/2019/04/02/the-final-leg-of-the-trail/) (HBC bateau about $80, rafts overturned by wind, about one in four took the river after the Barlow Road opened). Hiring an HBC boat is not offered yet.
 
-## Still to come
+## Fort Walla Walla through Cayuse War country (Blue Mountains to the John Day)
 
-The Fort Walla Walla detour from the Blue Mountains, as a dangerous Cayuse War road with its own encounters (Spencer's choice). The plan is in `docs/CLAUDE_HANDOFF.md`.
+Spencer chose to add this as a dangerous detour. After the Whitman killings at Waiilatpu in November 1847, the Oregon volunteers fought the Cayuse through 1848, and the NPS notes that travelers "generally avoided Fort Walla Walla." The main road down the Umatilla stays first.
+
+| Road | Miles | Basis |
+| --- | ---: | --- |
+| Main: Blue Mountains to Umatilla to John Day | 16 + 77 = 93 | Palmer rows 104 to 106 |
+| Blue Mountains to `fort_walla_walla` | 55 | Authored estimate: about 30 to Waiilatpu and about 25 to the HBC post (`allocation_note`) |
+| `fort_walla_walla` to John Day | 58 | Authored estimate: about 25 down the Columbia's south bank to the Umatilla's mouth, then Palmer's 33 (row 106) |
+
+The detour is about 20 miles longer (1,958 guide miles in all by this road and the Barlow road).
+
+- Both legs carry hazard `unrest`: trail events are twice as likely and riders/bandits weigh three times as much (placeholders).
+- Three new events have `"hazard": "unrest"` and happen only on unrest legs: **Oregon volunteers** (share 30 lb food or refuse), **Cayuse riders** (trade a clothing set and 10 bullets for passage, go around for a day with team strain, or stand your ground as armed defense with a 30% wound risk) and **the Waiilatpu mission ruins** (a sober stop). The text frames the war from both sides: the measles deaths that preceded the killings, and the volunteers' campaign.
+- Fort Walla Walla is an HBC post: bulk trade at Fort Hall's prices (`bulk_food_cents` 4000), care post, crime scene and fort talk like the other company posts. The Aseprite thread supplied the location picture (PR #43).
+- Sources: [NPS, Death on the trails](https://www.nps.gov/articles/000/death-on-the-trails.htm), [Oregon Encyclopedia, Cayuse War](https://www.oregonencyclopedia.org/articles/cayuse_war/), [HistoryLink 7807](https://www.historylink.org/File/7807) (Fort Nez Percés / Walla Walla).
