@@ -40,25 +40,25 @@ end)
 
 ----------------------------------------------------------------- 2. Wide Muddy Kansas River
 K.layer("muddy_water", function()
-  -- Silty water: greener and darker near the far shore where the woods reflect, paler in
-  -- midstream where it takes the sky, with tan silt swirls and current lines.
-  K.rect(0, 78, W, 72, "teal")
-  K.rect(0, 78, W, 6, "leaf")
-  K.dither(0, 84, W, 4, "leaf", "teal")
+  -- Yellow-brown turbid water: Palmer (1845) calls the Kaw "a muddy stream"; Fremont (1842)
+  -- a "yellow turbid current". Darker under the far trees, paler where it takes the sky.
+  K.rect(0, 78, W, 72, "silt")
+  K.rect(0, 78, W, 5, "silt_dk")
+  K.dither(0, 83, W, 4, "silt_dk", "silt")
   for y = 96, 128 do
     for x = 0, W - 1 do
-      if (x + y) % 2 == 0 and K.rnd(100) < 60 - math.abs(y - 112) * 3 then K.px(x, y, "haze") end
+      if (x + y) % 2 == 0 and K.rnd(100) < 50 - math.abs(y - 112) * 3 then K.px(x, y, "silt_lt") end
     end
   end
   for i = 1, 170 do
     local rx = K.rnd(W - 10)
     local ry = 82 + K.rnd(67)
     local len = 3 + K.rnd(8) + math.floor((ry - 80) / 12)
-    local col = (i % 5 == 0) and "clap_sh" or ((i % 3 == 0) and "light_blue" or "haze")
-    if ry < 90 then col = (i % 2 == 0) and "pine" or "teal" end
+    local col = (i % 5 == 0) and "silt_dk" or ((i % 3 == 0) and "light_blue" or "silt_lt")
+    if ry < 90 then col = (i % 2 == 0) and "pine" or "silt_dk" end
     K.rect(rx, ry, len, 1, col)
   end
-  for i = 1, 30 do K.px(K.rnd(W), 90 + K.rnd(58), "white") end
+  for i = 1, 24 do K.px(K.rnd(W), 90 + K.rnd(58), "cream") end
   -- the far bank's reflection
   K.rect(0, 78, W, 1, "pine")
 
