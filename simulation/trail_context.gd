@@ -23,6 +23,7 @@ func load_data(value: Variant) -> bool:
 	for key in ["passing_window_days","passing_lots","post_lots"]:
 		if not numeric(value.get(key)) or value[key]!=int(value[key]) or value[key]<1 or value[key]>8:return false
 	if value.passing_lots>value.post_lots:return false
+	if not numeric(value.get("passing_price_markup")) or value.passing_price_markup<1 or value.passing_price_markup>2:return false
 	if value.passing_window_days>=5 or not numeric(value.get("prepared_risk_factor")) or value.prepared_risk_factor<=0 or value.prepared_risk_factor>1:return false
 	var camp: Variant=value.get("emigrant_camp")
 	if not camp is Dictionary or camp.size()!=5 or not camp.get("note") is String:return false
@@ -50,7 +51,7 @@ func market(game) -> Dictionary:
 	if at_post:return {"available":true,"key":"post:"+game.state.landmark,"lots":int(data.post_lots),"price":float(region(game).price),"post":true}
 	var period: int=region(game).period
 	var phase: int=posmod(int(game.state.day)+posmod(int(game.state.seed),3),period)
-	return {"available":phase<int(data.passing_window_days),"key":"passing:%s:%d" % [region_id(game),(int(game.state.day)+posmod(int(game.state.seed),3))/period],"lots":int(data.passing_lots),"price":float(region(game).price),"post":false}
+	return {"available":phase<int(data.passing_window_days),"key":"passing:%s:%d" % [region_id(game),(int(game.state.day)+posmod(int(game.state.seed),3))/period],"lots":int(data.passing_lots),"price":float(region(game).price)*float(data.passing_price_markup),"post":false}
 func decorate(game,options: Array,offer: Dictionary) -> void:
 	for choice in options:
 		var effects: Dictionary=choice.effects
@@ -66,6 +67,10 @@ func can_trade(choice: Dictionary) -> bool:
 	return not choice.has("market_key") or int(record.spent.get(choice.market_key,0))<int(choice.stock_limit)
 func consume(choice: Dictionary) -> void:
 	if choice.has("market_key"):record.spent[choice.market_key]=int(record.spent.get(choice.market_key,0))+1
+	if choice.has("visit_key"):record.spent[choice.visit_key]=1
+## A trading visit costs one day, charged on its first transaction, at a post or with passing traders.
+func trade_days(offer: Dictionary) -> int:
+	return 0 if record.spent.has(offer.key+"|visit") else 1
 func crossing_factor(place: String) -> float:
 	return float(data.prepared_risk_factor) if place in record.prepared else 1.0
 func activity_choices(game) -> Array:

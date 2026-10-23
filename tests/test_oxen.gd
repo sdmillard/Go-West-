@@ -45,7 +45,7 @@ func run():
 	game.open_trade()
 	var cash: float=game.state.money
 	game.choose(8)
-	check(game.state.oxen==7 and is_equal_approx(game.state.money,cash-42.75) and game.state.day==1,"Trading companion discounts the replacement ox; one day and ordinary meals still pass")
+	check(game.state.oxen==7 and is_equal_approx(game.state.money,cash-51.3) and game.state.day==1,"Trading companion discounts the passing traders' marked-up ox; the visit's day and ordinary meals pass")
 	game=outfit()
 	check(game.ox_slaughter_offer().meat==400 and game.ox_slaughter_offer().remaining==5,"Healthy spare ox offers four hundred usable pounds")
 	check(game.slaughter_ox() and game.state.oxen==5 and game.state.bullets==199 and game.state.food==785 and game.state.day==1,"One animal costs exactly one bullet and one day; all meat credited before fifteen-pound meal")

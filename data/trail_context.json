@@ -98,6 +98,7 @@
   },
   "passing_window_days": 4,
   "passing_lots": 3,
+  "passing_price_markup": 1.2,
   "post_lots": 8,
   "prepared_risk_factor": 0.85,
   "sources": [

@@ -113,7 +113,9 @@ func run():
 	var barter: int=-1
 	for index in range(game.pending.choices.size()):
 		if game.pending.choices[index].effects.get("food",0)==40:barter=index
-	check(barter>=0 and game.choose(barter) and game.crime.food_left(game,"fort_bridger")==1560,"Barter transfers forty physical pounds rather than deleting a full bulk lot")
+	check(barter<0,"Posts deal in cash at the store counter; barter is left to traders met on the road")
+	game.choose(game.pending.choices.size()-1)
+	check(game.post_checkout({"food":1}) and game.crime.food_left(game,"fort_bridger")==1400,"A store-counter purchase draws its pounds from the post's physical food stock")
 	check(store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))!=null,"Exact purchase/barter depletion round-trips")
 	var previous: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-crime-save-v1.json"))
 	var restored=store.restore(previous)
