@@ -57,10 +57,18 @@ func load_data(value: Variant) -> bool:
 	for entry in value.weather:
 		if not entry is Dictionary or not entry.get("id") is String or not entry.get("label") is String or entry.id in ids or not _integer(entry.get("weight"), 1) or not _number(entry.get("speed")) or entry.speed <= 0 or entry.speed > 1 or not _integer(entry.get("exposure"), 0) or not _integer(entry.get("wet"), 0):
 			return _fail("Invalid weather definition")
+		if not _valid_climate(entry):
+			return _fail("Invalid weather season or region")
 		ids.append(entry.id)
 	for required in ["clear", "rain", "heavy_rain", "fog", "hail", "cold", "blizzard"]:
 		if required not in ids:
 			return _fail("Missing weather type")
+	var rivers: Variant=season.get("river_high_chance",{})
+	if not rivers is Dictionary:return _fail("Invalid river stage chances")
+	for source in rivers:
+		if source not in ["rain","snowmelt"] or not rivers[source] is Array or rivers[source].size()!=12:return _fail("Invalid river stage chances")
+		for chance in rivers[source]:
+			if not _number(chance) or chance<0 or chance>1:return _fail("Invalid river stage chances")
 	ids.clear()
 	for lot in value.trade_lots:
 		if not lot is Dictionary or lot.get("item") not in ["food", "bullets", "medicine", "clothing", "oxen", "wheels", "axles", "tongues", "salt"] or lot.item in ids or not lot.get("label") is String or not _integer(lot.get("amount"), 1) or not _integer(lot.get("buy_cents"), 1) or not _integer(lot.get("sell_cents"), 1) or lot.sell_cents >= lot.buy_cents:
@@ -70,6 +78,27 @@ func load_data(value: Variant) -> bool:
 	for key in ["winter_months","snow_months"]:data.seasonal[key]=data.seasonal[key].map(func(month):return int(month))
 	weather = data.weather[0].duplicate()
 	return true
+
+# Optional climate fields: months the weather can occur, regional weight
+# multipliers (0 excludes a region), extra team strain and illness risk.
+func _valid_climate(entry: Dictionary) -> bool:
+	if entry.has("months"):
+		if not entry.months is Array or entry.months.is_empty():return false
+		for month in entry.months:
+			if not _integer(month,1) or month>12:return false
+	if entry.has("regions"):
+		if not entry.regions is Dictionary:return false
+		for region in entry.regions:
+			if not _number(entry.regions[region]) or entry.regions[region]<0:return false
+	if entry.has("ox_strain") and (not _integer(entry.ox_strain,0) or entry.ox_strain>3):return false
+	if entry.has("illness_risk") and (not _number(entry.illness_risk) or entry.illness_risk<0.5 or entry.illness_risk>3):return false
+	return true
+
+## Chance that a river is running high on arrival, by its water source and month.
+func river_high_chance(month: int, source: String = "rain") -> float:
+	var table: Dictionary=data.seasonal.get("river_high_chance",{})
+	if not table.has(source):return 0.45
+	return float(table[source][clampi(month,1,12)-1])
 
 func _number(value: Variant) -> bool:
 	return (value is int or value is float) and is_finite(float(value))
@@ -101,8 +130,13 @@ func advance(month: int, terrain: String = "plains", region: Dictionary = {}) ->
 	for entry in data.weather:
 		if (not cold and entry.id in ["cold", "blizzard"]) or (entry.id=="blizzard" and month not in data.seasonal.snow_months):
 			continue
+		if entry.has("months") and month not in entry.months.map(func(m):return int(m)):
+			continue
 		var candidate: Dictionary=entry.duplicate()
-		var multiplier: float=float(region.get("cold",1.0)) if entry.id in ["cold","blizzard"] else (float(region.get("wet",1.0)) if entry.id in ["rain","heavy_rain","fog"] else 1.0)
+		var multiplier: float=float(region.get("cold",1.0)) if entry.id in ["cold","blizzard"] else (float(region.get("wet",1.0)) if entry.id in ["rain","heavy_rain","fog","thunderstorm"] else 1.0)
+		if entry.has("regions") and region.has("id"):
+			multiplier*=float(entry.regions.get(region.id,1.0))
+			if multiplier<=0.0:continue
 		candidate.weight=maxi(1,roundi(float(entry.weight)*multiplier))
 		candidates.append(candidate)
 		total += int(candidate.weight)

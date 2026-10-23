@@ -386,6 +386,44 @@
     ]
   },
   {
+    "id": "stampede",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 15,
+    "weather": [
+      "thunderstorm",
+      "hail"
+    ],
+    "title": "Stampede",
+    "text": "Thunder spooks the cattle in the night. Two oxen break loose and run off across the prairie.",
+    "onset_effects": {
+      "oxen": -2
+    },
+    "choices": [
+      {
+        "label": "Round them both up \u00b7 2 days",
+        "effects": {
+          "days": 2,
+          "oxen": 2
+        },
+        "result": "After two days of riding and tracking, you drive both animals back to camp."
+      },
+      {
+        "label": "Search briefly \u00b7 1 day",
+        "effects": {
+          "days": 1,
+          "oxen": 1
+        },
+        "result": "You recover one ox. The other is gone."
+      },
+      {
+        "label": "Continue without them",
+        "effects": {},
+        "result": "You yoke what remains and move on."
+      }
+    ]
+  },
+  {
     "id": "illness",
     "category": "historical",
     "trigger": "random",
