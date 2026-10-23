@@ -36,10 +36,10 @@ func eat_the_dead(game,deceive: bool) -> bool:
 		elif deceive:pick(game,"remains_command","deceive",slot)
 	if game.pending.get("remains_menu",false):pick(game,"remains_command","back")
 	return true
-## Visits a camp the lawful way: trade for food when bullets allow, have the first traveler in need nursed, and swap news.
+## Visits a camp the lawful way: trade for food when bullets allow, and have the first traveler in need nursed.
 func visit_camp(game) -> bool:
 	if not game.open_camp():return false
-	for key in ["barter_food","care","news"]:
+	for key in ["barter_food","care"]:
 		if not game.pending.get("service_menu",false) and not game.open_camp():return true
 		for index in range(game.pending.choices.size()):
 			if str(game.pending.choices[index].get("market_key","")).ends_with("|"+key) and game.can_choose(index):

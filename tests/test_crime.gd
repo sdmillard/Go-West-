@@ -721,9 +721,10 @@ func camp_visit_checks(store) -> void:
 	game.choose(camp_choice(game,"barter_food"))
 	game.open_camp()
 	check(not game.can_choose(camp_choice(game,"barter_food")),"They have only a little food to spare")
-	check(game.choose(camp_choice(game,"news")) and game.journal.any(func(text):return text.ends_with("They heard no talk of your party at the posts they passed.")),"Lawful travelers hear no talk of themselves")
-	game.open_camp()
-	check(not game.can_choose(camp_choice(game,"news")),"News is shared once per camp")
+	var asks: int=game.news_left("camp")
+	check(asks>0 and game.choose(camp_choice(game,"asked")) and not game.last_news.is_empty() and not game.news.fragments(game,"camp",key).any(func(said):return said.contains("your party")),"Lawful travelers hear news, but no talk of themselves")
+	for ask in range(asks-1):game.choose(camp_choice(game,"asked"))
+	check(not game.can_choose(camp_choice(game,"asked")),"A family answers only as many questions as its temper allows")
 	choose_back(game)
 	var patient: Dictionary=game.party_health.members[2]
 	game.party_health.affect(patient,-30,game.state.day,"injuries")

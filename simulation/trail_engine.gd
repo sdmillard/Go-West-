@@ -16,6 +16,8 @@ var context=preload("res://simulation/trail_context.gd").new()
 var combat=preload("res://simulation/combat.gd").new()
 var crime=preload("res://simulation/crime_system.gd").new()
 var news=preload("res://simulation/trail_news.gd").new()
+## The last fragment of news a camp menu question drew (shown beside the camp picture; not saved).
+var last_news: String=""
 const DESTINATION := 102
 const ABSURD_CHANCE := 0.01
 const PACE_MILES = [12, 18, 24]
@@ -1059,7 +1061,9 @@ func open_camp() -> bool:
 	for member in party_health.members:
 		if party_health.is_active(member) and (not member.conditions.is_empty() or member.health<100):
 			options.append({"label":"Ask their help nursing %s · 1 day, once per camp" % member.name,"member_id":member.id,"care":int(rules.care),"market_key":place+"|care","stock_limit":1,"effects":{"days":1},"result":"An emigrant family helped nurse %s." % member.name})
-	options.append({"label":"Share news of the road · once per camp","market_key":place+"|news","stock_limit":1,"effects":{},"result":camp_news()})
+	# Asking for news uses the same questions as a counter's ASK FOR NEWS: as many as the family's temper allows.
+	var counter: Dictionary=trade_counter("camp")
+	if not counter.is_empty():options.append({"label":news_label("camp"),"news":"camp","market_key":place+"|asked","stock_limit":int(news.data.asks[news_temper(counter)]),"effects":{},"result":""})
 	if not _service_menu("An emigrant camp","An emigrant family is camped near the road and is glad of company. Their food in the wagon: %d lb. Trading and news cost no time; nursing takes a day." % crime.food_left(self,place),options):return false
 	pending["camp"]=place
 	return true
@@ -1067,8 +1071,12 @@ func open_camp() -> bool:
 ## What a family met on the road heard at the posts behind it: which posts ahead already know of the party.
 func camp_news() -> String:
 	var warned: Array=crime.venues().filter(func(place):return crime.mile(self,place)>int(state.miles) and crime.refuses(self,place)).map(func(place):return route.nodes[place].name)
-	if warned.is_empty():return "Swapped news with an emigrant family. They heard no talk of your party at the posts they passed."
-	return "Swapped news with an emigrant family. Word of your party has already reached %s." % ", ".join(warned)
+	if warned.is_empty():return "We heard no talk of your party at the posts we passed."
+	return "Word of your party has already reached %s." % ", ".join(warned)
+
+func news_label(venue: String) -> String:
+	var left: int=news_left(venue)
+	return "Ask for news · %d question(s) left" % left if left>0 else "Ask for news · they have told you all they care to"
 
 func open_care() -> bool:
 	var options: Array = []
@@ -1090,6 +1098,11 @@ func _choose_service(index: int) -> bool:
 	var choice: Dictionary = pending.choices[index]
 	# The trading counter is its own screen; choosing it here changes nothing.
 	if choice.has("counter"):return true
+	# A question for the family: one fragment of news, shown beside their picture; the menu stays open.
+	if choice.has("news"):
+		last_news=ask_news(str(choice.news))
+		choice.label=news_label(str(choice.news))
+		return true
 	if choice.get("departure_review",false):
 		pending=service_return.duplicate(true)
 		service_return={}
