@@ -1,6 +1,6 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 23, 2026, after the climate PR (see Expanded mechanics). Sections below cover PRs #19 to #34. **Continue the existing project; do not restart it. Spencer requested a break. This is a saved checkpoint, not a request to continue working now.**
+Last updated October 23, 2026, after the route branches part 1 PR (see Expanded mechanics). Sections below cover PRs #19 to #34. **Continue the existing project; do not restart it. Spencer requested a break. This is a saved checkpoint, not a request to continue working now.**
 
 ## Resume here
 
@@ -60,6 +60,7 @@ Spencer's order: crime follow-ups and these expanded mechanics first, the big ba
 - Disease part 1: illness is picked by month and region, measles/dysentery/typhoid spread within the party, measles leaves immunity (saved per traveler as `immune`), new non-contagious mountain fever in high country, cholera still locked to 1849+. See `docs/DISEASE.md` and `tests/test_disease.gd` (suite 34). Previous fingerprint `a76bde0b…81b7` whitelisted in `economy_v1`.
 - Disease part 2: scurvy after 45+ days of meals without fresh (undried) meat (`party_health.days_without_fresh`, saved as top-level `days_without_fresh`); mends only on fresh-meat days; never a random illness. Previous fingerprint `4fbbe60d…7351` whitelisted. Dried fruit, pickles and foraged greens are not modeled yet.
 - Climate: weather entries may carry `months`/`regions` (engine passes region id); new `thunderstorm` (Apr-Aug, Platte) and `heat` (Jun-Aug, sagebrush; +1 team strain, illness x1.25) weather; `stampede` trail event during thunderstorms/hail; snow-fed rivers (`river_source: snowmelt` on South/North Platte, Green, Snake, Fort Boise) use a monthly high-water table in `seasonal.river_high_chance`. See `docs/CLIMATE.md`, `tests/test_climate.gd` (suite 35). Previous fingerprint `fb3094a3…95ee` whitelisted. Art placeholders are procedural in `ui/trail_view.gd` until the Aseprite thread's overlays land.
+- Route branches part 1: `route.json` forks (first edge = main road, forks only at non-river stops, all rejoin), per-road leave choices with `edge`, saved top-level `route_path`, path-aware `destination()`, `waterless` road hazard. Greenwood's Cutoff from the Little Sandy (46 mi to new `greenwood_cutoff` crossing, 40 dry; 124 to Soda Springs; Palmer rows 50-53, 66-72). `truncate_at(end_id)` is now a no-op (restores pass route_end). See `docs/ROUTE_BRANCHES.md`, `tests/test_branches.gd` (suite 36). Previous fingerprint `e1776b18…1199` whitelisted.
 
 ## Stoic vs. Loyal (Spencer's choice, October 23, 2026)
 

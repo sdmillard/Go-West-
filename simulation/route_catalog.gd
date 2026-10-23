@@ -1,9 +1,11 @@
 extends RefCounted
-## Explicit directed route edges; this chapter is a single researched corridor.
+## Explicit directed route edges: one researched main road (each stop's first
+## edge) plus historical alternatives that fork at a stop and rejoin later.
 var nodes: Dictionary = {}
 var start := ""
 var error := ""
 var total_miles := 0
+var longest_miles := 0
 var end_id := ""
 
 func _init() -> void:
@@ -44,36 +46,113 @@ func load_data(data: Variant) -> bool:
 		candidate[node.id] = node.duplicate(true)
 	if not candidate.has(data.start):
 		return _fail("Route start does not exist.")
-	# Validate the currently supported single corridor; reject branches until UI supports them.
-	var current: String = data.start
-	var visited: Array = []
-	var distance := 0
-	while current not in visited:
-		visited.append(current)
-		var node: Dictionary = candidate[current]
+	# Every landmark is reachable, every road ends at one destination, and
+	# forks happen only at stops (never mid-crossing). next[0] is the main road.
+	var ends: Array = []
+	for id in candidate:
+		var node: Dictionary = candidate[id]
 		if node.kind in ["chapter_end", "destination"]:
-			if not node.next.is_empty() or visited.size() != candidate.size():
+			if not node.next.is_empty():
 				return _fail("Chapter must end after all connected landmarks.")
-			nodes = candidate
-			start = data.start
-			end_id = current
-			total_miles = distance
+			ends.append(id)
+			continue
+		if node.next.is_empty():
+			return _fail("Chapter must end after all connected landmarks.")
+		if node.kind == "river" and node.next.size() != 1:
+			return _fail("This chapter needs exactly one outgoing road from a crossing.")
+		var targets: Array = []
+		for edge in node.next:
+			if not edge is Dictionary or not candidate.has(edge.get("to")) or not (edge.get("miles") is int or edge.get("miles") is float):
+				return _fail("Invalid road destination or distance.")
+			if not is_finite(float(edge.miles)) or edge.miles <= 0 or edge.miles != floor(edge.miles):
+				return _fail("Road distance must be positive whole miles.")
+			if edge.to in targets or (edge.has("label") and (not edge.label is String or edge.label.is_empty())) or edge.get("hazard", "") not in ["", "waterless"]:
+				return _fail("Invalid road choice.")
+			targets.append(edge.to)
+	if ends.size() != 1:
+		return _fail("Chapter must end after all connected landmarks.")
+	var state := {}
+	if _has_cycle(candidate, data.start, state):
+		return _fail("Route contains a cycle.")
+	if state.size() != candidate.size():
+		return _fail("Chapter must end after all connected landmarks.")
+	nodes = candidate
+	start = data.start
+	end_id = ends[0]
+	total_miles = remaining(start)
+	longest_miles = _longest(start, {})
+	return true
+
+func _has_cycle(candidate: Dictionary, id: String, state: Dictionary) -> bool:
+	state[id] = 1
+	for edge in candidate[id].next:
+		if state.get(edge.to, 0) == 1:
 			return true
-		if node.next.size() != 1:
-			return _fail("This chapter needs exactly one outgoing road.")
-		var edge: Variant = node.next[0]
-		if not edge is Dictionary or not candidate.has(edge.get("to")) or not (edge.get("miles") is int or edge.get("miles") is float):
-			return _fail("Invalid road destination or distance.")
-		if not is_finite(float(edge.miles)) or edge.miles <= 0 or edge.miles != floor(edge.miles):
-			return _fail("Road distance must be positive whole miles.")
-		distance += int(edge.miles)
-		current = edge.to
-	return _fail("Route contains a cycle.")
+		if not state.has(edge.to) and _has_cycle(candidate, edge.to, state):
+			return true
+	state[id] = 2
+	return false
+
+func _longest(id: String, memo: Dictionary) -> int:
+	if not memo.has(id):
+		var best := 0
+		for edge in nodes[id].next:
+			best = maxi(best, int(edge.miles) + _longest(edge.to, memo))
+		memo[id] = best
+	return int(memo[id])
+
+## Guide miles from a stop to the end along the main road (each node's first edge).
+func remaining(id: String) -> int:
+	var distance := 0
+	while not nodes[id].next.is_empty():
+		distance += int(nodes[id].next[0].miles)
+		id = nodes[id].next[0].to
+	return distance
+
+func edge_between(from: String, to: String) -> Dictionary:
+	if nodes.has(from):
+		for edge in nodes[from].next:
+			if edge.to == to:
+				return edge
+	return {}
+
+## The main-road stops from the start up to and including id; empty if id is off it.
+func main_path_to(id: String) -> Array:
+	var path: Array = [start]
+	while path[-1] != id:
+		if nodes[path[-1]].next.is_empty():
+			return []
+		path.append(nodes[path[-1]].next[0].to)
+	return path
+
+func valid_path(path: Variant) -> bool:
+	if not path is Array or path.is_empty() or path[0] != start:
+		return false
+	for index in range(1, path.size()):
+		if not path[index] is String or edge_between(path[index - 1], path[index]).is_empty():
+			return false
+	return true
+
+## Guide miles from the start to every stop, the main road first; a branch stop
+## takes the distance along its branch.
+func node_miles() -> Dictionary:
+	var result := {}
+	_walk_miles(start, 0, result)
+	return result
+
+func _walk_miles(id: String, distance: int, result: Dictionary) -> void:
+	if result.has(id):
+		return
+	result[id] = distance
+	for edge in nodes[id].next:
+		_walk_miles(edge.to, distance + int(edge.miles), result)
 
 func truncate_at(id: String) -> bool:
 	# Explicit opening-chapter regression fixture; normal play loads the full corridor.
 	if not nodes.has(id):
 		return false
+	if id == end_id:
+		return true
 	var selected: Dictionary = {}
 	var current := start
 	var distance := 0
@@ -83,8 +162,11 @@ func truncate_at(id: String) -> bool:
 			if selected[current].kind != "destination":
 				selected[current].kind = "chapter_end"
 			selected[current].next = []
+			for kept in selected:
+				selected[kept].next = selected[kept].next.filter(func(edge): return selected.has(edge.to))
 			nodes = selected
 			total_miles = distance
+			longest_miles = distance
 			end_id = id
 			return true
 		if nodes[current].next.is_empty():

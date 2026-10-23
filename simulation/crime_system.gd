@@ -334,15 +334,7 @@ func report_for(current: Dictionary,day: int) -> Dictionary:
 	return {"incident":current.id,"origin":current.place,"day":day,"senders":local_witnesses(current),"facts":facts,"identified":current.action!="theft"}
 ## Guide miles from the start of the road to each stop.
 func mile(game,id: String) -> int:
-	if miles.is_empty():
-		var current: String=game.route.start
-		var distance:=0
-		while true:
-			miles[current]=distance
-			var next: Array=game.route.nodes[current].get("next",[])
-			if next.is_empty() or not game.route.nodes.has(next[0].to):break
-			distance+=int(next[0].miles)
-			current=next[0].to
+	if miles.is_empty():miles=game.route.node_miles()
 	# A trading party is wherever the party met it; one not yet in the record is here.
 	if transient(id):return int(record.services[id].mile) if record.services.has(id) else int(game.state.miles)
 	return int(miles.get(id,0))

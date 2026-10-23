@@ -24,7 +24,11 @@ var journal: Array[String] = []
 var error := ""
 var outfitter = Outfitting.new()
 var departure_error := ""
+## Authored placeholder costs of a waterless leg (Palmer: "No water and but little grass between").
+const WATERLESS := {"ox_strain": 3, "thirst": 1}
 var route = Route.new()
+# Stops reached so far, in order, from the start; records which road was taken.
+var route_path: Array = []
 var last_crossing: Dictionary = {}
 var crossing_history: Array[Dictionary] = []
 var party_health = PartyHealth.new()
@@ -74,6 +78,7 @@ func _init(seed_value: int = 1848, mode: String = "classic", setup: bool = false
 		error = route.error
 		state.status = "error"
 	elif setup:
+		route_path = [state.landmark]
 		_set_next_leg()
 	if not combat.error.is_empty():
 		error=combat.error
@@ -151,23 +156,47 @@ func calendar() -> Dictionary:
 	var start := "1848-%02d-01T00:00:00" % state.departure_month
 	return Time.get_datetime_dict_from_unix_time(int(Time.get_unix_time_from_datetime_string(start)) + state.day * 86400)
 
+## Guide miles of the whole journey along the road chosen so far, then the main road.
 func destination() -> int:
-	return route.total_miles if state.extended_route else DESTINATION
+	if not state.extended_route:
+		return DESTINATION
+	if not route.nodes.has(state.landmark):
+		return route.total_miles
+	if state.next_landmark == "" or state.next_landmark == state.landmark or not route.nodes.has(state.next_landmark):
+		return int(state.miles) + route.remaining(state.landmark)
+	return int(state.miles) - int(state.leg_miles) + int(state.leg_length) + route.remaining(state.next_landmark)
 
-func _set_next_leg() -> void:
+## Stops reached so far. A party placed directly at a stop (scenario fixtures)
+## without a matching history is treated as having come by the main road.
+func travelled_path() -> Array:
+	if not route_path.is_empty() and route_path[-1] == state.landmark and route.valid_path(route_path):
+		return route_path
+	var main: Array = route.main_path_to(str(state.landmark))
+	return main if not main.is_empty() else route_path
+
+## The road the party is on between stops, or {} at a stop.
+func current_edge() -> Dictionary:
+	if state.next_landmark == state.landmark:
+		return {}
+	return route.edge_between(state.landmark, state.next_landmark)
+
+func _set_next_leg(edge_index: int = 0) -> void:
 	var node: Dictionary = route.nodes[state.landmark]
 	state.terrain = node.get("terrain", "plains")
 	if node.next.is_empty():
 		state.next_landmark = ""
 		state.status = "arrived"
 		return
-	state.next_landmark = node.next[0].to
-	state.leg_length = int(node.next[0].miles)
+	var edge: Dictionary = node.next[clampi(edge_index, 0, node.next.size() - 1)]
+	state.next_landmark = edge.to
+	state.leg_length = int(edge.miles)
 	state.leg_miles = 0
 	state.river_stage = ""
 
 func _arrive_landmark() -> void:
+	route_path = travelled_path().duplicate()
 	state.landmark = state.next_landmark
+	route_path.append(state.landmark)
 	var node: Dictionary = route.nodes[state.landmark]
 	journal.append("Day %d · Reached %s. Guide mileage: %d." % [state.day, node.name, state.miles])
 	if node.kind in ["chapter_end", "destination"]:
@@ -190,7 +219,12 @@ func _arrive_landmark() -> void:
 			options=options.filter(func(option):return option.get("method","")=="ferry")
 			options.append({"label":"Swim across with packs · 1 day, high injury / supply-loss risk","action":"cross","method":"swim","effects":{"days":1},"risk":swimming_risk()})
 	else:
-		options.append({"label": "Continue toward " + route.nodes[node.next[0].to].name, "action": "leave"})
+		for index in range(node.next.size()):
+			var road: Dictionary = node.next[index]
+			var leave := {"label": road.get("label", "Continue toward " + route.nodes[road.to].name), "action": "leave"}
+			if index > 0:
+				leave["edge"] = index
+			options.append(leave)
 	if node.get("descent",false):
 		options[0] = {"label":"Lower wagons carefully · 2 days", "action":"leave", "effects":{"days":2}}
 		if state.vehicle=="foot":options[0]={"label":"Descend carefully on foot · 1 day","action":"leave","effects":{"days":1}}
@@ -270,7 +304,9 @@ func _choose_landmark(index: int) -> bool:
 		journal.append("Crossed %s by %s." % [last_crossing.place, last_crossing.method])
 	journal.append("Leaving " + route.nodes[state.landmark].name + ".")
 	pending = {}
-	_set_next_leg()
+	_set_next_leg(int(choice.get("edge", 0)))
+	if int(choice.get("edge", 0)) > 0:
+		journal.append("Day %d · Took the road toward %s." % [state.day, route.nodes[state.next_landmark].name])
 	_schedule_event(false)
 	return true
 
@@ -439,12 +475,13 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 		survival.advance(int(calendar().month), state.terrain, climate)
 		state.weather = survival.weather.label
 		state.fatigue = clampi(int(state.fatigue) + (2 + int(state.pace) * 2 if team_working else (-14 if resting else -6)), 0, 100)
-		if not team_working:
+		if not team_working and current_edge().get("hazard","")!="waterless":
 			state.ox_health = mini(100, int(state.ox_health) + (int(seasonal_pressure().rest_ox_recovery) if resting else mini(2,int(seasonal_pressure().rest_ox_recovery))))
 		elif state.vehicle!="foot":
 			var strain: int=int(context.region(self).strain)+int(seasonal_pressure().working_strain)
 			if context.region_id(self) in ["plains","sagebrush"] and int(calendar().month) in [7,8,9]:strain+=1
 			strain+=int(survival.weather.get("ox_strain",0))
+			if current_edge().get("hazard","")=="waterless":strain+=int(WATERLESS.ox_strain)
 			state.ox_health=maxi(0,int(state.ox_health)-strain)
 	if state.extended_route:
 		var spoiled := provisions.spoil(int(state.day), int(state.food))
@@ -472,6 +509,8 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 	if not party_health.members.is_empty():
 		var storm_damage: int=int(seasonal_pressure().storm_damage) if state.extended_route else 0
 		if storm_damage>0:_change_health(-storm_damage,"winter exposure")
+		# No water and little grass: animals get no recovery and people go thirsty.
+		if state.extended_route and current_edge().get("hazard","")=="waterless":_change_health(-int(WATERLESS.thirst),"thirst")
 		var unprotected: int = maxi(0, int(state.party_size) - int(state.clothing))
 		if unprotected > 0 and int(survival.weather.exposure) > 0:
 			var exposed := 0
