@@ -35,6 +35,15 @@ func _initialize() -> void:
 	check(load("res://art/pixels/hunt_smoke.png").get_size() == Vector2(128, 16), "Rifle smoke holds eight 16 x 16 frames")
 	check(load("res://art/pixels/gravestone_frame.png").get_size() == Vector2(432, 150), "Headstone fills the memorial view")
 	var scenes = preload("res://ui/location_scenes.gd").new()
+	# Ambient effects sit inside the pictures they decorate.
+	var ambience: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/scene_ambience.json"))
+	for id in ambience.scenes:
+		check(scenes.textures.has(id), "Ambience names a real scene: " + id)
+		for kind in ambience.scenes[id]:
+			for point in ambience.scenes[id][kind]:
+				check(Rect2(0, 0, 432, 150).has_point(Vector2(point[0], point[1])), "Ambient %s sits inside %s" % [kind, id])
+	for name in ["ambient_smoke", "ambient_flag", "ambient_bird"]:
+		check(load("res://art/pixels/" + name + ".png").get_width() % 8 == 0, name + " holds eight frames")
 	check(scenes.error.is_empty(), "Scene registry loads every image")
 	var route = preload("res://simulation/route_catalog.gd").new()
 	var fingerprints: Dictionary = {}

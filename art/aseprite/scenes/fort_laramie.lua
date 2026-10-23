@@ -140,11 +140,8 @@ K.layer("fort_john", function()
   for gx = 194, 222, 7 do
     K.rect(gx, 66, 3, 6, "deep")
   end
-  -- Flagstaff flying trading post banner above the gatehouse
+  -- flagstaff above the gatehouse; ui/scene_ambience.gd flies the company's US flag from it
   K.rect(208, 44, 1, 16, "wood")
-  K.poly({{209, 45}, {221, 47}, {209, 50}}, "rust")
-  K.rect(209, 45, 5, 3, "blue")
-  K.px(211, 46, "white")
 
   -- Main gateway arch/lintel & open heavy timber doors
   K.rect(194, 96, 30, 29, "wood")

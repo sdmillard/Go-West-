@@ -31,6 +31,7 @@ const NEAR_BANK = [Vector2(0, 178), Vector2(25, 189), Vector2(50, 204), Vector2(
 const FAR_BANK = [Vector2(330, 0), Vector2(360, 21), Vector2(390, 26), Vector2(420, 43), Vector2(450, 62), Vector2(480, 77), Vector2(510, 90), Vector2(540, 99), Vector2(570, 125), Vector2(600, 136), Vector2(630, 150), Vector2(660, 161), Vector2(690, 182), Vector2(720, 200), Vector2(720, 0)]
 signal crossing_finished
 var scenes = preload("res://ui/location_scenes.gd").new()
+var ambience = preload("res://ui/scene_ambience.gd").new()
 var scene_id := ""
 var miles := 0
 var vehicle := "wagon"
@@ -110,6 +111,7 @@ func _draw() -> void:
 		return
 	if not scene_id.is_empty():
 		draw_texture(scenes.texture_for(scene_id), Vector2.ZERO)
+		ambience.draw(self, scene_id, scenes.texture_for(scene_id), clock_time)
 		if vehicle=="foot":_draw_walkers(Vector2(140,135),false)
 		_draw_weather()
 		return # Parked wagons/people are composed into each arrival illustration.

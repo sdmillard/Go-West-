@@ -1,0 +1,15 @@
+{
+  "notes": "Looping effects laid over location pictures by ui/scene_ambience.gd. Points are picture pixels: smoke rises from a chimney top or cook fire, a flag flies from the top of its staff (row 0 HBC red ensign, row 1 US flag). Water glints and birds are automatic.",
+  "no_birds": ["camp"],
+  "scenes": {
+    "independence": {"smoke": [[254, 28], [18, 36], [402, 56]]},
+    "elm_grove": {"smoke": [[214, 121]]},
+    "camp": {"smoke": [[212, 116]], "sparks": [[212, 124]]},
+    "fort_kearny_early": {"smoke": [[290, 137]]},
+    "independence_rock": {"smoke": [[100, 108]]},
+    "fort_laramie": {"flag": [[208, 44, 1]]},
+    "fort_hall": {"flag": [[213, 46, 0]]},
+    "umatilla": {"smoke": [[138, 99], [166, 97], [190, 99]]},
+    "eagle_creek": {"smoke": [[290, 63]]}
+  }
+}
