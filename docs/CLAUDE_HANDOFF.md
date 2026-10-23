@@ -19,6 +19,8 @@ Last updated October 22, 2026, after merged PR #19. **Continue the existing proj
 - Fixed stale meal orders after a diner dies/leaves; Hardy/fatal-shot and Frail/lethal-wound history mismatches; body/human-food weight missing from pack previews; and several study-policy stalls/timeout classifications. Save-rule fingerprint then: `376c2029…e635` (see PR #33 section for the current one).
 - The final test policy preserves **four working oxen** before elective slaughter (`slaughter_team_floor=4`). Earlier bots ate working teams down to one, falsely exaggerating four-ox difficulty. This is a policy correction, not a player restriction: the player can still slaughter working animals in emergencies. Keep the three working-team regression cases.
 
+- PR #31: shooting a companion now opens a notice right away ("YOU SHOT AT <NAME>") with the result, who joined, fought back, objected, fled (with what they took) or stood by. Trust lines stay in the journal (`ui/main.gd` `_show_attack_result`).
+
 ## Aseprite art (published)
 
 - The local Aseprite rebuild of all 52 scenes, the seven new sprites and `docs/GUI_ART_HANDOFF.md` were committed from the canonical checkout on branch `claude/aseprite-art-wiring`. The hunting sprites, headstone and ledger icons are wired into `ui/hunt_view.gd`, `ui/grave_view.gd` and `ui/main.gd`; the headstone was redrawn round-topped. The river-crossing and cabinet-chrome suggestions in that handoff are not implemented.
