@@ -205,7 +205,7 @@ func check_map() -> void:
 	check(map.status.text.contains("62 OF 124 MILES"), "Map footer says where the party is")
 	check(map._get_tooltip(map.ORIGIN + map.stops.greenwood_cutoff).contains("Green River"), "Hovering a stop names it")
 	await process_frame
-	check(map.status.get_rect().end.y <= map.close_button.position.y, "Map footer never overlaps the control row")
+	check(map.status.get_rect().end.y <= 340 and map.close_button.get_rect().end.y < map.ORIGIN.y, "Map footer clears its controls and X stays above the picture")
 	var anchor: Vector2 = map.ORIGIN + map.MAP_SIZE / 2
 	var before: Vector2 = map.screen_to_map(anchor)
 	var wheel := InputEventMouseButton.new()

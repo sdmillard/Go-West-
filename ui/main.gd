@@ -1678,7 +1678,7 @@ func _refresh_place_actions() -> void:
 		place_actions.add_child(option)
 
 
-func _normalize_dialog_tree(node: Node) -> void:
+func _normalize_dialog_tree(node) -> void:
 	if not is_instance_valid(node):return
 	if node is AcceptDialog:
 		if not node.has_meta("normalized_exit"):
