@@ -196,6 +196,23 @@ func run() -> void:
 	game.state.bullets=0
 	var before: Dictionary=Store.new().capture(game)
 	check(not pick(game,"breakout") and Store.new().capture(game)==before,"An empty gun rejects a fight without spending time or supplies")
+	game=outfit()
+	game.state.departure_month=6
+	game.state.next_landmark="fort_kearny"
+	game._arrive_landmark()
+	game.state.miles=int(game.route.node_miles().fort_kearny)
+	game.crime.scenes.fort_kearny.compliance=1
+	game.crime.scenes.fort_kearny.escape_capture=0
+	game.crime.scenes.fort_kearny.escape_injury=0
+	game.crime.scenes.fort_kearny.pursuit.daily=1
+	game.open_crime()
+	pick(game,"robbery")
+	pick(game,"take")
+	pick(game,"flee")
+	pick(game,"finish")
+	check(game.crime.check_pursuit(game),"The original army pursuit still creates a standoff")
+	check(pick(game,"surrender") and game.crime.incident().sentence.kind=="robbery","Being pursued without fighting is not charged as an assault")
+	roundtrip(game,"Army surrender sentence")
 	var screen=Main.instantiate()
 	root.add_child(screen)
 	await process_frame

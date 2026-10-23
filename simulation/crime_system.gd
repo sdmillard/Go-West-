@@ -414,7 +414,7 @@ func tale(game,slot: int) -> Dictionary:
 	var uid:=person_id(int(game.state.seed),slot)
 	var member: Dictionary=game.party_health.members[slot]
 	var objects:=func(action):return game.characters.response(slot,action) in ["forbidden","reluctant","disapproved"]
-	var acts: Array=record.incidents.filter(func(current):return current.knowledge.has(uid) and current.action not in ["pursuit","wanted"] and objects.call("murder" if current.action in ["shoot","assault"] else "robbery")).map(func(current):return int(current.id))
+	var acts: Array=record.incidents.filter(func(current):return current.knowledge.has(uid) and (current.action not in ["pursuit","wanted"] or int(current.shots)>0) and objects.call("murder" if current.action in ["shoot","assault","pursuit","wanted"] else "robbery")).map(func(current):return int(current.id))
 	var attacks: Array=record.attacks.filter(func(attack):return int(attack.day)<=int(member.departure_day) and (int(attack.target)==slot or attack.responses.has(str(slot))) and (int(attack.target)==slot or bond(slot,int(attack.target)) in CLOSE or objects.call("murder"))).map(func(attack):return int(attack.id))
 	var bodies: Array=record.remains.filter(func(item):return slot in item.witnesses and (objects.call("cannibalism") or (record.people.has(item.person) and bond(slot,int(record.people[item.person].slot)) in CLOSE))).map(func(item):return int(item.id))
 	return {"teller":slot,"origin":member.departure_place,"day":int(member.departure_day),"incidents":acts,"attacks":attacks,"remains":bodies}
@@ -442,7 +442,7 @@ func news_text(game,place: String) -> String:
 		else:lines.append("People here have heard that someone matching a description of your party stole from %s %s." % [noun,origin])
 	for told in heard_tales(game,place):
 		var said: Array=[]
-		for id in told.incidents:said.append("%s %s %s" % [{"theft":"stole from","robbery":"robbed","shoot":"shot at","assault":"attacked unarmed","raid":"looted"}[record.incidents[id-1].action],kind(record.incidents[id-1].place).noun,where(game,record.incidents[id-1].place)])
+		for id in told.incidents:said.append("%s %s %s" % [{"theft":"stole from","robbery":"robbed","shoot":"shot at","assault":"attacked unarmed","raid":"looted","pursuit":"fought soldiers from","wanted":"fought"}[record.incidents[id-1].action],kind(record.incidents[id-1].place).noun,where(game,record.incidents[id-1].place)])
 		for id in told.attacks:said.append(("attacked unarmed " if record.attacks[id-1].get("weapon","gun")=="unarmed" else "shot at ")+("them" if int(record.attacks[id-1].target)==int(told.teller) else game.party_health.members[int(record.attacks[id-1].target)].name))
 		for id in told.remains:said.append("butchered %s's remains for food" % Remains.entry(game,id).name)
 		lines.append("%s, who left your party on day %d, has told people here that you %s. They will not trade with you or help you." % [game.party_health.members[int(told.teller)].name,told.day,", ".join(said)])

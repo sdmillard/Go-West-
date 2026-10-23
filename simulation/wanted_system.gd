@@ -28,7 +28,7 @@ static func incident_evidence(crime,game,item: Dictionary,identified: bool) -> D
 	var weight: float=5.0 if military else ({"theft":1.0,"robbery":2.0,"raid":2.0,"shoot":4.0,"assault":4.0,"pursuit":5.0,"wanted":4.0}.get(action,0.0))
 	var severity: int=1 if action=="theft" else (2 if action in ["robbery","raid"] else 3)
 	if item.attempt=="killed" or not item.get("kills",[]).is_empty():severity=4
-	if action=="wanted" and int(item.shots)==0:weight=0
+	if action in ["wanted","pursuit"] and int(item.shots)==0:weight=0
 	return {"id":"incident:%d" % int(item.id),"weight":weight if identified else weight*0.5,"severity":severity,"value":value_of(game,item),"day":int(item.day),"identified":identified,"origin":item.place,"joining":item.get("joining",[])}
 ## Merge reports and tales about the same act, taking the strongest identification, never double-counting.
 static func evidence(crime,game,place: Variant="",local: Dictionary={},day: int=-1) -> Array:
@@ -43,7 +43,7 @@ static func evidence(crime,game,place: Variant="",local: Dictionary={},day: int=
 			merge(known,{"id":"attack:%d" % int(id),"weight":4.0,"severity":4 if attack.attempt=="killed" else 3,"value":0,"day":int(attack.day),"identified":true,"origin":told.origin,"joining":attack.joining})
 		for id in told.remains:
 			merge(known,{"id":"remains:%d" % int(id),"weight":3.0,"severity":2,"value":0,"day":int(told.day),"identified":true,"origin":told.origin,"joining":[]})
-	if not local.is_empty() and local.action!="wanted":merge(known,incident_evidence(crime,game,local,true))
+	if not local.is_empty() and local.action!="wanted" and (local.action!="pursuit" or int(local.shots)>0):merge(known,incident_evidence(crime,game,local,true))
 	return known.values().filter(func(item):return float(item.weight)>0)
 static func merge(known: Dictionary,item: Dictionary) -> void:
 	if not known.has(item.id) or float(known[item.id].weight)<float(item.weight):known[item.id]=item
@@ -198,6 +198,13 @@ static func choose(crime,game,current: Dictionary,command: String) -> bool:
 ## Captures at an original crime scene and later pursuits use the same sentencing rules.
 static func trial(crime,game,current: Dictionary,surrendered: bool) -> void:
 	var known:=charges(crime,game,int(game.state.miles),current)
+	# A detachment carries its own post's reports, even ahead of the general news.
+	# Merely being pursued is not an additional assault.
+	if current.action=="pursuit":
+		var answered:=settled(crime)
+		for report in crime.record.reports:
+			if report.origin==current.place and "incident:%d" % int(report.incident) not in answered:
+				merge_array(known,incident_evidence(crime,game,crime.record.incidents[int(report.incident)-1],true))
 	# A violent fight just witnessed is evidence even if its report has not left yet.
 	if current.action=="wanted" and int(current.shots)>0:merge_array(known,incident_evidence(crime,game,current,true))
 	var severity:=1

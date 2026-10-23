@@ -34,7 +34,8 @@ func run():
 				var okay:=true
 				if game.pending.get("crime_menu",false):
 					var stage: String=game.crime.incident().get("stage","")
-					okay=crime_choice(game,"take") if stage=="loot" else crime_choice(game,"flee" if stage=="escape" else "finish")
+					if stage=="standoff":okay=crime_choice(game,"breakout") or crime_choice(game,"surrender")
+					else:okay=crime_choice(game,"take") if stage=="loot" else crime_choice(game,"flee" if stage=="escape" else "finish")
 					if not okay and stage=="loot":okay=crime_choice(game,"flee")
 				elif action!="none" and not attempted and game.pending.get("landmark","")=="fort_bridger":
 					attempted=true
@@ -60,7 +61,7 @@ func run():
 			if store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))==null:errors.append({"seed":seed_value,"action":action,"error":"final save"})
 			rows.append({"seed":seed_value,"action":action,"attempted":attempted,"outcome":outcome,"days":game.state.day,"survivors":game.state.party_size,"cash":game.state.money,"incidents":game.crime.record.incidents,"deaths":game.party_health.members.filter(func(member):return not member.alive).size(),"departures":game.party_health.members.filter(func(member):return member.get("departed",false)).size()})
 	var file=FileAccess.open("res://docs/first-store-journeys.json",FileAccess.WRITE)
-	file.store_string(JSON.stringify({"rules_signature":store.fingerprint(),"runs":rows,"errors":errors,"policy":"24 actual full-route journeys: 4 actions x6seeds; banker suggested outfit, March/May/August, existing cautious salted-hunt65% aim policy. At Fort Bridger buy one ammunition lot if necessary for a gun offense, then attempt chosen action once, take reachable loot and try to escape, then resume normal survival decisions. Natural disease/weather and actual time, ammunition, injuries, death, stock and companion reactions apply. This integration sample is not the final survival balance campaign."},"\t"))
+	file.store_string(JSON.stringify({"rules_signature":store.fingerprint(),"runs":rows,"errors":errors,"policy":"24 actual full-route journeys: 4 actions x6seeds; banker suggested outfit, March/May/August, existing cautious salted-hunt65% aim policy. At Fort Bridger buy one ammunition lot if necessary for a gun offense, then attempt chosen action once, take reachable loot and try to escape, fight later pursuers if armed or surrender, then resume normal survival decisions. Natural disease/weather and actual time, ammunition, injuries, death, stock and companion reactions apply. This integration sample is not the final survival balance campaign."},"\t"))
 	file.close()
 	print("Store journeys: %d runs, %d errors" % [rows.size(),errors.size()])
 	quit(0 if rows.size()==24 and errors.is_empty() else 1)

@@ -29,7 +29,7 @@ Every trial records its charges, date, surrender status, payment, goods, banishe
 
 This is authored frontier-justice gameplay, not a reconstruction of uniform sentencing law or measured pursuit rates. The handoff's broad statement that there was "no civil law west of the Missouri" must not be treated literally: Indigenous nations had their own laws, Oregon had a provisional government, and Oregon Territory was created in 1848. The game models the uneven access of this emigrant party to organized enforcement, not an absence of law or government.
 
-- [National Park Service: Death and Danger on the Emigrant Trails](https://www.nps.gov/articles/000/death-on-trails.htm) describes murder and emigrant justice among trail dangers.
+- [National Park Service: Death and Danger on the Emigrant Trails](https://www.nps.gov/articles/000/death-on-trails.htm) distinguishes rare murders from the more common accidental gunshot deaths.
 - [BLM: Emigrant Trails of Southern Idaho](https://www.blm.gov/sites/default/files/documents/files/Library_Idaho_CulturalResourceSeries01.pdf) discusses rapid emigrant justice and trials. Evidence from later overland years informs the regulator abstraction; it is not proof of these exact 1848 encounters.
 - [Oregon State Archives chronology](https://sos.oregon.gov/blue-book/explore/Pages/chronology-1543-1850.aspx) documents provisional government and the 1848 territorial transition.
 - [National Archives: United States and Western Territories, December 1848](https://www.archives.gov/legislative/features/nm-az-statehood/us-map.html) provides jurisdictional context.
