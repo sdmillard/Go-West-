@@ -10,6 +10,12 @@
 --                          rump on the ground line at (0, 15) like the kit's standing ox
 --   flotsam         48x12  two 24x12 pieces of high-water drift: a log with a root wad, a
 --                          torn-out willow; each sits on the water line at y = 9
+--   rain_clouds    432x56  a grey, even overcast for a rainy day; tiles left to right
+--   rain_splash     32x4   four 8x4 frames of a drop hitting the ground, the ring spreading
+--   fog_bank       432x40  a ragged bank of mist, solid at its heart and dithered thin at the
+--                          edges so the picture shows through; tiles left to right
+--   snow_squall    432x150 one tile of wind-driven snow streaks and flakes, transparent
+--                          between them; tiles both ways as it scrolls
 local K = dofile(app.params.kit)
 
 -------------------------------------------------------------------- storm clouds
@@ -186,3 +192,96 @@ K.layer("drift", function()
   K.rect(ox + 1, 10, 22, 1, "light_blue"); K.px(ox + 21, 9, "white")
 end)
 K.save("flotsam")
+
+-------------------------------------------------------------------- rainy overcast
+K.canvas(432, 56, 1855)
+K.wrap = true
+K.layer("overcast", function()
+  -- one even grey lid of cloud, cooler and paler than a thunderhead
+  K.rect(0, 0, 432, 18, "storm")
+  K.dither(0, 18, 432, 2, "storm", "storm_lt")
+  -- low soft rolls along its base
+  local x = 0
+  while x < 432 do
+    local r = 18 + K.rnd(20)
+    local y = 20 + K.rnd(6)
+    K.ellipse(x, y, r, 7, "storm")
+    K.ellipse(x - 2, y - 1, r - 2, 5, "storm_lt")
+    for xx = x - r + 2, x + r - 2 do if xx % 2 == 0 then K.px(xx, y + 5, "storm") end end
+    x = x + r + K.rnd(10)
+  end
+  -- a broken fringe of scud below the base
+  for i = 1, 70 do
+    local bx, by = K.rnd(432), 28 + K.rnd(6)
+    K.rect(bx, by, 3 + K.rnd(9), 1, (K.rnd(2) == 0) and "storm_lt" or "storm")
+  end
+  -- grey veils of rain falling out of it, fading downward
+  for x = 0, 431 do
+    local t = x * 2 * math.pi / 432
+    if math.sin(t * 19) + 0.5 * math.sin(t * 48) > 0.4 then
+      for y = 30, 55 do
+        if (x + y * 2) % 5 == 0 and K.rnd(100) < (56 - y) * 4 then K.px(x - math.floor((y - 30) / 5), y, "storm_lt") end
+      end
+    end
+  end
+end)
+K.wrap = false
+K.save("rain_clouds")
+
+-------------------------------------------------------------------- splashes
+K.canvas(32, 4, 1856)
+K.layer("splash", function()
+  -- the drop lands, throws up a crown, and the ring spreads and fades
+  K.px(3, 3, "light_blue"); K.px(4, 3, "light_blue"); K.px(3, 2, "white")
+  K.px(9, 3, "light_blue"); K.px(12, 3, "light_blue"); K.px(10, 1, "white"); K.px(11, 1, "light_blue"); K.px(10, 2, "light_blue")
+  K.px(16, 3, "light_blue"); K.px(21, 3, "light_blue"); K.px(17, 2, "mist"); K.px(20, 2, "mist")
+  K.px(24, 3, "mist"); K.px(30, 3, "mist")
+end)
+K.save("rain_splash")
+
+-------------------------------------------------------------------- fog
+K.canvas(432, 40, 1857)
+K.wrap = true
+K.layer("fog", function()
+  -- density from overlapping slow swells; solid where thick, then ordered dither stepping down
+  local function density(x, y)
+    -- whole numbers of waves across the 432 px tile, so the bank repeats without a seam
+    local t = x * 2 * math.pi / 432
+    local mid = 20 + 4 * math.sin(t * 12) + 2 * math.sin(t * 33 + 1)
+    local half = 9 + 4 * math.sin(t * 15 + 2) + 2 * math.sin(t * 62)
+    return 1 - math.abs(y - mid) / math.max(1, half)
+  end
+  local bayer = {{0, 8, 2, 10}, {12, 4, 14, 6}, {3, 11, 1, 9}, {15, 7, 13, 5}}
+  for y = 0, 39 do
+    for x = 0, 431 do
+      local d = density(x, y)
+      if d > 0 and d * 18 > bayer[y % 4 + 1][x % 4 + 1] then
+        K.px(x, y, (d > 0.7) and "stone_lt" or "mist")
+      end
+    end
+  end
+end)
+K.wrap = false
+K.save("fog_bank")
+
+-------------------------------------------------------------------- blizzard
+K.canvas(432, 150, 1858)
+K.wrap = true
+K.layer("snow", function()
+  -- streaks blown hard from the left, falling a little as they go; flakes between
+  for i = 1, 170 do
+    local x, y = K.rnd(432), K.rnd(150)
+    local len = 3 + K.rnd(7)
+    for k = 0, len - 1 do
+      local yy = (y + math.floor(k / 4)) % 150
+      K.px(x + k, yy, (k == len - 1) and "white" or ((k < 2) and "mist" or "stone_lt"))
+    end
+  end
+  for i = 1, 220 do
+    local x, y = K.rnd(432), K.rnd(150)
+    K.px(x, y, (K.rnd(3) == 0) and "white" or "stone_lt")
+    if K.rnd(4) == 0 then K.px(x + 1, y, "white") end
+  end
+end)
+K.wrap = false
+K.save("snow_squall")
