@@ -455,6 +455,8 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 	var fed: bool = state.food >= needed
 	var eaten := mini(int(state.food), needed)
 	if state.extended_route:
+		# Fresh (undried) meat at a meal keeps scurvy away; staples and dried meat do not.
+		party_health.days_without_fresh = 0 if eaten > 0 and provisions.fresh_pounds(int(state.food)) > 0 else party_health.days_without_fresh + 1
 		provisions.remove(eaten)
 	state.food = maxi(0, state.food - needed)
 	if not fed:
@@ -475,7 +477,7 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 					exposed += 1
 		var nutrition: int = state.rations if fed else 0
 		var risk_multiplier: float = [2.0, 1.3, 0.7][nutrition] * (0.6 if resting else 1.0) * (1.4 if unprotected and survival.weather.exposure else 1.0)
-		party_health.tick(state.day, resting, risk_multiplier, nutrition, int(calendar().year), int(calendar().month) if state.extended_route else 0, context.region_id(self) if state.extended_route else "")
+		party_health.tick(state.day, resting, risk_multiplier, nutrition, int(calendar().year), int(calendar().month) if state.extended_route else 0, context.region_id(self) if state.extended_route else "", party_health.days_without_fresh)
 		_collect_health_events()
 		state.health = party_health.average_health()
 		state.party_size = party_health.living_count()

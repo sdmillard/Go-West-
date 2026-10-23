@@ -116,5 +116,47 @@ func run() -> void:
 		bad.party[2].immune = bad_value
 		check(store.restore(bad) == null, "Malformed immunity rejected: %s" % [bad_value])
 
+	# Scurvy: only after a long run without fresh meat, and it mends only with fresh food.
+	health = Health.new()
+	for change in [["condition", "measles"], ["onset_days", 0], ["max_chance", 2]]:
+		var invalid := data.duplicate(true)
+		invalid.scurvy[change[0]] = change[1]
+		check(not health.load_data(invalid), "Invalid scurvy rules rejected: " + change[0])
+	health.load_data(data)
+	check(not health.automatic_conditions(1850).has("scurvy"), "Scurvy is never a random illness")
+	check(health.scurvy_chance(45) == 0.0 and health.scurvy_chance(46) > 0.0 and health.scurvy_chance(90) > health.scurvy_chance(46) and health.scurvy_chance(1000) == float(data.scurvy.max_chance), "Scurvy risk starts after the onset period and rises to a cap")
+	var scorbutic := 0
+	for seed_value in range(40):
+		health.start(["Ada", "Sam", "Jo", "Lou", "Pat"], seed_value)
+		health.daily_onset_chance = 0.0
+		health.tick(1, false, 1.0, 2, 1848, 7, "plains", 30)
+		for member in health.members:
+			check(member.conditions.is_empty(), "No scurvy within the onset period")
+		health.tick(2, false, 1.0, 2, 1848, 7, "plains", 120)
+		for member in health.members:
+			scorbutic += member.conditions.filter(func(active): return active.id == "scurvy").size()
+	check(scorbutic > 0, "Scurvy appears after months without fresh meat (%d cases)" % scorbutic)
+	health.start(["Ada"], 1)
+	health.daily_onset_chance = 0.0
+	health.scurvy = {}
+	health.begin_condition(0, "scurvy", 0)
+	for day in range(1, 31):
+		health.tick(day, true, 1.0, 2, 1848, 7, "plains", 50 + day)
+	check(health.members[0].conditions.size() == 1 and "fresh food" in health.description(0), "Scurvy does not mend without fresh food")
+	health.members[0].health = 85
+	for day in range(31, 46):
+		health.tick(day, false, 1.0, 2, 1848, 7, "plains", 0)
+	check(health.members[0].conditions.is_empty(), "Fresh food lets scurvy mend")
+	game = outfit()
+	game._tick_day(true)
+	check(game.party_health.days_without_fresh == 1, "Meals of staples count as days without fresh meat")
+	game.provisions.add_meat(40, game.state.day)
+	game.state.food += game.provisions.meat_units(40)
+	game._tick_day(true)
+	check(game.party_health.days_without_fresh == 0, "A meal with fresh meat resets the count")
+	game.party_health.days_without_fresh = 70
+	copy = store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))
+	check(copy != null and copy.party_health.days_without_fresh == 70, "Days without fresh meat persist through save and load")
+
 	print("Disease checks: %d, failures: %d" % [checks, failures])
 	quit(1 if failures else 0)
