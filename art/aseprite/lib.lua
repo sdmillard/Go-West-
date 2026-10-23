@@ -213,6 +213,25 @@ function K.ridge(x0, x1, base, floor, height, fill, lit, shade)
   end
 end
 
+-- Distant snowy range: hazy blue rock, lit faces to the upper left, and snow on everything
+-- higher than `snow` pixels above `base`, white where lit and pale blue in shade.
+function K.peaks(x0, x1, base, floor, height, snow)
+  for x = x0, x1 do
+    local top = math.floor(base - height(x) + 0.5)
+    local slope = height(x + 1) - height(x - 1)
+    for y = top, floor do
+      local c = (slope > 0) and "mist" or "far_hill"
+      if slope == 0 then c = "far_hill" end
+      if y > top + 3 then c = (slope > 0) and "far_hill" or "haze" end
+      if base - y > snow + math.floor(2 * math.sin(x / 3)) then
+        c = (slope > 0) and "white" or "light_blue"
+        if (x + y) % 5 == 0 then c = (slope > 0) and "mist" or "far_hill" end
+      end
+      px(x, y, c)
+    end
+  end
+end
+
 -- Low grey-green sagebrush clump.
 function K.sage(x, y)
   rect(x - 3, y - 1, 7, 2, "teal")

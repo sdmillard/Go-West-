@@ -1,88 +1,84 @@
--- Umatilla River Crossing (432x150).
--- Historical reference: Joel Palmer's 1845 journal & WESTERN_REFERENCES.md.
--- Clear stream channel winding across the rolling Columbia Plateau grasslands,
--- shaded by groves of cottonwoods and river-bottom willows.
+-- Umatilla River (432x150).
+-- Coming down off the Blue Mountains the road reaches the Umatilla, a cottonwood-lined river in
+-- dry, rolling bunchgrass hills: the homeland of the Umatilla, Cayuse and Walla Walla peoples,
+-- whose horse herds diarists remarked on. A village of mat lodges stands well off the road.
+-- The pine-dark Blue Mountains rise behind.
 local K = dofile(app.params.kit)
 local W, H = 432, 150
-local tau = math.pi * 2.0
 
-K.canvas(W, H, 184827)
+K.canvas(W, H, 184837)
 
------------------------------------------------------------------ 1. Sky & Columbia Plateau Hills
-K.layer("sky_and_hills", function()
-  K.rect(0, 0, W, 16, "blue")
-  K.blend(0, 16, W, "blue", "sky_top")
-  K.rect(0, 19, W, 18, "sky_top")
-  K.blend(0, 37, W, "sky_top", "sky")
-  K.rect(0, 40, W, 16, "sky")
-  K.blend(0, 56, W, "sky", "light_blue")
-  K.rect(0, 59, W, 14, "light_blue")
+-- a long A-frame lodge of tule mats, sunlit on its left slope
+local function lodge(x, y, len)
+  K.poly({{x, y}, {x + 4, y - 6}, {x + len - 4, y - 6}, {x + len, y}}, "ochre")
+  K.poly({{x, y}, {x + 4, y - 6}, {x + len / 2, y - 6}, {x + len / 2 - 2, y}}, "gold")
+  for i = x + 3, x + len - 3, 3 do K.px(i, y - 3, "rust") end
+  K.rect(x + 4, y - 7, len - 8, 1, "wood")
+  K.rect(x + math.floor(len / 2) - 1, y - 3, 2, 3, "deep")
+  K.px(x + 6, y - 9, "mist"); K.px(x + 7, y - 11, "mist")
+end
 
-  K.cloud(42, 16, 1.35)
-  K.cloud(302, 14, 1.4)
+K.layer("sky", function()
+  K.sky(W, 100, {{100, 16, 0.7}, {300, 8, 1.0}}, "mist")
+end)
 
+K.layer("blue mountains", function()
+  local bm = function(x) return 34 + 8 * math.sin(x / 47 + 1) + 4 * math.sin(x / 13) end
+  K.ridge(0, W - 1, 0, 100, function(x) return -(88 - bm(x)) end, "far_hill", "mist", "haze")
   for x = 0, W - 1 do
-    local y_far = 64 + math.floor(4 * math.sin(tau * x / 432.0 + 0.4) + 2 * math.cos(tau * x / 144.0))
-    for y = y_far, 84 do
-      K.px(x, y, (y == y_far) and "mist" or "far_hill")
-    end
-    local y_mid = 74 + math.floor(4 * math.cos(tau * x / 432.0 + 0.9) + 2 * math.sin(tau * x / 108.0))
-    for y = y_mid, 96 do
-      K.px(x, y, (y == y_mid) and "gold" or "sage")
-    end
+    local top = math.floor(88 - bm(x) + 0.5)
+    local line = top + 4 + math.floor(3 * math.sin(x / 9))
+    for y = line, 100 do K.px(x, y, ((x + 2 * y) % 7 == 0) and "haze" or "teal") end
+    if x % 3 == 0 then K.px(x, line - 1, "teal") end
   end
 end)
 
------------------------------------------------------------------ 2. Umatilla River Channel, Cottonwoods & Near Bank
-K.layer("river_and_trees", function()
-  K.rect(0, 92, W, 58, "grass")
-  K.dither(0, 92, W, 5, "sage", "grass")
-  K.dither(0, 140, W, 10, "grass", "pine")
-
-  -- Far gravel bank
-  K.poly({{0, 91}, {432, 80}, {432, 83}, {0, 94}}, "sand")
-
-  -- Umatilla River channel (34px wide)
-  K.poly({{0, 93}, {432, 82}, {432, 116}, {0, 127}}, "blue")
-  K.poly({{0, 95}, {432, 84}, {432, 114}, {0, 125}}, "sky_top")
-  K.poly({{0, 98}, {432, 87}, {432, 111}, {0, 122}}, "sky")
-  -- Near gravel shoreline
-  K.poly({{0, 126}, {432, 115}, {432, 118}, {0, 129}}, "sand")
-
-  for i = 1, 75 do
-    local rx = 6 + K.rnd(W - 16)
-    local ry = 85 + K.rnd(38)
-    local cur = K.at(rx, ry)
-    if cur == "sky" or cur == "sky_top" or cur == "blue" then
-      K.rect(rx, ry, 4 + (i % 4), 1, (i % 3 == 0) and "white" or "light_blue")
+K.layer("hills", function()
+  local h1 = function(x) return 20 + 10 * math.sin(x / 38 + 2) + 4 * math.sin(x / 15) end
+  K.ridge(0, W - 1, 104, 108, h1, "gold", "sand", "ochre")
+  for x = 0, W - 1 do
+    if h1(x + 2) - h1(x - 2) < -1 then
+      local top = math.floor(104 - h1(x) + 0.5)
+      for y = top + 3, top + 12 do if (x + y) % 2 == 0 and K.at(x, y) == "gold" then K.px(x, y, "ochre") end end
     end
   end
-
-  -- Ford approach road
-  K.poly({{204, 120}, {228, 119}, {304, 150}, {236, 150}}, "ochre")
-  K.poly({{210, 120}, {222, 119}, {290, 150}, {248, 150}}, "gold")
-  K.line(208, 121, 246, 149, "rust")
-  K.line(221, 120, 288, 149, "rust")
-
-  for i = 1, 500 do
-    local x = K.rnd(W)
-    local y = 118 + K.rnd(32)
-    local cur = K.at(x, y)
-    if cur == "grass" then
-      K.px(x, y, (i % 3 == 0) and "sage" or ((i % 2 == 0) and "leaf" or "gold"))
-    end
-  end
-
-  -- Riparian cottonwoods & alders along the riverbanks
-  for _, tx in ipairs({42, 83, 354, 390}) do
-    K.elm(tx, 96, 1)
+  for i = 1, 900 do
+    local x, y = K.rnd(W), 74 + K.rnd(36)
+    if K.at(x, y) == "gold" then K.px(x, y, (i % 3 == 0) and "sand" or "ochre") end
   end
 end)
 
------------------------------------------------------------------ 3. Arriving Wagon
-K.layer("wagon", function()
-  K.wagon(24, 143, 1)
-  K.person(84, 142, "blue", "sand", false)
+K.layer("bottom", function()
+  K.rect(0, 106, W, H - 106, "sage")
+  for i = 1, 1400 do
+    local x, y = K.rnd(W), 106 + K.rnd(44)
+    K.px(x, y, ({"gold", "grass", "clap_sh", "sage", "ochre"})[i % 5 + 1])
+  end
+  local river = K.smooth({{-6, 116, 3}, {80, 112, 3}, {160, 120, 4}, {240, 114, 4}, {320, 124, 5}, {440, 120, 5}})
+  K.ribbon(river, "grass", 4)
+  K.river(river, "clap_sh")
+  local road = K.smooth({{440, 104, 1}, {380, 110, 2}, {320, 134, 4}, {250, 140, 5}, {160, 144, 6}, {-6, 148, 7}})
+  K.ribbon(road, "ochre", 1); K.ribbon(road, "sand", 0)
+end)
+
+K.layer("village", function()
+  -- cottonwoods along the river, mat lodges on the far bench, horses grazing
+  for _, t in ipairs({{40, 112}, {104, 112}, {290, 114}, {352, 120}, {410, 116}}) do K.elm(t[1], t[2], 1) end
+  for _, w in ipairs({{70, 114}, {150, 118}, {226, 118}, {300, 120}, {380, 122}}) do K.willow(w[1], w[2], 1) end
+  lodge(132, 106, 22); lodge(160, 104, 18); lodge(184, 106, 24)
+  for _, h in ipairs({{214, 104, "rust"}, {222, 106, "deep"}, {232, 103, "cream"}, {244, 105, "rust"}, {256, 104, "wood"}, {226, 101, "ochre"}}) do
+    local x, y = h[1], h[2]
+    K.rect(x, y - 3, 5, 2, h[3]); K.px(x + 5, y - 4, h[3]); K.px(x + 6, y - 5, h[3])
+    K.px(x, y - 1, "deep"); K.px(x + 4, y - 1, "deep"); K.px(x - 1, y - 3, h[3])
+  end
+end)
+
+K.layer("figures", function()
+  -- a wagon coming down the road toward the river crossing
+  K.wagon(300, 140, -1)
+  K.team(290, 136, -1, {"red"}, {"light", true})
+  K.person(356, 140, "blue", "deep")
+  K.far_wagon(392, 112, -1)
 end)
 
 K.save("location_umatilla")
