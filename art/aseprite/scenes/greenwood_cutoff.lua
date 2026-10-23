@@ -3,7 +3,8 @@
 -- Fort Bridger at the cost of some forty to fifty miles without water or grass. Parties filled
 -- every keg, rested the stock and often drove through the night. The country is rolling
 -- sagebrush and greasewood with pale alkali flats; far ahead the Wyoming Range still carries
--- snow above the Green. Dead and abandoned oxen marked the road.
+-- snow, and at last the dark line of cottonwoods along the Green shows where the road drops to
+-- the crossing. Dead and abandoned oxen marked the road.
 local K = dofile(app.params.kit)
 local W, H = 432, 150
 local HORIZON = 82
@@ -34,8 +35,26 @@ end)
 
 K.layer("plain", function()
   K.rect(0, HORIZON + 2, W, H - HORIZON - 2, "clap_sh")
+  -- the Green's bottom far ahead: pale banded bluffs on the far side, a dark ribbon of
+  -- cottonwood and willow below the plain, and the river glinting through where the road meets it
+  K.ridge(236, 420, HORIZON + 2, HORIZON + 4, function(x)
+    return 4 * math.min(1, (x - 236) / 20, (420 - x) / 20) + math.sin(x / 6)
+  end, "stone_lt", "white", "stone")
+  for x = 240, 416, 2 do K.px(x, HORIZON + 1, "clap_sh") end
   -- long low swells, each a little warmer and plainer than the one behind
   K.ridge(0, W - 1, 96, 100, function(x) return 6 + 4 * math.sin(x / 53 + 1) + math.sin(x / 11) end, "sand", "cream", "clap_sh")
+  -- the cottonwoods and willows of the Green's bottom, only where the swell in front leaves them in view
+  for x = 246, 410 do
+    local front = math.floor(96 - (6 + 4 * math.sin(x / 53 + 1) + math.sin(x / 11)) + 0.5)
+    local y = HORIZON + 5 + math.floor(math.sin(x / 15))
+    local crown = 2 + math.floor(1.5 * math.sin(x / 3.1) + 0.8 * math.sin(x / 1.7))
+    for yy = y - crown, y do
+      if yy < front then K.px(x, yy, (yy == y - crown and K.rnd(2) == 0) and "grass" or ((K.rnd(4) == 0) and "leaf" or "pine")) end
+    end
+    if ((x > 280 and x < 300) or (x > 330 and x < 352)) and y + 1 < front then
+      K.px(x, y + 1, (K.rnd(3) == 0) and "white" or "light_blue")
+    end
+  end
   K.ridge(0, W - 1, 112, 118, function(x) return 7 + 5 * math.sin(x / 71 + 3) + 1.5 * math.sin(x / 17) end, "clap_sh", "sand", "stone")
   for y = HORIZON + 2, H - 1 do
     for x = 0, W - 1 do
