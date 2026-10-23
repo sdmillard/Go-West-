@@ -4,7 +4,7 @@ var members: Array[Dictionary] = []
 var conditions: Dictionary = {}
 var daily_onset_chance := 0.0
 var scurvy: Dictionary = {}
-# Consecutive days whose meals had no fresh (undried) meat; drives scurvy.
+# Consecutive days without sufficient vitamin-C produce eaten; legacy save field name.
 var days_without_fresh := 0
 var notices: Array[String] = []
 var error := ""
@@ -282,7 +282,7 @@ func description(member_id: int) -> String:
 		if member.conditions.is_empty():
 			lines.append("No current illness or injury.")
 		for active in member.conditions:
-			lines.append("%s · %s · since day %d%s" % [conditions[active.id].name, ["Mild", "Bad", "Serious"][int(active.get("severity", 1)) - 1], active.started_day, " · mends only with fresh food" if conditions[active.id].get("needs_fresh_food", false) else ""])
+			lines.append("%s · %s · since day %d%s" % [conditions[active.id].name, ["Mild", "Bad", "Serious"][int(active.get("severity", 1)) - 1], active.started_day, " · mends only with vitamin-C foods" if conditions[active.id].get("needs_fresh_food", false) else ""])
 	lines.append("PERSONAL HISTORY")
 	lines.append("\n".join(member.history) if not member.history.is_empty() else "No health events recorded.")
 	return "\n\n".join(lines)

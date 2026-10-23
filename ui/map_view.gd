@@ -19,6 +19,13 @@ var roads: Dictionary = {} # "from>to" -> PackedVector2Array along the road
 var status: Label
 var close_button: Button
 var blink := 0.0
+var map_canvas: Control
+var zoom := 1.0
+var pan := Vector2.ZERO
+var dragging := false
+var zoom_label: Label
+const MAP_SIZE := Vector2(616, 288)
+const MAX_ZOOM := 4.0
 
 func _init(simulation) -> void:
 	game = simulation
@@ -30,17 +37,57 @@ func _ready() -> void:
 	data = JSON.parse_string(FileAccess.get_file_as_string("res://data/map.json"))
 	for id in data.stops:
 		stops[id] = project(data.stops[id])
+	map_canvas = Control.new()
+	map_canvas.position = ORIGIN
+	map_canvas.size = MAP_SIZE
+	map_canvas.clip_contents = true
+	map_canvas.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	map_canvas.draw.connect(_draw_map)
+	add_child(map_canvas)
 	status = Label.new()
 	status.add_theme_color_override("font_color", PAPER)
-	status.position = Vector2(14, 325)
-	status.size = Vector2(500, 24)
+	status.position = Vector2(12, 319)
+	status.size = Vector2(616, 20)
+	status.add_theme_font_size_override("font_size", 8)
+	status.clip_text = true
+	status.max_lines_visible = 1
+	status.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	status.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(status)
+	status.size = Vector2(616, 20)
+	for spec in [["-", 12, 30, -1], ["+", 46, 30, 1], ["FIT", 80, 42, 0], ["WAGON", 126, 60, 2]]:
+		var button := Button.new()
+		button.text = spec[0]
+		button.position = Vector2(spec[1], 340)
+		button.size = Vector2(spec[2], 18)
+		button.add_theme_font_size_override("font_size", 8)
+		var action: int = spec[3]
+		button.pressed.connect(func():
+			if action == 0: reset_view()
+			elif action == 2: focus_wagon()
+			else: set_zoom(zoom + action, ORIGIN + MAP_SIZE / 2))
+		add_child(button)
+		button.size = Vector2(spec[2], 18)
+	zoom_label = Label.new()
+	zoom_label.position = Vector2(192, 343)
+	zoom_label.add_theme_font_size_override("font_size", 8)
+	zoom_label.add_theme_color_override("font_color", PAPER)
+	zoom_label.text = "1X"
+	add_child(zoom_label)
+	var hint := Label.new()
+	hint.add_theme_color_override("font_color", PAPER)
+	hint.text = "SCROLL TO ZOOM / DRAG TO PAN"
+	hint.position = Vector2(226, 343)
+	hint.add_theme_font_size_override("font_size", 8)
+	add_child(hint)
 	close_button = Button.new()
 	close_button.text = "BACK TO THE TRAIL"
-	close_button.position = Vector2(500, 327)
-	close_button.size = Vector2(128, 20)
+	close_button.position = Vector2(500, 340)
+	close_button.size = Vector2(128, 18)
+	close_button.add_theme_font_size_override("font_size", 8)
 	close_button.pressed.connect(close)
 	add_child(close_button)
+	close_button.size = Vector2(128, 18)
 	tooltip_text = " "
 
 ## Latitude/longitude pair to a pixel on the map picture.
@@ -101,18 +148,20 @@ func open() -> void:
 	else:
 		where = "at " + where
 	status.text = ("Day %d  -  %d guide miles traveled  -  %s" % [s.day, s.miles, where]).to_upper()
+	status.tooltip_text = status.text
 	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	show()
 	queue_redraw()
 
 func close() -> void:
+	dragging = false
 	hide()
 	closed.emit()
 
 func _process(delta: float) -> void:
 	if visible:
 		blink = fmod(blink + delta, 1.0)
-		queue_redraw()
+		map_canvas.queue_redraw()
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if visible and event.is_action_pressed("ui_cancel"):
@@ -129,15 +178,15 @@ func trace(points: PackedVector2Array, color: Color, width: int = 1, gap: int = 
 		for t in range(steps + (1 if i == points.size() - 2 else 0)):
 			var p := a.lerp(b, float(t) / maxf(1.0, float(steps))).round()
 			if count % gap == 0:
-				draw_rect(Rect2(ORIGIN + p - Vector2(width / 2, width / 2), Vector2(width, width)), color)
+				map_canvas.draw_rect(Rect2(p - Vector2(width / 2, width / 2), Vector2(width, width)), color)
 			count += 1
 
 func text(at: Vector2, value: String, color: Color = LABEL) -> void:
 	var y := at.y
 	for line in value.split("\n"):
 		var width := PIXEL_FONT.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1, 8).x
-		var x := clampf(roundf(at.x - width / 2.0), ORIGIN.x + 5.0, ORIGIN.x + data.projection.width - width - 5.0)
-		draw_string(PIXEL_FONT, Vector2(x, y), line, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, color)
+		var x := clampf(roundf(at.x - width / 2.0), 5.0, data.projection.width - width - 5.0)
+		map_canvas.draw_string(PIXEL_FONT, Vector2(x, y), line, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, color)
 		y += 9
 
 ## A name on a small paper tag beside a map point (side: "above", "below" or "left"), kept inside the map.
@@ -152,10 +201,10 @@ func tag(at: Vector2, value: String, side: String, ink: Color = INK) -> void:
 		y = at.y - 5.0
 	x = clampf(x, 4.0, data.projection.width - width - 4.0)
 	y = clampf(y, 4.0, data.projection.height - 15.0)
-	var box := Rect2(ORIGIN + Vector2(x, y), Vector2(width, 11))
-	draw_rect(box, PAPER)
-	draw_rect(box, INK, false, 1.0)
-	draw_string(PIXEL_FONT, box.position + Vector2(3, 9), value, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, ink)
+	var box := Rect2(Vector2(x, y), Vector2(width, 11))
+	map_canvas.draw_rect(box, PAPER)
+	map_canvas.draw_rect(box, INK, false, 1.0)
+	map_canvas.draw_string(PIXEL_FONT, box.position + Vector2(3, 9), value, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, ink)
 
 func _draw() -> void:
 	if data.is_empty() or game == null:
@@ -170,9 +219,13 @@ func _draw() -> void:
 	for x in range(536, 548, 2):
 		draw_rect(Rect2(x, 15, 1, 1), PAPER)
 	draw_string(PIXEL_FONT, Vector2(552, 20), "OTHER ROADS", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, PAPER)
-	draw_texture(MAP_ART, ORIGIN)
+
+func _draw_map() -> void:
+	if data.is_empty(): return
+	map_canvas.draw_set_transform(pan, 0.0, Vector2.ONE * zoom)
+	map_canvas.draw_texture(MAP_ART, Vector2.ZERO)
 	for label in data.labels:
-		text(project(label.at) + ORIGIN, label.text)
+		text(project(label.at), label.text)
 	# Every road on the route, dotted; then the journey in red over it.
 	for id in game.route.nodes:
 		for edge in game.route.nodes[id].next:
@@ -186,37 +239,39 @@ func _draw() -> void:
 	for id in stops:
 		if not game.route.nodes.has(id):
 			continue
-		var p: Vector2 = ORIGIN + stops[id]
+		var p: Vector2 = stops[id]
 		var kind: String = game.route.nodes[id].kind
 		var visited: bool = id in path
 		var r := 2.0 if kind in ["fort", "town", "destination"] else 1.0
-		draw_rect(Rect2(p - Vector2(r, r), Vector2(r * 2 + 1, r * 2 + 1)), INK)
-		draw_rect(Rect2(p - Vector2(r - 1, r - 1), Vector2(r * 2 - 1, r * 2 - 1)), JOURNEY if visited else PAPER)
+		map_canvas.draw_rect(Rect2(p - Vector2(r, r), Vector2(r * 2 + 1, r * 2 + 1)), INK)
+		map_canvas.draw_rect(Rect2(p - Vector2(r - 1, r - 1), Vector2(r * 2 - 1, r * 2 - 1)), JOURNEY if visited else PAPER)
 	tag(stops["independence"], "INDEPENDENCE", "below")
 	tag(stops["oregon_city"], "OREGON CITY", "left")
 	# The wagon: a small covered wagon standing on the party's spot, with a blinking ring.
-	var here: Vector2 = (ORIGIN + j.here).round()
+	var here: Vector2 = (j.here).round()
 	if blink < 0.6:
-		draw_arc(here + Vector2(0.5, 0.5), 5.0, 0.0, TAU, 16, PAPER, 1.0)
+		map_canvas.draw_arc(here + Vector2(0.5, 0.5), 5.0, 0.0, TAU, 16, PAPER, 1.0)
 	var w := here + Vector2(-5, -12)
-	draw_rect(Rect2(w + Vector2(1, 0), Vector2(8, 1)), INK)
-	draw_rect(Rect2(w + Vector2(0, 1), Vector2(10, 4)), INK)
-	draw_rect(Rect2(w + Vector2(2, 1), Vector2(6, 1)), PAPER)
-	draw_rect(Rect2(w + Vector2(1, 2), Vector2(8, 3)), PAPER)
-	draw_rect(Rect2(w + Vector2(0, 5), Vector2(10, 2)), Color("76503c"))
-	draw_rect(Rect2(w + Vector2(1, 7), Vector2(2, 2)), INK)
-	draw_rect(Rect2(w + Vector2(7, 7), Vector2(2, 2)), INK)
-	draw_rect(Rect2(here + Vector2(0, -3), Vector2(1, 3)), INK)
+	map_canvas.draw_rect(Rect2(w + Vector2(1, 0), Vector2(8, 1)), INK)
+	map_canvas.draw_rect(Rect2(w + Vector2(0, 1), Vector2(10, 4)), INK)
+	map_canvas.draw_rect(Rect2(w + Vector2(2, 1), Vector2(6, 1)), PAPER)
+	map_canvas.draw_rect(Rect2(w + Vector2(1, 2), Vector2(8, 3)), PAPER)
+	map_canvas.draw_rect(Rect2(w + Vector2(0, 5), Vector2(10, 2)), Color("76503c"))
+	map_canvas.draw_rect(Rect2(w + Vector2(1, 7), Vector2(2, 2)), INK)
+	map_canvas.draw_rect(Rect2(w + Vector2(7, 7), Vector2(2, 2)), INK)
+	map_canvas.draw_rect(Rect2(here + Vector2(0, -3), Vector2(1, 3)), INK)
 	tag(j.here, "YOU ARE HERE", "above", JOURNEY_DARK)
 
 func _get_tooltip(at: Vector2) -> String:
-	if data.is_empty():
+	if status != null and status.get_rect().has_point(at): return status.text
+	if data.is_empty() or not Rect2(ORIGIN, MAP_SIZE).has_point(at):
 		return ""
+	at = screen_to_map(at)
 	var best := ""
-	var nearest := 6.0
+	var nearest := 6.0 / zoom
 	for id in stops:
-		if game.route.nodes.has(id) and (ORIGIN + stops[id]).distance_to(at) < nearest:
-			nearest = (ORIGIN + stops[id]).distance_to(at)
+		if game.route.nodes.has(id) and stops[id].distance_to(at) < nearest:
+			nearest = stops[id].distance_to(at)
 			best = id
 	if best == "":
 		return ""
@@ -225,3 +280,44 @@ func _get_tooltip(at: Vector2) -> String:
 	if best in game.travelled_path():
 		notes = "\nYou passed here." if best != game.state.landmark else "\nYou are here."
 	return node.name + notes
+
+
+func screen_to_map(at: Vector2) -> Vector2:
+	return (at - ORIGIN - pan) / zoom
+
+func map_to_screen(at: Vector2) -> Vector2:
+	return ORIGIN + pan + at * zoom
+
+func clamp_pan() -> void:
+	pan = pan.clamp(MAP_SIZE - MAP_SIZE * zoom, Vector2.ZERO).round()
+	map_canvas.queue_redraw()
+
+func set_zoom(value: float, anchor: Vector2) -> void:
+	var point := screen_to_map(anchor)
+	zoom = clampf(roundf(value), 1.0, MAX_ZOOM)
+	pan = anchor - ORIGIN - point * zoom
+	clamp_pan()
+	zoom_label.text = "%dX" % int(zoom)
+
+func reset_view() -> void:
+	set_zoom(1.0, ORIGIN + MAP_SIZE / 2)
+
+func focus_wagon() -> void:
+	set_zoom(maxf(2.0, zoom), ORIGIN + MAP_SIZE / 2)
+	pan = MAP_SIZE / 2 - journey().here * zoom
+	clamp_pan()
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			dragging = event.pressed and Rect2(ORIGIN, MAP_SIZE).has_point(event.position)
+		elif event.pressed and Rect2(ORIGIN, MAP_SIZE).has_point(event.position):
+			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+				set_zoom(zoom + 1, event.position)
+			elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+				set_zoom(zoom - 1, event.position)
+		accept_event()
+	elif event is InputEventMouseMotion and dragging:
+		pan += event.relative
+		clamp_pan()
+		accept_event()

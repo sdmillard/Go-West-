@@ -139,7 +139,7 @@ func run():
 	var before: Dictionary=store.capture(game)
 	check(game.open_attack(2) and game.pending.title=="Attack Ben" and "Joining you: Lead, Cora, Dell" in game.pending.text and "Refusing: Ada" in game.pending.text and "Ada and Ben: family" in game.pending.text,"The attack menu names the target, helpers, refusers and bonds")
 	check(round_trip(store,game),"An open attack menu restores")
-	check(game.choose(1) and store.capture(game)==before,"Backing out of an attack changes nothing")
+	check(game.choose(game.pending.choices.size()-1) and store.capture(game)==before,"Backing out of an attack changes nothing")
 	# A killing: the bold family member fights back and leaves; objectors who saw a death flee.
 	game=party(["Ruthless","Compassionate","Compassionate","Compassionate"],[{"a":1,"b":2,"kind":"family"}],["Bold","Cautious","Cautious","Cautious"])
 	game.crime.companion_rules.hit=1
@@ -185,10 +185,11 @@ func run():
 	check(game.party_health.members[2].get("fled",false) and game.party_health.members[2].history.back().contains("fled after you shot at Ben"),"The target's own history says why they left")
 	check(attack(game,3) and game.characters.profiles[3].memories.filter(func(memory):return memory.get("attack_id",0)>0).size()==2,"A second attack the same day is remembered separately")
 	check(round_trip(store,game),"Two attacks round-trip through saves")
-	# Without a bullet there is no attack.
+	# Without a bullet an unarmed attack is still available.
 	game=party(["Ruthless","Ruthless","Ruthless","Ruthless"])
 	game.state.bullets=0
-	check(not game.open_attack(1),"No bullets, no attack")
+	check(game.open_attack(1) and not game.can_choose(0) and game.can_choose(1),"Without bullets only unarmed attack is available")
+	game.choose(game.pending.choices.size()-1)
 	game.state.bullets=5
 	check(not game.open_attack(0) and not game.open_attack(9),"Only a companion with the party can be attacked")
 	betrayal(store)
@@ -199,7 +200,7 @@ func run():
 	screen.game=party(["Ruthless","Ruthless","Ruthless","Ruthless"])
 	screen._refresh()
 	screen._select_member(2)
-	check(screen.attack_button.visible and not screen.attack_button.disabled and screen.attack_button.text=="SHOOT BEN","The party view offers the attack for a companion")
+	check(screen.attack_button.visible and not screen.attack_button.disabled and screen.attack_button.text=="ATTACK BEN","The party view offers the attack for a companion")
 	screen._attack_selected()
 	check(screen.service_window.visible and screen.service_window.title=="Attack Ben","The attack menu opens in the native UI")
 	screen.game.crime.companion_rules.hit=0
@@ -207,6 +208,13 @@ func run():
 	check(screen.record_notice.visible and screen.record_notice.title=="YOU SHOT AT BEN" and "You shot at Ben: missed." in screen.record_notice.dialog_text and "Fled: Ben. They took " in screen.record_notice.dialog_text and not "(trust" in screen.record_notice.dialog_text,"The result of the shot is shown at once: the miss and who left")
 	check(screen.record_notice.size.x<=640 and screen.record_notice.size.y<=330,"The shot notice fits the 640 x 360 screen")
 	check("Joined you: Ada, Cora, Dell." in screen.record_notice.dialog_text,"Those who joined are named too")
+	screen.record_notice.hide()
+	screen.game=party(["Ruthless","Ruthless","Ruthless","Ruthless"])
+	screen._refresh()
+	screen._select_member(2)
+	screen._attack_selected()
+	screen._service_choice(1)
+	check(screen.record_notice.title=="YOU ATTACKED UNARMED BEN" and "No ammunition used." in screen.record_notice.dialog_text and not "One bullet used" in screen.record_notice.dialog_text,"Unarmed result names the method and correct ammunition cost")
 	screen.record_notice.hide()
 	screen.queue_free()
 	await process_frame

@@ -205,5 +205,33 @@ func check_map() -> void:
 	check(map.status.text.contains("62 OF 124 MILES"), "Map footer says where the party is")
 	check(map._get_tooltip(map.ORIGIN + map.stops.greenwood_cutoff).contains("Green River"), "Hovering a stop names it")
 	await process_frame
+	check(map.status.get_rect().end.y <= map.close_button.position.y, "Map footer never overlaps the control row")
+	var anchor: Vector2 = map.ORIGIN + map.MAP_SIZE / 2
+	var before: Vector2 = map.screen_to_map(anchor)
+	var wheel := InputEventMouseButton.new()
+	wheel.position = anchor
+	wheel.button_index = MOUSE_BUTTON_WHEEL_UP
+	wheel.pressed = true
+	map._gui_input(wheel)
+	check(map.zoom == 2 and map.screen_to_map(anchor).distance_to(before) < 1, "Wheel zoom preserves the point under the cursor")
+	map.focus_wagon()
+	check(Rect2(map.ORIGIN,map.MAP_SIZE).has_point(map.map_to_screen(j.here)), "Wagon control finds the party when zoomed")
+	check(map._get_tooltip(map.map_to_screen(map.stops.greenwood_cutoff)).contains("Green River"), "Stop hover follows zoom and pan")
+	var press := InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.pressed = true
+	press.position = anchor
+	map._gui_input(press)
+	var motion := InputEventMouseMotion.new()
+	motion.relative = Vector2(30,20)
+	var old_pan: Vector2 = map.pan
+	map._gui_input(motion)
+	check(map.pan != old_pan, "Dragging pans the map")
+	map.pan = Vector2(-100000,100000)
+	map.clamp_pan()
+	check(map.pan.x >= map.MAP_SIZE.x*(1-map.zoom) and map.pan.y<=0, "Panning stays inside map edges")
+	map.reset_view()
+	check(map.zoom==1 and map.pan==Vector2.ZERO, "Fit restores the whole map")
+	await process_frame
 	map.close_button.pressed.emit()
 	check(not map.visible, "Back to the trail closes the map")

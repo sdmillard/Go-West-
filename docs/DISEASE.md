@@ -21,14 +21,9 @@ Before this change, a spontaneous illness was picked uniformly from every unlock
 | Exhaustion | 2 | any | any | no | no |
 | Cholera | 1 | any | any | no | locked until 1849 |
 
-## Scurvy (part 2)
+## Scurvy
 
-- The engine counts `party_health.days_without_fresh`: each day's meals either include fresh (undried) meat from hunting or slaughter, or they don't. Staples and dried meat don't count. Human meat served through the remains ledger is not counted either way yet.
-- Past `onset_days` (45), each well traveler has a daily chance of scurvy: 1%, plus 1% for every further 15 days, capped at 8%. These are placeholders.
-- Scurvy is never picked as a random illness. It mends only on days the party eats fresh meat, and the roster says so. Without fresh food it keeps doing slow damage.
-- Saved as a top-level `days_without_fresh` field (not in `state`, so migrated saves keep their state untouched); older saves start the count at 0.
-
-NPS links scurvy to "diets lacking in vitamin C." Emigrants also carried dried fruit, pickles and vinegar, and gathered wild greens; none of those are modeled yet, so hunting is the only cure for now. That gap belongs to the outfitting/foraging work, not this PR.
+Updated October 23: [Foraging and vitamin C](FORAGING_AND_UNARMED.md) replaces the former fresh-meat shortcut. Scurvy follows an extended gap in adequate vitamin-C produce **actually eaten**, not food merely carried. Seasonal foraging supplies greens and berries. The existing onset and recovery values remain provisional. The legacy `days_without_fresh` save field retains its name for compatibility.
 
 ## Historical grounding and limits
 

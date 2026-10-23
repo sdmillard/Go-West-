@@ -1,6 +1,6 @@
 extends RefCounted
 ## Persistent local people, finite loot and staged incidents. No UI or global RNG.
-const COMMANDS=["theft","robbery","shoot","raid","take","flee","breakout","surrender","finish","back"]
+const COMMANDS=["theft","robbery","shoot","assault","raid","take","flee","breakout","surrender","finish","back"]
 const STAGES=["loot","escape","standoff","report","done"]
 const ATTEMPTS=["unseen","noticed","complied","resisted","missed","wounded","killed","raided","caught"]
 const RESOLUTIONS=["","left","escaped","captured","surrendered","party_lost"]
@@ -34,6 +34,7 @@ var scenes: Dictionary={}
 var modifiers: Dictionary={}
 var news_rules: Dictionary={}
 var companion_rules: Dictionary={}
+var unarmed_data: Dictionary={}
 var remains_rules: Dictionary={}
 var miles: Dictionary={}
 var record: Dictionary={}
@@ -43,6 +44,12 @@ func _init():load_data(JSON.parse_string(FileAccess.get_file_as_string("res://da
 func load_data(value: Variant) -> bool:
 	error="Invalid crime scene rules"
 	if not value is Dictionary or value.get("version")!=1 or not value.get("scenes") is Dictionary or value.scenes.is_empty() or not value.get("modifiers") is Dictionary:return false
+	var unarmed: Variant = value.get("unarmed")
+	if not unarmed is Dictionary:return false
+	for key in ["hit_penalty","fatal_factor","mishap_chance"]:
+		if not number(unarmed.get(key)) or unarmed[key]<0 or unarmed[key]>1:return false
+	if not whole(unarmed.get("mishap_damage"),1,100):return false
+	unarmed_data=unarmed.duplicate(true)
 	var mods: Dictionary=value.modifiers
 	if not mods.get("note") is String:return false
 	for key in ["experience_step","stealth_step","staff_step","poor_condition_penalty","fair_condition_penalty","small_party_penalty","floor","ceiling"]:
@@ -230,7 +237,7 @@ func loot_quote(game,place: String) -> Dictionary:
 	# Theft is carried away quietly. The commissary lies inside the post; roadside
 	# parties and ordinary stores allow loading alongside the wagon after a holdup.
 	var alongside: bool=game.state.vehicle=="wagon" and rules(place).wagon_access and current.get("action","")!="theft"
-	var hauling: int=game.hauling_capacity("murder" if current.get("action","")=="shoot" else "robbery")
+	var hauling: int=game.hauling_capacity("murder" if current.get("action","") in ["shoot","assault"] else "robbery")
 	var food_space:=floori(mini(room,room if alongside else hauling)/float(game.provisions.data.weights_lb.food))
 	return {"food":mini(mini(food_left(game,place),int(rules(place).loot_limit)),food_space) if rules(place).kind in ["store","fort","traders","emigrants"] else 0,"money":service(place).cash_cents if not current.is_empty() and current.action!="theft" else 0,"wagon_access":alongside,"haul_limit_lb":hauling}
 func option(label: String,command: String) -> Dictionary:
@@ -285,7 +292,7 @@ func menu(game) -> Dictionary:
 		else:text+="\n%s: %s. Cash box: $%.2f." % [keeper.role.capitalize(),condition(keeper),service(place).cash_cents/100.0]
 		text+="\nStaff on hand: %d. Your party's condition: %s. Fit, willing participants: %d. Prior successful jobs counted: %d of %d." % [living_staff(place).size(),party_condition(game),able(game,"robbery"),experience(game),int(modifiers.experience_cap)]
 		if keeper.health>0:
-			options=[option(words.theft,"theft"),option("Threaten the %s with your gun · 1 day" % keeper.role,"robbery"),option("Shoot at the %s · 1 bullet, 1 day" % keeper.role,"shoot")]
+			options=[option(words.theft,"theft"),option("Threaten the %s with your gun · 1 day" % keeper.role,"robbery"),option("Shoot at the %s · 1 bullet, 1 day" % keeper.role,"shoot"),option("Attack the %s unarmed · 1 day, higher injury risk" % keeper.role,"assault")]
 		else:options=[option(words.raid,"raid")]
 	elif current.stage=="loot":
 		var loot:=loot_quote(game,place)
@@ -313,7 +320,7 @@ func can_choose(game,command: String) -> bool:
 		if command=="back":return true
 		if record.incidents.size()>=10000:return false
 		var alive: bool=owner(target(game)).health>0
-		return (command in ["theft","robbery","shoot"] and alive and (command=="theft" or game.state.bullets>0)) or (command=="raid" and not alive)
+		return (command in ["theft","robbery","shoot","assault"] and alive and (command in ["theft","assault"] or game.state.bullets>0)) or (command=="raid" and not alive)
 	if current.stage=="report":return command=="finish"
 	if current.stage=="loot":
 		var quote:=loot_quote(game,current.place)
@@ -349,7 +356,7 @@ func tale(game,slot: int) -> Dictionary:
 	var uid:=person_id(int(game.state.seed),slot)
 	var member: Dictionary=game.party_health.members[slot]
 	var objects:=func(action):return game.characters.response(slot,action) in ["forbidden","reluctant","disapproved"]
-	var acts: Array=record.incidents.filter(func(current):return current.knowledge.has(uid) and current.action!="pursuit" and objects.call("murder" if current.action=="shoot" else "robbery")).map(func(current):return int(current.id))
+	var acts: Array=record.incidents.filter(func(current):return current.knowledge.has(uid) and current.action!="pursuit" and objects.call("murder" if current.action in ["shoot","assault"] else "robbery")).map(func(current):return int(current.id))
 	var attacks: Array=record.attacks.filter(func(attack):return int(attack.day)<=int(member.departure_day) and (int(attack.target)==slot or attack.responses.has(str(slot))) and (int(attack.target)==slot or bond(slot,int(attack.target)) in CLOSE or objects.call("murder"))).map(func(attack):return int(attack.id))
 	var bodies: Array=record.remains.filter(func(item):return slot in item.witnesses and (objects.call("cannibalism") or (record.people.has(item.person) and bond(slot,int(record.people[item.person].slot)) in CLOSE))).map(func(item):return int(item.id))
 	return {"teller":slot,"origin":member.departure_place,"day":int(member.departure_day),"incidents":acts,"attacks":attacks,"remains":bodies}
@@ -370,15 +377,15 @@ func news_text(game,place: String) -> String:
 	var lines: Array=[]
 	for report in heard(game,place):
 		if report.origin==place:continue
-		var act: String={"theft":"stole from","robbery":"robbed","shoot":"shot at","raid":"looted","pursuit":"fought off soldiers from"}[record.incidents[int(report.incident)-1].action]
+		var act: String={"theft":"stole from","robbery":"robbed","shoot":"shot at","assault":"attacked unarmed","raid":"looted","pursuit":"fought off soldiers from"}[record.incidents[int(report.incident)-1].action]
 		var origin: String=where(game,report.origin)
 		var noun: String=kind(report.origin).noun
 		if report.identified:lines.append("Word reached here by day %d that your party %s %s %s. The people here will not trade with you or help you." % [arrival(game,report,place),act,noun,origin])
 		else:lines.append("People here have heard that someone matching a description of your party stole from %s %s." % [noun,origin])
 	for told in heard_tales(game,place):
 		var said: Array=[]
-		for id in told.incidents:said.append("%s %s %s" % [{"theft":"stole from","robbery":"robbed","shoot":"shot at","raid":"looted"}[record.incidents[id-1].action],kind(record.incidents[id-1].place).noun,where(game,record.incidents[id-1].place)])
-		for id in told.attacks:said.append("shot at "+("them" if int(record.attacks[id-1].target)==int(told.teller) else game.party_health.members[int(record.attacks[id-1].target)].name))
+		for id in told.incidents:said.append("%s %s %s" % [{"theft":"stole from","robbery":"robbed","shoot":"shot at","assault":"attacked unarmed","raid":"looted"}[record.incidents[id-1].action],kind(record.incidents[id-1].place).noun,where(game,record.incidents[id-1].place)])
+		for id in told.attacks:said.append(("attacked unarmed " if record.attacks[id-1].get("weapon","gun")=="unarmed" else "shot at ")+("them" if int(record.attacks[id-1].target)==int(told.teller) else game.party_health.members[int(record.attacks[id-1].target)].name))
 		for id in told.remains:said.append("butchered %s's remains for food" % Remains.entry(game,id).name)
 		lines.append("%s, who left your party on day %d, has told people here that you %s. They will not trade with you or help you." % [game.party_health.members[int(told.teller)].name,told.day,", ".join(said)])
 	return " ".join(lines)
@@ -432,7 +439,7 @@ func choose(game,command: String) -> bool:
 	var keeper: Dictionary=owner(place)
 	var store: Dictionary=service(place)
 	var kind: String=incident().get("action",command)
-	var scene: Dictionary=odds(game,place,"murder" if kind=="shoot" else "robbery")
+	var scene: Dictionary=odds(game,place,"murder" if kind in ["shoot","assault"] else "robbery")
 	if incident().is_empty():
 		var id: int=record.incidents.size()+1
 		var current: Dictionary={"id":id,"day":int(game.state.day),"place":place,"target":keeper.uid,"action":command,"attempt":"raided","resolution":"","stage":"escape","food":0,"cash_cents":0,"shots":0,"knowledge":{}}
@@ -440,18 +447,21 @@ func choose(game,command: String) -> bool:
 		record.active={"id":id}
 		if command=="theft":current.attempt="unseen" if rng.randf()<scene.theft_success else "noticed"
 		elif command=="robbery":current.attempt="complied" if rng.randf()<scene.compliance else "resisted"
-		elif command=="shoot":
-			game._apply({"bullets":-1})
-			current.shots=1
+		elif command in ["shoot","assault"]:
+			var unarmed: bool = command == "assault"
+			if not unarmed:
+				game._apply({"bullets":-1})
+				current.shots=1
 			current.attempt="missed"
-			if rng.randf()<scene.shot_hit:
-				keeper.health=0 if keeper.health<=40 or rng.randf()<scene.shot_fatal else maxi(0,int(keeper.health)-40)
+			if rng.randf()<scene.shot_hit - (float(unarmed_rules().hit_penalty) if unarmed else 0.0):
+				keeper.health=0 if keeper.health<=40 or rng.randf()<scene.shot_fatal * (float(unarmed_rules().fatal_factor) if unarmed else 1.0) else maxi(0,int(keeper.health)-40)
 				current.attempt="killed" if keeper.health==0 else "wounded"
+		if command == "assault": unarmed_mishap(game)
 		if current.attempt!="unseen":store.alarmed=true
 		if current.attempt in ["unseen","complied","killed","raided"]:current.stage="loot"
 		game.journal.append("Day %d · %s incident %d: %s; %s %s. Nearby staff %s." % [game.state.day,kind(place).journal,id,command,keeper.role,current.attempt,"were alerted" if store.alarmed else "did not notice the attempt"])
 		observe(game,current,"attempt",current.attempt!="unseen")
-		game.characters.react_to_incident(game,"murder" if command=="shoot" else "robbery",id)
+		game.characters.react_to_incident(game,"murder" if command in ["shoot","assault"] else "robbery",id)
 		if not advance(game):return true
 	elif command=="take":
 		var current:=incident()
@@ -590,7 +600,7 @@ func attack_chance(game,target: int) -> float:
 	return clampf(float(companion_rules.hit)+float(companion_rules.participant_step)*(attack_side(game,target).joining.size()-1),float(modifiers.floor),float(modifiers.ceiling))
 func attack_ready(game,target: int) -> bool:
 	var members: Array=game.party_health.members
-	return target>0 and target<members.size() and game.party_health.is_active(members[target]) and game.party_health.is_active(members[0]) and game.state.bullets>0 and record.active.is_empty() and record.attacks.size()<100
+	return target>0 and target<members.size() and game.party_health.is_active(members[target]) and game.party_health.is_active(members[0]) and record.active.is_empty() and record.attacks.size()<100
 func can_attack(game,target: int) -> bool:return game.can_service() and attack_ready(game,target)
 ## Pure: shows the target, who joins, who refuses and the odds before anything is committed.
 func attack_menu(game,target: int) -> Dictionary:
@@ -598,30 +608,33 @@ func attack_menu(game,target: int) -> Dictionary:
 	var side:=attack_side(game,target)
 	var name: String=members[target].name
 	var names:=func(ids):return ", ".join(ids.map(func(id):return members[id].name)) if not ids.is_empty() else "nobody"
-	var text: String="You intend to shoot %s. Joining you: %s. Refusing: %s. Chance to hit: %d%%. A hit may kill or only wound. Everyone with the wagon sees it; companions close to %s may fight you or flee at once, and others who object may leave." % [name,names.call(side.joining),names.call(side.refusing),roundi(attack_chance(game,target)*100),name]
+	var text: String="You intend to attack %s. Joining you: %s. Refusing: %s. Chance to hit: %d%%. A hit may kill or only wound. Unarmed attacks have a 25-point lower hit chance and a 45%% additional injury risk. Everyone with the wagon sees it; companions close to %s may fight you or flee at once, and others who object may leave." % [name,names.call(side.joining),names.call(side.refusing),roundi(attack_chance(game,target)*100),name]
 	for item in record.bonds:
 		if int(item.a)==target or int(item.b)==target:text+="\n%s and %s: %s." % [members[int(item.a)].name,members[int(item.b)].name,item.kind]
-	return {"id":"attack","attack_menu":true,"service_menu":true,"title":"Attack "+name,"text":text,"choices":[{"label":"Shoot %s · 1 bullet" % name,"attack_target":target,"effects":{},"result":""},{"label":"Back","attack_target":-1,"effects":{},"result":""}]}
+	return {"id":"attack","attack_menu":true,"service_menu":true,"title":"Attack "+name,"text":text,"choices":[{"label":"Shoot %s · 1 bullet" % name,"attack_target":target,"effects":{},"result":""},{"label":"Attack %s unarmed · higher injury risk" % name,"attack_target":target,"unarmed":true,"effects":{},"result":""},{"label":"Back","attack_target":-1,"effects":{},"result":""}]}
 func choose_attack(game,index: int) -> bool:
 	var target: int=int(game.pending.choices[index].attack_target)
-	if target>=0 and not attack_ready(game,target):return false
+	var unarmed: bool = game.pending.choices[index].get("unarmed",false)
+	if target>=0 and (not attack_ready(game,target) or (not unarmed and game.state.bullets<=0)):return false
 	game.pending=game.service_return.duplicate(true)
 	game.service_return={}
-	if target>=0:attack(game,target)
+	if target>=0:attack(game,target,unarmed)
 	return true
-func attack(game,target: int) -> void:
+func attack(game,target: int, unarmed: bool = false) -> void:
+	if not attack_ready(game,target) or (not unarmed and game.state.bullets <= 0): return
 	var members: Array=game.party_health.members
 	var leader: Dictionary=members[0]
 	var victim: Dictionary=members[target]
 	var day: int=int(game.state.day)
 	var side:=attack_side(game,target)
-	var chance:=attack_chance(game,target)
-	game._apply({"bullets":-1})
+	var chance:=maxf(0.05,attack_chance(game,target) - (float(unarmed_rules().hit_penalty) if unarmed else 0.0))
+	var verb := "attacked unarmed" if unarmed else "shot at"
+	if not unarmed: game._apply({"bullets":-1})
 	var attempt: String="missed"
-	if rng.randf()<chance:attempt="killed" if victim.health<=int(companion_rules.wound_damage) or rng.randf()<float(companion_rules.fatal) else "wounded"
-	if attempt=="killed":game.party_health.kill(victim,day,"being shot by "+leader.name)
+	if rng.randf()<chance:attempt="killed" if victim.health<=int(companion_rules.wound_damage) or rng.randf()<float(companion_rules.fatal) * (float(unarmed_rules().fatal_factor) if unarmed else 1.0) else "wounded"
+	if attempt=="killed":game.party_health.kill(victim,day,("an unarmed attack by " if unarmed else "being shot by ")+leader.name)
 	elif attempt=="wounded":
-		game.party_health.affect(victim,-int(companion_rules.wound_damage),day,"a gunshot wound from "+leader.name)
+		game.party_health.affect(victim,-int(companion_rules.wound_damage),day,("an unarmed attack by " if unarmed else "a gunshot wound from ")+leader.name)
 		game.party_health.begin_condition(target,"wound",day,1)
 		if not victim.alive:attempt="killed"
 	var id: int=record.attacks.size()+1
@@ -637,12 +650,12 @@ func attack(game,target: int) -> void:
 		elif bond(other,target)!="rival" and game.characters.response(other,"murder") in ["forbidden","reluctant"]:answer="fled" if attempt=="killed" else "objected"
 		responses[str(other)]=answer
 		# Harm to oneself or a loved one is never an ordinary trust loss; a rival is unmoved.
-		if other==target or bond(other,target) in CLOSE:game.characters.remember(game,profile,"action_murder",-12,"You shot at %s." % ("them" if other==target else victim.name),true,0,id)
+		if other==target or bond(other,target) in CLOSE:game.characters.remember(game,profile,"action_murder",-12,"You %s %s." % [verb,"them" if other==target else victim.name],true,0,id)
 		elif bond(other,target)!="rival":
 			var reaction: String=game.characters.response(other,"murder")
-			if reaction!="neutral":game.characters.remember(game,profile,"action_murder",-12 if reaction in ["forbidden","reluctant"] else (2 if reaction=="approved" else -2),"You shot at %s. Response: %s." % [victim.name,reaction],reaction in ["forbidden","reluctant"],0,id)
-	record.attacks.append({"id":id,"day":day,"target":target,"attempt":attempt,"joining":side.joining,"responses":responses})
-	game.journal.append("Day %d · You shot at %s: %s." % [day,victim.name,attempt])
+			if reaction!="neutral":game.characters.remember(game,profile,"action_murder",-12 if reaction in ["forbidden","reluctant"] else (2 if reaction=="approved" else -2),"You %s %s. Response: %s." % [verb,victim.name,reaction],reaction in ["forbidden","reluctant"],0,id)
+	record.attacks.append({"id":id,"day":day,"target":target,"attempt":attempt,"joining":side.joining,"responses":responses,"weapon":"unarmed" if unarmed else "gun"})
+	game.journal.append("Day %d · You %s %s: %s." % [day,verb,victim.name,attempt])
 	var leaving: Array=[]
 	for key in responses:
 		var member: Dictionary=members[int(key)]
@@ -654,9 +667,10 @@ func attack(game,target: int) -> void:
 			game.journal.append("Day %d · %s fought back%s." % [day,member.name," and hit you" if hit else " and missed"])
 		if responses[key] in ["fled","retaliated"]:leaving.append(int(key))
 		elif responses[key]=="objected":game.journal.append("Day %d · %s objects to the attack." % [day,member.name])
+	if unarmed: unarmed_mishap(game)
 	game._collect_health_events()
-	game.flee(leaving,"after you shot at "+victim.name)
-	game.health_events.append("You shot at %s: %s.%s" % [victim.name,attempt,(" Leaving at once: "+", ".join(leaving.map(func(other):return members[other].name))+".") if not leaving.is_empty() else ""])
+	game.flee(leaving,"after you "+verb+" "+victim.name)
+	game.health_events.append("You %s %s: %s.%s" % [verb,victim.name,attempt,(" Leaving at once: "+", ".join(leaving.map(func(other):return members[other].name))+".") if not leaving.is_empty() else ""])
 	game.state.health=game.party_health.average_health()
 	game.state.party_size=game.party_health.living_count()
 	game._check_health()
@@ -832,7 +846,8 @@ func valid_party(r: Dictionary,game) -> bool:
 	var previous_day:=0
 	for index in range(r.attacks.size()):
 		var attack: Variant=r.attacks[index]
-		if not attack is Dictionary or attack.size()!=6 or attack.get("id")!=index+1 or not whole(attack.get("day"),previous_day,int(game.state.day)) or not whole(attack.get("target"),1,members.size()-1) or attack.get("attempt") not in ATTACK_RESULTS:return false
+		if not attack is Dictionary or attack.size() not in [6,7] or attack.get("id")!=index+1 or not whole(attack.get("day"),previous_day,int(game.state.day)) or not whole(attack.get("target"),1,members.size()-1) or attack.get("attempt") not in ATTACK_RESULTS:return false
+		if attack.get("weapon","gun") not in ["gun","unarmed"]:return false
 		previous_day=int(attack.day)
 		var victim: Dictionary=members[int(attack.target)]
 		if attack.attempt=="killed" and (victim.alive or victim.death_day!=attack.day):return false
@@ -904,10 +919,10 @@ func valid(value: Variant,game) -> bool:
 	for index in range(r.incidents.size()):
 		var current: Variant=r.incidents[index]
 		if not current is Dictionary or current.size()!=12 or current.get("id")!=index+1 or not whole(current.get("day"),0,int(game.state.day)) or not (current.get("place") is String and r.services.has(current.place) and not TEMPLATE_KINDS.has(current.place)) or current.get("target")!=owner_id(current.place):return false
-		if current.get("action") not in ["theft","robbery","shoot","raid","pursuit"] or current.get("attempt") not in ATTEMPTS or current.get("stage") not in STAGES or current.get("resolution") not in RESOLUTIONS:return false
+		if current.get("action") not in ["theft","robbery","shoot","assault","raid","pursuit"] or current.get("attempt") not in ATTEMPTS or current.get("stage") not in STAGES or current.get("resolution") not in RESOLUTIONS:return false
 		if current.day<previous_day:return false
 		previous_day=int(current.day)
-		if current.attempt not in {"theft":["unseen","noticed"],"robbery":["complied","resisted"],"shoot":["missed","wounded","killed"],"raid":["raided"],"pursuit":["caught"]}[current.action]:return false
+		if current.attempt not in {"theft":["unseen","noticed"],"robbery":["complied","resisted"],"shoot":["missed","wounded","killed"],"assault":["missed","wounded","killed"],"raid":["raided"],"pursuit":["caught"]}[current.action]:return false
 		# A chase follows an escape from the same post, within its days, and happens once.
 		if current.action=="pursuit":
 			var chase: Dictionary=rules(current.place).get("pursuit",{})
@@ -954,3 +969,18 @@ func valid(value: Variant,game) -> bool:
 	if not r.active.is_empty():
 		if r.active.size()!=1 or not whole(r.active.get("id"),1,r.incidents.size()) or r.active.id!=r.incidents.size() or r.incidents[int(r.active.id)-1].stage=="done" or not game.pending.get("crime_menu",false):return false
 	return Remains.valid(r,game)
+
+
+func unarmed_rules() -> Dictionary:
+	return unarmed_data
+
+func unarmed_mishap(game) -> void:
+	if game.party_health.is_active(game.party_health.members[0]) and rng.randf() < float(unarmed_rules().mishap_chance):
+		game.party_health.affect(game.party_health.members[0],-int(unarmed_rules().mishap_damage),int(game.state.day),"an unarmed struggle")
+		game.party_health.begin_condition(0,"wound",int(game.state.day),1)
+		game._collect_health_events()
+		game.state.health=game.party_health.average_health()
+		game.state.party_size=game.party_health.living_count()
+		game._check_health()
+		game.journal.append("Day %d · Hurt in the unarmed struggle." % game.state.day)
+		game.health_events.append("You were hurt in the unarmed struggle.")

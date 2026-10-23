@@ -350,5 +350,12 @@
       "window_days": 2,
       "wagon_access": true
     }
+  },
+  "unarmed": {
+    "note": "Authored close-combat risk; never consumes ammunition. Applies to a chosen unarmed attack, even with ammunition available.",
+    "hit_penalty": 0.25,
+    "fatal_factor": 0.5,
+    "mishap_chance": 0.45,
+    "mishap_damage": 25
   }
 }
