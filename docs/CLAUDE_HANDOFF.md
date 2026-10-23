@@ -1,6 +1,6 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 23, 2026, after the disease part 1 PR (see Expanded mechanics). Sections below cover PRs #19 to #34. **Continue the existing project; do not restart it. Spencer requested a break. This is a saved checkpoint, not a request to continue working now.**
+Last updated October 23, 2026, after the disease part 2 PR (see Expanded mechanics). Sections below cover PRs #19 to #34. **Continue the existing project; do not restart it. Spencer requested a break. This is a saved checkpoint, not a request to continue working now.**
 
 ## Resume here
 
@@ -58,6 +58,7 @@ Last updated October 23, 2026, after the disease part 1 PR (see Expanded mechani
 Spencer's order: crime follow-ups and these expanded mechanics first, the big balance pass last. Do not tune balance in these PRs; mark new numbers as placeholders. Plan: disease (causes and contagion, then scurvy), climate (Platte storms and stampedes, heat and dry stretches, snowmelt rivers), then route branches open in 1848 (Greenwood Cutoff, Columbia raft vs Barlow Road, Fort Walla Walla detour).
 
 - Disease part 1: illness is picked by month and region, measles/dysentery/typhoid spread within the party, measles leaves immunity (saved per traveler as `immune`), new non-contagious mountain fever in high country, cholera still locked to 1849+. See `docs/DISEASE.md` and `tests/test_disease.gd` (suite 34). Previous fingerprint `a76bde0b…81b7` whitelisted in `economy_v1`.
+- Disease part 2: scurvy after 45+ days of meals without fresh (undried) meat (`party_health.days_without_fresh`, saved as top-level `days_without_fresh`); mends only on fresh-meat days; never a random illness. Previous fingerprint `4fbbe60d…7351` whitelisted. Dried fruit, pickles and foraged greens are not modeled yet.
 
 ## Stoic vs. Loyal (Spencer's choice, October 23, 2026)
 

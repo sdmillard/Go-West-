@@ -3,6 +3,9 @@ extends RefCounted
 var members: Array[Dictionary] = []
 var conditions: Dictionary = {}
 var daily_onset_chance := 0.0
+var scurvy: Dictionary = {}
+# Consecutive days whose meals had no fresh (undried) meat; drives scurvy.
+var days_without_fresh := 0
 var notices: Array[String] = []
 var error := ""
 var rng := RandomNumberGenerator.new()
@@ -37,7 +40,21 @@ func load_data(data: Variant) -> bool:
 		if not _valid_spread(entry):
 			return _fail("Invalid disease onset or spread")
 		conditions[entry.id] = entry.duplicate(true)
+	var deficiency: Variant = data.get("scurvy", {})
+	if not deficiency is Dictionary or (not deficiency.is_empty() and not _valid_deficiency(deficiency)):
+		return _fail("Invalid scurvy rules")
 	daily_onset_chance = float(chance)
+	scurvy = deficiency.duplicate(true)
+	return true
+
+func _valid_deficiency(rules: Dictionary) -> bool:
+	if not conditions.has(rules.get("condition")) or not conditions[rules.condition].get("deficiency", false):
+		return false
+	if not _number(rules.get("onset_days")) or rules.onset_days < 1 or rules.onset_days != floor(rules.onset_days):
+		return false
+	for key in ["base_chance", "chance_per_15_days", "max_chance"]:
+		if not _number(rules.get(key)) or rules[key] < 0 or rules[key] > 1:
+			return false
 	return true
 
 func _valid_spread(entry: Dictionary) -> bool:
@@ -46,8 +63,9 @@ func _valid_spread(entry: Dictionary) -> bool:
 			return false
 	if entry.has("spread_chance") and (not _number(entry.spread_chance) or entry.spread_chance < 0 or entry.spread_chance > 1):
 		return false
-	if entry.has("immunizing") and not entry.immunizing is bool:
-		return false
+	for key in ["immunizing", "deficiency", "needs_fresh_food"]:
+		if entry.has(key) and not entry[key] is bool:
+			return false
 	if entry.has("months"):
 		if not entry.months is Array or entry.months.size() != 12:
 			return false
@@ -68,12 +86,14 @@ func _number(value: Variant) -> bool:
 func _fail(message: String) -> bool:
 	conditions.clear()
 	daily_onset_chance = 0.0
+	scurvy = {}
 	error = message
 	return false
 
 func start(names: Array, seed_value: int) -> void:
 	members.clear()
 	notices.clear()
+	days_without_fresh = 0
 	rng.seed = seed_value ^ 0x50415254
 	for index in range(names.size()):
 		members.append({"id": index, "name": names[index], "health": 85,
@@ -155,7 +175,7 @@ func roll_severity(rations: int) -> int:
 func automatic_conditions(year: int) -> Array[String]:
 	var candidates: Array[String] = []
 	for id in conditions:
-		if conditions[id].kind == "illness" and year >= int(conditions[id].get("from_year", 0)):
+		if conditions[id].kind == "illness" and not conditions[id].get("deficiency", false) and year >= int(conditions[id].get("from_year", 0)):
 			candidates.append(id)
 	return candidates
 
@@ -185,6 +205,22 @@ func _pick_condition(available: Array[String], month: int, region: String) -> St
 
 # Contagious illness can pass to anyone in the party who is currently well and
 # not immune. People who fell ill today do not pass it on until tomorrow.
+# Daily chance that each well traveler develops scurvy after a long run of
+# meals without fresh meat. It rises every 15 days past onset_days.
+func scurvy_chance(days_without_fresh: int) -> float:
+	if scurvy.is_empty() or days_without_fresh <= int(scurvy.onset_days):
+		return 0.0
+	var steps := floori(float(days_without_fresh - int(scurvy.onset_days)) / 15.0)
+	return minf(float(scurvy.max_chance), float(scurvy.base_chance) + steps * float(scurvy.chance_per_15_days))
+
+func _deficiency(day: int, rations: int, days_without_fresh: int) -> void:
+	var chance := scurvy_chance(days_without_fresh)
+	if chance <= 0.0:
+		return
+	for member in members:
+		if is_active(member) and member.conditions.is_empty() and rng.randf() < chance:
+			begin_condition(int(member.id), scurvy.condition, day, roll_severity(rations))
+
 func _spread(day: int, rations: int) -> void:
 	var sources: Array = []
 	for member in members:
@@ -198,7 +234,7 @@ func _spread(day: int, rations: int) -> void:
 			if is_active(member) and member.conditions.is_empty() and source[1] not in member.get("immune", []) and rng.randf() < chance:
 				begin_condition(int(member.id), source[1], day, roll_severity(rations), source[0])
 
-func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 2, year: int = 1848, month: int = 0, region: String = "") -> void:
+func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 2, year: int = 1848, month: int = 0, region: String = "", days_without_fresh: int = 0) -> void:
 	for member in members:
 		if not is_active(member):
 			continue
@@ -207,7 +243,9 @@ func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 
 			affect(member, -int(definition.daily_damage) * int(active.get("severity", 1)), day, definition.name.to_lower())
 			if not is_active(member):
 				break
-			active.elapsed += 2 if resting else 1
+			# Deficiency illness only mends on days with fresh food.
+			if days_without_fresh == 0 or not definition.get("needs_fresh_food", false):
+				active.elapsed += 2 if resting else 1
 			if active.elapsed >= definition.recovery_days:
 				member.conditions.erase(active)
 				_record(member, day, "%s recovered from %s." % [member.name, definition.name.to_lower()])
@@ -216,6 +254,7 @@ func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 
 						member.immune = []
 					member.immune.append(active.id)
 	_spread(day, rations)
+	_deficiency(day, rations, days_without_fresh)
 	# One provisional party-level onset roll per day; a separate seeded stream
 	# keeps watching the party and opening dialogs from changing any outcomes.
 	if living_count() == 0 or rng.randf() >= clampf(daily_onset_chance * risk_multiplier, 0, 1):
@@ -243,7 +282,7 @@ func description(member_id: int) -> String:
 		if member.conditions.is_empty():
 			lines.append("No current illness or injury.")
 		for active in member.conditions:
-			lines.append("%s · %s · since day %d" % [conditions[active.id].name, ["Mild", "Bad", "Serious"][int(active.get("severity", 1)) - 1], active.started_day])
+			lines.append("%s · %s · since day %d%s" % [conditions[active.id].name, ["Mild", "Bad", "Serious"][int(active.get("severity", 1)) - 1], active.started_day, " · mends only with fresh food" if conditions[active.id].get("needs_fresh_food", false) else ""])
 	lines.append("PERSONAL HISTORY")
 	lines.append("\n".join(member.history) if not member.history.is_empty() else "No health events recorded.")
 	return "\n\n".join(lines)

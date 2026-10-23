@@ -31,7 +31,7 @@ func capture(game) -> Dictionary:
 		"last_crossing":game.last_crossing.duplicate(true), "crossing_history":game.crossing_history.duplicate(true),
 		"supply_history":game.supply_history.duplicate(true), "service_return":game.service_return.duplicate(true),
 		"party":game.party_health.members.duplicate(true), "health_events":Array(game.health_events),
-		"fresh":game.provisions.fresh.duplicate(true), "outings":game.hunting_outings,
+		"fresh":game.provisions.fresh.duplicate(true), "outings":game.hunting_outings, "days_without_fresh":game.party_health.days_without_fresh,
 		"random":str(game.rng.state), "health_random":str(game.party_health.rng.state),
 		"survival_random":str(game.survival.rng.state),
 		"weather":game.survival.weather.duplicate(true), "wet_ground":game.survival.wet_ground,
@@ -248,7 +248,7 @@ func restore(value: Variant):
 		for entry in value[key]:
 			if not entry is Dictionary:
 				return null
-	if not integer(value.get("outings"),0,100000) or not integer(value.get("wet_ground"),0,12):
+	if not integer(value.get("outings"),0,100000) or not integer(value.get("wet_ground"),0,12) or not integer(value.get("days_without_fresh",0),0,100000):
 		return null
 	if s.extended_route and value.party.size() != 5:
 		return null
@@ -332,6 +332,7 @@ func restore(value: Variant):
 	game.supply_history.assign(normalize(value.supply_history))
 	game.last_crossing = normalize(value.last_crossing)
 	game.hunting_outings = int(value.outings)
+	game.party_health.days_without_fresh = int(value.get("days_without_fresh",0))
 	game.rng.state = int(value.random)
 	game.party_health.rng.state = int(value.health_random)
 	game.survival.rng.state = int(value.survival_random)
