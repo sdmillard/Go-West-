@@ -212,7 +212,7 @@ static func reveal(game) -> bool:
 static func valid(cache: Dictionary,game,day: int,party: Array=[]) -> bool:
  if not cache.has("camp_random"):return not cache.has("guards") and not party.any(func(member):return member.get("guarding",false))
  if not cache.camp_random is String or not cache.camp_random.is_valid_int() or str(int(cache.camp_random))!=cache.camp_random:return false
- if not game.crime.whole(cache.get("camp_day"),0,day) or not cache.get("gone") is bool or not cache.get("guards") is Array or cache.guards.size()>4 or not cache.get("camp_log") is Array or cache.camp_log.size()>20000:return false
+ if not game.crime.whole(cache.get("camp_day"),0,day) or not cache.get("gone") is bool or not cache.get("guards") is Array or cache.guards.size()>game.MAX_TRAVELERS-1 or not cache.get("camp_log") is Array or cache.camp_log.size()>20000:return false
  if not (cache.get("risk_cumulative") is float or cache.get("risk_cumulative") is int) or not is_finite(cache.risk_cumulative) or cache.risk_cumulative<0 or cache.risk_cumulative>1:return false
  if not game.hunting.data.regions.has(cache.get("habitat")) or not game.crime.whole(cache.get("camp_rations"),0,2) or not game.crime.whole(cache.get("camp_deficiency"),0,100000):return false
  for line in cache.camp_log:

@@ -483,6 +483,7 @@ func can_choose(index: int) -> bool:
 	if choice.has("bandit_payment") and (pending.id!="bandits" or not combat.BanditDemand.valid_choice(choice) or (choice.get("bandit_wagon",false) and state.vehicle!="wagon")):return false
 	if pending.get("recruit_menu",false) or pending.get("dismiss_menu",false):return recruitment.can_choose(self,index)
 	if pending.get("crime_menu",false):return crime.can_choose(self,str(choice.get("crime_command","")))
+	if pending.get("riders_menu",false):return crime.Wanted.can_choose_rider(self,index)
 	if pending.get("attack_menu",false):return int(choice.get("attack_target",-1))<0 or (crime.attack_ready(self,int(choice.attack_target)) and (choice.get("unarmed",false) or state.bullets>0))
 	if pending.get("remains_menu",false):return Remains.can_choose(self,str(choice.get("remains_command","")),int(choice.get("remains_id",0)),int(choice.get("member",-1)))
 	if choice.get("care",0)==12 and not context.local_care(self):return false
@@ -498,6 +499,7 @@ func choose(index: int) -> bool:
 		return false
 	if pending.get("recruit_menu",false) or pending.get("dismiss_menu",false):return recruitment.choose(self,index)
 	if pending.get("crime_menu",false):return crime.choose(self,str(pending.choices[index].crime_command))
+	if pending.get("riders_menu",false):return crime.Wanted.choose_rider(self,index)
 	if pending.get("attack_menu",false):return crime.choose_attack(self,index)
 	if pending.get("remains_menu",false):return Remains.choose(self,index)
 	if pending.get("service_menu", false):

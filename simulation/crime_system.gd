@@ -358,14 +358,14 @@ func menu(game) -> Dictionary:
 	elif current.stage=="escape":
 		text="%s. Staff have been alerted. Attempting escape costs one day; you may be injured or captured. Surrender brings a trial; a known killing can mean hanging." % current.attempt.capitalize()
 		options=[option(("Ride for it · 1 day" if game.Mounts.mounted(Wanted.flight_plan(game)) else "Try to escape · 1 day"),"flee"),option("Surrender","surrender")]
-		if Wanted.can_ride_off(game):options.append(option(Wanted.RIDE_LABEL,"ride"))
+		if Wanted.can_ride_off(game):options.append(option(Wanted.ride_label(game),"ride"))
 	elif current.stage=="standoff":
 		var shots: int=mini(int(scene.breakout_shots),int(game.state.bullets))
 		text=("Soldiers from %s rode after you and have caught up. " % game.route.nodes[place].name if current.action=="pursuit" else "Soldiers have blocked the way out. ")+"Shooting your way out spends up to %d bullets; some of you will likely be hurt, and you may still be taken. Surrender brings a trial; a known killing can mean hanging." % int(scene.breakout_shots)
 		options=[option("Shoot your way out · %d bullet(s)" % shots,"breakout"),option("Surrender","surrender")]
 		if current.action=="pursuit":
 			options.append(option("Flee the detachment · 1 day, risk of capture","flee"))
-			if Wanted.can_ride_off(game):options.append(option(Wanted.RIDE_LABEL,"ride"))
+			if Wanted.can_ride_off(game):options.append(option(Wanted.ride_label(game),"ride"))
 	elif current.has("sentence"):
 		text=current.sentence.text
 		options=[option("Acknowledge the sentence","finish")]
@@ -503,10 +503,15 @@ func advance(game,days: int=1) -> bool:
 		result(game,"party_lost")
 		return false
 	return true
-func choose(game,command: String) -> bool:
+## left: companions staying with the wagon when the party cuts loose; chosen on the riders menu.
+func choose(game,command: String,left: Array=[]) -> bool:
 	if not can_choose(game,command):return false
-	if incident().get("action","")=="wanted":return Wanted.choose(self,game,incident(),command)
-	if incident().get("action","")=="pursuit" and command in ["flee","ride"]:return Wanted.flee_pursuit(self,game,incident(),command=="ride")
+	# Too few saddles for everyone: first pick who rides.
+	if command=="ride" and left.is_empty() and not Wanted.everyone_rides(game):
+		game.pending=Wanted.riders_menu(game,Wanted.default_riders(game))
+		return true
+	if incident().get("action","")=="wanted":return Wanted.choose(self,game,incident(),command,left)
+	if incident().get("action","")=="pursuit" and command in ["flee","ride"]:return Wanted.flee_pursuit(self,game,incident(),command=="ride",left)
 	if command in ["back","finish"]:
 		if command=="finish":
 			incident().stage="done"
@@ -577,7 +582,9 @@ func choose(game,command: String) -> bool:
 	elif command=="surrender":result(game,"surrendered")
 	elif command in ["flee","ride"]:
 		var current:=incident()
-		if command=="ride" and not Wanted.cut_loose(self,game):return false
+		if command=="ride":
+			if not Wanted.cut_loose(self,game,left):return false
+			Wanted.left_at_wagon(self,game,store.alarmed)
 		# Riders get clear of the scene more often, though never surely.
 		var capture: float=maxf(minf(float(scene.escape_capture),float(modifiers.floor)),float(scene.escape_capture)-Wanted.flight_bonus(self,game))
 		if store.alarmed:Wanted.ride_hard(game)
@@ -1101,7 +1108,7 @@ func valid(value: Variant,game) -> bool:
 		if report.get("incident")!=derived.incident or report.get("origin")!=derived.origin or report.get("identified")!=derived.identified or report.get("senders")!=derived.senders or report.get("facts")!=derived.facts:return false
 	if not Wanted.valid_bounties(self,r,game):return false
 	if not r.active.is_empty():
-		if r.active.size()!=1 or not whole(r.active.get("id"),1,r.incidents.size()) or r.active.id!=r.incidents.size() or r.incidents[int(r.active.id)-1].stage=="done" or not game.pending.get("crime_menu",false):return false
+		if r.active.size()!=1 or not whole(r.active.get("id"),1,r.incidents.size()) or r.active.id!=r.incidents.size() or r.incidents[int(r.active.id)-1].stage=="done" or not (game.pending.get("crime_menu",false) or game.pending.get("riders_menu",false)):return false
 	return Remains.valid(r,game)
 
 
