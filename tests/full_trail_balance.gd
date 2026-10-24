@@ -54,6 +54,7 @@ func hunt_outing(game, profile: Dictionary, aim: RandomNumberGenerator, count: D
 	count.meat_obtained += int(game.hunt.meat)
 	if game.hunt.meat == 0:count.empty_hunts+=1
 	var finished: bool = game.finish_hunt()
+	if finished:count["last_hunt_day"]=int(game.state.day)
 	var recovered: Dictionary=game.last_hunt_recovery
 	count.meat_carried += float(recovered.get("mass",0))
 	count["meat_food_units"]=int(count.get("meat_food_units",0))+int(recovered.get("food",0))

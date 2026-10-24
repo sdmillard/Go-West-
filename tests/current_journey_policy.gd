@@ -172,6 +172,9 @@ func act(game,profile: Dictionary,aim: RandomNumberGenerator,count: Dictionary) 
    for index in range(game.pending.choices.size()):
     if game.pending.choices[index].get("action","")=="rest" and game.can_choose(index):bump(count,"toll_waits");return game.choose(index)
   return false
+ if game.state.vehicle!="foot" and game.state.oxen>0 and game.state.ox_health<=0:
+  bump(count,"rests")
+  return game.rest()
  if game.state.oxen==0 and game.state.vehicle!="foot":
   if abandon(game,count):return true
   bump(count,"rests")
@@ -187,7 +190,8 @@ func act(game,profile: Dictionary,aim: RandomNumberGenerator,count: Dictionary) 
  if profile.get("slaughter",true) and game.state.oxen>int(profile.get("slaughter_team_floor",4)) and game.state.food<90 and not game.ox_slaughter_offer().is_empty():bump(count,"oxen_slaughtered");return game.slaughter_ox()
  var threshold: int=int(profile.get("hunt_below",45))
  if game.state.vehicle=="foot" and (not profile.get("mount_support",false) or game.mount_plan().mode=="walking"):threshold=mini(20,threshold)
- if profile.hunt and game.state.food<threshold and game.state.bullets>0:return hunt_outing(game,profile,aim,count)
+ var just_fed_on_hunt: bool=game.mount_plan().mode=="walking" and int(count.get("last_hunt_day",-1))==int(game.state.day) and int(game.last_hunt_recovery.get("eaten_food",0))>=int(game.state.party_size)*(ration+1)
+ if profile.hunt and game.state.food<threshold and game.state.bullets>0 and not just_fed_on_hunt:return hunt_outing(game,profile,aim,count)
  var worst: int=game.state.health
  for member in game.party_health.members:
   if game.party_health.is_active(member):worst=mini(worst,int(member.health))
