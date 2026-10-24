@@ -50,12 +50,13 @@ var ribbon_buttons: Dictionary={}
 var crime_category := ""
 ## The VILLAINY section a crime, attack or remains preview was opened from; its back button returns there.
 var crime_back := ""
-const SECTION_PARENTS={"Attack someone":"Villainy","Party member":"Attack someone","Someone here":"Attack someone","Steal":"Villainy","Rob":"Villainy","Preserve meat":"Camp","Dry produce":"Camp","Companion tasks":"Camp"}
+const SECTION_PARENTS={"Attack someone":"Villainy","Party member":"Attack someone","Someone here":"Attack someone","Steal":"Villainy","Rob":"Villainy","Preserve meat":"Camp","Dry produce":"Camp","Companion tasks":"Camp","Field trips":"Camp"}
 var display_fit: OptionButton
 var window_scale: OptionButton
 var fullscreen: CheckBox
 var travel_speed: OptionButton
 var preferences_path := "user://preferences.cfg"
+var outing_window=preload("res://ui/outing_outfit_view.gd").new()
 var hunt_window: AcceptDialog
 var hunt_view: Control
 var hunt_report: Label
@@ -511,6 +512,8 @@ Northern shortcuts and Columbia rafting are not yet playable. Weather, medical e
 	section_rows.add_theme_constant_override("separation",7)
 	section_scroll.add_child(section_rows)
 	_build_ribbon()
+	add_child(outing_window)
+	outing_window.launch_requested.connect(_launch_outing)
 	food_notice=AcceptDialog.new()
 	food_notice.title="FOOD WARNING"
 	wrap_dialog(food_notice)
@@ -643,6 +646,7 @@ func _show_options() -> void:
 func _section_action(action: Callable) -> void:
 	section_window.hide()
 	action.call()
+	_refresh()
 
 func _show_section(section: String) -> void:
 	if section!="History" and (not game.can_service() or not landscape.crossing.is_empty() or _reviewing_crossing()):return
@@ -707,7 +711,18 @@ func _show_section(section: String) -> void:
 			var note:=label("Opening camp spends no time or supplies.\nChoose an activity; rest is optional.")
 			note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 			section_rows.add_child(note)
-			entries=[["COMPANION TASKS >",_show_section.bind("Companion tasks")],["REST · CHOOSE DAYS",_rest],["PRESERVE MEAT >",_show_section.bind("Preserve meat")],["DRY FRUIT / GREENS >",_show_section.bind("Dry produce")],["CARE / MEDICAL ATTENTION",_open_care]]
+			entries=[["COMPANION TASKS >",_show_section.bind("Companion tasks")],["FIELD TRIPS / RETURNING HUNTERS >",_show_section.bind("Field trips")],["REST · CHOOSE DAYS",_rest],["PRESERVE MEAT >",_show_section.bind("Preserve meat")],["DRY FRUIT / GREENS >",_show_section.bind("Dry produce")],["CARE / MEDICAL ATTENTION",_open_care]]
+		"Field trips":
+			for trip in game.field_outings.record.trips:
+				var info:=label("%s · %s · EXPECTED DAY %d\nDEPARTURE CAMP: MILE %d · %s" % [game.party_health.members[trip.member].name,str(trip.stage).to_upper(),trip.due,trip.mile,outing_window.KIT_LABELS[game.field_outings.Outfit.KITS.find(trip.kit)]])
+				info.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+				section_rows.add_child(info)
+			if game.field_outings.record.trips.is_empty():section_rows.add_child(label("No hunting parties are away."))
+			section_rows.add_child(button("OUTFIT A HUNTING TRIP >",_section_action.bind(_open_field_trip.bind(-1))))
+			var collect:=button("LOOK FOR HUNTERS AT THIS CAMP",func():
+				if game.field_outings.recover_here(game):_refresh();_show_section("Field trips"))
+			collect.disabled=not game.field_outings.record.trips.any(func(trip):return trip.stage=="stranded" and game.field_outings.at_origin(game,trip))
+			section_rows.add_child(collect)
 		"Companion tasks":
 			var table:=PanelContainer.new()
 			var border:=style("45372f","45372f",1)
@@ -915,10 +930,12 @@ func _camp_task_menu(id: int,task: Dictionary) -> MenuButton:
 	menu.add_submenu_item("Repair wagon","RepairOptions",20)
 	menu.add_item("Guard stock",game.camp_tasks.JOBS.find("guard"))
 	menu.set_item_tooltip(menu.item_count-1,"Watch horses and mules at night. In camp this costs the worker's rest; on travel nights the existing watch sleep cost applies. Protection never stacks.")
+	menu.add_item("Send hunting trip / outrider...",30)
 	menu.add_item("Help leader hunt",game.camp_tasks.JOBS.find("hunt_help"))
 	menu.set_item_tooltip(menu.item_count-1,"Join your hunt, adding hauling and Hunter benefits. Rest when the leader does something else.")
 	menu.id_pressed.connect(func(item: int):
-		if item not in [20,game.camp_tasks.JOBS.find("dry"),game.camp_tasks.JOBS.find("nurse")]:_assign_camp_task(item,id))
+		if item==30:_open_field_trip(id)
+		elif item not in [20,game.camp_tasks.JOBS.find("dry"),game.camp_tasks.JOBS.find("nurse")]:_assign_camp_task(item,id))
 	return choice
 
 func _camp_cell(content: Control,width: int=0) -> PanelContainer:
@@ -1249,9 +1266,27 @@ func _cancel_service() -> void:
 		_choose(game.pending.choices.size() - 1)
 
 func _start_hunt() -> void:
+	_open_field_trip(-1)
+
+func _open_field_trip(member: int=-1) -> void:
+	section_window.hide()
+	_pause_travel()
+	if game.can_service():outing_window.open(game,member)
+
+func _launch_outing(member: int,config: Dictionary) -> void:
+	if member>=0:
+		if game.field_outings.start(game,member,config.kit,int(config.days),int(config.bullets)):
+			outing_window.hide()
+			_refresh()
+	else:
+		if game.start_hunt(config):
+			game.field_outings.record.preferences["leader"]={"kit":config.kit,"days":1,"bullets":int(config.bullets)}
+			outing_window.hide()
+			_open_hunt_window()
+func _open_hunt_window() -> void:
 	options_window.hide()
 	crossing_result = {}
-	if game.start_hunt():
+	if not game.hunt.is_empty():
 		# Use the first active traveler for the visible hunter, including after a leader death.
 		var shooter: Dictionary=game.party_health.members.filter(func(member):return game.party_health.is_active(member))[0]
 		hunt_view.traveler_profile=game.characters.profiles[int(shooter.id)]
@@ -1263,7 +1298,7 @@ func _start_hunt() -> void:
 
 func _update_hunt_report() -> void:
 	if not game.hunt.is_empty():
-		hunt_report.text = "%s · %ds · %s · SHOTS %d/5 · AMMO %d\nLEFT: FIRE · RIGHT: WALK · MEAT %d LB / HAUL LIMIT %d LB\n%s" % [game.hunt.region_label.to_upper(), ceili(30 - game.hunt.elapsed), "RELOAD" if game.hunt.reload > 0 else "READY", game.hunt.shots, game.state.bullets, game.hunt.meat, game.hunting_capacity(), game.hunt.message]
+		hunt_report.text = "%s · %ds · %s · SHOTS %d/5 · AMMO %d\nLEFT: FIRE · RIGHT: WALK · MEAT %d LB / HAUL LIMIT %d LB\n%s" % [game.hunt.region_label.to_upper(), ceili(30 - game.hunt.elapsed), "RELOAD" if game.hunt.reload > 0 else "READY", game.hunt.shots, game.hunt_ammo(), game.hunt.meat, game.hunting_capacity(), game.hunt.message]
 
 
 func _finish_hunt() -> void:
@@ -1315,7 +1350,7 @@ func _refresh_party() -> void:
 			vacancy.disabled=not game.can_service() or game.recruitment.site(game).is_empty()
 			party_rows.add_child(vacancy)
 		else:_add_party_row(game.party_health.members[int(id)])
-	var past: Array=game.party_health.members.filter(func(member):return not game.party_health.is_active(member) and not member.get("guarding",false))
+	var past: Array=game.party_health.members.filter(func(member):return not game.party_health.is_active(member) and not member.get("guarding",false) and not member.get("away",false))
 	if not past.is_empty():
 		var history:=button(("HIDE" if show_past_travelers else "SHOW")+" PAST TRAVELERS · %d" % past.size(),_toggle_party_history)
 		history.name="PartyHistory"
@@ -1323,7 +1358,7 @@ func _refresh_party() -> void:
 		if show_past_travelers:
 			for member in past:_add_party_row(member)
 	member_details.text = game.crime.wanted_label(game)+"\n\n"+game.party_health.description(selected_member).replace("PERSONAL HISTORY",game.characters.description(selected_member)+("\n\n"+game.social.description(game,selected_member) if selected_member>0 else "")+"\n\nHEALTH HISTORY")
-	if game.party_health.members[selected_member].get("guarding",false):
+	if game.party_health.members[selected_member].get("guarding",false) or game.party_health.members[selected_member].get("away",false):
 		member_details.text=game.party_health.description(selected_member)
 		return
 	if selected_member<game.characters.profiles.size():
@@ -1345,7 +1380,7 @@ func _refresh_party() -> void:
 		if wages_button.visible:wages_button.size.x=143
 
 func _add_party_row(member: Dictionary) -> void:
-	var condition: String = "GUARDING WAGON" if member.get("guarding",false) else "LEFT PARTY" if member.get("departed",false) else (game.PartyHealth.condition_label(member.health) if member.alive else "DECEASED")
+	var condition: String = "AWAY HUNTING" if member.get("away",false) else "GUARDING WAGON" if member.get("guarding",false) else "LEFT PARTY" if member.get("departed",false) else (game.PartyHealth.condition_label(member.health) if member.alive else "DECEASED")
 	var text: String = member.name.to_upper() + " · " + condition
 	if game.party_health.is_active(member) and not member.conditions.is_empty():
 		var active: Dictionary = member.conditions[0]
@@ -1505,14 +1540,14 @@ func _advance_day() -> void:
 		return
 	if _warn_food():return
 	var before: int = game.state.miles
-	var wages_before: int=game.characters.due_total()
+	var wages_before: int=game.characters.payable_due_total(game)
 	if game.travel():
 		landscape.motion = 1.3
 	if not game._can_act():
 		_pause_travel()
 	_refresh()
 	if game.pending.get("crime_menu",false):_show_service()
-	if game.characters.due_total()>wages_before:
+	if game.characters.payable_due_total(game)>wages_before:
 		_pause_travel()
 		_refresh()
 		notice("WAGES DUE","Wages remain unpaid. Open Party to pay or review automatic payments. Another day without full payment counts as a missed payment.")
@@ -1561,13 +1596,13 @@ func _confirm_rest() -> void:
 			break
 		var health_news: int=game.health_events.size()
 		var living: int=game.state.party_size
-		var wages_before: int=game.characters.due_total()
+		var wages_before: int=game.characters.payable_due_total(game)
 		if not game.rest_in_camp():
 			reason="Resolve the current event before resting."
 			break
 		completed+=1
 		camping=true
-		if game.characters.due_total()>wages_before:
+		if game.characters.payable_due_total(game)>wages_before:
 			reason="Wages are due. Open View Party to pay before another day passes."
 			break
 		if game.state.status!="traveling":

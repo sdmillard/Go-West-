@@ -122,7 +122,7 @@ static func _day(game,cache: Dictionary,random) -> void:
   return
  var ration: int=cache.camp_rations
  var needed:=count*int(food.data.rations_lb[ration])
- var hunted:=false
+ var hunted: bool=bool(cache.get("field_working",false))
  var rules: Dictionary=food.data.wagon_guards
  if int(cache.inventory.food)<needed*int(rules.hunt_below_days) and int(cache.inventory.bullets)>0 and Carry.capacity(model.members,float(game.hunting.data.carry_per_person_lb))>0:
   # One abstract outing: regional species, real ammunition, health-scaled haul.

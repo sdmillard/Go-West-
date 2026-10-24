@@ -263,6 +263,14 @@ func _draw_map() -> void:
 		map_canvas.draw_rect(Rect2(cache_at-Vector2(3,3),Vector2(7,5)),INK,false,1.0)
 		tag(cache_at,"WAGON CACHE","left" if cache_at.distance_to(stops["independence"])<25 else "below")
 
+	var marked: Array=[]
+	for trip in game.field_outings.record.trips:
+		var point: Variant=outing_point(trip.origin)
+		if not point is Vector2 or point in marked:continue
+		marked.append(point)
+		map_canvas.draw_rect(Rect2(point-Vector2(2,2),Vector2(5,5)),Color("9d78aa"))
+		map_canvas.draw_rect(Rect2(point-Vector2(2,2),Vector2(5,5)),INK,false,1.0)
+		tag(point,"HUNTERS' CAMP","above")
 	# The wagon: a small covered wagon standing on the party's spot, with a blinking ring.
 	var here: Vector2 = (j.here).round()
 	if blink < 0.6:
@@ -285,6 +293,11 @@ func _get_tooltip(at: Vector2) -> String:
 	at = screen_to_map(at)
 	var cache_at: Variant=cache_point()
 	if cache_at is Vector2 and cache_at.distance_to(at)<7.0/zoom:return "Abandoned wagon · guide mile %d. Travel there to inspect it." % game.wagon_cache.mile
+	var names: Array[String]=[]
+	for trip in game.field_outings.record.trips:
+		var point: Variant=outing_point(trip.origin)
+		if point is Vector2 and point.distance_to(at)<7.0/zoom:names.append("%s: %s; expected day %d. Departure camp at mile %d." % [game.party_health.members[trip.member].name,trip.stage,trip.due,trip.mile])
+	if not names.is_empty():return "\n".join(names)+" Travel here and use Camp > Field trips to look for stranded hunters."
 	var best := ""
 	var nearest := 6.0 / zoom
 	for id in stops:
@@ -351,3 +364,10 @@ func focus_cache() -> void:
 	if not at is Vector2:return
 	pan=MAP_SIZE/2-at*zoom
 	clamp_pan()
+
+func outing_point(at: Dictionary) -> Variant:
+	if not stops.has(at.from) or not stops.has(at.to):return null
+	if at.from==at.to:return stops[at.from]
+	var edge: Dictionary=game.route.edge_between(at.from,at.to)
+	if edge.is_empty():return null
+	return part_of(road(at.from,at.to),float(at.offset)/float(edge.miles))[-1]

@@ -111,7 +111,7 @@ static func condition_label(health: int) -> String:
 	return "VERY POOR"
 
 static func is_active(member: Dictionary) -> bool:
-	return member.alive and not member.get("departed",false) and not member.get("guarding",false)
+	return member.alive and not member.get("departed",false) and not member.get("guarding",false) and not member.get("away",false)
 
 func living_count() -> int:
 	var count := 0
@@ -274,6 +274,7 @@ func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 
 
 func description(member_id: int) -> String:
 	var member: Dictionary = members[member_id]
+	if member.get("away",false):return member.name.to_upper()+"\n\nAWAY HUNTING\nLast known condition: "+condition_label(int(member.health))+"\nTheir slot, supplies and animals remain reserved. Check field trips or the map."
 	if member.get("guarding",false):return member.name.to_upper()+"\n\nGUARDING THE WAGON\nLast known condition: "+condition_label(int(member.health))+"\nReturn to the map marker to learn what happened.\nTheir party slot remains reserved."
 	if member.get("departed",false):
 		return "%s\n\nLEFT THE PARTY · DAY %d\nLocation: %s\n\n%s" % [member.name.to_upper(),member.departure_day,member.departure_place,"\n".join(member.history)]
