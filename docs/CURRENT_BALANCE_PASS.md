@@ -1,5 +1,7 @@
 # Combined survival balance pass
 
+Published snapshot: [PR #69](https://github.com/sdmillard/Go-West-/pull/69). Later variable bandit demands have separate validation in [Bandit demands](BANDIT_DEMANDS.md); the campaign below predates that change.
+
 Spencer's balance criterion is fair, understandable consequences, not equal outcomes for every choice. Poverty, late departure, payroll obligations, injury and violent crime may impose very different risks. The checks look for accounting errors, impossible saves, misleading previews, stalled actions, dominant loopholes and whether sensible lawful play has a viable path; they do not flatten those differences into equal win rates.
 
 This pass updates the automated policy for the current game: exact-unit counters, foraging, fresh/dried produce, party composition, paid contracts, replacement companions and wanted encounters. Earlier balance archives describe earlier rules and policies; their totals are not pooled into this sample.

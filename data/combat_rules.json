@@ -9,5 +9,40 @@
   "circle_floor": 0.08,
   "risk_cap": 0.75,
   "small_party_penalty": 0.1,
-  "minimum_defenders": 3
+  "minimum_defenders": 3,
+  "bandit_demands": {
+    "note": "Authored gameplay variation, not measured historical robbery frequencies. Requests are capped by visible carried holdings; wagon demands exclude clothing worn and leave carried bodies at the roadside.",
+    "tiers": [
+      {
+        "weight": 4,
+        "cash_cap": 20,
+        "goods_fraction": 0.15
+      },
+      {
+        "weight": 3,
+        "cash_fraction": 0.5,
+        "goods_fraction": 0.5
+      },
+      {
+        "weight": 1,
+        "cash_fraction": 1.0,
+        "goods_fraction": 1.0
+      }
+    ],
+    "mixed_chance": 0.6,
+    "goods_only_chance": 0.15,
+    "wagon_chance": 0.03,
+    "max_goods": 3,
+    "goods": {
+      "food": 4,
+      "bullets": 3,
+      "oxen": 1,
+      "clothing": 2,
+      "medicine": 2,
+      "salt": 1,
+      "wheels": 1,
+      "axles": 1,
+      "tongues": 1
+    }
+  }
 }

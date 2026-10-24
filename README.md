@@ -4,6 +4,8 @@ A growing Oregon Trail-inspired game in **Godot 4 / GDScript**. Lead five travel
 
 ![The playable travel screen](docs/preview.png)
 
+[Variable bandit demands](docs/BANDIT_DEMANDS.md) can ask for cash, actual carried goods or rarely the loaded wagon, with terms fixed before choosing.
+
 [Wanted encounters and frontier sentences](docs/WANTED_SYSTEM.md) build on witnessed crimes and spreading news, with regional pursuers, rewards, escape choices and save-compatible trials.
 
 [Historically scaled wages and economy](docs/HISTORICAL_ECONOMY.md) now distinguish cash plus party food from unboarded labor, with period price anchors and an explicit list of remaining abstractions.

@@ -350,3 +350,20 @@ Next authorized change: variable bandit demands, ranging from smaller/larger cas
 
 Publication: [PR #69](https://github.com/sdmillard/Go-West-/pull/69), branch codex/full-balance-pass. The tested implementation and frozen report sources are recorded above.
 
+
+## Variable bandit demands and remaining authorized work (October 23)
+
+Implemented after the frozen PR #69 campaign: actual-holdings-bounded cash/goods bundles and rare explicit loaded-wagon demands. See docs/BANDIT_DEMANDS.md. New demand regression sweep has 3,673 checks across 256 seeded rich-party quotes plus small-purse, empty-party, pending-save, malformed-save, actual surrender, body/food, legacy-$20 and UI cases. Clean final validation/publication follows below.
+
+Spencer's further authorized requests, still to implement:
+- Generate Party button during creation.
+- Travel menu toggle for east/west movement, with actual return to earlier places and river crossings.
+- Replacement wagons sold at stores; oxen separate if needed.
+- On voluntary wagon abandonment, optionally leave companions as guards. Their survival uses cached supplies and ammunition/hunting; guards lower but do not eliminate looting/loss risk. Returning may find surviving guards, deaths, departures or an empty/stolen wagon. Build this on real backtracking and cache accounting. This is distinct from bandits taking a wagon.
+
+Further steering: remove the dedicated backtrack-to-wagon UI button once normal east/west travel works; mark the abandoned wagon on the map. Continuing east beyond Independence should end peacefully with the character deciding to go back east, distinct from death and arrival in Oregon.
+
+Demand validation complete: feature checkpoint 6b6987e passed all 49 suites in a clean checkout, including 3,673 demand checks. Same game sources passed 48 source-frozen follow-up journeys and 24 store / 20 outlaw integrations. The first store integration hit one obsolete-policy stall after team loss; tests/store_crime_journeys.gd now uses the existing current counter/foraging policy (5e180de), preserving four working oxen. Failed and passing integration reports remain ignored in .tools/bandit-*. Current rule fingerprint: aecf61d91b46ad7eb2924872f40becc9b4b29a1ebb9768cb34dfd836c7c8f2eb. The PR #69 5,400-journey campaign remains a pre-demand baseline. Next authorized features are listed above, including the peaceful eastward ending and map-based wagon return.
+
+Publication: [PR #70](https://github.com/sdmillard/Go-West-/pull/70), variable bandit demands. Remaining authorized travel/generation/guard work is still pending as listed above.
+

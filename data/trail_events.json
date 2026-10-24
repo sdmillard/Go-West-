@@ -194,10 +194,10 @@
     "trigger": "random",
     "weight": 3,
     "title": "A robbery on the road",
-    "text": "Armed thieves demand money. Decide whether to surrender supplies, defend the wagon, or flee. Fighting can cause serious or fatal injury.",
+    "text": "Armed thieves block the trail. Their demand: {demand}. Fighting can cause serious or fatal injury.",
     "choices": [
       {
-        "label": "Surrender $20",
+        "label": "Surrender their demand",
         "requires": {
           "money": 20
         },
