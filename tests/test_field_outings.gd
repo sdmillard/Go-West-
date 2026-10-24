@@ -141,6 +141,9 @@ func run():
  g.choose(crossing);g.choose(1);g.choose(crossing)
  check(g.field_outings.record.trips.size()==1 and g.field_outings.record.trips[0].stage=="stranded" and g.state.party_size==4,"A due rider is left on the near bank when the train crosses")
  check(store.restore(JSON.parse_string(JSON.stringify(store.capture(g))))!=null,"Far-bank party and near-bank hunter save as distinct locations")
+ var prior: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-carry-curve-v5.json"))
+ var migrated=store.restore(prior)
+ check(migrated!=null and migrated.state==store.normalize(prior.state) and str(migrated.rng.state)==prior.random and migrated.field_outings.snapshot()==store.normalize(prior.field_outings),"Genuine previous-curve outing preserves its reserved animals, packs, health, deadlines and random streams")
  # Outing conservation and offscreen fates.
  g=party();g.field_outings.rules.hit_chance=10;g.hunting.data.regions.woodland.empty_chance=0;g.hunting.data.regions.plains.empty_chance=0
  g.field_outings.start(g,1,"foot",1,5);day(g)
