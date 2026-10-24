@@ -359,6 +359,9 @@ func run():
 		root.get_texture().get_image().save_png("res://docs/store-actions.png")
 	screen.game.crime.scenes.fort_bridger.escape_capture=1
 	screen._service_choice(1)
+	check(screen.robbery_demand_view.visible and screen.game.crime.incident().is_empty(),"Robbery preview waits for an explicit demand")
+	screen.robbery_demand_view.confirmed.emit()
+	screen.robbery_demand_view.hide()
 	if screen.game.crime.incident().stage=="loot":choose(screen.game,"flee")
 	if screen.game.state.status=="traveling" and screen.game.crime.incident().stage=="escape":choose(screen.game,"surrender")
 	if screen.game.state.status=="lost":

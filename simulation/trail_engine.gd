@@ -7,6 +7,7 @@ const PartyHealth = preload("res://simulation/party_health.gd")
 const Survival = preload("res://simulation/survival_rules.gd")
 const Produce=preload("res://simulation/produce_trade.gd")
 const Direction=preload("res://simulation/travel_direction.gd")
+const RobberyDemand=preload("res://simulation/robbery_demand.gd")
 const Guards=preload("res://simulation/wagon_guards.gd")
 const CacheSupport=preload("res://simulation/wagon_cache.gd")
 const Remains=preload("res://simulation/remains.gd")
@@ -98,6 +99,9 @@ func _init(seed_value: int = 1848, mode: String = "classic", setup: bool = false
 		_set_next_leg()
 	if not combat.error.is_empty():
 		error=combat.error
+		state.status="error"
+	if not RobberyDemand.valid_rules(RobberyDemand.data):
+		error="Invalid robbery demand rules."
 		state.status="error"
 	if not crime.error.is_empty():
 		error=crime.error
@@ -847,6 +851,7 @@ func _trade_options(offer: Dictionary,at_post: bool) -> Array:
 		lots[0].sell_cents = 2000
 	if characters.available(self,"Trading"):
 		for lot in lots:lot.buy_cents=maxi(1,roundi(lot.buy_cents*characters.benefits.trade_buy_factor))
+	if at_post:lots[0].sell_cents=mini(int(lots[0].sell_cents),floori(float(lots[0].buy_cents)*0.5))
 	var days: int=context.trade_days(offer)
 	var when: String=", 1 day" if days>0 else ""
 	for lot in lots:
@@ -990,6 +995,12 @@ func _units_used(key: String,amount: int) -> int:
 	return int(context.record.spent.get(key+"|units",int(context.record.spent.get(key,0))*amount))
 
 ## Price a basket at the post: positive counts buy, negative counts sell, in units (pounds of food, single bullets). Read-only.
+func robbery_quote(basket: Dictionary) -> Dictionary:return RobberyDemand.quote(self,basket)
+func demand_robbery(basket: Dictionary) -> bool:return RobberyDemand.start(self,basket)
+
+func wagon_sale_quote(cart: Dictionary,keep_oxen: int=-1) -> Dictionary:return provisions.WagonTrade.sale_quote(self,cart,keep_oxen)
+func sell_wagon(cart: Dictionary,keep_oxen: int=-1) -> bool:return provisions.WagonTrade.sell(self,cart,keep_oxen)
+
 func post_quote(cart: Dictionary) -> Dictionary:
 	return counter_quote(cart)
 

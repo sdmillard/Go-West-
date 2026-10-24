@@ -367,3 +367,10 @@ Demand validation complete: feature checkpoint 6b6987e passed all 49 suites in a
 
 Publication: [PR #70](https://github.com/sdmillard/Go-West-/pull/70), variable bandit demands. Remaining authorized travel/generation/guard work is still pending as listed above.
 
+
+
+## Return-travel publication and current follow-up (October 23)
+
+Published [PR #71](https://github.com/sdmillard/Go-West-/pull/71), merge 13106ffd12fd0755bf539ad141e7a402dc527a9b: Generate Party, real east/west travel, repeated crossings with bank awareness, peaceful eastward ending, exact cache map markers/at-site inspection, empty replacement wagons, and companions guarding cached supplies. See [return travel and guards](RETURN_TRAVEL_AND_WAGON_GUARDS.md). Clean checkpoint 5ed5384 passed all **52 suites**, including 63 return-travel, 59 guard and 18 wagon-purchase checks; 24 store plus 20 outlaw integration journeys reported zero errors. Logs/reports retained in ignored .tools/return-*. The old remote backtrack UI regression was updated to ordinary return travel; a prior failure log is retained separately, not counted as passing evidence. Native creation, packing, direction, party, map and store views were inspected.
+
+Spencer then requested wagon sales with automatic sale of accepted leftovers and explicit permanent discards, player-selected robbery demands including wagons when on foot, greater resistance for larger demands, and adjustable window scaling/aspect behavior. Implementation and focused checks are described in [sales, demands and display](WAGON_SALES_ROBBERY_AND_DISPLAY.md). Final clean validation/publication follows below when complete. Prior survival campaigns remain archived evidence for their original rules, not a balance claim for these additions. Preserve the three preexisting untracked debug pilots and actual player saves.

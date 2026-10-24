@@ -273,6 +273,7 @@ func can_trade(game,choice: Dictionary) -> bool:
 func incident() -> Dictionary:
 	return {} if record.active.is_empty() else record.incidents[int(record.active.id)-1]
 func loot_quote(game,place: String) -> Dictionary:
+	if incident().has("demand"):return game.RobberyDemand.loot(game,incident())
 	var room:=maxi(0,floori(game.provisions.storage_capacity(game.state)-game.provisions.cargo(game.state)))
 	var current:=incident()
 	# Theft is carried away quietly. The commissary lies inside the post; roadside
@@ -341,7 +342,10 @@ func menu(game) -> Dictionary:
 			options=options.filter(func(choice):return choice.crime_command in ["shoot","assault"])
 	elif current.stage=="loot":
 		var loot:=loot_quote(game,place)
-		if scene.kind in ["toll","ferry"]:
+		if current.has("demand"):
+			text=current.attempt.capitalize()+". Demand: "+game.RobberyDemand.describe(current.demand)+". Collecting uses one day. Witnesses and escape risks still apply. "+str(loot.get("message",""))
+			options=[option("Collect the demanded goods · 1 day","take"),option("Leave the demand and try to get away","flee")]
+		elif scene.kind in ["toll","ferry"]:
 			text="%s. You can take $%.2f from the cash box, and %s. Doing it uses one more day. Nearby staff can respond as you leave." % [current.attempt.capitalize(),loot.money/100.0,words.passage]
 			options=[option(words.take % (loot.money/100.0),"take"),option("Give it up and try to get away","flee")]
 		else:
@@ -361,6 +365,9 @@ func menu(game) -> Dictionary:
 	else:
 		text="Incident %d: %s; %s. Food taken: %d lb. Cash taken: $%.2f. Shots: %d. People here who saw it: %d. See the journal and party records for injuries and reactions." % [current.id,current.attempt,current.resolution,current.food,current.cash_cents/100.0,current.shots,local_witnesses(current).size()]
 		options=[option("Acknowledge the outcome","finish")]
+	if current.has("demand"):
+		text+="\nDemand: "+game.RobberyDemand.describe(current.demand)
+		if current.stage=="loot":text+="\nOnly the agreed demand can be collected. Extra goods require another dangerous attempt."
 	options.append(option(({"traders":"Leave the traders alone","emigrants":"Leave the family be"}.get(scene.kind,"Back to the stop")) if current.is_empty() else "Encounter in progress","back"))
 	var result_menu: Dictionary={"id":"crime","crime_menu":true,"service_menu":true,"title":scene.title,"text":text,"choices":options}
 	# A place picked from the VILLAINY lists stays picked while the preview is open.
@@ -384,7 +391,7 @@ func can_choose(game,command: String) -> bool:
 	if current.stage=="loot":
 		var quote:=loot_quote(game,current.place)
 		# Passage is itself the prize at a gate or ferry, even with an empty cash box.
-		return command=="flee" or (command=="take" and (quote.food>0 or quote.money>0 or rules(current.place).kind in ["toll","ferry"]))
+		return command=="flee" or (command=="take" and (quote.food>0 or quote.money>0 or not quote.get("goods",{}).is_empty() or rules(current.place).kind in ["toll","ferry"]))
 	if current.stage=="standoff":return command=="surrender" or (command=="flee" and current.action=="pursuit") or (command=="breakout" and game.state.bullets>0)
 	return current.stage=="escape" and command in ["flee","surrender"]
 ## Local people who hold any knowledge of this incident; later reports can only come from them.
@@ -510,6 +517,11 @@ func choose(game,command: String) -> bool:
 		var id: int=record.incidents.size()+1
 		var current: Dictionary={"id":id,"day":int(game.state.day),"place":place,"target":keeper.uid,"action":command,"attempt":"raided","resolution":"","stage":"escape","food":0,"cash_cents":0,"shots":0,"knowledge":{}}
 		current["joining"]=game.party_health.members.filter(func(member):return game.party_health.is_active(member) and game.characters.willing(int(member.id),"murder" if command in ["shoot","assault"] else "robbery")).map(func(member):return int(member.id))
+		if command=="robbery" and game.pending.has("robbery_demand"):
+			var demanded: Dictionary=game.RobberyDemand.quote(game,game.pending.robbery_demand,place)
+			if not demanded.valid:return false
+			current["demand"]=demanded.basket.duplicate(true)
+			scene.compliance=demanded.compliance
 		record.incidents.append(current)
 		record.active={"id":id}
 		if command=="theft":current.attempt="unseen" if rng.randf()<scene.theft_success else "noticed"
@@ -531,10 +543,14 @@ func choose(game,command: String) -> bool:
 		game.journal.append("Day %d · %s incident %d: %s; %s %s. Nearby staff %s." % [game.state.day,kind(place).journal,id,command,display_name(game,place,keeper.uid),current.attempt,"were alerted" if store.alarmed else "did not notice the attempt"])
 		observe(game,current,"attempt",current.attempt!="unseen")
 		game.characters.react_to_incident(game,"murder" if command in ["shoot","assault"] else "robbery",id)
+		if command=="robbery" and current.has("demand") and current.attempt=="resisted" and rng.randf()<float(scene.escape_injury):
+			wound(game,int(scene.injury_damage),1)
+			game.journal.append("Day %d · The robbery target fought back; a traveler was hurt." % game.state.day)
 		if not advance(game):return true
 	elif command=="take":
 		var current:=incident()
 		var loot:=loot_quote(game,place)
+		if current.has("demand"):game.RobberyDemand.take(game,current,loot.goods)
 		store.food_taken+=int(loot.food)
 		store.cash_cents-=int(loot.money)
 		current.food+=int(loot.food)
@@ -1009,7 +1025,7 @@ func valid(value: Variant,game) -> bool:
 	var previous_day: int=-1
 	for index in range(r.incidents.size()):
 		var current: Variant=r.incidents[index]
-		if not current is Dictionary or (current.get("action")!="wanted" and current.size()!=12+int(current.has("sentence"))+int(current.has("joining"))+int(current.has("kills"))) or current.get("id")!=index+1 or not whole(current.get("day"),0,int(game.state.day)) or not (current.get("place") is String and r.services.has(current.place) and not TEMPLATE_KINDS.has(current.place)) or current.get("target") not in staff_ids(current.place):return false
+		if not current is Dictionary or (current.get("action")!="wanted" and current.size()!=12+int(current.has("sentence"))+int(current.has("joining"))+int(current.has("kills"))+int(current.has("demand"))+int(current.has("taken_goods"))) or current.get("id")!=index+1 or not whole(current.get("day"),0,int(game.state.day)) or not (current.get("place") is String and r.services.has(current.place) and not TEMPLATE_KINDS.has(current.place)) or current.get("target") not in staff_ids(current.place):return false
 		if not Wanted.valid_extras(self,r,current,game):return false
 		if current.get("action")=="wanted":
 			if not Wanted.valid_incident(self,r,current,game,index,previous_day):return false
@@ -1017,6 +1033,7 @@ func valid(value: Variant,game) -> bool:
 			continue
 		if current.get("action") not in ["shoot","assault"] and current.target!=owner_id(current.place):return false
 		if current.get("action") not in ["theft","robbery","shoot","assault","raid","pursuit"] or current.get("attempt") not in ATTEMPTS or current.get("stage") not in STAGES or current.get("resolution") not in RESOLUTIONS:return false
+		if not game.RobberyDemand.valid(game,current):return false
 		if current.day<previous_day:return false
 		previous_day=int(current.day)
 		if current.attempt not in {"theft":["unseen","noticed"],"robbery":["complied","resisted"],"shoot":["missed","wounded","killed"],"assault":["missed","wounded","killed"],"raid":["raided"],"pursuit":["caught"]}[current.action]:return false
