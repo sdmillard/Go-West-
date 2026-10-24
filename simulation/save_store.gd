@@ -148,7 +148,7 @@ func valid_menu(menu: Dictionary, game, count: int=5) -> bool:
 		if choice.has("market_key") and (not choice.market_key is String or choice.market_key.length()>128 or not integer(choice.get("stock_limit"),1,8)):return false
 		if choice.has("visit_key") and (not choice.visit_key is String or choice.visit_key.length()>128 or not choice.visit_key.ends_with("|visit") or not choice.has("effects") or int(choice.effects.get("days",0))!=1):return false
 		if choice.has("text") and not choice.text is String:return false
-		if choice.has("method") and choice.method not in ["ford", "float", "ferry", "seized", "swim", "wade"]:
+		if choice.has("method") and choice.method not in ["ford", "float", "ferry", "seized", "swim", "wade", "horses"]:
 			return false
 		if not menu.has("landmark") and not choice.get("result") is String:
 			return false
@@ -186,7 +186,7 @@ func valid_effects(effects: Variant) -> bool:
 	if not effects is Dictionary:
 		return false
 	for key in effects:
-		if key not in ["food","health","money","fuel","wheels","axles","tongues","medicine","clothing","bullets","oxen","ox_health","days","item","vehicle","salt"]:
+		if key not in ["food","health","money","fuel","wheels","axles","tongues","medicine","clothing","bullets","oxen","ox_health","horse_health","days","item","vehicle","salt"]:
 			return false
 		var value = effects[key]
 		if key in ["item","vehicle"]:
