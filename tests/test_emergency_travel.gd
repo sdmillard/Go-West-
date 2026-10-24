@@ -81,5 +81,28 @@ func run():
  var legacy: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-emergency-travel-save-v1.json"))
  var previous=store.restore(legacy)
  check(previous!=null and not previous.state.has("hunger_days") and previous.state.day==0,"A genuine previous-rule save loads without inventing past starvation")
+ game=party()
+ game.state.vehicle="foot"
+ game.state.food=0
+ for member in game.party_health.members:member.health=60
+ game.state.health=60
+ for day in range(7):
+  game.pending={}
+  var before_day: int=game.state.day
+  check(game.start_hunt() and game.state.day==before_day,"Hunting meals settle once the catch is known")
+  game.hunt.meat=200 # Controlled successful catch; natural hit/return rates are separate journey tests.
+  check(game.finish_hunt() and game.state.day==before_day+1,"Even a successful outing costs one real day")
+  var recovered: Dictionary=game.last_hunt_recovery
+  check(recovered.eaten_food>0 and game.state.get("hunger_days",0)==0,"A weak party can eat its successful catch before fitting walking packs")
+  check(game.provisions.cargo(game.state)<=game.provisions.capacity(game.state),"Retained meat fits actual post-meal carrying capacity")
+  check(is_equal_approx(200,recovered.eaten_mass+recovered.mass+recovered.left+recovered.other_loss),"Every pound is eaten, retained, left or explicitly otherwise lost")
+ check(game.state.party_size==5 and game.state.health>=60,"A poor-health party does not starve while successfully hunting every day")
+ check(not game.provisions.fresh.any(func(b):return b.has("_hunt_meal")),"Temporary field-meal markers never leak into saved provisions")
+ check(store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))!=null,"A settled field meal saves normally")
+ game=party()
+ game.state.food=0
+ game.start_hunt()
+ game.finish_hunt()
+ check(game.state.day==1 and game.state.hunger_days==1,"An unsuccessful outing still costs its day and missed meals")
  print("Emergency travel: %d checks, %d failures" % [checks,failures])
  quit(1 if failures else 0)

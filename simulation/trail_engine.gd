@@ -57,6 +57,7 @@ var trail_events = Catalog.new()
 var service_return: Dictionary = {}
 var hunting = preload("res://simulation/hunting.gd").new()
 var hunting_outings := 0
+var last_hunt_recovery: Dictionary = {}
 var hunt: Dictionary = {}
 var supply_history: Array[Dictionary] = []
 var provisions = preload("res://simulation/provisions.gd").new()
@@ -587,7 +588,9 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 	var eaten := mini(int(state.food), needed)
 	if state.extended_route:
 		# Count vitamin-C produce actually consumed, never merely carried or fresh meat.
+		var field_before: int=provisions.fresh.filter(func(b):return b.get("_hunt_meal",false)).reduce(func(n,b):return n+int(b.pounds),0)
 		var produce_eaten: float = provisions.eat(eaten,int(state.party_size),int(state.food))
+		if not hunt.is_empty():hunt["_meal_food"]=field_before-provisions.fresh.filter(func(b):return b.get("_hunt_meal",false)).reduce(func(n,b):return n+int(b.pounds),0)
 		party_health.days_without_fresh = 0 if produce_eaten >= state.party_size * float(provisions.data.foraging.vitamin_c_lb_per_person) else party_health.days_without_fresh + 1
 		for member in party_health.members:
 			if party_health.is_active(member) and member.has("vitamin_days"):member.vitamin_days=0 if party_health.days_without_fresh==0 else int(member.vitamin_days)+1
@@ -1417,13 +1420,12 @@ func _update_river_stage() -> void:
 func start_hunt() -> bool:
 	if not _can_act() or not state.extended_route or state.bullets < 1:
 		return false
-	_tick_day(false)
-	if state.status != "traveling":
-		return false
+	# Settle the day after the outing: today's successful catch can feed today's camp.
+	last_hunt_recovery={}
 	hunting_outings += 1
 	hunt = hunting.begin(int(state.seed), hunting_outings, int(state.miles), route.nodes[state.landmark].get("hunting_region","plains"))
-	hunt.day = state.day
-	journal.append("Day %d · Stopped to hunt. One day passes; rations consumed." % state.day)
+	hunt.day = state.day+1
+	journal.append("Day %d · Set out to hunt. The outing will take one day, including meals at camp." % (state.day+1))
 	return true
 
 func hunt_shot(target: int) -> bool:
@@ -1477,10 +1479,33 @@ func hunt_recovery() -> Dictionary:
 	return {"mass":carried,"food":provisions.meat_units(carried),"left":int(hunt.meat)-carried}
 func finish_hunt() -> bool:
 	if hunt.is_empty():return false
-	var recovered:=hunt_recovery()
-	state.food+=provisions.add_meat(int(recovered.mass),int(state.day))
-	journal.append("Day %d · Hunting: %d shots, %d lb meat obtained, %d lb carried, %d food units (hauling limit %d lb)." % [state.day,hunt.shots,hunt.meat,recovered.mass,recovered.food,hunting_capacity()])
-	journal.append("%s · %d lb left behind. %s" % [hunt.region_label,recovered.left,hunt.message])
+	var outing: Dictionary=hunt.duplicate(true)
+	# Retrieval work remains limited by health and willing helpers, but eating at camp
+	# does not require the meat to fit into tomorrow's walking packs first.
+	var retrieved: int=mini(hunting_capacity(),int(hunt.meat))
+	var units: int=provisions.add_meat(retrieved,int(state.day)+1)
+	if units>0:provisions.fresh.back()["_hunt_meal"]=true
+	state.food+=units
+	_tick_day(false)
+	var remaining: int=0
+	var ratio: float=float(retrieved)/units if units>0 else 1.0
+	var batch: Dictionary={}
+	for piece in provisions.fresh:
+		if piece.get("_hunt_meal",false):remaining+=int(piece.pounds);batch=piece.duplicate(true)
+	var eaten: int=int(hunt.get("_meal_food",0))
+	var other_loss: int=maxi(0,units-remaining-eaten)
+	# Remove the temporary catch to measure the actual space left after meals/illness.
+	provisions.fresh=provisions.fresh.filter(func(piece):return not piece.get("_hunt_meal",false))
+	state.food-=remaining
+	var room: float=maxf(0,provisions.storage_capacity(state)-provisions.cargo(state))
+	var keep: int=mini(remaining,maxi(0,floori(minf(room,hunting_capacity())/ratio)))
+	if keep>0:
+		batch.erase("_hunt_meal")
+		batch.pounds=keep
+		provisions.fresh.append(batch)
+		state.food+=keep
+	last_hunt_recovery={"mass":keep*ratio,"food":keep,"eaten_mass":eaten*ratio,"eaten_food":eaten,"retrieved":retrieved,"other_loss":other_loss*ratio,"left":maxf(0,float(outing.meat)-(eaten+keep+other_loss)*ratio)}
+	journal.append("Day %d · Hunting: %d shots, %d lb obtained; %.1f lb eaten at camp, %.1f lb packed (%d food units); %.1f lb left behind." % [state.day,outing.shots,outing.meat,last_hunt_recovery.eaten_mass,last_hunt_recovery.mass,keep,last_hunt_recovery.left])
 	hunt={}
 	_schedule_event(false)
 	return true
