@@ -580,7 +580,8 @@ func _can_act() -> bool:
 func _tick_day(resting: bool, team_working: bool = false, camp_action: String = "") -> void:
 	state.erase("camp_watch_day")
 	state.erase("camp_watch_member")
-	if not resting or (not camp_action.is_empty() and camp_action!="rest"):camp_tasks.end_leader_nursing(self)
+	var wagon_hunt: bool=camp_action=="hunt" and hunt.get("field",{}).get("kit","")=="wagon"
+	if not wagon_hunt and (not resting or (not camp_action.is_empty() and camp_action!="rest")):camp_tasks.end_leader_nursing(self)
 	if state.extended_route and not camp_action.is_empty():camp_tasks.begin(self,camp_action)
 	var sick_before: bool=characters.has_sick(self)
 	state.day += 1

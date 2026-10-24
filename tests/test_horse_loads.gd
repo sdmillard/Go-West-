@@ -67,7 +67,9 @@ func run():
  copy=store.restore(JSON.parse_string(JSON.stringify(store.capture(g))))
  check(copy!=null and copy.field_outings.record.trips[0].camp.return_mode=="lead_strenuous","Loaded field return and preference survive saving")
  g=party()
- g.camp_tasks.assign(g,1,"nurse",2)
+ g.party_health.members[0].health=60;g.state.health=g.party_health.average_health()
+ g.camp_tasks.assign(g,1,"nurse",0)
+ g.state.ox_health=90
  g.camp_tasks.assign(g,3,"forage")
  var jobs: Dictionary=g.camp_tasks.assignments.duplicate(true)
  check(not g.hunt_outfit_quote([0,1],"wagon",5).valid,"Leaving companions at camp prevents bringing the wagon")
@@ -79,7 +81,7 @@ func run():
  check(g.hunt_shot(-1) and g.state.bullets==ammo-1,"Wagon hunt spends main inventory bullets exactly once")
  var food: int=g.state.food;var medicine: int=g.state.medicine;var day: int=g.state.day
  check(g.finish_hunt() and g.state.day==day+1 and g.state.food==food-15,"Whole-party wagon outing costs one day and one party meal")
- check(g.state.ox_health<100,"Wagon hunt works and wears the ox team")
+ check(g.state.ox_health<=90,"Working ox team does not get idle-day recovery")
  check(g.state.medicine==medicine and g.camp_tasks.assignments==jobs,"Suspended chores spend no kit and standing orders remain")
  check(not g.finish_hunt(),"Wagon return cannot duplicate supplies")
  g=party()
