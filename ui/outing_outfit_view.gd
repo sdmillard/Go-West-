@@ -26,6 +26,7 @@ func _init():
  duration.min_value=1;duration.max_value=3;duration.step=1
  ammo.min_value=1;ammo.max_value=30;ammo.step=1
  rows.add_child(helpers)
+ summary.tooltip_text="Good / Fair: full human carrying. Poor: gradually reduced to half. Very Poor: falls toward zero. Broken legs prevent hauling. The outbound pack uses part of this capacity; allocated tack and animals add only their own cargo."
  summary.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
  summary.custom_minimum_size=Vector2(500,80)
  rows.add_child(summary)

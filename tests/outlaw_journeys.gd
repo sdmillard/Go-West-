@@ -47,13 +47,17 @@ func visit_camp(game) -> bool:
 				break
 	if game.pending.get("service_menu",false):game.choose(game.pending.choices.size()-1)
 	return true
+func survival_profile() -> Dictionary:
+	return {"id":"outlaw","pace":0,"rations":1,"rest":true,"hunt":true,"accuracy":0.65,"hunt_below":45,"adaptive_rations":true,"preserve":"salt","slaughter":true}
+func report_path() -> String:return "res://docs/outlaw-journeys.json"
+func report_policy(text: String) -> String:return text
 func run():
 	adaptive=true
 	hunting_study=true
 	var rows: Array=[]
 	var errors: Array=[]
 	var store=Store.new()
-	var policy: Dictionary={"id":"outlaw","pace":0,"rations":1,"rest":true,"hunt":true,"accuracy":0.65,"hunt_below":45,"adaptive_rations":true,"preserve":"salt","slaughter":true}
+	var policy: Dictionary=survival_profile()
 	for strategy in STRATEGIES:
 		for seed_value in range(4):
 			var game=Simulation.new(seed_value,"classic",true)
@@ -115,8 +119,8 @@ func run():
 				"incidents":record.incidents.map(func(current):return "%s:%s:%s" % [current.action,current.attempt,current.resolution]),"attacks":record.attacks.map(func(attack):return attack.attempt),
 				"remains":record.remains.map(func(item):return item.state),"camps_visited":acts.visited.size(),"tales":game.crime.tales(game).size(),"betrayals":record.betrayals.map(func(item):return "%s:%s" % [item.act,item.attempt])})
 			print("%s: %s on day %d at mile %d, %d with the party" % [label,outcome,game.state.day,game.state.miles,game.state.party_size])
-	var file=FileAccess.open("res://docs/outlaw-journeys.json",FileAccess.WRITE)
-	file.store_string(JSON.stringify({"rules_signature":store.fingerprint(),"runs":rows,"errors":errors,"policy":"20 full-route journeys: 5 strategies x 4 seeds (banker suggested outfit; June, May, August, July). Lawful control that visits each emigrant camp peacefully (trading bullets for food, nursing, news); robbing up to three roadside parties; robbing the Fort Kearny commissary; shooting a companion on day 20, then butchering any accessible dead openly and offering the meat, or in secret and serving it without telling. Otherwise the cautious salted-hunt survival policy. An integration check, not balance evidence."},"\t"))
+	var file=FileAccess.open(report_path(),FileAccess.WRITE)
+	file.store_string(JSON.stringify({"rules_signature":store.fingerprint(),"runs":rows,"errors":errors,"policy":report_policy("20 full-route journeys: 5 strategies x 4 seeds (banker suggested outfit; June, May, August, July). Lawful control that visits each emigrant camp peacefully (trading bullets for food, nursing, news); robbing up to three roadside parties; robbing the Fort Kearny commissary; shooting a companion on day 20, then butchering any accessible dead openly and offering the meat, or in secret and serving it without telling. Otherwise the cautious salted-hunt survival policy. An integration check, not balance evidence.")},"\t"))
 	file.close()
 	for error in errors:printerr("ERROR: %s" % JSON.stringify(error))
 	print("Outlaw journeys: %d runs, %d errors" % [rows.size(),errors.size()])
