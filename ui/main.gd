@@ -764,6 +764,7 @@ func _show_section(section: String) -> void:
 				if not str(project.method).is_empty():status.text="BROKEN "+str(project.part).to_upper()+" · "+str(project.method).to_upper()+" "+str(project.progress)+"/"+str(game.camp_tasks.rules.repair_work_days[project.method])+" WORK"
 				var self_repair:=MenuButton.new()
 				self_repair.text="WORK ON REPAIR YOURSELF >"
+				self_repair.flat=false
 				for method in ["patch","wood"]:
 					var item: int=0 if method=="patch" else 1
 					self_repair.get_popup().add_item(method.to_upper()+" · 1 WORK DAY",item)

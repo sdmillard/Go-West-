@@ -1,6 +1,6 @@
 # Companion camp work: first playable stage
 
-October 24, 2026. The shared camp-day stage is implemented. Away hunts, repair, stock guarding, mounted tasks and new backgrounds remain later stages in [the implementation plan](COMPANION_TASKS_IMPLEMENTATION.md).
+October 24, 2026. The shared camp-day stage is implemented. [Repair and stock guarding](CAMP_REPAIRS_AND_GUARDS.md) are now implemented. Away hunts, mounted tasks and new backgrounds remain later stages in [the implementation plan](COMPANION_TASKS_IMPLEMENTATION.md).
 
 ## Playing
 
@@ -8,7 +8,7 @@ Open **Camp > Companion tasks**. Give each companion a standing job: Rest, Forag
 
 Selecting the first assignment enables shared camp work. Unassigned companions rest; only assigned hunt helpers accompany the leader and haul meat. Clear jobs / Use group actions restores the earlier whole-party action behavior. Existing saves and new journeys begin with group actions, allowing the new labor model to be tested without silently changing a player's existing strategy.
 
-Use Rest, hunt, forage, care or preservation as the leader's action. Jobs run during those camp days, including each day of a multi-day rest. They pause during travel, crossings, trading and unrelated event delays. Trading alongside camp work is not in this first stage.
+Use Rest, hunt, forage, care or preservation as the leader's action. Jobs run during those camp days, including each day of a multi-day rest. Camp chores pause during travel, crossings, trading and unrelated event delays. Named stock guards still cover the night watch; see the repair/guard notes. Trading alongside camp work is not in this first stage.
 
 ## A shared day
 
@@ -16,7 +16,7 @@ Each worker has one job. Workers miss rest recovery and advance injury/illness r
 
 The leader gets a full personal rest day while being nursed. Committing to another activity ends that nursing assignment first and returns the nurse to Rest, with one journal entry. Opening a menu, viewing a quote or attempting an invalid action does not end treatment. A hunt cannot retain the leader's nursing or rest benefits. Too ill, injured or unwilling companions rest instead, with an explanation in the journal. Health and willingness are rechecked daily.
 
-The day coordinator reserves nursing patients and available kits in party order. Leader-selected care takes priority over delegated care and cannot overspend the final kit. A Caregiver nurse improves treatment through the existing specialist values; that person no longer also grants passive care to the leader. An assigned Hunter can assist the minigame, but a Hunter foraging or drying meat cannot also reload or haul for it. Carpentry and Trading remain as before until their respective tasks are built. Veteran remains a combat special.
+The day coordinator reserves nursing patients and available kits in party order. Leader-selected care takes priority over delegated care and cannot overspend the final kit. A Caregiver nurse improves treatment through the existing specialist values; that person no longer also grants passive care to the leader. An assigned Hunter can assist the minigame, but a Hunter foraging or drying meat cannot also reload or haul for it. Carpentry now belongs to assigned repair work in shared mode; Trading remains passive. Veteran remains a combat special.
 
 One worker handles the available drying batch using the existing processing rules. Extra driers rest rather than process the same food twice. Meals and spoilage happen before processing. The morning quote bounds the input; evening hunting returns are excluded, so today's catch cannot also complete a full day of drying.
 
