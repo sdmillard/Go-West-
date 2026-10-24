@@ -177,8 +177,11 @@ func run():
  screen.departure_view.hide();screen.game=party();screen._refresh()
  baseline=store.capture(screen.game)
  screen._show_section("Companion tasks")
- check(screen.section_window.visible and screen.section_rows.find_child("CampTask1",false,false)!=null,"Camp task roster shows named companion controls")
+ check(screen.section_window.visible and screen.section_rows.find_child("CampTask1",true,false)!=null,"Camp task roster shows named companion controls")
  check(store.capture(screen.game)==baseline,"Opening roster has no simulation side effects")
+ await process_frame
+ var roster_row=screen.section_rows.find_child("CampCompanion1",true,false)
+ check(roster_row!=null and roster_row.get_child(0).position.x<roster_row.get_child(1).position.x,"Roster pairs a companion name with their task in adjacent columns")
  screen._set_camp_task(1,"forage",-1);await process_frame
  check(screen.game.camp_tasks.job(1).job=="forage" and screen.game.state.day==0,"UI assigns work without spending a day")
  screen.section_window.hide()
