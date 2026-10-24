@@ -42,7 +42,8 @@ static func sale_quote(game,cart: Dictionary,keep_oxen: int=-1) -> Dictionary:
  var sold: Dictionary={}
  var dropped: Dictionary={}
  var prices: Dictionary={}
- var payout:=floori(float(game.provisions.data.replacement_wagon.price_cents)*0.5)
+ # Half the post's own price for a wagon: worth more where wagons cost more.
+ var payout:=floori(float(game.provisions.data.replacement_wagon.price_cents)*float(game.context.region(game).price)*0.5)
  var rows: Array=counter.rows.duplicate(true)
  # Separate fruit baskets before offering the remaining generic food.
  rows.sort_custom(func(a,b):return (a.item in ["produce","dried_produce"]) and (b.item not in ["produce","dried_produce"]))

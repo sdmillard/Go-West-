@@ -11,7 +11,7 @@ static func valid_rules(v: Variant) -> bool:
 	if not v is Dictionary or not v.get("note") is String:return false
 	for animal in ["horse","mule"]:
 		if not v.get(animal) is Dictionary or not whole(v[animal].get("pack_lb"),1,1000) or not whole(v[animal].get("meat_lb"),1,1000):return false
-	for key in ["saddlebag_lb","mounted_miles_per_day","doubled_wear","rest_recovery","breakdown_condition"]:
+	for key in ["saddlebag_lb","mounted_miles_per_day","doubled_wear","rest_recovery","breakdown_condition","guard_factor","guard_fatigue"]:
 		if not whole(v.get(key),1,100):return false
 	if not v.get("forage_strain") is Dictionary:return false
 	for region in v.forage_strain:
@@ -26,7 +26,7 @@ static func condition(state: Dictionary) -> int:return int(state.get("horse_heal
 static func valid_state(s: Dictionary) -> bool:
 	for key in KEYS:
 		if s.has(key) and not whole(s[key],0,1000):return false
-	return (not s.has("horse_health") or whole(s.horse_health,0,100)) and (not s.has("double_up") or s.double_up is bool)
+	return (not s.has("horse_health") or whole(s.horse_health,0,100)) and (not s.has("double_up") or s.double_up is bool) and (not s.has("night_guard") or s.night_guard is bool)
 static func animals(inventory: Dictionary) -> int:return int(inventory.get("horses",0))+int(inventory.get("mules",0))
 ## Only the stock and tack keys of an inventory, for pack and sale quotes.
 static func carried(state: Dictionary) -> Dictionary:

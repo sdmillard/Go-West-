@@ -46,12 +46,20 @@ Horses, mules, saddles, pack saddles and saddlebags are trade goods at every pos
 
 - A post keeps 4 horses, 3 mules, 4 saddles, 4 pack saddles and 6 pairs of saddlebags (the optional `post_lots` per lot) and sells at its regional price: a horse is $40 in the woodland and plains, $54 in the sagebrush.
 - Passing traders and emigrant families roll their own stock and wants for animals and tack (`mount_stock` / `mount_wants` in `trail_context.json`). These rolls come after everything else a party or family carries, so every older meeting keeps the goods and purse it always had. Traders charge their usual markup.
-- **Resale cap:** anything bought sells back for less than it cost, at the counter and at Independence: a horse sells for $15, a mule $18, a saddle $5, a pack saddle $1.50, saddlebags $1. The most a family short of horses pays is about $30. No buy-and-sell-back loop makes money.
+- **Regional sell prices (Spencer):** where goods cost more to buy, they fetch more too. Every lot's sell price is multiplied by the region's price (not the traders' markup), so a horse sells for $15 on the plains and about $20 in sagebrush country. A wagon sold at a post pays half that post's own wagon price.
+- **Resale cap:** nothing sells for as much as it costs at the same counter (a sell price that would reach the buy price is cut to half of it), and a family short of something never pays its own asking price. No buy-and-sell-back loop makes money.
 
 ## Robbery and theft
 
 - Robbery demands can name horses, mules and tack, valued at Independence prices. Taking a trading party's or family's last saddle and pack animals strands them, so they resist harder (`mount_penalty` 0.15). A wagon can only be demanded if the party has oxen or demands them too.
 - **Stealing works like a demand (Spencer's request).** At a store, commissary, trading party or camp, STEAL opens the same goods picker. The chance of going unseen is the scene's theft chance, minus `theft_value_penalty` (0.5) times the share of their goods taken, minus `animal_noise` (0.06) for each horse or mule led off. A theft never takes the cash box or a wagon, and it must be carried off by willing, fit helpers (animals walk themselves). Unseen, the party carries off exactly what it chose; noticed, it gets nothing and must run. Gates and ferries keep their old passage theft. Thefts begun without a basket (older saves) still take food as before.
+
+## Horse country
+
+- **Horse thieves** (`horse_thieves` in `trail_events.json`, weight 8, only for parties with horses or mules, wagon or not): at first light up to two animals are gone, horses before mules. Ride after the thieves (2 days, both back, 25% chance of a wound), search the nearby draws (1 day, one back; dropped when only one was taken), or let them go.
+- **Night guard** (Travel → NIGHT GUARD ON THE STOCK): divides the horse thieves' weight by `guard_factor` (3) and costs `guard_fatigue` (2) fatigue every day. Optional state key `night_guard`.
+- **Butchering** (Supplies → BUTCHER 1 HORSE / MULE): 250 lb from a horse, 220 from a mule, scaled from half to full by the animals' condition, with the ox rules for the bullet and for by-hand injury.
+- **Nez Perce horse traders** at the Grande Ronde (`horse_traders` in `trail_context.json`): a horse for two clothing sets, a footsore ox, 60 bullets or $20 in coin, four horses per herd, the first trade costing the day. Before the 1847 killings at Waiilatpu both Cayuse and Nez Perce traded horses with emigrants there; with the Cayuse at war in 1848, the game credits Nez Perce families, who largely stayed out of it.
 
 ## Display
 
@@ -63,9 +71,11 @@ The horse keys are optional: a party that never bought an animal, and every olde
 
 ## Not yet built
 
-Later steps from the design: thieves running off the party's horses, horse butchering and Cayuse/Nez Perce trade; flight bonuses in the wanted system, and fleeing a wagon on horseback with an automatic, hasty saddlebag pack; a balance study of wagon, packer and walking journeys.
+Later steps from the design: flight bonuses in the wanted system, and fleeing a wagon on horseback with an automatic, hasty saddlebag pack; a balance study of wagon, packer and walking journeys.
 
 ## Validation
+
+`tests/test_horse_country.gd`: horse thieves (two horses, mules when there are no horses, one led horse behind a wagon), no thieves without animals, the night guard's effect and fatigue, saves, butchering horses and mules (condition, by hand), the Nez Perce traders (terms, day, stock, saves), regional sell prices with the resale cap, the pre-horse-thieves fixture, and the Travel and Supplies buttons.
 
 `tests/test_horse_trade.gd`: post counter stock and prices, the resale cap, buying and selling, the lot menu, trader rolls that leave older meetings unchanged, trader sales, the stranding penalty, horse robbery demands, the wagon-needs-oxen rule, theft baskets (cash and wagon excluded, value and animal noise, haul limit, both outcomes, restitution, saves), the pre-horse-trade save fixture and the STEAL picker.
 

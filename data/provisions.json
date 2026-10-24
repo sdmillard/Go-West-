@@ -119,6 +119,8 @@
     "doubled_wear": 4,
     "rest_recovery": 4,
     "breakdown_condition": 35,
+    "guard_factor": 3,
+    "guard_fatigue": 2,
     "forage_strain": {
       "woodland": 0,
       "plains": 0,

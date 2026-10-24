@@ -633,5 +633,47 @@
         "result": "You spend a day here. The party is quiet that night."
       }
     ]
+  },
+  {
+    "id": "horse_thieves",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 8,
+    "title": "Horse thieves in the night",
+    "text": "At first light the picket ropes are cut and {stock} gone. The tracks lead off into the broken country. Horses were what thieves and raiders on the road wanted most.",
+    "onset_effects": {
+      "horses": -2
+    },
+    "choices": [
+      {
+        "label": "Ride after the thieves · 2 days, risk of a fight",
+        "effects": {
+          "days": 2,
+          "horses": 2
+        },
+        "risk": {
+          "probability": 0.25,
+          "effects": {},
+          "condition": "wound",
+          "text": "The thieves fire back when you come up on them. A traveler is hit.",
+          "victim_damage": 15,
+          "severity": 1
+        },
+        "result": "You run the thieves down and drive the stock back to camp."
+      },
+      {
+        "label": "Search the nearby draws · 1 day",
+        "effects": {
+          "days": 1,
+          "horses": 1
+        },
+        "result": "You find one animal that broke loose from the thieves. The rest are gone."
+      },
+      {
+        "label": "Let them go",
+        "effects": {},
+        "result": "You pack what the remaining animals can carry and move on."
+      }
+    ]
   }
 ]

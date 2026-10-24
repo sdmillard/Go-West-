@@ -124,6 +124,20 @@
     "fort_walla_walla",
     "fort_boise"
   ],
+  "horse_traders": {
+    "note": "Horse herds on the Columbia plateau. Before the 1847 killings at Waiilatpu, Cayuse and Nez Perce traders met emigrants in the Grande Ronde to trade horses for clothing, cattle and ammunition; in 1848, with the Cayuse at war, the game credits Nez Perce families, who largely stayed out of it. A horse for each offer; a herd parts with only a few. Authored tuning, not reconstructed prices.",
+    "grande_ronde": {
+      "name": "Nez Perce horse traders",
+      "text": "Nez Perce families have brought a horse herd down to the valley grass. With signs and a few words of trade jargon they make their terms plain: clothing, ammunition or a footsore ox for a sound horse. They will part with only a few.",
+      "horses": 4,
+      "offers": [
+        {"label": "Trade 2 clothing sets for a horse", "give": {"clothing": 2}},
+        {"label": "Trade a footsore ox for a horse", "give": {"oxen": 1}},
+        {"label": "Trade 60 bullets for a horse", "give": {"bullets": 60}},
+        {"label": "Pay $20 in coin for a horse", "give": {"money": 20}}
+      ]
+    }
+  },
   "passing_goods": {
     "note": "Each passing trading party carries its own goods and drives its own bargains, seeded per meeting. Trappers' and traders' parties on the road carried flour, robes, mules and powder, and wanted clothing, ammunition and footsore oxen they could fatten and resell. Authored tuning, not reconstructed 1848 measurements.",
     "moods": [

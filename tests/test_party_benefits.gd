@@ -81,7 +81,7 @@ func run():
 	game.state.next_landmark="fort_hall"
 	game._arrive_landmark()
 	game.open_trade()
-	check(game.pending.choices[0].effects.money==-38 and game.pending.choices[1].effects.money==20,"Trader discounts buying while selling quote stays unchanged")
+	check(game.pending.choices[0].effects.money==-38 and game.pending.choices[1].effects.money==27,"Trader discounts buying while selling quote stays unchanged (Fort Hall pays its regional price)")
 	game.choose(0)
 	check(game.state.day==1 and game.context.record.spent.size()>0,"Discounted transaction consumes day and finite stock")
 	game=outfit()

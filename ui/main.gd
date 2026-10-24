@@ -63,6 +63,7 @@ var supplies_rows: VBoxContainer
 var drop_window: ConfirmationDialog
 var slaughter_confirmation: ConfirmationDialog
 var slaughter_by_hand := false
+var slaughter_kind := "oxen"
 var packing_window: AcceptDialog
 var packing_quantities: Dictionary={}
 var packing_quote: Label
@@ -685,6 +686,13 @@ func _show_section(section: String) -> void:
 				doubling.name="DoubleUp"
 				doubling.tooltip_text="Without a wagon and with too few saddles, two ride each saddled animal. You keep riding pace, but the animals wear out about four times as fast. Good for a getaway, not for the long road."
 				section_rows.add_child(doubling)
+				var guard:=button("NIGHT GUARD ON THE STOCK: "+("ON" if game.state.get("night_guard",false) else "OFF"),func():
+					game.set_night_guard(not game.state.get("night_guard",false))
+					_refresh()
+					_show_section("Travel"))
+				guard.name="NightGuard"
+				guard.tooltip_text="Someone stands watch over the horses and mules each night. Horse thieves seldom get past a guard, but the watch costs sleep: the party tires faster."
+				section_rows.add_child(guard)
 			section_rows.add_child(label("Choices take effect on the next trail day."))
 		"Camp":
 			var note:=label("Opening camp spends no time or supplies.\nChoose an activity; rest is optional.")
@@ -873,7 +881,7 @@ func _show_stop_activities() -> void:
 		stop_window.title="AT "+game.pending.title
 		for index in range(game.pending.choices.size()):
 			var choice: Dictionary=game.pending.choices[index]
-			if choice.get("action","") in ["notes","activity"]:
+			if choice.get("action","") in ["notes","activity"] or choice.get("horse_traders",false):
 				var option:=button(choice.label,_stop_choice.bind(str(game.pending.landmark),index))
 				option.disabled=not game.can_choose(index)
 				stop_rows.add_child(option)
@@ -1597,6 +1605,14 @@ func _show_supplies() -> void:
 	var hand_offer: Dictionary = game.ox_slaughter_offer(true)
 	if not hand_offer.is_empty():
 		transport.add_child(button("BUTCHER BY HAND · NO AMMO · %d%% INJURY RISK · 1 DAY" % roundi(hand_offer.injury_chance*100),func():_confirm_slaughter(true)))
+	# Starving packers ate their stock: a horse or mule gives less meat than an ox.
+	for kind in game.Mounts.ANIMALS:
+		var stock_offer: Dictionary = game.mount_slaughter_offer(kind,game.state.bullets<1)
+		if stock_offer.is_empty():continue
+		var name: String={"horses":"HORSE","mules":"MULE"}[kind]
+		var butcher := button(("BUTCHER 1 %s · %d LB · " % [name,stock_offer.meat])+("1 BULLET · 1 DAY" if not stock_offer.by_hand else "BY HAND · %d%% INJURY RISK · 1 DAY" % roundi(stock_offer.injury_chance*100)),_confirm_slaughter.bind(stock_offer.by_hand,kind))
+		butcher.tooltip_text = "Fewer animals means fewer riders and smaller loads. Meat may spoil."
+		transport.add_child(butcher)
 	supplies_window.popup_centered()
 
 func _packing_cart() -> Dictionary:
@@ -1685,10 +1701,11 @@ func _show_packing(from_cache: bool=false,selling: bool=false) -> void:
 	_update_packing_quote()
 	packing_window.popup_centered()
 
-func _confirm_slaughter(by_hand: bool = false) -> void:
-	var offer: Dictionary = game.ox_slaughter_offer(by_hand)
+func _confirm_slaughter(by_hand: bool = false,kind: String = "oxen") -> void:
+	var offer: Dictionary = game.ox_slaughter_offer(by_hand) if kind=="oxen" else game.mount_slaughter_offer(kind,by_hand)
 	if offer.is_empty():return
 	slaughter_by_hand=by_hand
+	slaughter_kind=kind
 	if not is_instance_valid(slaughter_confirmation):
 		slaughter_confirmation=ConfirmationDialog.new()
 		slaughter_confirmation.title="SLAUGHTER AN OX?"
@@ -1696,7 +1713,7 @@ func _confirm_slaughter(by_hand: bool = false) -> void:
 		wrap_dialog(slaughter_confirmation)
 		slaughter_confirmation.confirmed.connect(func():
 			slaughter_confirmation.hide()
-			if game.slaughter_ox(slaughter_by_hand):
+			if (game.slaughter_ox(slaughter_by_hand) if slaughter_kind=="oxen" else game.slaughter_mount(slaughter_kind,slaughter_by_hand)):
 				_refresh()
 				_show_supplies())
 		slaughter_confirmation.canceled.connect(func():
@@ -1706,6 +1723,11 @@ func _confirm_slaughter(by_hand: bool = false) -> void:
 	slaughter_confirmation.dialog_text="Lose one ox and use %d bullet; spend one camp day.\n%d oxen remain. Below four, pulling speed falls.\nRecover all %d lb usable meat without a hunting carry limit.\nMeat supplies %d food units before meals. Extra load slows travel; fresh meat spoils.\nYou may need to dry meat or discard cargo.\nThis cannot be undone within the current journey." % [offer.bullets,offer.remaining,offer.meat,game.provisions.meat_units(int(offer.meat))]
 	if offer.remaining==0:slaughter_confirmation.dialog_text+="\nNO TEAM REMAINS. Wagon stops until you acquire another ox."
 	elif offer.remaining==1:slaughter_confirmation.dialog_text+="\nONE OX: very slow; load guideline %.0f lb." % game.provisions.team_capacity(1)
+	if kind!="oxen":
+		var name: String={"horses":"horse","mules":"mule"}[kind]
+		slaughter_confirmation.title="BUTCHER A %s?" % name.to_upper()
+		slaughter_confirmation.dialog_text="Lose one %s and use %d bullet; spend one camp day.\n%d %s remain; fewer animals carry fewer riders and loads.\nRecover all %d lb usable meat, %d food units before meals. Fresh meat spoils.\nThis cannot be undone within the current journey." % [name,offer.bullets,offer.remaining,kind,offer.meat,game.provisions.meat_units(int(offer.meat))]
+	else:slaughter_confirmation.title="SLAUGHTER AN OX?"
 	if by_hand:slaughter_confirmation.dialog_text+="\nHousehold tools included; %d%% chance of wounding a traveler." % roundi(offer.injury_chance*100)
 	supplies_window.hide()
 	popup_fitted(slaughter_confirmation)
