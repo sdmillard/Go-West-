@@ -706,7 +706,7 @@ func _show_section(section: String) -> void:
 			section_rows.add_child(note)
 			entries=[["COMPANION TASKS >",_show_section.bind("Companion tasks")],["REST · CHOOSE DAYS",_rest],["PRESERVE MEAT >",_show_section.bind("Preserve meat")],["DRY FRUIT / GREENS >",_show_section.bind("Dry produce")],["CARE / MEDICAL ATTENTION",_open_care]]
 		"Companion tasks":
-			var note:=label("Camp jobs share one day. Workers miss rest recovery.\nUnassigned companions rest; hunt helpers haul. Jobs pause on the road.")
+			var note:=label("CAMP WORK ROSTER · HOVER FOR DETAILS")
 			note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 			section_rows.add_child(note)
 			var headings:=HBoxContainer.new()
@@ -737,12 +737,6 @@ func _show_section(section: String) -> void:
 				pick.item_selected.connect(_assign_camp_task.bind(id))
 				pick.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 				row.add_child(pick)
-				var options:=VBoxContainer.new()
-				options.add_theme_constant_override("separation",3)
-				var inset:=MarginContainer.new()
-				inset.add_theme_constant_override("margin_left",164)
-				inset.add_child(options)
-				worker.add_child(inset)
 				if task.job=="nurse":
 					var patients:=OptionButton.new()
 					for person in game.party_health.members:
@@ -754,7 +748,10 @@ func _show_section(section: String) -> void:
 					patient_row.add_child(label("PATIENT"))
 					patients.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 					patient_row.add_child(patients)
-					options.add_child(patient_row)
+					var inset:=MarginContainer.new()
+					inset.add_theme_constant_override("margin_left",164)
+					inset.add_child(patient_row)
+					worker.add_child(inset)
 				var why: String=game.camp_tasks.reason(game,id,task.job,int(task.patient))
 				var detail:=label(why if not why.is_empty() else {"rest":"Rest recovery; no work.","forage":"Seasonal yield, shared carrying room; food arrives after meals.","dry":"Morning meat after meals; one worker handles the available batch.","salt_dry":"Morning meat and available salt; one worker per batch.","nurse":"1 care kit / day while needed; caregiver improves treatment.","hunt_help":"Works only when you hunt; adds hauling and Hunter benefits."}[task.job])
 				if why.is_empty() and task.job in ["dry","salt_dry"]:
@@ -764,8 +761,22 @@ func _show_section(section: String) -> void:
 					var offer: Dictionary=game.forage_offer(true)
 					var amount: float=float(member.health)/100.0*float(offer.factor)
 					detail.text="About %.1f-%.1f lb; weather / cargo may reduce it." % [game.provisions.data.foraging.lb_per_worker[0]*amount,game.provisions.data.foraging.lb_per_worker[1]*amount]
-				detail.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
-				options.add_child(detail)
+				pick.tooltip_text=detail.text+"\nWorkers miss rest recovery. Unassigned companions rest; hunt helpers haul only when you hunt. Jobs pause on travel, crossing and trading days."
+				for item in range(pick.item_count):
+					var job: String=game.camp_tasks.JOBS[item]
+					pick.get_popup().set_item_tooltip(item,{"rest":"Rest and recover. No work.","forage":"Gather seasonal greens and berries after meals. Uses carrying room.","dry":"Dry morning meat after meals; one worker per batch.","salt_dry":"Dry morning meat using salt for better retention and storage.","nurse":"Use 1 kit each day while needed. Choose a patient below.","hunt_help":"Join your hunt, adding hauling and Hunter reload benefits. Otherwise rest."}[job])
+				detail.free()
+			section_rows.add_child(HSeparator.new())
+			var costs: Dictionary=game.camp_tasks.quote(game)
+			var cost_label:=label("PER CAMP DAY · %d DAY · %d FOOD UNITS\nMATERIALS: %d CARE KIT(S) · %.0f LB MEAT TO DRY · %d LB SALT\nWAGES DUE BY TOMORROW: $%.2f" % [costs.days,costs.meals,costs.kits,costs.meat_lb,costs.salt,costs.wages_cents/100.0])
+			cost_label.name="CampWorkCosts"
+			cost_label.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+			cost_label.tooltip_text="Estimate with the leader resting, based on morning supplies. Your chosen action can change available inputs; wages follow existing payment terms. Jobs share one day. Hunting uses only the bullets you fire.\n"+"\n".join(costs.notes)
+			section_rows.add_child(cost_label)
+			if not costs.notes.is_empty():
+				var blocked:=label("SOME JOBS CANNOT RUN · HOVER FOR DETAILS")
+				blocked.tooltip_text="\n".join(costs.notes)
+				section_rows.add_child(blocked)
 			if game.camp_tasks.enabled():
 				section_rows.add_child(button("CLEAR JOBS · USE GROUP ACTIONS",func():
 					game.camp_tasks.assignments={}

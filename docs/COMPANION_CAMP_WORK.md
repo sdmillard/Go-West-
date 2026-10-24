@@ -4,7 +4,7 @@ October 24, 2026. The shared camp-day stage is implemented. Away hunts, repair, 
 
 ## Playing
 
-Open **Camp > Companion tasks**. Give each companion a standing job: Rest, Forage, Dry meat, Salt + dry meat, Nurse a named patient, or Help leader hunt. The roster lists companions in the left column and assigned tasks in the right. Task-specific controls, such as the patient selector, sit underneath the task alongside eligibility, input and output details. Assigning jobs takes no time.
+Open **Camp > Companion tasks**. Give each companion a standing job: Rest, Forage, Dry meat, Salt + dry meat, Nurse a named patient, or Help leader hunt. The roster lists companions in the left column and assigned tasks in the right. Task-specific controls, such as the patient selector, sit underneath the task. Descriptions and eligibility details appear on hover. The bottom summarizes one shared day, meals, reserved kits, morning meat, salt and upcoming wages; warnings explain blocked jobs. This is a read-only estimate with the leader resting, and the chosen leader action can change available inputs. Assigning jobs takes no time.
 
 Selecting the first assignment enables shared camp work. Unassigned companions rest; only assigned hunt helpers accompany the leader and haul meat. Clear jobs / Use group actions restores the earlier whole-party action behavior. Existing saves and new journeys begin with group actions, allowing the new labor model to be tested without silently changing a player's existing strategy.
 

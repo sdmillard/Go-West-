@@ -3,6 +3,8 @@ extends RefCounted
 const JOBS=["rest","forage","dry","salt_dry","nurse","hunt_help"]
 const LABELS=["Rest","Forage","Dry meat","Salt + dry meat","Nurse a patient","Help leader hunt"]
 var assignments: Dictionary={}
+var quiet:=false
+var planning_notes: Array[String]=[]
 var day_plan: Dictionary={}
 var rules: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/camp_tasks.json"))
 func enabled() -> bool:return not assignments.is_empty()
@@ -135,9 +137,31 @@ func finish(game) -> void:
   else:report(game,"Gathering was stopped by conditions; no harvest returned.")
  day_plan={}
 func report(game,text: String) -> void:
- game.journal.append("Day %d · Camp work: %s" % [game.state.day,text])
+ if quiet:planning_notes.append(text)
+ else:game.journal.append("Day %d · Camp work: %s" % [game.state.day,text])
 func excludes_helper(game,index: int) -> bool:
  if not enabled() or index==0:return false
  if not reason(game,index,"hunt_help").is_empty():return true
  if not game.hunt.is_empty() and game.hunt.has("_camp_helpers"):return index not in game.hunt._camp_helpers
  return job(index).job!="hunt_help"
+
+## Use the same reservation pass for a read-only roster quote.
+func quote(game) -> Dictionary:
+ var model=get_script().new()
+ model.assignments=assignments.duplicate(true)
+ model.rules=rules.duplicate(true)
+ model.quiet=true
+ model.begin(game,"rest")
+ var result: Dictionary={"days":1,"meals":int(game.provisions.data.rations_lb[game.state.rations])*int(game.state.party_size),"kits":0,"meat_lb":0.0,"salt":0,"wages_cents":0,"notes":model.planning_notes.duplicate()}
+ for entry in model.day_plan.get("jobs",[]):
+  if entry.job=="nurse":result.kits+=1
+  if entry.job in ["dry","salt_dry"]:
+   result.meat_lb+=float(entry.offer.mass)
+   result.salt+=int(entry.offer.salt)
+ for profile in game.characters.profiles:
+  if profile.contract.is_empty():continue
+  if not game.party_health.is_active(game.party_health.members[profile.id]) and not game.Guards.actual_alive(game,int(profile.id)):continue
+  var contract: Dictionary=profile.contract
+  var bills: int=maxi(0,floori(float(int(game.state.day)+1-int(contract.next_due_day))/int(contract.interval_days))+1)
+  result.wages_cents+=int(contract.arrears_cents)+bills*int(contract.wage_cents)
+ return result
