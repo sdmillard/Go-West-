@@ -24,7 +24,7 @@ def aggregate(rows,kind):
   wanted_encounters=sum(r.get("wanted_encounters",0) for r in rows),
   scurvy_cases=sum(r.get("scurvy_cases",0) for r in rows))
 def cohort(root,spec):
- kind=spec["kind"];fields=IDENTITIES[kind];rows=[];archives=[];frozen=None
+ kind=spec["kind"];fields=IDENTITIES[kind];rows=[];archives=[];frozen=None;settings_seen=None
  for relative in spec["files"]:
   path=root/relative
   data=json.loads(path.read_text(encoding="utf-8-sig"))
@@ -33,6 +33,9 @@ def cohort(root,spec):
   identity={k:data[k] for k in ("rules_signature","source_hashes","seed_start","seed_count")}
   if frozen is not None and identity!=frozen:raise ValueError(f"{path}: source/seed mismatch within cohort")
   frozen=identity
+  run_settings={k:data[k] for k in ("settings","accuracy","stress","rest_below","protocol") if k in data}
+  if settings_seen is not None and settings_seen!=run_settings:raise ValueError("Settings differ within cohort")
+  settings_seen=run_settings
   rows.extend(data["runs"])
   archives.append(dict(path=relative,sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
  keys=[tuple(r[f] for f in fields) for r in rows]
