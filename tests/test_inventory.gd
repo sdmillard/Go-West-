@@ -61,10 +61,10 @@ func run():
  screen.game.state.health=20
  screen.game.provisions.carriers=screen.game.party_health.members
  var day: int=screen.game.state.day
- screen._recover_wagon()
- check(screen.game.state.day==day and screen.game.pending.id=="packs_too_heavy","Overloaded recovery does not secretly travel or recover the wagon")
- check("has not been reached" in screen.record_notice.dialog_text and not "Wagon found" in screen.record_notice.dialog_text,"The recovery report distinguishes an interrupted attempt from finding the cache")
- screen.record_notice.hide()
+ check(not screen.game.inspect_cached_wagon() and screen.game.state.day==day,"A distant cache cannot be remotely inspected or recovered")
+ screen.game.travel()
+ screen._refresh()
+ check(screen.game.state.day==day and screen.game.pending.id=="packs_too_heavy","Normal return travel enforces the same human carry limit before walking")
  screen._choose(0)
  check(screen.camping and screen.section_window.visible and screen.game.can_service(),"Return to camp opens the activities needed to fix excess pack weight")
  screen.section_window.hide()
