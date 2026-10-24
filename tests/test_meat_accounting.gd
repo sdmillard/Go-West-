@@ -41,14 +41,16 @@ func run():
 	var game=outfit()
 	check(game.hunting_capacity()==200,"Fit willing party can share a bounded two-hundred-pound haul")
 	for member in game.party_health.members:member.health=50
-	check(game.hunting_capacity()==125,"Half health scales hauling continuously to half of full party capacity")
+	check(game.hunting_capacity()==200,"Fair health retains full hunting allowance")
 	game.party_health.begin_condition(1,"broken_leg",0)
-	check(game.hunting_capacity()==100,"Broken leg removes that traveler's entire hauling contribution")
+	game.party_health.begin_condition(2,"broken_leg",0)
+	check(game.hunting_capacity()==150,"Broken leg removes that traveler's entire hauling contribution")
 	game.state.vehicle="foot"
-	check(game.provisions.capacity(game.state)==108,"Walking moderates illness penalties while broken legs still remove a carrier")
+	check(game.provisions.capacity(game.state)==120,"Walking moderates illness penalties while broken legs still remove a carrier")
 	game.state.vehicle="wagon"
 	check(game.provisions.capacity(game.state)==2500,"Human hauling injuries do not reduce wagon storage")
 	game.party_health.members[1].conditions.clear()
+	game.party_health.members[2].conditions.clear()
 	for member in game.party_health.members:member.health=85
 	var original: int=game.state.food
 	game.state.food+=game.provisions.add_meat(100,0)
@@ -84,15 +86,15 @@ func run():
 	check(quote.wagon_access and quote.food==200,"Robbing a roadside store with wagon alongside uses its cargo room")
 	game.crime.scenes.fort_bridger.wagon_access=false
 	quote=game.crime.loot_quote(game,"fort_bridger")
-	check(not quote.wagon_access and quote.haul_limit_lb==125 and quote.food==125,"Away from wagon, loot is bounded by health-scaled willing helpers")
+	check(not quote.wagon_access and quote.haul_limit_lb==200 and quote.food==200,"Away from wagon, loot is bounded by health-scaled willing helpers")
 	game.party_health.begin_condition(1,"broken_leg",0)
 	quote=game.crime.loot_quote(game,"fort_bridger")
-	check(quote.food==100,"Injured helpers cannot haul robbery food")
+	check(quote.food==200,"Injured helpers cannot haul robbery food")
 	for person in game.characters.profiles.slice(1):
 		person.boundaries=game.characters.catalog.boundaries("Compassionate")
 		person.trust=50
 	quote=game.crime.loot_quote(game,"fort_bridger")
-	check(quote.food==25,"Companions who forbid robbery do not carry its loot")
+	check(quote.food==50,"Companions who forbid robbery do not carry its loot")
 	check(is_equal_approx(old_cargo,game.provisions.cargo(game.state)),"Hauling previews change neither inventory nor physical cargo")
 	game.crime.scenes.fort_bridger.wagon_access=true
 	game.open_crime()
@@ -107,10 +109,10 @@ func run():
 	for member in walking.party_health.members:member.health=50
 	walking.state.health=50
 	var restored=store.restore(JSON.parse_string(JSON.stringify(store.capture(walking))))
-	check(restored!=null and restored.provisions.capacity(restored.state)==135,"Loaded packs derive their capacity from restored live health")
+	check(restored!=null and restored.provisions.capacity(restored.state)==200,"Loaded packs derive their capacity from restored live health")
 	if restored!=null:
 		restored.party_health.members[0].health=100
-		check(restored.provisions.capacity(restored.state)==148,"Recovery immediately restores pack capacity without a second stored health value")
+		check(restored.provisions.capacity(restored.state)==200,"Recovery within Fair/Good keeps full pack capacity without a second stored health value")
 	for member in walking.party_health.members:walking.party_health.begin_condition(int(member.id),"broken_leg",0)
 	check(walking.hunting_capacity()==0 and walking.provisions.capacity(walking.state)==0,"All broken legs means no human hauling; no artificial minimum bypass")
 	game=outfit()

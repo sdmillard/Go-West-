@@ -75,7 +75,7 @@ func run():
  preload("res://tests/full_trail_policy.gd").step(game)
  check(game.provisions.cargo(game.state)<heavy,"The regression traveler discards real excess stock instead of looping at an overweight warning")
  game.party_health.begin_condition(1,"broken_leg",game.state.day)
- check(game.provisions.Carrying.factor(game.party_health.members[1])==0,"A broken leg still prevents hauling")
+ check(game.provisions.Carrying.factor(game.party_health.members[1],game.provisions.data.walking.health_load_curve)==0,"A broken leg still prevents hauling")
  game=party()
  check(not game.state.has("hunger_days"),"Well-fed journeys do not gain unnecessary saved hunger state")
  var legacy: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-emergency-travel-save-v1.json"))

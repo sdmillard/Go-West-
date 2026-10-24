@@ -124,7 +124,7 @@ static func _day(game,cache: Dictionary,random) -> void:
  var needed:=count*int(food.data.rations_lb[ration])
  var hunted: bool=bool(cache.get("field_working",false))
  var rules: Dictionary=food.data.wagon_guards
- if int(cache.inventory.food)<needed*int(rules.hunt_below_days) and int(cache.inventory.bullets)>0 and Carry.capacity(model.members,float(game.hunting.data.carry_per_person_lb))>0:
+ if int(cache.inventory.food)<needed*int(rules.hunt_below_days) and int(cache.inventory.bullets)>0 and Carry.capacity(model.members,float(game.hunting.data.carry_per_person_lb),game.provisions.data.walking.health_load_curve)>0:
   # One abstract outing: regional species, real ammunition, health-scaled haul.
   hunted=true
   cache.inventory.bullets-=1
@@ -140,7 +140,7 @@ static func _day(game,cache: Dictionary,random) -> void:
     if roll<=0:break
     kind+=1
    var species: Dictionary=game.hunting.data.species[kind]
-   var pounds:=mini(random.randi_range(int(species.meat_min),int(species.meat_max)),floori(Carry.capacity(model.members,float(game.hunting.data.carry_per_person_lb))))
+   var pounds:=mini(random.randi_range(int(species.meat_min),int(species.meat_max)),floori(Carry.capacity(model.members,float(game.hunting.data.carry_per_person_lb),game.provisions.data.walking.health_load_curve)))
    var units: int=food.add_meat(pounds,day)
    cache.inventory.food+=units
    _log(cache,day,"Guards spent one bullet hunting; hauled %d lb meat (%d food units)." % [pounds,units])

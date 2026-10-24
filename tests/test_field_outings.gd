@@ -35,6 +35,22 @@ func run():
  check(foot.valid and leader.valid and foot.capacity_lb==leader.capacity_lb and foot.catch_lb==leader.catch_lb,"Leader and equal-health companion have identical outfit/carrying limits")
  check(foot.catch_lb<50 and foot.pack_lb>20,"Personal gear, clothing, food reserve and ammunition consume real retrieval room")
  check(store.capture(g)==before,"Outfit quotes do not consume supplies, time or random numbers")
+ # Good and Fair carry normally; one curve applies to every human load.
+ var curve: Array=g.provisions.data.walking.health_load_curve
+ var last:=0.0
+ for health in range(101):
+  var person: Dictionary=g.party_health.members[0].duplicate(true);person.health=health;person.alive=health>0
+  var factor: float=g.provisions.Carrying.factor(person,curve)
+  check(factor>=last and factor<=1 and factor-last<=0.025001,"Carrying curve has no downward jump or sudden health-category cliff")
+  if health>=50:check(factor==1,"All Fair and Good health retains full human carrying capacity")
+  last=factor
+ for pair in [[100,1.0],[80,1.0],[50,1.0],[49,59.0/60.0],[35,0.75],[20,0.5],[10,0.25],[0,0.0]]:
+  g.party_health.members[0].health=pair[0];g.party_health.members[1].health=pair[0]
+  var a: float=Outfit.capacity(g,[0],"foot");var b: float=Outfit.capacity(g,[1],"foot")
+  check(is_equal_approx(a,50*pair[1]) and a==b,"Leader and delegated hunter share each configured health breakpoint")
+  var walker: Dictionary=g.party_health.members[0]
+  check(is_equal_approx(g.provisions.Carrying.capacity([walker],40,curve),snappedf(40*pair[1],0.1)),"Walking uses the same health factor with its own base allowance")
+ g=party()
  var mounted: Dictionary=Outfit.quote(g,[1],"ride_horse",3,5)
  check(mounted.valid and mounted.catch_lb>foot.catch_lb,"Allocated riding animal with bags adds real cargo")
  g.state.saddlebags=0

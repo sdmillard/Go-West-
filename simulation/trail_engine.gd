@@ -1554,7 +1554,7 @@ func hauling_capacity(action: String="hunt") -> int:
 	var pounds:=0.0
 	for member in party_health.members:
 		if characters.willing(int(member.id),action) and (action!="hunt" or not camp_tasks.excludes_helper(self,int(member.id))):
-			pounds+=float(hunting.data.carry_per_person_lb)*provisions.Carrying.factor(member)
+			pounds+=float(hunting.data.carry_per_person_lb)*provisions.Carrying.factor(member,provisions.data.walking.health_load_curve)
 	return mini(int(hunting.data.carry_limit),floori(pounds))
 func hunting_capacity() -> int:
 	if hunt.has("field"):return maxi(0,floori(field_outings.Outfit.capacity(self,hunt.field.members,hunt.field.kit)-float(hunt.field.pack_lb)))

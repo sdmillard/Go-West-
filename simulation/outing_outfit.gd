@@ -14,7 +14,7 @@ static func capacity(game,members: Array,kit: String) -> float:
  var people:=0.0
  for id in members:
   var person: Dictionary=id if id is Dictionary else game.party_health.members[int(id)]
-  people+=float(game.hunting.data.carry_per_person_lb)*game.provisions.Carrying.factor(person)
+  people+=float(game.hunting.data.carry_per_person_lb)*game.provisions.Carrying.factor(person,game.provisions.data.walking.health_load_curve)
  var inventory: Dictionary=stock(kit)
  inventory.merge({"vehicle":"foot","party_size":members.size()})
  var animals: float=game.Mounts.plan(game.provisions.data.mounts,inventory).animal_lb
@@ -26,7 +26,7 @@ static func quote(game,members: Array,kit: String,days: int,bullets: int) -> Dic
  for id in members:
   if not game.crime.whole(id,0,game.party_health.members.size()-1) or int(id) in seen:return result
   var person: Dictionary=game.party_health.members[int(id)]
-  if not game.party_health.is_active(person) or game.provisions.Carrying.factor(person)<=0 or not game.characters.willing(int(id),"hunt"):return result
+  if not game.party_health.is_active(person) or game.provisions.Carrying.factor(person,game.provisions.data.walking.health_load_curve)<=0 or not game.characters.willing(int(id),"hunt"):return result
   if int(id)>0 and game.camp_tasks.patient_nurses(game).has(int(id)):result.message="A patient receiving nursing must rest.";return result
   seen.append(int(id))
  var animals: Dictionary=stock(kit)

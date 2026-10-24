@@ -27,8 +27,9 @@ func load_data(value: Variant) -> bool:
 	for key in ["carry_lb_per_person","personal_gear_lb_per_person","miles_per_day","packing_miles_per_day"]:
 		if not number(value.walking.get(key)) or value.walking[key]<=0:return false
 	if value.walking.personal_gear_lb_per_person>=value.walking.carry_lb_per_person or not Shortfall.valid_rules(value.get("shortfall")):return false
-	for key in ["cache_loss_base","cache_loss_daily","cache_loss_cap","pack_health_relief_anchor"]:
+	for key in ["cache_loss_base","cache_loss_daily","cache_loss_cap"]:
 		if not number(value.walking.get(key)) or value.walking[key]<0 or value.walking[key]>1:return false
+	if not Carrying.valid_curve(value.walking.get("health_load_curve")):return false
 	if not value.get("ox_slaughter") is Dictionary:return false
 	if not number(value.ox_slaughter.get("minimum_team")) or value.ox_slaughter.minimum_team < 0 or value.ox_slaughter.minimum_team != int(value.ox_slaughter.minimum_team):return false
 	for key in ["usable_meat_lb","bullets"]:
@@ -93,7 +94,7 @@ func capacity(inventory: Dictionary) -> float:
 	var plan: Dictionary=Mounts.plan(data.mounts,inventory)
 	# Riders carry only their personal gear; walkers carry full packs.
 	if Mounts.mounted(plan):return snappedf(float(data.walking.personal_gear_lb_per_person)*int(inventory.party_size)+float(plan.animal_lb),0.1)
-	var people: float=Carrying.capacity(carriers,float(data.walking.carry_lb_per_person),float(data.walking.pack_health_relief_anchor)) if not carriers.is_empty() else float(data.walking.carry_lb_per_person)*int(inventory.party_size)
+	var people: float=Carrying.capacity(carriers,float(data.walking.carry_lb_per_person),data.walking.health_load_curve) if not carriers.is_empty() else float(data.walking.carry_lb_per_person)*int(inventory.party_size)
 	return snappedf(people+float(plan.animal_lb),0.1)
 func storage_capacity(inventory: Dictionary) -> float:
 	return capacity(inventory) if inventory.get("vehicle","")=="foot" else float(data.cargo_guideline_lb)
