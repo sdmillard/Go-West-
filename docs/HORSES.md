@@ -78,9 +78,9 @@ The horse keys are optional: a party that never bought an animal, and every olde
   - **Some slip away at once (Spencer: it depends on temperament and trust).** A companion at or below their breaking trust always goes. Otherwise Nervous (too frightened) and Self-serving (not reliable) companions always go unless Loyal; Loyal ones stay; anyone else goes with a chance of (60 − trust)%, so trusting companions stay (`left_behind_trust` 60).
   - **Pursuers may take in the rest** (`left_behind_taken` 0.4 each) when someone is chasing the party.
 
-## Not yet built
+## Balance pass
 
-The [historical and travel balance audit](HISTORY_AND_MOUNT_BALANCE.md) is complete: 1,112 formal journeys identify unresolved pack pace, elapsed travel time, food dependence and grazing/load calibration. The subsequent [emergency travel calibration](EMERGENCY_TRAVEL_CALIBRATION.md) revises walking/packing pace and food-shortage behavior with fresh comparisons. Animal payloads, grazing and winter recovery still need review.
+See [HORSE_BALANCE.md](HORSE_BALANCE.md), which builds on the [historical and travel balance audit](HISTORY_AND_MOUNT_BALANCE.md) and [emergency travel calibration](EMERGENCY_TRAVEL_CALIBRATION.md). Forage strain is lower (sagebrush 1, highcountry and forest 0), all-mule strings take no forage strain, and load drag on daily distance starts at 75% of capacity for animal parties. Mounted bankers now arrive sooner than wagons (median 183 against 204 days). Packing is a lean, hungry option, and walking with no animals stays unviable by design.
 
 ## Validation
 

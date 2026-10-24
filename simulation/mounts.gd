@@ -80,7 +80,9 @@ static func wear(rules: Dictionary,plan_: Dictionary,region: String,base_strain:
 	# Light work at a cautious pace can be sustained on good grazing; heavier loads,
 	# haste, poor grass and winter still draw down condition. Doubling is always hard work.
 	var workload: int=1 if load_ratio>float(rules.light_work_load) else 0
-	var strain: int=workload+base_strain+int(rules.forage_strain.get(region,0))+pace
+	# Mules thrive on forage that wears horses down: an all-mule string takes no forage strain.
+	var forage: int=0 if int(plan_.get("saddled_horses",0))+int(plan_.get("pack_horses",0))==0 else int(rules.forage_strain.get(region,0))
+	var strain: int=workload+base_strain+forage+pace
 	if plan_.mode=="doubled":strain=maxi(1,strain)*int(rules.doubled_wear)
 	return strain
 

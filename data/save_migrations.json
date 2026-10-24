@@ -4,6 +4,7 @@
   ],
   "note": "Verified previous opening and full-route economy fingerprints only. Economy updates retain existing cash, inventory, party, time and pending transaction quotes; future offers use current prices.",
   "economy_v1": [
+    "6927c03c33aba3ab718e02606b39caa53355a215aa4182c564764aa580dc5403",
     "4c1d6f3f0d9396b8b346019a07164fe3244ae2049eb1919eb0aa2bb38008a963",
     "7dd76ff024cb920e552c1dc5ecee647de9f40bc56e3da99434e552e35f3ccdf0",
     "1e165d9f77c1d2d314e544464c2649b213221d02afdf305b5de15ab4c4e93d64",

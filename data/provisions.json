@@ -125,9 +125,9 @@
     "forage_strain": {
       "woodland": 0,
       "plains": 0,
-      "highcountry": 1,
-      "sagebrush": 2,
-      "forest": 1
+      "highcountry": 0,
+      "sagebrush": 1,
+      "forest": 0
     },
     "light_work_load": 0.5
   },
