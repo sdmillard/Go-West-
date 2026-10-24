@@ -180,14 +180,14 @@ func run() -> void:
 	var ammo: int = game.state.bullets
 	game.state.fatigue = 40
 	check(game.start_hunt(), "Hunting can begin between landmarks")
-	check(game.state.day == 1 and game.state.food == food - 15 and game.state.fatigue < 40 and not game.travel(), "Hunt consumes one day's rations, rests the team and locks travel")
+	check(game.state.day == 0 and game.state.food == food and not game.travel(), "Starting a hunt locks travel; day and meals settle on return")
 	game.hunt.animals = [{"kind": 0, "x": 100.0, "y": 75, "direction": 1, "escaped": false}, {"kind": 1, "x": 200.0, "y": 98, "direction": 1, "escaped": false}, {"kind": 2, "x": 300.0, "y": 121, "direction": -1, "escaped": false}]
 	check(game.hunt_shot(-1), "Miss consumes a shot")
 	for target in range(3):
 		game.advance_hunt(1.5)
 		check(game.hunt_shot(target), "Distinct available target resolves after reload")
 	check(not game.hunt_shot(0) and game.state.bullets == ammo - 4, "Already-taken target cannot duplicate meat or ammunition use")
-	check(game.finish_hunt() and game.state.food == food - 15 + 100, "Healthy willing party hauls up to two hundred physical pounds for one hundred meal units")
+	check(game.finish_hunt() and game.state.day == 1 and game.state.fatigue < 40 and game.state.food == food - 15 + 100, "Healthy willing party hauls up to two hundred physical pounds for one hundred meal units")
 	before = game.state.duplicate(true)
 	check(not game.finish_hunt() and game.state == before, "Finishing hunting twice cannot duplicate food or time")
 	game = outfit()
@@ -237,7 +237,7 @@ func run() -> void:
 	screen._show_section("Hunt & forage")
 	check(screen.section_window.visible and not screen.traveling, "Hunt & forage opens a paused action menu")
 	screen.section_rows.get_child(0).pressed.emit()
-	check(screen.hunt_window.visible and screen.game.state.day == 1, "Mouse menu starts the actual hunt")
+	check(screen.hunt_window.visible and screen.game.state.day == 0, "Mouse menu starts the actual hunt")
 	screen.hunt_view.set_process(false)
 	if "--capture" in OS.get_cmdline_user_args():
 		await capture("hunting")
@@ -254,7 +254,7 @@ func run() -> void:
 	if "--capture" in OS.get_cmdline_user_args():
 		await capture("hunting-shot")
 	screen._finish_hunt()
-	check(screen.record_notice.visible and "lb brought to camp" in screen.record_notice.dialog_text, "Returning displays actual hunting yield and waste")
+	check(screen.record_notice.visible and screen.game.state.day == 1 and "lb eaten at camp" in screen.record_notice.dialog_text and "PACKED" in screen.record_notice.dialog_text and "lb left behind" in screen.record_notice.dialog_text, "Returning displays actual hunting yield and waste")
 	screen.record_notice.hide()
 	check(not screen.hunt_window.visible and screen.game.hunt.is_empty(), "Returning to camp finishes the hunt once")
 	if not screen.game.pending.is_empty():
