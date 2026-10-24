@@ -44,7 +44,8 @@
     "cache_loss_base": 0.15,
     "cache_loss_daily": 0.03,
     "cache_loss_cap": 0.85,
-    "packing_miles_per_day": 22
+    "packing_miles_per_day": 22,
+    "pack_health_relief_anchor": 0.85
   },
   "foraging": {
     "note": "Authored seasonal gameplay estimates, not measured harvests or dietary vitamin C doses. Greens and berries supplement meals; four physical pounds supply one food unit. A shared half-pound of produce per living traveler counts as a vitamin-C meal.",
