@@ -6,6 +6,8 @@ A growing Oregon Trail-inspired game in **Godot 4 / GDScript**. Lead five travel
 
 [Wagon sales, custom robbery demands and resizing](docs/WAGON_SALES_ROBBERY_AND_DISPLAY.md) add reviewed keep/sell/leave decisions, value-sensitive intimidation and configurable window scaling.
 
+[The total survival balance check](docs/TOTAL_SURVIVAL_BALANCE.md) covers 4,428 current-mechanics scenarios, historical/current sources and workload-dependent animal condition. Nutrition, weak walking and elapsed journey time remain open; surviving a test journey does not certify historical accuracy.
+
 [Emergency travel and hunting calibration](docs/EMERGENCY_TRAVEL_CALIBRATION.md) corrects meals from a successful hunt before packing, softens the abrupt starvation clock and revises walking/packing pace. Matched emergencies improve, but weak walkers and low-budget pack journeys remain difficult.
 
 [Historical accuracy and mount balance](docs/HISTORY_AND_MOUNT_BALANCE.md) records 1,112 journeys under the preceding rules, dated sources and unresolved pack-travel problems. Passing software tests does not mean these modes are balanced.
