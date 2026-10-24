@@ -6,6 +6,8 @@ A growing Oregon Trail-inspired game in **Godot 4 / GDScript**. Lead five travel
 
 [Wagon sales, custom robbery demands and resizing](docs/WAGON_SALES_ROBBERY_AND_DISPLAY.md) add reviewed keep/sell/leave decisions, value-sensitive intimidation and configurable window scaling.
 
+[Historical accuracy and mount balance](docs/HISTORY_AND_MOUNT_BALANCE.md) records 1,112 current-rule journeys, dated sources and unresolved pack-travel problems. Passing software tests does not mean these modes are balanced.
+
 [Horses and mules](docs/HORSES.md): the wagon is now an Independence store item, and parties can leave as packers with saddle horses, pack mules and tack. Riding is faster than a wagon but carries far less; doubling up is a short, punishing dash.
 
 [Returning east, replacement wagons and wagon guards](docs/RETURN_TRAVEL_AND_WAGON_GUARDS.md) let an expedition retrace its road, inspect a marked cache and discover the fate of companions left behind. Party creation includes Generate Party.
@@ -78,7 +80,7 @@ This is a complete playable overland corridor with provisional balancing. Guide 
 
 The [first source-grounded balance pass](docs/BALANCE_PASS_01.md) records BASIC/historical comparisons and deterministic before/after experiments. Cautious movement now averages about 12.1 miles per moving day in that experiment. Rest recovery depends on rations; spontaneous illness no longer causes fractures; automatic cholera onset respects the later epidemic chronology. These are starting bounds and corrections, not final historical calibration.
 
-Starting cash is $600/$900/$1,400 for farmer/carpenter/banker, with the wagon and household gear already owned. Opening oxen cost $30 each, and one-ox departures are allowed with severe hauling limitations. These are period-informed game choices; see [economy and preservation](docs/ECONOMY_AND_PRESERVATION.md) and [team rules](docs/TEAM_SIZE.md).
+Starting cash is $675/$975/$1,475 for farmer/carpenter/banker. The $75 wagon is now an explicit store purchase; household gear is included. These are gameplay budgets, not measured occupational wealth. Opening oxen cost $30 each, and one-ox departures are allowed with severe hauling limitations. These are period-informed game choices; see [economy and preservation](docs/ECONOMY_AND_PRESERVATION.md) and [team rules](docs/TEAM_SIZE.md).
 
 ## Test
 

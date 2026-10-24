@@ -24,19 +24,22 @@ func counter_visit(game,profile: Dictionary,count: Dictionary,fundraising: bool=
    if habitat in ["plains","woodland"]:food_goal=90
    elif game.state.landmark=="fort_boise":food_goal=900
    elif habitat=="highcountry":food_goal=300
-  if walking:food_goal=mini(25,food_goal)
+  if walking and (not profile.get("mount_support",false) or game.mount_plan().mode=="walking"):food_goal=mini(25,food_goal)
   if game.state.food<food_goal:targets.food=food_goal
   if game.state.clothing<game.state.party_size:targets.clothing=int(game.state.party_size)
   if profile.hunt and game.state.bullets<(60 if store.kind=="post" else 15):targets.bullets=100 if store.kind=="post" else 40
   if profile.get("preserve","")=="salt" and game.state.salt<4:targets.salt=8
   if not walking and game.state.oxen<4:targets.oxen=4
   if game.state.medicine<1:targets.medicine=1
+  if walking and profile.get("mount_support",false):
+   for stock in profile.get("mount_targets",{}):
+    if game.Mounts.count(game.state,stock)<int(profile.mount_targets[stock]):targets[stock]=int(profile.mount_targets[stock])
   var gap: int=int(game.party_health.days_without_fresh)
   if profile.get("produce",true) and produce_held(game)==0 and gap>=int(profile.get("forage_gap",20)):
    targets.produce=2
    targets.dried_produce=3
   # Nutrition, missing clothes and an actual team come before stockpiling ordinary food.
-  for item in ["produce","dried_produce","clothing","oxen","bullets","food","salt","medicine"]:
+  for item in ["produce","dried_produce","clothing","oxen","bullets","food","salt","medicine","horses","mules"]:
    if not targets.has(item):continue
    if item=="dried_produce" and int(cart.get("produce",0))>0:continue
    var matches: Array=store.rows.filter(func(row):return row.item==item)
@@ -149,7 +152,7 @@ func act(game,profile: Dictionary,aim: RandomNumberGenerator,count: Dictionary) 
      var kind: String=game.context.data.activities[choice.activity].kind
      if (kind=="graze" and game.state.ox_health<85) or (kind=="prepare" and game.state.river_stage=="high" and game.state.medicine>1):return game.choose(index)
    if game.route.nodes[game.state.landmark].kind=="river":
-    var methods: Array=["ferry",("swim" if game.state.river_stage=="high" else "wade")] if game.state.vehicle=="foot" else ["ferry","float" if game.state.river_stage=="high" else "ford"]
+    var methods: Array=["ferry",("horses" if profile.get("mount_support",false) and game.Mounts.animals(game.state)>0 else ("swim" if game.state.river_stage=="high" else "wade"))] if game.state.vehicle=="foot" else ["ferry","float" if game.state.river_stage=="high" else "ford"]
     for method in methods:
      if method=="ferry" and "barlow_pass" not in game.travelled_path():
       var ferries: Array=game.pending.choices.filter(func(c):return c.get("method","")=="ferry")
@@ -183,12 +186,12 @@ func act(game,profile: Dictionary,aim: RandomNumberGenerator,count: Dictionary) 
    return game.preserve_meat(salted)
  if profile.get("slaughter",true) and game.state.oxen>int(profile.get("slaughter_team_floor",4)) and game.state.food<90 and not game.ox_slaughter_offer().is_empty():bump(count,"oxen_slaughtered");return game.slaughter_ox()
  var threshold: int=int(profile.get("hunt_below",45))
- if game.state.vehicle=="foot":threshold=mini(20,threshold)
+ if game.state.vehicle=="foot" and (not profile.get("mount_support",false) or game.mount_plan().mode=="walking"):threshold=mini(20,threshold)
  if profile.hunt and game.state.food<threshold and game.state.bullets>0:return hunt_outing(game,profile,aim,count)
  var worst: int=game.state.health
  for member in game.party_health.members:
   if game.party_health.is_active(member):worst=mini(worst,int(member.health))
- if profile.rest and (worst<int(profile.get("rest_below",55)) or game.state.fatigue>50 or (game.state.vehicle!="foot" and game.state.ox_health<65)) and game.state.food>=game.state.party_size*(ration+1):
+ if profile.rest and (worst<int(profile.get("rest_below",55)) or game.state.fatigue>50 or (game.state.vehicle!="foot" and game.state.ox_health<65) or (profile.get("mount_support",false) and game.mount_plan().mode in ["mounted","doubled","packing"] and game.Mounts.condition(game.state)<int(profile.get("mount_rest_below",65)))) and game.state.food>=game.state.party_size*(ration+1):
   bump(count,"rests")
   return game.rest()
  return game.travel()

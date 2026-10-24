@@ -1,0 +1,79 @@
+{
+  "reviewed": "2026-10-24",
+  "purpose": "Historical boundaries for the current rules audit. No population survival target is inferred.",
+  "sources": [
+    {
+      "id": "palmer-1847",
+      "url": "https://www.gutenberg.org/cache/epub/46906/pg46906-images.html",
+      "date": "1847 guide; 1845-1846 observations; 1906 reprint",
+      "location": "Necessary Outfits pp.258-263; Fort Bridger entry July 25 p.74",
+      "supports": "Eight oxen with 2500 lb loading; 340 lb of five weighed staples per adult, plus other supplies; Bridger horses offered at $25-50 in trade.",
+      "limits": "Advice and particular trades, not a universal 1848 tariff, adult diet or surveyed route."
+    },
+    {
+      "id": "marcy-pack",
+      "url": "https://www.kancoll.org/books/marcy/machap04.htm",
+      "date": "1859",
+      "location": "Packing and Driving; paragraph beginning One hundred and twenty-five",
+      "supports": "125 lb sufficient mule load on a long journey; good pack saddles and careful adjustment matter; pack trains avoid some wagon delays.",
+      "limits": "Eleven years later; recommendation, not every mule maximum or a numerical speed series. The source contains period prejudices that are not game facts."
+    },
+    {
+      "id": "marcy-grazing",
+      "url": "https://www.kancoll.org/books/marcy/machap03.htm",
+      "date": "1859",
+      "location": "Method of Marching",
+      "supports": "Properly attended animals can maintain condition on good grass and water without grain; excessive speed and inadequate grazing harm condition.",
+      "limits": "Conditional qualitative advice, not a measured daily wear or recovery rate."
+    },
+    {
+      "id": "nps-travel",
+      "url": "https://www.nps.gov/articles/000/traveling-emigrant-trails.htm",
+      "date": "Modern NPS interpretation; outfit figure dated 1850",
+      "supports": "Broad 12-15 miles/day and four-six month context; 2500 lb wagon capacity; supplies and finite purchases mattered.",
+      "limits": "Do not equate total outfit and first-year support cost with remaining cash or use its 1849 Ware list as an exact 1848 list."
+    },
+    {
+      "id": "nps-season",
+      "url": "https://www.nps.gov/oreg/learn/historyculture/making-the-trek.htm",
+      "date": "Modern NPS interpretation",
+      "supports": "April/May timing, winter pass risk, declining late-route game and harder western terrain; Barlow Road from 1846.",
+      "limits": "No exact monthly weather table, hunting success probability or population victory rate."
+    },
+    {
+      "id": "nps-kearny",
+      "url": "https://www.nps.gov/places/000/fort-kearny-state-historical-park.htm",
+      "date": "Modern NPS interpretation of 1848-1849",
+      "supports": "Construction began June 1848; early travelers passed before construction; initially scant buildings and supplies.",
+      "limits": "Does not establish the quantity or price of a particular 1848 shop or medical service."
+    },
+    {
+      "id": "nps-cholera",
+      "url": "https://www.nps.gov/articles/000/cholera-a-trail-epidemic.htm",
+      "date": "Gold Rush years; Winslow death June 8, 1849",
+      "supports": "Major trail epidemic belongs to the later Gold Rush context.",
+      "limits": "Not proof of zero infection in all 1848 places, or of game disease frequencies."
+    },
+    {
+      "id": "outfit-museum",
+      "url": "https://historicoregoncity.org/2019/04/03/outfitting-for-the-journey/",
+      "date": "Modern museum compilation spanning 1840s-early 1850s",
+      "supports": "Four-six oxen as a common outfit; differing stock/tack prices and typical supplies.",
+      "limits": "Wide dates and places; its mule prices differ sharply from current $50. Do not silently substitute one aggregate list for a dated local transaction."
+    },
+    {
+      "id": "nih-vitamin-c",
+      "url": "https://ods.od.nih.gov/factsheets/VitaminC-HealthProfessional/",
+      "date": "Modern nutritional reference",
+      "supports": "Vitamin C deficiency causes scurvy; storage and heat can reduce vitamin C.",
+      "limits": "Does not validate one shared deficiency counter, exact game drying retention or preserved fruit as a guaranteed prevention method."
+    },
+    {
+      "id": "bouchard-classic",
+      "url": "https://www.philipbouchard.com/oregon-trail/hunting.html",
+      "date": "Designer retrospective on 1985 design and later adaptations",
+      "supports": "100 lb hunting haul was a game design decision; regional ecology and shooting skill were deliberate mechanics.",
+      "limits": "Classic rules are design references, not historical measurements; do not copy a haul cap as physiological evidence."
+    }
+  ]
+}

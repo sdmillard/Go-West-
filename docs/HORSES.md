@@ -80,7 +80,7 @@ The horse keys are optional: a party that never bought an animal, and every olde
 
 ## Not yet built
 
-A balance study of wagon, packer and walking journeys.
+The [historical and travel balance audit](HISTORY_AND_MOUNT_BALANCE.md) is complete: 1,112 formal journeys identify unresolved pack pace, elapsed travel time, food dependence and grazing/load calibration. Next: fix those findings and validate with fresh seeds.
 
 ## Validation
 
@@ -91,7 +91,7 @@ A balance study of wagon, packer and walking journeys.
 `tests/test_horse_trade.gd`: post counter stock and prices, the resale cap, buying and selling, the lot menu, trader rolls that leave older meetings unchanged, trader sales, the stranding penalty, horse robbery demands, the wagon-needs-oxen rule, theft baskets (cash and wagon excluded, value and animal noise, haul limit, both outcomes, restitution, saves), the pre-horse-trade save fixture and the STEAL picker.
 
 
-`tests/test_mounts.gd` (64 checks): store quotes with and without a wagon, packer departure, seat assignment, riding versus walking distance, mounted versus wagon first day, wear and rest, doubling up, sagebrush wear, breakdowns, led horses behind a wagon, abandoning the wagon with horses, save round trip, the real pre-horse save, wagonless events, the horse ford and swim (choice, mishaps, drowned animals, rising water, saves) and the travel view and ledger. Existing tests that priced the default outfit now include the $75 wagon; the store-layout check scrolls to the salt row in the longer list.
+`tests/test_mounts.gd` (82 checks): store quotes with and without a wagon, packer departure, seat assignment, riding versus walking distance, mounted versus wagon first day, wear and rest, doubling up, sagebrush wear, breakdowns, led horses behind a wagon, abandoning the wagon with horses, save round trip, the real pre-horse save, wagonless events, the horse ford and swim (choice, mishaps, drowned animals, rising water, saves) and the travel view and ledger. Existing tests that priced the default outfit now include the $75 wagon; the store-layout check scrolls to the salt row in the longer list.
 
 ## Mount review fixes (October 24)
 
@@ -99,4 +99,4 @@ Initial walking and packing quotes now use the actual starting party health (85)
 
 Exhaustion removes a horse or mule assigned to a saddle or pack, preferring working horses before working mules. Led-only stock and empty trains cannot suffer a carrying breakdown. Remaining stock can take over the lost animal pack, so losing an animal does not necessarily reduce capacity immediately.
 
-The representative train is positioned inside the landscape with a gap between walkers and animals, keeping five walkers visible even with eight animals. Existing pixel assets are unchanged. These are correctness fixes, not the wagon/packer/walker balance study that remains to be done.
+The representative train is positioned inside the landscape with a gap between walkers and animals, keeping five walkers visible even with eight animals. Existing pixel assets are unchanged. These are correctness fixes. The subsequent [balance audit](HISTORY_AND_MOUNT_BALANCE.md) records separate current-rule evidence.
