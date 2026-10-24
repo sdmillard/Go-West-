@@ -20,6 +20,7 @@ static func assign(game,ids: Array) -> void:
  cache["risk_cumulative"]=0.0
  cache["gone"]=false
  cache["guards"]=[]
+ if not ids.is_empty() and game.state.has("hunger_days"):cache["hunger_days"]=float(game.state.hunger_days)
  cache["camp_log"]=[]
  cache["habitat"]=game.context.region_id(game)
  cache["camp_rations"]=int(game.state.rations)
@@ -150,10 +151,11 @@ static func _day(game,cache: Dictionary,random) -> void:
  var sufficient: bool=vitamin>=count*float(food.data.foraging.vitamin_c_lb_per_person)
  cache.camp_deficiency=0 if sufficient else int(cache.camp_deficiency)+1
  var fed: bool=eaten>=needed
+ var shortage: Dictionary=food.Shortfall.step(food.data.shortfall,cache,eaten,needed,ration)
  for member in model.members:
   if not model.is_active(member):continue
   member["vitamin_days"]=0 if sufficient else int(member.get("vitamin_days",cache.camp_deficiency-1))+1
-  model.affect(member,-maxi(1,ceili(18.0*(1.0-float(eaten)/maxi(1,needed)))) if not fed else (0 if hunted else int(game.survival.data.rest_recovery[ration])),day,"lack of food" if not fed else "ill health")
+  model.affect(member,-int(shortage.damage) if not fed else (int(game.survival.data.rest_recovery[ration]) if not hunted and shortage.can_recover else 0),day,"lack of food" if not fed else "ill health")
   var month: int=game.calendar().month
   var cold: bool=month in [11,12,1,2] or (month in [3,10] and cache.habitat in ["forest","highcountry"])
   if cold:model.affect(member,-(1 if int(cache.inventory.clothing)>=count else 4),day,"winter exposure")
@@ -192,6 +194,7 @@ static func reveal(game) -> bool:
   member.merge(actual.duplicate(true))
   member.history=history
   if member.alive and not member.get("departed",false):
+   if cache.has("hunger_days"):game.state["hunger_days"]=maxf(float(game.state.get("hunger_days",0)),float(cache.hunger_days))
    game.state.household_gear_lb=game.provisions.household_mass(game.state)+float(game.provisions.data.walking.personal_gear_lb_per_person)
    member.history.append("Day %d · Rejoined the travelers at the wagon." % game.state.day)
    game.journal.append("Day %d · %s rejoined the party." % [game.state.day,member.name])
@@ -211,6 +214,7 @@ static func reveal(game) -> bool:
  return not cache.gone
 static func valid(cache: Dictionary,game,day: int,party: Array=[]) -> bool:
  if not cache.has("camp_random"):return not cache.has("guards") and not party.any(func(member):return member.get("guarding",false))
+ if not game.provisions.Shortfall.valid_state(cache):return false
  if not cache.camp_random is String or not cache.camp_random.is_valid_int() or str(int(cache.camp_random))!=cache.camp_random:return false
  if not game.crime.whole(cache.get("camp_day"),0,day) or not cache.get("gone") is bool or not cache.get("guards") is Array or cache.guards.size()>game.MAX_TRAVELERS-1 or not cache.get("camp_log") is Array or cache.camp_log.size()>20000:return false
  if not (cache.get("risk_cumulative") is float or cache.get("risk_cumulative") is int) or not is_finite(cache.risk_cumulative) or cache.risk_cumulative<0 or cache.risk_cumulative>1:return false

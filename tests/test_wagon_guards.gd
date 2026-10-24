@@ -30,6 +30,9 @@ func disable_loss(game):
  game.provisions.data.walking.cache_loss_base=0
  game.provisions.data.walking.cache_loss_daily=0
  game.provisions.data.walking.cache_loss_cap=0
+func rest_day(game):
+ if game.pending.get("id","")=="party_health":game.choose(0)
+ return game.rest()
 func run():
  var game=outfit()
  var before: Dictionary=Store.new().capture(game)
@@ -54,8 +57,8 @@ func run():
   copy.survival.forced_weather="clear"
   copy.survival.data.event_chance=0
   copy.party_health.daily_onset_chance=0
-  game.rest()
-  copy.rest()
+  rest_day(game)
+  rest_day(copy)
   check(Store.new().capture(copy)==Store.new().capture(game),"Saved camp random stream continues identically")
  check(not game.characters.can_receive_wages(game,1),"Cannot remotely pay an absent guard")
  disable_loss(game)
@@ -67,7 +70,7 @@ func run():
  game.abandon_wagon({"food":0,"clothing":3,"bullets":0},[1,2])
  var packed: int=game.state.food
  var cached: int=game.wagon_cache.inventory.food
- game.rest()
+ rest_day(game)
  check(game.state.food==packed and game.wagon_cache.inventory.food==cached-6,"Hungry travelers cannot eat the remote cache; guards consume their own meals")
  check(game.party_health.members[1].health==100,"Away roster exposes last-known health")
  game=outfit()
@@ -77,7 +80,7 @@ func run():
  game.state.food=20
  game.abandon_wagon({"food":10,"clothing":3,"bullets":0},[1,2])
  var bullets: int=game.wagon_cache.inventory.bullets
- for n in range(4):game.rest()
+ for n in range(4):rest_day(game)
  check(game.wagon_cache.inventory.bullets<bullets and game.state.bullets==0,"Hungry guards spend only cached ammunition on uncertain hunts")
  check(game.wagon_cache.camp_log.any(func(line):return "empty-handed" in line),"Failed hunts are recorded without free meat")
  check(game.wagon_cache.guards[0].health<100 and game.party_health.members[1].health==100,"Cached hunger damages actual guards without leaking remote condition")
@@ -88,7 +91,8 @@ func run():
  game.state.food=10
  game.state.bullets=0
  game.abandon_wagon({"food":10,"clothing":3},[1])
- for n in range(6):game.rest()
+ game.state.food=1000 # Isolate the hidden guard shortage from the traveling party.
+ for n in range(40):rest_day(game)
  check(not game.wagon_cache.guards[0].alive and game.party_health.members[1].alive,"A starving guard can die offscreen while the roster stays last-known")
  check(game.current_party_slots()[1]==1,"Unknown guard death does not allow a duplicate replacement")
  check(game.party_health.description(1).contains("GUARDING") and not game.party_health.description(1).contains("DIED"),"Health description does not reveal hidden death")
@@ -140,7 +144,7 @@ func run():
  game.abandon_wagon({"food":10,"clothing":4,"bullets":0},[1])
  for n in range(8):
   if game.wagon_cache.camp_log.any(func(line):return "hauled" in line):break
-  game.rest()
+  rest_day(game)
  check(game.wagon_cache.camp_log.any(func(line):return "hauled" in line),"Armed healthy guards can obtain regional game")
  check(game.wagon_cache.fresh.all(func(batch):return batch.pounds<=game.provisions.meat_units(int(game.hunting.data.carry_per_person_lb))),"Guard meat batches respect one healthy guard's haul and food conversion")
  game=outfit()
@@ -174,10 +178,10 @@ func run():
  employee.specials=["Mercenary"]
  check(game.characters.start_contract(game,1,1000,2),"Set a legal two-day guard wage contract")
  game.abandon_wagon({"food":20,"clothing":4},[1])
- game.rest()
+ rest_day(game)
  check(employee.contract.arrears_cents==1000 and not game.characters.pay_wages(game,1),"Living guard earns wages but cannot receive remote money")
  var trust: int=employee.trust
- game.rest()
+ rest_day(game)
  check(employee.contract.misses>0 and employee.trust<trust,"Missed guard wage changes trust and preserves debt")
  game.pending={}
  game.inspect_cached_wagon()
