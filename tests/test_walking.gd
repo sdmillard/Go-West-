@@ -78,6 +78,7 @@ func run():
 	game=outfit()
 	game.provisions.add_fresh(100,0)
 	game.abandon_wagon({"clothing":1})
+	if game.pending.get("id","")=="party_health":game.choose(0) # Acknowledge the explicit new food-shortage warning.
 	game.rest()
 	game.rest()
 	check(game.recover_wagon() and game.state.food==485,"Food continues aging in cache and expired meat cannot be rescued")

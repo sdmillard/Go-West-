@@ -62,7 +62,7 @@ func run():
 	game.state.saddles=0
 	var walking: int=game.walking_distance()
 	game.state.saddles=5
-	check(riding>walking*1.8,"Riding covers far more ground than walking (%d vs %d)" % [riding,walking])
+	check(riding>walking*1.3,"Riding still covers more ground than a properly paced pack train (%d vs %d)" % [riding,walking])
 	var wagon=wagon_party()
 	var start: int=wagon.state.miles
 	wagon.travel()

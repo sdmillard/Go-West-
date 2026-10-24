@@ -592,12 +592,14 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 		for member in party_health.members:
 			if party_health.is_active(member) and member.has("vitamin_days"):member.vitamin_days=0 if party_health.days_without_fresh==0 else int(member.vitamin_days)+1
 	state.food = maxi(0, state.food - needed)
+	var recovered_food: bool=provisions.Shortfall.tick(self,eaten,needed) if state.extended_route else true
 	if not fed:
-		_change_health(-maxi(1, ceili(18.0 * (1.0 - float(eaten) / maxi(1, needed)))) if state.extended_route else -18, "lack of food")
+		if not state.extended_route:_change_health(-18,"lack of food")
 	elif resting:
-		_change_health(int(survival.data.rest_recovery[state.rations]) if state.extended_route else 7, "ill health")
+		if recovered_food:_change_health(int(survival.data.rest_recovery[state.rations]) if state.extended_route else 7,"ill health")
 	else:
-		_change_health([ -3, 0, 1 ][state.rations] - [0, 1, 4][state.pace], "exhaustion")
+		var change: int=[-3,0,1][state.rations]-[0,1,4][state.pace]
+		_change_health(change if recovered_food else mini(0,change),"exhaustion")
 	if not party_health.members.is_empty():
 		var storm_damage: int=int(seasonal_pressure().storm_damage) if state.extended_route else 0
 		if storm_damage>0:_change_health(-storm_damage,"winter exposure")
@@ -1489,6 +1491,7 @@ func walking_distance() -> int:
 	var terrain:=0.8 if state.terrain=="mountains" else (0.9 if state.terrain=="forest" else 1.0)
 	var base: float=float(provisions.data.walking.miles_per_day)*[1.0,1.15,1.3][state.pace]
 	var plan: Dictionary=mount_plan()
+	if plan.mode=="packing":base=float(provisions.data.walking.packing_miles_per_day)*[1.0,1.15,1.3][state.pace]
 	if Mounts.mounted(plan):base=Mounts.base_miles(provisions.data.mounts,Mounts.condition(state),int(state.pace))
 	return maxi(1,roundi(base*float(seasonal_pressure().travel)*float(survival.weather.speed)*terrain*burden*(1.0-float(state.fatigue)/300.0)))
 func walking_overloaded() -> bool:
