@@ -4,6 +4,8 @@ October 24, 2026. Spencer asked to address nutrition and weak walking first, and
 
 **This nutrition/risk change does not alter travel speeds or day costs.** The published build also preserves the independently merged horse-balance PR #84; its animal-load changes are checked separately below. The study now distinguishes cautious play, brief stops and pushing on. The results show a worthwhile payoff from riskier decisions without establishing that every late arrival is a timing bug.
 
+**Current carrying rule:** [Field outings and shared health breakpoints](FIELD_OUTINGS.md) replace the walking relief formula below. Good/Fair now retain full capacity; Poor/Very Poor reduce it smoothly for walkers and retrieval alike. Existing nutrition changes remain.
+
 ## Gameplay changes
 
 ### Scurvy can start improving before it disappears

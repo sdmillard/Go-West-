@@ -5,7 +5,7 @@ const FORMAT := "westward-probably"
 const VERSION := 1
 const DEFAULT_PATH := "user://journey.json"
 const MAX_BYTES := 2097152
-const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes", "social_rules", "appearance", "recruitment", "robbery_demands", "camp_tasks"]
+const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes", "social_rules", "appearance", "recruitment", "robbery_demands", "camp_tasks", "field_outings"]
 var error := ""
 var rules_signature := ""
 var load_note := ""
@@ -25,7 +25,7 @@ func capture(game) -> Dictionary:
 		return {}
 	return normalize({"format": FORMAT, "version": VERSION, "rules": fingerprint(),
 		"recruitment":game.recruitment.snapshot(),"social":game.social.snapshot(),"crime":game.crime.snapshot(),
-		"camp_repair":game.camp_repair.work.duplicate(true),"characters_version":4,"camp_tasks":game.camp_tasks.snapshot(),"characters":game.characters.profiles.duplicate(true),
+		"camp_repair":game.camp_repair.work.duplicate(true),"field_outings":game.field_outings.snapshot(),"characters_version":5,"camp_tasks":game.camp_tasks.snapshot(),"characters":game.characters.profiles.duplicate(true),
 		"combat_history":game.combat.history.duplicate(true),"context":game.context.record.duplicate(true),"route_end":game.route.end_id,"wagon_cache":game.wagon_cache.duplicate(true), "state":game.state.duplicate(true), "pending":game.pending.duplicate(true),
 		"seen":game.seen.duplicate(), "journal":Array(game.journal),
 		"last_crossing":game.last_crossing.duplicate(true), "crossing_history":game.crossing_history.duplicate(true),
@@ -117,6 +117,14 @@ func strings(value: Variant, limit: int = 10000) -> bool:
 	return true
 
 func valid_menu(menu: Dictionary, game, count: int=5) -> bool:
+	if menu.get("outing_warning",false):
+		if menu.get("id")!="outing_departure" or not menu.get("flight") is bool or not menu.get("resume") is Dictionary or menu.resume.has("outing_warning") or not menu.get("choices") is Array:return false
+		var expected: Array=["leave","back"] if menu.flight else ["wait","leave","back"]
+		if menu.choices.size()!=expected.size():return false
+		for i in range(expected.size()):
+			var choice: Variant=menu.choices[i]
+			if not choice is Dictionary or choice.get("outing_choice")!=expected[i] or not choice.get("label") is String or not choice.get("effects") is Dictionary or not choice.effects.is_empty():return false
+		return valid_menu(menu.resume,game,count)
 	if menu.has("approach_direction") and (menu.approach_direction not in ["west","east"] or not menu.has("landmark")):return false
 	if menu.has("retreat_without_crossing") and (menu.retreat_without_crossing!=true or not menu.has("landmark")):return false
 	if menu.is_empty():
@@ -284,6 +292,7 @@ func restore(value: Variant):
 		var member: Dictionary = value.party[index]
 		if member.get("id") != index or not member.get("name") is String or not member.get("alive") is bool or not integer(member.get("health"),0,100) or not strings(member.get("history")) or not member.get("conditions") is Array or not member.get("cause") is String or not integer(member.get("death_day"),-1,int(s.day)):
 			return null
+		if member.has("away") and (member.away!=true or index==0 or not member.alive or member.get("departed",false) or member.get("guarding",false) or int(value.get("characters_version",0))<5):return null
 		if member.has("guarding") and (member.guarding!=true or index==0 or not member.alive or member.get("departed",false)):return null
 		if member.has("vitamin_days") and not integer(member.vitamin_days,0,100000):return null
 		if index>=5 and not integer(member.get("joined_day"),0,int(s.day)):return null
@@ -314,7 +323,7 @@ func restore(value: Variant):
 	if s.extended_route and (alive>Simulation.PARTY_CAPACITY or s.party_size != alive or s.health != (roundi(float(health) / alive) if alive else 0)):
 		return null
 	if not integer(s.get("departed_gear_lb",0),0,(s.party.size()-1)*int(game.provisions.data.walking.personal_gear_lb_per_person)) or s.get("departed_gear_lb",0)!=departed*int(game.provisions.data.walking.personal_gear_lb_per_person):return null
-	if departed>0 and not integer(value.get("characters_version"),3,4):return null
+	if departed>0 and not integer(value.get("characters_version"),3,5):return null
 	var fresh := 0
 	for batch in value.fresh:
 		if not batch is Dictionary:return null
@@ -338,7 +347,7 @@ func restore(value: Variant):
 	game.state = normalize(s)
 	if value.has("characters"):
 		var characters_version: Variant=value.get("characters_version",1)
-		if not integer(characters_version,1,4) or not game.characters.valid(value.characters,value.party.size(),int(s.day),int(characters_version)==1,int(characters_version)):return null
+		if not integer(characters_version,1,5) or not game.characters.valid(value.characters,value.party.size(),int(s.day),int(characters_version)==1,int(characters_version)):return null
 		game.characters.profiles.assign(normalize(value.characters))
 		if int(characters_version)==1:game.characters.upgrade()
 		elif int(characters_version)==2:
@@ -361,10 +370,14 @@ func restore(value: Variant):
 	if not game.camp_repair.work.is_empty() and s.vehicle!="wagon":return null
 	if s.has("camp_watch_day")!=s.has("camp_watch_member"):return null
 	if s.has("camp_watch_day") and (not integer(s.camp_watch_day,0,int(s.day)) or not integer(s.camp_watch_member,1,value.party.size()-1)):return null
+	if int(value.get("characters_version",1))>=5:
+		if not game.field_outings.valid(value.get("field_outings"),game,value.party,int(s.day)):return null
+		game.field_outings.record=normalize(value.field_outings)
+	elif value.has("field_outings"):return null
 	game.combat.history.assign(normalize(value.get("combat_history",[])))
 	game.context.record=normalize(value.get("context",{"spent":{},"activities":[],"prepared":[]}))
 	game.wagon_cache=normalize(value.get("wagon_cache",{}))
-	game.pending = normalize(value.pending)
+	game.pending = normalize(value.pending.resume if value.pending.get("outing_warning",false) else value.pending)
 	game.service_return = normalize(value.service_return)
 	game.upgrade_foot_crossing(game.pending)
 	game.upgrade_foot_crossing(game.service_return)
@@ -472,6 +485,10 @@ func restore(value: Variant):
 	elif economy_migrated:
 		load_note = "Updated compatible survival rules. Your existing cash, supplies and pending offers are unchanged."
 		game.journal.append(load_note)
+	if value.pending.get("outing_warning",false):
+		var warning: Dictionary=normalize(value.pending)
+		warning.resume=game.pending.duplicate(true)
+		game.pending=warning
 	error = ""
 	return game
 

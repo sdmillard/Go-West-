@@ -2,7 +2,7 @@ extends RefCounted
 ## Companion backgrounds, trust, participation and warned settlement departures.
 const Appearance=preload("res://simulation/traveler_appearance.gd")
 const SKILLS=["Hunting", "Carpentry", "Caregiving", "Trading"]
-const KINDS=["rest_sick", "push_sick", "care", "defend"]
+const KINDS=["rest_sick", "push_sick", "care", "defend", "hunter_left"]
 const ACTIONS=["robbery", "murder", "cannibalism", "miss_wages", "hunt", "repair", "care", "trade", "defend"]
 var RELATIONSHIPS: Dictionary={"self":50}
 var SPECIALS: Array=[]
@@ -402,7 +402,7 @@ func acceptable_terms(wage_cents: Variant, interval_days: Variant, profile: Dict
 func advance_contracts(game) -> void:
 	for profile in profiles:
 		if profile.id==0 or profile.contract.is_empty():continue
-		if not game.party_health.is_active(game.party_health.members[profile.id]) and not game.Guards.actual_alive(game,int(profile.id)):continue
+		if not game.party_health.is_active(game.party_health.members[profile.id]) and not game.Guards.actual_alive(game,int(profile.id)) and not game.field_outings.actual_alive(int(profile.id)):continue
 		var contract: Dictionary=profile.contract
 		if contract.last_due_day>=0 and contract.last_due_day<game.state.day and contract.last_assessed_day<contract.last_due_day:
 			contract.last_assessed_day=contract.last_due_day
@@ -434,7 +434,7 @@ func set_auto_pay(game,index: int,enabled: bool) -> bool:
 func can_receive_wages(game, index: int) -> bool:
 	if index<=0 or index>=profiles.size() or game.state.status not in ["traveling","arrived"]:return false
 	var member: Dictionary=game.party_health.members[index]
-	if not member.alive or member.get("guarding",false):return false
+	if not member.alive or member.get("guarding",false) or member.get("away",false):return false
 	if not member.get("departed",false):return true
 	return game.pending.get("landmark",game.service_return.get("landmark",""))==member.departure_place
 
@@ -505,3 +505,9 @@ func valid_framework(profile: Dictionary, index: int, day: int) -> bool:
 	return true
 
 
+
+func payable_due_total(game) -> int:
+	var total:=0
+	for profile in profiles:
+		if can_receive_wages(game,int(profile.id)):total+=int(profile.contract.get("arrears_cents",0))
+	return total

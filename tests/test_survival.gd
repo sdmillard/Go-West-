@@ -237,7 +237,9 @@ func run() -> void:
 	screen._show_section("Hunt & forage")
 	check(screen.section_window.visible and not screen.traveling, "Hunt & forage opens a paused action menu")
 	screen.section_rows.get_child(0).pressed.emit()
-	check(screen.hunt_window.visible and screen.game.state.day == 0, "Mouse menu starts the actual hunt")
+	check(screen.outing_window.visible and screen.game.state.day==0 and screen.game.hunt.is_empty(),"Mouse menu opens outfitting without spending time")
+	screen.outing_window.confirmed.emit()
+	check(screen.hunt_window.visible and screen.game.state.day == 0, "Confirmed outfit starts the actual hunt")
 	screen.hunt_view.set_process(false)
 	if "--capture" in OS.get_cmdline_user_args():
 		await capture("hunting")

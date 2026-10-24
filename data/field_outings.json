@@ -1,0 +1,20 @@
+{
+  "note": "Authored outing encounter tuning, not measured historical rates.",
+  "hit_chance": 0.65,
+  "hunter_bonus": 0.1,
+  "mishap_chance": 0.08,
+  "fork_follow_chance": 0.5,
+  "lone_crossing_drowning_chance": 0.1,
+  "missing_after_days": 2,
+  "bandit_daily_chance": 0.025,
+  "bandit_max_per_trip": 1,
+  "bandit_chase_damage": 30,
+  "bandit_lone_fatal_on_hit": 0.1,
+  "bandit_goods": {
+    "food": 3,
+    "bullets": 1,
+    "clothing": 1,
+    "horses": 2,
+    "mules": 2
+  }
+}

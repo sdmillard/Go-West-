@@ -37,12 +37,12 @@ func run():
  for member in game.party_health.members:member.health=60
  game.state.health=60
  game.state.food=0
- check(game.provisions.capacity(game.state)==150,"Moderate illness still leaves pack capacity for meals")
- check(game.hunting_capacity()==150,"Hunting and robbery retrieval retain their existing health scaling")
+ check(is_equal_approx(game.provisions.capacity(game.state),200),"Moderate illness still leaves pack capacity for meals")
+ check(game.hunting_capacity()==200,"Retrieval uses the same health factor with its separate fifty-pound baseline")
  var mass: float=game.provisions.cargo(game.state)
- check(mass==110 and game.provisions.capacity(game.state)-mass==40,"Real gear stays counted; relief gives forty pounds of food room")
+ check(mass==110 and is_equal_approx(game.provisions.capacity(game.state)-mass,90),"Real gear stays counted; relief gives food room without a second health modifier")
  game.party_health.begin_condition(1,"broken_leg",0)
- check(game.provisions.capacity(game.state)==120,"A broken leg still removes a carrier completely")
+ check(is_equal_approx(game.provisions.capacity(game.state),160),"A broken leg still removes a carrier completely")
  var previous:=0.0
  for h in range(101):
   for member in game.party_health.members:member.conditions=[];member.health=h;member.alive=h>0
@@ -58,14 +58,14 @@ func run():
   for member in restored.party_health.members:member.health=60
   restored.state.health=60
   var clone=store.restore(JSON.parse_string(JSON.stringify(store.capture(restored))))
-  check(clone!=null and clone.provisions.capacity(clone.state)==150,"Adjusted capacity derives from live restored people")
+  check(clone!=null and is_equal_approx(clone.provisions.capacity(clone.state),200),"Adjusted capacity derives from live restored people")
  var horse_sync: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-recovery-horse-sync-save-v1.json"))
  var synced=store.restore(horse_sync)
  check(synced!=null and synced.state==store.normalize(horse_sync.state) and str(synced.rng.state)==horse_sync.random,"The concurrent horse-update save migrates without resetting a journey")
  var pack_rules: Dictionary=game.provisions.data.duplicate(true)
- for invalid in [-1,1.01,"soft"]:
+ for invalid in [null,[],[[0,0],[20,0.5],[50,0.9],[80,1],[100,1]],[[0,0],[20,0.8],[50,0.5],[80,1],[100,1]],[[0,0],[20,-1],[50,0.75],[80,1],[100,1]],[[0,0],[20,"soft"],[50,0.75],[80,1],[100,1]]]:
   var bad: Dictionary=pack_rules.duplicate(true)
-  bad.walking.pack_health_relief_anchor=invalid
-  check(not game.provisions.load_data(bad),"Malformed pack relief rejects")
+  bad.walking.health_load_curve=invalid
+  check(not game.provisions.load_data(bad),"Malformed carrying curve rejects")
  print("Nutrition and pack recovery: %d checks, %d failures" % [checks,failures])
  quit(1 if failures else 0)

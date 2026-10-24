@@ -12,6 +12,7 @@ const Guards=preload("res://simulation/wagon_guards.gd")
 const CacheSupport=preload("res://simulation/wagon_cache.gd")
 const Remains=preload("res://simulation/remains.gd")
 const Mounts=preload("res://simulation/mounts.gd")
+var field_outings=preload("res://simulation/field_outings.gd").new()
 var camp_repair=preload("res://simulation/camp_repair.gd").new()
 var camp_tasks=preload("res://simulation/camp_tasks.gd").new()
 var wagon_cache: Dictionary={}
@@ -418,6 +419,7 @@ func configure(pace: int, rations: int) -> void:
 
 func travel() -> bool:
 	if camp_repair.blocked(self):return false
+	if _can_act() and field_outings.warn(self):return true
 	if not _can_act():
 		return false
 	if walking_overloaded():return true
@@ -440,7 +442,9 @@ func travel() -> bool:
 			journal.append("The Corolla is out of fuel. You unhitch the wagon and continue with oxen.")
 	if state.extended_route:
 		# On the river the current carries the party; the team rides or is driven alongside.
+		field_outings.moving=true
 		_tick_day(false, not on_river)
+		field_outings.moving=false
 		if state.status != "traveling":
 			return true
 		if walking_overloaded():return true
@@ -450,17 +454,19 @@ func travel() -> bool:
 		var east: bool=Direction.heading(self)=="east"
 		distance=mini(distance,int(state.leg_miles) if east else int(state.leg_length)-int(state.leg_miles))
 		distance=Direction.clamp_at_cache(self,distance)
+		distance=field_outings.clamp_distance(self,distance)
 		state.leg_miles+=-distance if east else distance
 		state.miles+=-distance if east else distance
 		if state.has("trail_history"):Direction.remember(self)
 		if east and state.leg_miles==0:state["east_arrival"]=true
 		if not wagon_cache.is_empty():wagon_cache.found=false
+		field_outings.resolve_returns(self)
 	else:
 		state.miles = mini(DESTINATION, state.miles + distance)
 		_tick_day(false)
 	journal.append("Day %d · Traveled to mile %d. Food remaining: %d units." % [state.day, state.miles, state.food])
 	if state.status == "traveling" and not crime.check_pursuit(self) and not crime.check_wanted(self):
-		if not Direction.cache_notice(self):_schedule_event()
+		if not field_outings.camp_notice(self) and not Direction.cache_notice(self):_schedule_event()
 	return true
 
 func rest() -> bool:
@@ -502,8 +508,13 @@ func can_choose(index: int) -> bool:
 	return true
 
 func choose(index: int) -> bool:
+	if pending.get("outing_warning",false):return field_outings.choose_warning(self,index)
 	if not can_choose(index):
 		return false
+	var outward: Dictionary=pending.choices[index]
+	var flight: bool=outward.get("crime_command","") in ["flee","ride","breakout"]
+	var boundary: bool=outward.get("action","")=="cross" or (outward.get("action","")=="leave" and route.nodes[state.landmark].next.size()>1)
+	if (outward.get("action","") in ["leave","cross"] or flight) and field_outings.warn(self,flight,boundary):return true
 	if pending.get("recruit_menu",false) or pending.get("dismiss_menu",false):return recruitment.choose(self,index)
 	if pending.get("crime_menu",false):return crime.choose(self,str(pending.choices[index].crime_command))
 	if pending.get("riders_menu",false):return crime.Wanted.choose_rider(self,index)
@@ -512,7 +523,11 @@ func choose(index: int) -> bool:
 	if pending.get("service_menu", false):
 		return _choose_service(index)
 	if pending.has("landmark"):
-		return _choose_landmark(index)
+		field_outings.moving=outward.get("action","") in ["leave","cross"]
+		var chosen: bool=_choose_landmark(index)
+		field_outings.moving=false
+		field_outings.resolve_returns(self)
+		return chosen
 	var choice: Dictionary = pending.choices[index]
 	if choice.get("camp_repair_part","") in camp_repair.PARTS:
 		if not camp_repair.queue(self,str(choice.camp_repair_part)):return false
@@ -653,6 +668,7 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 	if state.extended_route and camp_rest.is_empty():camp_tasks.other_day_watch(self)
 	if state.extended_route:social.tick(self,resting,fed)
 	if state.extended_route:Guards.tick(self)
+	if state.extended_route:field_outings.tick(self)
 	characters.daily(self,resting,team_working,sick_before,camp_rest)
 	if state.extended_route:crime.check_betrayal(self)
 	if state.extended_route:
@@ -1457,9 +1473,16 @@ func _update_river_stage() -> void:
 		elif option.get("method", "") == "seized":
 			option.risk = crime.seized_risk(self,str(state.landmark))
 
-func start_hunt() -> bool:
+func start_hunt(outfit: Dictionary={}) -> bool:
 	if not _can_act() or not state.extended_route or state.bullets < 1:
 		return false
+	var field: Dictionary={}
+	if not outfit.is_empty():
+		field=hunt_outfit_quote(outfit.get("members",[]),str(outfit.get("kit","foot")),int(outfit.get("bullets",5)))
+		if not field.get("valid",false):return false
+		if not camp_tasks.enabled():
+			for person in party_health.members:
+				if int(person.id)>0 and party_health.is_active(person):camp_tasks.assign(self,int(person.id),"hunt_help" if int(person.id) in field.members else "rest")
 	# Settle the day after the outing: today's successful catch can feed today's camp.
 	last_hunt_recovery={}
 	camp_tasks.end_leader_nursing(self)
@@ -1467,16 +1490,36 @@ func start_hunt() -> bool:
 	hunting_outings += 1
 	hunt = hunting.begin(int(state.seed), hunting_outings, int(state.miles), route.nodes[state.landmark].get("hunting_region","plains"))
 	if camp_tasks.enabled():hunt["_camp_helpers"]=camp_tasks.day_plan.get("jobs",[]).filter(func(j):return j.job=="hunt_help").map(func(j):return int(j.member))
+	if not field.is_empty():
+		field["condition"]=Mounts.condition(state)
+		hunt["field"]=field
+		hunt["_camp_helpers"]=field.members.filter(func(id):return int(id)!=0)
+		for job in camp_tasks.day_plan.get("jobs",[]):
+			if job.job=="hunt_help" and int(job.member) not in field.members:camp_tasks.day_plan.rest[job.member]=true
+		if not camp_tasks.day_plan.is_empty():camp_tasks.day_plan.jobs=camp_tasks.day_plan.jobs.filter(func(job):return job.job!="hunt_help" or int(job.member) in field.members)
+		field_outings.Outfit.reserve(self,field)
 	hunt.day = state.day+1
 	journal.append("Day %d · Set out to hunt. The outing will take one day, including meals at camp." % (state.day+1))
 	return true
 
+func hunt_outfit_quote(members: Array,kit: String,bullets: int) -> Dictionary:
+	var leader: int=-1
+	for person in party_health.members:
+		if party_health.is_active(person):leader=int(person.id);break
+	if leader<0 or leader not in members:return {"valid":false,"message":"The leader must join the player hunt."}
+	for id in members:
+		if int(id)!=leader and camp_tasks.enabled() and camp_tasks.job(int(id)).job!="hunt_help":return {"valid":false,"message":"Assign additional companions to Help leader hunt first."}
+	return field_outings.Outfit.quote(self,members,kit,1,bullets)
+func hunt_ammo() -> int:
+	return int(hunt.field.inventory.bullets) if hunt.has("field") else int(state.bullets)
+
 func hunt_shot(target: int) -> bool:
-	if hunt.is_empty() or hunt.ended or hunt.reload > 0 or state.bullets < 1 or hunt.shots >= hunting.data.shot_limit or target < -1 or target >= hunt.animals.size():
+	if hunt.is_empty() or hunt.ended or hunt.reload > 0 or hunt_ammo() < 1 or hunt.shots >= hunting.data.shot_limit or target < -1 or target >= hunt.animals.size():
 		return false
 	if target in hunt.targets or (target >= 0 and hunt.animals[target].escaped):
 		return false
-	state.bullets -= 1
+	if hunt.has("field"):hunt.field.inventory.bullets-=1
+	else:state.bullets -= 1
 	hunt.shots += 1
 	hunt.reload = hunting.data.reload_seconds*(characters.benefits.hunter_reload_factor if characters.available(self,"Hunting") else 1.0)
 	hunt.flash = 0.12
@@ -1487,7 +1530,7 @@ func hunt_shot(target: int) -> bool:
 		var meat: int = hunt.animals[target].get("meat", species.meat)
 		hunt.meat += meat
 		hunt.message = "%s: %d lb usable meat." % [species.label, meat]
-	if hunt.shots >= hunting.data.shot_limit or state.bullets == 0:
+	if hunt.shots >= hunting.data.shot_limit or hunt_ammo() == 0:
 		hunt.ended = true
 		hunt.message += " Return to camp."
 	return true
@@ -1512,9 +1555,10 @@ func hauling_capacity(action: String="hunt") -> int:
 	var pounds:=0.0
 	for member in party_health.members:
 		if characters.willing(int(member.id),action) and (action!="hunt" or not camp_tasks.excludes_helper(self,int(member.id))):
-			pounds+=float(hunting.data.carry_per_person_lb)*provisions.Carrying.factor(member)
+			pounds+=float(hunting.data.carry_per_person_lb)*provisions.Carrying.factor(member,provisions.data.walking.health_load_curve)
 	return mini(int(hunting.data.carry_limit),floori(pounds))
 func hunting_capacity() -> int:
+	if hunt.has("field"):return maxi(0,floori(field_outings.Outfit.capacity(self,hunt.field.members,hunt.field.kit)-float(hunt.field.pack_lb)))
 	return hauling_capacity("hunt")
 ## Pre-settlement space estimate; last_hunt_recovery records actual meals and loads after settlement.
 func hunt_recovery() -> Dictionary:
@@ -1524,6 +1568,9 @@ func hunt_recovery() -> Dictionary:
 func finish_hunt() -> bool:
 	if hunt.is_empty():return false
 	var outing: Dictionary=hunt.duplicate(true)
+	if hunt.has("field"):
+		for key in hunt.field.inventory:state[key]+=int(hunt.field.inventory[key])
+		provisions.fresh.append_array(hunt.field.fresh.duplicate(true))
 	# Retrieval work remains limited by health and willing helpers, but eating at camp
 	# does not require the meat to fit into tomorrow's walking packs first.
 	var retrieved: int=mini(hunting_capacity(),int(hunt.meat))
@@ -1531,6 +1578,11 @@ func finish_hunt() -> bool:
 	if units>0:provisions.fresh.back()["_hunt_meal"]=true
 	state.food+=units
 	_tick_day(false,false,"hunt")
+	if hunt.has("field"):
+		var inventory: Dictionary=hunt.field.stock.duplicate()
+		inventory.merge({"vehicle":"foot","party_size":hunt.field.members.size()})
+		var wear: int=field_outings.Outfit.wear(self,hunt.field.kit,hunt.field.members.size(),context.region_id(self),(float(hunt.field.pack_lb)+retrieved)/maxf(1,float(hunt.field.capacity_lb)))
+		field_outings.Outfit.restore_stock(self,hunt.field.stock,maxi(10,int(hunt.field.condition)-wear))
 	var remaining: int=0
 	var ratio: float=float(retrieved)/units if units>0 else 1.0
 	var batch: Dictionary={}
@@ -1794,6 +1846,7 @@ func discard_supplies(cart: Dictionary) -> bool:
 func produce_drying_offer() -> Dictionary:return Produce.drying_offer(self)
 func dry_produce() -> bool:return Produce.dry(self)
 
-func turn_direction(to: String) -> bool:return Direction.turn(self,to)
+func turn_direction(to: String) -> bool:
+	return Direction.turn(self,to)
 
 func inspect_cached_wagon() -> bool:return CacheSupport.inspect(self)

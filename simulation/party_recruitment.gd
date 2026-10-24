@@ -6,7 +6,7 @@ const COMMANDS=["search","accept","decline","dismiss","back"]
 func snapshot() -> Dictionary:return record.duplicate(true)
 func restore(value: Dictionary) -> void:record=value.duplicate(true)
 func slots(game) -> Array:
-	return record.slots.map(func(id):return int(id) if int(id)>=0 and int(id)<game.party_health.members.size() and (game.party_health.is_active(game.party_health.members[int(id)]) or game.party_health.members[int(id)].get("guarding",false)) else -1)
+	return record.slots.map(func(id):return int(id) if int(id)>=0 and int(id)<game.party_health.members.size() and (game.party_health.is_active(game.party_health.members[int(id)]) or game.party_health.members[int(id)].get("guarding",false) or game.party_health.members[int(id)].get("away",false)) else -1)
 func site(game) -> String:
 	if game.pending.get("recruit_menu",false):return game.pending.get("recruit_site","")
 	if not game.can_service():return ""
@@ -149,7 +149,7 @@ func valid(value: Variant,game) -> bool:
 		if not game.crime.whole(id,-1,game.party_health.members.size()-1) or (int(id)>=0 and int(id) in seen):return false
 		seen.append(int(id))
 	for member in game.party_health.members:
-		if (game.party_health.is_active(member) or member.get("guarding",false)) and int(member.id) not in seen:return false
+		if (game.party_health.is_active(member) or member.get("guarding",false) or member.get("away",false)) and int(member.id) not in seen:return false
 	var hired: Array=[]
 	for key in value.searches:
 		var visit: Variant=value.searches[key]

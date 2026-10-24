@@ -97,6 +97,7 @@ func run():
 	old.erase("characters")
 	old.erase("characters_version")
 	old.erase("camp_tasks")
+	old.erase("field_outings")
 	restored=store.restore(old)
 	var neutral_profiles: Array=outfit().characters.profiles.duplicate(true)
 	for neutral_profile in neutral_profiles:neutral_profile.erase("appearance")

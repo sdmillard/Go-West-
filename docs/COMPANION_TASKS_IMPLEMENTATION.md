@@ -1,6 +1,6 @@
 # Companion assignments: implementation plan
 
-Approved October 24, 2026. The first camp-day stage and the repair/stock-guard stage are built; see [behavior and current limits](COMPANION_CAMP_WORK.md). The remaining stages below are pending. This turns [the agreed design](COMPANION_TASKS_PLAN.md) into small, playable stages.
+Approved October 24, 2026. The first camp-day stage and the repair/stock-guard stage are built; see [behavior and current limits](COMPANION_CAMP_WORK.md). Away hunting and mounted hunting are now implemented too; see [field outings](FIELD_OUTINGS.md). Scouting, new backgrounds and the updated balance study remain pending. This turns [the agreed design](COMPANION_TASKS_PLAN.md) into small, playable stages.
 
 ## Design target
 
@@ -28,7 +28,7 @@ Move each specialist benefit only when its replacement task is playable. Test lo
 
 Deliver stages 1 and 2 as separate reviewed changes if the shared-day refactor is substantial. Each should leave a useful, playable game.
 
-## 3. Away hunting and leaving camp
+## 3. Away hunting and leaving camp (implemented)
 
 Add same-day foot hunts with actual ammunition, carried rations, clothing and gear. Spencer confirmed that leader and companion outings must use the same outfit and carrying calculation: only participating people and explicitly allocated animals contribute, with the same health, gear and supply costs. Merely owning a horse or leaving helpers in camp grants no hunting cargo. Apply this shared calculation to the leader minigame as well as delegated hunts. Reuse regional/seasonal hunting and the established retrieval limits. Count the outbound pack plus the catch against carrying capacity; the old whole-party hunt's yield is not a lone hunter's allowance.
 
@@ -38,11 +38,11 @@ Before ordinary travel, automatic travel or a flight separates the group, show W
 
 Acceptance: absent people remain saved and accounted for, no duplicate party slots or supplies appear, and departure warnings cannot be bypassed. Test empty returns, injury delays, a full camp inventory, retrieval, death and save-load at every stage.
 
-## 4. Mounted work
+## 4. Mounted work (hunting implemented; scouting pending)
 
 Add one-to-three-day outrider hunts and scouting during travel. Reserve the selected horse or mule and its equipment; it cannot also carry the wagon party, join an escape or serve another worker. Apply existing country, load and animal-condition rules.
 
-Resolve late returns and possible mounted catch-up through trust and temperament. Do not teleport people or animals across a river or route branch. Show expected return timing and explain delays when the traveler returns.
+Resolve late returns and possible mounted catch-up through trust and temperament. Do not teleport people or animals across a river or route branch. Riders can follow via actual independent river-crossing days; forks have a saved one-time 50/50 follow chance. A reversal toward a rider permits reunion. Fatal crossing losses remain unknown until discovered, with one uncertain notice after two overdue days. Show expected return timing and explain delays when the traveler returns.
 
 ## 5. New backgrounds and crime hooks
 

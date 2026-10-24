@@ -37,15 +37,15 @@ func run():
 	var legacy: Dictionary={"oxen":6,"food":600}
 	var listed: Dictionary={"wagon":1,"oxen":6,"food":600}
 	check(setup.outfitter.quote("farmer",legacy).total_cents==setup.outfitter.quote("farmer",listed).total_cents,"A cart from before the wagon was listed still buys one")
-	var walking_cart: Dictionary={"wagon":0,"oxen":0,"food":95}
+	var walking_cart: Dictionary={"wagon":0,"oxen":0,"food":125}
 	var walking_quote: Dictionary=setup.outfitter.quote("farmer",walking_cart)
-	check(walking_quote.valid and walking_quote.team_capacity_lb==170,"Walking outfit uses the starting party health, not full health")
+	check(walking_quote.valid and walking_quote.team_capacity_lb==200,"Good starting health retains full walking capacity")
 	check(setup.depart("farmer",["A","B","C","D","E"],5,walking_cart) and setup.provisions.capacity(setup.state)==walking_quote.team_capacity_lb and setup.provisions.cargo(setup.state)==walking_quote.cargo_lb,"A boundary walking quote matches actual departure load and capacity")
-	check(not setup.outfitter.quote("farmer",{"wagon":0,"food":96}).valid and not setup.outfitter.quote("farmer",{"wagon":0,"food":100}).valid,"Walking outfits above the real 170 lb limit are rejected")
-	var packing_cart: Dictionary={"wagon":0,"horses":1,"mules":2,"pack_saddles":1,"food":295}
+	check(not setup.outfitter.quote("farmer",{"wagon":0,"food":126}).valid and not setup.outfitter.quote("farmer",{"wagon":0,"food":130}).valid,"Walking outfits above the real 200 lb limit are rejected")
+	var packing_cart: Dictionary={"wagon":0,"horses":1,"mules":2,"pack_saddles":1,"food":325}
 	check(setup.outfitter.quote("farmer",packing_cart).valid,"A working mule adds 200 lb to the starting walkers")
-	packing_cart.food=296
-	check(not setup.outfitter.quote("farmer",packing_cart).valid,"Packing quotes use starting health too")
+	packing_cart.food=326
+	check(not setup.outfitter.quote("farmer",packing_cart).valid,"Packing quotes enforce actual healthy human and animal limits")
 	check(not setup.outfitter.quote("farmer",{"wagon":1,"oxen":0,"food":100}).valid,"A wagon still needs an ox")
 	check(not setup.outfitter.quote("farmer",{"wagon":0,"food":600}).valid,"Without animals, the outfit must fit five walkers' packs")
 	var quote: Dictionary=setup.outfitter.quote("banker",PACKERS)
