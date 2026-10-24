@@ -70,6 +70,10 @@ func run():
  game.pending={}
  var distance: int=game.walking_distance()
  check(distance>=12 and distance<=20,"A healthy loaded walker has plausible good-weather moving-day progress")
+ game.state.food+=100
+ var heavy: float=game.provisions.cargo(game.state)
+ preload("res://tests/full_trail_policy.gd").step(game)
+ check(game.provisions.cargo(game.state)<heavy,"The regression traveler discards real excess stock instead of looping at an overweight warning")
  game.party_health.begin_condition(1,"broken_leg",game.state.day)
  check(game.provisions.Carrying.factor(game.party_health.members[1])==0,"A broken leg still prevents hauling")
  game=party()

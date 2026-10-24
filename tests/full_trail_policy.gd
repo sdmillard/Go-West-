@@ -3,6 +3,15 @@ extends RefCounted
 static func step(game) -> void:
  if game.state.status != "traveling":return
  game.configure(0,2)
+ # Longer-lived stranded parties may now reach a real carry limit after losing the wagon.
+ if game.state.vehicle=="foot" and game.pending.is_empty() and game.provisions.cargo(game.state)>game.provisions.capacity(game.state):
+  var excess: float=game.provisions.cargo(game.state)-game.provisions.capacity(game.state)
+  for item in ["wheels","axles","tongues","salt","medicine","food","clothing"]:
+   var available: int=int(game.state.get(item,0))
+   if available<=0:continue
+   if game.discard_supply(item,mini(available,maxi(1,ceili(excess/float(game.provisions.data.weights_lb[item]))))):return
+  game.rest()
+  return
  if not game.pending.is_empty():
   if game.pending.has("landmark") and game.route.nodes[game.state.landmark].get("trade_bulk",false) and game.state.food < 1250 and game.state.money >= 60:
    if game.open_trade():
