@@ -347,3 +347,6 @@ Actual wanted fixes: transient bounty restoration uses the candidate crime recor
 Feature checkpoint 341cf82 passed all 48 Godot suites in a clean isolated checkout, including 52 produce, 206 observer/policy and 173 wanted checks, plus 24 store and 20 outlaw journeys with zero errors. Reports/logs are in ignored .tools/balance-final-*; disposable checkout removed after preserving outputs. Final publication adds only reports/documentation to that tested implementation. Older tracked reports, player saves and the three preexisting debug pilots are untouched. Human clarity/aiming/pacing playtests remain: docs/PLAYTEST_CHECKLIST.md. Restart an already-running game after updating.
 
 Next authorized change: variable bandit demands, ranging from smaller/larger cash amounts to cash plus goods. Show actual terms before choosing, preserve them across saves and do not reroll on opening. This is a new change after the frozen campaign above; retain that distinction in later reports.
+
+Publication: [PR #69](https://github.com/sdmillard/Go-West-/pull/69), branch codex/full-balance-pass. The tested implementation and frozen report sources are recorded above.
+
