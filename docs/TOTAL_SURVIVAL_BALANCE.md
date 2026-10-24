@@ -17,10 +17,10 @@ This checks food, preservation, forage, vitamins, health, rest, weather, travel 
 | Full mechanics development: 3 professions, 3 departure months, 5 rosters, 9 strategies, 2 seeds | 810 | 810 |
 | Transport development: 3 professions, 4 modes, 3 months, hunt/no-hunt, 2 seeds | 144 | 144 |
 | Controlled emergencies: 4 modes, 3 health cases, 3 distances, 2 months, 4 seeds | 288 | 288 |
-| Fresh full mechanics validation, 4 seeds | â€” | 1,620 |
-| Fresh transport validation, 4 seeds | â€” | 288 |
-| Main / Greenwood / Columbia route sensitivity | â€” | 18 |
-| 35% / 65% / 90% scripted aiming sensitivity | â€” | 18 |
+| Fresh full mechanics validation, 4 seeds | — | 1,620 |
+| Fresh transport validation, 4 seeds | — | 288 |
+| Main / Greenwood / Columbia route sensitivity | — | 18 |
+| 35% / 65% / 90% scripted aiming sensitivity | — | 18 |
 
 Development full-mechanics seeds: 71000-71001; transport: 72000-72001. Fresh full-mechanics seeds: 74000-74003; transport: 73000-73003. Emergencies: 75000-75003; routes: 76000-76001; aiming: 77000-77001. No production tuning followed the fresh validation sample.
 
@@ -75,7 +75,7 @@ Fresh full-mechanics May starts, four seeds each. Arrival means at least one tra
 
 | Profession | Salted hunting arrivals | Intact | Median elapsed days of arrivals |
 |---|---:|---:|---:|
-| Farmer | 0/4 | 0/4 | â€” |
+| Farmer | 0/4 | 0/4 | — |
 | Carpenter | 4/4 | 3/4 | 263 |
 | Banker | 4/4 | 4/4 | 253 |
 
