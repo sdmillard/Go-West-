@@ -1,0 +1,5294 @@
+{
+	"accuracy": 0.65,
+	"errors": [],
+	"modes": [
+		"wagon"
+	],
+	"months": [
+		5,
+		8
+	],
+	"professions": [
+		"farmer",
+		"banker"
+	],
+	"rules_signature": "9c71783d9a386c0c2ca5f82f2a08c277ccaa5ae4c2ae0563391f05ad9e8d77d7",
+	"runs": [
+		{
+			"arrival_month": 1,
+			"audit": {
+				"days": 263,
+				"illness_person_days": 209,
+				"max_vitamin_gap": 128,
+				"other_days": 109,
+				"rest_days": 31,
+				"scurvy_person_days": 144,
+				"underfed_days": 8,
+				"vitamin_days": 13,
+				"working_days": 123
+			},
+			"breakdowns": 0,
+			"cash": 10.0,
+			"counts": {
+				"bought_dried_produce": 6,
+				"bought_produce": 3,
+				"care": 2,
+				"counter_camp": 8,
+				"counter_cents": 25440,
+				"counter_post": 5,
+				"counter_traders": 4,
+				"counter_visits": 17,
+				"empty_food_days": 0,
+				"empty_hunts": 12,
+				"forages": 8,
+				"hunts": 60,
+				"last_care": 85,
+				"last_forage": 181,
+				"meat_carried": 2270,
+				"meat_food_units": 1147,
+				"meat_obtained": 2353,
+				"oxen_slaughtered": 0,
+				"preservations": 16,
+				"rests": 18,
+				"shots": 118,
+				"trades": 0,
+				"travel_days": 122
+			},
+			"days": 263,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"dysentery"
+			],
+			"food": 0,
+			"horse_condition": 100,
+			"horses": 0,
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1636,
+			"miles_per_moving_day": 13.4098360655738,
+			"mode": "wagon",
+			"modes_used": {
+				"wagon": 329
+			},
+			"month": 5,
+			"mules": 0,
+			"opening_quote": {
+				"budget_cents": 67500,
+				"cargo_lb": 2373.0,
+				"message": "Ready to depart. Keep some cash for the trail.",
+				"mounts": {
+					"animal_lb": 0.0,
+					"bags": 0,
+					"led": 0,
+					"mode": "wagon",
+					"pack_horses": 0,
+					"pack_mules": 0,
+					"riders": 5,
+					"saddled": 0,
+					"saddled_horses": 0,
+					"saddled_mules": 0
+				},
+				"remaining_cents": 27640,
+				"team_capacity_lb": 2500.0,
+				"total_cents": 39860,
+				"valid": true,
+				"wagon": true
+			},
+			"original_present": 0,
+			"outcome": "lost",
+			"outfit": {
+				"axles": 1,
+				"bullet_boxes": 10,
+				"clothing": 5,
+				"dried_produce": 20,
+				"food": 1700,
+				"horses": 0,
+				"medicine": 2,
+				"mules": 0,
+				"oxen": 4,
+				"pack_saddles": 0,
+				"produce": 0,
+				"saddlebags": 0,
+				"saddles": 0,
+				"salt": 10,
+				"tongues": 1,
+				"wagon": 1,
+				"wheels": 1
+			},
+			"oxen": 4,
+			"places": [
+				{
+					"condition": 100,
+					"day": 3,
+					"month": 5,
+					"place": "elm_grove",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 5,
+					"month": 5,
+					"place": "wakarusa",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 8,
+					"month": 5,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 9,
+					"month": 5,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 20,
+					"month": 5,
+					"place": "big_blue",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 21,
+					"month": 5,
+					"place": "big_blue",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 35,
+					"month": 6,
+					"place": "platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 48,
+					"month": 6,
+					"place": "south_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 49,
+					"month": 6,
+					"place": "south_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 52,
+					"month": 6,
+					"place": "ash_hollow",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 55,
+					"month": 6,
+					"place": "courthouse_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 56,
+					"month": 6,
+					"place": "chimney_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 58,
+					"month": 6,
+					"place": "scotts_bluff",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 61,
+					"month": 7,
+					"place": "fort_laramie",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 69,
+					"month": 7,
+					"place": "north_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 77,
+					"month": 7,
+					"place": "independence_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 78,
+					"month": 7,
+					"place": "devils_gate",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 89,
+					"month": 7,
+					"place": "south_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 94,
+					"month": 8,
+					"place": "green_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 98,
+					"month": 8,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 99,
+					"month": 8,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 112,
+					"month": 8,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 113,
+					"month": 8,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 114,
+					"month": 8,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 120,
+					"month": 8,
+					"place": "fort_hall",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 121,
+					"month": 8,
+					"place": "fort_hall",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 155,
+					"month": 10,
+					"place": "fort_boise",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 156,
+					"month": 10,
+					"place": "fort_boise",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 197,
+					"month": 11,
+					"place": "powder_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 258,
+					"month": 1,
+					"place": "grande_ronde",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 259,
+					"month": 1,
+					"place": "grande_ronde",
+					"stock": 0
+				}
+			],
+			"profession": "farmer",
+			"scurvy_cases": 4,
+			"seed": 63000,
+			"strategy": "salt",
+			"survivors": 0
+		},
+		{
+			"arrival_month": 11,
+			"audit": {
+				"days": 186,
+				"illness_person_days": 105,
+				"max_vitamin_gap": 68,
+				"other_days": 55,
+				"rest_days": 26,
+				"scurvy_person_days": 13,
+				"underfed_days": 7,
+				"vitamin_days": 12,
+				"working_days": 105
+			},
+			"breakdowns": 0,
+			"cash": 10.33,
+			"counts": {
+				"bought_dried_produce": 2,
+				"bought_produce": 2,
+				"care": 3,
+				"counter_camp": 4,
+				"counter_cents": 22007,
+				"counter_post": 3,
+				"counter_traders": 4,
+				"counter_visits": 11,
+				"empty_food_days": 0,
+				"empty_hunts": 5,
+				"forages": 15,
+				"hunts": 16,
+				"last_care": 114,
+				"last_forage": 183,
+				"meat_carried": 528,
+				"meat_food_units": 267,
+				"meat_obtained": 531,
+				"oxen_slaughtered": 0,
+				"preservations": 3,
+				"rests": 13,
+				"shots": 19,
+				"trades": 0,
+				"travel_days": 105
+			},
+			"days": 186,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"food": 0,
+			"horse_condition": 100,
+			"horses": 0,
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1421,
+			"miles_per_moving_day": 13.5333333333333,
+			"mode": "wagon",
+			"modes_used": {
+				"wagon": 257
+			},
+			"month": 5,
+			"mules": 0,
+			"opening_quote": {
+				"budget_cents": 67500,
+				"cargo_lb": 2373.0,
+				"message": "Ready to depart. Keep some cash for the trail.",
+				"mounts": {
+					"animal_lb": 0.0,
+					"bags": 0,
+					"led": 0,
+					"mode": "wagon",
+					"pack_horses": 0,
+					"pack_mules": 0,
+					"riders": 5,
+					"saddled": 0,
+					"saddled_horses": 0,
+					"saddled_mules": 0
+				},
+				"remaining_cents": 27640,
+				"team_capacity_lb": 2500.0,
+				"total_cents": 39860,
+				"valid": true,
+				"wagon": true
+			},
+			"original_present": 0,
+			"outcome": "lost",
+			"outfit": {
+				"axles": 1,
+				"bullet_boxes": 10,
+				"clothing": 5,
+				"dried_produce": 20,
+				"food": 1700,
+				"horses": 0,
+				"medicine": 2,
+				"mules": 0,
+				"oxen": 4,
+				"pack_saddles": 0,
+				"produce": 0,
+				"saddlebags": 0,
+				"saddles": 0,
+				"salt": 10,
+				"tongues": 1,
+				"wagon": 1,
+				"wheels": 1
+			},
+			"oxen": 4,
+			"places": [
+				{
+					"condition": 100,
+					"day": 4,
+					"month": 5,
+					"place": "elm_grove",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 6,
+					"month": 5,
+					"place": "wakarusa",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 9,
+					"month": 5,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 10,
+					"month": 5,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 19,
+					"month": 5,
+					"place": "big_blue",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 20,
+					"month": 5,
+					"place": "big_blue",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 32,
+					"month": 6,
+					"place": "platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 46,
+					"month": 6,
+					"place": "south_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 49,
+					"month": 6,
+					"place": "ash_hollow",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 50,
+					"month": 6,
+					"place": "ash_hollow",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 51,
+					"month": 6,
+					"place": "ash_hollow",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 54,
+					"month": 6,
+					"place": "courthouse_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 56,
+					"month": 6,
+					"place": "chimney_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 59,
+					"month": 6,
+					"place": "scotts_bluff",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 70,
+					"month": 7,
+					"place": "north_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 88,
+					"month": 7,
+					"place": "south_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 91,
+					"month": 7,
+					"place": "little_sandy",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 101,
+					"month": 8,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 102,
+					"month": 8,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 118,
+					"month": 8,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 119,
+					"month": 8,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 128,
+					"month": 9,
+					"place": "fort_hall",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 153,
+					"month": 10,
+					"place": "snake_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 154,
+					"month": 10,
+					"place": "snake_river",
+					"stock": 0
+				}
+			],
+			"profession": "farmer",
+			"scurvy_cases": 1,
+			"seed": 63001,
+			"strategy": "salt",
+			"survivors": 0
+		},
+		{
+			"arrival_month": 4,
+			"audit": {
+				"days": 352,
+				"illness_person_days": 317,
+				"max_vitamin_gap": 172,
+				"other_days": 162,
+				"rest_days": 35,
+				"scurvy_person_days": 196,
+				"underfed_days": 3,
+				"vitamin_days": 18,
+				"working_days": 155
+			},
+			"breakdowns": 0,
+			"cash": 0.02,
+			"counts": {
+				"bought_produce": 10,
+				"care": 3,
+				"counter_camp": 2,
+				"counter_cents": 26398,
+				"counter_post": 6,
+				"counter_traders": 5,
+				"counter_visits": 13,
+				"empty_food_days": 0,
+				"empty_hunts": 14,
+				"forages": 22,
+				"hunts": 74,
+				"last_care": 143,
+				"last_forage": 350,
+				"meat_carried": 3584,
+				"meat_food_units": 1806,
+				"meat_obtained": 4456,
+				"oxen_slaughtered": 0,
+				"preservations": 28,
+				"rests": 25,
+				"shots": 153,
+				"trades": 0,
+				"travel_days": 155
+			},
+			"days": 352,
+			"death_causes": [
+				"measles",
+				"exposure",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"food": 0,
+			"horse_condition": 100,
+			"horses": 0,
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1913,
+			"miles_per_moving_day": 12.341935483871,
+			"mode": "wagon",
+			"modes_used": {
+				"wagon": 440
+			},
+			"month": 5,
+			"mules": 0,
+			"opening_quote": {
+				"budget_cents": 67500,
+				"cargo_lb": 2373.0,
+				"message": "Ready to depart. Keep some cash for the trail.",
+				"mounts": {
+					"animal_lb": 0.0,
+					"bags": 0,
+					"led": 0,
+					"mode": "wagon",
+					"pack_horses": 0,
+					"pack_mules": 0,
+					"riders": 5,
+					"saddled": 0,
+					"saddled_horses": 0,
+					"saddled_mules": 0
+				},
+				"remaining_cents": 27640,
+				"team_capacity_lb": 2500.0,
+				"total_cents": 39860,
+				"valid": true,
+				"wagon": true
+			},
+			"original_present": 0,
+			"outcome": "lost",
+			"outfit": {
+				"axles": 1,
+				"bullet_boxes": 10,
+				"clothing": 5,
+				"dried_produce": 20,
+				"food": 1700,
+				"horses": 0,
+				"medicine": 2,
+				"mules": 0,
+				"oxen": 4,
+				"pack_saddles": 0,
+				"produce": 0,
+				"saddlebags": 0,
+				"saddles": 0,
+				"salt": 10,
+				"tongues": 1,
+				"wagon": 1,
+				"wheels": 1
+			},
+			"oxen": 4,
+			"places": [
+				{
+					"condition": 100,
+					"day": 5,
+					"month": 5,
+					"place": "wakarusa",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 10,
+					"month": 5,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 11,
+					"month": 5,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 20,
+					"month": 5,
+					"place": "big_blue",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 30,
+					"month": 5,
+					"place": "platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 31,
+					"month": 6,
+					"place": "fort_kearny",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 45,
+					"month": 6,
+					"place": "ash_hollow",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 51,
+					"month": 6,
+					"place": "courthouse_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 57,
+					"month": 6,
+					"place": "chimney_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 59,
+					"month": 6,
+					"place": "scotts_bluff",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 61,
+					"month": 7,
+					"place": "fort_laramie",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 62,
+					"month": 7,
+					"place": "fort_laramie",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 70,
+					"month": 7,
+					"place": "north_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 71,
+					"month": 7,
+					"place": "north_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 89,
+					"month": 7,
+					"place": "south_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 91,
+					"month": 7,
+					"place": "little_sandy",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 95,
+					"month": 8,
+					"place": "green_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 100,
+					"month": 8,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 101,
+					"month": 8,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 112,
+					"month": 8,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 113,
+					"month": 8,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 119,
+					"month": 8,
+					"place": "fort_hall",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 120,
+					"month": 8,
+					"place": "fort_hall",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 152,
+					"month": 9,
+					"place": "fort_boise",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 153,
+					"month": 10,
+					"place": "fort_boise",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 157,
+					"month": 10,
+					"place": "burnt_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 161,
+					"month": 10,
+					"place": "powder_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 165,
+					"month": 10,
+					"place": "grande_ronde",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 166,
+					"month": 10,
+					"place": "grande_ronde",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 170,
+					"month": 10,
+					"place": "blue_mountains",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 172,
+					"month": 10,
+					"place": "umatilla",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 181,
+					"month": 10,
+					"place": "john_day",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 184,
+					"month": 11,
+					"place": "deschutes",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 189,
+					"month": 11,
+					"place": "the_dalles",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 258,
+					"month": 1,
+					"place": "barlow_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 261,
+					"month": 1,
+					"place": "laurel_hill",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 299,
+					"month": 2,
+					"place": "eagle_creek",
+					"stock": 0
+				}
+			],
+			"profession": "farmer",
+			"scurvy_cases": 3,
+			"seed": 63002,
+			"strategy": "salt",
+			"survivors": 0
+		},
+		{
+			"arrival_month": 12,
+			"audit": {
+				"days": 214,
+				"illness_person_days": 91,
+				"max_vitamin_gap": 72,
+				"other_days": 70,
+				"rest_days": 33,
+				"scurvy_person_days": 14,
+				"underfed_days": 7,
+				"vitamin_days": 12,
+				"working_days": 111
+			},
+			"breakdowns": 0,
+			"cash": 10.08,
+			"counts": {
+				"bought_dried_produce": 3,
+				"bought_produce": 4,
+				"care": 2,
+				"counter_camp": 4,
+				"counter_cents": 24532,
+				"counter_post": 3,
+				"counter_traders": 6,
+				"counter_visits": 13,
+				"empty_food_days": 0,
+				"empty_hunts": 10,
+				"forages": 10,
+				"hunts": 32,
+				"last_care": 195,
+				"last_forage": 183,
+				"meat_carried": 881,
+				"meat_food_units": 445,
+				"meat_obtained": 1025,
+				"oxen_slaughtered": 0,
+				"preservations": 4,
+				"rests": 22,
+				"shots": 63,
+				"trades": 0,
+				"travel_days": 111
+			},
+			"days": 214,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"food": 0,
+			"horse_condition": 100,
+			"horses": 0,
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1412,
+			"miles_per_moving_day": 12.7207207207207,
+			"mode": "wagon",
+			"modes_used": {
+				"wagon": 271
+			},
+			"month": 5,
+			"mules": 0,
+			"opening_quote": {
+				"budget_cents": 67500,
+				"cargo_lb": 2373.0,
+				"message": "Ready to depart. Keep some cash for the trail.",
+				"mounts": {
+					"animal_lb": 0.0,
+					"bags": 0,
+					"led": 0,
+					"mode": "wagon",
+					"pack_horses": 0,
+					"pack_mules": 0,
+					"riders": 5,
+					"saddled": 0,
+					"saddled_horses": 0,
+					"saddled_mules": 0
+				},
+				"remaining_cents": 27640,
+				"team_capacity_lb": 2500.0,
+				"total_cents": 39860,
+				"valid": true,
+				"wagon": true
+			},
+			"original_present": 0,
+			"outcome": "lost",
+			"outfit": {
+				"axles": 1,
+				"bullet_boxes": 10,
+				"clothing": 5,
+				"dried_produce": 20,
+				"food": 1700,
+				"horses": 0,
+				"medicine": 2,
+				"mules": 0,
+				"oxen": 4,
+				"pack_saddles": 0,
+				"produce": 0,
+				"saddlebags": 0,
+				"saddles": 0,
+				"salt": 10,
+				"tongues": 1,
+				"wagon": 1,
+				"wheels": 1
+			},
+			"oxen": 4,
+			"places": [
+				{
+					"condition": 100,
+					"day": 2,
+					"month": 5,
+					"place": "elm_grove",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 4,
+					"month": 5,
+					"place": "wakarusa",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 10,
+					"month": 5,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 19,
+					"month": 5,
+					"place": "big_blue",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 39,
+					"month": 6,
+					"place": "platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 40,
+					"month": 6,
+					"place": "fort_kearny",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 41,
+					"month": 6,
+					"place": "fort_kearny",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 52,
+					"month": 6,
+					"place": "south_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 60,
+					"month": 6,
+					"place": "courthouse_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 61,
+					"month": 7,
+					"place": "chimney_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 66,
+					"month": 7,
+					"place": "fort_laramie",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 76,
+					"month": 7,
+					"place": "north_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 80,
+					"month": 7,
+					"place": "independence_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 81,
+					"month": 7,
+					"place": "devils_gate",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 94,
+					"month": 8,
+					"place": "south_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 96,
+					"month": 8,
+					"place": "little_sandy",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 106,
+					"month": 8,
+					"place": "green_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 111,
+					"month": 8,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 112,
+					"month": 8,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 133,
+					"month": 9,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 134,
+					"month": 9,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 135,
+					"month": 9,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 144,
+					"month": 9,
+					"place": "fort_hall",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 145,
+					"month": 9,
+					"place": "fort_hall",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 167,
+					"month": 10,
+					"place": "snake_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 168,
+					"month": 10,
+					"place": "snake_river",
+					"stock": 0
+				}
+			],
+			"profession": "farmer",
+			"scurvy_cases": 1,
+			"seed": 63003,
+			"strategy": "salt",
+			"survivors": 0
+		},
+		{
+			"arrival_month": 1,
+			"audit": {
+				"days": 173,
+				"illness_person_days": 44,
+				"max_vitamin_gap": 32,
+				"other_days": 31,
+				"rest_days": 40,
+				"scurvy_person_days": 0,
+				"underfed_days": 7,
+				"vitamin_days": 14,
+				"working_days": 102
+			},
+			"breakdowns": 0,
+			"cash": 10.06,
+			"counts": {
+				"bought_dried_produce": 17,
+				"care": 3,
+				"counter_camp": 3,
+				"counter_cents": 25534,
+				"counter_post": 2,
+				"counter_traders": 12,
+				"counter_visits": 17,
+				"discards": 1,
+				"empty_food_days": 0,
+				"empty_hunts": 1,
+				"forages": 4,
+				"hunts": 7,
+				"last_care": 129,
+				"last_forage": 84,
+				"meat_carried": 348,
+				"meat_food_units": 176,
+				"meat_obtained": 348,
+				"oxen_slaughtered": 0,
+				"preservations": 1,
+				"rests": 28,
+				"shots": 14,
+				"trades": 0,
+				"travel_days": 101
+			},
+			"days": 173,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"food": 0,
+			"horse_condition": 100,
+			"horses": 0,
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1094,
+			"miles_per_moving_day": 10.8316831683168,
+			"mode": "wagon",
+			"modes_used": {
+				"wagon": 214,
+				"walking": 10
+			},
+			"month": 8,
+			"mules": 0,
+			"opening_quote": {
+				"budget_cents": 67500,
+				"cargo_lb": 2373.0,
+				"message": "Ready to depart. Keep some cash for the trail.",
+				"mounts": {
+					"animal_lb": 0.0,
+					"bags": 0,
+					"led": 0,
+					"mode": "wagon",
+					"pack_horses": 0,
+					"pack_mules": 0,
+					"riders": 5,
+					"saddled": 0,
+					"saddled_horses": 0,
+					"saddled_mules": 0
+				},
+				"remaining_cents": 27640,
+				"team_capacity_lb": 2500.0,
+				"total_cents": 39860,
+				"valid": true,
+				"wagon": true
+			},
+			"original_present": 0,
+			"outcome": "lost",
+			"outfit": {
+				"axles": 1,
+				"bullet_boxes": 10,
+				"clothing": 5,
+				"dried_produce": 20,
+				"food": 1700,
+				"horses": 0,
+				"medicine": 2,
+				"mules": 0,
+				"oxen": 4,
+				"pack_saddles": 0,
+				"produce": 0,
+				"saddlebags": 0,
+				"saddles": 0,
+				"salt": 10,
+				"tongues": 1,
+				"wagon": 1,
+				"wheels": 1
+			},
+			"oxen": 0,
+			"places": [
+				{
+					"condition": 100,
+					"day": 3,
+					"month": 8,
+					"place": "elm_grove",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 5,
+					"month": 8,
+					"place": "wakarusa",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 8,
+					"month": 8,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 17,
+					"month": 8,
+					"place": "big_blue",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 33,
+					"month": 9,
+					"place": "platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 34,
+					"month": 9,
+					"place": "fort_kearny",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 44,
+					"month": 9,
+					"place": "south_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 47,
+					"month": 9,
+					"place": "ash_hollow",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 51,
+					"month": 9,
+					"place": "courthouse_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 52,
+					"month": 9,
+					"place": "courthouse_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 53,
+					"month": 9,
+					"place": "chimney_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 55,
+					"month": 9,
+					"place": "scotts_bluff",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 59,
+					"month": 9,
+					"place": "fort_laramie",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 71,
+					"month": 10,
+					"place": "north_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 78,
+					"month": 10,
+					"place": "independence_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 79,
+					"month": 10,
+					"place": "independence_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 103,
+					"month": 11,
+					"place": "south_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 116,
+					"month": 11,
+					"place": "little_sandy",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 126,
+					"month": 12,
+					"place": "green_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 144,
+					"month": 12,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 145,
+					"month": 12,
+					"place": "fort_bridger",
+					"stock": 0
+				}
+			],
+			"profession": "farmer",
+			"scurvy_cases": 0,
+			"seed": 63000,
+			"strategy": "salt",
+			"survivors": 0
+		},
+		{
+			"arrival_month": 3,
+			"audit": {
+				"days": 236,
+				"illness_person_days": 158,
+				"max_vitamin_gap": 96,
+				"other_days": 109,
+				"rest_days": 35,
+				"scurvy_person_days": 66,
+				"underfed_days": 10,
+				"vitamin_days": 12,
+				"working_days": 92
+			},
+			"breakdowns": 0,
+			"cash": 10.45,
+			"counts": {
+				"bought_dried_produce": 19,
+				"bought_produce": 1,
+				"care": 3,
+				"counter_camp": 10,
+				"counter_cents": 26195,
+				"counter_traders": 17,
+				"counter_visits": 27,
+				"empty_food_days": 0,
+				"empty_hunts": 14,
+				"forages": 11,
+				"hunts": 66,
+				"last_care": 165,
+				"last_forage": 235,
+				"meat_carried": 2445,
+				"meat_food_units": 1232,
+				"meat_obtained": 2718,
+				"oxen_slaughtered": 0,
+				"preservations": 8,
+				"rests": 27,
+				"shots": 139,
+				"trades": 0,
+				"travel_days": 92
+			},
+			"days": 236,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"scurvy",
+				"lack of food"
+			],
+			"food": 0,
+			"horse_condition": 100,
+			"horses": 0,
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1041,
+			"miles_per_moving_day": 11.3152173913043,
+			"mode": "wagon",
+			"modes_used": {
+				"wagon": 312
+			},
+			"month": 8,
+			"mules": 0,
+			"opening_quote": {
+				"budget_cents": 67500,
+				"cargo_lb": 2373.0,
+				"message": "Ready to depart. Keep some cash for the trail.",
+				"mounts": {
+					"animal_lb": 0.0,
+					"bags": 0,
+					"led": 0,
+					"mode": "wagon",
+					"pack_horses": 0,
+					"pack_mules": 0,
+					"riders": 5,
+					"saddled": 0,
+					"saddled_horses": 0,
+					"saddled_mules": 0
+				},
+				"remaining_cents": 27640,
+				"team_capacity_lb": 2500.0,
+				"total_cents": 39860,
+				"valid": true,
+				"wagon": true
+			},
+			"original_present": 0,
+			"outcome": "lost",
+			"outfit": {
+				"axles": 1,
+				"bullet_boxes": 10,
+				"clothing": 5,
+				"dried_produce": 20,
+				"food": 1700,
+				"horses": 0,
+				"medicine": 2,
+				"mules": 0,
+				"oxen": 4,
+				"pack_saddles": 0,
+				"produce": 0,
+				"saddlebags": 0,
+				"saddles": 0,
+				"salt": 10,
+				"tongues": 1,
+				"wagon": 1,
+				"wheels": 1
+			},
+			"oxen": 4,
+			"places": [
+				{
+					"condition": 100,
+					"day": 3,
+					"month": 8,
+					"place": "elm_grove",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 5,
+					"month": 8,
+					"place": "wakarusa",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 9,
+					"month": 8,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 10,
+					"month": 8,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 21,
+					"month": 8,
+					"place": "big_blue",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 32,
+					"month": 9,
+					"place": "platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 33,
+					"month": 9,
+					"place": "fort_kearny",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 52,
+					"month": 9,
+					"place": "ash_hollow",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 55,
+					"month": 9,
+					"place": "courthouse_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 56,
+					"month": 9,
+					"place": "chimney_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 58,
+					"month": 9,
+					"place": "scotts_bluff",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 62,
+					"month": 10,
+					"place": "fort_laramie",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 75,
+					"month": 10,
+					"place": "north_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 81,
+					"month": 10,
+					"place": "independence_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 83,
+					"month": 10,
+					"place": "devils_gate",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 84,
+					"month": 10,
+					"place": "devils_gate",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 120,
+					"month": 11,
+					"place": "south_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 129,
+					"month": 12,
+					"place": "little_sandy",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 146,
+					"month": 12,
+					"place": "green_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 180,
+					"month": 1,
+					"place": "fort_bridger",
+					"stock": 0
+				}
+			],
+			"profession": "farmer",
+			"scurvy_cases": 4,
+			"seed": 63001,
+			"strategy": "salt",
+			"survivors": 0
+		},
+		{
+			"arrival_month": 4,
+			"audit": {
+				"days": 271,
+				"illness_person_days": 121,
+				"max_vitamin_gap": 68,
+				"other_days": 116,
+				"rest_days": 49,
+				"scurvy_person_days": 5,
+				"underfed_days": 8,
+				"vitamin_days": 14,
+				"working_days": 106
+			},
+			"breakdowns": 0,
+			"cash": 10.29,
+			"counts": {
+				"bought_dried_produce": 22,
+				"bought_produce": 2,
+				"care": 4,
+				"counter_camp": 14,
+				"counter_cents": 26211,
+				"counter_post": 3,
+				"counter_traders": 16,
+				"counter_visits": 33,
+				"empty_food_days": 0,
+				"empty_hunts": 18,
+				"forages": 13,
+				"hunts": 69,
+				"last_care": 205,
+				"last_forage": 268,
+				"meat_carried": 2546,
+				"meat_food_units": 1285,
+				"meat_obtained": 2617,
+				"oxen_slaughtered": 0,
+				"preservations": 11,
+				"rests": 34,
+				"shots": 130,
+				"trades": 0,
+				"travel_days": 106
+			},
+			"days": 271,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"food": 0,
+			"horse_condition": 100,
+			"horses": 0,
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1208,
+			"miles_per_moving_day": 11.3962264150943,
+			"mode": "wagon",
+			"modes_used": {
+				"wagon": 365
+			},
+			"month": 8,
+			"mules": 0,
+			"opening_quote": {
+				"budget_cents": 67500,
+				"cargo_lb": 2373.0,
+				"message": "Ready to depart. Keep some cash for the trail.",
+				"mounts": {
+					"animal_lb": 0.0,
+					"bags": 0,
+					"led": 0,
+					"mode": "wagon",
+					"pack_horses": 0,
+					"pack_mules": 0,
+					"riders": 5,
+					"saddled": 0,
+					"saddled_horses": 0,
+					"saddled_mules": 0
+				},
+				"remaining_cents": 27640,
+				"team_capacity_lb": 2500.0,
+				"total_cents": 39860,
+				"valid": true,
+				"wagon": true
+			},
+			"original_present": 0,
+			"outcome": "lost",
+			"outfit": {
+				"axles": 1,
+				"bullet_boxes": 10,
+				"clothing": 5,
+				"dried_produce": 20,
+				"food": 1700,
+				"horses": 0,
+				"medicine": 2,
+				"mules": 0,
+				"oxen": 4,
+				"pack_saddles": 0,
+				"produce": 0,
+				"saddlebags": 0,
+				"saddles": 0,
+				"salt": 10,
+				"tongues": 1,
+				"wagon": 1,
+				"wheels": 1
+			},
+			"oxen": 4,
+			"places": [
+				{
+					"condition": 100,
+					"day": 2,
+					"month": 8,
+					"place": "elm_grove",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 4,
+					"month": 8,
+					"place": "wakarusa",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 9,
+					"month": 8,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 18,
+					"month": 8,
+					"place": "big_blue",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 30,
+					"month": 8,
+					"place": "platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 45,
+					"month": 9,
+					"place": "south_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 48,
+					"month": 9,
+					"place": "ash_hollow",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 51,
+					"month": 9,
+					"place": "courthouse_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 52,
+					"month": 9,
+					"place": "courthouse_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 53,
+					"month": 9,
+					"place": "chimney_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 58,
+					"month": 9,
+					"place": "fort_laramie",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 59,
+					"month": 9,
+					"place": "fort_laramie",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 72,
+					"month": 10,
+					"place": "north_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 78,
+					"month": 10,
+					"place": "devils_gate",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 90,
+					"month": 10,
+					"place": "south_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 93,
+					"month": 11,
+					"place": "little_sandy",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 96,
+					"month": 11,
+					"place": "green_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 104,
+					"month": 11,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 105,
+					"month": 11,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 187,
+					"month": 2,
+					"place": "soda_springs",
+					"stock": 0
+				}
+			],
+			"profession": "farmer",
+			"scurvy_cases": 1,
+			"seed": 63002,
+			"strategy": "salt",
+			"survivors": 0
+		},
+		{
+			"arrival_month": 3,
+			"audit": {
+				"days": 216,
+				"illness_person_days": 145,
+				"max_vitamin_gap": 75,
+				"other_days": 70,
+				"rest_days": 43,
+				"scurvy_person_days": 63,
+				"underfed_days": 9,
+				"vitamin_days": 11,
+				"working_days": 103
+			},
+			"breakdowns": 0,
+			"cash": 10.39,
+			"counts": {
+				"bought_dried_produce": 27,
+				"bought_produce": 1,
+				"care": 3,
+				"counter_camp": 13,
+				"counter_cents": 26201,
+				"counter_post": 2,
+				"counter_traders": 13,
+				"counter_visits": 28,
+				"empty_food_days": 0,
+				"empty_hunts": 14,
+				"forages": 5,
+				"hunts": 37,
+				"last_care": 89,
+				"last_forage": 213,
+				"meat_carried": 1007,
+				"meat_food_units": 508,
+				"meat_obtained": 1026,
+				"oxen_slaughtered": 0,
+				"preservations": 5,
+				"rests": 31,
+				"shots": 63,
+				"trades": 0,
+				"travel_days": 103
+			},
+			"days": 216,
+			"death_causes": [
+				"dysentery",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"food": 0,
+			"horse_condition": 100,
+			"horses": 0,
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1100,
+			"miles_per_moving_day": 10.6796116504854,
+			"mode": "wagon",
+			"modes_used": {
+				"wagon": 288
+			},
+			"month": 8,
+			"mules": 0,
+			"opening_quote": {
+				"budget_cents": 67500,
+				"cargo_lb": 2373.0,
+				"message": "Ready to depart. Keep some cash for the trail.",
+				"mounts": {
+					"animal_lb": 0.0,
+					"bags": 0,
+					"led": 0,
+					"mode": "wagon",
+					"pack_horses": 0,
+					"pack_mules": 0,
+					"riders": 5,
+					"saddled": 0,
+					"saddled_horses": 0,
+					"saddled_mules": 0
+				},
+				"remaining_cents": 27640,
+				"team_capacity_lb": 2500.0,
+				"total_cents": 39860,
+				"valid": true,
+				"wagon": true
+			},
+			"original_present": 0,
+			"outcome": "lost",
+			"outfit": {
+				"axles": 1,
+				"bullet_boxes": 10,
+				"clothing": 5,
+				"dried_produce": 20,
+				"food": 1700,
+				"horses": 0,
+				"medicine": 2,
+				"mules": 0,
+				"oxen": 4,
+				"pack_saddles": 0,
+				"produce": 0,
+				"saddlebags": 0,
+				"saddles": 0,
+				"salt": 10,
+				"tongues": 1,
+				"wagon": 1,
+				"wheels": 1
+			},
+			"oxen": 4,
+			"places": [
+				{
+					"condition": 100,
+					"day": 3,
+					"month": 8,
+					"place": "elm_grove",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 5,
+					"month": 8,
+					"place": "wakarusa",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 15,
+					"month": 8,
+					"place": "big_blue",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 31,
+					"month": 9,
+					"place": "fort_kearny",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 44,
+					"month": 9,
+					"place": "south_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 47,
+					"month": 9,
+					"place": "ash_hollow",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 48,
+					"month": 9,
+					"place": "ash_hollow",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 53,
+					"month": 9,
+					"place": "courthouse_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 54,
+					"month": 9,
+					"place": "chimney_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 59,
+					"month": 9,
+					"place": "fort_laramie",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 77,
+					"month": 10,
+					"place": "north_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 81,
+					"month": 10,
+					"place": "independence_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 82,
+					"month": 10,
+					"place": "devils_gate",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 83,
+					"month": 10,
+					"place": "devils_gate",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 106,
+					"month": 11,
+					"place": "south_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 114,
+					"month": 11,
+					"place": "little_sandy",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 124,
+					"month": 12,
+					"place": "green_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 138,
+					"month": 12,
+					"place": "fort_bridger",
+					"stock": 0
+				}
+			],
+			"profession": "farmer",
+			"scurvy_cases": 1,
+			"seed": 63003,
+			"strategy": "salt",
+			"survivors": 0
+		},
+		{
+			"arrival_month": 1,
+			"audit": {
+				"days": 263,
+				"illness_person_days": 63,
+				"max_vitamin_gap": 34,
+				"other_days": 59,
+				"rest_days": 41,
+				"scurvy_person_days": 0,
+				"underfed_days": 0,
+				"vitamin_days": 18,
+				"working_days": 163
+			},
+			"breakdowns": 0,
+			"cash": 469.92,
+			"counts": {
+				"bought_dried_produce": 22,
+				"bought_produce": 4,
+				"care": 2,
+				"counter_camp": 14,
+				"counter_cents": 58308,
+				"counter_post": 6,
+				"counter_traders": 22,
+				"counter_visits": 42,
+				"empty_food_days": 0,
+				"empty_hunts": 1,
+				"forages": 3,
+				"hunts": 13,
+				"last_care": 85,
+				"last_forage": 177,
+				"meat_carried": 685,
+				"meat_food_units": 347,
+				"meat_obtained": 685,
+				"oxen_slaughtered": 0,
+				"preservations": 4,
+				"rests": 25,
+				"shots": 29,
+				"trades": 0,
+				"travel_days": 163
+			},
+			"days": 263,
+			"death_causes": [],
+			"food": 75,
+			"horse_condition": 100,
+			"horses": 0,
+			"loss_reason": "",
+			"miles": 1938,
+			"miles_per_moving_day": 11.8895705521472,
+			"mode": "wagon",
+			"modes_used": {
+				"wagon": 344
+			},
+			"month": 5,
+			"mules": 0,
+			"opening_quote": {
+				"budget_cents": 147500,
+				"cargo_lb": 2373.0,
+				"message": "Ready to depart. Keep some cash for the trail.",
+				"mounts": {
+					"animal_lb": 0.0,
+					"bags": 0,
+					"led": 0,
+					"mode": "wagon",
+					"pack_horses": 0,
+					"pack_mules": 0,
+					"riders": 5,
+					"saddled": 0,
+					"saddled_horses": 0,
+					"saddled_mules": 0
+				},
+				"remaining_cents": 107640,
+				"team_capacity_lb": 2500.0,
+				"total_cents": 39860,
+				"valid": true,
+				"wagon": true
+			},
+			"original_present": 5,
+			"outcome": "arrived",
+			"outfit": {
+				"axles": 1,
+				"bullet_boxes": 10,
+				"clothing": 5,
+				"dried_produce": 20,
+				"food": 1700,
+				"horses": 0,
+				"medicine": 2,
+				"mules": 0,
+				"oxen": 4,
+				"pack_saddles": 0,
+				"produce": 0,
+				"saddlebags": 0,
+				"saddles": 0,
+				"salt": 10,
+				"tongues": 1,
+				"wagon": 1,
+				"wheels": 1
+			},
+			"oxen": 4,
+			"places": [
+				{
+					"condition": 100,
+					"day": 3,
+					"month": 5,
+					"place": "elm_grove",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 5,
+					"month": 5,
+					"place": "wakarusa",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 8,
+					"month": 5,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 9,
+					"month": 5,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 20,
+					"month": 5,
+					"place": "big_blue",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 21,
+					"month": 5,
+					"place": "big_blue",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 35,
+					"month": 6,
+					"place": "platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 48,
+					"month": 6,
+					"place": "south_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 49,
+					"month": 6,
+					"place": "south_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 52,
+					"month": 6,
+					"place": "ash_hollow",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 55,
+					"month": 6,
+					"place": "courthouse_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 56,
+					"month": 6,
+					"place": "chimney_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 58,
+					"month": 6,
+					"place": "scotts_bluff",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 61,
+					"month": 7,
+					"place": "fort_laramie",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 69,
+					"month": 7,
+					"place": "north_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 77,
+					"month": 7,
+					"place": "independence_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 78,
+					"month": 7,
+					"place": "devils_gate",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 89,
+					"month": 7,
+					"place": "south_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 94,
+					"month": 8,
+					"place": "green_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 98,
+					"month": 8,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 99,
+					"month": 8,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 112,
+					"month": 8,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 113,
+					"month": 8,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 114,
+					"month": 8,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 120,
+					"month": 8,
+					"place": "fort_hall",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 121,
+					"month": 8,
+					"place": "fort_hall",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 155,
+					"month": 10,
+					"place": "fort_boise",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 160,
+					"month": 10,
+					"place": "burnt_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 164,
+					"month": 10,
+					"place": "powder_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 168,
+					"month": 10,
+					"place": "grande_ronde",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 169,
+					"month": 10,
+					"place": "grande_ronde",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 176,
+					"month": 10,
+					"place": "umatilla",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 177,
+					"month": 10,
+					"place": "umatilla",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 184,
+					"month": 11,
+					"place": "john_day",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 187,
+					"month": 11,
+					"place": "deschutes",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 191,
+					"month": 11,
+					"place": "the_dalles",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 215,
+					"month": 12,
+					"place": "barlow_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 222,
+					"month": 12,
+					"place": "laurel_hill",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 252,
+					"month": 1,
+					"place": "eagle_creek",
+					"stock": 0
+				}
+			],
+			"profession": "banker",
+			"scurvy_cases": 0,
+			"seed": 63000,
+			"strategy": "salt",
+			"survivors": 5
+		},
+		{
+			"arrival_month": 2,
+			"audit": {
+				"days": 283,
+				"illness_person_days": 103,
+				"max_vitamin_gap": 63,
+				"other_days": 79,
+				"rest_days": 59,
+				"scurvy_person_days": 5,
+				"underfed_days": 11,
+				"vitamin_days": 17,
+				"working_days": 145
+			},
+			"breakdowns": 0,
+			"cash": 10.07,
+			"counts": {
+				"bought_dried_produce": 10,
+				"bought_produce": 5,
+				"care": 4,
+				"counter_camp": 10,
+				"counter_cents": 59433,
+				"counter_post": 6,
+				"counter_traders": 11,
+				"counter_visits": 27,
+				"empty_food_days": 0,
+				"empty_hunts": 6,
+				"forages": 6,
+				"hunts": 38,
+				"last_care": 278,
+				"last_forage": 184,
+				"meat_carried": 1009,
+				"meat_food_units": 511,
+				"meat_obtained": 1215,
+				"oxen_slaughtered": 0,
+				"preservations": 4,
+				"rests": 39,
+				"shots": 80,
+				"trades": 0,
+				"travel_days": 144
+			},
+			"days": 283,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"food": 0,
+			"horse_condition": 100,
+			"horses": 0,
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1755,
+			"miles_per_moving_day": 12.1875,
+			"mode": "wagon",
+			"modes_used": {
+				"wagon": 365
+			},
+			"month": 5,
+			"mules": 0,
+			"opening_quote": {
+				"budget_cents": 147500,
+				"cargo_lb": 2373.0,
+				"message": "Ready to depart. Keep some cash for the trail.",
+				"mounts": {
+					"animal_lb": 0.0,
+					"bags": 0,
+					"led": 0,
+					"mode": "wagon",
+					"pack_horses": 0,
+					"pack_mules": 0,
+					"riders": 5,
+					"saddled": 0,
+					"saddled_horses": 0,
+					"saddled_mules": 0
+				},
+				"remaining_cents": 107640,
+				"team_capacity_lb": 2500.0,
+				"total_cents": 39860,
+				"valid": true,
+				"wagon": true
+			},
+			"original_present": 0,
+			"outcome": "lost",
+			"outfit": {
+				"axles": 1,
+				"bullet_boxes": 10,
+				"clothing": 5,
+				"dried_produce": 20,
+				"food": 1700,
+				"horses": 0,
+				"medicine": 2,
+				"mules": 0,
+				"oxen": 4,
+				"pack_saddles": 0,
+				"produce": 0,
+				"saddlebags": 0,
+				"saddles": 0,
+				"salt": 10,
+				"tongues": 1,
+				"wagon": 1,
+				"wheels": 1
+			},
+			"oxen": 4,
+			"places": [
+				{
+					"condition": 100,
+					"day": 4,
+					"month": 5,
+					"place": "elm_grove",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 6,
+					"month": 5,
+					"place": "wakarusa",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 9,
+					"month": 5,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 10,
+					"month": 5,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 19,
+					"month": 5,
+					"place": "big_blue",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 20,
+					"month": 5,
+					"place": "big_blue",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 32,
+					"month": 6,
+					"place": "platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 46,
+					"month": 6,
+					"place": "south_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 49,
+					"month": 6,
+					"place": "ash_hollow",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 50,
+					"month": 6,
+					"place": "ash_hollow",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 51,
+					"month": 6,
+					"place": "ash_hollow",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 54,
+					"month": 6,
+					"place": "courthouse_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 56,
+					"month": 6,
+					"place": "chimney_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 59,
+					"month": 6,
+					"place": "scotts_bluff",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 70,
+					"month": 7,
+					"place": "north_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 88,
+					"month": 7,
+					"place": "south_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 91,
+					"month": 7,
+					"place": "little_sandy",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 101,
+					"month": 8,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 102,
+					"month": 8,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 118,
+					"month": 8,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 119,
+					"month": 8,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 128,
+					"month": 9,
+					"place": "fort_hall",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 149,
+					"month": 9,
+					"place": "snake_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 162,
+					"month": 10,
+					"place": "fort_boise",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 163,
+					"month": 10,
+					"place": "fort_boise",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 167,
+					"month": 10,
+					"place": "burnt_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 176,
+					"month": 10,
+					"place": "powder_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 183,
+					"month": 10,
+					"place": "grande_ronde",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 184,
+					"month": 11,
+					"place": "grande_ronde",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 185,
+					"month": 11,
+					"place": "grande_ronde",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 189,
+					"month": 11,
+					"place": "blue_mountains",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 190,
+					"month": 11,
+					"place": "blue_mountains",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 194,
+					"month": 11,
+					"place": "umatilla",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 243,
+					"month": 12,
+					"place": "john_day",
+					"stock": 0
+				}
+			],
+			"profession": "banker",
+			"scurvy_cases": 1,
+			"seed": 63001,
+			"strategy": "salt",
+			"survivors": 0
+		},
+		{
+			"arrival_month": 1,
+			"audit": {
+				"days": 260,
+				"illness_person_days": 113,
+				"max_vitamin_gap": 41,
+				"other_days": 63,
+				"rest_days": 36,
+				"scurvy_person_days": 0,
+				"underfed_days": 0,
+				"vitamin_days": 20,
+				"working_days": 161
+			},
+			"breakdowns": 0,
+			"cash": 334.35,
+			"counts": {
+				"bought_dried_produce": 19,
+				"bought_produce": 10,
+				"care": 3,
+				"counter_camp": 14,
+				"counter_cents": 48565,
+				"counter_post": 7,
+				"counter_traders": 21,
+				"counter_visits": 42,
+				"empty_food_days": 0,
+				"empty_hunts": 5,
+				"forages": 4,
+				"hunts": 13,
+				"last_care": 143,
+				"last_forage": 170,
+				"meat_carried": 596,
+				"meat_food_units": 300,
+				"meat_obtained": 596,
+				"oxen_slaughtered": 0,
+				"preservations": 2,
+				"rests": 25,
+				"shots": 20,
+				"trades": 0,
+				"travel_days": 161
+			},
+			"days": 260,
+			"death_causes": [],
+			"food": 75,
+			"horse_condition": 100,
+			"horses": 0,
+			"loss_reason": "",
+			"miles": 1938,
+			"miles_per_moving_day": 12.0372670807453,
+			"mode": "wagon",
+			"modes_used": {
+				"wagon": 350
+			},
+			"month": 5,
+			"mules": 0,
+			"opening_quote": {
+				"budget_cents": 147500,
+				"cargo_lb": 2373.0,
+				"message": "Ready to depart. Keep some cash for the trail.",
+				"mounts": {
+					"animal_lb": 0.0,
+					"bags": 0,
+					"led": 0,
+					"mode": "wagon",
+					"pack_horses": 0,
+					"pack_mules": 0,
+					"riders": 5,
+					"saddled": 0,
+					"saddled_horses": 0,
+					"saddled_mules": 0
+				},
+				"remaining_cents": 107640,
+				"team_capacity_lb": 2500.0,
+				"total_cents": 39860,
+				"valid": true,
+				"wagon": true
+			},
+			"original_present": 5,
+			"outcome": "arrived",
+			"outfit": {
+				"axles": 1,
+				"bullet_boxes": 10,
+				"clothing": 5,
+				"dried_produce": 20,
+				"food": 1700,
+				"horses": 0,
+				"medicine": 2,
+				"mules": 0,
+				"oxen": 4,
+				"pack_saddles": 0,
+				"produce": 0,
+				"saddlebags": 0,
+				"saddles": 0,
+				"salt": 10,
+				"tongues": 1,
+				"wagon": 1,
+				"wheels": 1
+			},
+			"oxen": 4,
+			"places": [
+				{
+					"condition": 100,
+					"day": 5,
+					"month": 5,
+					"place": "wakarusa",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 10,
+					"month": 5,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 11,
+					"month": 5,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 20,
+					"month": 5,
+					"place": "big_blue",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 30,
+					"month": 5,
+					"place": "platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 31,
+					"month": 6,
+					"place": "fort_kearny",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 45,
+					"month": 6,
+					"place": "ash_hollow",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 51,
+					"month": 6,
+					"place": "courthouse_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 57,
+					"month": 6,
+					"place": "chimney_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 59,
+					"month": 6,
+					"place": "scotts_bluff",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 61,
+					"month": 7,
+					"place": "fort_laramie",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 62,
+					"month": 7,
+					"place": "fort_laramie",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 70,
+					"month": 7,
+					"place": "north_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 71,
+					"month": 7,
+					"place": "north_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 89,
+					"month": 7,
+					"place": "south_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 91,
+					"month": 7,
+					"place": "little_sandy",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 95,
+					"month": 8,
+					"place": "green_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 100,
+					"month": 8,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 101,
+					"month": 8,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 112,
+					"month": 8,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 113,
+					"month": 8,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 119,
+					"month": 8,
+					"place": "fort_hall",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 120,
+					"month": 8,
+					"place": "fort_hall",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 152,
+					"month": 9,
+					"place": "fort_boise",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 153,
+					"month": 10,
+					"place": "fort_boise",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 157,
+					"month": 10,
+					"place": "burnt_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 161,
+					"month": 10,
+					"place": "powder_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 165,
+					"month": 10,
+					"place": "grande_ronde",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 166,
+					"month": 10,
+					"place": "grande_ronde",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 171,
+					"month": 10,
+					"place": "blue_mountains",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 173,
+					"month": 10,
+					"place": "umatilla",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 180,
+					"month": 10,
+					"place": "john_day",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 184,
+					"month": 11,
+					"place": "deschutes",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 187,
+					"month": 11,
+					"place": "the_dalles",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 210,
+					"month": 11,
+					"place": "barlow_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 217,
+					"month": 12,
+					"place": "laurel_hill",
+					"stock": 0
+				}
+			],
+			"profession": "banker",
+			"scurvy_cases": 0,
+			"seed": 63002,
+			"strategy": "salt",
+			"survivors": 5
+		},
+		{
+			"arrival_month": 3,
+			"audit": {
+				"days": 324,
+				"illness_person_days": 498,
+				"max_vitamin_gap": 93,
+				"other_days": 89,
+				"rest_days": 66,
+				"scurvy_person_days": 415,
+				"underfed_days": 0,
+				"vitamin_days": 16,
+				"working_days": 169
+			},
+			"breakdowns": 0,
+			"cash": 271.32,
+			"counts": {
+				"bought_dried_produce": 43,
+				"bought_produce": 4,
+				"care": 6,
+				"counter_camp": 25,
+				"counter_cents": 77868,
+				"counter_post": 6,
+				"counter_traders": 38,
+				"counter_visits": 69,
+				"empty_food_days": 0,
+				"empty_hunts": 5,
+				"forages": 10,
+				"hunts": 27,
+				"last_care": 319,
+				"last_forage": 322,
+				"meat_carried": 1654,
+				"meat_food_units": 833,
+				"meat_obtained": 1656,
+				"oxen_slaughtered": 0,
+				"preservations": 7,
+				"rests": 46,
+				"shots": 64,
+				"trades": 0,
+				"travel_days": 169
+			},
+			"days": 324,
+			"death_causes": [],
+			"food": 75,
+			"horse_condition": 100,
+			"horses": 0,
+			"loss_reason": "",
+			"miles": 1938,
+			"miles_per_moving_day": 11.4674556213018,
+			"mode": "wagon",
+			"modes_used": {
+				"wagon": 439
+			},
+			"month": 5,
+			"mules": 0,
+			"opening_quote": {
+				"budget_cents": 147500,
+				"cargo_lb": 2373.0,
+				"message": "Ready to depart. Keep some cash for the trail.",
+				"mounts": {
+					"animal_lb": 0.0,
+					"bags": 0,
+					"led": 0,
+					"mode": "wagon",
+					"pack_horses": 0,
+					"pack_mules": 0,
+					"riders": 5,
+					"saddled": 0,
+					"saddled_horses": 0,
+					"saddled_mules": 0
+				},
+				"remaining_cents": 107640,
+				"team_capacity_lb": 2500.0,
+				"total_cents": 39860,
+				"valid": true,
+				"wagon": true
+			},
+			"original_present": 5,
+			"outcome": "arrived",
+			"outfit": {
+				"axles": 1,
+				"bullet_boxes": 10,
+				"clothing": 5,
+				"dried_produce": 20,
+				"food": 1700,
+				"horses": 0,
+				"medicine": 2,
+				"mules": 0,
+				"oxen": 4,
+				"pack_saddles": 0,
+				"produce": 0,
+				"saddlebags": 0,
+				"saddles": 0,
+				"salt": 10,
+				"tongues": 1,
+				"wagon": 1,
+				"wheels": 1
+			},
+			"oxen": 4,
+			"places": [
+				{
+					"condition": 100,
+					"day": 2,
+					"month": 5,
+					"place": "elm_grove",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 4,
+					"month": 5,
+					"place": "wakarusa",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 10,
+					"month": 5,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 19,
+					"month": 5,
+					"place": "big_blue",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 39,
+					"month": 6,
+					"place": "platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 40,
+					"month": 6,
+					"place": "fort_kearny",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 41,
+					"month": 6,
+					"place": "fort_kearny",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 52,
+					"month": 6,
+					"place": "south_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 60,
+					"month": 6,
+					"place": "courthouse_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 61,
+					"month": 7,
+					"place": "chimney_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 66,
+					"month": 7,
+					"place": "fort_laramie",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 76,
+					"month": 7,
+					"place": "north_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 80,
+					"month": 7,
+					"place": "independence_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 81,
+					"month": 7,
+					"place": "devils_gate",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 94,
+					"month": 8,
+					"place": "south_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 96,
+					"month": 8,
+					"place": "little_sandy",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 106,
+					"month": 8,
+					"place": "green_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 111,
+					"month": 8,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 112,
+					"month": 8,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 133,
+					"month": 9,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 134,
+					"month": 9,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 135,
+					"month": 9,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 144,
+					"month": 9,
+					"place": "fort_hall",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 145,
+					"month": 9,
+					"place": "fort_hall",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 167,
+					"month": 10,
+					"place": "snake_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 168,
+					"month": 10,
+					"place": "snake_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 169,
+					"month": 10,
+					"place": "snake_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 182,
+					"month": 10,
+					"place": "fort_boise",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 183,
+					"month": 10,
+					"place": "fort_boise",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 189,
+					"month": 11,
+					"place": "burnt_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 197,
+					"month": 11,
+					"place": "powder_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 204,
+					"month": 11,
+					"place": "grande_ronde",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 205,
+					"month": 11,
+					"place": "grande_ronde",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 208,
+					"month": 11,
+					"place": "blue_mountains",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 214,
+					"month": 12,
+					"place": "umatilla",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 242,
+					"month": 12,
+					"place": "john_day",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 256,
+					"month": 1,
+					"place": "deschutes",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 269,
+					"month": 1,
+					"place": "the_dalles",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 296,
+					"month": 2,
+					"place": "barlow_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 300,
+					"month": 2,
+					"place": "laurel_hill",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 301,
+					"month": 2,
+					"place": "laurel_hill",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 317,
+					"month": 3,
+					"place": "eagle_creek",
+					"stock": 0
+				}
+			],
+			"profession": "banker",
+			"scurvy_cases": 4,
+			"seed": 63003,
+			"strategy": "salt",
+			"survivors": 5
+		},
+		{
+			"arrival_month": 1,
+			"audit": {
+				"days": 177,
+				"illness_person_days": 47,
+				"max_vitamin_gap": 32,
+				"other_days": 32,
+				"rest_days": 41,
+				"scurvy_person_days": 0,
+				"underfed_days": 7,
+				"vitamin_days": 14,
+				"working_days": 104
+			},
+			"breakdowns": 0,
+			"cash": 650.61,
+			"counts": {
+				"bought_dried_produce": 19,
+				"care": 3,
+				"counter_camp": 4,
+				"counter_cents": 29479,
+				"counter_post": 2,
+				"counter_traders": 15,
+				"counter_visits": 21,
+				"discards": 3,
+				"empty_food_days": 0,
+				"empty_hunts": 1,
+				"forages": 4,
+				"hunts": 8,
+				"last_care": 129,
+				"last_forage": 84,
+				"meat_carried": 348,
+				"meat_food_units": 176,
+				"meat_obtained": 416,
+				"oxen_slaughtered": 0,
+				"preservations": 1,
+				"rests": 29,
+				"shots": 15,
+				"trades": 0,
+				"travel_days": 104
+			},
+			"days": 177,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"food": 0,
+			"horse_condition": 100,
+			"horses": 0,
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1106,
+			"miles_per_moving_day": 10.6346153846154,
+			"mode": "wagon",
+			"modes_used": {
+				"wagon": 214,
+				"walking": 21
+			},
+			"month": 8,
+			"mules": 0,
+			"opening_quote": {
+				"budget_cents": 147500,
+				"cargo_lb": 2373.0,
+				"message": "Ready to depart. Keep some cash for the trail.",
+				"mounts": {
+					"animal_lb": 0.0,
+					"bags": 0,
+					"led": 0,
+					"mode": "wagon",
+					"pack_horses": 0,
+					"pack_mules": 0,
+					"riders": 5,
+					"saddled": 0,
+					"saddled_horses": 0,
+					"saddled_mules": 0
+				},
+				"remaining_cents": 107640,
+				"team_capacity_lb": 2500.0,
+				"total_cents": 39860,
+				"valid": true,
+				"wagon": true
+			},
+			"original_present": 0,
+			"outcome": "lost",
+			"outfit": {
+				"axles": 1,
+				"bullet_boxes": 10,
+				"clothing": 5,
+				"dried_produce": 20,
+				"food": 1700,
+				"horses": 0,
+				"medicine": 2,
+				"mules": 0,
+				"oxen": 4,
+				"pack_saddles": 0,
+				"produce": 0,
+				"saddlebags": 0,
+				"saddles": 0,
+				"salt": 10,
+				"tongues": 1,
+				"wagon": 1,
+				"wheels": 1
+			},
+			"oxen": 0,
+			"places": [
+				{
+					"condition": 100,
+					"day": 3,
+					"month": 8,
+					"place": "elm_grove",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 5,
+					"month": 8,
+					"place": "wakarusa",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 8,
+					"month": 8,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 17,
+					"month": 8,
+					"place": "big_blue",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 33,
+					"month": 9,
+					"place": "platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 34,
+					"month": 9,
+					"place": "fort_kearny",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 44,
+					"month": 9,
+					"place": "south_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 47,
+					"month": 9,
+					"place": "ash_hollow",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 51,
+					"month": 9,
+					"place": "courthouse_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 52,
+					"month": 9,
+					"place": "courthouse_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 53,
+					"month": 9,
+					"place": "chimney_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 55,
+					"month": 9,
+					"place": "scotts_bluff",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 59,
+					"month": 9,
+					"place": "fort_laramie",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 71,
+					"month": 10,
+					"place": "north_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 78,
+					"month": 10,
+					"place": "independence_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 79,
+					"month": 10,
+					"place": "independence_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 103,
+					"month": 11,
+					"place": "south_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 116,
+					"month": 11,
+					"place": "little_sandy",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 126,
+					"month": 12,
+					"place": "green_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 144,
+					"month": 12,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 145,
+					"month": 12,
+					"place": "fort_bridger",
+					"stock": 0
+				}
+			],
+			"profession": "banker",
+			"scurvy_cases": 0,
+			"seed": 63000,
+			"strategy": "salt",
+			"survivors": 0
+		},
+		{
+			"arrival_month": 6,
+			"audit": {
+				"days": 311,
+				"illness_person_days": 141,
+				"max_vitamin_gap": 55,
+				"other_days": 88,
+				"rest_days": 55,
+				"scurvy_person_days": 0,
+				"underfed_days": 3,
+				"vitamin_days": 21,
+				"working_days": 168
+			},
+			"breakdowns": 0,
+			"cash": 233.23,
+			"counts": {
+				"bought_dried_produce": 32,
+				"bought_produce": 3,
+				"care": 4,
+				"counter_camp": 18,
+				"counter_cents": 75777,
+				"counter_post": 6,
+				"counter_traders": 24,
+				"counter_visits": 48,
+				"empty_food_days": 0,
+				"empty_hunts": 6,
+				"forages": 9,
+				"hunts": 35,
+				"last_care": 273,
+				"last_forage": 298,
+				"meat_carried": 1125,
+				"meat_food_units": 568,
+				"meat_obtained": 1398,
+				"oxen_slaughtered": 0,
+				"preservations": 3,
+				"rests": 39,
+				"shots": 73,
+				"trades": 0,
+				"travel_days": 168
+			},
+			"days": 311,
+			"death_causes": [],
+			"food": 230,
+			"horse_condition": 100,
+			"horses": 0,
+			"loss_reason": "",
+			"miles": 1938,
+			"miles_per_moving_day": 11.5357142857143,
+			"mode": "wagon",
+			"modes_used": {
+				"wagon": 420
+			},
+			"month": 8,
+			"mules": 0,
+			"opening_quote": {
+				"budget_cents": 147500,
+				"cargo_lb": 2373.0,
+				"message": "Ready to depart. Keep some cash for the trail.",
+				"mounts": {
+					"animal_lb": 0.0,
+					"bags": 0,
+					"led": 0,
+					"mode": "wagon",
+					"pack_horses": 0,
+					"pack_mules": 0,
+					"riders": 5,
+					"saddled": 0,
+					"saddled_horses": 0,
+					"saddled_mules": 0
+				},
+				"remaining_cents": 107640,
+				"team_capacity_lb": 2500.0,
+				"total_cents": 39860,
+				"valid": true,
+				"wagon": true
+			},
+			"original_present": 5,
+			"outcome": "arrived",
+			"outfit": {
+				"axles": 1,
+				"bullet_boxes": 10,
+				"clothing": 5,
+				"dried_produce": 20,
+				"food": 1700,
+				"horses": 0,
+				"medicine": 2,
+				"mules": 0,
+				"oxen": 4,
+				"pack_saddles": 0,
+				"produce": 0,
+				"saddlebags": 0,
+				"saddles": 0,
+				"salt": 10,
+				"tongues": 1,
+				"wagon": 1,
+				"wheels": 1
+			},
+			"oxen": 4,
+			"places": [
+				{
+					"condition": 100,
+					"day": 3,
+					"month": 8,
+					"place": "elm_grove",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 5,
+					"month": 8,
+					"place": "wakarusa",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 9,
+					"month": 8,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 10,
+					"month": 8,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 21,
+					"month": 8,
+					"place": "big_blue",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 32,
+					"month": 9,
+					"place": "platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 33,
+					"month": 9,
+					"place": "fort_kearny",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 52,
+					"month": 9,
+					"place": "ash_hollow",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 55,
+					"month": 9,
+					"place": "courthouse_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 56,
+					"month": 9,
+					"place": "chimney_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 58,
+					"month": 9,
+					"place": "scotts_bluff",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 62,
+					"month": 10,
+					"place": "fort_laramie",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 75,
+					"month": 10,
+					"place": "north_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 81,
+					"month": 10,
+					"place": "independence_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 83,
+					"month": 10,
+					"place": "devils_gate",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 84,
+					"month": 10,
+					"place": "devils_gate",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 120,
+					"month": 11,
+					"place": "south_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 129,
+					"month": 12,
+					"place": "little_sandy",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 146,
+					"month": 12,
+					"place": "green_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 177,
+					"month": 1,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 178,
+					"month": 1,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 216,
+					"month": 3,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 217,
+					"month": 3,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 218,
+					"month": 3,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 238,
+					"month": 3,
+					"place": "fort_hall",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 239,
+					"month": 3,
+					"place": "fort_hall",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 250,
+					"month": 4,
+					"place": "snake_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 251,
+					"month": 4,
+					"place": "snake_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 252,
+					"month": 4,
+					"place": "snake_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 262,
+					"month": 4,
+					"place": "fort_boise",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 270,
+					"month": 4,
+					"place": "powder_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 273,
+					"month": 5,
+					"place": "grande_ronde",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 274,
+					"month": 5,
+					"place": "grande_ronde",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 275,
+					"month": 5,
+					"place": "grande_ronde",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 279,
+					"month": 5,
+					"place": "umatilla",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 285,
+					"month": 5,
+					"place": "john_day",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 288,
+					"month": 5,
+					"place": "deschutes",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 292,
+					"month": 5,
+					"place": "the_dalles",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 293,
+					"month": 5,
+					"place": "the_dalles",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 299,
+					"month": 5,
+					"place": "barlow_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 301,
+					"month": 5,
+					"place": "laurel_hill",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 308,
+					"month": 6,
+					"place": "eagle_creek",
+					"stock": 0
+				}
+			],
+			"profession": "banker",
+			"scurvy_cases": 0,
+			"seed": 63001,
+			"strategy": "salt",
+			"survivors": 5
+		},
+		{
+			"arrival_month": 6,
+			"audit": {
+				"days": 329,
+				"illness_person_days": 202,
+				"max_vitamin_gap": 34,
+				"other_days": 91,
+				"rest_days": 76,
+				"scurvy_person_days": 0,
+				"underfed_days": 1,
+				"vitamin_days": 22,
+				"working_days": 162
+			},
+			"breakdowns": 0,
+			"cash": 420.5,
+			"counts": {
+				"bought_dried_produce": 23,
+				"bought_produce": 7,
+				"care": 5,
+				"counter_camp": 20,
+				"counter_cents": 64650,
+				"counter_post": 7,
+				"counter_traders": 23,
+				"counter_visits": 50,
+				"empty_food_days": 0,
+				"empty_hunts": 9,
+				"forages": 6,
+				"hunts": 39,
+				"last_care": 271,
+				"last_forage": 296,
+				"meat_carried": 1608,
+				"meat_food_units": 811,
+				"meat_obtained": 1657,
+				"oxen_slaughtered": 0,
+				"preservations": 7,
+				"rests": 56,
+				"shots": 78,
+				"trades": 0,
+				"travel_days": 162
+			},
+			"days": 329,
+			"death_causes": [],
+			"food": 75,
+			"horse_condition": 100,
+			"horses": 0,
+			"loss_reason": "",
+			"miles": 1938,
+			"miles_per_moving_day": 11.962962962963,
+			"mode": "wagon",
+			"modes_used": {
+				"wagon": 455
+			},
+			"month": 8,
+			"mules": 0,
+			"opening_quote": {
+				"budget_cents": 147500,
+				"cargo_lb": 2373.0,
+				"message": "Ready to depart. Keep some cash for the trail.",
+				"mounts": {
+					"animal_lb": 0.0,
+					"bags": 0,
+					"led": 0,
+					"mode": "wagon",
+					"pack_horses": 0,
+					"pack_mules": 0,
+					"riders": 5,
+					"saddled": 0,
+					"saddled_horses": 0,
+					"saddled_mules": 0
+				},
+				"remaining_cents": 107640,
+				"team_capacity_lb": 2500.0,
+				"total_cents": 39860,
+				"valid": true,
+				"wagon": true
+			},
+			"original_present": 5,
+			"outcome": "arrived",
+			"outfit": {
+				"axles": 1,
+				"bullet_boxes": 10,
+				"clothing": 5,
+				"dried_produce": 20,
+				"food": 1700,
+				"horses": 0,
+				"medicine": 2,
+				"mules": 0,
+				"oxen": 4,
+				"pack_saddles": 0,
+				"produce": 0,
+				"saddlebags": 0,
+				"saddles": 0,
+				"salt": 10,
+				"tongues": 1,
+				"wagon": 1,
+				"wheels": 1
+			},
+			"oxen": 4,
+			"places": [
+				{
+					"condition": 100,
+					"day": 2,
+					"month": 8,
+					"place": "elm_grove",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 4,
+					"month": 8,
+					"place": "wakarusa",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 9,
+					"month": 8,
+					"place": "kansas_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 18,
+					"month": 8,
+					"place": "big_blue",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 30,
+					"month": 8,
+					"place": "platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 45,
+					"month": 9,
+					"place": "south_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 48,
+					"month": 9,
+					"place": "ash_hollow",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 51,
+					"month": 9,
+					"place": "courthouse_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 52,
+					"month": 9,
+					"place": "courthouse_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 53,
+					"month": 9,
+					"place": "chimney_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 58,
+					"month": 9,
+					"place": "fort_laramie",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 59,
+					"month": 9,
+					"place": "fort_laramie",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 72,
+					"month": 10,
+					"place": "north_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 78,
+					"month": 10,
+					"place": "devils_gate",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 90,
+					"month": 10,
+					"place": "south_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 93,
+					"month": 11,
+					"place": "little_sandy",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 96,
+					"month": 11,
+					"place": "green_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 104,
+					"month": 11,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 105,
+					"month": 11,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 187,
+					"month": 2,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 220,
+					"month": 3,
+					"place": "fort_hall",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 221,
+					"month": 3,
+					"place": "fort_hall",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 238,
+					"month": 3,
+					"place": "snake_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 250,
+					"month": 4,
+					"place": "fort_boise",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 251,
+					"month": 4,
+					"place": "fort_boise",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 256,
+					"month": 4,
+					"place": "burnt_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 260,
+					"month": 4,
+					"place": "powder_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 262,
+					"month": 4,
+					"place": "grande_ronde",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 265,
+					"month": 4,
+					"place": "blue_mountains",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 267,
+					"month": 4,
+					"place": "umatilla",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 281,
+					"month": 5,
+					"place": "john_day",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 284,
+					"month": 5,
+					"place": "deschutes",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 286,
+					"month": 5,
+					"place": "the_dalles",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 292,
+					"month": 5,
+					"place": "barlow_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 295,
+					"month": 5,
+					"place": "laurel_hill",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 296,
+					"month": 5,
+					"place": "laurel_hill",
+					"stock": 0
+				}
+			],
+			"profession": "banker",
+			"scurvy_cases": 0,
+			"seed": 63002,
+			"strategy": "salt",
+			"survivors": 5
+		},
+		{
+			"arrival_month": 5,
+			"audit": {
+				"days": 298,
+				"illness_person_days": 219,
+				"max_vitamin_gap": 69,
+				"other_days": 73,
+				"rest_days": 56,
+				"scurvy_person_days": 108,
+				"underfed_days": 0,
+				"vitamin_days": 17,
+				"working_days": 169
+			},
+			"breakdowns": 0,
+			"cash": 258.99,
+			"counts": {
+				"bought_dried_produce": 41,
+				"bought_produce": 3,
+				"care": 8,
+				"counter_camp": 27,
+				"counter_cents": 80801,
+				"counter_post": 6,
+				"counter_traders": 22,
+				"counter_visits": 55,
+				"empty_food_days": 0,
+				"empty_hunts": 7,
+				"forages": 7,
+				"hunts": 25,
+				"last_care": 274,
+				"last_forage": 260,
+				"meat_carried": 728,
+				"meat_food_units": 367,
+				"meat_obtained": 728,
+				"oxen_slaughtered": 0,
+				"preservations": 3,
+				"rests": 34,
+				"shots": 46,
+				"trades": 0,
+				"travel_days": 169
+			},
+			"days": 298,
+			"death_causes": [],
+			"food": 124,
+			"horse_condition": 100,
+			"horses": 0,
+			"loss_reason": "",
+			"miles": 1938,
+			"miles_per_moving_day": 11.4674556213018,
+			"mode": "wagon",
+			"modes_used": {
+				"wagon": 409
+			},
+			"month": 8,
+			"mules": 0,
+			"opening_quote": {
+				"budget_cents": 147500,
+				"cargo_lb": 2373.0,
+				"message": "Ready to depart. Keep some cash for the trail.",
+				"mounts": {
+					"animal_lb": 0.0,
+					"bags": 0,
+					"led": 0,
+					"mode": "wagon",
+					"pack_horses": 0,
+					"pack_mules": 0,
+					"riders": 5,
+					"saddled": 0,
+					"saddled_horses": 0,
+					"saddled_mules": 0
+				},
+				"remaining_cents": 107640,
+				"team_capacity_lb": 2500.0,
+				"total_cents": 39860,
+				"valid": true,
+				"wagon": true
+			},
+			"original_present": 5,
+			"outcome": "arrived",
+			"outfit": {
+				"axles": 1,
+				"bullet_boxes": 10,
+				"clothing": 5,
+				"dried_produce": 20,
+				"food": 1700,
+				"horses": 0,
+				"medicine": 2,
+				"mules": 0,
+				"oxen": 4,
+				"pack_saddles": 0,
+				"produce": 0,
+				"saddlebags": 0,
+				"saddles": 0,
+				"salt": 10,
+				"tongues": 1,
+				"wagon": 1,
+				"wheels": 1
+			},
+			"oxen": 4,
+			"places": [
+				{
+					"condition": 100,
+					"day": 3,
+					"month": 8,
+					"place": "elm_grove",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 5,
+					"month": 8,
+					"place": "wakarusa",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 15,
+					"month": 8,
+					"place": "big_blue",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 31,
+					"month": 9,
+					"place": "fort_kearny",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 44,
+					"month": 9,
+					"place": "south_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 47,
+					"month": 9,
+					"place": "ash_hollow",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 48,
+					"month": 9,
+					"place": "ash_hollow",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 53,
+					"month": 9,
+					"place": "courthouse_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 54,
+					"month": 9,
+					"place": "chimney_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 59,
+					"month": 9,
+					"place": "fort_laramie",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 77,
+					"month": 10,
+					"place": "north_platte",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 81,
+					"month": 10,
+					"place": "independence_rock",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 82,
+					"month": 10,
+					"place": "devils_gate",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 83,
+					"month": 10,
+					"place": "devils_gate",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 106,
+					"month": 11,
+					"place": "south_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 114,
+					"month": 11,
+					"place": "little_sandy",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 124,
+					"month": 12,
+					"place": "green_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 138,
+					"month": 12,
+					"place": "fort_bridger",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 203,
+					"month": 2,
+					"place": "soda_springs",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 222,
+					"month": 3,
+					"place": "fort_hall",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 223,
+					"month": 3,
+					"place": "fort_hall",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 236,
+					"month": 3,
+					"place": "snake_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 237,
+					"month": 3,
+					"place": "snake_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 247,
+					"month": 4,
+					"place": "fort_boise",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 248,
+					"month": 4,
+					"place": "fort_boise",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 257,
+					"month": 4,
+					"place": "powder_river",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 260,
+					"month": 4,
+					"place": "grande_ronde",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 263,
+					"month": 4,
+					"place": "blue_mountains",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 265,
+					"month": 4,
+					"place": "umatilla",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 270,
+					"month": 4,
+					"place": "john_day",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 273,
+					"month": 5,
+					"place": "deschutes",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 276,
+					"month": 5,
+					"place": "the_dalles",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 287,
+					"month": 5,
+					"place": "barlow_pass",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 290,
+					"month": 5,
+					"place": "laurel_hill",
+					"stock": 0
+				},
+				{
+					"condition": 100,
+					"day": 296,
+					"month": 5,
+					"place": "eagle_creek",
+					"stock": 0
+				}
+			],
+			"profession": "banker",
+			"scurvy_cases": 1,
+			"seed": 63003,
+			"strategy": "salt",
+			"survivors": 5
+		}
+	],
+	"seed_count": 4,
+	"seed_start": 63000,
+	"source_hashes": {
+		"data/appearance.json": "59d47bc3af292ea8a47fd9f9c7bccf51b6a73b74ce2e379b0fd3c956968fbe15",
+		"data/character_catalog.json": "09bfaac277a6affc948cdb148f811e78be9ff7c36568656a933408433d869709",
+		"data/combat_rules.json": "8e66c77298a219ae09f8af8c9352638f67ca0ff0f623f286e1868fb010f227cc",
+		"data/crime_scenes.json": "5c39b3800d671c3f603c56853b119706bfe3897d6d340a585b0bc517badc804c",
+		"data/events.json": "92553914f1b86377d290d29086361e1b9cadce027b53459785f131b947f167b7",
+		"data/health_conditions.json": "e3abbdcb754a2b93cd6b2df734e982d3400b4e88e319563f5993f671b587f536",
+		"data/hunting.json": "a98611c88f4ab06b70560329564fb808aee9e57f8fd09d927276f986df96c090",
+		"data/location_scenes.json": "c83c95452bdc9d1363e1d986920114d73ca5250de1209ee69e980952648f3865",
+		"data/map.json": "b7901aded45ef703256260d9d5f0a3116c28cf5c58e0d49c5f1d0dc8ababbafc",
+		"data/outfitting.json": "08a3550cc590ad6b02e28af840171c58c89618dc5d012960b22cc4d66df71dfd",
+		"data/party_benefits.json": "34570796d75535ee475b745540b2d36090d376109a179393cfd94c5aa7c2956c",
+		"data/provisions.json": "0a060d577ec260ffa1ca21cc6f2974f93343e4bddd9f841dcde90afecffa8a84",
+		"data/recruitment.json": "2ab34cf68166ff24a80e53212a49a56a6bf706a35f13420e0ee0caf0b069494b",
+		"data/robbery_demands.json": "ee44b0749aafee4cc9c69c6ad771edfd632bc7aa68fa3afd4e284d2c643e73d9",
+		"data/route.json": "07fdb32ad03a0c116a5c29effa0f100b680baf569a67eb8a722427b1e6ab90f4",
+		"data/save_migrations.json": "8bcc3826b64544df13fc16847be6f3d809c324cebd60eed7ae86cdefef986cff",
+		"data/scene_ambience.json": "d70843fe5553ffc3a9849f38461f838287dc53f3b462e4a091680b4b5b68f937",
+		"data/social_rules.json": "0881a6a6bda117ad493093029b1225631a6b1c9ea1bcb605f9a2766cdb53d0c8",
+		"data/survival_rules.json": "f15b2570c913dd87265583619d09ea5e0419c89f6307fc3ee6619dbefb8b5473",
+		"data/trail_context.json": "dde8603f760c3fa3d715dfc864711f52597382733c189ef30beca9ece1546cf4",
+		"data/trail_events.json": "9038f6ef7af1f49f5663f897fa13a5bd4671a9dbbe6f2b096a7e2af6ce2d9cd3",
+		"data/trail_news.json": "839ff4aa42b1c0a1dba2d9707fa2eed6be6b776f3019396e984419bcbb39754d",
+		"simulation/bandit_demand.gd": "83165ce95943786a9a507b456000a200731e383866e097af1c2d35704dda25f9",
+		"simulation/carrying.gd": "891371fb237492472db2f08c78cc5e86e6283602ba9e6458a7ee54e04c97e004",
+		"simulation/character_catalog.gd": "37cd3d67e87d6425c5126c67beb917ce2303c2218d02e3eaa2455c6d7a380a96",
+		"simulation/combat.gd": "d363ac8683951057fb1d039ed3d8492ce60ffd5bb984b39001e232ddc7382c2b",
+		"simulation/crime_system.gd": "489c3bb2d3721834531d6eae639174319313daa68ce1435d158c0278d6ed37e1",
+		"simulation/discard_plan.gd": "0515216a6b171ab53f968abd7a06fbb6c42a80d59b2258c504cb566101004b23",
+		"simulation/event_catalog.gd": "6be0059b606d0c3e0623ce811c71d6587bce4465e5577eb934f9be8924cf1ea4",
+		"simulation/grave_store.gd": "ce13273ecee4d73114564c37908b7f3a2c473530672a265b0eae2c029a4ba71d",
+		"simulation/hunting.gd": "e0fe2fdfc4481fd83ae6f1142cba75564af9a6133ea74a5f65720b00bc220f92",
+		"simulation/mounts.gd": "5e91c818c98455c15e33fad5768b54ea6b28cbc0013c45522c5e1466cb78a011",
+		"simulation/outfitting.gd": "e7e63cbd908207a1473180186f1c9ef4e4b9ad0271643aff2ba7b1b552c73a6e",
+		"simulation/party_character.gd": "26e7c355fe28a18c9695170550ab5c3989caf8172883ca457a18943b2cb48063",
+		"simulation/party_health.gd": "1f61ef215c79a06cfb49c277111e8fbca9b9dd975cbbe2cd2138cc54ff4e925f",
+		"simulation/party_recruitment.gd": "2de6523c5f70d4f8f45e4462fa60527d9228bea27bbdcc5f6af7cce635a7f2d8",
+		"simulation/party_social.gd": "7f53661a4f05d9055f615ef6fe03a49c420ae4c6b4e3e3f60a7738af52b4dc8e",
+		"simulation/produce_trade.gd": "7aa52e0b479d07838b1922de07e7c178db511adb02f0b85fdcec09f0cbb75d72",
+		"simulation/provisions.gd": "739f8c70210a22e7a61c51e935d5e3140023c23fa03ca4ec9ad7ca054ef01ad9",
+		"simulation/remains.gd": "6bf04a1f19299d231dee130687004ac4ba6fc1f6558b2b2dfc1217fd95e60fb4",
+		"simulation/robbery_demand.gd": "70804f8dce7bcb69e444502f4c86dcecefeca5b91c1c92c3ec49a0734313b9f3",
+		"simulation/route_catalog.gd": "f8e42f847e7c2a2328ddf9e8b8ae6b689dcb2ad24d4aa1fb4361ea6fd8e666d7",
+		"simulation/save_store.gd": "cddae133468119b173931f64e83bd7a7f914297db5c624a3fb722393cc6c6975",
+		"simulation/survival_rules.gd": "8d547f56e2838e44ad1368fed0c082ec388530b52eec74807a3740a7490cffeb",
+		"simulation/trail_context.gd": "12ab831f4beaba4c5f9d56552146b0e07d34a1a426191be4f518b1de8e0e6599",
+		"simulation/trail_engine.gd": "370a245f4665f5b205de5b483e98032b7a02cbc490b0fc8bf449178f95f4d4b5",
+		"simulation/trail_news.gd": "7cf725ae5554ecde199cce47b22d1b1d6398bd5afdec86c88bb46f29907ff16d",
+		"simulation/travel_direction.gd": "54f0b2bf84d8eba3e953b74faeeb8289a415397a5cc9e63b224c90c26017342e",
+		"simulation/traveler_appearance.gd": "1be477cbb1b7bb23c480fa23717ed305cef48b1d0031db07b66e8e5e0cb65ecb",
+		"simulation/wagon_cache.gd": "446b1e186f94e3ea5a8320f6e142216527c5fb782f105c115c0a1bbe0314250c",
+		"simulation/wagon_guards.gd": "0664e57c86b0442702c4734577443d0b9e276252d3d9c9ef4e3b9e09c5196b41",
+		"simulation/wagon_trade.gd": "1697145a2542dd232abb8f66004f90cee4d62c30a79c9ece6343bf45b30fe85c",
+		"simulation/wanted_system.gd": "c4d843fa7fddae063adaeb6bdd3e7d3ae2161d52f222e4647b68aac8cdd9ce50",
+		"tests/balance_campaign.gd": "96a8e0f70b66a8b22cf56923caf3f1d90a04c9f4350da1439909392106041bc3",
+		"tests/balance_observer.gd": "ab642d18a478e82060e8c41290b465b0828054d5909f2e5129200848890f02c5",
+		"tests/balance_report.gd": "9231b99e3b73012842d2f25e4b947e154fb310e0e3b48be40a5aa95bb5cda20e",
+		"tests/combat_risk_study.gd": "e92bc72e8b0a15984c429615ed13136c3ee2a74980a426b9bbe4f24720a72332",
+		"tests/current_balance_campaign.gd": "6bb382bcb1a43767b9a7304828107f5b708b5fcff558654d5e2937639ac6103d",
+		"tests/current_emergency_study.gd": "c465b088ef9935db3de3c510a70917c5ca448251597edfe3e32284f35a87fec6",
+		"tests/current_hunting_study.gd": "deb3463f27e1ff5a59eb13fc7b1d1cfb227bc3bb5eac9283cb40875534dacb51",
+		"tests/current_journey_policy.gd": "f84af6a4512809a4fd5c5e4f33dc292ae057784d84f15e6dac641d593028bef5",
+		"tests/emergency_journeys.gd": "1875ba41b8361f6db104911cd2193aff1d732cc5d411f923b6f827b74ed15a7b",
+		"tests/food_decision_study.gd": "1b7c486453887bab7a7f9560e86718aa82054cc57b68e918e46f98b4857d6df9",
+		"tests/full_trail_balance.gd": "76980100cfee9108c3c46d7a15088e13cd1fc6decddb9cc6965e88d7d157b480",
+		"tests/full_trail_policy.gd": "487074167a5286f9d3d77c6ca11628ec5013ac9cf1efb279432eaac7df83eeb6",
+		"tests/generated_party_journeys.gd": "16b5dbd0812615bdbb2818a7ac785a63f34a4472ba25d58aadd8fd1680b5b991",
+		"tests/historical_diagnostic.gd": "03824e489518e4650c44d5ff9153642413f676925f0b5b7fa48d1eb1aeb4b154",
+		"tests/journey_trade_policy.gd": "2af3c09bb7d1cdb2c8e222baff902127ddeb4785bf142d3c0f13300d6759c497",
+		"tests/mount_balance_campaign.gd": "89b250d46eb8181e53f2b6f4dd31be35b675efd98f422764f272eac279e38f78",
+		"tests/outlaw_journeys.gd": "a3c868e8d1c60af7b7daca1ed098ac0cf80524fd6155819397e10033918fb141",
+		"tests/pace_aim_no_slaughter.gd": "133f46fb8b9c086f5d12603e0c5a8aa90f2c6c61c684d5023022df415237766b",
+		"tests/pace_aim_study.gd": "a4ada4bdd28ae7ef60c5e3e456aab3e81bd29b28d70cfda34211c32f9d39c645",
+		"tests/replay_policy_cap.gd": "da9cfeba95ae25f8582e117229645a96063b593b4b3ee3d1b2e74d15ef413cc4",
+		"tests/rest_care_diagnostic.gd": "da30fc9c11a8886b14ae033315b8ced97483032efae22481a762adeeacb5f301",
+		"tests/seasonal_pressure_study.gd": "2a976f3ebccee735dc6245c5269627f3e10f414bb0407d13de2f96bba24900b3",
+		"tests/specialist_balance.gd": "56b0a5f2c6b6527519bd423b06460205a144d1e9652da0f77e44ecad0e36c436",
+		"tests/store_crime_journeys.gd": "059bad2ecce6d0f4a8aef372cddea0581b01ddcf2435105e4f8fa599483ceb84",
+		"tests/survival_policy.gd": "779cce1800650563cbc0ae28b28e7fbf73c88928241677ecaf018980f5e4c6e9",
+		"tests/team_survival_study.gd": "d3d772cc1e04940093300ae62fd2456830b734e9651cfb85860b13e86c88f236",
+		"tests/test_appearance.gd": "45642e60dabf8f5338b904a1efe7e51e6aafd8333f2551ab4693ccb7ecd9c9ca",
+		"tests/test_art.gd": "80524d5a4f88279978bdc649b5e074a356c078281cb150fb29bec9df6f5731a7",
+		"tests/test_bandit_demands.gd": "a80876732472e612bf28108c47c08b105c304938d11b5cf475f0cdab217363a5",
+		"tests/test_branches.gd": "303a0aa11bce1b5c6e4bfeb76892a6f3a69b665dfe5aa6663d05b3bbeb7d6a91",
+		"tests/test_camp_rest.gd": "4bfb58b7411dc2f1c38e08eac4c66656677dcafe2018d400c4ba044b03e55984",
+		"tests/test_care_combat.gd": "716e6ccfd526a88bef915a1fa2fdd613686f1ad648f67fdbe7d6ff6e9382b30b",
+		"tests/test_character_catalog.gd": "0cd7d4013ca60d3d2e923107f5d661195a31c3567fdc4689a9ef0507e383c496",
+		"tests/test_climate.gd": "dc68ad2c905c25fcfd0a962c9b5852729089b9605fba8d16d62f21edd94f4038",
+		"tests/test_companions.gd": "75de2214920d3b873aec50bb561d88b3e634aad8c11214bf18780cef5b582d15",
+		"tests/test_crime.gd": "84077043194ecfc85973892f66ab4147c8fd6a96a7d55ed935a6958216a3f57c",
+		"tests/test_current_policy.gd": "dcaf3718edaed741cf472e7ea877bb33dfe419325b5add1f88c09e7fd5e42765",
+		"tests/test_departures.gd": "3635c3c9347d461887e9f22bde3504f59ce97bbfe9aa874e9c22210534ae89a5",
+		"tests/test_discards.gd": "4df31623bd9a1fb3ca36efd212745edbb2a8ab109b496bb751b507e453e05e31",
+		"tests/test_disease.gd": "6256bdf995970be44c39ca34c433ef6c24b09bb29ce00b957c307a9701cc5c9a",
+		"tests/test_field_actions.gd": "e234d6c29554440f7b3033dd651949a09adf569767d39ce5de008bda7f95357a",
+		"tests/test_full_trail.gd": "5afa3f02f6f71b7f1d9c88c0f3205e7194162b927e6ce809f824835f28bdc375",
+		"tests/test_graves.gd": "b3ff389a53723eac43b0b8bd8ddedac71b8d1f38ca22cdfdc1f7d60a0c228eae",
+		"tests/test_health.gd": "3c859869cd56b9bd3efd026f36bac7ae8ca652e6f9df962e83bdab4b1abd401f",
+		"tests/test_historical_economy.gd": "6cffe2814b8eac1ea4aedf638de290269e6af03572f8547233f89a722ee8949e",
+		"tests/test_horse_country.gd": "3fdd9cc87332057f33fcab12f2a0f1141c9cccbfe26e38a73babe5352be9447d",
+		"tests/test_horse_flight.gd": "af5066483d6f484afd4a37117d18978dcd14f43c47187ee531ac14fec2e79edb",
+		"tests/test_horse_trade.gd": "aade7fbcb023e6e4bd5f2cfc13d6b4c555811bf524e0defc68301b2062c3b96d",
+		"tests/test_hunting.gd": "255202552b291d51a84378de4f60b7023f69c940136a3a9f7962b7484b56b450",
+		"tests/test_inventory.gd": "07685f441d8626ad4496b99aaaf5072850fe2cbd94b8a847c6f813c16b00da4b",
+		"tests/test_journey_policy.gd": "4f9b897a4d0625cd52645bf049ac7e73fd4aaa64c5f26a9fb430dc1fcf0a3425",
+		"tests/test_local_targets.gd": "79a67d2e7fe165a6609b38b3c73a51bc7dbe7747d66250010cb3fc1905796f02",
+		"tests/test_meat_accounting.gd": "375f9cfd899f860f7f73fc650faa2caea26e8eca8a65c709e9c9503b96b758aa",
+		"tests/test_motion.gd": "1b68a1a14f3536de3b0dfb02dbe4e43b6661fa269adc8d894fdb608662d51e74",
+		"tests/test_mount_campaign.gd": "691d9aa144d615e31a02dd871d523cbc7d97418fdebe64f1e6e4b25f3c542a9c",
+		"tests/test_mounts.gd": "45dd39120a291864e35d959d16c2345133c4a646a8e83a8a1a28bada814db989",
+		"tests/test_news.gd": "19b3a3008feced4721e97abbab2bcef2d7c6b82879898685e85286f7d737c386",
+		"tests/test_oxen.gd": "8f86a9269df320f79ab075a13a26aade4bf13b7c9259a90b632cbfda81437f69",
+		"tests/test_party_benefits.gd": "3ebe7fd885bd1e9bdb05d7acb24f300be0207a59df0c9785c6a919db6cb0f278",
+		"tests/test_party_character.gd": "712311d79c6ae7acf33f50e1d259dcc350b20b201c387a8185a474fbc99d69c9",
+		"tests/test_party_flaws.gd": "e87836b7d2929bfd8ed4c1930a6ad0dcab86b3725e716f1d0388eb1518dd86ae",
+		"tests/test_party_framework.gd": "37ed569362dd744b9e1248f6e1399cde7a257a618be4e5836b273dffee038a1f",
+		"tests/test_party_setup.gd": "5bd76f821e42c62649b36924b3603036f41533c4ff0e9ef28a729e5e69611160",
+		"tests/test_preservation.gd": "e757736f0e5b9e13f85ae8fcc84554cff0c8851f5f8758c134d36de941235528",
+		"tests/test_produce.gd": "601d44ebe64c51cfa93249365c8974300c9c8304b6020b4646db4530157f2d88",
+		"tests/test_provisions.gd": "806a6942da2da165d4ecb01e251c4bac7f7760178b0e0427f2d50d5c580e6d20",
+		"tests/test_recruitment.gd": "436acecdf46673e617e7c69db82e2cfe50b927609f23ba21e854d118d1aa2253",
+		"tests/test_remains.gd": "39ac254fa658c682dc22fee085b14b6a863ad9aa3d4f4b16325c40e173f38641",
+		"tests/test_return_travel.gd": "01bb0ff8d20f9db95a58a03e7c6072414945cb81c28fd36f4724fd45a14445ba",
+		"tests/test_ribbon.gd": "ad6beaac50e9ae56792405946e509fc82c683be7630776a2c884c67c0cab2cb1",
+		"tests/test_robbery_demands.gd": "bee2c44e43c82a01acae9876737ba07c41f6d63ff0cab255e544cce893384592",
+		"tests/test_route.gd": "31cb1d4cf2bd0b484689f34ab83077d0c9db7fe87c6268a2158c2db8a712d2aa",
+		"tests/test_saves.gd": "8d94b2a99c7c023c6ee3af5f1d165217ed5355866dcde7d5008874b7e5205948",
+		"tests/test_simulation.gd": "851209c1c649bca1fd0120f13fb966be4d05da32999f6e49659bdfd621b42bc3",
+		"tests/test_social.gd": "f82046a0fa02b447fbcb9ab8acb7516ae0fd0b8d9fefd8edc03e770dcec38293",
+		"tests/test_survival.gd": "82ed899049fb7b57ea961f476172b4b39c442e9dfae512f6237ff36fe5c55358",
+		"tests/test_trail_context.gd": "d1a0fb03219fa7da4f5ce4a89cd032f60836124b6e8fbfc276bb7de4a0d0f253",
+		"tests/test_ui.gd": "dd4e6ed39236cb6971dd67e0f9a0d0782ddbac7f3ee05527d32f7f61e5d7f3e2",
+		"tests/test_wagon_guards.gd": "0c11585207cfe2c10b728672add52b85ac5b128d3563506db227b8198513dcff",
+		"tests/test_wagon_sale_display.gd": "bbd6a353ec92a8f2d3fbf56d0401ca031d9585743fb8d54be475121145d37e07",
+		"tests/test_wagon_trade.gd": "17d75850b9e699acf430d249abf980312d2ed02730380176082b6ec7030fb970",
+		"tests/test_walking.gd": "c8724ec0002b3b860242685c040f156cba4a26c90d534065fdb64aa0c50f5fab",
+		"tests/test_wanted.gd": "57930d595e7c41fc20d94974e1456c52a299e164b229453f3acc8bc3bca911e7",
+		"tests/test_winter.gd": "2ef7344e79f559efad1e28e952d65443d09979ffaecf457400bc644ce3ae061a",
+		"tests/test_working_team_policy.gd": "0acf5afa14f5f9901ab7201ce7252f86a851dfe1de3f441d680c3c474d0c5bf0"
+	},
+	"strategies": [
+		"salt"
+	],
+	"stress": "four_oxen"
+}
