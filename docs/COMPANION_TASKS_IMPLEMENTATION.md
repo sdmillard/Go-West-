@@ -1,6 +1,6 @@
 # Companion assignments: implementation plan
 
-Proposed October 24, 2026. No assignment gameplay is built by this change. This turns [the agreed design](COMPANION_TASKS_PLAN.md) into small, playable stages.
+Approved October 24, 2026. The first playable camp-day stage is built; see [behavior and current limits](COMPANION_CAMP_WORK.md). The remaining stages below are pending. This turns [the agreed design](COMPANION_TASKS_PLAN.md) into small, playable stages.
 
 ## Design target
 

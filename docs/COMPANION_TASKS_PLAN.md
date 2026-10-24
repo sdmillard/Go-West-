@@ -1,6 +1,6 @@
-# Companion task assignments (proposed, not built)
+# Companion task assignments
 
-October 24, 2026. Spencer proposed replacing the always-on companion background bonuses with tasks you send companions to do. This file records the design worked out with him in the "Design companion task assignments" thread. **Nothing here is implemented.** Build only after Spencer approves, one PR per phase. The working analysis is also at https://claude.ai/artifact/EPrfj7aDmxBNN9cRj4FYGW.
+October 24, 2026. Spencer proposed replacing the always-on companion background bonuses with tasks you send companions to do. This file records the design worked out with him in the "Design companion task assignments" thread. Spencer approved implementation on October 24. **The shared camp-day first stage is now implemented**; see [playing and scope](COMPANION_CAMP_WORK.md). Repair, stock guard, away hunting, mounted work and new backgrounds remain to build, one reviewed change per stage. The working analysis is also at https://claude.ai/artifact/EPrfj7aDmxBNN9cRj4FYGW.
 
 ## Why
 
