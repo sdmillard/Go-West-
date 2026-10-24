@@ -185,6 +185,7 @@ func depart(profession: String, names: Array, month: int, cart: Dictionary, cust
 	for key in customization.get("contracts",{}):
 		var terms: Dictionary=customization.contracts[key]
 		characters.start_contract(self,int(key),int(terms.wage_cents),int(terms.interval_days))
+		if terms.get("auto_pay",false):characters.set_auto_pay(self,int(key),true)
 	journal.append("Departed %s 1, 1848 as a %s. Party: %s." % [str(month), profession, ", ".join(cleaned)])
 	journal.append("Supplies cost $%.2f. Cash remaining: $%.2f." % [float(quote.total_cents) / 100.0, state.money])
 	if not quote.wagon:journal.append("Left Independence without a wagon, as packers: %s." % Mounts.describe(mount_plan()))

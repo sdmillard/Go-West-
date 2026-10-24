@@ -31,6 +31,7 @@ var special_count_label: Label
 var flaw_choice: OptionButton
 var flaw_description: Label
 var accepted_flaw: String=""
+var auto_pay: CheckBox
 var wage: SpinBox
 var interval: SpinBox
 var edited_member:=1
@@ -326,6 +327,10 @@ func _build_companions() -> void:
 	interval.max_value=7
 	interval.value=7
 	rows.add_child(interval)
+	auto_pay=CheckBox.new()
+	auto_pay.text="AUTO-PAY WAGES"
+	auto_pay.tooltip_text="Automatically pay this companion from available cash when wages are due. Unpaid wages still lose trust. Change this later in Party."
+	rows.add_child(auto_pay)
 	interval.value_changed.connect(func(_days: float):_refresh_wage_quote())
 	special_checks.Mercenary.toggled.connect(func(on: bool):
 		wage.editable=on
@@ -393,6 +398,7 @@ func _special_toggled(on: bool, special: String) -> void:
 	if on and selected>draft.MAX_CREATION_SPECIALS+(0 if accepted_flaw.is_empty() else 1):special_checks[special].set_pressed_no_signal(false)
 	wage.editable=special_checks.Mercenary.button_pressed
 	interval.editable=wage.editable
+	auto_pay.visible=wage.editable
 	_refresh_wage_quote()
 
 func _flaw_selected(index: int) -> void:
@@ -452,6 +458,7 @@ func _store_companion() -> void:
 		if special_checks[special].button_pressed:profile.specials.append(special)
 	profile.boundaries=draft.catalog.boundaries(profile.traits[1])
 	draft_terms[str(edited_member)]={"wage_cents":roundi(wage.value*100),"interval_days":int(interval.value)}
+	if special_checks.Mercenary.button_pressed and auto_pay.button_pressed:draft_terms[str(edited_member)]["auto_pay"]=true
 
 func _load_companion() -> void:
 	loading_companion=true
@@ -465,11 +472,13 @@ func _load_companion() -> void:
 	relationship.selected=draft.catalog.data.relationships.keys().find(profile.relationship)
 	for special in special_checks:special_checks[special].button_pressed=special in profile.specials
 	var terms: Dictionary=draft_terms.get(str(edited_member),{"wage_cents":draft.wage_quote(profile).daily_cents*7,"interval_days":7})
+	auto_pay.set_pressed_no_signal(bool(terms.get("auto_pay",false)))
 	interval.value=terms.interval_days
 	wage.min_value=0.01
 	wage.value=terms.wage_cents/100.0
 	wage.editable="Mercenary" in profile.specials
 	interval.editable=wage.editable
+	auto_pay.visible=wage.editable
 	loading_companion=false
 	_refresh_wage_quote()
 

@@ -4,7 +4,7 @@ Last updated October 24, 2026, after horse travel step 5 and the concurrent nutr
 
 ## Resume here
 
-- **Proposed, not built: companion task assignments.** Spencer is designing assignable camp and away tasks (hunting, nursing, drying, guard, outriders) to replace passive background bonuses, plus Soldier and Criminal backgrounds. Decisions so far and the build order are in `docs/COMPANION_TASKS_PLAN.md`. Do not build without Spencer's approval, and check that file before changing companion benefits, rest recovery or hunting.
+- **Proposed, not built: companion task assignments.** Spencer is designing assignable camp and away tasks (hunting, nursing, drying, guard, outriders) to replace passive background bonuses, plus Soldier and Criminal backgrounds. Decisions so far and the build order are in `docs/COMPANION_TASKS_PLAN.md`; concrete proposed stages and acceptance checks are in `docs/COMPANION_TASKS_IMPLEMENTATION.md`. Do not build without Spencer's approval, and check that file before changing companion benefits, rest recovery or hunting.
 - Canonical local repository: `C:/Users/Spencer/Projects/Oregon Trail`. GitHub: https://github.com/sdmillard/Go-West- ; default branch `master`. The `Documents/ChatGPT/Oregon Trail` workspace is stale staging.
 - Survival/accounting work is pushed and merged: [PR #19](https://github.com/sdmillard/Go-West-/pull/19), merge commit `4b7839640949d593d251d695236f8908334bc64e`. Local master was synced while preserving every pending working file. No implementation change is waiting for publication.
 - Exact publication commit passed all **33 Godot suites**, plus **24 store journeys and 20 outlaw journeys**, in a clean isolated checkout. Temporary checkouts were removed. The earlier tested snapshot remains on local branch `codex/survival-accounting-validation-20261022`.
@@ -492,3 +492,9 @@ Fresh mounted/packing32cases use86000-86003,April/May,salt,carpenter/banker: mou
 Current combined fingerprint38d5a0bdaca9f681aca65bb45c0da8a41029739b67400ff71cf0941e09647a75. A genuine immediately preceding horse-update walking save (6f29f0fae730d228ef155a3a0b59928eb063602af261d95367b39519317f186f) migrates unchanged; this and the pre-merge95ac2b1f fingerprint are whitelisted. Both handoff sections were preserved when resolving the merge.
 
 Next decisions remain nutrition scarcity/coarse servings and the player's shopping/hunting/press-on policies. September is a playstyle benchmark; do not force the calendar by blindly changing action costs. Scorbutic travelers can recover while moving if fed; moderate illness no longer makes pack food space disappear immediately. Preserve all prior evidence and actual saves.
+
+## Optional automatic mercenary wages (October 24)
+
+Added per-contract AUTO-PAY WAGES in creation and the live Party sheet, default off for new and old contracts. Full affordable arrears settle on enable and each real day; normal unpaid debt/trust rules apply when cash is short. No remote wagon-guard payment, no prepayment, and manual payment remains. Stable cent settlement fixes JSON round-trip drift. No data rules/fingerprint changed. See [behavior and validation](MERCENARY_AUTOPAY.md).
+
+Checkpoint 07635fe passed all63 suites (40auto-pay checks) in a clean isolated checkout, plus24store and20outlaw journeys with zero reported errors. Native creation and Party layouts inspected; screenshot shown to Spencer. Companion assignments remain proposed, not implemented. Parallel work should remove artificial sequential-day costs without invented compensating penalties; use actual labor, recovery, supplies and timing constraints. Player saves and three local debug pilots preserved.
