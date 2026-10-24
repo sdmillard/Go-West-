@@ -20,6 +20,7 @@ const CROSS_RAFT = preload("res://art/pixels/cross_raft.png")
 const CROSS_FERRYMAN = preload("res://art/pixels/cross_ferryman.png") # 32x40
 const CROSS_PEOPLE = preload("res://art/pixels/cross_people.png") # 16x20; rows: man, woman
 const CROSS_SWIMMER = preload("res://art/pixels/cross_swimmer.png") # 16x12; rows: man, woman, in trouble
+const CROSS_HORSES = preload("res://art/pixels/cross_horses.png") # 48x40; rows: rider walk/wade/swim, pack horse walk/wade/swim, mule walk/swim
 const WORLD := Vector2i(720, 300)
 const PATH_START := Vector2(90, 282) # the wagon's rear on the near landing; the road runs (2, -1)
 const NEAR_SHORE := 31.0 # path distances where the near and far shorelines cross the road
@@ -462,7 +463,9 @@ func _draw_ferry(t_raft: float, cargo_t: float, foot: bool) -> void:
 	var moving := not is_equal_approx(cargo_t, t_raft + 2.0)
 	var frame := int(crossing_elapsed * FPS) % FRAMES if moving else 0
 	if foot:
-		_draw_party_on_foot(cargo_t, frame, lift)
+		# The deck takes two ranks of stock; walkers crowd in behind one rank of packers.
+		var ranks := _draw_stock(cargo_t - 4.0, frame, lift, false, 4 if _riding() else 2, 10.0)
+		_draw_party_on_foot(cargo_t - ranks * 8.0, frame, lift, false, ranks > 0 and _riding())
 	else:
 		draw_set_transform(-_camera() + lift)
 		_draw_wagon_at(cargo_t, frame, false, 0, aboard)
@@ -471,8 +474,32 @@ func _draw_ferry(t_raft: float, cargo_t: float, foot: bool) -> void:
 	var pole := int(crossing_elapsed * FPS * 0.75) % FRAMES
 	_sprite(CROSS_FERRYMAN, Vector2i(32, 40), Vector2i(12, 30), pole, 0, _on_path(t_raft + 22.0, 9.0) + Vector2(0, -2))
 
-func _draw_party_on_foot(t: float, frame: int, lift := Vector2.ZERO, rough := false) -> void:
-	# Walkers in a loose file; anyone in the river swims, anyone on land walks.
+func _riding() -> bool:return mount_plan.get("mode","") in ["mounted","doubled"]
+
+## Saddle and pack animals two abreast, leading the party; riders are drawn on their horses.
+## Stock wades a low-water ford and swims high water. Returns the number of ranks drawn.
+func _draw_stock(t: float, frame: int, lift: Vector2, high: bool, most: int, spacing := 12.0) -> int:
+	var rows: Array = mount_rows().slice(0, most)
+	var sprites: Array = []
+	for index in range(rows.size()):
+		var at := _on_path(t + 14.0 - (index / 2) * spacing, 6.0 if index % 2 == 0 else -6.0) + lift
+		var wet := lift == Vector2.ZERO and _in_water(at + Vector2(14, -6))
+		var row: int
+		match int(rows[index]):
+			MOUNT_PACK_MULE:row = 7 if wet else 6
+			MOUNT_PACK_HORSE, MOUNT_LED:row = (5 if high else 4) if wet else 3
+			_:row = (2 if high else 1) if wet else 0
+		sprites.append({"at": at, "row": row, "step": (frame + index * 3) % FRAMES if frame > 0 or lift == Vector2.ZERO else 0})
+	# Nearer animals (lower on screen) cover the ones behind them.
+	sprites.sort_custom(func(a, b): return a.at.y < b.at.y)
+	for sprite in sprites:
+		_sprite(CROSS_HORSES, Vector2i(48, 40), Vector2i(12, 34), sprite.step, sprite.row, sprite.at)
+	return ceili(rows.size() / 2.0)
+
+func _draw_party_on_foot(t: float, frame: int, lift := Vector2.ZERO, rough := false, mounted := false) -> void:
+	# Walkers in a loose file; anyone in the river swims, anyone on land walks. Riders are on their horses.
+	if mounted:
+		return
 	for index in range(walkers):
 		var pt := t + 14.0 - (index / 2) * 5.0
 		var side := 5.0 if index % 2 == 0 else -5.0
@@ -544,7 +571,8 @@ func _draw_crossing() -> void:
 	if method == "ferry":
 		_draw_ferry(phase.raft, phase.cargo, vehicle == "foot")
 	elif vehicle == "foot":
-		_draw_party_on_foot(phase.cargo, frame, Vector2.ZERO, rough)
+		var ranks := _draw_stock(phase.cargo, frame, Vector2.ZERO, high, 8)
+		_draw_party_on_foot(phase.cargo - ranks * 12.0, frame, Vector2.ZERO, rough, ranks > 0 and _riding())
 	else:
 		_draw_wagon_at(phase.cargo, frame, method == "ford", bob if _in_water(_on_path(phase.cargo)) and method != "ford" else 0)
 		# A wake spreading behind the wagon while it is in the water.

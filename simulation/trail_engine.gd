@@ -169,8 +169,9 @@ func depart(profession: String, names: Array, month: int, cart: Dictionary, cust
 	for key in Mounts.KEYS:
 		if int(cart.get(key,0))>0:state[key]=int(cart[key])
 	if not quote.wagon:
-		# Packers leave without a wagon: only personal gear travels with them.
+		# Packers leave without a wagon: only personal gear travels with them, and no wheel can crack.
 		state.vehicle="foot"
+		seen.append("muddy_trail")
 		state["household_gear_lb"]=float(provisions.data.walking.personal_gear_lb_per_person)*cleaned.size()
 	for item in Produce.ITEMS:
 		Produce.add(provisions,item,int(cart.get(item,0)),0)
@@ -265,7 +266,8 @@ func _arrive_landmark(revisit: bool=false,roll_stage: bool=true) -> void:
 		options.append({"label": "Prepare and float · 1 day, risk to supplies", "action": "cross", "method": "float", "effects": {"days": 1}, "risk": 0.35 if state.river_stage == "high" else 0.2})
 		if state.vehicle=="foot":
 			options=options.filter(func(option):return option.get("method","")=="ferry")
-			options.append({"label":"Swim across with packs · 1 day, high injury / supply-loss risk","action":"cross","method":"swim","effects":{"days":1},"risk":swimming_risk()})
+			if Mounts.animals(state)>0:options.append(horse_crossing())
+			else:options.append({"label":"Swim across with packs · 1 day, high injury / supply-loss risk","action":"cross","method":"swim","effects":{"days":1},"risk":swimming_risk()})
 	else:
 		for index in range(node.next.size()):
 			var road: Dictionary = node.next[index]
@@ -344,6 +346,11 @@ func _choose_landmark(index: int) -> bool:
 	if state.status == "traveling" and choice.has("risk") and rng.randf() < float(choice.risk)*context.crossing_factor(state.landmark):
 		_apply({"food": -30, "health": -15, "clothing": -1}, "crossing injuries")
 		last_crossing.mishap = true
+		# Swimming stock in high water: the current takes an animal.
+		if choice.method=="horses" and last_crossing.stage=="high" and Mounts.animals(state)>0:
+			var kind: String="mules" if Mounts.count(state,"mules")>0 and (Mounts.count(state,"horses")==0 or rng.randf()<0.4) else "horses"
+			state[kind]=int(state[kind])-1
+			last_crossing["animal_lost"]=kind
 	if not last_crossing.is_empty():
 		last_crossing.merge({"day": state.day, "landmark": state.landmark,
 			"food_lost": food_before - int(state.food),
@@ -368,10 +375,11 @@ func _choose_landmark(index: int) -> bool:
 	return true
 
 func crossing_summary(result: Dictionary) -> String:
-	var method: String = {"ford": "fording", "float": "floating", "ferry": "ferry", "seized": "working the taken ferry","swim":"swimming with packs","wade":"wading with packs"}.get(result.method,str(result.method))
+	var method: String = {"ford": "fording", "float": "floating", "ferry": "ferry", "seized": "working the taken ferry","swim":"swimming with packs","wade":"wading with packs","horses":"swimming the horses" if result.get("stage","")=="high" else "fording with the horses"}.get(result.method,str(result.method))
 	var text := "%s · %s. " % [result.place, method]
 	if result.mishap:
 		text += "Crossing mishap! Cargo washes away. Lost %d lb food and %d clothing set(s); the party suffered injuries. " % [result.food_lost, result.get("clothing_lost", 0)]
+		if result.has("animal_lost"):text += "A %s was swept downstream and drowned. " % ("mule" if result.animal_lost=="mules" else "horse")
 	else:
 		text += "No cargo lost. "
 	text += "The journey ended during this crossing." if result.lost else "The party reached the far bank."
@@ -654,7 +662,7 @@ func _apply(effects: Dictionary, health_cause: String = "injuries", resting: boo
 		elif key == "health":
 			_change_health(int(effects[key]), health_cause)
 		elif key != "days":
-			state[key] = maxi(0, int(state[key] + effects[key]))
+			state[key] = maxi(0, int(state.get(key, 100 if key == "horse_health" else 0) + effects[key]))
 	if state.extended_route and effects.has("food") and state.food < before.food:
 		provisions.remove(int(before.food) - int(state.food))
 	if effects.has("wheels") or effects.has("axles") or effects.has("tongues"):
@@ -700,6 +708,8 @@ func _schedule_event(allow_random: bool = true) -> void:
 			continue # Legacy first-leg fixture only; researched route owns river stops.
 		if event.id in seen or event.category != "historical":
 			continue
+		# A cracked wheel needs a wagon; it waits until the party has one again.
+		if state.vehicle=="foot" and event.id=="muddy_trail":continue
 		if (event.trigger == "day" and state.day >= event.at) or (event.trigger == "mile" and state.miles >= event.at):
 			_present(event)
 			return
@@ -731,7 +741,7 @@ func _roll_trail_event() -> void:
 	var candidates: Array = []
 	var weight := 0
 	for event in trail_events.events:
-		if state.vehicle=="foot" and event.id in ["breakdown","wagon_fire","swamped_load"]:continue
+		if state.vehicle=="foot" and event.id in ["breakdown","wagon_fire","swamped_load","hail_damage"]:continue
 		if state.oxen==0 and event.id=="ox_injury":continue
 		if state.oxen<2 and event.id=="stampede":continue
 		if current_edge().get("hazard","")=="river" and event.id in ["breakdown","ox_injury","wandering_ox","stampede"]:continue
@@ -1223,6 +1233,14 @@ func _choose_service(index: int) -> bool:
 		_schedule_event(false)
 	return true
 
+## Stock cross by the water: they ford in low water and swim in high. One choice, set by the stage.
+func horse_crossing() -> Dictionary:
+	var high: bool=state.river_stage=="high"
+	return {"label":("Swim the horses across · 1 day, risk to stock and supplies" if high else "Ford with the horses · 1 day, small risk to supplies"),"action":"cross","method":"horses","effects":{"days":1},"risk":horse_crossing_risk()}
+func horse_crossing_risk() -> float:
+	# Authored gameplay odds: animals take a ford well, and swim better than people with packs.
+	return 0.4 if state.river_stage == "high" else 0.08
+
 func swimming_risk() -> float:
 	# Authored gameplay odds, higher than either wagon option at the same stage.
 	return 0.8 if state.river_stage == "high" else 0.3
@@ -1291,6 +1309,8 @@ func open_departure_review() -> bool:
 	return _service_menu("Companions intend to leave","\n".join(lines),[{"label":"Acknowledge departures and remain at this stop","departure_review":true,"effects":{},"result":"Reviewed companion departures."}])
 
 func river_conditions() -> String:
+	if state.vehicle == "foot" and Mounts.animals(state)>0:
+		return "\nThe river is up: the animals will have to swim, and the current can take one." if state.river_stage == "high" else "\nThe water is low enough for the animals to ford."
 	if state.vehicle == "foot":
 		return "\nHigh water and a swift current make swimming extremely dangerous." if state.river_stage == "high" else "\nSwimming with packs risks injury and lost supplies, even in low water."
 	return "\nHigh water and a swift current make fording dangerous." if state.river_stage == "high" else "\nLow water makes fording more practical, though mishaps remain possible."
@@ -1319,6 +1339,8 @@ func _update_river_stage() -> void:
 			option.risk = 0.65 if state.river_stage == "high" else 0.08
 		elif option.get("method", "") == "swim":
 			option.risk = swimming_risk()
+		elif option.get("method", "") == "horses":
+			option.merge(horse_crossing(),true)
 		elif option.get("method", "") == "float":
 			option.risk = 0.35 if state.river_stage == "high" else 0.2
 		elif option.get("method", "") == "seized":
@@ -1562,6 +1584,7 @@ func open_local_attack(uid: String) -> bool:
 
 func adapt_travel_event(content: Dictionary) -> void:
 	if state.vehicle!="foot" or content.get("choices",[]).size()<2:return
+	_adapt_wagonless(content)
 	if content.get("id","")=="ox_injury":
 		content.text="An ox travelling with your party injures its leg. You are on foot; there is no wagon to pull. The animal's condition will matter if you hitch the wagon again."
 		content.choices[0].label="Rest the herd · 1 day"
@@ -1572,6 +1595,27 @@ func adapt_travel_event(content: Dictionary) -> void:
 		content.text="One animal is missing when you count the oxen travelling alongside your party."
 		content.choices[1].result="You keep walking with fewer oxen."
 
+
+## Without a wagon, encounters speak of the party, and "team strain" falls on whatever animals
+## carry the party: saddle and pack animals first, else any herded oxen, else nobody.
+func _adapt_wagonless(content: Dictionary) -> void:
+	var animals: int=Mounts.animals(state)
+	var words: Array=[["away from the wagon","away from camp"],["the wagons","the party"],["the wagon","the party"],["Defend the wagon","Defend the party"]]
+	for pair in words:content.text=str(content.get("text","")).replace(pair[0],pair[1])
+	for choice in content.get("choices",[]):
+		for pair in words:
+			choice.label=str(choice.get("label","")).replace(pair[0],pair[1])
+			choice.result=str(choice.get("result","")).replace(pair[0],pair[1])
+		for effects in [choice.get("effects",{}),choice.get("risk",{}).get("effects",{})]:
+			if not effects.has("ox_health"):continue
+			if animals>0:effects["horse_health"]=effects.ox_health
+			if animals>0 or int(state.oxen)==0:effects.erase("ox_health")
+		if animals>0:
+			choice.label=choice.label.replace("team strain","horses strained")
+			choice.result=choice.result.replace("the team is strained","the horses are blown")
+		elif int(state.oxen)==0:
+			choice.label=choice.label.replace(", team strain","")
+			choice.result=choice.result.replace(", but the team is strained","")
 
 func discard_supplies(cart: Dictionary) -> bool:
 	var plan: Dictionary=preload("res://simulation/discard_plan.gd").quote(self,cart)

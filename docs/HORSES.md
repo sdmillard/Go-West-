@@ -30,6 +30,16 @@ Abandoning the wagon or selling it at a post keeps the animals and tack, and the
 - A rest day restores 4, an ordinary day without carrying restores 1. Waterless legs allow no recovery.
 - An animal ridden to zero gives out and is left on the road (horses before mules). The rest recover to 35.
 
+## Wagonless events
+
+A party with no wagon never meets wagon troubles: breakdowns, wagon fires, swamped loads, hail damage and the cracked-wheel muddy trail are skipped, along with the oxen events. Shared encounters (bandits, riders and the like) speak of the party instead of the wagon, and any strain they put on a team falls on the horses and mules (`horse_health`), or on nobody when the party walks with no animals.
+
+## River crossings
+
+A party with horses or mules gets one crossing choice besides any ferry, set by the water: **Ford with the horses** in low water (8% mishap risk before the river's own factor) or **Swim the horses across** in high water (40%). If the water rises while the party waits, the ford becomes a swim. A mishap costs the usual food, clothing and injuries; in high water the current also drowns one animal. Walkers without animals still swim with their packs. These odds are authored gameplay tuning.
+
+`cross_horses.png` (PR #72) draws the stock two abreast in the crossing scene: riders walk the landings, wade a ford and swim high water; pack horses (and led horses) and pack mules do the same. On a ferry, the deck takes two ranks of riders, or one rank of animals with the walkers behind.
+
 ## Display
 
 `horses.png` (PR #72) draws a single-file string in `ui/trail_view.gd`: riders (man, woman, mule rider, or doubled riders), then pack horses, pack mules and led animals, up to eight. Walkers follow when the party is on foot. The ledger shows MOUNTED, DOUBLED UP or PACK TRAIN with the animal count and condition; Supplies → Transport lists stock, tack and loads.
@@ -40,8 +50,8 @@ The horse keys are optional: a party that never bought an animal, and every olde
 
 ## Not yet built
 
-Later steps from the design: horses, mules and tack at posts and traders (and in robbery demands, with the resale cap); crossings with `cross_horses.png`; theft, horse butchering and Cayuse/Nez Perce trade; flight bonuses in the wanted system, and fleeing a wagon on horseback with an automatic, hasty saddlebag pack; a balance study of wagon, packer and walking journeys.
+Later steps from the design: horses, mules and tack at posts and traders (and in robbery demands, with the resale cap); theft, horse butchering and Cayuse/Nez Perce trade; flight bonuses in the wanted system, and fleeing a wagon on horseback with an automatic, hasty saddlebag pack; a balance study of wagon, packer and walking journeys.
 
 ## Validation
 
-`tests/test_mounts.gd` (37 checks): store quotes with and without a wagon, packer departure, seat assignment, riding versus walking distance, mounted versus wagon first day, wear and rest, doubling up, sagebrush wear, breakdowns, led horses behind a wagon, abandoning the wagon with horses, save round trip, the real pre-horse save and the travel view and ledger. Existing tests that priced the default outfit now include the $75 wagon; the store-layout check scrolls to the salt row in the longer list.
+`tests/test_mounts.gd` (64 checks): store quotes with and without a wagon, packer departure, seat assignment, riding versus walking distance, mounted versus wagon first day, wear and rest, doubling up, sagebrush wear, breakdowns, led horses behind a wagon, abandoning the wagon with horses, save round trip, the real pre-horse save, wagonless events, the horse ford and swim (choice, mishaps, drowned animals, rising water, saves) and the travel view and ledger. Existing tests that priced the default outfit now include the $75 wagon; the store-layout check scrolls to the salt row in the longer list.

@@ -1486,7 +1486,7 @@ func _refresh() -> void:
 		node.queue_free()
 	if animating:
 		event_title.text = "Crossing " + crossing_result.place
-		event_text.text = {"ford": "The oxen pull the wagon through the water.", "float": "The unhitched wagon floats while the oxen cross separately.", "ferry": "The ferry carries the party and their packs." if s.vehicle=="foot" else "The ferry carries the wagon on its wooden platform.","swim":"The party swims across with their packs. The current threatens people and supplies."}.get(crossing_result.method,"The party crosses the river.")
+		event_text.text = {"ford": "The oxen pull the wagon through the water.", "float": "The unhitched wagon floats while the oxen cross separately.", "ferry": "The ferry carries the party and their packs." if s.vehicle=="foot" else "The ferry carries the wagon on its wooden platform.","swim":"The party swims across with their packs. The current threatens people and supplies.","horses":("The horses swim the current, riders and packs riding high." if crossing_result.get("stage","")=="high" else "The horses wade the shallow ford, packs riding dry.")}.get(crossing_result.method,"The party crosses the river.")
 		choices.add_child(button("SKIP ANIMATION", landscape.finish_crossing))
 	elif _reviewing_crossing():
 		event_title.text = "Crossing mishap!" if crossing_result.mishap else "The journey ends here."

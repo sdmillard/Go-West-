@@ -109,6 +109,61 @@ func run():
 	check(upgraded!=null and upgraded.state==store.normalize(old.state) and upgraded.Mounts.animals(upgraded.state)==0 and str(upgraded.rng.state)==old.random,"A real save from before horses loads unchanged with no animals")
 	snapshot.state.horse_health=101
 	check(store.restore(JSON.parse_string(JSON.stringify(snapshot)))==null,"Out-of-range horse condition is rejected")
+	# No wagon, no wagon troubles: encounters speak of the party and strain the horses.
+	game=packers()
+	check("muddy_trail" in game.seen,"Packers never meet the cracked-wheel muddy trail")
+	var bandits: Dictionary={}
+	for event in game.trail_events.events:
+		if event.id=="bandits":bandits=event.duplicate(true)
+	game.adapt_travel_event(bandits)
+	var words: String=JSON.stringify(bandits).to_lower()
+	check(not "wagon" in words and not "ox_health" in words,"Bandit choices for packers mention no wagon or team")
+	var flee: Dictionary=bandits.choices.filter(func(choice):return choice.label.begins_with("Flee"))[0]
+	check(flee.effects.get("horse_health",0)==-15 and "horses strained" in flee.label,"Fleeing strains the horses instead of a team")
+	game.state["horse_health"]=90
+	game._apply(flee.effects)
+	check(game.state.horse_health<=76 and game.state.ox_health==100,"Horse strain lands on the horses; the lost day is a camp day")
+	var walkers=packers({"wagon":0,"food":80,"clothing":5})
+	var riders: Dictionary={}
+	for event in walkers.trail_events.events:
+		if event.id=="riders":riders=event.duplicate(true)
+	walkers.adapt_travel_event(riders)
+	check(not "ox_health" in JSON.stringify(riders) and not "strain" in JSON.stringify(riders),"Walkers with no animals have no team to strain")
+	walkers.survival.data.event_chance=1.0
+	var seen_hail:=false
+	for i in range(200):
+		walkers.pending={}
+		walkers._roll_trail_event()
+		if walkers.pending.get("id","") in ["hail_damage","breakdown","wagon_fire","swamped_load","ox_injury","wandering_ox","stampede"]:seen_hail=true
+	check(not seen_hail,"No wagon or oxen events reach a party without them")
+	# Stock ford a low river and swim a high one: one choice, set by the water.
+	for stage in ["low","high"]:
+		game=packers()
+		game.state.next_landmark="big_blue"
+		game.state.river_stage=stage
+		game._arrive_landmark(false,false)
+		var methods: Array=game.pending.choices.map(func(choice):return choice.get("method",""))
+		var horse: Dictionary=game.pending.choices.filter(func(choice):return choice.get("method","")=="horses")[0] if "horses" in methods else {}
+		check(methods.count("horses")==1 and not "swim" in methods and not "ford" in methods,"Packers at a river get one horse crossing choice: "+stage)
+		check(horse.get("label","").begins_with("Ford with the horses" if stage=="low" else "Swim the horses across"),"The horse crossing fords low water and swims high water: "+stage)
+		check(store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))!=null,"A save at the river with the horse choice loads: "+stage)
+		var index: int=methods.find("horses")
+		game.pending.choices[index].risk=100.0
+		var stock: int=game.Mounts.animals(game.state)
+		check(game.choose(index),"Packers cross with their horses: "+stage)
+		check(game.last_crossing.mishap and game.Mounts.animals(game.state)==stock-(1 if stage=="high" else 0),"Only high water can drown an animal in a mishap: "+stage)
+		check(("drowned" in game.last_crossing.summary)==(stage=="high"),"The crossing record names a drowned animal: "+stage)
+	game=packers()
+	game.state.next_landmark="big_blue"
+	game.state.river_stage="low"
+	game._arrive_landmark(false,false)
+	game.survival.wet_ground=4
+	game._update_river_stage()
+	check(game.pending.choices.any(func(choice):return choice.get("label","").begins_with("Swim the horses")),"Rising water turns the horse ford into a swim")
+	walkers=packers({"wagon":0,"food":80,"clothing":5})
+	walkers.state.next_landmark="big_blue"
+	walkers._arrive_landmark()
+	check(walkers.pending.choices.any(func(choice):return choice.get("method","")=="swim") and not walkers.pending.choices.any(func(choice):return choice.get("method","")=="horses"),"Walkers without animals still swim with their packs")
 	# The travel screen shows riders and pack animals.
 	var main=Main.instantiate()
 	root.add_child(main)
@@ -118,6 +173,10 @@ func run():
 	await process_frame
 	check(main.landscape.mount_rows().size()==8 and main.landscape.mount_rows().count(main.landscape.MOUNT_PACK_MULE)==3,"The travel view draws five riders and three pack mules")
 	check("MOUNTED" in main.stats.text and "HORSES 5 MULES 3" in main.stats.text,"The ledger shows the mounted party and its animals")
+	main.landscape.start_crossing({"method":"horses","stage":"high","place":"Big Blue River","mishap":false})
+	main.landscape.crossing_elapsed=main.landscape.crossing_duration*0.5
+	await process_frame
+	check(main.landscape._riding() and not main.landscape.crossing.is_empty(),"The horse crossing plays with the riders on their horses")
 	main.queue_free()
 	print("Mounts: %d checks, %d failures" % [checks,failures])
 	quit(1 if failures else 0)
