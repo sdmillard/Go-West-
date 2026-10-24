@@ -11,6 +11,8 @@ const ANIMALS = [preload("res://art/pixels/hunt_bison.png"), preload("res://art/
 const COVER = preload("res://art/pixels/hunt_cover.png") # the model's 12 x 14 cover
 const HUNTER = preload("res://art/pixels/hunt_hunter.png") # 16x18 frames; rows standing, walking
 const SMOKE = preload("res://art/pixels/hunt_smoke.png") # 16x16 frames
+const HEADROOM := [0, 7, 2]
+const FOOTROOM := [0, 0, 1]
 const FRAMES := 8
 const SMOKE_SECONDS := 0.8
 var active := false
@@ -63,7 +65,8 @@ func _draw() -> void:
 		# Game walks until the first shot, then runs flat out; shot animals stay where they fell.
 		var frame := 0 if down else int(encounter.elapsed * (14.0 if running else 8.0) + index * 3) % FRAMES
 		var row := 2 if down else (1 if running else 0)
-		draw_texture_rect_region(ANIMALS[kind], Rect2(p, bounds.size), Rect2(frame * bounds.size.x, row * bounds.size.y, bounds.size.x, bounds.size.y))
+		var sprite_size:=bounds.size+Vector2(0,HEADROOM[kind]+FOOTROOM[kind])
+		draw_texture_rect_region(ANIMALS[kind], Rect2(p-Vector2(0,HEADROOM[kind]),sprite_size), Rect2(frame*sprite_size.x,row*sprite_size.y,sprite_size.x,sprite_size.y))
 		draw_set_transform(Vector2.ZERO)
 	# Foreground cover masks animals and blocks the rifle's line of fire.
 	var cover_frame := 0 if encounter.region in ["woodland","forest"] else 1

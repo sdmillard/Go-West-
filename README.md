@@ -6,6 +6,8 @@ A growing Oregon Trail-inspired game in **Godot 4 / GDScript**. Lead five travel
 
 [Wagon sales, custom robbery demands and resizing](docs/WAGON_SALES_ROBBERY_AND_DISPLAY.md) add reviewed keep/sell/leave decisions, value-sensitive intimidation and configurable window scaling.
 
+[Horse loads and wagon hunts](docs/HORSE_LOADS.md) account for riders, tack and freight, with heavy or led returns and an optional noisy whole-party wagon hunt. Deer antlers and rabbit ears now fit their animation cells.
+
 [Hunting trips and mounted outriders](docs/FIELD_OUTINGS.md) use real packed supplies, selected animals and shared carrying rules for leader and companion hunts. Camp > Field trips shows return dates and camps left behind.
 
 [Companion camp work](docs/COMPANION_CAMP_WORK.md) lets travelers nurse, forage, dry meat or help the leader hunt during one shared camp day. [Repairs and named stock guards](docs/CAMP_REPAIRS_AND_GUARDS.md) add persistent broken-part projects and the existing night-watch protection to the roster. Open Camp > Companion tasks to assign standing jobs.

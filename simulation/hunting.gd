@@ -11,6 +11,7 @@ func load_data(value: Variant) -> bool:
 	error = "Invalid hunting rules"
 	if not value is Dictionary:
 		return false
+	if not value.get("wagon_noise_chance") is float or not is_finite(value.wagon_noise_chance) or value.wagon_noise_chance<0 or value.wagon_noise_chance>1:return false
 	for key in ["duration", "reload_seconds", "shot_limit", "carry_limit", "carry_per_person_lb"]:
 		if not value.get(key) is float and not value.get(key) is int:
 			return false
@@ -37,6 +38,7 @@ func load_data(value: Variant) -> bool:
 		var region = value.regions.get(key)
 		if not region is Dictionary or not region.get("label") is String or not region.get("weights") is Array or region.weights.size() != 3:
 			return false
+		if not region.get("wagon_access") is bool:return false
 		var total := 0
 		for weight in region.weights:
 			if (not weight is float and not weight is int) or weight < 0 or weight != int(weight):
@@ -49,7 +51,7 @@ func load_data(value: Variant) -> bool:
 	return true
 var rng := RandomNumberGenerator.new()
 
-func begin(seed_value: int, outing: int, miles: int, habitat: String = "") -> Dictionary:
+func begin(seed_value: int, outing: int, miles: int, habitat: String = "", wagon: bool = false) -> Dictionary:
 	rng.seed = seed_value + 719 * outing + 98471
 	var region := habitat if data.regions.has(habitat) else ("woodland" if miles < 81 else "plains")
 	var rules: Dictionary = data.regions[region]
@@ -67,14 +69,20 @@ func begin(seed_value: int, outing: int, miles: int, habitat: String = "") -> Di
 				break
 			kind += 1
 		var species: Dictionary = data.species[kind]
-		animals.append({"kind": kind, "x": rng.randf_range(45, 330), "y": 72 + index * 23,
+		animals.append({"kind": kind, "x": rng.randf_range(45, 330), "y": 96 + index * 10,
 			"direction": -1 if rng.randf() < 0.5 else 1, "escaped": false,
 			"meat": rng.randi_range(int(species.meat_min), int(species.meat_max))})
+	# Noise rolls are separate, preserving on-foot seeds and shot mechanics.
+	if wagon:
+		var noise:=RandomNumberGenerator.new()
+		noise.seed=seed_value+719*outing+801737
+		animals=animals.filter(func(_animal):return noise.randf()>=float(data.wagon_noise_chance))
+		count=animals.size()
 	var cover: Array = []
 	for index in range(4):
-		cover.append(Rect2(rng.randi_range(40, 385), rng.randi_range(64, 113), 12, 14))
+		cover.append(Rect2(rng.randi_range(40, 385), rng.randi_range(101, 126), 12, 14))
 	return {"shots": 0, "meat": 0, "targets": [], "animals": animals, "cover": cover,
-		"region": region, "region_label": rules.label, "elapsed": 0.0, "reload": 0.0,
+		"region": region, "region_label": rules.label, "wagon": wagon, "elapsed": 0.0, "reload": 0.0,
 		"ended": false, "hunter": Vector2(216, 140), "destination": Vector2(216, 140),
 		"message": "No game in sight. Return to camp." if count == 0 else "Watch for a clear shot.",
 		"flash": 0.0, "aim": Vector2.ZERO}

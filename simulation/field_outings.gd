@@ -36,9 +36,10 @@ func same_road(game,trip: Dictionary) -> bool:
  for i in range(start,path.size()-1):
   if game.route.nodes[path[i]].kind=="river" or game.route.nodes[path[i+1]].kind=="river" or game.route.nodes[path[i]].next.size()!=1 or game.route.edge_between(path[i],path[i+1]).get("hazard","")=="river":return false
  return true
-func start(game,index: int,kit: String,days: int,bullets: int) -> bool:
+func start(game,index: int,kit: String,days: int,bullets: int,return_mode: String="ride") -> bool:
+ if kit=="wagon":return false
  if not game.can_service() or index<=0 or index>=game.party_health.members.size() or game.state.party_size<2:return false
- var offer: Dictionary=Outfit.quote(game,[index],kit,days,bullets)
+ var offer: Dictionary=Outfit.quote(game,[index],kit,days,bullets,return_mode)
  if not offer.valid:return false
  if days>1 and not offer.mounted:return false
  var original: Dictionary=game.party_health.members[index]
@@ -47,13 +48,14 @@ func start(game,index: int,kit: String,days: int,bullets: int) -> bool:
  var random:=RandomNumberGenerator.new()
  random.seed=int(game.state.seed)^int(record.next_id)*104729^0x4f5554
  var trip: Dictionary={"id":int(record.next_id),"member":index,"kit":kit,"stock":offer.stock.duplicate(true),"condition":game.Mounts.condition(game.state),"origin":game.CacheSupport.location(game),"mile":int(game.state.miles),"heading":game.Direction.heading(game),"started":int(game.state.day),"due":int(game.state.day)+days,"days":days,"left":false,"stage":"away","delayed":false,"camp":{"camp_random":str(random.state),"camp_day":int(game.state.day),"risk_cumulative":0.0,"gone":false,"guards":[person],"camp_log":[],"habitat":game.context.region_id(game),"camp_rations":int(game.state.rations),"camp_deficiency":int(game.party_health.days_without_fresh),"inventory":offer.inventory.duplicate(true),"fresh":offer.fresh.duplicate(true),"household_gear_lb":float(game.provisions.data.walking.personal_gear_lb_per_person),"location":game.CacheSupport.location(game),"field_working":true}}
+ trip.camp["return_mode"]=return_mode
  trip.camp["departure_kit"]=kit
  Outfit.reserve(game,offer)
  game.state.household_gear_lb=maxf(0,game.provisions.household_mass(game.state)-float(game.provisions.data.walking.personal_gear_lb_per_person))
  original["away"]=true
  original.history.append("Day %d · Left on a %d-day %s hunting trip. Expected day %d." % [game.state.day,days,"mounted" if offer.mounted else "foot",trip.due])
  record.trips.append(trip);record.next_id+=1
- record.preferences[str(index)]={"kit":kit,"days":days,"bullets":bullets}
+ record.preferences[str(index)]={"kit":kit,"days":days,"bullets":bullets,"return_mode":return_mode}
  recount(game)
  game.journal.append("Day %d · %s set out hunting: %s; %d food units, %d bullets. Expected day %d." % [game.state.day,original.name,kit,offer.inventory.food,bullets,trip.due])
  game.supply_history.append({"day":game.state.day,"event":"outing_departure","member":index,"inventory":offer.inventory.duplicate(true),"stock":offer.stock.duplicate(true),"changes":{}})
@@ -65,12 +67,12 @@ func _hunt(game,trip: Dictionary,random) -> bool:
  var cache: Dictionary=trip.camp
  var actual: Dictionary=cache.guards[0]
  if not actual.alive or actual.get("departed",false) or int(cache.inventory.bullets)<1:return false
- var limit: float=Outfit.capacity(game,[actual],trip.kit,trip.stock)
+ var limit: float=Outfit.capacity(game,[actual],trip.kit,trip.stock,Outfit.mode(trip))
  var food=game.provisions.get_script().new()
  food.data=game.provisions.data.duplicate(true);food.fresh.assign(cache.fresh)
  var load: Dictionary=cache.inventory.duplicate()
  load.merge({"vehicle":"foot","party_size":1})
- var room: int=maxi(0,floori(limit-food.cargo(load)))
+ var room: int=maxi(0,floori(limit-Outfit.mass(game,[actual],trip.kit,cache.inventory,cache.fresh,trip.stock,Outfit.mode(trip))))
  if room<=0:return false
  cache.inventory.bullets-=1
  var region: Dictionary=game.hunting.data.regions[cache.habitat]
@@ -130,12 +132,25 @@ func tick(game) -> void:
   if actual.get("departed",false) and not was_left:
    trip.stock=Outfit.stock("foot");trip.kit="foot"
    cache.camp_log.append("The departing hunter took the outing's animals and tack.")
+  var profile: Dictionary={}
   if trip.kit!="foot":
    var load: Dictionary=cache.inventory.duplicate()
    load.merge({"vehicle":"foot","party_size":1})
    var food=game.provisions.get_script().new();food.data=game.provisions.data;food.fresh.assign(cache.fresh)
-   var wear: int=Outfit.wear(game,trip.kit,1,cache.habitat,food.cargo(load)/maxf(1,Outfit.capacity(game,[actual],trip.kit,trip.stock)),trip.stock)
-   trip.condition=maxi(10,int(trip.condition)-wear) if cache.field_working else mini(100,int(trip.condition)+int(game.provisions.data.mounts.rest_recovery))
+   var mass: float=Outfit.mass(game,[actual],trip.kit,cache.inventory,cache.fresh,trip.stock,Outfit.mode(trip))
+   profile=Outfit.load_profile(game,[actual],trip.kit,mass,trip.stock,Outfit.mode(trip))
+   var wear: int=Outfit.wear(game,trip.kit,1,cache.habitat,profile.ratio,trip.stock,Outfit.mode(trip))
+   trip.condition=maxi(0,int(trip.condition)-wear) if cache.field_working else mini(100,int(trip.condition)+int(game.provisions.data.mounts.rest_recovery))
+  if trip.kit!="foot" and int(trip.condition)==0 and game.Mounts.animals(trip.stock)>0:
+   var kind: String=profile.worst_kind
+   if kind not in game.Mounts.ANIMALS or int(trip.stock[kind])<1:kind="horses" if int(trip.stock.horses)>0 else "mules"
+   trip.stock[kind]-=1
+   trip.condition=int(game.provisions.data.mounts.breakdown_condition) if game.Mounts.animals(trip.stock)>0 else 0
+   cache.camp_log.append("A field animal gave out under its load and was lost.")
+   if game.Mounts.animals(trip.stock)==0:
+    cache["cached_tack"]={}
+    for key in game.Mounts.TACK:cache.cached_tack[key]=trip.stock[key];trip.stock[key]=0
+    trip.stage="stranded"
   cache.camp_random=str(random.state)
  if not moving:resolve_returns(game)
 func resolve_returns(game) -> void:
@@ -153,13 +168,13 @@ func resolve_returns(game) -> void:
     cache.camp_log.append("A difficult return delayed the hunter and left them worn or injured.")
    elif at_origin(game,trip):_return(game,trip)
    elif int(cache.get("return_after_day",0))>int(game.state.day):trip.due=int(cache.return_after_day)
-   elif active and trip.kit in ["ride_horse","ride_mule","horse_and_mule"]:
+   elif active and Outfit.rides(trip.kit) and game.Mounts.animals(trip.stock)>0:
     var result: String=Follow.advance(game,trip,random)
     if result=="joined":_return(game,trip)
     elif result in ["moving","crossing"]:trip.due=int(game.state.day)+1
     else:_strand(game,trip)
    else:_strand(game,trip)
-  elif trip.stage=="stranded" and active and not cache.get("wrong_turn",false) and trip.kit in ["ride_horse","ride_mule","horse_and_mule"]:
+  elif trip.stage=="stranded" and active and not cache.get("wrong_turn",false) and Outfit.rides(trip.kit) and game.Mounts.animals(trip.stock)>0:
    var profile: Dictionary=game.characters.profiles[int(trip.member)]
    if profile.trust>game.characters.breaking_point(profile) and ("Loyal" in profile.specials or not profile.traits.any(func(t):return t in ["Nervous","Self-serving"])):
     var result: String=Follow.advance(game,trip,random)
@@ -207,7 +222,9 @@ func _return(game,trip: Dictionary) -> void:
   else:game.provisions.fresh.append(batch.duplicate(true))
  var caught: int=catches.reduce(func(n,b):return n+int(b.pounds),0)
  game.state.food+=all_food-caught
- Outfit.restore_stock(game,trip.stock,int(trip.condition))
+ var restored_stock: Dictionary=trip.stock.duplicate()
+ for key in trip.camp.get("cached_tack",{}):restored_stock[key]+=int(trip.camp.cached_tack[key])
+ Outfit.restore_stock(game,restored_stock,int(trip.condition))
  recount(game)
  var lost:=0
  for batch in catches:
@@ -231,7 +248,7 @@ func recover_here(game) -> bool:
 func needs_warning(game,all_trips: bool=false) -> bool:
  for trip in record.trips:
   if trip.left or trip.stage=="stranded":continue
-  if all_trips or trip.kit not in ["ride_horse","ride_mule","horse_and_mule"] or int(game.state.day)>=int(trip.due):return true
+  if all_trips or not Outfit.rides(trip.kit) or int(game.state.day)>=int(trip.due):return true
  return false
 func warn(game,flight: bool=false,all_trips: bool=false) -> bool:
  if not needs_warning(game,flight or all_trips):return false
@@ -263,7 +280,7 @@ func valid(value: Variant,game,party: Array,day: int) -> bool:
   if not game.crime.whole(trip.get("id"),1,int(value.next_id)-1) or trip.id in ids or not game.crime.whole(trip.get("member"),1,party.size()-1) or trip.member in members:return false
   ids.append(trip.id);members.append(trip.member)
   if not party[int(trip.member)].get("away",false):return false
-  if trip.get("kit") not in Outfit.KITS or not trip.get("stock") is Dictionary or trip.stock.size()!=5:return false
+  if trip.get("kit")=="wagon" or trip.get("kit") not in Outfit.KITS or not trip.get("stock") is Dictionary or trip.stock.size()!=5:return false
   for key in Outfit.stock(trip.kit):
    if not game.crime.whole(trip.stock.get(key),0,2) or int(trip.stock[key])>int(Outfit.stock(trip.kit)[key]):return false
   if not game.crime.whole(trip.get("condition"),0,100) or not game.crime.whole(trip.get("days"),1,3) or not game.crime.whole(trip.get("started"),0,day) or not game.crime.whole(trip.get("due"),int(trip.started)+1,day+3) or not game.crime.whole(trip.get("mile"),0,game.route.longest_miles):return false
@@ -274,6 +291,10 @@ func valid(value: Variant,game,party: Array,day: int) -> bool:
   if origin_mile!=int(trip.mile):return false
   var camp: Variant=trip.get("camp")
   if not camp is Dictionary or not game.Guards.valid(camp,game,day) or camp.guards.size()!=1 or int(camp.guards[0].id)!=int(trip.member) or camp.guards[0].name!=party[int(trip.member)].name:return false
+  if camp.has("cached_tack"):
+   if not camp.cached_tack is Dictionary or camp.cached_tack.size()!=3:return false
+   for key in game.Mounts.TACK:
+    if not game.crime.whole(camp.cached_tack.get(key),0,int(Outfit.stock(trip.kit)[key])-int(trip.stock[key])):return false
   if not Follow.valid(camp,game) or not Encounters.valid(camp,game):return false
   if not camp.get("field_working") is bool or not camp.get("inventory") is Dictionary or camp.inventory.size()!=game.provisions.data.weights_lb.size() or not camp.get("fresh") is Array or camp.fresh.size()>1000:return false
   for key in game.provisions.data.weights_lb:
@@ -294,7 +315,7 @@ func valid(value: Variant,game,party: Array,day: int) -> bool:
  for key in value.preferences:
   var pref: Variant=value.preferences[key]
   if not key is String or (key!="leader" and (not key.is_valid_int() or str(int(key))!=key or int(key)<1 or int(key)>=party.size())):return false
-  if not pref is Dictionary or pref.size()!=3 or pref.get("kit") not in Outfit.KITS or not game.crime.whole(pref.get("days"),1,3) or not game.crime.whole(pref.get("bullets"),1,30):return false
+  if not pref is Dictionary or pref.size() not in [3,4] or (pref.has("return_mode") and pref.return_mode not in Outfit.RETURN_MODES) or pref.get("kit") not in Outfit.KITS or not game.crime.whole(pref.get("days"),1,3) or not game.crime.whole(pref.get("bullets"),1,30):return false
  return true
 func valid_origin(game,at: Dictionary) -> bool:
  if at.size()!=4 or not at.get("from") is String or not at.get("to") is String or not at.get("path") is Array or not game.route.valid_path(at.path) or at.path[-1]!=at.from:return false

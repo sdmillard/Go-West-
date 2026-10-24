@@ -44,7 +44,8 @@
         6,
         7
       ],
-      "empty_chance": 0.12
+      "empty_chance": 0.12,
+      "wagon_access": true
     },
     "plains": {
       "label": "Open prairie",
@@ -53,7 +54,8 @@
         3,
         7
       ],
-      "empty_chance": 0.18
+      "empty_chance": 0.18,
+      "wagon_access": true
     },
     "highcountry": {
       "label": "High country",
@@ -62,7 +64,8 @@
         5,
         6
       ],
-      "empty_chance": 0.2
+      "empty_chance": 0.2,
+      "wagon_access": false
     },
     "sagebrush": {
       "label": "Sagebrush country",
@@ -71,7 +74,8 @@
         4,
         7
       ],
-      "empty_chance": 0.25
+      "empty_chance": 0.25,
+      "wagon_access": true
     },
     "forest": {
       "label": "Western forest",
@@ -80,7 +84,9 @@
         7,
         5
       ],
-      "empty_chance": 0.18
+      "empty_chance": 0.18,
+      "wagon_access": false
     }
-  }
+  },
+  "wagon_noise_chance": 0.35
 }

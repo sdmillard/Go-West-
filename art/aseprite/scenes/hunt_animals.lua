@@ -2,8 +2,8 @@
 -- Each animal sheet is eight frames wide at the species' hitbox size from data/hunting.json,
 -- in three rows: walking (before any shot), running flat out (after the first shot), and down.
 --   hunt_bison   320x72  (40x24 frames)  buffalo: a four-beat walk and a rocking gallop
---   hunt_deer    216x66  (27x22 frames)  mule deer: a walk, then stotting on all four feet
---   hunt_rabbit  120x33  (15x11 frames)  jackrabbit: easy hops, then long bounds, ears laid back
+--   hunt_deer    216x87  (27x29 frames; 7px headroom)  mule deer: a walk, then stotting on all four feet
+--   hunt_rabbit  120x42  (15x14 frames; 2px headroom, 1px footroom)  jackrabbit: easy hops, then long bounds, ears laid back
 --   hunt_hunter  128x36  (16x18 frames)  rows: standing (breathing), walking; feet at (8, 17)
 --   hunt_smoke   128x16  (16x16 frames)  a black-powder puff that billows, drifts up and thins
 local K = dofile(app.params.kit)
@@ -129,9 +129,9 @@ local function deer(ox, oy, frame, gait)
   end
 end
 
-K.canvas(216, 66, 184882)
+K.canvas(216, 87, 184882)
 K.layer("deer", function()
-  for f = 1, FRAMES do for g = 1, 3 do deer((f - 1) * 27, (g - 1) * 22, (g == 3) and 1 or f, g) end end
+  for f = 1, FRAMES do for g = 1, 3 do deer((f - 1) * 27, (g - 1) * 29 + 7, (g == 3) and 1 or f, g) end end
 end)
 K.save("hunt_deer")
 
@@ -172,9 +172,9 @@ local function rabbit(ox, oy, frame, gait)
   end
 end
 
-K.canvas(120, 33, 184883)
+K.canvas(120, 42, 184883)
 K.layer("rabbit", function()
-  for f = 1, FRAMES do for g = 1, 3 do rabbit((f - 1) * 15, (g - 1) * 11 + 1, (g == 3) and 1 or f, g) end end
+  for f = 1, FRAMES do for g = 1, 3 do rabbit((f - 1) * 15, (g - 1) * 14 + 2, (g == 3) and 1 or f, g) end end
 end)
 K.save("hunt_rabbit")
 

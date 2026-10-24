@@ -128,14 +128,20 @@
     "note": "Authored offscreen camp abstraction. Guards use cached food, clothing and ammunition; one uncertain hunting shot per outing. Regional animals and health-based hauling apply. Protection lowers but never eliminates cache loss; outcomes are learned on return."
   },
   "mounts": {
-    "note": "Authored game tuning, not measured 1848 figures. A saddle animal carries one rider (two when doubled up) and its saddlebags; a pack animal carries its pack load. Horses take poor grass harder than oxen. Mounted miles are before pace, load, weather, terrain and fatigue. Light slow pack work on good grazing can maintain condition; load, pace, poor forage and winter add wear. Rest recovery is capped by seasonal grazing. Exact thresholds remain authored.",
+    "note": "Authored load model, not measured 1848 animal specifications or safe handling guidance. Working total includes rider and fitted tack. Secured freight can be lashed outside saddlebags. Strenuous ceilings are emergency gameplay limits: actual excess load slows travel and increases wear; doubling is especially costly. Leading removes rider weight. Proper pack saddles avoid the improvised saddle-load wear surcharge.",
     "horse": {
-      "pack_lb": 175,
-      "meat_lb": 250
+      "pack_lb": 225,
+      "meat_lb": 250,
+      "max_pack_lb": 300,
+      "working_load_lb": 250,
+      "max_load_lb": 375
     },
     "mule": {
-      "pack_lb": 200,
-      "meat_lb": 220
+      "pack_lb": 225,
+      "meat_lb": 220,
+      "max_pack_lb": 300,
+      "working_load_lb": 250,
+      "max_load_lb": 375
     },
     "saddlebag_lb": 25,
     "mounted_miles_per_day": 32,
@@ -151,7 +157,17 @@
       "sagebrush": 1,
       "forest": 0
     },
-    "light_work_load": 0.5
+    "light_work_load": 0.85,
+    "rider_lb": 150,
+    "riding_tack_lb": 25,
+    "pack_tack_lb": 25,
+    "loose_bags_lb": 2,
+    "riding_lash_lb": 50,
+    "riding_lash_max_lb": 125,
+    "led_lash_lb": 225,
+    "led_lash_max_lb": 300,
+    "overload_wear": 6,
+    "improvised_wear": 1
   },
   "shortfall": {
     "note": "Authored gradual shortage model, not a clinical survival clock. Fractional missed ration-days accumulate; regular meals repay the deficit before health can recover. Hunger raises fatigue and later damage. Injury, exposure, illness and thirst remain separate.",

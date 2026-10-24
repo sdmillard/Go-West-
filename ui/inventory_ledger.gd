@@ -61,6 +61,12 @@ func _init(game):
   equipment.add_child(words(str(item).capitalize()))
   equipment.add_child(words(str(amount)))
   equipment.add_child(words("%.1f" % (amount*float(game.provisions.data.weights_lb[item]))))
+ var loose: Dictionary=game.Mounts.loose_tack(game.provisions.data.mounts,game.state)
+ for key in loose:
+  if int(loose[key])>0:
+   equipment.add_child(words("Loose "+str(key).replace("_"," ")))
+   equipment.add_child(words(str(loose[key])))
+   equipment.add_child(words("%.1f" % (loose[key]*float(game.provisions.data.mounts.loose_bags_lb if key=="saddlebags" else game.provisions.data.mounts.pack_tack_lb))))
  var personal: float=float(game.provisions.data.walking.personal_gear_lb_per_person)*game.state.party_size if game.state.vehicle=="foot" else game.provisions.household_mass(game.state)
  gear.add_child(words("Personal / household gear: %.0f lb · Carried remains: %d lb" % [personal,game.state.get("remains_lb",0)]))
  var transport:=page("Transport")
@@ -75,7 +81,10 @@ func _init(game):
   transport.add_child(words("Tack: %d saddles, %d pack saddles, %d saddlebags" % [game.Mounts.count(game.state,"saddles"),game.Mounts.count(game.state,"pack_saddles"),game.Mounts.count(game.state,"saddlebags")]))
   if game.state.vehicle=="foot":transport.add_child(words("Travel: %s. Animals carry %.0f lb.%s" % [game.Mounts.label(plan).to_lower(),plan.animal_lb," Poor grass in dry country wears horses down faster than oxen." if game.Mounts.animals(game.state)>0 else ""]))
  if game.state.vehicle=="foot":
-  transport.add_child(words("Carry limit: %.0f lb, from the active party's health and the animals' loads." % game.provisions.capacity(game.state)))
+  transport.add_child(words("Cargo: %.1f lb · Working %.0f / Allowed %.0f lb" % [game.provisions.cargo(game.state),game.provisions.capacity(game.state),game.provisions.storage_capacity(game.state)]))
+  var burden: Dictionary=game.provisions.load_profile(game.state)
+  transport.add_child(words("Animal load: %.0f rider + %.0f tack + %.0f cargo lb" % [burden.rider_lb,burden.tack_lb,burden.animal_cargo_lb]))
+  if burden.ratio>1:transport.add_child(words("Above working load: slower travel and extra animal wear."))
   if not game.wagon_cache.is_empty():transport.add_child(words("Wagon cache: mile %d · %s" % [game.wagon_cache.mile,"located" if game.wagon_cache.found else "not yet checked"]))
  else:
   transport.add_child(words("Team load guideline: %.0f lb · Pulling speed: %d%%" % [game.provisions.team_capacity(game.state.oxen),roundi(game.survival.team_factor(game.state.oxen)*100)]))

@@ -25,11 +25,17 @@ func _initialize() -> void:
 			var frame_width: int = {"wagon": 96, "oxen": 48, "walker": 16, "cross_wagon": 64, "cross_swim_ox": 32, "cross_ferryman": 32, "cross_people": 16, "cross_swimmer": 16}[name]
 			check(image.get_width() == frame_width * 8, name + " has eight exact frames")
 			check(image.get_region(Rect2i(0, 0, frame_width, image.get_height())).get_data() != image.get_region(Rect2i(frame_width, 0, frame_width, image.get_height())).get_data(), name + " frames actually animate")
-	# Hunting sheets hold eight frames exactly the size of each species' hitbox, in three rows.
+	# Sprite headroom is visual padding; the physical shot targets keep their original size.
 	var species: Array = JSON.parse_string(FileAccess.get_file_as_string("res://data/hunting.json")).species
 	for index in range(3):
 		var sheet: Texture2D = load("res://art/pixels/hunt_" + ["bison", "deer", "rabbit"][index] + ".png")
-		check(sheet.get_size() == Vector2(species[index].width * 8, species[index].height * 3), "Hunting sprite matches its hitbox: " + species[index].id)
+		check(sheet.get_size() == Vector2(species[index].width * 8, (species[index].height+[0,7,3][index])*3), "Hunting sprite has complete padded animation cells: " + species[index].id)
+	# A clear top border in every deer frame protects antlers through the whole jump.
+	var deer: Image=load("res://art/pixels/hunt_deer.png").get_image()
+	for gait in range(3):
+		for frame in range(8):
+			for x in range(27):
+				check(deer.get_pixel(frame*27+x,gait*29).a==0,"Antlers stay inside their animation cell")
 	check(load("res://art/pixels/hunt_cover.png").get_size() == Vector2(24, 14), "Cover sheet holds two 12 x 14 frames")
 	check(load("res://art/pixels/hunt_hunter.png").get_size() == Vector2(128, 36), "Hunter sheet holds standing and walking rows of 16 x 18 frames")
 	check(load("res://art/pixels/hunt_smoke.png").get_size() == Vector2(128, 16), "Rifle smoke holds eight 16 x 16 frames")

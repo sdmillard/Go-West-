@@ -1,26 +1,59 @@
 extends RefCounted
 ## The same people/equipment/load calculation serves player and delegated hunts.
-const KITS=["foot","ride_horse","pack_horse","ride_mule","pack_mule","horse_and_mule"]
+const KITS=["foot","ride_horse","pack_horse","ride_mule","pack_mule","horse_and_mule","ride_horse_light","ride_mule_light","wagon"]
+const RETURN_MODES=["ride","ride_strenuous","lead","lead_strenuous"]
+static func rides(kit: String) -> bool:return kit in ["ride_horse","ride_mule","horse_and_mule","ride_horse_light","ride_mule_light"]
+static func mode(trip: Dictionary) -> String:return str(trip.camp.get("return_mode","ride"))
 static func stock(kit: String) -> Dictionary:
  var result: Dictionary={"horses":0,"mules":0,"saddles":0,"pack_saddles":0,"saddlebags":0}
  match kit:
+  "ride_horse_light":result.horses=1;result.saddles=1
+  "ride_mule_light":result.mules=1;result.saddles=1
   "ride_horse":result.horses=1;result.saddles=1;result.saddlebags=1
   "pack_horse":result.horses=1;result.pack_saddles=1
   "ride_mule":result.mules=1;result.saddles=1;result.saddlebags=1
   "pack_mule":result.mules=1;result.pack_saddles=1
   "horse_and_mule":result.horses=1;result.mules=1;result.saddles=1;result.saddlebags=1;result.pack_saddles=1
  return result
-static func capacity(game,members: Array,kit: String,allocated: Dictionary={}) -> float:
- var people:=0.0
- for id in members:
-  var person: Dictionary=id if id is Dictionary else game.party_health.members[int(id)]
-  people+=float(game.hunting.data.carry_per_person_lb)*game.provisions.Carrying.factor(person,game.provisions.data.walking.health_load_curve)
+static func transport(game,members: Array,kit: String,allocated: Dictionary={},return_mode: String="ride") -> Dictionary:
  var inventory: Dictionary=stock(kit) if allocated.is_empty() else allocated.duplicate()
- inventory.merge({"vehicle":"foot","party_size":members.size()})
- var animals: float=game.Mounts.plan(game.provisions.data.mounts,inventory).animal_lb
- return minf(float(game.hunting.data.carry_limit),people+animals)
-static func quote(game,members: Array,kit: String,days: int,bullets: int) -> Dictionary:
+ inventory.merge({"vehicle":"foot","party_size":members.size(),"lead_mounts":return_mode.begins_with("lead"),"strenuous_load":return_mode.ends_with("strenuous")})
+ return inventory
+static func people(game,members: Array,riding: int) -> float:
+ var actual: Array=[]
+ for id in members:actual.append(id if id is Dictionary else game.party_health.members[int(id)])
+ return minf(float(game.hunting.data.carry_limit),game.provisions.Carrying.capacity(game.Mounts.walking_members(actual,riding),float(game.hunting.data.carry_per_person_lb),game.provisions.data.walking.health_load_curve))
+static func capacity(game,members: Array,kit: String,allocated: Dictionary={},return_mode: String="ride") -> float:
+ if kit=="wagon":return float(game.provisions.data.cargo_guideline_lb)
+ var plan: Dictionary=game.Mounts.plan(game.provisions.data.mounts,transport(game,members,kit,allocated,return_mode))
+ return people(game,members,int(plan.riding_people))+game.Mounts.freight_limit(plan)
+static func mass(game,members: Array,kit: String,inventory: Dictionary,fresh: Array,allocated: Dictionary={},return_mode: String="ride") -> float:
+ var food=game.provisions.get_script().new();food.data=game.provisions.data;food.fresh.assign(fresh)
+ var load: Dictionary=inventory.duplicate()
+ load.merge(transport(game,members,kit,allocated,return_mode))
+ return food.cargo(load)
+static func load_profile(game,members: Array,kit: String,cargo: float,allocated: Dictionary={},return_mode: String="ride") -> Dictionary:
+ var plan: Dictionary=game.Mounts.plan(game.provisions.data.mounts,transport(game,members,kit,allocated,return_mode))
+ return game.Mounts.burden(game.provisions.data.mounts,plan,cargo,people(game,members,int(plan.riding_people)))
+static func wagon_quote(game,members: Array) -> Dictionary:
+ var fail: Dictionary={"valid":false,"message":"Take everyone currently with you to bring the wagon."}
+ var active: Array=game.party_health.members.filter(func(p):return game.party_health.is_active(p)).map(func(p):return int(p.id))
+ if members.size()!=active.size() or not active.all(func(id):return id in members):return fail
+ if game.state.vehicle!="wagon" or game.state.oxen<1 or game.state.ox_health<1:fail.message="A wagon and a working ox team are required.";return fail
+ var region: String=game.context.region_id(game)
+ if not game.hunting.data.regions[region].wagon_access:fail.message="The wagon cannot reach this hunting ground. Use people or animals here.";return fail
+ var crew: Array=active.filter(func(id):return game.provisions.Carrying.factor(game.party_health.members[id],game.provisions.data.walking.health_load_curve)>0 and game.characters.willing(id,"hunt"))
+ if crew.is_empty() or active[0] not in crew:fail.message="The leader must be able and willing to hunt.";return fail
+ if game.state.bullets<1:fail.message="Bring ammunition to hunt.";return fail
+ var inventory: Dictionary={}
+ for key in game.provisions.data.weights_lb:inventory[key]=0
+ var used: float=game.provisions.cargo(game.state)
+ var limit: float=game.provisions.storage_capacity(game.state)
+ return {"valid":used<limit,"message":"Ready." if used<limit else "The wagon has no cargo room. Drop supplies first.","members":active,"crew":crew,"kit":"wagon","days":1,"inventory":inventory,"stock":stock("foot"),"fresh":[],"pack_lb":used,"capacity_lb":limit,"working_lb":game.provisions.team_capacity(game.state.oxen),"catch_lb":maxi(0,floori(limit-used)),"mounted":false,"return_mode":"ride","rider_lb":0.0,"tack_lb":0.0}
+static func quote(game,members: Array,kit: String,days: int,bullets: int,return_mode: String="ride") -> Dictionary:
  var result: Dictionary={"valid":false,"message":"Choose a healthy, willing outing party and real equipment."}
+ if kit=="wagon":return wagon_quote(game,members)
+ if return_mode not in RETURN_MODES:return result
  if kit not in KITS or days<1 or days>3 or bullets<1 or bullets>30 or members.is_empty() or members.size()>5:return result
  var seen: Array=[]
  for id in members:
@@ -55,14 +88,16 @@ static func quote(game,members: Array,kit: String,days: int,bullets: int) -> Dic
    var piece: Dictionary=batch.duplicate(true);piece.pounds=used;carried.append(piece)
    need-=used
  model.fresh.assign(carried)
- inventory.merge({"vehicle":"foot","party_size":size})
- var pack: float=model.cargo(inventory)
- var limit: float=capacity(game,members,kit)
+ var pack: float=mass(game,members,kit,inventory,carried,animals,return_mode)
+ var limit: float=capacity(game,members,kit,animals,return_mode)
+ var normal: String="lead" if return_mode.begins_with("lead") else "ride"
+ var working: float=capacity(game,members,kit,animals,normal)
+ var profile: Dictionary=load_profile(game,members,kit,pack,animals,return_mode)
  var room: int=maxi(0,floori(limit-pack))
- result.merge({"valid":room>0,"message":"Ready." if room>0 else "The outbound pack fills this party's carrying allowance.","members":seen,"kit":kit,"days":days,"inventory":inventory,"stock":animals,"fresh":carried,"pack_lb":pack,"capacity_lb":limit,"catch_lb":room,"mounted":kit in ["ride_horse","ride_mule","horse_and_mule"]},true)
- inventory.erase("vehicle");inventory.erase("party_size")
+ result.merge({"valid":room>0,"message":"Ready." if room>0 else "The outbound pack fills this party's carrying allowance.","members":seen,"kit":kit,"days":days,"inventory":inventory,"stock":animals,"fresh":carried,"pack_lb":pack,"capacity_lb":limit,"working_lb":working,"catch_lb":room,"mounted":rides(kit),"return_mode":return_mode,"rider_lb":profile.rider_lb,"tack_lb":profile.tack_lb},true)
  return result
 static func reserve(game,offer: Dictionary) -> void:
+ if offer.kit=="wagon":return
  game.provisions.remove(int(offer.inventory.food))
  for key in offer.inventory:game.state[key]-=int(offer.inventory[key])
  for key in offer.stock:game.state[key]=int(game.state.get(key,0))-int(offer.stock[key])
@@ -73,8 +108,7 @@ static func restore_stock(game,animals: Dictionary,condition: int) -> void:
  for key in animals:game.state[key]=int(game.state.get(key,0))+int(animals[key])
  if incoming>0:game.state.horse_health=roundi(float(current*before+condition*incoming)/(before+incoming))
 
-static func wear(game,kit: String,size: int,habitat: String,load_ratio: float,allocated: Dictionary={}) -> int:
- var inventory: Dictionary=stock(kit) if allocated.is_empty() else allocated.duplicate()
- inventory.merge({"vehicle":"foot","party_size":size})
+static func wear(game,kit: String,size: int,habitat: String,load_ratio: float,allocated: Dictionary={},return_mode: String="ride") -> int:
+ var inventory: Dictionary=transport(game,range(size),kit,allocated,return_mode)
  var base: int=int(game.context.data.regions[habitat].strain)+int(game.seasonal_pressure().working_strain)+int(game.survival.weather.get("ox_strain",0))
  return game.Mounts.wear(game.provisions.data.mounts,game.Mounts.plan(game.provisions.data.mounts,inventory),habitat,base,0,load_ratio)

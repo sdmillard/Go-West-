@@ -47,7 +47,7 @@ func run():
  for pair in [[100,1.0],[80,1.0],[50,1.0],[49,59.0/60.0],[35,0.75],[20,0.5],[10,0.25],[0,0.0]]:
   g.party_health.members[0].health=pair[0];g.party_health.members[1].health=pair[0]
   var a: float=Outfit.capacity(g,[0],"foot");var b: float=Outfit.capacity(g,[1],"foot")
-  check(is_equal_approx(a,50*pair[1]) and a==b,"Leader and delegated hunter share each configured health breakpoint")
+  check(is_equal_approx(a,snappedf(50*pair[1],0.1)) and a==b,"Leader and delegated hunter share each configured health breakpoint")
   var walker: Dictionary=g.party_health.members[0]
   check(is_equal_approx(g.provisions.Carrying.capacity([walker],40,curve),snappedf(40*pair[1],0.1)),"Walking uses the same health factor with its own base allowance")
  g=party()
