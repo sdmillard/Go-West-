@@ -1,0 +1,1144 @@
+{
+  "rules_signature": "aecf61d91b46ad7eb2924872f40becc9b4b29a1ebb9768cb34dfd836c7c8f2eb",
+  "source_hashes": {
+    "data/appearance.json": "59d47bc3af292ea8a47fd9f9c7bccf51b6a73b74ce2e379b0fd3c956968fbe15",
+    "data/character_catalog.json": "09bfaac277a6affc948cdb148f811e78be9ff7c36568656a933408433d869709",
+    "data/combat_rules.json": "8e66c77298a219ae09f8af8c9352638f67ca0ff0f623f286e1868fb010f227cc",
+    "data/crime_scenes.json": "7af939795e45e77e338dbf9c993337fa132c4abf71ca83566cbe473033af6391",
+    "data/events.json": "92553914f1b86377d290d29086361e1b9cadce027b53459785f131b947f167b7",
+    "data/health_conditions.json": "e3abbdcb754a2b93cd6b2df734e982d3400b4e88e319563f5993f671b587f536",
+    "data/hunting.json": "487f044f49f5eff775465db325ca86935f17000a39bf509e05d289491ef11430",
+    "data/location_scenes.json": "c83c95452bdc9d1363e1d986920114d73ca5250de1209ee69e980952648f3865",
+    "data/map.json": "b7901aded45ef703256260d9d5f0a3116c28cf5c58e0d49c5f1d0dc8ababbafc",
+    "data/outfitting.json": "d71920f71a456f987094ebb95dc69a29b08de0594a9063dac68edcb9b9cdd7f1",
+    "data/party_benefits.json": "34570796d75535ee475b745540b2d36090d376109a179393cfd94c5aa7c2956c",
+    "data/provisions.json": "fd81522a4cd6e3f888fe6e3349d1bcbaa15406a346da761ba8fb9b3415258048",
+    "data/recruitment.json": "2ab34cf68166ff24a80e53212a49a56a6bf706a35f13420e0ee0caf0b069494b",
+    "data/route.json": "ed6819e25a190422112e6b2c54da7e54b7a35a9065beabe1634652ff218d3224",
+    "data/save_migrations.json": "13a32f52d3eee8982b3b62e56447b3013b5729cdc18d32adf2434b43fafd331a",
+    "data/scene_ambience.json": "d70843fe5553ffc3a9849f38461f838287dc53f3b462e4a091680b4b5b68f937",
+    "data/social_rules.json": "0881a6a6bda117ad493093029b1225631a6b1c9ea1bcb605f9a2766cdb53d0c8",
+    "data/survival_rules.json": "15d6e3bc30aba897125e565a06966c8399d2eec0a7d79c7103856349c0850c68",
+    "data/trail_context.json": "87dbf2adb5daa058418ae7a010dc0983bb6cb444716601228d8ab74649018307",
+    "data/trail_events.json": "eba01173e551cff889da3a2a98d095f435a873c9e226571b3a0c02e5088e8f93",
+    "data/trail_news.json": "839ff4aa42b1c0a1dba2d9707fa2eed6be6b776f3019396e984419bcbb39754d",
+    "simulation/bandit_demand.gd": "7b6590ff7db47138120a7f14dee2abab9155d2509ea659a99853d7bb514167d9",
+    "simulation/carrying.gd": "e257982c3e0aaf3ededdf319cbdbff48896005c7d5d50b76f51c28126209077c",
+    "simulation/character_catalog.gd": "37cd3d67e87d6425c5126c67beb917ce2303c2218d02e3eaa2455c6d7a380a96",
+    "simulation/combat.gd": "d363ac8683951057fb1d039ed3d8492ce60ffd5bb984b39001e232ddc7382c2b",
+    "simulation/crime_system.gd": "a8b1137631ea1fb7c0c9996640df8d7a3ddedabe4335c428585c0ce486a4db84",
+    "simulation/discard_plan.gd": "0515216a6b171ab53f968abd7a06fbb6c42a80d59b2258c504cb566101004b23",
+    "simulation/event_catalog.gd": "02ef866ad2653e87fcc90eaef14967a1ea819c191c2729b951dca308071a2dad",
+    "simulation/grave_store.gd": "ce13273ecee4d73114564c37908b7f3a2c473530672a265b0eae2c029a4ba71d",
+    "simulation/hunting.gd": "eec6cd067332c78f8c330ec71f7909e4942d33cd6c0f39989802a6f2ec9bf1a6",
+    "simulation/outfitting.gd": "27b931263784eb943966400787660c30c396f3e21a6599261695bb60383a2904",
+    "simulation/party_character.gd": "11c4924b78d80f8a6e79df3f465d59fea50d887c7f662702dbb3b9ea839a2d69",
+    "simulation/party_health.gd": "17704fe969c69ad6b13308e80a31c4bebecc7ce38142856e6bcd58197f623d64",
+    "simulation/party_recruitment.gd": "8b25e3e20d192b18ea7ddd084de996b2306f43973e22b5dc7e002fe65181bed8",
+    "simulation/party_social.gd": "7f53661a4f05d9055f615ef6fe03a49c420ae4c6b4e3e3f60a7738af52b4dc8e",
+    "simulation/produce_trade.gd": "916542b3ceb3869029a9cf50b89c79e0ab8a56f1fdf185785a3fdc1495d95b76",
+    "simulation/provisions.gd": "8f91af63bffe0d3c6f4e70a5ecc369fcd2f3333407bf2f0d103592c9660c0eba",
+    "simulation/remains.gd": "f6c942956538ddca8cf3dd28727a5113b411331c2a91f3281639604ff79f8fca",
+    "simulation/route_catalog.gd": "f8e42f847e7c2a2328ddf9e8b8ae6b689dcb2ad24d4aa1fb4361ea6fd8e666d7",
+    "simulation/save_store.gd": "0f282a31c894e0f761265b0ae14f0ee7297504533cda24cbc59af6070e231955",
+    "simulation/survival_rules.gd": "c63cd33f933b6c84c062093aae6f25ef5bc83662ee5faf40fcb266f80dac90d2",
+    "simulation/trail_context.gd": "484ecbd2ada91d388fd98994298463a1bcfe76d68b98cb55cc4efca54e485f85",
+    "simulation/trail_engine.gd": "6254fa637ad86a8c5ef816305eee2f2e452f217f49b13ffdf111ebbe9bd0dacc",
+    "simulation/trail_news.gd": "7cf725ae5554ecde199cce47b22d1b1d6398bd5afdec86c88bb46f29907ff16d",
+    "simulation/traveler_appearance.gd": "1be477cbb1b7bb23c480fa23717ed305cef48b1d0031db07b66e8e5e0cb65ecb",
+    "simulation/wagon_cache.gd": "42dd28e3817606035d68ad83b5c6836af1e67b3f0a5eca48940d2032eeb13556",
+    "simulation/wanted_system.gd": "d083c5683e80b15cd19a4e0b877a50db698752562b8918f815f8123b17481e36",
+    "tests/balance_observer.gd": "ab642d18a478e82060e8c41290b465b0828054d5909f2e5129200848890f02c5",
+    "tests/current_balance_campaign.gd": "6bb382bcb1a43767b9a7304828107f5b708b5fcff558654d5e2937639ac6103d",
+    "tests/current_journey_policy.gd": "e35fb6e9688884e39107dabbbb64e6191c298d315085e9a44565c68848154d7f",
+    "tests/full_trail_balance.gd": "76980100cfee9108c3c46d7a15088e13cd1fc6decddb9cc6965e88d7d157b480",
+    "tests/journey_trade_policy.gd": "0e99d83cd36f6fb62de3e1492e1b7d2d3bb72aef7dd3d1a4b89bd65673bbecd9",
+    "tests/outlaw_journeys.gd": "a3c868e8d1c60af7b7daca1ed098ac0cf80524fd6155819397e10033918fb141"
+  },
+  "settings": {
+    "accuracy": 0.65,
+    "branch": "",
+    "care_below": 55,
+    "cash_reserve": 20,
+    "forage_gap": 20,
+    "hunt_below": 90,
+    "opportunity": 1,
+    "outfit_dried": 20,
+    "oxen": 6,
+    "post_food": 600,
+    "preserve_meals": 3.3
+  },
+  "seed_start": 6000,
+  "seed_count": 8,
+  "months": [
+    5
+  ],
+  "rosters": [
+    "ordinary"
+  ],
+  "strategies": [
+    "salt",
+    "steady"
+  ],
+  "rest_below": 55,
+  "label": "bandit-validation-01",
+  "total": {
+    "n": 48,
+    "arrived": 28,
+    "original_intact": 25,
+    "current_full_party": 25,
+    "outcomes": {
+      "lost": 18,
+      "arrived": 28,
+      "year_limit": 2
+    },
+    "deaths": 98,
+    "departures": 0,
+    "recruited": 0,
+    "mean_elapsed_days": 214.479,
+    "arrival_days": {
+      "mean": 216.25,
+      "min": 180,
+      "max": 308
+    },
+    "mean_underfed_days": 2.5,
+    "mean_scurvy_person_days": 26.854,
+    "scurvy_cases": 43,
+    "mean_hunts": 19.771,
+    "mean_preservations": 7.688,
+    "mean_forages": 6.625,
+    "mean_counter_visits": 17.479,
+    "mean_vitamin_days": 15.646,
+    "wages_paid_cents": 0,
+    "wages_owed_cents": 0,
+    "wanted_encounters": 0,
+    "sentences": {},
+    "death_causes": {
+      "lack of food": 66,
+      "typhoid fever": 3,
+      "measles": 2,
+      "scurvy": 21,
+      "dysentery": 2,
+      "exposure": 4
+    }
+  },
+  "errors": [],
+  "by_profession": {
+    "banker": {
+      "n": 16,
+      "arrived": 14,
+      "original_intact": 14,
+      "current_full_party": 14,
+      "outcomes": {
+        "arrived": 14,
+        "year_limit": 1,
+        "lost": 1
+      },
+      "deaths": 6,
+      "departures": 0,
+      "recruited": 0,
+      "mean_elapsed_days": 210.938,
+      "arrival_days": {
+        "mean": 210.5,
+        "min": 180,
+        "max": 253
+      },
+      "mean_underfed_days": 0.438,
+      "mean_scurvy_person_days": 6.75,
+      "scurvy_cases": 2,
+      "mean_hunts": 7.188,
+      "mean_preservations": 4,
+      "mean_forages": 4.188,
+      "mean_counter_visits": 22.812,
+      "mean_vitamin_days": 16.75,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "wanted_encounters": 0,
+      "sentences": {},
+      "death_causes": {
+        "scurvy": 1,
+        "lack of food": 5
+      }
+    },
+    "carpenter": {
+      "n": 16,
+      "arrived": 12,
+      "original_intact": 11,
+      "current_full_party": 11,
+      "outcomes": {
+        "arrived": 12,
+        "lost": 3,
+        "year_limit": 1
+      },
+      "deaths": 20,
+      "departures": 0,
+      "recruited": 0,
+      "mean_elapsed_days": 215.75,
+      "arrival_days": {
+        "mean": 210.583,
+        "min": 180,
+        "max": 270
+      },
+      "mean_underfed_days": 1.062,
+      "mean_scurvy_person_days": 34.688,
+      "scurvy_cases": 13,
+      "mean_hunts": 15.688,
+      "mean_preservations": 7.188,
+      "mean_forages": 6.125,
+      "mean_counter_visits": 18.562,
+      "mean_vitamin_days": 15.938,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "wanted_encounters": 0,
+      "sentences": {},
+      "death_causes": {
+        "dysentery": 1,
+        "typhoid fever": 1,
+        "lack of food": 10,
+        "exposure": 2,
+        "scurvy": 6
+      }
+    },
+    "farmer": {
+      "n": 16,
+      "arrived": 2,
+      "original_intact": 0,
+      "current_full_party": 0,
+      "outcomes": {
+        "lost": 14,
+        "arrived": 2
+      },
+      "deaths": 72,
+      "departures": 0,
+      "recruited": 0,
+      "mean_elapsed_days": 216.75,
+      "arrival_days": {
+        "mean": 290.5,
+        "min": 273,
+        "max": 308
+      },
+      "mean_underfed_days": 6,
+      "mean_scurvy_person_days": 39.125,
+      "scurvy_cases": 28,
+      "mean_hunts": 36.438,
+      "mean_preservations": 11.875,
+      "mean_forages": 9.562,
+      "mean_counter_visits": 11.062,
+      "mean_vitamin_days": 14.25,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "wanted_encounters": 0,
+      "sentences": {},
+      "death_causes": {
+        "lack of food": 51,
+        "typhoid fever": 2,
+        "measles": 2,
+        "scurvy": 14,
+        "dysentery": 1,
+        "exposure": 2
+      }
+    }
+  },
+  "by_month": {
+    "5": {
+      "n": 48,
+      "arrived": 28,
+      "original_intact": 25,
+      "current_full_party": 25,
+      "outcomes": {
+        "lost": 18,
+        "arrived": 28,
+        "year_limit": 2
+      },
+      "deaths": 98,
+      "departures": 0,
+      "recruited": 0,
+      "mean_elapsed_days": 214.479,
+      "arrival_days": {
+        "mean": 216.25,
+        "min": 180,
+        "max": 308
+      },
+      "mean_underfed_days": 2.5,
+      "mean_scurvy_person_days": 26.854,
+      "scurvy_cases": 43,
+      "mean_hunts": 19.771,
+      "mean_preservations": 7.688,
+      "mean_forages": 6.625,
+      "mean_counter_visits": 17.479,
+      "mean_vitamin_days": 15.646,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "wanted_encounters": 0,
+      "sentences": {},
+      "death_causes": {
+        "lack of food": 66,
+        "typhoid fever": 3,
+        "measles": 2,
+        "scurvy": 21,
+        "dysentery": 2,
+        "exposure": 4
+      }
+    }
+  },
+  "by_roster": {
+    "ordinary": {
+      "n": 48,
+      "arrived": 28,
+      "original_intact": 25,
+      "current_full_party": 25,
+      "outcomes": {
+        "lost": 18,
+        "arrived": 28,
+        "year_limit": 2
+      },
+      "deaths": 98,
+      "departures": 0,
+      "recruited": 0,
+      "mean_elapsed_days": 214.479,
+      "arrival_days": {
+        "mean": 216.25,
+        "min": 180,
+        "max": 308
+      },
+      "mean_underfed_days": 2.5,
+      "mean_scurvy_person_days": 26.854,
+      "scurvy_cases": 43,
+      "mean_hunts": 19.771,
+      "mean_preservations": 7.688,
+      "mean_forages": 6.625,
+      "mean_counter_visits": 17.479,
+      "mean_vitamin_days": 15.646,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "wanted_encounters": 0,
+      "sentences": {},
+      "death_causes": {
+        "lack of food": 66,
+        "typhoid fever": 3,
+        "measles": 2,
+        "scurvy": 21,
+        "dysentery": 2,
+        "exposure": 4
+      }
+    }
+  },
+  "by_strategy": {
+    "salt": {
+      "n": 24,
+      "arrived": 11,
+      "original_intact": 10,
+      "current_full_party": 10,
+      "outcomes": {
+        "lost": 11,
+        "arrived": 11,
+        "year_limit": 2
+      },
+      "deaths": 61,
+      "departures": 0,
+      "recruited": 0,
+      "mean_elapsed_days": 222.208,
+      "arrival_days": {
+        "mean": 233.545,
+        "min": 195,
+        "max": 273
+      },
+      "mean_underfed_days": 3.083,
+      "mean_scurvy_person_days": 38.5,
+      "scurvy_cases": 26,
+      "mean_hunts": 25.583,
+      "mean_preservations": 10.125,
+      "mean_forages": 6.833,
+      "mean_counter_visits": 17.833,
+      "mean_vitamin_days": 16.333,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "wanted_encounters": 0,
+      "sentences": {},
+      "death_causes": {
+        "lack of food": 40,
+        "typhoid fever": 3,
+        "measles": 2,
+        "scurvy": 12,
+        "dysentery": 2,
+        "exposure": 2
+      }
+    },
+    "steady": {
+      "n": 24,
+      "arrived": 17,
+      "original_intact": 15,
+      "current_full_party": 15,
+      "outcomes": {
+        "lost": 7,
+        "arrived": 17
+      },
+      "deaths": 37,
+      "departures": 0,
+      "recruited": 0,
+      "mean_elapsed_days": 206.75,
+      "arrival_days": {
+        "mean": 205.059,
+        "min": 180,
+        "max": 308
+      },
+      "mean_underfed_days": 1.917,
+      "mean_scurvy_person_days": 15.208,
+      "scurvy_cases": 17,
+      "mean_hunts": 13.958,
+      "mean_preservations": 5.25,
+      "mean_forages": 6.417,
+      "mean_counter_visits": 17.125,
+      "mean_vitamin_days": 14.958,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "wanted_encounters": 0,
+      "sentences": {},
+      "death_causes": {
+        "lack of food": 26,
+        "scurvy": 9,
+        "exposure": 2
+      }
+    }
+  },
+  "timely_ordinary": {
+    "farmer": {
+      "salt": {
+        "n": 8,
+        "arrived": 1,
+        "original_intact": 0,
+        "current_full_party": 0,
+        "outcomes": {
+          "lost": 7,
+          "arrived": 1
+        },
+        "deaths": 36,
+        "departures": 0,
+        "recruited": 0,
+        "mean_elapsed_days": 210.5,
+        "arrival_days": {
+          "mean": 273,
+          "min": 273,
+          "max": 273
+        },
+        "mean_underfed_days": 6.25,
+        "mean_scurvy_person_days": 40.875,
+        "scurvy_cases": 15,
+        "mean_hunts": 36.375,
+        "mean_preservations": 11.625,
+        "mean_forages": 8.375,
+        "mean_counter_visits": 10.875,
+        "mean_vitamin_days": 14.75,
+        "wages_paid_cents": 0,
+        "wages_owed_cents": 0,
+        "wanted_encounters": 0,
+        "sentences": {},
+        "death_causes": {
+          "lack of food": 25,
+          "typhoid fever": 2,
+          "measles": 2,
+          "scurvy": 6,
+          "dysentery": 1
+        }
+      },
+      "steady": {
+        "n": 8,
+        "arrived": 1,
+        "original_intact": 0,
+        "current_full_party": 0,
+        "outcomes": {
+          "lost": 7,
+          "arrived": 1
+        },
+        "deaths": 36,
+        "departures": 0,
+        "recruited": 0,
+        "mean_elapsed_days": 223,
+        "arrival_days": {
+          "mean": 308,
+          "min": 308,
+          "max": 308
+        },
+        "mean_underfed_days": 5.75,
+        "mean_scurvy_person_days": 37.375,
+        "scurvy_cases": 13,
+        "mean_hunts": 36.5,
+        "mean_preservations": 12.125,
+        "mean_forages": 10.75,
+        "mean_counter_visits": 11.25,
+        "mean_vitamin_days": 13.75,
+        "wages_paid_cents": 0,
+        "wages_owed_cents": 0,
+        "wanted_encounters": 0,
+        "sentences": {},
+        "death_causes": {
+          "lack of food": 26,
+          "scurvy": 8,
+          "exposure": 2
+        }
+      }
+    },
+    "carpenter": {
+      "salt": {
+        "n": 8,
+        "arrived": 4,
+        "original_intact": 4,
+        "current_full_party": 4,
+        "outcomes": {
+          "arrived": 4,
+          "lost": 3,
+          "year_limit": 1
+        },
+        "deaths": 19,
+        "departures": 0,
+        "recruited": 0,
+        "mean_elapsed_days": 230,
+        "arrival_days": {
+          "mean": 228.75,
+          "min": 195,
+          "max": 263
+        },
+        "mean_underfed_days": 2.125,
+        "mean_scurvy_person_days": 61.125,
+        "scurvy_cases": 9,
+        "mean_hunts": 26.75,
+        "mean_preservations": 12,
+        "mean_forages": 8,
+        "mean_counter_visits": 17.75,
+        "mean_vitamin_days": 16.375,
+        "wages_paid_cents": 0,
+        "wages_owed_cents": 0,
+        "wanted_encounters": 0,
+        "sentences": {},
+        "death_causes": {
+          "dysentery": 1,
+          "typhoid fever": 1,
+          "lack of food": 10,
+          "exposure": 2,
+          "scurvy": 5
+        }
+      },
+      "steady": {
+        "n": 8,
+        "arrived": 8,
+        "original_intact": 7,
+        "current_full_party": 7,
+        "outcomes": {
+          "arrived": 8
+        },
+        "deaths": 1,
+        "departures": 0,
+        "recruited": 0,
+        "mean_elapsed_days": 201.5,
+        "arrival_days": {
+          "mean": 201.5,
+          "min": 180,
+          "max": 270
+        },
+        "mean_underfed_days": 0,
+        "mean_scurvy_person_days": 8.25,
+        "scurvy_cases": 4,
+        "mean_hunts": 4.625,
+        "mean_preservations": 2.375,
+        "mean_forages": 4.25,
+        "mean_counter_visits": 19.375,
+        "mean_vitamin_days": 15.5,
+        "wages_paid_cents": 0,
+        "wages_owed_cents": 0,
+        "wanted_encounters": 0,
+        "sentences": {},
+        "death_causes": {
+          "scurvy": 1
+        }
+      }
+    },
+    "banker": {
+      "salt": {
+        "n": 8,
+        "arrived": 6,
+        "original_intact": 6,
+        "current_full_party": 6,
+        "outcomes": {
+          "arrived": 6,
+          "year_limit": 1,
+          "lost": 1
+        },
+        "deaths": 6,
+        "departures": 0,
+        "recruited": 0,
+        "mean_elapsed_days": 226.125,
+        "arrival_days": {
+          "mean": 230.167,
+          "min": 195,
+          "max": 253
+        },
+        "mean_underfed_days": 0.875,
+        "mean_scurvy_person_days": 13.5,
+        "scurvy_cases": 2,
+        "mean_hunts": 13.625,
+        "mean_preservations": 6.75,
+        "mean_forages": 4.125,
+        "mean_counter_visits": 24.875,
+        "mean_vitamin_days": 17.875,
+        "wages_paid_cents": 0,
+        "wages_owed_cents": 0,
+        "wanted_encounters": 0,
+        "sentences": {},
+        "death_causes": {
+          "scurvy": 1,
+          "lack of food": 5
+        }
+      },
+      "steady": {
+        "n": 8,
+        "arrived": 8,
+        "original_intact": 8,
+        "current_full_party": 8,
+        "outcomes": {
+          "arrived": 8
+        },
+        "deaths": 0,
+        "departures": 0,
+        "recruited": 0,
+        "mean_elapsed_days": 195.75,
+        "arrival_days": {
+          "mean": 195.75,
+          "min": 180,
+          "max": 224
+        },
+        "mean_underfed_days": 0,
+        "mean_scurvy_person_days": 0,
+        "scurvy_cases": 0,
+        "mean_hunts": 0.75,
+        "mean_preservations": 1.25,
+        "mean_forages": 4.25,
+        "mean_counter_visits": 20.75,
+        "mean_vitamin_days": 15.625,
+        "wages_paid_cents": 0,
+        "wages_owed_cents": 0,
+        "wanted_encounters": 0,
+        "sentences": {},
+        "death_causes": {}
+      }
+    }
+  },
+  "cells": {
+    "banker|5|ordinary|salt": {
+      "n": 8,
+      "arrived": 6,
+      "original_intact": 6,
+      "current_full_party": 6,
+      "outcomes": {
+        "arrived": 6,
+        "year_limit": 1,
+        "lost": 1
+      },
+      "deaths": 6,
+      "departures": 0,
+      "recruited": 0,
+      "mean_elapsed_days": 226.125,
+      "arrival_days": {
+        "mean": 230.167,
+        "min": 195,
+        "max": 253
+      },
+      "mean_underfed_days": 0.875,
+      "mean_scurvy_person_days": 13.5,
+      "scurvy_cases": 2,
+      "mean_hunts": 13.625,
+      "mean_preservations": 6.75,
+      "mean_forages": 4.125,
+      "mean_counter_visits": 24.875,
+      "mean_vitamin_days": 17.875,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "wanted_encounters": 0,
+      "sentences": {},
+      "death_causes": {
+        "scurvy": 1,
+        "lack of food": 5
+      }
+    },
+    "banker|5|ordinary|steady": {
+      "n": 8,
+      "arrived": 8,
+      "original_intact": 8,
+      "current_full_party": 8,
+      "outcomes": {
+        "arrived": 8
+      },
+      "deaths": 0,
+      "departures": 0,
+      "recruited": 0,
+      "mean_elapsed_days": 195.75,
+      "arrival_days": {
+        "mean": 195.75,
+        "min": 180,
+        "max": 224
+      },
+      "mean_underfed_days": 0,
+      "mean_scurvy_person_days": 0,
+      "scurvy_cases": 0,
+      "mean_hunts": 0.75,
+      "mean_preservations": 1.25,
+      "mean_forages": 4.25,
+      "mean_counter_visits": 20.75,
+      "mean_vitamin_days": 15.625,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "wanted_encounters": 0,
+      "sentences": {},
+      "death_causes": {}
+    },
+    "carpenter|5|ordinary|salt": {
+      "n": 8,
+      "arrived": 4,
+      "original_intact": 4,
+      "current_full_party": 4,
+      "outcomes": {
+        "arrived": 4,
+        "lost": 3,
+        "year_limit": 1
+      },
+      "deaths": 19,
+      "departures": 0,
+      "recruited": 0,
+      "mean_elapsed_days": 230,
+      "arrival_days": {
+        "mean": 228.75,
+        "min": 195,
+        "max": 263
+      },
+      "mean_underfed_days": 2.125,
+      "mean_scurvy_person_days": 61.125,
+      "scurvy_cases": 9,
+      "mean_hunts": 26.75,
+      "mean_preservations": 12,
+      "mean_forages": 8,
+      "mean_counter_visits": 17.75,
+      "mean_vitamin_days": 16.375,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "wanted_encounters": 0,
+      "sentences": {},
+      "death_causes": {
+        "dysentery": 1,
+        "typhoid fever": 1,
+        "lack of food": 10,
+        "exposure": 2,
+        "scurvy": 5
+      }
+    },
+    "carpenter|5|ordinary|steady": {
+      "n": 8,
+      "arrived": 8,
+      "original_intact": 7,
+      "current_full_party": 7,
+      "outcomes": {
+        "arrived": 8
+      },
+      "deaths": 1,
+      "departures": 0,
+      "recruited": 0,
+      "mean_elapsed_days": 201.5,
+      "arrival_days": {
+        "mean": 201.5,
+        "min": 180,
+        "max": 270
+      },
+      "mean_underfed_days": 0,
+      "mean_scurvy_person_days": 8.25,
+      "scurvy_cases": 4,
+      "mean_hunts": 4.625,
+      "mean_preservations": 2.375,
+      "mean_forages": 4.25,
+      "mean_counter_visits": 19.375,
+      "mean_vitamin_days": 15.5,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "wanted_encounters": 0,
+      "sentences": {},
+      "death_causes": {
+        "scurvy": 1
+      }
+    },
+    "farmer|5|ordinary|salt": {
+      "n": 8,
+      "arrived": 1,
+      "original_intact": 0,
+      "current_full_party": 0,
+      "outcomes": {
+        "lost": 7,
+        "arrived": 1
+      },
+      "deaths": 36,
+      "departures": 0,
+      "recruited": 0,
+      "mean_elapsed_days": 210.5,
+      "arrival_days": {
+        "mean": 273,
+        "min": 273,
+        "max": 273
+      },
+      "mean_underfed_days": 6.25,
+      "mean_scurvy_person_days": 40.875,
+      "scurvy_cases": 15,
+      "mean_hunts": 36.375,
+      "mean_preservations": 11.625,
+      "mean_forages": 8.375,
+      "mean_counter_visits": 10.875,
+      "mean_vitamin_days": 14.75,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "wanted_encounters": 0,
+      "sentences": {},
+      "death_causes": {
+        "lack of food": 25,
+        "typhoid fever": 2,
+        "measles": 2,
+        "scurvy": 6,
+        "dysentery": 1
+      }
+    },
+    "farmer|5|ordinary|steady": {
+      "n": 8,
+      "arrived": 1,
+      "original_intact": 0,
+      "current_full_party": 0,
+      "outcomes": {
+        "lost": 7,
+        "arrived": 1
+      },
+      "deaths": 36,
+      "departures": 0,
+      "recruited": 0,
+      "mean_elapsed_days": 223,
+      "arrival_days": {
+        "mean": 308,
+        "min": 308,
+        "max": 308
+      },
+      "mean_underfed_days": 5.75,
+      "mean_scurvy_person_days": 37.375,
+      "scurvy_cases": 13,
+      "mean_hunts": 36.5,
+      "mean_preservations": 12.125,
+      "mean_forages": 10.75,
+      "mean_counter_visits": 11.25,
+      "mean_vitamin_days": 13.75,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "wanted_encounters": 0,
+      "sentences": {},
+      "death_causes": {
+        "lack of food": 26,
+        "scurvy": 8,
+        "exposure": 2
+      }
+    }
+  },
+  "seed_cluster_arrivals": {
+    "6000": {
+      "n": 6,
+      "arrived": 4,
+      "original_intact": 3,
+      "current_full_party": 3,
+      "outcomes": {
+        "lost": 2,
+        "arrived": 4
+      },
+      "deaths": 11,
+      "departures": 0,
+      "recruited": 0,
+      "mean_elapsed_days": 242.5,
+      "arrival_days": {
+        "mean": 250,
+        "min": 224,
+        "max": 270
+      },
+      "mean_underfed_days": 2.333,
+      "mean_scurvy_person_days": 11.833,
+      "scurvy_cases": 6,
+      "mean_hunts": 26.5,
+      "mean_preservations": 10,
+      "mean_forages": 5.333,
+      "mean_counter_visits": 23,
+      "mean_vitamin_days": 17.333,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "wanted_encounters": 0,
+      "sentences": {},
+      "death_causes": {
+        "lack of food": 9,
+        "typhoid fever": 1,
+        "scurvy": 1
+      }
+    },
+    "6001": {
+      "n": 6,
+      "arrived": 4,
+      "original_intact": 4,
+      "current_full_party": 4,
+      "outcomes": {
+        "lost": 2,
+        "arrived": 4
+      },
+      "deaths": 10,
+      "departures": 0,
+      "recruited": 0,
+      "mean_elapsed_days": 206.167,
+      "arrival_days": {
+        "mean": 211,
+        "min": 197,
+        "max": 225
+      },
+      "mean_underfed_days": 2.833,
+      "mean_scurvy_person_days": 7.333,
+      "scurvy_cases": 2,
+      "mean_hunts": 8.667,
+      "mean_preservations": 4.833,
+      "mean_forages": 6,
+      "mean_counter_visits": 15.167,
+      "mean_vitamin_days": 16,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "wanted_encounters": 0,
+      "sentences": {},
+      "death_causes": {
+        "measles": 2,
+        "lack of food": 7,
+        "scurvy": 1
+      }
+    },
+    "6002": {
+      "n": 6,
+      "arrived": 4,
+      "original_intact": 4,
+      "current_full_party": 4,
+      "outcomes": {
+        "lost": 2,
+        "arrived": 4
+      },
+      "deaths": 10,
+      "departures": 0,
+      "recruited": 0,
+      "mean_elapsed_days": 220,
+      "arrival_days": {
+        "mean": 207,
+        "min": 182,
+        "max": 232
+      },
+      "mean_underfed_days": 2,
+      "mean_scurvy_person_days": 17.333,
+      "scurvy_cases": 4,
+      "mean_hunts": 13.167,
+      "mean_preservations": 4.333,
+      "mean_forages": 3.833,
+      "mean_counter_visits": 18.667,
+      "mean_vitamin_days": 18.333,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "wanted_encounters": 0,
+      "sentences": {},
+      "death_causes": {
+        "typhoid fever": 1,
+        "lack of food": 7,
+        "scurvy": 2
+      }
+    },
+    "6003": {
+      "n": 6,
+      "arrived": 3,
+      "original_intact": 3,
+      "current_full_party": 3,
+      "outcomes": {
+        "lost": 3,
+        "arrived": 3
+      },
+      "deaths": 15,
+      "departures": 0,
+      "recruited": 0,
+      "mean_elapsed_days": 189,
+      "arrival_days": {
+        "mean": 199.667,
+        "min": 183,
+        "max": 233
+      },
+      "mean_underfed_days": 3.5,
+      "mean_scurvy_person_days": 8.167,
+      "scurvy_cases": 5,
+      "mean_hunts": 8.833,
+      "mean_preservations": 3,
+      "mean_forages": 7.667,
+      "mean_counter_visits": 15,
+      "mean_vitamin_days": 14,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "wanted_encounters": 0,
+      "sentences": {},
+      "death_causes": {
+        "lack of food": 9,
+        "dysentery": 2,
+        "scurvy": 3,
+        "typhoid fever": 1
+      }
+    },
+    "6004": {
+      "n": 6,
+      "arrived": 4,
+      "original_intact": 3,
+      "current_full_party": 3,
+      "outcomes": {
+        "lost": 1,
+        "arrived": 4,
+        "year_limit": 1
+      },
+      "deaths": 10,
+      "departures": 0,
+      "recruited": 0,
+      "mean_elapsed_days": 244.667,
+      "arrival_days": {
+        "mean": 233.25,
+        "min": 186,
+        "max": 308
+      },
+      "mean_underfed_days": 1.333,
+      "mean_scurvy_person_days": 42,
+      "scurvy_cases": 4,
+      "mean_hunts": 28,
+      "mean_preservations": 13.333,
+      "mean_forages": 10.333,
+      "mean_counter_visits": 17.5,
+      "mean_vitamin_days": 16,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "wanted_encounters": 0,
+      "sentences": {},
+      "death_causes": {
+        "lack of food": 5,
+        "exposure": 3,
+        "scurvy": 2
+      }
+    },
+    "6005": {
+      "n": 6,
+      "arrived": 2,
+      "original_intact": 2,
+      "current_full_party": 2,
+      "outcomes": {
+        "lost": 3,
+        "arrived": 2,
+        "year_limit": 1
+      },
+      "deaths": 16,
+      "departures": 0,
+      "recruited": 0,
+      "mean_elapsed_days": 262.833,
+      "arrival_days": {
+        "mean": 211,
+        "min": 211,
+        "max": 211
+      },
+      "mean_underfed_days": 3.167,
+      "mean_scurvy_person_days": 75.5,
+      "scurvy_cases": 12,
+      "mean_hunts": 45.167,
+      "mean_preservations": 17.667,
+      "mean_forages": 9,
+      "mean_counter_visits": 23.333,
+      "mean_vitamin_days": 14.667,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "wanted_encounters": 0,
+      "sentences": {},
+      "death_causes": {
+        "lack of food": 10,
+        "scurvy": 6
+      }
+    },
+    "6006": {
+      "n": 6,
+      "arrived": 2,
+      "original_intact": 2,
+      "current_full_party": 2,
+      "outcomes": {
+        "lost": 4,
+        "arrived": 2
+      },
+      "deaths": 20,
+      "departures": 0,
+      "recruited": 0,
+      "mean_elapsed_days": 130.833,
+      "arrival_days": {
+        "mean": 203,
+        "min": 203,
+        "max": 203
+      },
+      "mean_underfed_days": 4.833,
+      "mean_scurvy_person_days": 2,
+      "scurvy_cases": 1,
+      "mean_hunts": 4.833,
+      "mean_preservations": 0.667,
+      "mean_forages": 5,
+      "mean_counter_visits": 11.833,
+      "mean_vitamin_days": 13.333,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "wanted_encounters": 0,
+      "sentences": {},
+      "death_causes": {
+        "lack of food": 19,
+        "scurvy": 1
+      }
+    },
+    "6007": {
+      "n": 6,
+      "arrived": 5,
+      "original_intact": 4,
+      "current_full_party": 4,
+      "outcomes": {
+        "arrived": 5,
+        "lost": 1
+      },
+      "deaths": 6,
+      "departures": 0,
+      "recruited": 0,
+      "mean_elapsed_days": 219.833,
+      "arrival_days": {
+        "mean": 204.6,
+        "min": 180,
+        "max": 273
+      },
+      "mean_underfed_days": 0,
+      "mean_scurvy_person_days": 50.667,
+      "scurvy_cases": 9,
+      "mean_hunts": 23,
+      "mean_preservations": 7.667,
+      "mean_forages": 5.833,
+      "mean_counter_visits": 15.333,
+      "mean_vitamin_days": 15.5,
+      "wages_paid_cents": 0,
+      "wages_owed_cents": 0,
+      "wanted_encounters": 0,
+      "sentences": {},
+      "death_causes": {
+        "scurvy": 5,
+        "exposure": 1
+      }
+    }
+  },
+  "paired_to_legacy": {
+    "salt": {
+      "pairs": 0,
+      "current_only_arrived": 0,
+      "legacy_only_arrived": 0,
+      "both_arrived": 0
+    },
+    "steady": {
+      "pairs": 0,
+      "current_only_arrived": 0,
+      "legacy_only_arrived": 0,
+      "both_arrived": 0
+    }
+  }
+}

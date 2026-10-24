@@ -11,3 +11,9 @@ All terms appear before the payment choice. Normal requirements prevent paying g
 The pending choice saves the concrete terms and RNG state. Loading or refreshing does not roll again. Previous compatible saves with a fixed $20 encounter retain that original offer. The previous rules fingerprint, 70ef4aad8342b811479b0122dc1411ba920da95bfdcf7f169d0753110a4391eb, is whitelisted.
 
 The 5,400-journey [combined balance checkpoint](CURRENT_BALANCE_PASS.md) predates this change and remains a frozen baseline. The new feature has its own bounded-demand, payment, saved-choice, whole-wagon, body/food and interface regressions plus integration validation. Human judgment remains necessary for whether each tradeoff is understandable and reasonable.
+
+## Validation
+
+Feature checkpoint 6b6987e passed all 49 Godot suites in a clean isolated checkout, including 3,673 demand checks. The 256-quote rich-party sweep produced 161 cash/goods bundles, 51 cash-only demands, 44 goods-only demands and seven wagon demands. These are deterministic regression coverage, not measured historical frequencies. Native mixed and full-wagon screens were inspected; the mixed example was shown to Spencer.
+
+Forty-eight additional full-route journeys (May, ordinary party, three capitals, salted/steady policies, seeds 6000–6007) reported zero selected errors. The [summary](balance-bandit-validation-01-summary.json) retains matching source hashes and rules. Twenty-four store and twenty outlaw integration journeys passed. The initial store run recorded one no-time loop in its obsolete trading policy; switching that harness to the existing current counter/foraging policy resolved it. Game rules were not weakened.
