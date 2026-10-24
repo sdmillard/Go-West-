@@ -1,0 +1,3043 @@
+{
+	"errors": [
+		{
+			"error": "policy_stalled",
+			"run": {
+				"month": 3,
+				"profession": "farmer",
+				"roster": "ordinary",
+				"seed": 3105,
+				"strategy": "predation"
+			}
+		},
+		{
+			"error": "policy_stalled",
+			"run": {
+				"month": 3,
+				"profession": "farmer",
+				"roster": "selected",
+				"seed": 3105,
+				"strategy": "predation"
+			}
+		}
+	],
+	"months": [
+		3
+	],
+	"rest_below": 55,
+	"rosters": [
+		"ordinary",
+		"selected"
+	],
+	"rules_signature": "70ef4aad8342b811479b0122dc1411ba920da95bfdcf7f169d0753110a4391eb",
+	"runs": [
+		{
+			"arrival_month": 12,
+			"attacks": [
+				"missed"
+			],
+			"audit": {
+				"days": 299,
+				"illness_person_days": 344,
+				"max_vitamin_gap": 293,
+				"other_days": 101,
+				"rest_days": 128,
+				"scurvy_person_days": 321,
+				"underfed_days": 0,
+				"vitamin_days": 6,
+				"working_days": 70
+			},
+			"bodies": [
+				"processed",
+				"lying"
+			],
+			"bullets": 80,
+			"cash": 215.4,
+			"counts": {
+				"care": 1,
+				"empty_food_days": 0,
+				"empty_hunts": 3,
+				"forages": 61,
+				"hunts": 8,
+				"last_care": 22,
+				"last_forage": 244,
+				"meat_carried": 46,
+				"meat_food_units": 24,
+				"meat_obtained": 650,
+				"oxen_slaughtered": 2,
+				"preservations": 4,
+				"rests": 119,
+				"shots": 15,
+				"trades": 0,
+				"travel_days": 70
+			},
+			"curve": [
+				[
+					1,
+					16,
+					1710,
+					216.4,
+					200,
+					5
+				],
+				[
+					31,
+					260,
+					1392,
+					215.4,
+					197,
+					2
+				],
+				[
+					61,
+					349,
+					1162,
+					215.4,
+					137,
+					2
+				],
+				[
+					91,
+					657,
+					964,
+					215.4,
+					137,
+					2
+				],
+				[
+					121,
+					833,
+					768,
+					215.4,
+					137,
+					2
+				],
+				[
+					151,
+					833,
+					588,
+					215.4,
+					137,
+					2
+				],
+				[
+					181,
+					849,
+					408,
+					215.4,
+					137,
+					2
+				],
+				[
+					211,
+					849,
+					228,
+					215.4,
+					137,
+					2
+				],
+				[
+					241,
+					863,
+					126,
+					215.4,
+					136,
+					1
+				],
+				[
+					271,
+					886,
+					144,
+					215.4,
+					135,
+					1
+				]
+			],
+			"days": 299,
+			"death_causes": [
+				"scurvy",
+				"exposure"
+			],
+			"departures": 3,
+			"food": 67,
+			"health": [
+				0,
+				92,
+				0,
+				92,
+				77
+			],
+			"incidents": [
+				[
+					"wanted",
+					"caught",
+					"tried",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No travelers remain with the wagon. Departures and deaths are recorded separately in View Party.",
+			"miles": 935,
+			"month": 3,
+			"original_present": 0,
+			"outcome": "lost",
+			"oxen": 4,
+			"profession": "farmer",
+			"recruited": 0,
+			"roster": "ordinary",
+			"route": [
+				"independence",
+				"elm_grove",
+				"wakarusa",
+				"kansas_river",
+				"big_blue",
+				"platte",
+				"fort_kearny",
+				"south_platte",
+				"ash_hollow",
+				"courthouse_rock",
+				"chimney_rock",
+				"scotts_bluff",
+				"fort_laramie",
+				"north_platte",
+				"independence_rock",
+				"devils_gate",
+				"south_pass",
+				"little_sandy"
+			],
+			"scurvy_cases": 2,
+			"seed": 3100,
+			"sentences": [
+				"assault"
+			],
+			"strategy": "predation",
+			"survivors": 0,
+			"tales": 3,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0,
+			"wanted_encounters": 1
+		},
+		{
+			"arrival_month": 11,
+			"attacks": [
+				"missed"
+			],
+			"audit": {
+				"days": 271,
+				"illness_person_days": 394,
+				"max_vitamin_gap": 265,
+				"other_days": 120,
+				"rest_days": 68,
+				"scurvy_person_days": 352,
+				"underfed_days": 0,
+				"vitamin_days": 6,
+				"working_days": 83
+			},
+			"bodies": [
+				"processed",
+				"processed",
+				"lying"
+			],
+			"bullets": 110,
+			"cash": 215.4,
+			"counts": {
+				"care": 2,
+				"empty_food_days": 0,
+				"empty_hunts": 6,
+				"forages": 63,
+				"hunts": 23,
+				"last_care": 42,
+				"last_forage": 244,
+				"meat_carried": 169,
+				"meat_food_units": 88,
+				"meat_obtained": 603,
+				"oxen_slaughtered": 2,
+				"preservations": 5,
+				"rests": 61,
+				"shots": 41,
+				"trades": 0,
+				"travel_days": 83
+			},
+			"curve": [
+				[
+					1,
+					12,
+					1710,
+					216.4,
+					200,
+					5
+				],
+				[
+					31,
+					363,
+					1372,
+					215.4,
+					199,
+					3
+				],
+				[
+					61,
+					576,
+					1126,
+					215.4,
+					197,
+					3
+				],
+				[
+					91,
+					707,
+					940,
+					215.4,
+					177,
+					2
+				],
+				[
+					121,
+					852,
+					700,
+					215.4,
+					177,
+					2
+				],
+				[
+					151,
+					962,
+					490,
+					215.4,
+					157,
+					2
+				],
+				[
+					181,
+					1132,
+					324,
+					215.4,
+					157,
+					2
+				],
+				[
+					211,
+					1147,
+					144,
+					215.4,
+					153,
+					2
+				],
+				[
+					241,
+					1212,
+					90,
+					215.4,
+					151,
+					2
+				],
+				[
+					271,
+					1212,
+					32,
+					215.4,
+					110,
+					0
+				]
+			],
+			"days": 271,
+			"death_causes": [
+				"snakebite",
+				"scurvy",
+				"exposure"
+			],
+			"departures": 2,
+			"food": 32,
+			"health": [
+				0,
+				0,
+				96,
+				0,
+				96
+			],
+			"incidents": [
+				[
+					"wanted",
+					"caught",
+					"tried",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No travelers remain with the wagon. Departures and deaths are recorded separately in View Party.",
+			"miles": 1212,
+			"month": 3,
+			"original_present": 0,
+			"outcome": "lost",
+			"oxen": 4,
+			"profession": "farmer",
+			"recruited": 0,
+			"roster": "ordinary",
+			"route": [
+				"independence",
+				"elm_grove",
+				"wakarusa",
+				"kansas_river",
+				"big_blue",
+				"platte",
+				"fort_kearny",
+				"south_platte",
+				"ash_hollow",
+				"courthouse_rock",
+				"chimney_rock",
+				"scotts_bluff",
+				"fort_laramie",
+				"north_platte",
+				"independence_rock",
+				"devils_gate",
+				"south_pass",
+				"little_sandy",
+				"green_river",
+				"fort_bridger",
+				"soda_springs"
+			],
+			"scurvy_cases": 3,
+			"seed": 3101,
+			"sentences": [
+				"assault"
+			],
+			"strategy": "predation",
+			"survivors": 0,
+			"tales": 2,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0,
+			"wanted_encounters": 1
+		},
+		{
+			"arrival_month": 3,
+			"attacks": [
+				"missed"
+			],
+			"audit": {
+				"days": 365,
+				"illness_person_days": 339,
+				"max_vitamin_gap": 359,
+				"other_days": 93,
+				"rest_days": 137,
+				"scurvy_person_days": 297,
+				"underfed_days": 0,
+				"vitamin_days": 6,
+				"working_days": 135
+			},
+			"bodies": [
+				"processed"
+			],
+			"bullets": 149,
+			"cash": 170.3,
+			"counts": {
+				"care": 1,
+				"counter_camp": 1,
+				"counter_cents": 1950,
+				"counter_visits": 1,
+				"empty_food_days": 0,
+				"empty_hunts": 0,
+				"forages": 58,
+				"hunts": 0,
+				"last_care": 19,
+				"last_forage": 244,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 0,
+				"preservations": 0,
+				"rests": 124,
+				"shots": 0,
+				"trades": 0,
+				"travel_days": 135
+			},
+			"curve": [
+				[
+					1,
+					10,
+					1710,
+					216.4,
+					200,
+					5
+				],
+				[
+					31,
+					206,
+					1343,
+					195.9,
+					197,
+					1
+				],
+				[
+					61,
+					464,
+					1253,
+					175.9,
+					197,
+					1
+				],
+				[
+					91,
+					621,
+					1163,
+					175.9,
+					197,
+					1
+				],
+				[
+					121,
+					792,
+					1043,
+					175.9,
+					197,
+					1
+				],
+				[
+					151,
+					926,
+					967,
+					175.9,
+					195,
+					1
+				],
+				[
+					181,
+					1104,
+					891,
+					175.9,
+					195,
+					1
+				],
+				[
+					211,
+					1327,
+					815,
+					175.9,
+					195,
+					1
+				],
+				[
+					241,
+					1488,
+					725,
+					175.9,
+					195,
+					1
+				],
+				[
+					271,
+					1548,
+					565,
+					175.9,
+					153,
+					1
+				],
+				[
+					301,
+					1647,
+					489,
+					175.9,
+					151,
+					1
+				],
+				[
+					331,
+					1753,
+					399,
+					175.9,
+					149,
+					1
+				],
+				[
+					361,
+					1848,
+					279,
+					170.3,
+					149,
+					1
+				]
+			],
+			"days": 365,
+			"death_causes": [
+				"confrontation injuries"
+			],
+			"departures": 3,
+			"food": 267,
+			"health": [
+				0,
+				72,
+				64,
+				54,
+				64
+			],
+			"incidents": [
+				[
+					"wanted",
+					"caught",
+					"tried",
+					0,
+					0
+				]
+			],
+			"loss_reason": "",
+			"miles": 1848,
+			"month": 3,
+			"original_present": 1,
+			"outcome": "year_limit",
+			"oxen": 6,
+			"profession": "farmer",
+			"recruited": 0,
+			"roster": "ordinary",
+			"route": [
+				"independence",
+				"elm_grove",
+				"wakarusa",
+				"kansas_river",
+				"big_blue",
+				"platte",
+				"fort_kearny",
+				"south_platte",
+				"ash_hollow",
+				"courthouse_rock",
+				"chimney_rock",
+				"scotts_bluff",
+				"fort_laramie",
+				"north_platte",
+				"independence_rock",
+				"devils_gate",
+				"south_pass",
+				"little_sandy",
+				"green_river",
+				"fort_bridger",
+				"soda_springs",
+				"fort_hall",
+				"snake_river",
+				"fort_boise",
+				"burnt_river",
+				"powder_river",
+				"grande_ronde",
+				"blue_mountains",
+				"umatilla",
+				"john_day",
+				"deschutes",
+				"the_dalles",
+				"barlow_pass"
+			],
+			"scurvy_cases": 1,
+			"seed": 3102,
+			"sentences": [
+				"assault"
+			],
+			"strategy": "predation",
+			"survivors": 1,
+			"tales": 3,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0,
+			"wanted_encounters": 1
+		},
+		{
+			"arrival_month": 12,
+			"attacks": [
+				"wounded"
+			],
+			"audit": {
+				"days": 297,
+				"illness_person_days": 385,
+				"max_vitamin_gap": 291,
+				"other_days": 105,
+				"rest_days": 70,
+				"scurvy_person_days": 355,
+				"underfed_days": 0,
+				"vitamin_days": 6,
+				"working_days": 122
+			},
+			"bodies": [
+				"processed",
+				"lying"
+			],
+			"bullets": 164,
+			"cash": 215.4,
+			"counts": {
+				"care": 2,
+				"empty_food_days": 0,
+				"empty_hunts": 1,
+				"forages": 64,
+				"hunts": 11,
+				"last_care": 23,
+				"last_forage": 243,
+				"meat_carried": 197,
+				"meat_food_units": 102,
+				"meat_obtained": 834,
+				"oxen_slaughtered": 2,
+				"preservations": 7,
+				"rests": 59,
+				"shots": 29,
+				"trades": 0,
+				"travel_days": 122
+			},
+			"curve": [
+				[
+					1,
+					5,
+					1710,
+					216.4,
+					200,
+					5
+				],
+				[
+					31,
+					286,
+					1407,
+					215.4,
+					199,
+					2
+				],
+				[
+					61,
+					585,
+					1201,
+					215.4,
+					199,
+					2
+				],
+				[
+					92,
+					887,
+					1043,
+					215.4,
+					199,
+					2
+				],
+				[
+					122,
+					1151,
+					863,
+					215.4,
+					199,
+					2
+				],
+				[
+					152,
+					1375,
+					697,
+					215.4,
+					199,
+					2
+				],
+				[
+					182,
+					1534,
+					517,
+					215.4,
+					199,
+					2
+				],
+				[
+					212,
+					1663,
+					337,
+					215.4,
+					199,
+					2
+				],
+				[
+					242,
+					1740,
+					97,
+					215.4,
+					199,
+					2
+				],
+				[
+					272,
+					1777,
+					123,
+					215.4,
+					193,
+					2
+				]
+			],
+			"days": 297,
+			"death_causes": [
+				"scurvy",
+				"exposure"
+			],
+			"departures": 3,
+			"food": 75,
+			"health": [
+				0,
+				94,
+				0,
+				70,
+				54
+			],
+			"incidents": [],
+			"loss_reason": "No travelers remain with the wagon. Departures and deaths are recorded separately in View Party.",
+			"miles": 1793,
+			"month": 3,
+			"original_present": 0,
+			"outcome": "lost",
+			"oxen": 4,
+			"profession": "farmer",
+			"recruited": 0,
+			"roster": "ordinary",
+			"route": [
+				"independence",
+				"elm_grove",
+				"wakarusa",
+				"kansas_river",
+				"big_blue",
+				"platte",
+				"fort_kearny",
+				"south_platte",
+				"ash_hollow",
+				"courthouse_rock",
+				"chimney_rock",
+				"scotts_bluff",
+				"fort_laramie",
+				"north_platte",
+				"independence_rock",
+				"devils_gate",
+				"south_pass",
+				"little_sandy",
+				"green_river",
+				"fort_bridger",
+				"soda_springs",
+				"fort_hall",
+				"snake_river",
+				"fort_boise",
+				"burnt_river",
+				"powder_river",
+				"grande_ronde",
+				"blue_mountains",
+				"umatilla",
+				"john_day",
+				"deschutes",
+				"the_dalles"
+			],
+			"scurvy_cases": 2,
+			"seed": 3103,
+			"sentences": [],
+			"strategy": "predation",
+			"survivors": 0,
+			"tales": 3,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0,
+			"wanted_encounters": 0
+		},
+		{
+			"arrival_month": 10,
+			"attacks": [
+				"wounded"
+			],
+			"audit": {
+				"days": 244,
+				"illness_person_days": 108,
+				"max_vitamin_gap": 85,
+				"other_days": 88,
+				"rest_days": 32,
+				"scurvy_person_days": 56,
+				"underfed_days": 5,
+				"vitamin_days": 12,
+				"working_days": 124
+			},
+			"bodies": [
+				"processed",
+				"processed",
+				"lying"
+			],
+			"bullets": 142,
+			"cash": 184.44,
+			"counts": {
+				"bought_produce": 1,
+				"care": 2,
+				"counter_camp": 1,
+				"counter_cents": 1096,
+				"counter_traders": 1,
+				"counter_visits": 2,
+				"empty_food_days": 2,
+				"empty_hunts": 7,
+				"forages": 25,
+				"hunts": 25,
+				"last_care": 24,
+				"last_forage": 244,
+				"meat_carried": 541,
+				"meat_food_units": 272,
+				"meat_obtained": 813,
+				"oxen_slaughtered": 2,
+				"preservations": 9,
+				"rests": 19,
+				"shots": 39,
+				"trades": 0,
+				"travel_days": 124
+			},
+			"curve": [
+				[
+					1,
+					11,
+					1710,
+					216.4,
+					200,
+					5
+				],
+				[
+					31,
+					266,
+					1344,
+					204.44,
+					199,
+					3
+				],
+				[
+					61,
+					619,
+					1113,
+					204.44,
+					197,
+					3
+				],
+				[
+					91,
+					899,
+					844,
+					204.44,
+					195,
+					3
+				],
+				[
+					121,
+					1178,
+					524,
+					204.44,
+					193,
+					3
+				],
+				[
+					151,
+					1413,
+					304,
+					204.44,
+					193,
+					3
+				],
+				[
+					181,
+					1620,
+					242,
+					204.44,
+					182,
+					3
+				],
+				[
+					211,
+					1740,
+					83,
+					184.44,
+					175,
+					3
+				],
+				[
+					241,
+					1740,
+					0,
+					184.44,
+					144,
+					1
+				]
+			],
+			"days": 244,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"dysentery"
+			],
+			"departures": 2,
+			"food": 1,
+			"health": [
+				0,
+				100,
+				0,
+				0,
+				60
+			],
+			"incidents": [],
+			"loss_reason": "No travelers remain with the wagon. Departures and deaths are recorded separately in View Party.",
+			"miles": 1740,
+			"month": 3,
+			"original_present": 0,
+			"outcome": "lost",
+			"oxen": 4,
+			"profession": "farmer",
+			"recruited": 0,
+			"roster": "ordinary",
+			"route": [
+				"independence",
+				"elm_grove",
+				"wakarusa",
+				"kansas_river",
+				"big_blue",
+				"platte",
+				"fort_kearny",
+				"south_platte",
+				"ash_hollow",
+				"courthouse_rock",
+				"chimney_rock",
+				"scotts_bluff",
+				"fort_laramie",
+				"north_platte",
+				"independence_rock",
+				"devils_gate",
+				"south_pass",
+				"little_sandy",
+				"green_river",
+				"fort_bridger",
+				"soda_springs",
+				"fort_hall",
+				"snake_river",
+				"fort_boise",
+				"burnt_river",
+				"powder_river",
+				"grande_ronde",
+				"blue_mountains",
+				"umatilla",
+				"john_day"
+			],
+			"scurvy_cases": 1,
+			"seed": 3104,
+			"sentences": [],
+			"strategy": "predation",
+			"survivors": 0,
+			"tales": 2,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0,
+			"wanted_encounters": 0
+		},
+		{
+			"arrival_month": 4,
+			"attacks": [
+				"missed"
+			],
+			"audit": {
+				"days": 33,
+				"illness_person_days": 27,
+				"max_vitamin_gap": 27,
+				"other_days": 10,
+				"rest_days": 6,
+				"scurvy_person_days": 0,
+				"underfed_days": 3,
+				"vitamin_days": 6,
+				"working_days": 17
+			},
+			"bodies": [
+				"processed"
+			],
+			"bullets": 0,
+			"cash": 215.4,
+			"counts": {
+				"abandonments": 1,
+				"care": 1,
+				"discards": 3,
+				"empty_food_days": 3,
+				"empty_hunts": 0,
+				"forages": 2,
+				"hunts": 0,
+				"last_care": 12,
+				"last_forage": 33,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 0,
+				"preservations": 0,
+				"rests": 5,
+				"shots": 0,
+				"trades": 0,
+				"travel_days": 17
+			},
+			"curve": [
+				[
+					1,
+					16,
+					1710,
+					216.4,
+					200,
+					5
+				],
+				[
+					31,
+					217,
+					0,
+					215.4,
+					20,
+					2
+				]
+			],
+			"days": 33,
+			"death_causes": [
+				"wound"
+			],
+			"departures": 2,
+			"food": 0,
+			"health": [
+				0,
+				18,
+				100,
+				23,
+				100
+			],
+			"incidents": [
+				[
+					"wanted",
+					"caught",
+					"tried",
+					0,
+					0
+				]
+			],
+			"loss_reason": "",
+			"miles": 217,
+			"month": 3,
+			"original_present": 2,
+			"outcome": "policy_stalled",
+			"oxen": 0,
+			"profession": "farmer",
+			"recruited": 0,
+			"roster": "ordinary",
+			"route": [
+				"independence",
+				"elm_grove",
+				"wakarusa",
+				"kansas_river",
+				"big_blue"
+			],
+			"scurvy_cases": 0,
+			"seed": 3105,
+			"sentences": [
+				"assault"
+			],
+			"strategy": "predation",
+			"survivors": 2,
+			"tales": 2,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0,
+			"wanted_encounters": 1
+		},
+		{
+			"arrival_month": 3,
+			"attacks": [
+				"killed"
+			],
+			"audit": {
+				"days": 365,
+				"illness_person_days": 298,
+				"max_vitamin_gap": 335,
+				"other_days": 83,
+				"rest_days": 131,
+				"scurvy_person_days": 281,
+				"underfed_days": 0,
+				"vitamin_days": 9,
+				"working_days": 151
+			},
+			"bodies": [
+				"processed"
+			],
+			"bullets": 189,
+			"cash": 188.6,
+			"counts": {
+				"bought_dried_produce": 3,
+				"care": 1,
+				"counter_camp": 1,
+				"counter_cents": 120,
+				"counter_visits": 1,
+				"empty_food_days": 0,
+				"empty_hunts": 0,
+				"forages": 59,
+				"hunts": 0,
+				"last_care": 42,
+				"last_forage": 243,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 0,
+				"preservations": 0,
+				"rests": 112,
+				"shots": 0,
+				"trades": 0,
+				"travel_days": 151
+			},
+			"curve": [
+				[
+					1,
+					17,
+					1710,
+					216.4,
+					200,
+					5
+				],
+				[
+					31,
+					350,
+					1487,
+					214.2,
+					199,
+					1
+				],
+				[
+					61,
+					614,
+					1401,
+					214.2,
+					199,
+					1
+				],
+				[
+					91,
+					901,
+					1281,
+					194.2,
+					197,
+					1
+				],
+				[
+					121,
+					1014,
+					1191,
+					194.2,
+					195,
+					1
+				],
+				[
+					151,
+					1065,
+					1101,
+					194.2,
+					195,
+					1
+				],
+				[
+					181,
+					1233,
+					1011,
+					194.2,
+					195,
+					1
+				],
+				[
+					211,
+					1448,
+					935,
+					194.2,
+					195,
+					1
+				],
+				[
+					241,
+					1647,
+					845,
+					194.2,
+					195,
+					1
+				],
+				[
+					271,
+					1740,
+					725,
+					194.2,
+					193,
+					1
+				],
+				[
+					301,
+					1800,
+					649,
+					194.2,
+					193,
+					1
+				],
+				[
+					331,
+					1848,
+					573,
+					194.2,
+					191,
+					1
+				],
+				[
+					361,
+					1886,
+					483,
+					188.6,
+					189,
+					1
+				]
+			],
+			"days": 365,
+			"death_causes": [
+				"being shot by A"
+			],
+			"departures": 3,
+			"food": 471,
+			"health": [
+				58,
+				85,
+				85,
+				85,
+				0
+			],
+			"incidents": [
+				[
+					"wanted",
+					"caught",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "",
+			"miles": 1904,
+			"month": 3,
+			"original_present": 1,
+			"outcome": "year_limit",
+			"oxen": 6,
+			"profession": "farmer",
+			"recruited": 0,
+			"roster": "ordinary",
+			"route": [
+				"independence",
+				"elm_grove",
+				"wakarusa",
+				"kansas_river",
+				"big_blue",
+				"platte",
+				"fort_kearny",
+				"south_platte",
+				"ash_hollow",
+				"courthouse_rock",
+				"chimney_rock",
+				"scotts_bluff",
+				"fort_laramie",
+				"north_platte",
+				"independence_rock",
+				"devils_gate",
+				"south_pass",
+				"little_sandy",
+				"green_river",
+				"fort_bridger",
+				"soda_springs",
+				"fort_hall",
+				"snake_river",
+				"fort_boise",
+				"burnt_river",
+				"powder_river",
+				"grande_ronde",
+				"blue_mountains",
+				"umatilla",
+				"john_day",
+				"deschutes",
+				"the_dalles",
+				"barlow_pass",
+				"laurel_hill"
+			],
+			"scurvy_cases": 1,
+			"seed": 3106,
+			"sentences": [],
+			"strategy": "predation",
+			"survivors": 1,
+			"tales": 3,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0,
+			"wanted_encounters": 1
+		},
+		{
+			"arrival_month": 8,
+			"attacks": [
+				"wounded"
+			],
+			"audit": {
+				"days": 179,
+				"illness_person_days": 120,
+				"max_vitamin_gap": 93,
+				"other_days": 70,
+				"rest_days": 24,
+				"scurvy_person_days": 75,
+				"underfed_days": 6,
+				"vitamin_days": 9,
+				"working_days": 85
+			},
+			"bodies": [
+				"processed",
+				"processed",
+				"lying",
+				"lying"
+			],
+			"bullets": 167,
+			"cash": 214.52,
+			"counts": {
+				"bought_dried_produce": 2,
+				"care": 2,
+				"counter_camp": 1,
+				"counter_cents": 88,
+				"counter_visits": 1,
+				"empty_food_days": 5,
+				"empty_hunts": 5,
+				"forages": 26,
+				"hunts": 17,
+				"last_care": 54,
+				"last_forage": 178,
+				"meat_carried": 555,
+				"meat_food_units": 281,
+				"meat_obtained": 675,
+				"oxen_slaughtered": 2,
+				"preservations": 6,
+				"rests": 20,
+				"shots": 30,
+				"trades": 0,
+				"travel_days": 85
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1710,
+					216.4,
+					200,
+					5
+				],
+				[
+					31,
+					343,
+					1291,
+					214.52,
+					199,
+					4
+				],
+				[
+					61,
+					656,
+					951,
+					214.52,
+					199,
+					4
+				],
+				[
+					91,
+					885,
+					593,
+					214.52,
+					199,
+					4
+				],
+				[
+					121,
+					1144,
+					203,
+					214.52,
+					199,
+					4
+				],
+				[
+					151,
+					1243,
+					79,
+					214.52,
+					190,
+					4
+				]
+			],
+			"days": 179,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"dysentery",
+				"lack of food"
+			],
+			"departures": 1,
+			"food": 0,
+			"health": [
+				0,
+				0,
+				0,
+				0,
+				60
+			],
+			"incidents": [],
+			"loss_reason": "No travelers remain with the wagon. Departures and deaths are recorded separately in View Party.",
+			"miles": 1243,
+			"month": 3,
+			"original_present": 0,
+			"outcome": "lost",
+			"oxen": 4,
+			"profession": "farmer",
+			"recruited": 0,
+			"roster": "ordinary",
+			"route": [
+				"independence",
+				"elm_grove",
+				"wakarusa",
+				"kansas_river",
+				"big_blue",
+				"platte",
+				"fort_kearny",
+				"south_platte",
+				"ash_hollow",
+				"courthouse_rock",
+				"chimney_rock",
+				"scotts_bluff",
+				"fort_laramie",
+				"north_platte",
+				"independence_rock",
+				"devils_gate",
+				"south_pass",
+				"little_sandy",
+				"green_river",
+				"fort_bridger",
+				"soda_springs",
+				"fort_hall"
+			],
+			"scurvy_cases": 3,
+			"seed": 3107,
+			"sentences": [],
+			"strategy": "predation",
+			"survivors": 0,
+			"tales": 1,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0,
+			"wanted_encounters": 0
+		},
+		{
+			"arrival_month": 3,
+			"attacks": [
+				"missed"
+			],
+			"audit": {
+				"days": 365,
+				"illness_person_days": 310,
+				"max_vitamin_gap": 359,
+				"other_days": 104,
+				"rest_days": 112,
+				"scurvy_person_days": 292,
+				"underfed_days": 0,
+				"vitamin_days": 6,
+				"working_days": 149
+			},
+			"bodies": [
+				"processed"
+			],
+			"bullets": 112,
+			"cash": 209.8,
+			"counts": {
+				"care": 1,
+				"empty_food_days": 0,
+				"empty_hunts": 0,
+				"forages": 61,
+				"hunts": 0,
+				"last_care": 22,
+				"last_forage": 243,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 1,
+				"preservations": 2,
+				"rests": 100,
+				"shots": 0,
+				"trades": 0,
+				"travel_days": 149
+			},
+			"curve": [
+				[
+					1,
+					16,
+					1710,
+					216.4,
+					200,
+					5
+				],
+				[
+					31,
+					260,
+					1392,
+					215.4,
+					197,
+					2
+				],
+				[
+					61,
+					349,
+					1162,
+					215.4,
+					137,
+					2
+				],
+				[
+					91,
+					695,
+					964,
+					215.4,
+					137,
+					2
+				],
+				[
+					121,
+					853,
+					774,
+					215.4,
+					117,
+					2
+				],
+				[
+					151,
+					926,
+					633,
+					215.4,
+					117,
+					1
+				],
+				[
+					181,
+					1213,
+					543,
+					215.4,
+					117,
+					1
+				],
+				[
+					211,
+					1375,
+					467,
+					215.4,
+					117,
+					1
+				],
+				[
+					241,
+					1555,
+					377,
+					215.4,
+					117,
+					1
+				],
+				[
+					271,
+					1647,
+					287,
+					215.4,
+					117,
+					1
+				],
+				[
+					301,
+					1762,
+					225,
+					215.4,
+					115,
+					1
+				],
+				[
+					331,
+					1839,
+					149,
+					215.4,
+					113,
+					1
+				],
+				[
+					363,
+					1873,
+					152,
+					209.8,
+					112,
+					1
+				]
+			],
+			"days": 365,
+			"death_causes": [
+				"scurvy"
+			],
+			"departures": 3,
+			"food": 146,
+			"health": [
+				82,
+				92,
+				0,
+				92,
+				77
+			],
+			"incidents": [
+				[
+					"wanted",
+					"caught",
+					"tried",
+					0,
+					0
+				]
+			],
+			"loss_reason": "",
+			"miles": 1891,
+			"month": 3,
+			"original_present": 1,
+			"outcome": "year_limit",
+			"oxen": 5,
+			"profession": "farmer",
+			"recruited": 0,
+			"roster": "selected",
+			"route": [
+				"independence",
+				"elm_grove",
+				"wakarusa",
+				"kansas_river",
+				"big_blue",
+				"platte",
+				"fort_kearny",
+				"south_platte",
+				"ash_hollow",
+				"courthouse_rock",
+				"chimney_rock",
+				"scotts_bluff",
+				"fort_laramie",
+				"north_platte",
+				"independence_rock",
+				"devils_gate",
+				"south_pass",
+				"little_sandy",
+				"green_river",
+				"fort_bridger",
+				"soda_springs",
+				"fort_hall",
+				"snake_river",
+				"fort_boise",
+				"burnt_river",
+				"powder_river",
+				"grande_ronde",
+				"blue_mountains",
+				"umatilla",
+				"john_day",
+				"deschutes",
+				"the_dalles",
+				"barlow_pass",
+				"laurel_hill"
+			],
+			"scurvy_cases": 2,
+			"seed": 3100,
+			"sentences": [
+				"assault"
+			],
+			"strategy": "predation",
+			"survivors": 1,
+			"tales": 3,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0,
+			"wanted_encounters": 1
+		},
+		{
+			"arrival_month": 1,
+			"attacks": [
+				"missed"
+			],
+			"audit": {
+				"days": 334,
+				"illness_person_days": 389,
+				"max_vitamin_gap": 328,
+				"other_days": 137,
+				"rest_days": 139,
+				"scurvy_person_days": 346,
+				"underfed_days": 0,
+				"vitamin_days": 6,
+				"working_days": 58
+			},
+			"bodies": [
+				"processed",
+				"processed",
+				"lying"
+			],
+			"bullets": 32,
+			"cash": 215.4,
+			"counts": {
+				"care": 2,
+				"empty_food_days": 0,
+				"empty_hunts": 6,
+				"forages": 62,
+				"hunts": 29,
+				"last_care": 42,
+				"last_forage": 245,
+				"meat_carried": 161,
+				"meat_food_units": 87,
+				"meat_obtained": 3091,
+				"oxen_slaughtered": 2,
+				"preservations": 8,
+				"rests": 126,
+				"shots": 61,
+				"trades": 0,
+				"travel_days": 58
+			},
+			"curve": [
+				[
+					1,
+					12,
+					1710,
+					216.4,
+					200,
+					5
+				],
+				[
+					31,
+					363,
+					1372,
+					215.4,
+					199,
+					3
+				],
+				[
+					61,
+					576,
+					1126,
+					215.4,
+					197,
+					3
+				],
+				[
+					91,
+					731,
+					940,
+					215.4,
+					177,
+					2
+				],
+				[
+					121,
+					792,
+					730,
+					215.4,
+					177,
+					2
+				],
+				[
+					151,
+					792,
+					510,
+					215.4,
+					137,
+					2
+				],
+				[
+					181,
+					815,
+					330,
+					215.4,
+					137,
+					2
+				],
+				[
+					211,
+					815,
+					210,
+					215.4,
+					137,
+					1
+				],
+				[
+					241,
+					815,
+					120,
+					215.4,
+					137,
+					1
+				],
+				[
+					271,
+					815,
+					129,
+					215.4,
+					134,
+					1
+				],
+				[
+					301,
+					815,
+					68,
+					215.4,
+					92,
+					1
+				],
+				[
+					331,
+					815,
+					43,
+					215.4,
+					38,
+					1
+				]
+			],
+			"days": 334,
+			"death_causes": [
+				"snakebite",
+				"scurvy",
+				"scurvy"
+			],
+			"departures": 2,
+			"food": 35,
+			"health": [
+				0,
+				0,
+				96,
+				0,
+				96
+			],
+			"incidents": [
+				[
+					"wanted",
+					"caught",
+					"tried",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No travelers remain with the wagon. Departures and deaths are recorded separately in View Party.",
+			"miles": 815,
+			"month": 3,
+			"original_present": 0,
+			"outcome": "lost",
+			"oxen": 4,
+			"profession": "farmer",
+			"recruited": 0,
+			"roster": "selected",
+			"route": [
+				"independence",
+				"elm_grove",
+				"wakarusa",
+				"kansas_river",
+				"big_blue",
+				"platte",
+				"fort_kearny",
+				"south_platte",
+				"ash_hollow",
+				"courthouse_rock",
+				"chimney_rock",
+				"scotts_bluff",
+				"fort_laramie",
+				"north_platte",
+				"independence_rock",
+				"devils_gate"
+			],
+			"scurvy_cases": 3,
+			"seed": 3101,
+			"sentences": [
+				"assault"
+			],
+			"strategy": "predation",
+			"survivors": 0,
+			"tales": 2,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0,
+			"wanted_encounters": 1
+		},
+		{
+			"arrival_month": 1,
+			"attacks": [
+				"missed"
+			],
+			"audit": {
+				"days": 310,
+				"illness_person_days": 290,
+				"max_vitamin_gap": 304,
+				"other_days": 92,
+				"rest_days": 189,
+				"scurvy_person_days": 254,
+				"underfed_days": 0,
+				"vitamin_days": 6,
+				"working_days": 29
+			},
+			"bodies": [
+				"processed",
+				"lying"
+			],
+			"bullets": 137,
+			"cash": 175.9,
+			"counts": {
+				"care": 1,
+				"counter_camp": 1,
+				"counter_cents": 1950,
+				"counter_visits": 1,
+				"empty_food_days": 0,
+				"empty_hunts": 0,
+				"forages": 68,
+				"hunts": 0,
+				"last_care": 19,
+				"last_forage": 244,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 0,
+				"preservations": 0,
+				"rests": 175,
+				"shots": 0,
+				"trades": 0,
+				"travel_days": 29
+			},
+			"curve": [
+				[
+					1,
+					10,
+					1710,
+					216.4,
+					200,
+					5
+				],
+				[
+					31,
+					217,
+					1343,
+					195.9,
+					197,
+					1
+				],
+				[
+					61,
+					386,
+					1253,
+					195.9,
+					197,
+					1
+				],
+				[
+					91,
+					386,
+					1163,
+					195.9,
+					195,
+					1
+				],
+				[
+					121,
+					386,
+					1073,
+					195.9,
+					193,
+					1
+				],
+				[
+					151,
+					386,
+					983,
+					175.9,
+					193,
+					1
+				],
+				[
+					181,
+					386,
+					893,
+					175.9,
+					191,
+					1
+				],
+				[
+					211,
+					386,
+					817,
+					175.9,
+					191,
+					1
+				],
+				[
+					241,
+					409,
+					687,
+					175.9,
+					149,
+					1
+				],
+				[
+					271,
+					409,
+					597,
+					175.9,
+					149,
+					1
+				],
+				[
+					301,
+					409,
+					507,
+					175.9,
+					137,
+					1
+				]
+			],
+			"days": 310,
+			"death_causes": [
+				"confrontation injuries",
+				"exhaustion"
+			],
+			"departures": 3,
+			"food": 480,
+			"health": [
+				0,
+				68,
+				60,
+				0,
+				56
+			],
+			"incidents": [
+				[
+					"wanted",
+					"caught",
+					"tried",
+					0,
+					0
+				]
+			],
+			"loss_reason": "No travelers remain with the wagon. Departures and deaths are recorded separately in View Party.",
+			"miles": 409,
+			"month": 3,
+			"original_present": 0,
+			"outcome": "lost",
+			"oxen": 6,
+			"profession": "farmer",
+			"recruited": 0,
+			"roster": "selected",
+			"route": [
+				"independence",
+				"elm_grove",
+				"wakarusa",
+				"kansas_river",
+				"big_blue",
+				"platte",
+				"fort_kearny"
+			],
+			"scurvy_cases": 1,
+			"seed": 3102,
+			"sentences": [
+				"assault"
+			],
+			"strategy": "predation",
+			"survivors": 0,
+			"tales": 3,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0,
+			"wanted_encounters": 1
+		},
+		{
+			"arrival_month": 12,
+			"attacks": [
+				"wounded"
+			],
+			"audit": {
+				"days": 303,
+				"illness_person_days": 398,
+				"max_vitamin_gap": 297,
+				"other_days": 116,
+				"rest_days": 107,
+				"scurvy_person_days": 369,
+				"underfed_days": 0,
+				"vitamin_days": 6,
+				"working_days": 80
+			},
+			"bodies": [
+				"processed",
+				"lying"
+			],
+			"bullets": 89,
+			"cash": 215.4,
+			"counts": {
+				"care": 2,
+				"empty_food_days": 0,
+				"empty_hunts": 3,
+				"forages": 62,
+				"hunts": 19,
+				"last_care": 23,
+				"last_forage": 242,
+				"meat_carried": 133,
+				"meat_food_units": 71,
+				"meat_obtained": 647,
+				"oxen_slaughtered": 2,
+				"preservations": 6,
+				"rests": 95,
+				"shots": 44,
+				"trades": 0,
+				"travel_days": 80
+			},
+			"curve": [
+				[
+					1,
+					5,
+					1710,
+					216.4,
+					200,
+					5
+				],
+				[
+					31,
+					286,
+					1407,
+					215.4,
+					199,
+					2
+				],
+				[
+					61,
+					585,
+					1201,
+					215.4,
+					199,
+					2
+				],
+				[
+					92,
+					887,
+					1043,
+					215.4,
+					199,
+					2
+				],
+				[
+					123,
+					1124,
+					857,
+					215.4,
+					199,
+					2
+				],
+				[
+					153,
+					1168,
+					677,
+					215.4,
+					199,
+					2
+				],
+				[
+					183,
+					1183,
+					511,
+					215.4,
+					199,
+					2
+				],
+				[
+					213,
+					1183,
+					281,
+					215.4,
+					139,
+					2
+				],
+				[
+					243,
+					1183,
+					101,
+					215.4,
+					137,
+					2
+				],
+				[
+					273,
+					1183,
+					127,
+					215.4,
+					133,
+					2
+				],
+				[
+					303,
+					1183,
+					28,
+					215.4,
+					89,
+					0
+				]
+			],
+			"days": 303,
+			"death_causes": [
+				"exposure",
+				"scurvy"
+			],
+			"departures": 3,
+			"food": 28,
+			"health": [
+				0,
+				91,
+				0,
+				71,
+				59
+			],
+			"incidents": [],
+			"loss_reason": "No travelers remain with the wagon. Departures and deaths are recorded separately in View Party.",
+			"miles": 1183,
+			"month": 3,
+			"original_present": 0,
+			"outcome": "lost",
+			"oxen": 4,
+			"profession": "farmer",
+			"recruited": 0,
+			"roster": "selected",
+			"route": [
+				"independence",
+				"elm_grove",
+				"wakarusa",
+				"kansas_river",
+				"big_blue",
+				"platte",
+				"fort_kearny",
+				"south_platte",
+				"ash_hollow",
+				"courthouse_rock",
+				"chimney_rock",
+				"scotts_bluff",
+				"fort_laramie",
+				"north_platte",
+				"independence_rock",
+				"devils_gate",
+				"south_pass",
+				"little_sandy",
+				"green_river",
+				"fort_bridger",
+				"soda_springs"
+			],
+			"scurvy_cases": 2,
+			"seed": 3103,
+			"sentences": [],
+			"strategy": "predation",
+			"survivors": 0,
+			"tales": 3,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0,
+			"wanted_encounters": 0
+		},
+		{
+			"arrival_month": 10,
+			"attacks": [
+				"wounded"
+			],
+			"audit": {
+				"days": 235,
+				"illness_person_days": 227,
+				"max_vitamin_gap": 179,
+				"other_days": 99,
+				"rest_days": 36,
+				"scurvy_person_days": 203,
+				"underfed_days": 4,
+				"vitamin_days": 8,
+				"working_days": 100
+			},
+			"bodies": [
+				"processed",
+				"processed",
+				"lying"
+			],
+			"bullets": 120,
+			"cash": 184.44,
+			"counts": {
+				"bought_produce": 1,
+				"care": 2,
+				"counter_camp": 1,
+				"counter_cents": 1096,
+				"counter_traders": 1,
+				"counter_visits": 2,
+				"empty_food_days": 3,
+				"empty_hunts": 6,
+				"forages": 49,
+				"hunts": 22,
+				"last_care": 24,
+				"last_forage": 233,
+				"meat_carried": 421,
+				"meat_food_units": 214,
+				"meat_obtained": 675,
+				"oxen_slaughtered": 2,
+				"preservations": 6,
+				"rests": 31,
+				"shots": 35,
+				"trades": 0,
+				"travel_days": 100
+			},
+			"curve": [
+				[
+					1,
+					11,
+					1710,
+					216.4,
+					200,
+					5
+				],
+				[
+					31,
+					264,
+					1344,
+					204.44,
+					199,
+					3
+				],
+				[
+					61,
+					642,
+					1099,
+					204.44,
+					197,
+					3
+				],
+				[
+					91,
+					811,
+					789,
+					204.44,
+					157,
+					3
+				],
+				[
+					121,
+					1151,
+					509,
+					184.44,
+					157,
+					3
+				],
+				[
+					151,
+					1320,
+					245,
+					184.44,
+					157,
+					3
+				],
+				[
+					181,
+					1375,
+					77,
+					184.44,
+					156,
+					2
+				],
+				[
+					211,
+					1476,
+					72,
+					184.44,
+					142,
+					2
+				]
+			],
+			"days": 235,
+			"death_causes": [
+				"scurvy",
+				"lack of food",
+				"scurvy"
+			],
+			"departures": 2,
+			"food": 0,
+			"health": [
+				0,
+				100,
+				0,
+				0,
+				68
+			],
+			"incidents": [],
+			"loss_reason": "No travelers remain with the wagon. Departures and deaths are recorded separately in View Party.",
+			"miles": 1476,
+			"month": 3,
+			"original_present": 0,
+			"outcome": "lost",
+			"oxen": 4,
+			"profession": "farmer",
+			"recruited": 0,
+			"roster": "selected",
+			"route": [
+				"independence",
+				"elm_grove",
+				"wakarusa",
+				"kansas_river",
+				"big_blue",
+				"platte",
+				"fort_kearny",
+				"south_platte",
+				"ash_hollow",
+				"courthouse_rock",
+				"chimney_rock",
+				"scotts_bluff",
+				"fort_laramie",
+				"north_platte",
+				"independence_rock",
+				"devils_gate",
+				"south_pass",
+				"little_sandy",
+				"green_river",
+				"fort_bridger",
+				"soda_springs",
+				"fort_hall",
+				"snake_river"
+			],
+			"scurvy_cases": 3,
+			"seed": 3104,
+			"sentences": [],
+			"strategy": "predation",
+			"survivors": 0,
+			"tales": 2,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0,
+			"wanted_encounters": 0
+		},
+		{
+			"arrival_month": 4,
+			"attacks": [
+				"missed"
+			],
+			"audit": {
+				"days": 32,
+				"illness_person_days": 14,
+				"max_vitamin_gap": 26,
+				"other_days": 11,
+				"rest_days": 8,
+				"scurvy_person_days": 0,
+				"underfed_days": 3,
+				"vitamin_days": 6,
+				"working_days": 13
+			},
+			"bodies": [
+				"processed"
+			],
+			"bullets": 0,
+			"cash": 215.4,
+			"counts": {
+				"abandonments": 1,
+				"care": 1,
+				"discards": 2,
+				"empty_food_days": 3,
+				"empty_hunts": 0,
+				"forages": 2,
+				"hunts": 0,
+				"last_care": 13,
+				"last_forage": 32,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 0,
+				"preservations": 0,
+				"rests": 7,
+				"shots": 0,
+				"trades": 0,
+				"travel_days": 13
+			},
+			"curve": [
+				[
+					1,
+					16,
+					1710,
+					216.4,
+					200,
+					5
+				],
+				[
+					31,
+					174,
+					0,
+					215.4,
+					20,
+					2
+				]
+			],
+			"days": 32,
+			"death_causes": [
+				"lack of food"
+			],
+			"departures": 2,
+			"food": 0,
+			"health": [
+				0,
+				55,
+				95,
+				26,
+				97
+			],
+			"incidents": [
+				[
+					"wanted",
+					"caught",
+					"tried",
+					0,
+					0
+				]
+			],
+			"loss_reason": "",
+			"miles": 174,
+			"month": 3,
+			"original_present": 2,
+			"outcome": "policy_stalled",
+			"oxen": 0,
+			"profession": "farmer",
+			"recruited": 0,
+			"roster": "selected",
+			"route": [
+				"independence",
+				"elm_grove",
+				"wakarusa",
+				"kansas_river",
+				"big_blue"
+			],
+			"scurvy_cases": 0,
+			"seed": 3105,
+			"sentences": [
+				"assault"
+			],
+			"strategy": "predation",
+			"survivors": 2,
+			"tales": 2,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0,
+			"wanted_encounters": 1
+		},
+		{
+			"arrival_month": 3,
+			"attacks": [
+				"killed"
+			],
+			"audit": {
+				"days": 365,
+				"illness_person_days": 298,
+				"max_vitamin_gap": 335,
+				"other_days": 83,
+				"rest_days": 131,
+				"scurvy_person_days": 281,
+				"underfed_days": 0,
+				"vitamin_days": 9,
+				"working_days": 151
+			},
+			"bodies": [
+				"processed"
+			],
+			"bullets": 189,
+			"cash": 188.6,
+			"counts": {
+				"bought_dried_produce": 3,
+				"care": 1,
+				"counter_camp": 1,
+				"counter_cents": 120,
+				"counter_visits": 1,
+				"empty_food_days": 0,
+				"empty_hunts": 0,
+				"forages": 59,
+				"hunts": 0,
+				"last_care": 42,
+				"last_forage": 243,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 0,
+				"preservations": 0,
+				"rests": 112,
+				"shots": 0,
+				"trades": 0,
+				"travel_days": 151
+			},
+			"curve": [
+				[
+					1,
+					17,
+					1710,
+					216.4,
+					200,
+					5
+				],
+				[
+					31,
+					350,
+					1487,
+					214.2,
+					199,
+					1
+				],
+				[
+					61,
+					614,
+					1401,
+					214.2,
+					199,
+					1
+				],
+				[
+					91,
+					901,
+					1281,
+					194.2,
+					197,
+					1
+				],
+				[
+					121,
+					1014,
+					1191,
+					194.2,
+					195,
+					1
+				],
+				[
+					151,
+					1065,
+					1101,
+					194.2,
+					195,
+					1
+				],
+				[
+					181,
+					1233,
+					1011,
+					194.2,
+					195,
+					1
+				],
+				[
+					211,
+					1448,
+					935,
+					194.2,
+					195,
+					1
+				],
+				[
+					241,
+					1647,
+					845,
+					194.2,
+					195,
+					1
+				],
+				[
+					271,
+					1740,
+					725,
+					194.2,
+					193,
+					1
+				],
+				[
+					301,
+					1800,
+					649,
+					194.2,
+					193,
+					1
+				],
+				[
+					331,
+					1848,
+					573,
+					194.2,
+					191,
+					1
+				],
+				[
+					361,
+					1886,
+					483,
+					188.6,
+					189,
+					1
+				]
+			],
+			"days": 365,
+			"death_causes": [
+				"being shot by A"
+			],
+			"departures": 3,
+			"food": 471,
+			"health": [
+				58,
+				85,
+				85,
+				85,
+				0
+			],
+			"incidents": [
+				[
+					"wanted",
+					"caught",
+					"escaped",
+					0,
+					0
+				]
+			],
+			"loss_reason": "",
+			"miles": 1904,
+			"month": 3,
+			"original_present": 1,
+			"outcome": "year_limit",
+			"oxen": 6,
+			"profession": "farmer",
+			"recruited": 0,
+			"roster": "selected",
+			"route": [
+				"independence",
+				"elm_grove",
+				"wakarusa",
+				"kansas_river",
+				"big_blue",
+				"platte",
+				"fort_kearny",
+				"south_platte",
+				"ash_hollow",
+				"courthouse_rock",
+				"chimney_rock",
+				"scotts_bluff",
+				"fort_laramie",
+				"north_platte",
+				"independence_rock",
+				"devils_gate",
+				"south_pass",
+				"little_sandy",
+				"green_river",
+				"fort_bridger",
+				"soda_springs",
+				"fort_hall",
+				"snake_river",
+				"fort_boise",
+				"burnt_river",
+				"powder_river",
+				"grande_ronde",
+				"blue_mountains",
+				"umatilla",
+				"john_day",
+				"deschutes",
+				"the_dalles",
+				"barlow_pass",
+				"laurel_hill"
+			],
+			"scurvy_cases": 1,
+			"seed": 3106,
+			"sentences": [],
+			"strategy": "predation",
+			"survivors": 1,
+			"tales": 3,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0,
+			"wanted_encounters": 1
+		},
+		{
+			"arrival_month": 8,
+			"attacks": [
+				"wounded"
+			],
+			"audit": {
+				"days": 182,
+				"illness_person_days": 144,
+				"max_vitamin_gap": 106,
+				"other_days": 60,
+				"rest_days": 25,
+				"scurvy_person_days": 83,
+				"underfed_days": 6,
+				"vitamin_days": 9,
+				"working_days": 97
+			},
+			"bodies": [
+				"processed",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"bullets": 166,
+			"cash": 214.52,
+			"counts": {
+				"bought_dried_produce": 2,
+				"care": 2,
+				"counter_camp": 1,
+				"counter_cents": 88,
+				"counter_visits": 1,
+				"empty_food_days": 5,
+				"empty_hunts": 5,
+				"forages": 25,
+				"hunts": 16,
+				"last_care": 65,
+				"last_forage": 181,
+				"meat_carried": 576,
+				"meat_food_units": 291,
+				"meat_obtained": 592,
+				"oxen_slaughtered": 2,
+				"preservations": 6,
+				"rests": 17,
+				"shots": 29,
+				"trades": 0,
+				"travel_days": 97
+			},
+			"curve": [
+				[
+					1,
+					18,
+					1710,
+					216.4,
+					200,
+					5
+				],
+				[
+					31,
+					361,
+					1291,
+					214.52,
+					199,
+					4
+				],
+				[
+					61,
+					726,
+					968,
+					214.52,
+					199,
+					4
+				],
+				[
+					91,
+					1015,
+					579,
+					214.52,
+					199,
+					4
+				],
+				[
+					121,
+					1368,
+					251,
+					214.52,
+					197,
+					4
+				],
+				[
+					151,
+					1395,
+					97,
+					214.52,
+					195,
+					4
+				],
+				[
+					181,
+					1395,
+					0,
+					214.52,
+					166,
+					1
+				]
+			],
+			"days": 182,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 1,
+			"food": 0,
+			"health": [
+				0,
+				0,
+				0,
+				0,
+				68
+			],
+			"incidents": [],
+			"loss_reason": "No travelers remain with the wagon. Departures and deaths are recorded separately in View Party.",
+			"miles": 1395,
+			"month": 3,
+			"original_present": 0,
+			"outcome": "lost",
+			"oxen": 4,
+			"profession": "farmer",
+			"recruited": 0,
+			"roster": "selected",
+			"route": [
+				"independence",
+				"elm_grove",
+				"wakarusa",
+				"kansas_river",
+				"big_blue",
+				"platte",
+				"fort_kearny",
+				"south_platte",
+				"ash_hollow",
+				"courthouse_rock",
+				"chimney_rock",
+				"scotts_bluff",
+				"fort_laramie",
+				"north_platte",
+				"independence_rock",
+				"devils_gate",
+				"south_pass",
+				"little_sandy",
+				"green_river",
+				"fort_bridger",
+				"soda_springs",
+				"fort_hall",
+				"snake_river"
+			],
+			"scurvy_cases": 3,
+			"seed": 3107,
+			"sentences": [],
+			"strategy": "predation",
+			"survivors": 0,
+			"tales": 1,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0,
+			"wanted_encounters": 0
+		}
+	],
+	"seconds": 7.929,
+	"seed_count": 8,
+	"seed_start": 3100,
+	"settings": {
+		"accuracy": 0.65,
+		"branch": "",
+		"care_below": 55,
+		"cash_reserve": 20,
+		"forage_gap": 20,
+		"hunt_below": 90,
+		"opportunity": 1,
+		"outfit_dried": 20,
+		"oxen": 6,
+		"post_food": 600,
+		"preserve_meals": 3.3
+	},
+	"source_hashes": {
+		"data/appearance.json": "59d47bc3af292ea8a47fd9f9c7bccf51b6a73b74ce2e379b0fd3c956968fbe15",
+		"data/character_catalog.json": "09bfaac277a6affc948cdb148f811e78be9ff7c36568656a933408433d869709",
+		"data/combat_rules.json": "07f885894ac8b5ffef2a36ec31371be3de9903e86bce85ce03586481b8e90f3b",
+		"data/crime_scenes.json": "7af939795e45e77e338dbf9c993337fa132c4abf71ca83566cbe473033af6391",
+		"data/events.json": "92553914f1b86377d290d29086361e1b9cadce027b53459785f131b947f167b7",
+		"data/health_conditions.json": "e3abbdcb754a2b93cd6b2df734e982d3400b4e88e319563f5993f671b587f536",
+		"data/hunting.json": "487f044f49f5eff775465db325ca86935f17000a39bf509e05d289491ef11430",
+		"data/location_scenes.json": "c83c95452bdc9d1363e1d986920114d73ca5250de1209ee69e980952648f3865",
+		"data/map.json": "b7901aded45ef703256260d9d5f0a3116c28cf5c58e0d49c5f1d0dc8ababbafc",
+		"data/outfitting.json": "d71920f71a456f987094ebb95dc69a29b08de0594a9063dac68edcb9b9cdd7f1",
+		"data/party_benefits.json": "34570796d75535ee475b745540b2d36090d376109a179393cfd94c5aa7c2956c",
+		"data/provisions.json": "fd81522a4cd6e3f888fe6e3349d1bcbaa15406a346da761ba8fb9b3415258048",
+		"data/recruitment.json": "2ab34cf68166ff24a80e53212a49a56a6bf706a35f13420e0ee0caf0b069494b",
+		"data/route.json": "ed6819e25a190422112e6b2c54da7e54b7a35a9065beabe1634652ff218d3224",
+		"data/save_migrations.json": "8919e9105e1fd555c4a8e4baf76ce62fe4de0790c182f7339a1332c4060d6192",
+		"data/scene_ambience.json": "d70843fe5553ffc3a9849f38461f838287dc53f3b462e4a091680b4b5b68f937",
+		"data/social_rules.json": "0881a6a6bda117ad493093029b1225631a6b1c9ea1bcb605f9a2766cdb53d0c8",
+		"data/survival_rules.json": "15d6e3bc30aba897125e565a06966c8399d2eec0a7d79c7103856349c0850c68",
+		"data/trail_context.json": "87dbf2adb5daa058418ae7a010dc0983bb6cb444716601228d8ab74649018307",
+		"data/trail_events.json": "31b0573c449d7ffdd18f88025bf3b1a4e171025a6b1a752b1e003416932edead",
+		"data/trail_news.json": "839ff4aa42b1c0a1dba2d9707fa2eed6be6b776f3019396e984419bcbb39754d",
+		"simulation/carrying.gd": "e257982c3e0aaf3ededdf319cbdbff48896005c7d5d50b76f51c28126209077c",
+		"simulation/character_catalog.gd": "37cd3d67e87d6425c5126c67beb917ce2303c2218d02e3eaa2455c6d7a380a96",
+		"simulation/combat.gd": "dfbc8832e1544199756a34753a74ca603855736f0bed1de637fb0d2eb7eabcdc",
+		"simulation/crime_system.gd": "a8b1137631ea1fb7c0c9996640df8d7a3ddedabe4335c428585c0ce486a4db84",
+		"simulation/discard_plan.gd": "0515216a6b171ab53f968abd7a06fbb6c42a80d59b2258c504cb566101004b23",
+		"simulation/event_catalog.gd": "02ef866ad2653e87fcc90eaef14967a1ea819c191c2729b951dca308071a2dad",
+		"simulation/grave_store.gd": "ce13273ecee4d73114564c37908b7f3a2c473530672a265b0eae2c029a4ba71d",
+		"simulation/hunting.gd": "eec6cd067332c78f8c330ec71f7909e4942d33cd6c0f39989802a6f2ec9bf1a6",
+		"simulation/outfitting.gd": "27b931263784eb943966400787660c30c396f3e21a6599261695bb60383a2904",
+		"simulation/party_character.gd": "11c4924b78d80f8a6e79df3f465d59fea50d887c7f662702dbb3b9ea839a2d69",
+		"simulation/party_health.gd": "17704fe969c69ad6b13308e80a31c4bebecc7ce38142856e6bcd58197f623d64",
+		"simulation/party_recruitment.gd": "8b25e3e20d192b18ea7ddd084de996b2306f43973e22b5dc7e002fe65181bed8",
+		"simulation/party_social.gd": "7f53661a4f05d9055f615ef6fe03a49c420ae4c6b4e3e3f60a7738af52b4dc8e",
+		"simulation/produce_trade.gd": "916542b3ceb3869029a9cf50b89c79e0ab8a56f1fdf185785a3fdc1495d95b76",
+		"simulation/provisions.gd": "80561c160d266c9a12ad17da14c8c11515c8c1c52a5a20c770b6ca1edbab8fad",
+		"simulation/remains.gd": "f6c942956538ddca8cf3dd28727a5113b411331c2a91f3281639604ff79f8fca",
+		"simulation/route_catalog.gd": "f8e42f847e7c2a2328ddf9e8b8ae6b689dcb2ad24d4aa1fb4361ea6fd8e666d7",
+		"simulation/save_store.gd": "0d73d0841364bb6303f3650957f1f2362d3a4f40fd12d7172375338adc3a8818",
+		"simulation/survival_rules.gd": "c63cd33f933b6c84c062093aae6f25ef5bc83662ee5faf40fcb266f80dac90d2",
+		"simulation/trail_context.gd": "484ecbd2ada91d388fd98994298463a1bcfe76d68b98cb55cc4efca54e485f85",
+		"simulation/trail_engine.gd": "2e4f0a4d801a49df7e06e9b6bb118f01f6eda3e14c2bf2e465a3c2b74fa9b81a",
+		"simulation/trail_news.gd": "7cf725ae5554ecde199cce47b22d1b1d6398bd5afdec86c88bb46f29907ff16d",
+		"simulation/traveler_appearance.gd": "1be477cbb1b7bb23c480fa23717ed305cef48b1d0031db07b66e8e5e0cb65ecb",
+		"simulation/wagon_cache.gd": "42dd28e3817606035d68ad83b5c6836af1e67b3f0a5eca48940d2032eeb13556",
+		"simulation/wanted_system.gd": "d083c5683e80b15cd19a4e0b877a50db698752562b8918f815f8123b17481e36",
+		"tests/balance_observer.gd": "586ed7a1ec3033812bf57b49de7ccffe1dab931203602be07d8a2848a87ce96d",
+		"tests/current_balance_campaign.gd": "f1622655d3bb0c15a2d6c5ee167813bcb88b48c60a91572c8140de4d8748e37a",
+		"tests/current_journey_policy.gd": "cabe5f7206510fcc773570cebd1fe49a0fe76dc508aa754e2f64e5077b28b075",
+		"tests/full_trail_balance.gd": "76980100cfee9108c3c46d7a15088e13cd1fc6decddb9cc6965e88d7d157b480",
+		"tests/journey_trade_policy.gd": "0e99d83cd36f6fb62de3e1492e1b7d2d3bb72aef7dd3d1a4b89bd65673bbecd9",
+		"tests/outlaw_journeys.gd": "a3c868e8d1c60af7b7daca1ed098ac0cf80524fd6155819397e10033918fb141"
+	},
+	"strategies": [
+		"predation"
+	]
+}

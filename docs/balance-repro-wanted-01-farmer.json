@@ -1,0 +1,862 @@
+{
+	"errors": [
+		{
+			"error": "The trail record has invalid or incompatible data.",
+			"run": {
+				"month": 3,
+				"profession": "farmer",
+				"roster": "ordinary",
+				"seed": 3001,
+				"strategy": "robbery"
+			}
+		},
+		{
+			"error": "final save: The trail record has invalid or incompatible data.",
+			"run": {
+				"month": 3,
+				"profession": "farmer",
+				"roster": "ordinary",
+				"seed": 3001,
+				"strategy": "robbery"
+			}
+		},
+		{
+			"error": "The trail record has invalid or incompatible data.",
+			"run": {
+				"month": 5,
+				"profession": "farmer",
+				"roster": "ordinary",
+				"seed": 3000,
+				"strategy": "robbery"
+			}
+		},
+		{
+			"error": "final save: The trail record has invalid or incompatible data.",
+			"run": {
+				"month": 5,
+				"profession": "farmer",
+				"roster": "ordinary",
+				"seed": 3000,
+				"strategy": "robbery"
+			}
+		},
+		{
+			"error": "The trail record has invalid or incompatible data.",
+			"run": {
+				"month": 5,
+				"profession": "farmer",
+				"roster": "ordinary",
+				"seed": 3001,
+				"strategy": "robbery"
+			}
+		},
+		{
+			"error": "final save: The trail record has invalid or incompatible data.",
+			"run": {
+				"month": 5,
+				"profession": "farmer",
+				"roster": "ordinary",
+				"seed": 3001,
+				"strategy": "robbery"
+			}
+		}
+	],
+	"rest_below": 55,
+	"rules_signature": "dd57503977a35f4cc96129e69ccd4cb4e58cbbdaee0bb6eb236f9af3e4106f49",
+	"runs": [
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"bullets": 144,
+			"cash": 264.4,
+			"counts": {
+				"care": 1,
+				"empty_food_days": 2,
+				"empty_hunts": 4,
+				"hunts": 9,
+				"last_care": 51,
+				"meat_carried": 186,
+				"meat_food_units": 94,
+				"meat_obtained": 186,
+				"oxen_slaughtered": 2,
+				"preservations": 6,
+				"rest_health": 9,
+				"rests": 9,
+				"shots": 12,
+				"trades": 2,
+				"travel_days": 93
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					243,
+					1420,
+					284.4,
+					200,
+					5
+				],
+				[
+					61,
+					615,
+					999,
+					284.4,
+					200,
+					5
+				],
+				[
+					91,
+					926,
+					549,
+					284.4,
+					200,
+					5
+				],
+				[
+					121,
+					1225,
+					113,
+					264.4,
+					198,
+					5
+				],
+				[
+					151,
+					1375,
+					1,
+					264.4,
+					144,
+					3
+				]
+			],
+			"days": 153,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 0,
+			"food": 0,
+			"health": [
+				0,
+				0,
+				0,
+				0,
+				0
+			],
+			"incidents": [
+				[
+					"robbery",
+					"complied",
+					"escaped",
+					90,
+					3000
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"complied",
+					"escaped",
+					0,
+					3000
+				]
+			],
+			"loss_reason": "No one in the party can continue. Consult the party records for their last days.",
+			"miles": 1375,
+			"month": 3,
+			"outcome": "lost",
+			"oxen": 4,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 3000,
+			"strategy": "robbery",
+			"survivors": 0,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying"
+			],
+			"bullets": 197,
+			"cash": 314.4,
+			"counts": {
+				"care": 1,
+				"empty_food_days": 0,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": 11,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 0,
+				"preservations": 0,
+				"rest_health": 17,
+				"rests": 17,
+				"shots": 0,
+				"trades": 0,
+				"travel_days": 55
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					174,
+					1576,
+					314.4,
+					200,
+					5
+				],
+				[
+					61,
+					467,
+					1151,
+					314.4,
+					200,
+					5
+				],
+				[
+					91,
+					747,
+					730,
+					314.4,
+					197,
+					5
+				]
+			],
+			"days": 99,
+			"death_causes": [],
+			"departures": 0,
+			"food": 610,
+			"health": [
+				100,
+				84,
+				57,
+				100,
+				75
+			],
+			"incidents": [
+				[
+					"robbery",
+					"complied",
+					"escaped",
+					150,
+					3000
+				],
+				[
+					"robbery",
+					"complied",
+					"escaped",
+					191,
+					6000
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"wanted",
+					"caught",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"wanted",
+					"caught",
+					"",
+					0,
+					0
+				]
+			],
+			"loss_reason": "",
+			"miles": 797,
+			"month": 3,
+			"outcome": "save_failed",
+			"oxen": 6,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 3001,
+			"strategy": "robbery",
+			"survivors": 5,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [],
+			"bullets": 187,
+			"cash": 254.4,
+			"counts": {
+				"activities": 2,
+				"care": 1,
+				"empty_food_days": 0,
+				"empty_hunts": 2,
+				"hunts": 5,
+				"last_care": 69,
+				"meat_carried": 111,
+				"meat_food_units": 56,
+				"meat_obtained": 111,
+				"oxen_slaughtered": 2,
+				"preservations": 5,
+				"rest_fatigue": 1,
+				"rest_health": 22,
+				"rest_oxen": 8,
+				"rests": 31,
+				"shots": 7,
+				"trades": 3,
+				"travel_days": 109
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					275,
+					1626,
+					294.4,
+					200,
+					5
+				],
+				[
+					61,
+					637,
+					1270,
+					274.4,
+					200,
+					4
+				],
+				[
+					91,
+					960,
+					910,
+					274.4,
+					196,
+					4
+				],
+				[
+					121,
+					1211,
+					550,
+					274.4,
+					196,
+					4
+				],
+				[
+					151,
+					1491,
+					232,
+					254.4,
+					196,
+					4
+				],
+				[
+					181,
+					1529,
+					114,
+					254.4,
+					194,
+					4
+				]
+			],
+			"days": 193,
+			"death_causes": [],
+			"departures": 1,
+			"food": 17,
+			"health": [
+				92,
+				92,
+				24,
+				100,
+				92
+			],
+			"incidents": [
+				[
+					"robbery",
+					"complied",
+					"escaped",
+					90,
+					3000
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"complied",
+					"escaped",
+					191,
+					6000
+				]
+			],
+			"loss_reason": "",
+			"miles": 1529,
+			"month": 5,
+			"outcome": "save_failed",
+			"oxen": 4,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 3000,
+			"strategy": "robbery",
+			"survivors": 4,
+			"tales": 1,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying"
+			],
+			"bullets": 195,
+			"cash": 294.4,
+			"counts": {
+				"care": 2,
+				"empty_food_days": 0,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": 28,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 0,
+				"preservations": 0,
+				"rest_health": 13,
+				"rests": 13,
+				"shots": 0,
+				"trades": 0,
+				"travel_days": 56
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					184,
+					1516,
+					314.4,
+					198,
+					5
+				],
+				[
+					61,
+					560,
+					1086,
+					314.4,
+					198,
+					5
+				],
+				[
+					91,
+					791,
+					624,
+					294.4,
+					195,
+					4
+				]
+			],
+			"days": 97,
+			"death_causes": [
+				"wound"
+			],
+			"departures": 0,
+			"food": 552,
+			"health": [
+				0,
+				100,
+				23,
+				100,
+				96
+			],
+			"incidents": [
+				[
+					"robbery",
+					"complied",
+					"escaped",
+					150,
+					3000
+				],
+				[
+					"robbery",
+					"complied",
+					"escaped",
+					131,
+					6000
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"wanted",
+					"caught",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"wanted",
+					"caught",
+					"",
+					0,
+					0
+				]
+			],
+			"loss_reason": "",
+			"miles": 791,
+			"month": 5,
+			"outcome": "save_failed",
+			"oxen": 6,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 3001,
+			"strategy": "robbery",
+			"survivors": 4,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying",
+				"lying",
+				"lying",
+				"lying"
+			],
+			"bullets": 136,
+			"cash": 294.4,
+			"counts": {
+				"activities": 1,
+				"care": 0,
+				"empty_food_days": 4,
+				"empty_hunts": 6,
+				"hunts": 12,
+				"last_care": -100,
+				"meat_carried": 189,
+				"meat_food_units": 96,
+				"meat_obtained": 189,
+				"oxen_slaughtered": 2,
+				"preservations": 6,
+				"rest_oxen": 44,
+				"rests": 44,
+				"shots": 16,
+				"trades": 1,
+				"travel_days": 96
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					260,
+					1626,
+					294.4,
+					198,
+					5
+				],
+				[
+					61,
+					544,
+					1271,
+					294.4,
+					198,
+					5
+				],
+				[
+					91,
+					825,
+					881,
+					294.4,
+					198,
+					4
+				],
+				[
+					121,
+					912,
+					521,
+					294.4,
+					198,
+					4
+				],
+				[
+					151,
+					1017,
+					161,
+					294.4,
+					194,
+					4
+				],
+				[
+					181,
+					1053,
+					56,
+					294.4,
+					150,
+					4
+				]
+			],
+			"days": 193,
+			"death_causes": [
+				"lack of food",
+				"lack of food",
+				"lack of food",
+				"lack of food"
+			],
+			"departures": 1,
+			"food": 0,
+			"health": [
+				0,
+				0,
+				0,
+				100,
+				0
+			],
+			"incidents": [
+				[
+					"robbery",
+					"complied",
+					"escaped",
+					90,
+					3000
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"robbery",
+					"complied",
+					"escaped",
+					191,
+					6000
+				]
+			],
+			"loss_reason": "No travelers remain with the wagon. Departures and deaths are recorded separately in View Party.",
+			"miles": 1053,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 4,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 3000,
+			"strategy": "robbery",
+			"survivors": 0,
+			"tales": 1,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		},
+		{
+			"attacks": [],
+			"bodies": [
+				"lying"
+			],
+			"bullets": 192,
+			"cash": 294.4,
+			"counts": {
+				"care": 2,
+				"empty_food_days": 0,
+				"empty_hunts": 0,
+				"hunts": 0,
+				"last_care": 30,
+				"meat_carried": 0,
+				"meat_obtained": 0,
+				"oxen_slaughtered": 0,
+				"preservations": 0,
+				"rest_health": 40,
+				"rests": 40,
+				"shots": 0,
+				"trades": 0,
+				"travel_days": 34
+			},
+			"curve": [
+				[
+					1,
+					0,
+					1685,
+					224.4,
+					200,
+					5
+				],
+				[
+					31,
+					174,
+					1486,
+					314.4,
+					200,
+					5
+				],
+				[
+					61,
+					317,
+					1036,
+					314.4,
+					200,
+					5
+				],
+				[
+					91,
+					516,
+					556,
+					314.4,
+					195,
+					5
+				]
+			],
+			"days": 103,
+			"death_causes": [],
+			"departures": 0,
+			"food": 376,
+			"health": [
+				25,
+				67,
+				97,
+				93,
+				97
+			],
+			"incidents": [
+				[
+					"robbery",
+					"complied",
+					"escaped",
+					150,
+					3000
+				],
+				[
+					"robbery",
+					"complied",
+					"escaped",
+					131,
+					6000
+				],
+				[
+					"robbery",
+					"resisted",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"wanted",
+					"caught",
+					"escaped",
+					0,
+					0
+				],
+				[
+					"wanted",
+					"caught",
+					"tried",
+					0,
+					0
+				]
+			],
+			"loss_reason": "The party's leader was hanged for murder.",
+			"miles": 516,
+			"month": 8,
+			"outcome": "lost",
+			"oxen": 6,
+			"profession": "farmer",
+			"roster": "ordinary",
+			"seed": 3001,
+			"strategy": "robbery",
+			"survivors": 5,
+			"tales": 0,
+			"wages_owed_cents": 0,
+			"wages_paid_cents": 0
+		}
+	],
+	"seconds": 2.021,
+	"seed_count": 2,
+	"seed_start": 3000,
+	"source_hashes": {
+		"simulation/carrying.gd": "e257982c3e0aaf3ededdf319cbdbff48896005c7d5d50b76f51c28126209077c",
+		"simulation/character_catalog.gd": "37cd3d67e87d6425c5126c67beb917ce2303c2218d02e3eaa2455c6d7a380a96",
+		"simulation/combat.gd": "dfbc8832e1544199756a34753a74ca603855736f0bed1de637fb0d2eb7eabcdc",
+		"simulation/crime_system.gd": "a8b1137631ea1fb7c0c9996640df8d7a3ddedabe4335c428585c0ce486a4db84",
+		"simulation/discard_plan.gd": "0515216a6b171ab53f968abd7a06fbb6c42a80d59b2258c504cb566101004b23",
+		"simulation/event_catalog.gd": "02ef866ad2653e87fcc90eaef14967a1ea819c191c2729b951dca308071a2dad",
+		"simulation/grave_store.gd": "ce13273ecee4d73114564c37908b7f3a2c473530672a265b0eae2c029a4ba71d",
+		"simulation/hunting.gd": "eec6cd067332c78f8c330ec71f7909e4942d33cd6c0f39989802a6f2ec9bf1a6",
+		"simulation/outfitting.gd": "25384265907fcd2e6478d7d595b14102090f624d5e2847a3cc655e1301acdf15",
+		"simulation/party_character.gd": "11c4924b78d80f8a6e79df3f465d59fea50d887c7f662702dbb3b9ea839a2d69",
+		"simulation/party_health.gd": "17704fe969c69ad6b13308e80a31c4bebecc7ce38142856e6bcd58197f623d64",
+		"simulation/party_recruitment.gd": "8b25e3e20d192b18ea7ddd084de996b2306f43973e22b5dc7e002fe65181bed8",
+		"simulation/party_social.gd": "7f53661a4f05d9055f615ef6fe03a49c420ae4c6b4e3e3f60a7738af52b4dc8e",
+		"simulation/provisions.gd": "4459c765bd8f03e669318ee17530b34bfe86fdfaf02827efcf2d765f53ce75fd",
+		"simulation/remains.gd": "f6c942956538ddca8cf3dd28727a5113b411331c2a91f3281639604ff79f8fca",
+		"simulation/route_catalog.gd": "f8e42f847e7c2a2328ddf9e8b8ae6b689dcb2ad24d4aa1fb4361ea6fd8e666d7",
+		"simulation/save_store.gd": "22e7bb5e2f9b512a940b0b2d87e9c667e260eecaced5ce0a0fb74dfddaff347a",
+		"simulation/survival_rules.gd": "c63cd33f933b6c84c062093aae6f25ef5bc83662ee5faf40fcb266f80dac90d2",
+		"simulation/trail_context.gd": "484ecbd2ada91d388fd98994298463a1bcfe76d68b98cb55cc4efca54e485f85",
+		"simulation/trail_engine.gd": "2de5f2ef84be1f546d3da76c321d7352e642360ec7c9f5bfb0027a38cc1a9108",
+		"simulation/trail_news.gd": "7cf725ae5554ecde199cce47b22d1b1d6398bd5afdec86c88bb46f29907ff16d",
+		"simulation/traveler_appearance.gd": "1be477cbb1b7bb23c480fa23717ed305cef48b1d0031db07b66e8e5e0cb65ecb",
+		"simulation/wagon_cache.gd": "caf6d7d85c5745a2e5738e3548460d68d886d6abe1ab8838cd9f5dc2cdbcc2ec",
+		"simulation/wanted_system.gd": "59abd5376d63896faa31aabf0d70c4673e5b148940685ad2d41a75227a4e8a94",
+		"tests/balance_campaign.gd": "ee2602614b3782fd953dd85080a6fb275fef9388791ca41f2fc4d42091e9da27",
+		"tests/full_trail_balance.gd": "76980100cfee9108c3c46d7a15088e13cd1fc6decddb9cc6965e88d7d157b480",
+		"tests/outlaw_journeys.gd": "a3c868e8d1c60af7b7daca1ed098ac0cf80524fd6155819397e10033918fb141"
+	}
+}
