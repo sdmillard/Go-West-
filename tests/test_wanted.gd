@@ -223,6 +223,27 @@ func run() -> void:
 	army_save.crime.record.erase("bounties")
 	army_save.pending.choices=army_save.pending.choices.filter(func(choice):return choice.crime_command!="flee")
 	check(Store.new().restore(JSON.parse_string(JSON.stringify(army_save)))!=null,"An older pending army pursuit gains flight on migration")
+	game=outfit()
+	game.pending={}
+	game.crime.scenes.passing_traders.shot_hit=1
+	game.crime.scenes.passing_traders.shot_fatal=0
+	game.crime.scenes.passing_traders.escape_capture=0
+	game.crime.scenes.passing_traders.escape_injury=0
+	check(game.open_crime() and pick(game,"shoot") and pick(game,"flee") and pick(game,"finish"),"Prepare a report from a transient trading party")
+	game.state.day+=2
+	Wanted.post_bounties(game.crime,game)
+	check(not game.crime.record.bounties.is_empty(),"A nearby post hears the transient party's report")
+	game.state.miles+=500
+	game.state.day+=50
+	roundtrip(game,"Transient-origin bounty after traveling away")
+	game=robbery()
+	game.open_crime()
+	pick(game,"robbery")
+	game.party_health.kill(game.party_health.members[0],int(game.state.day),"confrontation injuries")
+	game._collect_health_events()
+	game.crime.result(game,"captured")
+	check(not game.party_health.members[0].alive and game.party_health.members[0].health==0,"A trial never gives health back to a leader already killed in the fight")
+	roundtrip(game,"A survivor answers the nonfatal trial after the original leader died")
 	var screen=Main.instantiate()
 	root.add_child(screen)
 	await process_frame

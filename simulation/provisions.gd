@@ -5,6 +5,7 @@ var data: Dictionary = {}
 var error := ""
 var fresh: Array[Dictionary] = []
 var carriers: Array[Dictionary] = []
+const Produce=preload("res://simulation/produce_trade.gd")
 const Carrying=preload("res://simulation/carrying.gd")
 func _init() -> void:
 	load_data(JSON.parse_string(FileAccess.get_file_as_string("res://data/provisions.json")))
@@ -55,6 +56,7 @@ func load_data(value: Variant) -> bool:
 	for amount in forage.lb_per_worker:
 		if not number(amount) or amount<0 or amount!=floor(amount):return false
 	if forage.lb_per_worker[0]>forage.lb_per_worker[1]:return false
+	if not Produce.valid_rules(value.get("produce_trade")):return false
 	data = value.duplicate(true)
 	error = ""
 	return true
@@ -74,7 +76,7 @@ func cargo(inventory: Dictionary) -> float:
 func cart_cargo(cart: Dictionary) -> float:
 	var inventory := cart.duplicate()
 	inventory.bullets = int(cart.get("bullet_boxes", 0)) * 20
-	return cargo(inventory)
+	return cargo(inventory)+int(cart.get("produce",0))*float(data.foraging.mass_ratio)+int(cart.get("dried_produce",0))*float(data.foraging.mass_ratio)*float(data.produce_trade.dry_weight)
 func team_capacity(oxen: int) -> float:
 	return minf(float(data.cargo_guideline_lb),maxi(0,oxen)*float(data.working_load_per_ox_lb))
 func capacity(inventory: Dictionary) -> float:
@@ -131,12 +133,12 @@ func processable() -> int:
 		room-=used*mass_ratio(batch)
 		if used<int(batch.pounds):break
 	return amount
-func preservation_plan(day: int,total: int,meal: int) -> Dictionary:
+func preservation_plan(day: int,total: int,meal: int,party_size: int=5) -> Dictionary:
 	var model=get_script().new()
 	model.data=data.duplicate(true)
 	model.fresh.assign(fresh.duplicate(true))
 	var spoiled: int=model.spoil(day+1,total)
-	model.remove(mini(meal,maxi(0,total-spoiled)))
+	model.eat(mini(meal,maxi(0,total-spoiled)),party_size,maxi(0,total-spoiled))
 	var amount: int=model.processable()
 	return {"input":amount,"mass":model.fresh_mass(amount)}
 func preservable_next_day(day: int, total: int, meal: int) -> int:
@@ -174,7 +176,7 @@ func remove(amount: int) -> float:
 	fresh.sort_custom(func(a,b):return a.expires<b.expires)
 	for batch in fresh:
 		var used := mini(amount, int(batch.pounds))
-		if batch.get("vitamin_c",false): vitamin_c_eaten += used * mass_ratio(batch)
+		if batch.get("vitamin_c",false): vitamin_c_eaten += used * float(batch.get("vitamin_c_per_unit",mass_ratio(batch)))
 		batch.pounds -= used
 		amount -= used
 	fresh = fresh.filter(func(batch): return batch.pounds > 0)
@@ -208,6 +210,49 @@ func forecast_days(total: int, party_size: int, rations: int, day: int, horizon:
 	for offset in range(1,horizon+1):
 		total-=model.spoil(day+offset,total)
 		if total<meal:return offset-1
-		model.remove(meal)
+		model.eat(meal,party_size,total)
 		total-=meal
 	return horizon
+
+func valid_nutrients(batch: Dictionary) -> bool:
+	if batch.has("vitamin_c") and not batch.vitamin_c is bool:return false
+	if batch.has("vitamin_c_per_unit"):
+		if not batch.get("vitamin_c",false) or not batch.get("preserved",false) or not number(batch.vitamin_c_per_unit) or batch.vitamin_c_per_unit<=0 or batch.vitamin_c_per_unit>float(data.foraging.mass_ratio):return false
+	return not (batch.get("vitamin_c",false) and batch.get("preserved",false) and not batch.has("vitamin_c_per_unit"))
+
+## Meals share a produce serving, then use other food; extra produce feeds shortages.
+## Discarding/selling still uses remove(), without crediting dietary vitamins.
+func eat(amount: int,party_size: int,total: int) -> float:
+	var remaining:=amount
+	var vitamin:=0.0
+	var target: float=party_size*float(data.foraging.vitamin_c_lb_per_person)
+	var produce_total:=0
+	for batch in fresh:
+		if batch.get("vitamin_c",false):produce_total+=int(batch.pounds)
+	var ordinary:=maxi(0,total-produce_total)
+	fresh.sort_custom(func(a,b):return a.expires<b.expires)
+	for batch in fresh:
+		if remaining<=0 or vitamin>=target:break
+		if not batch.get("vitamin_c",false):continue
+		var per_unit: float=float(batch.get("vitamin_c_per_unit",mass_ratio(batch)))
+		var used: int=mini(mini(remaining,int(batch.pounds)),ceili((target-vitamin)/per_unit))
+		batch.pounds-=used
+		remaining-=used
+		vitamin+=used*per_unit
+	var other: int=mini(remaining,ordinary)
+	remaining-=other
+	for batch in fresh:
+		if batch.get("vitamin_c",false):continue
+		var used: int=mini(other,int(batch.pounds))
+		batch.pounds-=used
+		other-=used
+	# Any remainder of 'other' was untracked staples. Food totals are committed by the engine.
+	for batch in fresh:
+		if remaining<=0:break
+		if not batch.get("vitamin_c",false):continue
+		var used: int=mini(remaining,int(batch.pounds))
+		batch.pounds-=used
+		remaining-=used
+		vitamin+=used*float(batch.get("vitamin_c_per_unit",mass_ratio(batch)))
+	fresh=fresh.filter(func(batch):return batch.pounds>0)
+	return vitamin

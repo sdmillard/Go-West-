@@ -17,11 +17,12 @@ var settle_button: Button
 var news_button: Button
 var bubble: Control
 var background: TextureRect
+var rows_scroll: ScrollContainer
 var rows_layer: Control
 var scenes = preload("res://ui/location_scenes.gd").new()
 const SpeechBubble = preload("res://ui/speech_bubble.gd")
 var refreshing := false
-const GOODS := {"food": "FOOD LB", "bullets": "BULLETS", "medicine": "CARE KITS", "clothing": "CLOTHES", "oxen": "OXEN", "wheels": "WHEELS", "axles": "AXLES", "tongues": "TONGUES", "salt": "SALT LB"}
+const GOODS := {"produce":"FRUIT/GRN","dried_produce":"DRY FRUIT","food": "FOOD LB", "bullets": "BULLETS", "medicine": "CARE KITS", "clothing": "CLOTHES", "oxen": "OXEN", "wheels": "WHEELS", "axles": "AXLES", "tongues": "TONGUES", "salt": "SALT LB"}
 const POST_X := 250
 const PARTY_X := 440
 
@@ -71,7 +72,11 @@ func _ready() -> void:
 	columns(POST_X, "STOCK", "BUY")
 	columns(PARTY_X, "HAVE", "SELL")
 	rows_layer = Control.new()
-	put(rows_layer, Rect2(0, 0, 622, 236))
+	rows_scroll=ScrollContainer.new()
+	rows_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
+	put(rows_scroll,Rect2(244,40,374,156))
+	rows_scroll.add_child(rows_layer)
+	rows_layer.custom_minimum_size=Vector2(358,200)
 	totals = text("", Rect2(POST_X, 207, 362, 26))
 	feedback = text("", Rect2(10, 240, 322, 30))
 	feedback.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -122,6 +127,7 @@ func open(where: String = "") -> void:
 		var goods: String = GOODS.get(row.item, row.item.to_upper())
 		var unit: String = "lb" if row.item in ["food", "salt"] else "each"
 		var tip := "Buy at $%.3f or sell at $%.3f %s. You hold %d. The post can sell %d more and buy %d." % [row.buy_cents / 100.0 / row.amount, row.sell_cents / 100.0 / row.amount, "a pound" if unit == "lb" else "each", row.held, row.can_buy, row.can_sell]
+		if row.item in game.Produce.ITEMS:tip="One basket = one food unit from 4 lb fresh produce. "+("Dried: lighter, up to 90 days, less vitamin C." if row.item=="dried_produce" else "Fresh: 4 lb, spoils in 3 days, more vitamin C.")+" Only eating it helps; prices are per basket."
 		# Goods move by the unit (a pound, a bullet, an ox). Counts follow the basket, so goods cross over as you choose them.
 		# A passing party prices only what it carries and what it wants; the rest shows a dash.
 		var stock := line(POST_X, y, goods, row.buy_cents / float(row.amount) if row.get("sells", true) else -1.0, tip)
@@ -129,10 +135,13 @@ func open(where: String = "") -> void:
 		# A family pays over the odds for what it is short of: those prices show in green.
 		if float(row.get("premium", 1.0)) >= 1.3:
 			rows_layer.get_child(rows_layer.get_child_count() - 2).add_theme_color_override("font_color", Color("2f6b2f"))
-		buys[row.item] = spin(row.can_buy, Rect2(POST_X + 128, y, 46, 17))
-		sells[row.item] = spin(row.can_sell, Rect2(PARTY_X + 128, y, 46, 17))
+		buys[row.item] = spin(row.can_buy, Rect2(POST_X + 128, y, 36, 17))
+		sells[row.item] = spin(row.can_sell, Rect2(PARTY_X + 128, y, 36, 17))
 		counts[row.item] = [have, stock]
 		held[row.item] = row
+	for child in rows_layer.get_children():child.position-=Vector2(244,40)
+	rows_layer.custom_minimum_size.y=store.rows.size()*17+2
+	rows_scroll.scroll_vertical=0
 	refreshing = false
 	update_news_button()
 	update_quote()

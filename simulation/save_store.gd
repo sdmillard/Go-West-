@@ -302,7 +302,7 @@ func restore(value: Variant):
 	var fresh := 0
 	for batch in value.fresh:
 		if not batch is Dictionary:return null
-		if batch.has("vitamin_c") and (not batch.vitamin_c is bool or (batch.vitamin_c and batch.get("preserved",false))):return null
+		if not game.provisions.valid_nutrients(batch):return null
 		if batch.has("preserved") and not batch.preserved is bool:return null
 		if not game.provisions.valid_mass_ratio(batch):return null
 		if not integer(batch.get("pounds"),1,1000000) or not integer(batch.get("expires"),int(s.day)+1,1000100):
