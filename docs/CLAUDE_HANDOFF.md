@@ -512,3 +512,13 @@ Next: repair and stock guard, then away hunting with packs/return times/leave wa
 ### Final roster revision
 
 Spencer supplied a chore-chart sketch and requested cascading options like Dragon Age tactics. The roster now uses a bordered two-column table with complete task descriptions in hover tips. Nursing opens a traveler submenu and stores/displays Nursing Dan; Dry meat offers Air dry / Salt + dry. Shared day/food/material/wage estimates sit below the table. The estimate reuses the reservation pass on an isolated read-only planner and cannot spend supplies or RNG. Window height follows actual content and shrinks with fewer companions. Final native table/submenus inspected and shown. b994305 passed all64 suites, including73camp-work checks. 08e75b9 passed24store/20outlaw integrations; simulation/data sources are identical in the final UI checkpoint. Newest UI logs: ignored .tools/camp-tasks-full-table.log; final reports .tools/camp-tasks-chart-*. Preserve earlier failed/debug logs separately.
+
+## Nursing requires personal rest (October 24)
+
+Spencer clarified that nursing must occupy both nurse and patient. Eligible companion patients now display a disabled Rest / being nursed task row. The API rejects new work assignments while care is reserved; prior standing work remains paused and resumes after treatment. Actual and pre-hunt hauling exclude these patients. The same pure reservation preview supplies UI locks and cost quotes; unavailable treatment (no kits, unwilling/absent nurse, well patient) does not trap someone in rest.
+
+A leader receiving nursing gets a personal rest day and its recovery rate. Committing to another activity ends all nursing assignments targeting the leader first, sets those nurses to Rest and logs the interruption once. Hunt start cancels immediately; other non-rest elapsed actions cancel before the day resolves. Opening menus, quoting or rejecting an invalid action does not cancel. No data rules/fingerprint or save schema changed.
+
+Checkpoint a90ba4a passed all64 suites, including88camp-work checks, plus24store/20outlaw journeys with zero reported errors in an isolated checkout. Native locked-patient roster inspected and shown. Verified logs/reports remain ignored .tools/nursing-*. Player saves and three debug pilots preserved.
+
+Spencer also confirmed leader/delegated-hunter carrying parity. The away-hunting plan now explicitly requires one shared outfit calculation for actual people/allocated animals, health, equipment and supplies. Current assignment-mode human hauling already uses only the leader and explicit helpers; horse allocation to hunting is still not implemented. Do not claim this fix adds mounted outings.

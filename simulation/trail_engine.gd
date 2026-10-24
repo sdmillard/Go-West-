@@ -555,6 +555,7 @@ func _can_act() -> bool:
 	return pending.is_empty() and state.status == "traveling" and hunt.is_empty()
 
 func _tick_day(resting: bool, team_working: bool = false, camp_action: String = "") -> void:
+	if not resting or (not camp_action.is_empty() and camp_action!="rest"):camp_tasks.end_leader_nursing(self)
 	if state.extended_route and not camp_action.is_empty():camp_tasks.begin(self,camp_action)
 	var sick_before: bool=characters.has_sick(self)
 	state.day += 1
@@ -1290,6 +1291,7 @@ func _choose_service(index: int) -> bool:
 	crime.consume_trade(choice)
 	context.consume(choice)
 	if choice.has("care") and camp_tasks.enabled():
+		camp_tasks.end_leader_nursing(self)
 		camp_tasks.begin(self,"care")
 		var patient_id: int=int(choice.member_id)
 		camp_tasks.day_plan.rest[patient_id]=true
@@ -1451,6 +1453,7 @@ func start_hunt() -> bool:
 		return false
 	# Settle the day after the outing: today's successful catch can feed today's camp.
 	last_hunt_recovery={}
+	camp_tasks.end_leader_nursing(self)
 	camp_tasks.begin(self,"hunt")
 	hunting_outings += 1
 	hunt = hunting.begin(int(state.seed), hunting_outings, int(state.miles), route.nodes[state.landmark].get("hunting_region","plains"))
