@@ -37,7 +37,7 @@ func reason(game,index: int,task: String,patient: int=-1) -> String:
  if not game.characters.willing(index,{"nurse":"care","dry":"preserve","salt_dry":"preserve","forage":"forage","hunt_help":"hunt"}.get(task,task)):return "Refuses at current trust or boundaries."
  if task in ["forage","hunt_help"] and member.conditions.any(func(c):return c.id=="broken_leg"):return "A broken leg prevents this work."
  if task=="forage" and not game.forage_offer(true).available:return "No suitable gathering in this season or weather."
- if task in ["dry","salt_dry"] and game.preservation_offer(task=="salt_dry").is_empty():return "No suitable meat / salt after tomorrow's meals and spoilage."
+ if task in ["dry","salt_dry"] and game.preservation_offer(task=="salt_dry",true).is_empty():return "No suitable meat / salt after tomorrow's meals and spoilage."
  if task=="nurse":
   if patient<0 or patient>=game.party_health.members.size() or patient==index:return "Choose another traveler."
   var person: Dictionary=game.party_health.members[patient]
@@ -84,7 +84,7 @@ func begin(game,action: String) -> void:
    if drying_claimed or action=="dry":
     report(game,"%s: another worker has the meat batch; resting instead." % member.name)
     continue
-   entry.offer=game.preservation_offer(task.job=="salt_dry")
+   entry.offer=game.preservation_offer(task.job=="salt_dry",true)
    drying_claimed=true
   day_plan.rest[index]=false
   day_plan.jobs.append(entry)
@@ -127,13 +127,17 @@ func finish(game) -> void:
    if result.input>0:
     game.supply_history.append({"day":game.state.day,"event":"camp_drying","changes":{"food":-int(result.lost),"salt":-int(result.salt)},"worker":entry.member,"processed":result.input,"retained":result.kept})
     report(game,"%s dried %.1f lb of morning meat into %d food units; %d lb salt used." % [member.name,result.mass,result.kept,result.salt])
+ if day_plan.action=="forage" and game.party_health.is_active(game.party_health.members[0]):workers+=float(game.party_health.members[0].health)/100.0
  if workers>0 and game.state.status=="traveling":
   var offer: Dictionary=game.forage_offer(true)
   offer.workers=workers
   if offer.available:game._gather_forage(offer,true)
+  else:report(game,"Gathering was stopped by conditions; no harvest returned.")
  day_plan={}
 func report(game,text: String) -> void:
  game.journal.append("Day %d · Camp work: %s" % [game.state.day,text])
- game.health_events.append(text)
-func excludes_helper(index: int) -> bool:
- return enabled() and index>0 and job(index).job!="hunt_help"
+func excludes_helper(game,index: int) -> bool:
+ if not enabled() or index==0:return false
+ if not reason(game,index,"hunt_help").is_empty():return true
+ if not game.hunt.is_empty() and game.hunt.has("_camp_helpers"):return index not in game.hunt._camp_helpers
+ return job(index).job!="hunt_help"

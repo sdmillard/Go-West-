@@ -313,7 +313,7 @@ func restore(value: Variant):
 	if s.extended_route and (alive>Simulation.PARTY_CAPACITY or s.party_size != alive or s.health != (roundi(float(health) / alive) if alive else 0)):
 		return null
 	if not integer(s.get("departed_gear_lb",0),0,(s.party.size()-1)*int(game.provisions.data.walking.personal_gear_lb_per_person)) or s.get("departed_gear_lb",0)!=departed*int(game.provisions.data.walking.personal_gear_lb_per_person):return null
-	if departed>0 and value.get("characters_version") not in [3,4]:return null
+	if departed>0 and not integer(value.get("characters_version"),3,4):return null
 	var fresh := 0
 	for batch in value.fresh:
 		if not batch is Dictionary:return null

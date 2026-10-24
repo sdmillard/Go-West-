@@ -46,7 +46,7 @@ func available(game, background: String="", special: String="") -> bool:
 	for profile in profiles:
 		if profile.id==0 or profile.id>=game.party_health.members.size():continue
 		var member: Dictionary=game.party_health.members[int(profile.id)]
-		if background=="Hunting" and game.camp_tasks.excludes_helper(int(profile.id)):continue
+		if background=="Hunting" and game.camp_tasks.excludes_helper(game,int(profile.id)):continue
 		if not game.party_health.is_active(member) or member.health<benefits.minimum_health or member.conditions.any(func(condition):return condition.severity>=3):continue
 		var action: String="defend" if special=="Veteran" else {"Hunting":"hunt","Carpentry":"repair","Caregiving":"care","Trading":"trade"}.get(background,"")
 		if not willing(int(profile.id),action):continue

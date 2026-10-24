@@ -9,6 +9,7 @@ static func food_rows(game) -> Array:
   rows[index].units+=used
   rows[index].mass+=used*game.provisions.mass_ratio(batch)
   left-=used
+ rows[2].mass+=float(game.state.get("camp_greens_lb",0))
  rows[0].units=left
  rows[0].mass=float(left)
  return rows
@@ -51,6 +52,7 @@ func _init(game):
  var per_day: int=game.state.party_size*int(game.provisions.data.rations_lb[game.state.rations])
  food.add_child(words("%d travelers · %d units/day · up to %d days before spoilage" % [game.state.party_size,per_day,game.provisions.expected_days(game.state.food,game.state.party_size,game.state.rations)]))
  food.add_child(words("Preserve meat in Camp. Eaten greens / berries supply vitamin C."))
+ if game.state.get("camp_greens_lb",0)>0:food.add_child(words("%d lb loose greens: below one food unit; served for vitamin C at the next meal." % game.state.camp_greens_lb))
  var gear:=page("Gear")
  var equipment:=grid(gear,["SUPPLY","QUANTITY","WEIGHT LB"])
  for item in game.provisions.data.weights_lb:

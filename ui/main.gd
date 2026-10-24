@@ -664,7 +664,7 @@ func _show_section(section: String) -> void:
 		section_rows.remove_child(child)
 		child.queue_free()
 	map_view.hide()
-	section_window.get_child(0).custom_minimum_size.y=190 if section in ["Camp","Travel"] else 150
+	section_window.get_child(0).custom_minimum_size=Vector2(560,230) if section=="Companion tasks" else Vector2(380,190 if section in ["Camp","Travel"] else 150)
 	section_window.title=section.to_upper()
 	section_window.get_ok_button().text="BACK" if SECTION_PARENTS.has(section) else "BACK TO TRAIL"
 	var entries: Array=[]
@@ -706,7 +706,7 @@ func _show_section(section: String) -> void:
 			section_rows.add_child(note)
 			entries=[["COMPANION TASKS >",_show_section.bind("Companion tasks")],["REST · CHOOSE DAYS",_rest],["PRESERVE MEAT >",_show_section.bind("Preserve meat")],["DRY FRUIT / GREENS >",_show_section.bind("Dry produce")],["CARE / MEDICAL ATTENTION",_open_care]]
 		"Companion tasks":
-			var note:=label("Choose standing jobs for camp days. Workers miss rest recovery.\nUnassigned companions rest; only hunt helpers haul your hunt.\nOne day of meals and wages, shared by all jobs.\nJobs pause during travel, crossings and trading.")
+			var note:=label("Camp jobs share one day. Workers miss rest recovery.\nUnassigned companions rest; hunt helpers haul. Jobs pause on the road.")
 			note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 			section_rows.add_child(note)
 			for member in game.party_health.members:
@@ -730,6 +730,13 @@ func _show_section(section: String) -> void:
 					section_rows.add_child(patients)
 				var why: String=game.camp_tasks.reason(game,id,task.job,int(task.patient))
 				var detail:=label(why if not why.is_empty() else {"rest":"Rest recovery; no work.","forage":"Seasonal yield, shared carrying room; food arrives after meals.","dry":"Morning meat after meals; one worker handles the available batch.","salt_dry":"Morning meat and available salt; one worker per batch.","nurse":"1 care kit / day while needed; caregiver improves treatment.","hunt_help":"Works only when you hunt; adds hauling and Hunter benefits."}[task.job])
+				if why.is_empty() and task.job in ["dry","salt_dry"]:
+					var work: Dictionary=game.preservation_offer(task.job=="salt_dry")
+					detail.text="Up to %.0f lb morning meat > %d food units; %d lb salt. Meals first." % [work.mass,work.kept,work.salt]
+				if why.is_empty() and task.job=="forage":
+					var offer: Dictionary=game.forage_offer(true)
+					var amount: float=float(member.health)/100.0*float(offer.factor)
+					detail.text="About %.1f-%.1f lb before weather / storage limits; arrives after meals." % [game.provisions.data.foraging.lb_per_worker[0]*amount,game.provisions.data.foraging.lb_per_worker[1]*amount]
 				detail.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 				section_rows.add_child(detail)
 			if game.camp_tasks.enabled():

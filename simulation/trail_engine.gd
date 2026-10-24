@@ -902,7 +902,7 @@ func _gather_forage(offer: Dictionary, shared: bool=false) -> void:
 	state.food += units
 	var report := "Foraged %d lb of greens and berries (%d food units)." % [units * int(rules.mass_ratio),units] if units > 0 else ("Gathered %d lb greens for vitamin-C meals (less than one food unit)." % int(state.get("camp_greens_lb",0)) if int(state.get("camp_greens_lb",0))>0 else "The search yielded no usable food within your carrying room.")
 	journal.append("Day %d · %s" % [state.day,report])
-	health_events.append(report)
+	if not shared:health_events.append(report)
 
 func open_trade() -> bool:
 	if not can_service():return false
@@ -1306,7 +1306,7 @@ func _choose_service(index: int) -> bool:
 		characters.care(self,int(choice.member_id))
 		state.health = party_health.average_health()
 	_apply(choice.effects, "injuries", choice.has("care"),"care" if choice.has("care") else ("forage" if choice.get("foraging",false) else ""))
-	if choice.get("foraging",false): _gather_forage(forage)
+	if choice.get("foraging",false) and not camp_tasks.enabled(): _gather_forage(forage)
 	if not choice.result.is_empty():
 		journal.append("Day %d · %s" % [state.day, choice.result])
 	pending = service_return if state.status == "traveling" else {}
@@ -1454,6 +1454,7 @@ func start_hunt() -> bool:
 	camp_tasks.begin(self,"hunt")
 	hunting_outings += 1
 	hunt = hunting.begin(int(state.seed), hunting_outings, int(state.miles), route.nodes[state.landmark].get("hunting_region","plains"))
+	if camp_tasks.enabled():hunt["_camp_helpers"]=camp_tasks.day_plan.get("jobs",[]).filter(func(j):return j.job=="hunt_help").map(func(j):return int(j.member))
 	hunt.day = state.day+1
 	journal.append("Day %d · Set out to hunt. The outing will take one day, including meals at camp." % (state.day+1))
 	return true
@@ -1498,7 +1499,7 @@ func move_hunter(point: Vector2) -> void:
 func hauling_capacity(action: String="hunt") -> int:
 	var pounds:=0.0
 	for member in party_health.members:
-		if characters.willing(int(member.id),action) and (action!="hunt" or not camp_tasks.excludes_helper(int(member.id))):
+		if characters.willing(int(member.id),action) and (action!="hunt" or not camp_tasks.excludes_helper(self,int(member.id))):
 			pounds+=float(hunting.data.carry_per_person_lb)*provisions.Carrying.factor(member)
 	return mini(int(hunting.data.carry_limit),floori(pounds))
 func hunting_capacity() -> int:
@@ -1620,8 +1621,8 @@ func slaughter_ox(by_hand: bool = false) -> bool:
 	if state.status == "traveling" and pending.is_empty():_schedule_event(false)
 	return true
 
-func preservation_offer(salted: bool = false) -> Dictionary:
-	if not can_service():return {}
+func preservation_offer(salted: bool = false, workday: bool=false) -> Dictionary:
+	if not workday and not can_service():return {}
 	var plan: Dictionary=provisions.preservation_plan(int(state.day),int(state.food),int(provisions.data.rations_lb[state.rations])*int(state.party_size),int(state.party_size))
 	var input: int=plan.input
 	if input < 1:return {}
