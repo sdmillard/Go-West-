@@ -195,7 +195,14 @@ func act(game,profile: Dictionary,aim: RandomNumberGenerator,count: Dictionary) 
  var worst: int=game.state.health
  for member in game.party_health.members:
   if game.party_health.is_active(member):worst=mini(worst,int(member.health))
- if profile.rest and (worst<int(profile.get("rest_below",55)) or game.state.fatigue>50 or (game.state.vehicle!="foot" and game.state.ox_health<65) or (profile.get("mount_support",false) and game.mount_plan().mode in ["mounted","doubled","packing"] and game.Mounts.condition(game.state)<int(profile.get("mount_rest_below",65)))) and game.state.food>=game.state.party_size*(ration+1):
+ var health_stop: bool=worst<int(profile.get("rest_below",55))
+ var limit: int=int(profile.get("health_rest_limit",0))
+ var consecutive: int=int(count.get("health_rest_streak",0)) if int(count.get("health_rest_day",-1))==int(game.state.day) else 0
+ if limit>0 and consecutive>=(maxi(3,limit) if worst<20 else limit):health_stop=false
+ if profile.rest and (health_stop or game.state.fatigue>50 or (game.state.vehicle!="foot" and game.state.ox_health<int(profile.get("team_rest_below",65))) or (profile.get("mount_support",false) and game.mount_plan().mode in ["mounted","doubled","packing"] and game.Mounts.condition(game.state)<int(profile.get("mount_rest_below",65)))) and game.state.food>=game.state.party_size*(ration+1):
   bump(count,"rests")
+  if health_stop:
+   count["health_rest_streak"]=consecutive+1
+   count["health_rest_day"]=int(game.state.day)+1
   return game.rest()
  return game.travel()
