@@ -154,6 +154,11 @@ func run():
  g.party_health.days_without_fresh=20
  rest(g)
  check(g.party_health.days_without_fresh==21,"Spoiled loose greens cannot cure vitamin deficiency")
+ g=party()
+ g.state.camp_greens_lb=3;g.state.camp_greens_expires=3
+ var drop: Dictionary=load("res://simulation/discard_plan.gd").quote(g,{"camp_greens_lb":3})
+ check(drop.valid and drop.dropped_lb==3 and g.discard_supplies({"camp_greens_lb":3}) and g.state.camp_greens_expires==0,"Loose greens can be dropped with an exact physical weight quote")
+ check(store.restore(JSON.parse_string(JSON.stringify(store.capture(g))))!=null,"Discarding the last loose greens preserves save validity")
  var old: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-camp-tasks-v3.json"))
  var legacy=store.restore(old)
  check(legacy!=null,"Genuine schema-3 save migrates")

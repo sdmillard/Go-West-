@@ -9,10 +9,10 @@ static func quote(game,cart: Dictionary) -> Dictionary:
  var result: Dictionary={"valid":false,"selected":0,"before_lb":original,"after_lb":original,"dropped_lb":0.0,"capacity_lb":game.provisions.storage_capacity(game.state),"message":"Choose how much to drop."}
  for item in cart:
   var amount: Variant=cart[item]
-  if item not in model.data.weights_lb or not (amount is int or amount is float) or not is_finite(float(amount)) or amount!=floor(amount) or amount<0 or amount>int(inventory.get(item,0)):
+  if (item not in model.data.weights_lb and item!="camp_greens_lb") or not (amount is int or amount is float) or not is_finite(float(amount)) or amount!=floor(amount) or amount<0 or amount>int(inventory.get(item,0)):
    result.message="Enter whole quantities within the supplies you have."
    return result
-  inventory[item]-=int(amount)
+  inventory[item]=int(inventory.get(item,0))-int(amount)
   result.selected+=int(amount)
   if item=="food":model.remove(int(amount))
  result.after_lb=model.cargo(inventory)
@@ -28,4 +28,5 @@ static func stock(game) -> Array:
   var mass: float=amount*float(game.provisions.data.weights_lb[item])
   if item=="food":mass+=game.provisions.tracked_mass(amount)-game.provisions.tracked_food(amount)
   rows.append({"id":item,"label":titles.get(item,str(item)),"amount":amount,"mass_lb":snappedf(mass,0.1),"unit_lb":mass/amount if amount>0 else float(game.provisions.data.weights_lb[item]),"average":item=="food" and not game.provisions.fresh.is_empty()})
+ if int(game.state.get("camp_greens_lb",0))>0:rows.append({"id":"camp_greens_lb","label":"Loose greens","amount":int(game.state.camp_greens_lb),"mass_lb":float(game.state.camp_greens_lb),"unit_lb":1.0,"average":false})
  return rows

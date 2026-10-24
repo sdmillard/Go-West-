@@ -1647,9 +1647,10 @@ func preserve_meat(salted: bool = false) -> bool:
 	return true
 
 func discard_supply(item: String, amount: int) -> bool:
-	if not can_service() or item not in provisions.data.weights_lb or amount <= 0 or amount > int(state.get(item, 0)):
+	if not can_service() or (item not in provisions.data.weights_lb and item!="camp_greens_lb") or amount <= 0 or amount > int(state.get(item, 0)):
 		return false
 	_apply({item: -amount})
+	if item=="camp_greens_lb" and state.camp_greens_lb==0:state.camp_greens_expires=0
 	journal.append("Day %d · Left %d %s behind to lighten the %s." % [state.day, amount, item, "wagon" if state.vehicle=="wagon" else "packs"])
 	return true
 
