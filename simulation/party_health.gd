@@ -234,7 +234,7 @@ func _spread(day: int, rations: int) -> void:
 			if is_active(member) and member.conditions.is_empty() and source[1] not in member.get("immune", []) and rng.randf() < chance:
 				begin_condition(int(member.id), source[1], day, roll_severity(rations), source[0])
 
-func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 2, year: int = 1848, month: int = 0, region: String = "", days_without_fresh: int = 0) -> void:
+func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 2, year: int = 1848, month: int = 0, region: String = "", days_without_fresh: int = 0, rest_by_member: Dictionary = {}) -> void:
 	for member in members:
 		if not is_active(member):
 			continue
@@ -247,7 +247,7 @@ func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 
 				break
 			# Deficiency recovery still needs sustained vitamin-C meals; feeding stops its deterioration first.
 			if int(member.get("vitamin_days",days_without_fresh)) == 0 or not definition.get("needs_fresh_food", false):
-				active.elapsed += 2 if resting else 1
+				active.elapsed += 2 if rest_by_member.get(int(member.id),resting) else 1
 			if active.elapsed >= definition.recovery_days:
 				member.conditions.erase(active)
 				_record(member, day, "%s recovered from %s." % [member.name, definition.name.to_lower()])

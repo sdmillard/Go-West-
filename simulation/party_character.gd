@@ -46,6 +46,7 @@ func available(game, background: String="", special: String="") -> bool:
 	for profile in profiles:
 		if profile.id==0 or profile.id>=game.party_health.members.size():continue
 		var member: Dictionary=game.party_health.members[int(profile.id)]
+		if background=="Hunting" and game.camp_tasks.excludes_helper(int(profile.id)):continue
 		if not game.party_health.is_active(member) or member.health<benefits.minimum_health or member.conditions.any(func(condition):return condition.severity>=3):continue
 		var action: String="defend" if special=="Veteran" else {"Hunting":"hunt","Carpentry":"repair","Caregiving":"care","Trading":"trade"}.get(background,"")
 		if not willing(int(profile.id),action):continue
@@ -252,12 +253,12 @@ func generate_candidate(seed_value: int, candidate_index: int, relationship: Str
 	if "Mercenary" in profile.specials:terms={"wage_cents":wage_quote(profile).daily_cents*7,"interval_days":7}
 	return {"candidate_id":"%d:%d" % [seed_value,candidate_index],"name":"%s %s" % [catalog.data.first_names[random.randi_range(0,catalog.data.first_names.size()-1)],catalog.data.surnames[random.randi_range(0,catalog.data.surnames.size()-1)]],"profile":profile,"terms":terms}
 
-func daily(game, resting: bool, working: bool, sick_before: bool) -> void:
+func daily(game, resting: bool, working: bool, sick_before: bool, rest_by_member: Dictionary={}) -> void:
 	advance_contracts(game)
 	for profile in profiles:review_exit(game,profile)
 	for profile in profiles:
 		if profile.id==0 or not game.party_health.is_active(game.party_health.members[profile.id]):continue
-		if resting and catalog.reaction(profile,"idle_trust")!=0:remember(game,profile,"action_idle",catalog.reaction(profile,"idle_trust"),"You spent a day resting in camp.")
+		if rest_by_member.get(int(profile.id),resting) and catalog.reaction(profile,"idle_trust")!=0:remember(game,profile,"action_idle",catalog.reaction(profile,"idle_trust"),"You spent a day resting in camp.")
 		if not sick_before:continue
 		if resting and catalog.reaction(profile,"rest_sick")!=0:
 			remember(game,profile,"rest_sick",catalog.reaction(profile,"rest_sick"),"You stopped to rest while someone was ill or injured.")

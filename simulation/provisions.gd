@@ -75,7 +75,7 @@ func household_mass(inventory: Dictionary) -> float:
 func cargo(inventory: Dictionary) -> float:
 	var pounds: float = float(data.walking.personal_gear_lb_per_person)*int(inventory.get("party_size",5)) if inventory.get("vehicle","")=="foot" else household_mass(inventory)
 	# Bodies carried with the party weigh what they weigh, on foot or in the wagon.
-	pounds+=float(inventory.get("remains_lb",0))
+	pounds+=float(inventory.get("remains_lb",0))+float(inventory.get("camp_greens_lb",0))
 	for key in data.weights_lb:
 		pounds += maxf(0, float(inventory.get(key, 0))) * float(data.weights_lb[key])
 	# Food is staple-equivalent ration weight. Dried meat supplies the same
@@ -235,9 +235,9 @@ func valid_nutrients(batch: Dictionary) -> bool:
 
 ## Meals share a produce serving, then use other food; extra produce feeds shortages.
 ## Discarding/selling still uses remove(), without crediting dietary vitamins.
-func eat(amount: int,party_size: int,total: int) -> float:
+func eat(amount: int,party_size: int,total: int,vitamin_offset: float=0.0) -> float:
 	var remaining:=amount
-	var vitamin:=0.0
+	var vitamin:=vitamin_offset
 	var target: float=party_size*float(data.foraging.vitamin_c_lb_per_person)
 	var produce_total:=0
 	for batch in fresh:

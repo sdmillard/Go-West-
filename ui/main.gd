@@ -50,7 +50,7 @@ var ribbon_buttons: Dictionary={}
 var crime_category := ""
 ## The VILLAINY section a crime, attack or remains preview was opened from; its back button returns there.
 var crime_back := ""
-const SECTION_PARENTS={"Attack someone":"Villainy","Party member":"Attack someone","Someone here":"Attack someone","Steal":"Villainy","Rob":"Villainy","Preserve meat":"Camp","Dry produce":"Camp"}
+const SECTION_PARENTS={"Attack someone":"Villainy","Party member":"Attack someone","Someone here":"Attack someone","Steal":"Villainy","Rob":"Villainy","Preserve meat":"Camp","Dry produce":"Camp","Companion tasks":"Camp"}
 var display_fit: OptionButton
 var window_scale: OptionButton
 var fullscreen: CheckBox
@@ -704,7 +704,39 @@ func _show_section(section: String) -> void:
 			var note:=label("Opening camp spends no time or supplies.\nChoose an activity; rest is optional.")
 			note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 			section_rows.add_child(note)
-			entries=[["REST · CHOOSE DAYS",_rest],["PRESERVE MEAT >",_show_section.bind("Preserve meat")],["DRY FRUIT / GREENS >",_show_section.bind("Dry produce")],["CARE / MEDICAL ATTENTION",_open_care]]
+			entries=[["COMPANION TASKS >",_show_section.bind("Companion tasks")],["REST · CHOOSE DAYS",_rest],["PRESERVE MEAT >",_show_section.bind("Preserve meat")],["DRY FRUIT / GREENS >",_show_section.bind("Dry produce")],["CARE / MEDICAL ATTENTION",_open_care]]
+		"Companion tasks":
+			var note:=label("Choose standing jobs for camp days. Workers miss rest recovery.\nUnassigned companions rest; only hunt helpers haul your hunt.\nOne day of meals and wages, shared by all jobs.\nJobs pause during travel, crossings and trading.")
+			note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+			section_rows.add_child(note)
+			for member in game.party_health.members:
+				var id: int=int(member.id)
+				if id==0 or not game.party_health.is_active(member):continue
+				section_rows.add_child(label(member.name.to_upper()+" · "+game.PartyHealth.condition_label(member.health).to_upper()))
+				var task: Dictionary=game.camp_tasks.job(id)
+				var pick:=OptionButton.new()
+				pick.name="CampTask%d" % id
+				for text in game.camp_tasks.LABELS:pick.add_item(text)
+				pick.select(game.camp_tasks.JOBS.find(task.job))
+				pick.item_selected.connect(_assign_camp_task.bind(id))
+				section_rows.add_child(pick)
+				if task.job=="nurse":
+					var patients:=OptionButton.new()
+					for person in game.party_health.members:
+						if int(person.id)==id or not game.party_health.is_active(person):continue
+						patients.add_item(person.name,int(person.id))
+						if int(person.id)==int(task.patient):patients.select(patients.item_count-1)
+					patients.item_selected.connect(func(item: int):_set_camp_task(id,"nurse",patients.get_item_id(item)))
+					section_rows.add_child(patients)
+				var why: String=game.camp_tasks.reason(game,id,task.job,int(task.patient))
+				var detail:=label(why if not why.is_empty() else {"rest":"Rest recovery; no work.","forage":"Seasonal yield, shared carrying room; food arrives after meals.","dry":"Morning meat after meals; one worker handles the available batch.","salt_dry":"Morning meat and available salt; one worker per batch.","nurse":"1 care kit / day while needed; caregiver improves treatment.","hunt_help":"Works only when you hunt; adds hauling and Hunter benefits."}[task.job])
+				detail.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+				section_rows.add_child(detail)
+			if game.camp_tasks.enabled():
+				section_rows.add_child(button("CLEAR JOBS · USE GROUP ACTIONS",func():
+					game.camp_tasks.assignments={}
+					_show_section.call_deferred("Companion tasks")))
+			else:section_rows.add_child(label("Group actions active until you assign a job."))
 		"Preserve meat":
 			section_rows.add_child(label("Processing uses a work day, not a rest day.\nMeals and spoilage happen before processing."))
 			var available:=false
@@ -779,6 +811,20 @@ func _show_drop_supplies() -> void:
 	section_window.hide()
 	supplies_window.hide()
 	drop_window.open(game)
+
+func _assign_camp_task(item: int,id: int) -> void:
+	var task: String=game.camp_tasks.JOBS[item]
+	var patient: int=-1
+	if task=="nurse":
+		for member in game.party_health.members:
+			if int(member.id)!=id and game.party_health.is_active(member):
+				patient=int(member.id)
+				break
+	_set_camp_task(id,task,patient)
+
+func _set_camp_task(id: int,task: String,patient: int) -> void:
+	if game.camp_tasks.assign(game,id,task,patient):
+		_show_section.call_deferred("Companion tasks")
 
 func _preserve_in_camp(salted: bool) -> void:
 	if not camping:return
