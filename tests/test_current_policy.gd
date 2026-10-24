@@ -91,5 +91,16 @@ func run():
  check(act(game,brief,aim_a,brief_counts) and game.state.day==before_day+1 and game.state.miles==0,"Brief-stop actor takes one real recovery day")
  before_miles=game.state.miles
  check(act(game,brief,aim_a,brief_counts) and game.state.miles>before_miles and game.state.health<55,"Brief-stop actor resumes travel before complete recovery")
+ game=prepare(Observed,3038)
+ game.state.money=0
+ game.party_health.days_without_fresh=2
+ game.party_health.begin_condition(1,"scurvy",0)
+ game.state.bullets=0
+ game.provisions.fresh.clear()
+ var treatment: Dictionary=profile.duplicate(true)
+ treatment.hunt=false;treatment.preserve=""
+ var treatment_counts: Dictionary={"last_care":game.state.day,"last_forage":-100}
+ before_day=game.state.day
+ check(act(game,treatment,aim_a,treatment_counts) and treatment_counts.get("forages",0)==1 and game.state.day==before_day+1,"Active scurvy prompts treatment forage before the twenty-day prevention interval")
  print("Current balance policy: %d checks, %d failures" % [checks,failures])
  quit(1 if failures else 0)
