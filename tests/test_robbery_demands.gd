@@ -104,6 +104,15 @@ func run():
   game.open_crime(camp)
   check(game.RobberyDemand.stock(game,camp).wagon==1,"A real nearby emigrant family can be targeted for its single wagon")
  else:check(false,"Find a camp fixture")
+ game=party(57,true)
+ for id in range(1,5):
+  var profile: Dictionary=game.characters.profiles[id]
+  profile.traits=["Cautious","Compassionate"]
+  profile.boundaries=game.characters.catalog.boundaries("Compassionate")
+  profile.trust=10
+ game.party_health.begin_condition(0,"broken_leg",int(game.state.day))
+ check(game.provisions.cargo(game.state)<game.provisions.capacity(game.state) and not game.robbery_quote({"food":1}).valid,"Available pack room cannot replace fit, willing criminal helpers")
+ check(game.robbery_quote({"cash_cents":100}).valid,"Cash-only demands add no physical hauling")
  var screen=Main.instantiate()
  root.add_child(screen)
  await process_frame

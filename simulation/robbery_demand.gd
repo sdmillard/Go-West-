@@ -69,6 +69,14 @@ static func quote(game,basket: Dictionary,place: String="") -> Dictionary:
   if item not in ["cash_cents","wagon"]:after[item]=int(after.get(item,0))+int(selected[item])
  var cargo: float=game.provisions.cargo(after)
  var capacity: float=game.provisions.storage_capacity(after)
+ var loot_mass:=0.0
+ for item in selected:
+  if game.provisions.data.weights_lb.has(item):loot_mass+=int(selected[item])*float(game.provisions.data.weights_lb[item])
+ var alongside: bool=after.vehicle=="wagon" and game.crime.rules(place).wagon_access
+ var haul_limit: float=game.hauling_capacity("robbery")
+ if not alongside and loot_mass>haul_limit:
+  result.message="Not enough fit, willing helpers to haul the requested loot (%.1f / %.1f lb). Reduce your demand." % [loot_mass,haul_limit]
+  return result
  var ratio: float=value(game,selected)/maxf(1.0,value(game,available))
  var chance: float=clampf(float(game.crime.odds(game,place).compliance)-float(data.value_penalty)*ratio-(float(data.wagon_penalty) if selected.get("wagon",0)>0 else 0.0),float(game.crime.modifiers.floor),float(game.crime.modifiers.ceiling))
  result.merge({"valid":cargo<=capacity,"basket":selected,"value_cents":roundi(value(game,selected)),"compliance":chance,"cargo_lb":cargo,"capacity_lb":capacity,"message":"A larger demand makes resistance more likely. Resistance, injury, capture and witnesses still apply." if cargo<=capacity else "The demanded goods would exceed your carrying limit. Reduce the demand or include an available wagon."},true)
