@@ -1513,11 +1513,13 @@ func finish_hunt() -> bool:
 	return true
 
 func walking_distance() -> int:
+	var plan: Dictionary=mount_plan()
 	var load:=provisions.cargo(state)/maxf(1,provisions.capacity(state))
-	var burden:=clampf(1.0-maxf(0,load-0.5)*0.5,0.25,1.0)
+	# Animals bear a full load better than people do: the drag starts later.
+	var easy: float=0.75 if plan.mode in ["packing","mounted","doubled"] else 0.5
+	var burden:=clampf(1.0-maxf(0,load-easy)*0.5,0.25,1.0)
 	var terrain:=0.8 if state.terrain=="mountains" else (0.9 if state.terrain=="forest" else 1.0)
 	var base: float=float(provisions.data.walking.miles_per_day)*[1.0,1.15,1.3][state.pace]
-	var plan: Dictionary=mount_plan()
 	if plan.mode=="packing":base=float(provisions.data.walking.packing_miles_per_day)*[1.0,1.15,1.3][state.pace]
 	if Mounts.mounted(plan):base=Mounts.base_miles(provisions.data.mounts,Mounts.condition(state),int(state.pace))
 	return maxi(1,roundi(base*float(seasonal_pressure().travel)*float(survival.weather.speed)*terrain*burden*(1.0-float(state.fatigue)/300.0)))
@@ -1618,7 +1620,7 @@ func discard_supply(item: String, amount: int) -> bool:
 	if not can_service() or item not in provisions.data.weights_lb or amount <= 0 or amount > int(state.get(item, 0)):
 		return false
 	_apply({item: -amount})
-	journal.append("Day %d · Left %d %s behind to lighten the wagon." % [state.day, amount, item])
+	journal.append("Day %d · Left %d %s behind to lighten the %s." % [state.day, amount, item, "wagon" if state.vehicle=="wagon" else "packs"])
 	return true
 
 func journey_summary() -> String:
