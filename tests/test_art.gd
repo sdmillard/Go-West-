@@ -69,6 +69,6 @@ func _initialize() -> void:
 	var font: Font = load("res://art/pixels/trail_font.fnt")
 	check(font.has_char(65) and font.has_char(97) and font.has_char(183), "Bitmap font covers interface and encounter text")
 	check(ProjectSettings.get_setting("display/window/stretch/mode") == "viewport", "Whole scene renders on a fixed pixel grid")
-	check(ProjectSettings.get_setting("display/window/stretch/scale_mode") == "integer", "Presentation scales in whole-pixel multiples")
+	check(ProjectSettings.get_setting("display/window/stretch/scale_mode") == "fractional", "Presentation follows window resizing continuously; crisp integer scaling is optional")
 	print("Art: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)

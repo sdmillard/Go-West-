@@ -1,6 +1,7 @@
 extends Panel
 ## A trading counter (a post's store or a passing party's goods): buy and sell by the unit within its stock and buying demand, settled as one visit.
 signal settled
+signal sale_requested
 var game
 var buys: Dictionary = {}
 var sells: Dictionary = {}
@@ -13,6 +14,7 @@ var venue := ""
 var purse_cents := -1
 var totals: Label
 var feedback: Label
+var sale_button: Button
 var settle_button: Button
 var news_button: Button
 var bubble: Control
@@ -77,6 +79,10 @@ func _ready() -> void:
 	put(rows_scroll,Rect2(244,40,374,156))
 	rows_scroll.add_child(rows_layer)
 	rows_layer.custom_minimum_size=Vector2(358,200)
+	sale_button=Button.new()
+	sale_button.text="SELL WAGON / PACK >"
+	sale_button.pressed.connect(func():sale_requested.emit())
+	put(sale_button,Rect2(10,207,222,25))
 	totals = text("", Rect2(POST_X, 207, 362, 26))
 	feedback = text("", Rect2(10, 240, 322, 30))
 	feedback.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -115,6 +121,7 @@ func open(where: String = "") -> void:
 	var store: Dictionary = game.trade_counter(venue)
 	if store.is_empty():
 		return
+	sale_button.visible=store.kind=="post" and game.state.vehicle=="wagon"
 	kind = store.kind
 	purse_cents = int(store.purse_cents)
 	# A passing party's temper shows beside its name; its camp is a different picture from the post's room.

@@ -21,7 +21,7 @@ static func arrived(crime,game,source: Dictionary,place: Variant,day: int=-1) ->
 	return int(source.day)+int(crime.news_rules.delay_days)+ceili(absi(here(game,place)-crime.mile(game,str(source.origin)))/float(crime.news_rules.miles_per_day))<=day
 static func value_of(game,item: Dictionary) -> int:
 	# Food restitution uses the documented opening staple price, in cents.
-	return int(item.cash_cents)+int(item.food)*int(game.outfitter.goods[1].price_cents)
+	return int(item.cash_cents)+int(item.food)*int(game.outfitter.goods[1].price_cents)+roundi(game.RobberyDemand.value(game,item.get("taken_goods",{})))
 static func incident_evidence(crime,game,item: Dictionary,identified: bool) -> Dictionary:
 	var action: String=item.action
 	var military: bool=crime.rules(item.place).kind=="fort"

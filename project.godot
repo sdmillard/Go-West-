@@ -16,7 +16,7 @@ window/size/window_height_override=720
 window/size/min_width=800
 window/size/min_height=360
 window/stretch/mode="viewport"
-window/stretch/scale_mode="integer"
+window/stretch/scale_mode="fractional"
 
 [rendering]
 renderer/rendering_method="gl_compatibility"

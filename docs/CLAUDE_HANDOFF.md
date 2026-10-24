@@ -1,6 +1,6 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 23, 2026, after the combined balance pass and fresh/dried produce. **Latest checkpoint:** see [current balance report](CURRENT_BALANCE_PASS.md) and the final section below. Earlier sections are chronological records of prior checkpoints.
+Last updated October 23, 2026, after return travel, wagon guards, wagon sales, robbery demands and resizing. **Latest checkpoint:** see the final two sections below and [sales, demands and display](WAGON_SALES_ROBBERY_AND_DISPLAY.md). Earlier sections are chronological records of prior checkpoints.
 
 ## Resume here
 
@@ -367,3 +367,15 @@ Demand validation complete: feature checkpoint 6b6987e passed all 49 suites in a
 
 Publication: [PR #70](https://github.com/sdmillard/Go-West-/pull/70), variable bandit demands. Remaining authorized travel/generation/guard work is still pending as listed above.
 
+
+
+## Return-travel publication and current follow-up (October 23)
+
+Published [PR #71](https://github.com/sdmillard/Go-West-/pull/71), merge 13106ffd12fd0755bf539ad141e7a402dc527a9b: Generate Party, real east/west travel, repeated crossings with bank awareness, peaceful eastward ending, exact cache map markers/at-site inspection, empty replacement wagons, and companions guarding cached supplies. See [return travel and guards](RETURN_TRAVEL_AND_WAGON_GUARDS.md). Clean checkpoint 5ed5384 passed all **52 suites**, including 63 return-travel, 59 guard and 18 wagon-purchase checks; 24 store plus 20 outlaw integration journeys reported zero errors. Logs/reports retained in ignored .tools/return-*. The old remote backtrack UI regression was updated to ordinary return travel; a prior failure log is retained separately, not counted as passing evidence. Native creation, packing, direction, party, map and store views were inspected.
+
+Spencer then requested wagon sales with automatic sale of accepted leftovers and explicit permanent discards, player-selected robbery demands including wagons when on foot, greater resistance for larger demands, and adjustable window scaling/aspect behavior. Implementation and focused checks are described in [sales, demands and display](WAGON_SALES_ROBBERY_AND_DISPLAY.md). Final clean validation/publication follows below when complete. Prior survival campaigns remain archived evidence for their original rules, not a balance claim for these additions. Preserve the three preexisting untracked debug pilots and actual player saves.
+
+
+Final follow-up checkpoint **30f47ef** passed all **54 Godot suites** in a pristine isolated checkout: 46 custom-demand, 18 sale/display, 55 ribbon/input, 1453 crime, 173 wanted and 59 guard checks among them. The exact simulation checkpoint then completed **24 store and 20 outlaw journeys with zero reported errors**. Logs and raw verified integration reports are retained in ignored .tools/demand-final-* and .tools/demand-verified-*. Earlier failing logs are separate diagnostics; do not pool them as successful runs. Native sale, demand and options views were rendered, inspected and shown to Spencer; fit/fill/integer properties and embedded close input are covered. Reports generated inside the disposable checkout were restored after preservation; no player save, archived campaign, debug pilot or proprietary reference was modified.
+
+The robbery form now gates the real attempt, so its old UI test explicitly confirms the demand. The art test now permits the user-requested fractional default; nearest-neighbor fixed-canvas rendering remains. Resale correction applies only when a quote would permit immediate buy/resell profit, preserving existing Trading resale benefits at ordinary posts. Custom demands also respect fit, willing criminal helpers unless loading alongside an accessible wagon. No further numerical tuning was performed on the archived full survival campaign. Human clarity, aiming, display comfort and difficulty still need playtesting.

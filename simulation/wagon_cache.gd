@@ -14,9 +14,11 @@ static func can_pack(game,from_cache: bool=false) -> bool:
 	if from_cache:return game.can_service() and game.state.vehicle=="foot" and not game.wagon_cache.is_empty() and game.wagon_cache.found and game.Direction.at_cache(game)
 	if not game._can_act():return false
 	return game.state.vehicle=="wagon" and game.wagon_cache.is_empty()
-static func quote(game,cart: Dictionary,from_cache: bool=false,guard_ids: Array=[]) -> Dictionary:
+static func quote(game,cart: Dictionary,from_cache: bool=false,guard_ids: Array=[],selling: bool=false) -> Dictionary:
 	var result: Dictionary={"valid":false,"message":"Pack only between stops, without an unresolved event."}
-	if not can_pack(game,from_cache):return result
+	if selling:
+		if not game.can_service() or game.state.vehicle!="wagon" or game.post_store().is_empty():return result
+	elif not can_pack(game,from_cache):return result
 	if (from_cache and not guard_ids.is_empty()) or not game.Guards.valid_selection(game,guard_ids):
 		result.message="Choose living companions to guard the wagon; the leader must travel."
 		return result

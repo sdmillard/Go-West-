@@ -91,18 +91,21 @@ func run():
  check(not screen.options_window.get_ok_button().visible,"Preferences exit through the shared X rather than a second OK/Back button")
  check(screen.theme.get_icon("close","Window").get_size()==Vector2(14,14),"The small close glyph retains a usable shared hit area")
  screen.options_window.hide()
- screen._show_section("Villainy")
- await process_frame
- var click:=InputEventMouseButton.new()
- click.button_index=MOUSE_BUTTON_LEFT
- click.pressed=true
- click.position=Vector2(screen.section_window.position)+Vector2(screen.section_window.size.x-11,-8)
- root.push_input(click)
- click=click.duplicate()
- click.pressed=false
- root.push_input(click)
- await process_frame
- check(not screen.section_window.visible,"Clicking the embedded title-bar X closes the section")
+ for fit in [0,1,2]:
+  screen.display_fit.select(fit)
+  screen._apply_preferences(false)
+  screen._show_section("Villainy")
+  await process_frame
+  var click:=InputEventMouseButton.new()
+  click.button_index=MOUSE_BUTTON_LEFT
+  click.pressed=true
+  click.position=Vector2(screen.section_window.position)+Vector2(screen.section_window.size.x-11,-8)
+  root.push_input(click,true)
+  click=click.duplicate()
+  click.pressed=false
+  root.push_input(click,true)
+  await process_frame
+  check(not screen.section_window.visible,"Clicking the embedded title-bar X closes the section in scaling mode %d" % fit)
  screen._rest()
  await process_frame
  check(screen.rest_window.get_ok_button().visible and not screen.rest_window.get_cancel_button().visible,"Confirmation retains its explicit action and uses X to cancel")

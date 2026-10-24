@@ -6,6 +6,7 @@ const GraveStore = preload("res://simulation/grave_store.gd")
 const GraveView = preload("res://ui/grave_view.gd")
 const SaveStore = preload("res://simulation/save_store.gd")
 const HuntView = preload("res://ui/hunt_view.gd")
+const RobberyDemandView=preload("res://ui/robbery_demand_view.gd")
 const PostStoreView = preload("res://ui/post_store_view.gd")
 const SpeechBubble = preload("res://ui/speech_bubble.gd")
 const MapView = preload("res://ui/map_view.gd")
@@ -49,6 +50,7 @@ var crime_category := ""
 ## The VILLAINY section a crime, attack or remains preview was opened from; its back button returns there.
 var crime_back := ""
 const SECTION_PARENTS={"Attack someone":"Villainy","Party member":"Attack someone","Someone here":"Attack someone","Steal":"Villainy","Rob":"Villainy","Preserve meat":"Camp","Dry produce":"Camp"}
+var display_fit: OptionButton
 var window_scale: OptionButton
 var fullscreen: CheckBox
 var travel_speed: OptionButton
@@ -64,12 +66,15 @@ var slaughter_by_hand := false
 var packing_window: AcceptDialog
 var packing_quantities: Dictionary={}
 var packing_quote: Label
+var packing_sale_mode:=false
+var packing_review: RichTextLabel
 var packing_cache_mode:=false
 var packing_guards: Dictionary={}
 var dismiss_button: Button
 var show_past_travelers := false
 var service_window: AcceptDialog
 var post_store_window: AcceptDialog
+var robbery_demand_view: ConfirmationDialog
 var post_store_view: Panel
 var service_rows: VBoxContainer
 var story_scroll: ScrollContainer
@@ -589,9 +594,21 @@ Northern shortcuts and Columbia rafting are not yet playable. Weather, medical e
 	post_store_window.confirmed.connect(_close_post_store)
 	post_store_window.canceled.connect(_close_post_store)
 	add_child(post_store_window)
+	robbery_demand_view=RobberyDemandView.new()
+	add_child(robbery_demand_view)
+	robbery_demand_view.committed.connect(func():
+		crime_category=""
+		_refresh()
+		if game.pending.get("service_menu",false):_show_service())
+	robbery_demand_view.canceled.connect(func():
+		robbery_demand_view.hide()
+		_show_service())
 	post_store_view = PostStoreView.new(game)
 	post_store_window.add_child(post_store_view)
 	post_store_view.settled.connect(_refresh)
+	post_store_view.sale_requested.connect(func():
+		post_store_window.hide()
+		_show_packing(false,true))
 
 func _build_ribbon() -> void:
 	var rail:=panel(Rect2(640,9,150,342))
@@ -955,6 +972,11 @@ func _show_service() -> void:
 	service_window.popup_centered()
 
 func _service_choice(index: int) -> void:
+	if game.pending.get("crime_menu",false) and game.crime.incident().is_empty() and game.pending.choices[index].get("crime_command","")=="robbery":
+		service_window.hide()
+		_pause_travel()
+		robbery_demand_view.open(game)
+		return
 	crime_category=""
 	service_window.hide()
 	if game.pending.choices[index].has("counter"):
@@ -1562,26 +1584,31 @@ func _show_supplies() -> void:
 
 func _packing_cart() -> Dictionary:
 	var cart: Dictionary={}
-	for key in packing_quantities:cart[key]=int(packing_quantities[key].value)
+	for key in packing_quantities:
+		if key!="oxen":cart[key]=int(packing_quantities[key].value)
 	return cart
 func _packing_guard_ids() -> Array:
 	return packing_guards.keys().filter(func(id):return packing_guards[id].button_pressed)
 func _update_packing_quote() -> void:
-	var quote: Dictionary=game.pack_quote(_packing_cart(),packing_cache_mode,_packing_guard_ids())
+	var quote: Dictionary=game.wagon_sale_quote(_packing_cart(),int(packing_quantities.oxen.value)) if packing_sale_mode else game.pack_quote(_packing_cart(),packing_cache_mode,_packing_guard_ids())
 	packing_quote.text="PACK %.1f / %.1f LB\n%s" % [quote.get("cargo_lb",0),quote.get("capacity_lb",0),quote.message]
-	if not packing_cache_mode and not _packing_guard_ids().is_empty():
+	if packing_sale_mode:
+		packing_quote.text="CARRY %.1f / %.1f LB · PAYOUT $%.2f · %d DAY(S)" % [quote.get("cargo_lb",0),quote.get("capacity_lb",0),int(quote.get("payout_cents",0))/100.0,int(quote.get("days",0))]
+		packing_review.text="SOLD: "+game.RobberyDemand.describe(quote.get("sold",{}))+"\nLEFT BEHIND PERMANENTLY: "+game.RobberyDemand.describe(quote.get("dropped",{}))+"\n"+str(quote.message)
+	if not packing_sale_mode and not packing_cache_mode and not _packing_guard_ids().is_empty():
 		var guard_food:=int(game.state.food)-int(_packing_cart().get("food",0))
 		packing_quote.text+="\nGUARDS: %d · LEFT: %d FOOD, %d CLOTHES, %d BULLETS\nFood can spoil. Guards may hunt, leave, die or lose the wagon." % [_packing_guard_ids().size(),guard_food,int(game.state.clothing)-int(_packing_cart().get("clothing",0)),int(game.state.bullets)-int(_packing_cart().get("bullets",0))]
 	packing_window.get_ok_button().disabled=not quote.valid
-func _show_packing(from_cache: bool=false) -> void:
+func _show_packing(from_cache: bool=false,selling: bool=false) -> void:
 	supplies_window.hide()
 	if is_instance_valid(packing_window):packing_window.queue_free()
 	packing_cache_mode=from_cache
+	packing_sale_mode=selling
 	packing_quantities={}
 	packing_guards={}
 	packing_window=AcceptDialog.new()
-	packing_window.title="REPACK AT WAGON" if from_cache else "ABANDON THE WAGON?"
-	packing_window.get_ok_button().text="REPACK" if from_cache else "LEAVE WAGON"
+	packing_window.title="SELL THE WAGON?" if selling else ("REPACK AT WAGON" if from_cache else "ABANDON THE WAGON?")
+	packing_window.get_ok_button().text="SELL WAGON" if selling else ("REPACK" if from_cache else "LEAVE WAGON")
 	packing_window.add_cancel_button("CANCEL")
 	add_child(packing_window)
 	var content:=VBoxContainer.new()
@@ -1592,8 +1619,8 @@ func _show_packing(from_cache: bool=false) -> void:
 	packing_window.add_child(packing_layout)
 	packing_layout.add_child(packing_scroll)
 	packing_scroll.add_child(content)
-	content.add_child(label("Carry only your packs. Everything else stays at the wagon.\nReturning costs real travel; the cache may be gone or spoiled."))
-	if not from_cache:
+	content.add_child(label("CHOOSE WHAT TO KEEP. The store buys accepted leftovers.\nReview what is SOLD and what is LEFT BEHIND before confirming." if selling else "Carry only your packs. Everything else stays at the wagon.\nReturning costs real travel; the cache may be gone or spoiled."))
+	if not from_cache and not selling:
 		content.add_child(label("LEAVE GUARDS? THEIR PARTY SLOTS STAY RESERVED."))
 		for member in game.party_health.members:
 			if int(member.id)==0 or not game.party_health.is_active(member):continue
@@ -1604,7 +1631,8 @@ func _show_packing(from_cache: bool=false) -> void:
 			packing_guards[int(member.id)]=guard
 			content.add_child(guard)
 	var stock: Dictionary=game.CacheSupport.available(game,from_cache)
-	var defaults: Dictionary={"clothing":mini(game.state.party_size,stock.clothing),"bullets":mini(40,stock.bullets),"medicine":mini(2,stock.medicine),"salt":mini(2,stock.salt)}
+	if selling:stock["oxen"]=int(game.state.oxen)
+	var defaults: Dictionary={"oxen":int(game.state.oxen),"clothing":mini(game.state.party_size,stock.clothing),"bullets":mini(40,stock.bullets),"medicine":mini(2,stock.medicine),"salt":mini(2,stock.salt)}
 	for key in stock:
 		var row:=HBoxContainer.new()
 		content.add_child(row)
@@ -1621,13 +1649,17 @@ func _show_packing(from_cache: bool=false) -> void:
 		packing_quantities[key]=quantity
 	packing_quote=label("")
 	packing_layout.add_child(packing_quote)
-	var starting_quote: Dictionary=game.pack_quote(_packing_cart(),from_cache)
+	packing_review=RichTextLabel.new()
+	packing_review.custom_minimum_size=Vector2(475,76)
+	packing_review.visible=selling
+	packing_layout.add_child(packing_review)
+	var starting_quote: Dictionary=game.wagon_sale_quote(_packing_cart(),int(packing_quantities.oxen.value)) if selling else game.pack_quote(_packing_cart(),from_cache)
 	packing_quantities.food.value=mini(int(stock.food),maxi(0,floori(float(starting_quote.get("capacity_lb",0))-float(starting_quote.get("cargo_lb",0)))))
 	for quantity in packing_quantities.values():quantity.value_changed.connect(func(_value):_update_packing_quote())
 	packing_window.confirmed.connect(func():
 		packing_window.hide()
 		var cart:=_packing_cart()
-		if game.repack_wagon_cache(cart) if packing_cache_mode else game.abandon_wagon(cart,_packing_guard_ids()):
+		if game.sell_wagon(cart,int(packing_quantities.oxen.value)) if packing_sale_mode else (game.repack_wagon_cache(cart) if packing_cache_mode else game.abandon_wagon(cart,_packing_guard_ids())):
 			_refresh()
 			_show_supplies())
 	packing_window.canceled.connect(func():
@@ -1787,11 +1819,17 @@ func _build_preferences() -> void:
 	fullscreen=CheckBox.new()
 	fullscreen.text="FULL SCREEN"
 	rows.add_child(fullscreen)
-	rows.add_child(label("WINDOW SIZE · CRISP INTEGER PIXELS"))
+	rows.add_child(label("WINDOW SIZE"))
 	window_scale=OptionButton.new()
 	window_scale.add_item("1X · 800 BY 360")
 	window_scale.add_item("2X · 1600 BY 720")
 	rows.add_child(window_scale)
+	rows.add_child(label("RESIZING / ASPECT RATIO"))
+	display_fit=OptionButton.new()
+	for text in ["FIT · KEEP PROPORTIONS","FILL WINDOW · STRETCH TO FIT","CRISP PIXELS · WHOLE SIZES"]:display_fit.add_item(text)
+	display_fit.tooltip_text="Fit scales continuously as you drag the window and keeps the artwork proportions. Fill uses the entire window at any shape, stretching the picture. Crisp keeps whole-number pixel scaling and may leave borders."
+	rows.add_child(display_fit)
+	display_fit.item_selected.connect(func(_value):_change_preferences(false))
 	rows.add_child(label("AUTOMATIC TRAVEL DISPLAY SPEED"))
 	travel_speed=OptionButton.new()
 	for text in ["SLOW · 2.5 SECONDS PER DAY","NORMAL · 1.25 SECONDS PER DAY","FAST · 0.75 SECONDS PER DAY"]:travel_speed.add_item(text)
@@ -1799,7 +1837,7 @@ func _build_preferences() -> void:
 	rows.add_child(label("Display speed changes no daily travel or survival rules."))
 	fullscreen.toggled.connect(func(_value):_change_preferences())
 	window_scale.item_selected.connect(func(_value):_change_preferences())
-	travel_speed.item_selected.connect(func(_value):_change_preferences())
+	travel_speed.item_selected.connect(func(_value):_change_preferences(false))
 
 func _show_preferences() -> void:
 	if not game.hunt.is_empty() or not landscape.crossing.is_empty() or _reviewing_crossing():return
@@ -1812,28 +1850,33 @@ func _load_preferences() -> void:
 	file.load(preferences_path)
 	var scale_value: Variant=file.get_value("display","scale",2)
 	var speed_value: Variant=file.get_value("travel","speed",1)
+	var fit_value: Variant=file.get_value("display","fit",0)
+	display_fit.select(int(fit_value) if fit_value is int and fit_value in [0,1,2] else 0)
 	var full_value: Variant=file.get_value("display","fullscreen",false)
 	window_scale.select(int(scale_value)-1 if scale_value is int and scale_value in [1,2] else 1)
 	travel_speed.select(int(speed_value) if speed_value is int and speed_value in [0,1,2] else 1)
 	fullscreen.set_pressed_no_signal(full_value if full_value is bool else false)
 	_apply_preferences()
 
-func _apply_preferences() -> void:
+func _apply_preferences(resize_window: bool=true) -> void:
 	travel_timer.wait_time=[2.5,1.25,0.75][travel_speed.selected]
 	window_scale.disabled=fullscreen.button_pressed
+	get_window().content_scale_stretch=Window.CONTENT_SCALE_STRETCH_INTEGER if display_fit.selected==2 else Window.CONTENT_SCALE_STRETCH_FRACTIONAL
+	get_window().content_scale_aspect=Window.CONTENT_SCALE_ASPECT_IGNORE if display_fit.selected==1 else Window.CONTENT_SCALE_ASPECT_KEEP
 	if DisplayServer.get_name()=="headless":return
 	var window:=get_window()
-	window.mode=Window.MODE_FULLSCREEN if fullscreen.button_pressed else Window.MODE_WINDOWED
-	if not fullscreen.button_pressed:
+	if resize_window:window.mode=Window.MODE_FULLSCREEN if fullscreen.button_pressed else Window.MODE_WINDOWED
+	if not fullscreen.button_pressed and resize_window:
 		var available:=DisplayServer.screen_get_usable_rect(window.current_screen)
 		var target:=Vector2i(800,360)*(window_scale.selected+1)
 		if target.x>available.size.x or target.y>available.size.y:target=Vector2i(800,360)
 		window.size=target
 		window.position=available.position+(available.size-target)/2
 
-func _change_preferences() -> void:
-	_apply_preferences()
+func _change_preferences(resize_window: bool=true) -> void:
+	_apply_preferences(resize_window)
 	var file:=ConfigFile.new()
+	file.set_value("display","fit",display_fit.selected)
 	file.set_value("display","scale",window_scale.selected+1)
 	file.set_value("display","fullscreen",fullscreen.button_pressed)
 	file.set_value("travel","speed",travel_speed.selected)
@@ -1869,7 +1912,7 @@ func _normalize_dialog_tree(node) -> void:
 
 func _normalize_dialog_buttons(dialog: AcceptDialog) -> void:
 	# Only real committing actions remain below; X/Escape is the one exit convention.
-	var commits: Array=["REST","SLAUGHTER","REPACK","LEAVE WAGON","LEAVE THIS STONE"]
+	var commits: Array=["REST","SLAUGHTER","REPACK","SELL WAGON","LEAVE WAGON","LEAVE THIS STONE"]
 	dialog.get_ok_button().visible=dialog is ConfirmationDialog or dialog.get_ok_button().text in commits
 	if dialog is ConfirmationDialog:dialog.get_cancel_button().hide()
 
