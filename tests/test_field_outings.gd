@@ -94,6 +94,16 @@ func run():
  # Test-only relocation to the exact original road position exercises recovery without a synthetic teleport action.
  g.pending={};g.state.landmark="independence";g.state.next_landmark="elm_grove";g.state.leg_length=20;g.state.leg_miles=1;g.state.miles=1
  check(g.field_outings.recover_here(g) and g.state.party_size==5 and g.field_outings.record.trips.is_empty(),"Returning to the marked origin retrieves the actual hunter and pack")
+ g=party();g.field_outings.start(g,1,"foot",1,5)
+ g.travel();g.choose(1);g.travel();g.pending={}
+ check(g.turn_direction("east"),"The actual heading action can turn back for a stranded hunter")
+ for step in range(8):
+  if g.state.miles<=1:break
+  g.pending={};g.travel()
+ check(g.state.miles==1 and g.pending.get("id","")=="hunter_camp_reached","Eastbound travel stops exactly at the hunter marker instead of skipping over an unreachable camp")
+ check(store.restore(JSON.parse_string(JSON.stringify(store.capture(g))))!=null,"The camp arrival notice saves with the correct route location")
+ g.choose(0)
+ check(g.field_outings.recover_here(g) and g.state.party_size==5,"Actual return travel and the public recovery action retrieve the hunter")
  g=party()
  g.field_outings.start(g,1,"ride_horse",1,5)
  check(g.travel() and not g.pending.get("outing_warning",false) and g.field_outings.record.trips.is_empty(),"Mounted outrider rejoins the moving party along the same road")

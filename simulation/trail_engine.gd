@@ -454,6 +454,7 @@ func travel() -> bool:
 		var east: bool=Direction.heading(self)=="east"
 		distance=mini(distance,int(state.leg_miles) if east else int(state.leg_length)-int(state.leg_miles))
 		distance=Direction.clamp_at_cache(self,distance)
+		distance=field_outings.clamp_distance(self,distance)
 		state.leg_miles+=-distance if east else distance
 		state.miles+=-distance if east else distance
 		if state.has("trail_history"):Direction.remember(self)
@@ -465,7 +466,7 @@ func travel() -> bool:
 		_tick_day(false)
 	journal.append("Day %d · Traveled to mile %d. Food remaining: %d units." % [state.day, state.miles, state.food])
 	if state.status == "traveling" and not crime.check_pursuit(self) and not crime.check_wanted(self):
-		if not Direction.cache_notice(self):_schedule_event()
+		if not field_outings.camp_notice(self) and not Direction.cache_notice(self):_schedule_event()
 	return true
 
 func rest() -> bool:

@@ -270,3 +270,14 @@ func valid_origin(game,at: Dictionary) -> bool:
  # An expedition may start while stopped at Independence, before choosing its first road.
  if at.from==at.to:return game.route.nodes.has(at.from) and at.get("offset")==0
  return not edge.is_empty() and game.crime.whole(at.get("offset"),0,int(edge.miles))
+
+func clamp_distance(game,distance: int) -> int:
+ for trip in record.trips:
+  if trip.stage!="stranded" or trip.origin.from!=game.state.landmark or trip.origin.to!=game.state.next_landmark:continue
+  var gap: int=int(game.state.leg_miles)-int(trip.origin.offset) if game.Direction.heading(game)=="east" else int(trip.origin.offset)-int(game.state.leg_miles)
+  if gap>0:distance=mini(distance,gap)
+ return distance
+func camp_notice(game) -> bool:
+ if not record.trips.any(func(trip):return trip.stage=="stranded" and at_origin(game,trip)):return false
+ game.pending={"id":"hunter_camp_reached","title":"The hunters' departure camp","text":"You have reached the marked hunting camp. Stop, then use Camp > Field trips > Look for hunters at this camp to learn their fate and recover surviving travelers and supplies.","choices":[{"label":"Stop here","effects":{},"result":"The party stops at the hunters' camp."}]}
+ return true
