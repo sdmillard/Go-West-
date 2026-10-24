@@ -6,7 +6,7 @@ October 24, 2026. Spencer proposed replacing the always-on companion background 
 
 Today each specialist gives a small passive bonus while alive, willing and at 40+ health with no serious condition (`data/party_benefits.json`, `party_character.gd` `available()`): Hunting reloads 20% faster, Carpentry saves a repair day, Caregiving adds +2 health and +1 recovery day to care, Trading takes 5% off purchases, Veteran cuts fight injury risk by 3 points. Most players never notice these. Tasks make companions hands you spend, and make a specialist's value (and wage) visible.
 
-Every camp action is currently a whole-party day: hunt, care, drying, forage and rest each spend a day of meals. Nursing, hunting and drying meat take three days. Running them in parallel makes camp days two to three times more productive, so the design must price that or it becomes a free win (see Spencer's balance rule: options need not be equal, only not bullshit).
+Every camp action is currently a whole-party day: hunt, care, drying, forage and rest each spend a day of meals. Parallel work should remove that artificial sequencing cost. Do not invent penalties just to preserve the old difficulty; use real constraints such as worker recovery, supplies, carrying and the timing of returns. See [the implementation stages](COMPANION_TASKS_IMPLEMENTATION.md) for the proposed sequence and acceptance checks.
 
 ## Core rules
 
