@@ -222,7 +222,7 @@ func valid_setup(setup: Dictionary) -> bool:
 		var key:=str(int(profile.id))
 		if "Mercenary" in profile.specials:
 			var terms: Variant=setup.contracts.get(key)
-			if not terms is Dictionary or terms.size()!=2 or not acceptable_terms(terms.get("wage_cents"),terms.get("interval_days"),profile):return false
+			if not terms is Dictionary or terms.size()!=2+(1 if terms.has("auto_pay") else 0) or (terms.has("auto_pay") and not terms.auto_pay is bool) or not acceptable_terms(terms.get("wage_cents"),terms.get("interval_days"),profile):return false
 		elif setup.contracts.has(key):return false
 	for key in setup.contracts:
 		if key not in ["1","2","3","4"]:return false
@@ -415,6 +415,21 @@ func advance_contracts(game) -> void:
 			contract.arrears_cents+=contract.wage_cents
 			game.journal.append("Day %d · Wages due for %s: $%.2f owed. Pay through View Party before another day passes." % [game.state.day,game.party_health.members[profile.id].name,contract.arrears_cents/100.0])
 
+		# Failed payments retain the existing next-day missed-wage assessment above.
+		# Party order is deterministic when the purse cannot cover every agreement.
+		if contract.get("auto_pay",false):pay_wages(game,int(profile.id))
+
+func set_auto_pay(game,index: int,enabled: bool) -> bool:
+	if not can_receive_wages(game,index) or not game.party_health.is_active(game.party_health.members[index]):return false
+	var contract: Dictionary=profiles[index].contract
+	if contract.is_empty():return false
+	if bool(contract.get("auto_pay",false))==enabled:return true
+	if enabled:contract["auto_pay"]=true
+	else:contract.erase("auto_pay")
+	game.journal.append("Day %d · Automatic wages %s for %s." % [game.state.day,"enabled" if enabled else "disabled",game.party_health.members[index].name])
+	if enabled:pay_wages(game,index)
+	return true
+
 func can_receive_wages(game, index: int) -> bool:
 	if index<=0 or index>=profiles.size() or game.state.status not in ["traveling","arrived"]:return false
 	var member: Dictionary=game.party_health.members[index]
@@ -430,7 +445,7 @@ func pay_wages(game, index: int, cents: int=-1) -> bool:
 	var amount: int=int(contract.arrears_cents) if cents==-1 else cents
 	if amount<=0 or amount>contract.arrears_cents or roundi(game.state.money*100)<amount:return false
 	var on_time: bool=contract.oldest_due_day==game.state.day
-	game.state.money=snappedf(game.state.money-amount/100.0,0.01)
+	game.state.money=float(roundi(game.state.money*100)-amount)/100.0 # Settle in cents; stable through JSON round trips.
 	game.supply_history.append({"day":int(game.state.day),"event":"wages","changes":{"money":-amount/100.0}})
 	contract.arrears_cents-=amount
 	game.journal.append("Day %d · Paid %s $%.2f in wages; $%.2f remains owed." % [game.state.day,game.party_health.members[index].name,amount/100.0,contract.arrears_cents/100.0])
@@ -476,8 +491,9 @@ func valid_framework(profile: Dictionary, index: int, day: int) -> bool:
 	var contract: Variant=profile.get("contract")
 	if not contract is Dictionary:return false
 	if not contract.is_empty():
-		var optional: int=(1 if contract.has("reward_days") else 0)+(1 if contract.has("last_late_reward_day") else 0)
+		var optional: int=(1 if contract.has("reward_days") else 0)+(1 if contract.has("last_late_reward_day") else 0)+(1 if contract.has("auto_pay") else 0)
 		if "Mercenary" not in profile.specials or contract.size()!=8+optional:return false
+		if contract.has("auto_pay") and not contract.auto_pay is bool:return false
 		if not whole(contract.get("reward_days",0),0,6) or not whole(contract.get("last_late_reward_day",-7),-7,day):return false
 		if not whole(contract.get("wage_cents"),1,100000) or not whole(contract.get("interval_days"),1,30) or not whole(contract.get("arrears_cents"),0,10000000000) or not whole(contract.get("misses"),0,100000):return false
 		if not whole(contract.get("next_due_day"),1,day+30) or not whole(contract.get("last_due_day"),-1,day) or not whole(contract.get("last_assessed_day"),-1,day):return false

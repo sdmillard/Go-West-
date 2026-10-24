@@ -39,6 +39,7 @@ var party_rows: VBoxContainer
 var member_details: RichTextLabel
 var selected_member := 0
 var wages_button: Button
+var auto_pay_wages: CheckBox
 var stop_window: AcceptDialog
 var stop_rows: VBoxContainer
 var options_window: AcceptDialog
@@ -483,6 +484,11 @@ Northern shortcuts and Columbia rafting are not yet playable. Weather, medical e
 	member_details = RichTextLabel.new()
 	member_details.selection_enabled = true
 	place(member_details, Rect2(261, 0, 291, 188), party_content)
+	auto_pay_wages=CheckBox.new()
+	auto_pay_wages.text="AUTO-PAY WAGES"
+	auto_pay_wages.tooltip_text="Pay wages owed from available cash each day. Enabling also pays affordable arrears now. Unpaid wages still lose trust. Cannot pay absent guards."
+	auto_pay_wages.toggled.connect(_toggle_auto_pay)
+	place(auto_pay_wages,Rect2(261,168,291,22),party_content)
 	wages_button=button("PAY WAGES",_pay_selected_wages)
 	place(wages_button,Rect2(261,194,291,22),party_content)
 	dismiss_button=button("ASK TO LEAVE",_dismiss_selected)
@@ -1115,6 +1121,7 @@ func _select_member(index: int) -> void:
 	_refresh_party()
 
 func _refresh_party() -> void:
+	auto_pay_wages.hide()
 	wages_button.hide()
 	dismiss_button.hide()
 	wages_button.size.x=291
@@ -1147,12 +1154,15 @@ func _refresh_party() -> void:
 	if selected_member<game.characters.profiles.size():
 		var contract: Dictionary=game.characters.profiles[selected_member].contract
 		if not contract.is_empty():
-			member_details.size.y=188
+			member_details.size.y=164
+			auto_pay_wages.show()
+			auto_pay_wages.set_pressed_no_signal(bool(contract.get("auto_pay",false)))
+			auto_pay_wages.disabled=not game.party_health.is_active(game.party_health.members[selected_member]) or not game.characters.can_receive_wages(game,selected_member)
 			wages_button.show()
 			wages_button.text="PAY WAGES OWED · $%.2f" % (contract.arrears_cents/100.0)
 			wages_button.disabled=contract.arrears_cents<=0 or roundi(game.state.money*100)<contract.arrears_cents or not game.characters.can_receive_wages(game,selected_member)
 	if selected_member>0 and game.party_health.is_active(game.party_health.members[selected_member]):
-		member_details.size.y=188
+		member_details.size.y=164 if auto_pay_wages.visible else 188
 		dismiss_button.show()
 		dismiss_button.disabled=not game.recruitment.eligible_dismiss(game,selected_member)
 		dismiss_button.position.x=410 if wages_button.visible else 261
@@ -1198,6 +1208,11 @@ func _attack_selected() -> void:
 	if game.open_attack(selected_member):
 		party_window.hide()
 		_show_service()
+
+func _toggle_auto_pay(enabled: bool) -> void:
+	game.characters.set_auto_pay(game,selected_member,enabled)
+	_refresh()
+	_refresh_party()
 
 func _pay_selected_wages() -> void:
 	if game.characters.pay_wages(game,selected_member):
@@ -1325,7 +1340,7 @@ func _advance_day() -> void:
 	if game.characters.due_total()>wages_before:
 		_pause_travel()
 		_refresh()
-		notice("WAGES DUE","Agreed wages are due. Open View Party and select the mercenary to pay. Another day without full payment counts as a missed payment.")
+		notice("WAGES DUE","Wages remain unpaid. Open Party to pay or review automatic payments. Another day without full payment counts as a missed payment.")
 	_check_roadside_graves(before, int(game.state.miles))
 
 func _rest() -> void:
