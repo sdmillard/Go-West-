@@ -71,3 +71,15 @@ Spencer proposed short custody with an opportunity to intervene, then questioned
 [Missouri State Archives](https://www.sos.mo.gov/archives/history/timeline/2) dates the first Missouri penitentiary admission to March 8, 1836. [Oregon State Archives](https://sos.oregon.gov/archives/provisional-guide/pages/penitentiary.aspx) distinguishes the 1845 Oregon City jail, its 1846 fire, rudimentary county detention and the territorial penitentiary opened in 1856 (the 1851 commission was not an operating prison). [NPS](https://www.nps.gov/cali/planyourvisit/fort-laramie.htm) dates the Army purchase of Fort Laramie to 1849; [Fort Bridger's NPS history](https://www.nps.gov/mopi/planyourvisit/fort-bridger.htm) likewise places its military phase after 1848. These dates expose a necessary audit of the current wanted-system assumptions. Do not add military guardhouses/courts to every 1848 trading post.
 
 [BLM's Oregon Trail education guide](https://www.blm.gov/sites/default/files/learn_interp_nhotic_edguide.pdf) describes emigrant companies administering their own justice. Temporary guarded detention or an emigrant hearing may fit a trail encounter, while formal custody needs a verified locality, date and authority. The absence of a US sheriff at a location does not mean there were no Indigenous laws or other jurisdictions. Next legal work should establish those distinctions before new custody mechanics.
+
+Spencer narrowed the proposed formal-prison mechanic to verified Missouri jurisdiction in the 1848 game, with transfer to an actual penitentiary rather than a prison at every stop. Temporary custody is distinct from a sentence of imprisonment; a lockup building alone does not establish local sentencing practice. This remains a proposed gameplay boundary pending the date/jurisdiction audit. Finish this outing slice before expanding detention or prison breaks.
+
+## Validated checkpoint
+
+Simulation/UI checkpoint c314dc1 passed all 66 suites, including 257 field-outing checks, 89 shared-camp-work checks and 46 repair/guard checks. A clean isolated checkout also passed 24 store and 20 current-policy outlaw journeys with zero reported errors. Those policies still use legacy group hunts; they validate integration and saves, not the balance of dispatched or explicitly outfitted hunting.
+
+The archived outlaw actor exposed one scurvy/rest loop after the carrying change: it never sought produce. Its failed evidence remains separate. tests/current_outlaw_journeys.gd runs the same twenty crime scenarios with the already-existing current counter/produce/foraging policy; no game-health changes were made to accommodate the old actor. Native outfitting, missing-person notice, party/trip presentation and map marker were reviewed. Earlier failed and interrupted development logs are separate from the final passing evidence.
+
+![Outfitting a mounted trip](field-outfitting.png)
+
+![An uncertain missing-person notice](field-missing-notice.png)
