@@ -3,20 +3,28 @@
     {
       "id": "banker",
       "label": "BANKER",
-      "cash_cents": 140000
+      "cash_cents": 147500
     },
     {
       "id": "carpenter",
       "label": "CARPENTER",
-      "cash_cents": 90000
+      "cash_cents": 97500
     },
     {
       "id": "farmer",
       "label": "FARMER",
-      "cash_cents": 60000
+      "cash_cents": 67500
     }
   ],
   "goods": [
+    {
+      "id": "wagon",
+      "label": "WAGON  $75 (MAX 1)",
+      "price_cents": 7500,
+      "maximum": 1,
+      "step": 1,
+      "suggested": 1
+    },
     {
       "id": "oxen",
       "label": "OXEN  $30 EACH",
@@ -24,6 +32,46 @@
       "maximum": 20,
       "step": 1,
       "suggested": 6
+    },
+    {
+      "id": "horses",
+      "label": "HORSES  $40 EACH",
+      "price_cents": 4000,
+      "maximum": 12,
+      "step": 1,
+      "suggested": 0
+    },
+    {
+      "id": "mules",
+      "label": "MULES  $50 EACH",
+      "price_cents": 5000,
+      "maximum": 12,
+      "step": 1,
+      "suggested": 0
+    },
+    {
+      "id": "saddles",
+      "label": "SADDLE + BRIDLE $15",
+      "price_cents": 1500,
+      "maximum": 12,
+      "step": 1,
+      "suggested": 0
+    },
+    {
+      "id": "pack_saddles",
+      "label": "PACK SADDLE  $5",
+      "price_cents": 500,
+      "maximum": 12,
+      "step": 1,
+      "suggested": 0
+    },
+    {
+      "id": "saddlebags",
+      "label": "SADDLEBAGS  $3",
+      "price_cents": 300,
+      "maximum": 12,
+      "step": 1,
+      "suggested": 0
     },
     {
       "id": "food",

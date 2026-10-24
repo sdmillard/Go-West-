@@ -27,7 +27,7 @@ func _initialize() -> void:
 	var suggested := {}
 	for good in game.outfitter.goods:
 		suggested[good.id] = int(good.suggested)
-	check(game.outfitter.quote("farmer",suggested).total_cents == 37560 and suggested.food == 1700 and suggested.medicine == 2, "Suggested outfit supplies 1700 lb and two kits and salt for $375.60 within the farmer budget")
+	check(game.outfitter.quote("farmer",suggested).total_cents == 45060 and suggested.food == 1700 and suggested.medicine == 2 and suggested.wagon == 1, "Suggested outfit supplies a wagon, 1700 lb, two kits and salt for $450.60 within the farmer budget")
 	check(is_equal_approx(provisions.cargo(game.state), 1245.0), "Cargo counts food, clothing, ammunition, parts and household gear; excludes oxen")
 	check(provisions.movement_factor(1250) > provisions.movement_factor(2500) and provisions.movement_factor(2500) > provisions.movement_factor(3000), "Increasing cargo smoothly slows progress")
 	var cart := {"oxen":6,"food":2000,"clothing":50,"bullet_boxes":100,"wheels":3,"axles":3,"tongues":3}

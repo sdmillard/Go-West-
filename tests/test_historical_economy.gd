@@ -14,7 +14,7 @@ func run():
 	var cart: Dictionary={}
 	for good in game.outfitter.goods:cart[good.id]=int(good.suggested)
 	var quote: Dictionary=game.outfitter.quote("farmer",cart)
-	check(quote.total_cents==37560 and quote.remaining_cents==22440,"Five-cent food basket leaves $224.40 from $600 without increasing funds")
+	check(quote.total_cents==45060 and quote.remaining_cents==22440,"Five-cent food basket and $75 wagon leave $224.40 from $675 without increasing funds")
 	check(game.depart("farmer",["A","B","C","D","E"],5,cart),"Suggested historical-price outfit is affordable and fits")
 	var profile: Dictionary=game.characters.profiles[1]
 	profile.skill="Hunting"

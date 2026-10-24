@@ -102,6 +102,9 @@ func run() -> void:
 	screen.departure_view.show_store()
 	await process_frame
 	var salt_widget=screen.departure_view.quantities.salt
+	# The longer list scrolls; bring the row into view as a player would.
+	salt_widget.get_parent().get_parent().ensure_control_visible(salt_widget)
+	await process_frame
 	check(salt_widget.get_global_rect().end.y<=screen.departure_view.totals.get_global_rect().position.y,"Ninth store row fits above totals")
 	var rows: Array=screen.departure_view.quantities.values()
 	for index in range(rows.size()-1):

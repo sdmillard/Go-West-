@@ -64,11 +64,16 @@ func _init(game):
  var transport:=page("Transport")
  transport.name="TransportRows"
  set_tab_title(2,"Transport")
- transport.add_child(words("ON FOOT · WAGON LEFT BEHIND" if game.state.vehicle=="foot" else "TRAVELING WITH THE WAGON"))
+ transport.add_child(words((game.Mounts.label(game.mount_plan())+" · NO WAGON") if game.state.vehicle=="foot" else "TRAVELING WITH THE WAGON"))
  transport.add_child(words("%d oxen %s · Condition: %s" % [game.state.oxen,"herded alongside your party" if game.state.vehicle=="foot" else "in the wagon team",game.PartyHealth.condition_label(game.state.ox_health)]))
  transport.add_child(words("Oxen graze; they do not eat the party's provisions."))
+ if game.Mounts.animals(game.state)>0 or game.Mounts.TACK.any(func(key):return game.Mounts.count(game.state,key)>0):
+  var plan: Dictionary=game.mount_plan()
+  transport.add_child(words("%d horses, %d mules · Condition: %s · %s" % [game.Mounts.count(game.state,"horses"),game.Mounts.count(game.state,"mules"),game.PartyHealth.condition_label(game.Mounts.condition(game.state)),game.Mounts.describe(plan) if game.state.vehicle=="foot" else "led behind the wagon"]))
+  transport.add_child(words("Tack: %d saddles, %d pack saddles, %d saddlebags" % [game.Mounts.count(game.state,"saddles"),game.Mounts.count(game.state,"pack_saddles"),game.Mounts.count(game.state,"saddlebags")]))
+  if game.state.vehicle=="foot":transport.add_child(words("Travel: %s. Animals carry %.0f lb.%s" % [game.Mounts.label(plan).to_lower(),plan.animal_lb," Poor grass in dry country wears horses down faster than oxen." if game.Mounts.animals(game.state)>0 else ""]))
  if game.state.vehicle=="foot":
-  transport.add_child(words("Pack limit: %.0f lb, based on the active party's health." % game.provisions.capacity(game.state)))
+  transport.add_child(words("Carry limit: %.0f lb, from the active party's health and the animals' loads." % game.provisions.capacity(game.state)))
   if not game.wagon_cache.is_empty():transport.add_child(words("Wagon cache: mile %d · %s" % [game.wagon_cache.mile,"located" if game.wagon_cache.found else "not yet checked"]))
  else:
   transport.add_child(words("Team load guideline: %.0f lb · Pulling speed: %d%%" % [game.provisions.team_capacity(game.state.oxen),roundi(game.survival.team_factor(game.state.oxen)*100)]))

@@ -103,5 +103,28 @@
     "departure_chance": 0.12,
     "raid_injury": 0.35,
     "note": "Authored offscreen camp abstraction. Guards use cached food, clothing and ammunition; one uncertain hunting shot per outing. Regional animals and health-based hauling apply. Protection lowers but never eliminates cache loss; outcomes are learned on return."
+  },
+  "mounts": {
+    "note": "Authored game tuning, not measured 1848 figures. A saddle animal carries one rider (two when doubled up) and its saddlebags; a pack animal carries its pack load. Horses take poor grass harder than oxen. Mounted miles are before pace, load, weather, terrain and fatigue.",
+    "horse": {
+      "pack_lb": 175,
+      "meat_lb": 250
+    },
+    "mule": {
+      "pack_lb": 200,
+      "meat_lb": 220
+    },
+    "saddlebag_lb": 25,
+    "mounted_miles_per_day": 32,
+    "doubled_wear": 4,
+    "rest_recovery": 4,
+    "breakdown_condition": 35,
+    "forage_strain": {
+      "woodland": 0,
+      "plains": 0,
+      "highcountry": 1,
+      "sagebrush": 2,
+      "forest": 1
+    }
   }
 }

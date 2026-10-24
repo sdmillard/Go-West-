@@ -11,6 +11,7 @@ const RobberyDemand=preload("res://simulation/robbery_demand.gd")
 const Guards=preload("res://simulation/wagon_guards.gd")
 const CacheSupport=preload("res://simulation/wagon_cache.gd")
 const Remains=preload("res://simulation/remains.gd")
+const Mounts=preload("res://simulation/mounts.gd")
 var wagon_cache: Dictionary={}
 const MAX_TRAVELERS := 32
 const PARTY_CAPACITY := 5
@@ -165,6 +166,12 @@ func depart(profession: String, names: Array, month: int, cart: Dictionary, cust
 	state.money = float(quote.remaining_cents) / 100.0
 	for key in ["oxen", "food", "clothing", "wheels", "axles", "tongues", "medicine", "salt"]:
 		state[key] = int(cart.get(key, 0))
+	for key in Mounts.KEYS:
+		if int(cart.get(key,0))>0:state[key]=int(cart[key])
+	if not quote.wagon:
+		# Packers leave without a wagon: only personal gear travels with them.
+		state.vehicle="foot"
+		state["household_gear_lb"]=float(provisions.data.walking.personal_gear_lb_per_person)*cleaned.size()
 	for item in Produce.ITEMS:
 		Produce.add(provisions,item,int(cart.get(item,0)),0)
 		state.food+=int(cart.get(item,0))
@@ -178,6 +185,7 @@ func depart(profession: String, names: Array, month: int, cart: Dictionary, cust
 		characters.start_contract(self,int(key),int(terms.wage_cents),int(terms.interval_days))
 	journal.append("Departed %s 1, 1848 as a %s. Party: %s." % [str(month), profession, ", ".join(cleaned)])
 	journal.append("Supplies cost $%.2f. Cash remaining: $%.2f." % [float(quote.total_cents) / 100.0, state.money])
+	if not quote.wagon:journal.append("Left Independence without a wagon, as packers: %s." % Mounts.describe(mount_plan()))
 	return true
 
 func calendar() -> Dictionary:
@@ -538,7 +546,9 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 		climate.id=context.region_id(self)
 		survival.advance(int(calendar().month), state.terrain, climate)
 		state.weather = survival.weather.label
-		state.fatigue = clampi(int(state.fatigue) + (2 + int(state.pace) * 2 if team_working else (-14 if resting else -6)), 0, 100)
+		# Riders tire more slowly than walkers or wagon drivers.
+		var riding: bool=team_working and Mounts.mounted(mount_plan())
+		state.fatigue = clampi(int(state.fatigue) + ((1 + int(state.pace) if riding else 2 + int(state.pace) * 2) if team_working else (-14 if resting else -6)), 0, 100)
 		if not team_working and current_edge().get("hazard","")!="waterless":
 			state.ox_health = mini(100, int(state.ox_health) + (int(seasonal_pressure().rest_ox_recovery) if resting else mini(2,int(seasonal_pressure().rest_ox_recovery))))
 		elif state.vehicle!="foot":
@@ -547,6 +557,7 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 			strain+=int(survival.weather.get("ox_strain",0))
 			if current_edge().get("hazard","")=="waterless":strain+=int(WATERLESS.ox_strain)
 			state.ox_health=maxi(0,int(state.ox_health)-strain)
+		_tick_mounts(resting,team_working)
 	if state.extended_route:
 		var spoiled := provisions.spoil(int(state.day), int(state.food))
 		if spoiled > 0:
@@ -598,6 +609,29 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 	if state.extended_route:
 		journal.append("Day %d · %s. Team condition %s; %s." % [state.day, state.weather, PartyHealth.condition_label(state.ox_health).to_lower(), "working" if team_working else "resting"])
 
+## Saddle and pack animals wear down while they carry and recover in camp or when only led.
+func _tick_mounts(resting: bool,team_working: bool) -> void:
+	if Mounts.animals(state)==0:return
+	var rules: Dictionary=provisions.data.mounts
+	var plan: Dictionary=mount_plan()
+	var waterless: bool=current_edge().get("hazard","")=="waterless"
+	if team_working and not Mounts.mounted(plan) and plan.mode!="packing":return
+	if not team_working:
+		if not waterless:state["horse_health"]=mini(100,Mounts.condition(state)+(int(rules.rest_recovery) if resting else 1))
+		return
+	var base: int=int(context.region(self).strain)+int(seasonal_pressure().working_strain)+int(survival.weather.get("ox_strain",0))
+	if waterless:base+=int(WATERLESS.ox_strain)
+	var strain: int=Mounts.wear(rules,plan,context.region_id(self),base,int(state.pace))
+	state["horse_health"]=maxi(0,Mounts.condition(state)-strain)
+	if state.horse_health==0:Mounts.breakdown(self)
+func mount_plan() -> Dictionary:return Mounts.plan(provisions.data.mounts,state)
+## Two riders to a saddled animal when there are too few saddles. Costs no time.
+func set_double_up(on: bool) -> bool:
+	if Mounts.animals(state)==0 and on:return false
+	state["double_up"]=on
+	journal.append("Day %d · %s" % [state.day,"Riders will double up on the saddled animals." if on else "No more doubling up; those without a saddle walk."])
+	return true
+
 func _check_health() -> void:
 	state.health = clampi(state.health, 0, 100)
 	if state.health == 0:
@@ -626,6 +660,7 @@ func _apply(effects: Dictionary, health_cause: String = "injuries", resting: boo
 	if effects.has("wheels") or effects.has("axles") or effects.has("tongues"):
 		state.parts = state.wheels + state.axles + state.tongues
 	state.ox_health = clampi(int(state.ox_health), 0, 100)
+	if state.has("horse_health"):state.horse_health = clampi(int(state.horse_health), 0, 100)
 	if state.extended_route:
 		var changes: Dictionary = {}
 		var lines: Array[String] = []
@@ -1364,7 +1399,10 @@ func walking_distance() -> int:
 	var load:=provisions.cargo(state)/maxf(1,provisions.capacity(state))
 	var burden:=clampf(1.0-maxf(0,load-0.5)*0.5,0.25,1.0)
 	var terrain:=0.8 if state.terrain=="mountains" else (0.9 if state.terrain=="forest" else 1.0)
-	return maxi(1,roundi(float(provisions.data.walking.miles_per_day)*[1.0,1.15,1.3][state.pace]*float(seasonal_pressure().travel)*float(survival.weather.speed)*terrain*burden*(1.0-float(state.fatigue)/300.0)))
+	var base: float=float(provisions.data.walking.miles_per_day)*[1.0,1.15,1.3][state.pace]
+	var plan: Dictionary=mount_plan()
+	if Mounts.mounted(plan):base=Mounts.base_miles(provisions.data.mounts,Mounts.condition(state),int(state.pace))
+	return maxi(1,roundi(base*float(seasonal_pressure().travel)*float(survival.weather.speed)*terrain*burden*(1.0-float(state.fatigue)/300.0)))
 func walking_overloaded() -> bool:
 	if state.vehicle!="foot" or provisions.cargo(state)<=provisions.capacity(state):return false
 	pending={"id":"packs_too_heavy","title":"Too much to carry","text":"Your packs exceed the surviving party's carry limit. Return to camp to drop supplies, or preserve fresh meat through Camp > Preserve meat before walking on.","choices":[{"label":"Return to camp","effects":{},"result":"The party reorganizes its packs."}]}

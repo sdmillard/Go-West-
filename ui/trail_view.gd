@@ -5,6 +5,10 @@ var traveler_profiles: Array = []
 const WAGON = preload("res://art/pixels/wagon.png")
 const OXEN = preload("res://art/pixels/oxen.png")
 const WALKER = preload("res://art/pixels/walker.png")
+# Horses and mules walking right, 48x44 frames with hooves at y 39. Rows: bay and man, chestnut
+# and woman, dun doubled up, gray led bare, bay pack horse, pack mule, mule and man.
+const HORSES = preload("res://art/pixels/horses.png")
+enum {MOUNT_MAN, MOUNT_WOMAN, MOUNT_DOUBLE, MOUNT_LED, MOUNT_PACK_HORSE, MOUNT_PACK_MULE, MOUNT_MULE_RIDER}
 const FRAMES := 8 # wagon, oxen and walker sheets hold eight frames side by side
 const FPS := 12.0
 # River crossings are drawn in a three-quarter view on a 720x300 world that the view pans across.
@@ -59,6 +63,8 @@ var scene_id := ""
 var miles := 0
 var vehicle := "wagon"
 var herded_oxen := 0
+## How the party's horses and mules are used (simulation/mounts.gd plan); empty without any.
+var mount_plan: Dictionary = {}
 var walkers := 5
 var encounter := ""
 var motion := 0.0
@@ -138,7 +144,7 @@ func _draw() -> void:
 		ambience.draw(self, scene_id, scenes.texture_for(scene_id), clock_time)
 		if vehicle=="foot":
 			_draw_herd(false)
-			_draw_walkers(Vector2(140,135),false)
+			_draw_party(Vector2(140,135),false)
 		_draw_weather()
 		return # Parked wagons/people are composed into each arrival illustration.
 	# Parallax: each layer of the backdrop slides at its own speed, nearest fastest, and the
@@ -160,7 +166,7 @@ func _draw() -> void:
 	var shift := int(sin(clock_time * 3) * 3) if motion > 0 else 0
 	if vehicle=="foot":
 		_draw_herd(scrolling or motion>0)
-		_draw_walkers(Vector2(150+shift,132+bob),scrolling or motion>0)
+		_draw_party(Vector2(150+shift,132+bob),scrolling or motion>0)
 	elif vehicle == "corolla":
 		draw_texture(CAR, Vector2(173 + shift, 96 + bob))
 	else:
@@ -188,6 +194,39 @@ func _draw_herd(moving: bool) -> void:
 	for index in range(mini(herded_oxen,3)):
 		var step:=int(clock_time*FPS+index*3)%FRAMES if moving else 0
 		draw_texture_rect_region(OXEN,Rect2(25+index*31,106-(index%2)*4,48,32),Rect2(step*48,0,48,32))
+
+## Walkers alone, or a string of riders, led and pack animals in single file with any walkers
+## behind. A small representative string is drawn; the ledger gives the exact count.
+func _draw_party(origin: Vector2,moving: bool) -> void:
+	var rows: Array=mount_rows()
+	if rows.is_empty():
+		_draw_walkers(origin,moving)
+		return
+	var on_foot: int=0 if mount_plan.get("mode","") in ["mounted","doubled"] else walkers
+	var front: float=origin.x+70.0
+	for index in range(rows.size()):
+		var x: float=front-index*30.0
+		var y: float=origin.y-(index%2)*3
+		var step:=int(clock_time*FPS+index*3)%FRAMES if moving else 0
+		draw_texture_rect_region(HORSES,Rect2(x,y-39,48,44),Rect2(step*48,int(rows[index])*44,48,44))
+	if on_foot>0:_draw_walkers(Vector2(front-rows.size()*30.0-on_foot*19.0+30.0,origin.y),moving)
+func mount_rows() -> Array:
+	var rows: Array=[]
+	if mount_plan.is_empty() or mount_plan.get("mode","walking")=="wagon":return rows
+	var riding: bool=mount_plan.mode in ["mounted","doubled"]
+	var pairs: int=maxi(0,int(mount_plan.riders)-int(mount_plan.saddled)) if mount_plan.mode=="doubled" else 0
+	for index in range(int(mount_plan.saddled)):
+		var mule: bool=index>=int(mount_plan.saddled_horses)
+		if not riding:rows.append(MOUNT_LED)
+		elif index<pairs:rows.append(MOUNT_DOUBLE)
+		elif mule:rows.append(MOUNT_MULE_RIDER)
+		else:
+			var profile: Dictionary=traveler_profiles[index] if index<traveler_profiles.size() else {"id":index}
+			rows.append(MOUNT_WOMAN if int(profile.get("appearance",{}).get("outfit",index%2))==1 else MOUNT_MAN)
+	for index in range(int(mount_plan.pack_horses)):rows.append(MOUNT_PACK_HORSE)
+	for index in range(int(mount_plan.pack_mules)):rows.append(MOUNT_PACK_MULE)
+	for index in range(int(mount_plan.led)):rows.append(MOUNT_LED)
+	return rows.slice(0,8)
 
 func _draw_walkers(origin: Vector2,moving: bool) -> void:
 	for index in range(walkers):

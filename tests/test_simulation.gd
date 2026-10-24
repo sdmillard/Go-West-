@@ -28,7 +28,7 @@ func _initialize() -> void:
 	var names := ["Ada", "Sam", "Jo", "Lee", "Pat"]
 	check(setup_game.state.status == "outfitting" and not setup_game.travel() and not setup_game.rest(), "Setup blocks time advancement")
 	var quote: Dictionary = setup_game.outfitter.quote("farmer", cart)
-	check(quote.valid and quote.total_cents == 31000 and quote.remaining_cents == 29000, "600 lb fixture outfit totals $310 with $290 remaining")
+	check(quote.valid and quote.total_cents == 38500 and quote.remaining_cents == 29000, "600 lb fixture outfit with its $75 wagon totals $385 with $290 remaining")
 	var setup_before: Dictionary = setup_game.state.duplicate(true)
 	var original_rng: int = setup_game.rng.state
 	var expensive := cart.duplicate()
