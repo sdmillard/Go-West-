@@ -141,7 +141,7 @@ func _ready() -> void:
 	paper(Rect2(267, 0, 355, 236), shop_layer)
 	paper(Rect2(0, 236, 622, 37), shop_layer)
 	text("THE GENERAL STORE", Rect2(278, 10, 320, 12), shop_layer)
-	text("Wagon/gear owned. Buy trail supplies.", Rect2(278, 30, 330, 12), shop_layer)
+	text("Buy a wagon and team, or ride with horses.", Rect2(278, 30, 330, 12), shop_layer)
 	var stock_scroll:=ScrollContainer.new()
 	stock_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
 	put(stock_scroll,Rect2(278,44,334,162),shop_layer)
@@ -215,8 +215,9 @@ func _update_quote() -> void:
 	if depart_button == null:
 		return
 	var quote: Dictionary = game.outfitter.quote(game.outfitter.professions[profession.selected].id, _current_cart())
-	totals.text = "SUPPLIES $%.2f  CASH LEFT $%.2f\nCARGO %.0f · TEAM %.0f LB · FOOD %d DAYS" % [float(quote.total_cents) / 100.0, float(quote.remaining_cents) / 100.0, quote.get("cargo_lb", 0),quote.get("team_capacity_lb",0), game.provisions.expected_days(int(_current_cart().get("food", 0)), 5, 2)]
-	feedback.text = quote.message + " Team pulling speed: %d%% (4 normal; 5 +5%%; 6+ +10%%)." % roundi(game.survival.team_factor(int(_current_cart().get("oxen",0)))*100)
+	totals.text = "SUPPLIES $%.2f  CASH LEFT $%.2f\nCARGO %.0f · %s %.0f LB · FOOD %d DAYS" % [float(quote.total_cents) / 100.0, float(quote.remaining_cents) / 100.0, quote.get("cargo_lb", 0),"TEAM" if quote.get("wagon",true) else "CARRY",quote.get("team_capacity_lb",0), game.provisions.expected_days(int(_current_cart().get("food", 0)), 5, 2)]
+	if quote.get("wagon",true):feedback.text = quote.message + " Team pulling speed: %d%% (4 normal; 5 +5%%; 6+ +10%%)." % roundi(game.survival.team_factor(int(_current_cart().get("oxen",0)))*100)
+	else:feedback.text = quote.message + " One saddle per rider; pack saddles carry the loads."
 	var agreements: Dictionary={}
 	for profile in draft.profiles:
 		if profile.id!=edited_member and "Mercenary" in profile.specials:agreements[str(profile.id)]=draft_terms[str(profile.id)]

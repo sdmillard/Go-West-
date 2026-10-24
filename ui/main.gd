@@ -677,6 +677,14 @@ func _show_section(section: String) -> void:
 				section_rows.add_child(setting[1])
 				setting[1].show()
 				setting[1].custom_minimum_size=Vector2(350,24)
+			if game.Mounts.animals(game.state)>0:
+				var doubling:=button("DOUBLE UP: "+("ON" if game.state.get("double_up",false) else "OFF"),func():
+					game.set_double_up(not game.state.get("double_up",false))
+					_refresh()
+					_show_section("Travel"))
+				doubling.name="DoubleUp"
+				doubling.tooltip_text="Without a wagon and with too few saddles, two ride each saddled animal. You keep riding pace, but the animals wear out about four times as fast. Good for a getaway, not for the long road."
+				section_rows.add_child(doubling)
 			section_rows.add_child(label("Choices take effect on the next trail day."))
 		"Camp":
 			var note:=label("Opening camp spends no time or supplies.\nChoose an activity; rest is optional.")
@@ -1424,7 +1432,9 @@ func _refresh() -> void:
 		date_label.text = "INDEPENDENCE, 1848   |   PREPARING FOR DEPARTURE   |   CLASSIC"
 	ledger_title.text="* PACKS & LIVESTOCK *" if s.vehicle=="foot" else "* WAGON LEDGER *"
 	stats.text = "FOOD    %4d UNITS\nHEALTH    %s\nCASH      $%.2f\nOXEN %d   CLOTHES %d\nBULLETS   %d\nSPARES W%d A%d T%d" % [s.food, game.party_condition(), s.money, s.oxen, s.clothing, s.bullets, s.wheels, s.axles, s.tongues]
-	stats.text += "\nCARE %d CARGO %.0f/%.0f\n%s\n%s" % [s.medicine, game.provisions.cargo(s),game.provisions.capacity(s), s.weather.to_upper(),"ON FOOT / PACKS" if s.vehicle=="foot" else "TEAM %s / %s" % [game.PartyHealth.condition_label(s.ox_health), "TIRED" if s.fatigue >= 50 else "FRESH"]]
+	var plan: Dictionary=game.mount_plan()
+	stats.text += "\nCARE %d CARGO %.0f/%.0f\n%s\n%s" % [s.medicine, game.provisions.cargo(s),game.provisions.capacity(s), s.weather.to_upper(),game.Mounts.label(plan) if s.vehicle=="foot" else "TEAM %s / %s" % [game.PartyHealth.condition_label(s.ox_health), "TIRED" if s.fatigue >= 50 else "FRESH"]]
+	if game.Mounts.animals(s)>0:stats.text+="\nHORSES %d MULES %d · %s" % [game.Mounts.count(s,"horses"),game.Mounts.count(s,"mules"),game.PartyHealth.condition_label(game.Mounts.condition(s)).to_upper()]
 	if s.vehicle=="foot" and s.oxen>0:stats.text+="\nHERD "+game.PartyHealth.condition_label(s.ox_health).to_upper()
 	if s.extended_route:
 		var nearby: Dictionary=game.context.market(game)
@@ -1439,6 +1449,7 @@ func _refresh() -> void:
 	landscape.miles = s.miles
 	landscape.vehicle = s.vehicle
 	landscape.herded_oxen=int(s.oxen) if s.vehicle=="foot" else 0
+	landscape.mount_plan=game.mount_plan() if s.vehicle=="foot" and game.Mounts.animals(s)>0 else {}
 	landscape.walkers=int(s.party_size)
 	landscape.traveler_profiles=game.characters.profiles.filter(func(profile):return int(profile.id)<game.party_health.members.size() and game.party_health.is_active(game.party_health.members[int(profile.id)]))
 	landscape.encounter = game.pending.get("id", "")
@@ -1517,7 +1528,7 @@ func _refresh() -> void:
 			target = "%s · %d guide miles %s" % [game.route.nodes[s.landmark if game.Direction.heading(game)=="east" else s.next_landmark].name, s.leg_miles if game.Direction.heading(game)=="east" else s.leg_length-s.leg_miles,game.Direction.heading(game)]
 		event_text.text = ("The wagon is rolling." if traveling else "The wagon is stopped. Continue or rest in camp.") + "\nNEXT: " + target + "\nPARTY: " + ", ".join(game.party_health.members.filter(func(member):return game.party_health.is_active(member)).map(func(member):return member.name))
 		event_text.text+="\n"+game.context.region(game).label+": "+game.context.region(game).note
-		if s.vehicle=="foot":event_text.text=("The party is walking." if traveling else "On foot. Continue or rest; supplies are limited to your packs.")+"\nNEXT: "+target+"\nPARTY: "+", ".join(game.party_health.members.filter(func(member):return game.party_health.is_active(member)).map(func(member):return member.name))+"\n"+game.context.region(game).note
+		if s.vehicle=="foot":event_text.text=(("The party is riding." if game.Mounts.mounted(game.mount_plan()) else "The party is walking.") if traveling else ("Mounted. Continue or rest; supplies are limited to what you and the animals carry." if game.Mounts.mounted(game.mount_plan()) else "On foot. Continue or rest; supplies are limited to your packs."))+"\nNEXT: "+target+"\nPARTY: "+", ".join(game.party_health.members.filter(func(member):return game.party_health.is_active(member)).map(func(member):return member.name))+"\n"+game.context.region(game).note
 	if s.status=="traveling":
 		var season: String=game.season_notice()
 		if not season.is_empty():event_text.text+="\n"+season

@@ -1,6 +1,7 @@
 extends RefCounted
 ## Prices are integer cents. Quotes are read-only; the engine commits departure once.
 var provisions = preload("res://simulation/provisions.gd").new()
+const Mounts=preload("res://simulation/mounts.gd")
 var professions: Array = []
 var goods: Array = []
 var error := ""
@@ -20,7 +21,7 @@ func load_data(data: Variant) -> bool:
 		error = "Outfitting data could not be loaded."
 		return false
 	for section in ["professions", "goods"]:
-		var required: Array = ["banker", "carpenter", "farmer"] if section == "professions" else ["oxen", "food", "clothing", "bullet_boxes", "wheels", "axles", "tongues", "medicine", "salt", "produce", "dried_produce"]
+		var required: Array = ["banker", "carpenter", "farmer"] if section == "professions" else ["wagon", "oxen", "horses", "mules", "saddles", "pack_saddles", "saddlebags", "food", "clothing", "bullet_boxes", "wheels", "axles", "tongues", "medicine", "salt", "produce", "dried_produce"]
 		var seen: Array = []
 		for entry in data[section]:
 			if not entry is Dictionary or not entry.get("id") is String or entry.id not in required or entry.id in seen or not entry.get("label") is String or entry.label.is_empty():
@@ -58,7 +59,8 @@ func quote(profession: String, cart: Dictionary) -> Dictionary:
 	var allowed: Array = []
 	for good in goods:
 		allowed.append(good.id)
-		var count: Variant = cart.get(good.id, 0)
+		# Carts from before the wagon was listed always bought one.
+		var count: Variant = cart.get(good.id, 1 if good.id == "wagon" else 0)
 		if not (count is int or count is float) or not is_finite(float(count)) or count != floor(count) or count < 0 or count > good.maximum:
 			result.message = "Check the quantity of " + good.id + "."
 			return result
@@ -67,17 +69,26 @@ func quote(profession: String, cart: Dictionary) -> Dictionary:
 		if key not in allowed:
 			result.message = "Unknown supply: " + str(key)
 			return result
-	result["cargo_lb"] = provisions.cart_cargo(cart)
-	result["team_capacity_lb"] = provisions.team_capacity(int(cart.get("oxen",0)))
+	# Without a wagon the party leaves as packers: the outfit must fit the riders, packs and walkers.
+	var wagon: bool=int(cart.get("wagon",1))>0
+	var inventory: Dictionary=cart.duplicate()
+	inventory.merge({"vehicle":"wagon" if wagon else "foot","party_size":5},true)
+	result["wagon"]=wagon
+	result["cargo_lb"] = provisions.cart_cargo(inventory)
+	result["team_capacity_lb"] = provisions.team_capacity(int(cart.get("oxen",0))) if wagon else provisions.capacity(inventory)
+	result["mounts"]=Mounts.plan(provisions.data.mounts,inventory)
 	result.remaining_cents = result.budget_cents - result.total_cents
 	if result.remaining_cents < 0:
 		result.message = "Your purchases exceed your cash."
-	elif result.cargo_lb > provisions.data.cargo_guideline_lb:
+	elif wagon and result.cargo_lb > provisions.data.cargo_guideline_lb:
 		result.message = "Lighten the cargo to 2,500 lb before departure."
-	elif cart.get("oxen", 0) < 1:
+	elif wagon and cart.get("oxen", 0) < 1:
 		result.message = "Buy at least one ox to pull the wagon."
+	elif not wagon and result.cargo_lb > result.team_capacity_lb:
+		result.message = "Without a wagon, everything must ride on the horses, mules and your backs. Lighten the load or buy pack animals."
 	else:
 		result.valid = true
 		result.message = "Ready to depart. Keep some cash for the trail."
-		if result.cargo_lb > result.team_capacity_lb:result.message="Ready, but above your team's load guideline. Travel will be slow."
+		if wagon and result.cargo_lb > result.team_capacity_lb:result.message="Ready, but above your team's load guideline. Travel will be slow."
+		elif not wagon:result.message={"mounted":"Ready to ride: everyone has a saddle.","doubled":"Ready, but some must ride double. That wears the animals out fast.","packing":"Ready, but not everyone has a saddle, so the party travels at walking pace.","walking":"Ready to walk with packs. No animals carry for you."}[result.mounts.mode]
 	return result

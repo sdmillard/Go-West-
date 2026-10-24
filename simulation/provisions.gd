@@ -8,6 +8,7 @@ var carriers: Array[Dictionary] = []
 const WagonTrade=preload("res://simulation/wagon_trade.gd")
 const Produce=preload("res://simulation/produce_trade.gd")
 const Carrying=preload("res://simulation/carrying.gd")
+const Mounts=preload("res://simulation/mounts.gd")
 func _init() -> void:
 	load_data(JSON.parse_string(FileAccess.get_file_as_string("res://data/provisions.json")))
 func load_data(value: Variant) -> bool:
@@ -57,6 +58,7 @@ func load_data(value: Variant) -> bool:
 	for amount in forage.lb_per_worker:
 		if not number(amount) or amount<0 or amount!=floor(amount):return false
 	if forage.lb_per_worker[0]>forage.lb_per_worker[1]:return false
+	if not Mounts.valid_rules(value.get("mounts")):return false
 	if not Produce.valid_rules(value.get("produce_trade")) or not WagonTrade.valid_rules(value.get("replacement_wagon")):return false
 	var guards: Variant=value.get("wagon_guards")
 	if not guards is Dictionary or not guards.get("note") is String or not number(guards.get("hunt_below_days")) or guards.hunt_below_days<1 or guards.hunt_below_days>7 or guards.hunt_below_days!=floor(guards.hunt_below_days):return false
@@ -87,7 +89,11 @@ func team_capacity(oxen: int) -> float:
 	return minf(float(data.cargo_guideline_lb),maxi(0,oxen)*float(data.working_load_per_ox_lb))
 func capacity(inventory: Dictionary) -> float:
 	if inventory.get("vehicle","")!="foot":return team_capacity(int(inventory.oxen))
-	return Carrying.capacity(carriers,float(data.walking.carry_lb_per_person)) if not carriers.is_empty() else float(data.walking.carry_lb_per_person)*int(inventory.party_size)
+	var plan: Dictionary=Mounts.plan(data.mounts,inventory)
+	# Riders carry only their personal gear; walkers carry full packs.
+	if Mounts.mounted(plan):return snappedf(float(data.walking.personal_gear_lb_per_person)*int(inventory.party_size)+float(plan.animal_lb),0.1)
+	var people: float=Carrying.capacity(carriers,float(data.walking.carry_lb_per_person)) if not carriers.is_empty() else float(data.walking.carry_lb_per_person)*int(inventory.party_size)
+	return snappedf(people+float(plan.animal_lb),0.1)
 func storage_capacity(inventory: Dictionary) -> float:
 	return capacity(inventory) if inventory.get("vehicle","")=="foot" else float(data.cargo_guideline_lb)
 func movement_factor(pounds: float, oxen: int = 4) -> float:

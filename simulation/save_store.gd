@@ -217,6 +217,8 @@ func restore(value: Variant):
 		return null
 	var s: Dictionary = value.state.duplicate(true)
 	if (migrated or economy_migrated) and not s.has("salt"):s["salt"]=0
+	# Saddle and pack animal keys are optional; records from before horses carry none.
+	if not Simulation.Mounts.valid_state(s):return null
 	if not integer(s.get("seed"), -2147483648, 2147483647) or s.get("extended_route") != true or s.get("status") not in ["traveling", "arrived", "lost", "returned_east"]:
 		return null
 	var game = Simulation.new(int(s.seed), str(s.get("mode", "classic")), s.extended_route, str(value.get("route_end","")))
