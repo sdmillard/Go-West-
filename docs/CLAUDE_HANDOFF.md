@@ -4,6 +4,7 @@ Last updated October 24, 2026, after horse travel step 5 and the concurrent nutr
 
 ## Resume here
 
+- **Proposed, not built: companion task assignments.** Spencer is designing assignable camp and away tasks (hunting, nursing, drying, guard, outriders) to replace passive background bonuses, plus Soldier and Criminal backgrounds. Decisions so far and the build order are in `docs/COMPANION_TASKS_PLAN.md`. Do not build without Spencer's approval, and check that file before changing companion benefits, rest recovery or hunting.
 - Canonical local repository: `C:/Users/Spencer/Projects/Oregon Trail`. GitHub: https://github.com/sdmillard/Go-West- ; default branch `master`. The `Documents/ChatGPT/Oregon Trail` workspace is stale staging.
 - Survival/accounting work is pushed and merged: [PR #19](https://github.com/sdmillard/Go-West-/pull/19), merge commit `4b7839640949d593d251d695236f8908334bc64e`. Local master was synced while preserving every pending working file. No implementation change is waiting for publication.
 - Exact publication commit passed all **33 Godot suites**, plus **24 store journeys and 20 outlaw journeys**, in a clean isolated checkout. Temporary checkouts were removed. The earlier tested snapshot remains on local branch `codex/survival-accounting-validation-20261022`.
