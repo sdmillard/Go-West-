@@ -38,6 +38,10 @@ func _initialize() -> void:
 	# Weather and event overlays keep the frame layouts ui/trail_view.gd slices them by.
 	for sheet in [["storm_clouds", 432, 56], ["weather_bolt", 96, 96], ["dust_devil", 64, 40], ["trail_dust", 48, 12], ["stampede_ox", 104, 16], ["flotsam", 48, 12], ["rain_clouds", 432, 56], ["rain_splash", 32, 4], ["fog_bank", 432, 40], ["snow_squall", 432, 150], ["cross_ripple", 48, 6], ["cloud_shadow", 256, 64], ["mist_wisp", 256, 48]]:
 		check(load("res://art/pixels/%s.png" % sheet[0]).get_size() == Vector2(sheet[1], sheet[2]), "Overlay sheet keeps its layout: " + sheet[0])
+	# Horse travel sheets (not wired yet) keep the frame grids the design names: 48x44 travel frames,
+	# 48x40 crossing frames, 16x16 store icons.
+	for sheet in [["horses", 384, 308], ["cross_horses", 384, 320], ["horse_icons", 80, 16]]:
+		check(load("res://art/pixels/%s.png" % sheet[0]).get_size() == Vector2(sheet[1], sheet[2]), "Horse sheet keeps its layout: " + sheet[0])
 	var scenes = preload("res://ui/location_scenes.gd").new()
 	# Ambient effects sit inside the pictures they decorate.
 	var ambience: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/scene_ambience.json"))
