@@ -1865,7 +1865,7 @@ func _apply_preferences(resize_window: bool=true) -> void:
 	get_window().content_scale_aspect=Window.CONTENT_SCALE_ASPECT_IGNORE if display_fit.selected==1 else Window.CONTENT_SCALE_ASPECT_KEEP
 	if DisplayServer.get_name()=="headless":return
 	var window:=get_window()
-	window.mode=Window.MODE_FULLSCREEN if fullscreen.button_pressed else Window.MODE_WINDOWED
+	if resize_window:window.mode=Window.MODE_FULLSCREEN if fullscreen.button_pressed else Window.MODE_WINDOWED
 	if not fullscreen.button_pressed and resize_window:
 		var available:=DisplayServer.screen_get_usable_rect(window.current_screen)
 		var target:=Vector2i(800,360)*(window_scale.selected+1)

@@ -8,7 +8,6 @@ var last_offer: Dictionary={}
 func _ready() -> void:
  title="MAKE A ROBBERY DEMAND"
  get_ok_button().text="MAKE DEMAND"
- add_cancel_button("CANCEL") if get_cancel_button()==null else null
  var layout:=VBoxContainer.new()
  layout.custom_minimum_size=Vector2(500,0)
  add_child(layout)
