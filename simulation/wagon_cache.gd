@@ -14,9 +14,12 @@ static func can_pack(game,from_cache: bool=false) -> bool:
 	if from_cache:return game.can_service() and game.state.vehicle=="foot" and not game.wagon_cache.is_empty() and game.wagon_cache.found and game.Direction.at_cache(game)
 	if not game._can_act():return false
 	return game.state.vehicle=="wagon" and game.wagon_cache.is_empty()
-static func quote(game,cart: Dictionary,from_cache: bool=false,guard_ids: Array=[],selling: bool=false) -> Dictionary:
+## forced: a getaway in the middle of a crime or a chase, when nobody could stop to pack properly.
+static func quote(game,cart: Dictionary,from_cache: bool=false,guard_ids: Array=[],selling: bool=false,forced: bool=false) -> Dictionary:
 	var result: Dictionary={"valid":false,"message":"Pack only between stops, without an unresolved event."}
-	if selling:
+	if forced:
+		if from_cache or game.state.vehicle!="wagon" or not game.wagon_cache.is_empty():return result
+	elif selling:
 		if not game.can_service() or game.state.vehicle!="wagon" or game.post_store().is_empty():return result
 	elif not can_pack(game,from_cache):return result
 	if (from_cache and not guard_ids.is_empty()) or not game.Guards.valid_selection(game,guard_ids):
@@ -65,8 +68,8 @@ static func quote(game,cart: Dictionary,from_cache: bool=false,guard_ids: Array=
 	for key in game.Mounts.KEYS+["double_up"]:inventory.erase(key)
 	result.merge({"valid":cargo<=capacity,"message":ready if cargo<=capacity else "Reduce your pack to the carry limit of your party and animals.","cargo_lb":cargo,"capacity_lb":capacity,"inventory":selected,"carried":carried,"stored":stored,"stock":stock},true)
 	return result
-static func pack(game,cart: Dictionary,from_cache: bool=false,guard_ids: Array=[]) -> bool:
-	var offer:=quote(game,cart,from_cache,guard_ids)
+static func pack(game,cart: Dictionary,from_cache: bool=false,guard_ids: Array=[],forced: bool=false) -> bool:
+	var offer:=quote(game,cart,from_cache,guard_ids,false,forced)
 	if not offer.valid:return false
 	if from_cache:spoil_cache(game)
 	var left: Dictionary={}
@@ -74,7 +77,7 @@ static func pack(game,cart: Dictionary,from_cache: bool=false,guard_ids: Array=[
 		left[key]=int(offer.stock[key])-int(offer.inventory[key])
 		game.state[key]=int(offer.inventory[key])
 	if not from_cache:
-		game.wagon_cache={"household_gear_lb":maxf(0.0,game.provisions.household_mass(game.state)-float(game.provisions.data.walking.personal_gear_lb_per_person)*(int(game.state.party_size)-guard_ids.size())),"location":{"from":str(game.state.landmark),"to":str(game.state.next_landmark),"offset":int(game.state.leg_miles),"path":game.travelled_path().duplicate()},"mile":int(game.state.miles),"day":int(game.state.day)+1,"found":true,"inventory":left,"fresh":offer.stored.duplicate(true)}
+		game.wagon_cache={"household_gear_lb":maxf(0.0,game.provisions.household_mass(game.state)-float(game.provisions.data.walking.personal_gear_lb_per_person)*(int(game.state.party_size)-guard_ids.size())),"location":location(game),"mile":int(game.state.miles),"day":int(game.state.day)+(0 if forced else 1),"found":true,"inventory":left,"fresh":offer.stored.duplicate(true)}
 		game.Guards.assign(game,guard_ids)
 	else:
 		game.wagon_cache.inventory=left
@@ -85,8 +88,9 @@ static func pack(game,cart: Dictionary,from_cache: bool=false,guard_ids: Array=[
 	game.state["household_gear_lb"]=float(game.provisions.data.walking.personal_gear_lb_per_person)*int(game.state.party_size)
 	if not from_cache:
 		if "muddy_trail" not in game.seen:game.seen.append("muddy_trail")
-		game.journal.append("Day %d · Abandoned the wagon at guide mile %d. Carried %.1f / %.1f lb; remaining goods cached. Money and surviving livestock stay with the party." % [game.state.day+1,game.state.miles,offer.cargo_lb,offer.capacity_lb])
-		game._tick_day(false)
+		game.journal.append("Day %d · Abandoned the wagon at guide mile %d. Carried %.1f / %.1f lb; remaining goods cached. Money and surviving livestock stay with the party." % [game.state.day+(0 if forced else 1),game.state.miles,offer.cargo_lb,offer.capacity_lb])
+		# A getaway's day is the flight itself.
+		if not forced:game._tick_day(false)
 	else:game.journal.append("Day %d · Repacked supplies at the cached wagon. Carried %.1f / %.1f lb." % [game.state.day,offer.cargo_lb,offer.capacity_lb])
 	if game.state.status=="traveling" and game.pending.is_empty():game._schedule_event(false)
 	return true
@@ -162,6 +166,13 @@ static func _recover_here(game) -> bool:
 		if stopped:game._arrive_landmark(true,false)
 		else:game._schedule_event(false)
 	return true
+## Where the wagon is left. At a stop, it stands at the end of the leg that led there.
+static func location(game) -> Dictionary:
+	var path: Array=game.travelled_path().duplicate()
+	if game.state.next_landmark==game.state.landmark and path.size()>=2:
+		var from: String=str(path[-2])
+		return {"from":from,"to":str(game.state.landmark),"offset":int(game.route.edge_between(from,str(game.state.landmark)).miles),"path":path.slice(0,-1)}
+	return {"from":str(game.state.landmark),"to":str(game.state.next_landmark),"offset":int(game.state.leg_miles),"path":path}
 static func valid(value: Variant,game,day: int) -> bool:
 	if not value is Dictionary:return false
 	if value.has("household_gear_lb") and (not (value.household_gear_lb is int or value.household_gear_lb is float) or not is_finite(value.household_gear_lb) or value.household_gear_lb<0 or value.household_gear_lb>100000):return false

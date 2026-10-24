@@ -3,13 +3,76 @@ extends RefCounted
 const PREFIXES={"posse":"wanted_posse:","regulators":"wanted_regulators:","bounty_hunters":"wanted_hunters:"}
 const POSTS=["fort_laramie","fort_bridger","fort_hall","fort_boise"]
 const SENTENCES=["restitution","robbery","assault","hanged"]
+const RIDE_LABEL="Cut loose and ride · leave the wagon, grab what you can, 1 day"
 static func valid_rules(value: Variant) -> bool:
-	if not value is Dictionary or value.size()!=15 or not value.get("note") is String:return false
+	if not value is Dictionary or value.size()!=16 or not value.get("note") is String:return false
 	for key in ["posse_max_mile","decay_days","cooldown_days","army_max_days","bounty_min_cents","bounty_max_cents","bounty_step_cents","robbery_reward_cents","flogging_damage"]:
 		if not whole(value.get(key),1,100000):return false
-	for key in ["daily_base","daily_cap","seizure_chance","helper_banish_chance"]:
+	for key in ["daily_base","daily_cap","seizure_chance","helper_banish_chance","mounted_flight_bonus"]:
 		if not number(value.get(key)) or value[key]<0 or value[key]>1:return false
 	return number(value.get("payoff_factor")) and value.payoff_factor>=1 and value.payoff_factor<=2 and value.bounty_max_cents>=value.bounty_min_cents
+## How the party would run: in the saddle (two to a horse if need be), behind the oxen, or on foot.
+static func flight_plan(game) -> Dictionary:
+	var inventory: Dictionary=game.state.duplicate()
+	inventory["double_up"]=true
+	return game.Mounts.plan(game.provisions.data.mounts,inventory)
+static func flight_speed(game) -> float:
+	if game.Mounts.mounted(flight_plan(game)):return float(game.Mounts.condition(game.state))/100.0
+	return float(game.state.ox_health)/100.0 if game.state.vehicle!="foot" and int(game.state.oxen)>0 else 0.25
+## Riders outrun most pursuit, though the riders after them are mounted too: a bonus, never a certainty.
+static func flight_bonus(crime,game) -> float:
+	return float(crime.wanted_data.mounted_flight_bonus) if game.Mounts.mounted(flight_plan(game)) else 0.0
+static func flight_chance(crime,game,scene: Dictionary) -> float:
+	return clampf(1.0-float(scene.escape_capture)+(flight_speed(game)-0.5)*0.2+int(game.state.pace)*0.04+flight_bonus(crime,game),0.05,0.85)
+## A hard ride wears the animals: one hard-pace day, at the doubled-up rate when two share a saddle.
+static func ride_hard(game) -> void:
+	var plan: Dictionary=flight_plan(game)
+	if not game.Mounts.mounted(plan):return
+	if plan.mode=="doubled" and not game.state.get("double_up",false):game.state["double_up"]=true
+	var wear: int=game.Mounts.wear(game.provisions.data.mounts,plan,game.context.region_id(game),0,2)
+	game.state["horse_health"]=maxi(0,game.Mounts.condition(game.state)-wear)
+	if game.state.horse_health==0:game.Mounts.breakdown(game)
+## A wagon party can cut loose: everyone onto the horses (doubled if need be), the wagon left where it stands.
+static func can_ride_off(game) -> bool:
+	if game.state.vehicle!="wagon" or not game.wagon_cache.is_empty():return false
+	if game.state.next_landmark==game.state.landmark and game.travelled_path().size()<2:return false
+	var inventory: Dictionary=game.state.duplicate()
+	inventory["vehicle"]="foot"
+	inventory["double_up"]=true
+	return game.Mounts.mounted(game.Mounts.plan(game.provisions.data.mounts,inventory))
+## Nobody planned this: whatever comes to hand goes into the saddlebags and packs, in no sensible order,
+## and the rest stays with the wagon. Spare wagon parts stay behind.
+static func cut_loose(crime,game) -> bool:
+	if not can_ride_off(game):return false
+	game.state["double_up"]=game.state.get("double_up",false) or game.Mounts.plan(game.provisions.data.mounts,game.state.merged({"vehicle":"foot"})).mode!="mounted"
+	var items: Array=["food","bullets","clothing","medicine","salt"]
+	var stock: Dictionary=game.CacheSupport.available(game)
+	var cart: Dictionary={}
+	for key in stock:cart[key]=0
+	var capacity: float=float(game.CacheSupport.quote(game,cart,false,[],false,true).get("capacity_lb",0.0))
+	var weights: Dictionary=game.provisions.data.weights_lb
+	var room: float=capacity-float(game.provisions.data.walking.personal_gear_lb_per_person)*int(game.state.party_size)
+	# Shuffle with the crime's own generator so a saved game replays the same scramble.
+	for i in range(items.size()-1,0,-1):
+		var j: int=crime.rng.randi_range(0,i)
+		var swap=items[i]
+		items[i]=items[j]
+		items[j]=swap
+	for key in items:
+		var grab: int=floori(int(stock.get(key,0))*crime.rng.randf_range(0.3,1.0))
+		var each: float=float(weights.get(key,1.0))
+		grab=mini(grab,floori(maxf(0.0,room)/each)) if each>0 else grab
+		cart[key]=maxi(0,grab)
+		room-=grab*each
+	var offer: Dictionary=game.CacheSupport.quote(game,cart,false,[],false,true)
+	# Fresh meat weighs more than the pound guess: shed food until the load fits.
+	while not offer.valid and int(cart.food)>0:
+		cart.food=maxi(0,int(cart.food)-maxi(1,int(cart.food)/10))
+		offer=game.CacheSupport.quote(game,cart,false,[],false,true)
+	if not offer.valid:return false
+	game.CacheSupport.pack(game,cart,false,[],true)
+	game.journal.append("Day %d · Cut loose from the wagon and rode for it. Grabbed in a hurry: %s. Everything else stays with the wagon." % [game.state.day,game.RobberyDemand.describe(cart)])
+	return true
 static func number(value: Variant) -> bool:return (value is int or value is float) and is_finite(value)
 static func whole(value: Variant,low: int,high: int) -> bool:return number(value) and value==floor(value) and value>=low and value<=high
 static func is_wanted(place: String) -> bool:return PREFIXES.values().any(func(prefix):return place.begins_with(prefix))
@@ -129,7 +192,8 @@ static func menu(crime,game,current: Dictionary) -> Dictionary:
 		var known:=charges(crime,game,int(game.state.miles))
 		var killing: bool=known.any(func(item):return item.severity==4)
 		text="They recognize the party from word along the road. "+("A killing is known: conviction means hanging." if killing else "Surrender brings a trial, restitution or punishment; it does not automatically end the journey.")+"\nFleeing takes a day. A failed escape can leave someone wounded. Fighting spends up to three bullets and risks injury or death."
-		options=[crime.option("Surrender for trial","surrender"),crime.option("Flee · 1 day, risk of capture","flee"),crime.option("Fight · up to 3 bullets, 1 day","breakout")]
+		options=[crime.option("Surrender for trial","surrender"),crime.option(("Ride for it · 1 day, risk of capture" if game.Mounts.mounted(flight_plan(game)) else "Flee · 1 day, risk of capture"),"flee"),crime.option("Fight · up to 3 bullets, 1 day","breakout")]
+		if can_ride_off(game):options.append(crime.option(RIDE_LABEL,"ride"))
 		if int(current.bounty)>0:options.append(crime.option("Pay off the reward seekers · $%.2f" % (payoff(crime,current)/100.0),"payoff"))
 	else:
 		text=current.get("sentence",{}).get("text","The encounter ended: "+str(current.resolution)+". Read the journal for wounds and losses.")
@@ -140,6 +204,7 @@ static func can_choose(crime,game,current: Dictionary,command: String) -> bool:
 	if current.stage=="report":return command=="finish"
 	if current.stage!="standoff":return false
 	if command in ["surrender","flee"]:return true
+	if command=="ride":return can_ride_off(game)
 	if command=="breakout":return game.state.bullets>0
 	return command=="payoff" and int(current.bounty)>0 and int(crime.record.bounties[int(current.bounty)-1].cleared_day)<0 and roundi(float(game.state.money)*100)>=payoff(crime,current)
 static func end_encounter(crime,game,current: Dictionary,resolution: String) -> void:
@@ -161,11 +226,12 @@ static func choose(crime,game,current: Dictionary,command: String) -> bool:
 		crime.record.bounties[int(current.bounty)-1].cleared_day=int(game.state.day)
 		game.journal.append("Day %d · Paid reward seekers $%.2f. The posting is settled; word of past crimes remains." % [game.state.day,cents/100.0])
 		end_encounter(crime,game,current,"paid")
-	elif command=="flee":
+	elif command in ["flee","ride"]:
+		if command=="ride" and not cut_loose(crime,game):return false
 		if not crime.advance(game):return true
 		var scene: Dictionary=crime.rules(current.place)
-		var speed: float=(float(game.state.ox_health)/100.0 if game.state.vehicle!="foot" and int(game.state.oxen)>0 else 0.25)
-		var chance: float=clampf(1.0-float(scene.escape_capture)+(speed-0.5)*0.2+int(game.state.pace)*0.04,0.05,0.85)
+		var chance: float=flight_chance(crime,game,scene)
+		ride_hard(game)
 		if crime.rng.randf()<chance:end_encounter(crime,game,current,"escaped")
 		else:
 			crime.wound(game,int(scene.injury_damage),1)
@@ -196,11 +262,12 @@ static func choose(crime,game,current: Dictionary,command: String) -> bool:
 	if game.state.status=="traveling":game.pending=menu(crime,game,current)
 	return true
 ## A later army detachment can be fled, unlike soldiers already blocking a fort gate.
-static func flee_pursuit(crime,game,current: Dictionary) -> bool:
+static func flee_pursuit(crime,game,current: Dictionary,ride: bool=false) -> bool:
+	if ride and not cut_loose(crime,game):return false
 	if not crime.advance(game):return true
 	var scene: Dictionary=crime.rules(current.place)
-	var speed: float=float(game.state.ox_health)/100.0 if game.state.vehicle!="foot" and int(game.state.oxen)>0 else 0.25
-	var chance: float=clampf(1.0-float(scene.escape_capture)+(speed-0.5)*0.2+int(game.state.pace)*0.04,0.05,0.85)
+	var chance: float=flight_chance(crime,game,scene)
+	ride_hard(game)
 	if crime.rng.randf()<chance:
 		crime.observe(game,current,"escape",true)
 		crime.result(game,"escaped")
