@@ -37,6 +37,8 @@ func load_data(data: Variant) -> bool:
 		for key in ["daily_damage", "recovery_days"]:
 			if not _number(entry.get(key)) or entry[key] != floor(entry[key]) or entry[key] <= 0:
 				return _fail("Invalid health progression")
+		if entry.has("fed_daily_damage") and (not entry.get("needs_fresh_food",false) or not _number(entry.fed_daily_damage) or entry.fed_daily_damage!=floor(entry.fed_daily_damage) or entry.fed_daily_damage<0 or entry.fed_daily_damage>entry.daily_damage):
+			return _fail("Invalid nutritional recovery damage")
 		if not _valid_spread(entry):
 			return _fail("Invalid disease onset or spread")
 		conditions[entry.id] = entry.duplicate(true)
@@ -238,10 +240,12 @@ func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 
 			continue
 		for active in member.conditions.duplicate():
 			var definition: Dictionary = conditions[active.id]
-			affect(member, -int(definition.daily_damage) * int(active.get("severity", 1)), day, definition.name.to_lower())
+			var nourished: bool=int(member.get("vitamin_days",days_without_fresh))==0
+			var damage: int=int(definition.get("fed_daily_damage",definition.daily_damage)) if nourished else int(definition.daily_damage)
+			affect(member,-damage*int(active.get("severity",1)),day,definition.name.to_lower())
 			if not is_active(member):
 				break
-			# Deficiency illness only mends on days with fresh food.
+			# Deficiency recovery still needs sustained vitamin-C meals; feeding stops its deterioration first.
 			if int(member.get("vitamin_days",days_without_fresh)) == 0 or not definition.get("needs_fresh_food", false):
 				active.elapsed += 2 if resting else 1
 			if active.elapsed >= definition.recovery_days:

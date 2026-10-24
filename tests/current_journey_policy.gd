@@ -5,6 +5,8 @@ func service_choice(game,key: String,value: Variant) -> bool:
  for index in range(game.pending.get("choices",[]).size()):
   if game.pending.choices[index].get(key)==value and game.can_choose(index):return game.choose(index)
  return false
+func has_scurvy(game) -> bool:
+ return game.party_health.members.any(func(m):return game.party_health.is_active(m) and m.conditions.any(func(c):return c.id=="scurvy"))
 func produce_held(game) -> int:
  return game.Produce.units(game.provisions,"produce",int(game.state.day))+game.Produce.units(game.provisions,"dried_produce",int(game.state.day))
 func counter_visit(game,profile: Dictionary,count: Dictionary,fundraising: bool=false) -> bool:
@@ -35,7 +37,7 @@ func counter_visit(game,profile: Dictionary,count: Dictionary,fundraising: bool=
    for stock in profile.get("mount_targets",{}):
     if game.Mounts.count(game.state,stock)<int(profile.mount_targets[stock]):targets[stock]=int(profile.mount_targets[stock])
   var gap: int=int(game.party_health.days_without_fresh)
-  if profile.get("produce",true) and produce_held(game)==0 and gap>=int(profile.get("forage_gap",20)):
+  if profile.get("produce",true) and produce_held(game)==0 and (has_scurvy(game) or gap>=int(profile.get("forage_gap",20))):
    targets.produce=2
    targets.dried_produce=3
   # Nutrition, missing clothes and an actual team come before stockpiling ordinary food.
@@ -135,8 +137,8 @@ func act(game,profile: Dictionary,aim: RandomNumberGenerator,count: Dictionary) 
   if counter_visit(game,profile,count):return true
   if recruit(game,profile,count):return true
   if game.state.day-int(count.last_care)>=3 and _try_care(game,count,int(profile.get("care_below",55))):return true
-  var deficient: bool=game.party_health.members.any(func(m):return game.party_health.is_active(m) and m.conditions.any(func(c):return c.id=="scurvy"))
-  if profile.get("produce",true) and produce_held(game)==0 and int(game.party_health.days_without_fresh)>=int(profile.get("forage_gap",20)) and game.state.day-int(count.get("last_forage",-100))>=(2 if deficient else 4) and game.forage_offer().available:
+  var deficient: bool=has_scurvy(game)
+  if profile.get("produce",true) and produce_held(game)==0 and (deficient or int(game.party_health.days_without_fresh)>=int(profile.get("forage_gap",20))) and game.state.day-int(count.get("last_forage",-100))>=(2 if deficient else 4) and game.forage_offer().available:
    if game.open_forage() and service_choice(game,"foraging",true):
     bump(count,"forages")
     count.last_forage=int(game.state.day)
@@ -195,7 +197,14 @@ func act(game,profile: Dictionary,aim: RandomNumberGenerator,count: Dictionary) 
  var worst: int=game.state.health
  for member in game.party_health.members:
   if game.party_health.is_active(member):worst=mini(worst,int(member.health))
- if profile.rest and (worst<int(profile.get("rest_below",55)) or game.state.fatigue>50 or (game.state.vehicle!="foot" and game.state.ox_health<65) or (profile.get("mount_support",false) and game.mount_plan().mode in ["mounted","doubled","packing"] and game.Mounts.condition(game.state)<int(profile.get("mount_rest_below",65)))) and game.state.food>=game.state.party_size*(ration+1):
+ var health_stop: bool=worst<int(profile.get("rest_below",55))
+ var limit: int=int(profile.get("health_rest_limit",0))
+ var consecutive: int=int(count.get("health_rest_streak",0)) if int(count.get("health_rest_day",-1))==int(game.state.day) else 0
+ if limit>0 and consecutive>=(maxi(3,limit) if worst<20 else limit):health_stop=false
+ if profile.rest and (health_stop or game.state.fatigue>50 or (game.state.vehicle!="foot" and game.state.ox_health<int(profile.get("team_rest_below",65))) or (profile.get("mount_support",false) and game.mount_plan().mode in ["mounted","doubled","packing"] and game.Mounts.condition(game.state)<int(profile.get("mount_rest_below",65)))) and game.state.food>=game.state.party_size*(ration+1):
   bump(count,"rests")
+  if health_stop:
+   count["health_rest_streak"]=consecutive+1
+   count["health_rest_day"]=int(game.state.day)+1
   return game.rest()
  return game.travel()

@@ -93,7 +93,7 @@ func run():
   game.hunt.meat=200 # Controlled successful catch; natural hit/return rates are separate journey tests.
   check(game.finish_hunt() and game.state.day==before_day+1,"Even a successful outing costs one real day")
   var recovered: Dictionary=game.last_hunt_recovery
-  check(recovered.eaten_food>0 and game.state.get("hunger_days",0)==0,"A weak party can eat its successful catch before fitting walking packs")
+  check((day>0 or recovered.eaten_food>0) and game.state.get("hunger_days",0)==0,"A weak party eats the first catch at camp and remains fed by later catches or retained meals")
   check(game.provisions.cargo(game.state)<=game.provisions.capacity(game.state),"Retained meat fits actual post-meal carrying capacity")
   check(is_equal_approx(200,recovered.eaten_mass+recovered.mass+recovered.left+recovered.other_loss),"Every pound is eaten, retained, left or explicitly otherwise lost")
  check(game.state.party_size==5 and game.state.health>=60,"A poor-health party does not starve while successfully hunting every day")

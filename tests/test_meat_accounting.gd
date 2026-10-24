@@ -45,7 +45,7 @@ func run():
 	game.party_health.begin_condition(1,"broken_leg",0)
 	check(game.hunting_capacity()==100,"Broken leg removes that traveler's entire hauling contribution")
 	game.state.vehicle="foot"
-	check(game.provisions.capacity(game.state)==80,"Walking uses the same injury and health factors with its own pack allowance")
+	check(game.provisions.capacity(game.state)==108,"Walking moderates illness penalties while broken legs still remove a carrier")
 	game.state.vehicle="wagon"
 	check(game.provisions.capacity(game.state)==2500,"Human hauling injuries do not reduce wagon storage")
 	game.party_health.members[1].conditions.clear()
@@ -107,10 +107,10 @@ func run():
 	for member in walking.party_health.members:member.health=50
 	walking.state.health=50
 	var restored=store.restore(JSON.parse_string(JSON.stringify(store.capture(walking))))
-	check(restored!=null and restored.provisions.capacity(restored.state)==100,"Loaded packs derive their capacity from restored live health")
+	check(restored!=null and restored.provisions.capacity(restored.state)==135,"Loaded packs derive their capacity from restored live health")
 	if restored!=null:
 		restored.party_health.members[0].health=100
-		check(restored.provisions.capacity(restored.state)==120,"Recovery immediately restores pack capacity without a second stored health value")
+		check(restored.provisions.capacity(restored.state)==148,"Recovery immediately restores pack capacity without a second stored health value")
 	for member in walking.party_health.members:walking.party_health.begin_condition(int(member.id),"broken_leg",0)
 	check(walking.hunting_capacity()==0 and walking.provisions.capacity(walking.state)==0,"All broken legs means no human hauling; no artificial minimum bypass")
 	game=outfit()

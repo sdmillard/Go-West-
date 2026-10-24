@@ -41,7 +41,7 @@ func run():
  game.state.food=0
  game.provisions.fresh.clear()
  for key in ["wheels","axles","tongues","salt","bullets","medicine"]:game.state[key]=0
- for member in game.party_health.members:member.health=35
+ for member in game.party_health.members:member.health=30
  game.state.health=game.party_health.average_health()
  check(game.provisions.cargo(game.state)>game.provisions.capacity(game.state),"Injured walking fixture cannot carry fixed gear")
  var before_day: int=game.state.day
@@ -77,5 +77,30 @@ func run():
  var before_miles: int=game.state.miles
  check(game.state.food<20 and game.last_hunt_recovery.eaten_food==15,"A weak hunter has eaten but cannot carry the bot's old target buffer")
  check(act(game,walking_profile,aim_a,counts) and game.state.day==before_day+1 and game.state.miles>before_miles and game.hunt.is_empty(),"A just-fed walker makes real progress instead of hunting forever for an impossible reserve")
+ game=prepare(Observed,3037)
+ game.state.money=0
+ game.party_health.daily_onset_chance=0
+ game.survival.forced_weather="clear"
+ game.survival.data.event_chance=0
+ for member in game.party_health.members:member.health=30;member.conditions=[]
+ game.state.health=30
+ var brief: Dictionary=profile.duplicate(true)
+ brief.hunt=false;brief.produce=false;brief.preserve="";brief.health_rest_limit=1
+ var brief_counts: Dictionary={"last_care":0}
+ before_day=game.state.day
+ check(act(game,brief,aim_a,brief_counts) and game.state.day==before_day+1 and game.state.miles==0,"Brief-stop actor takes one real recovery day")
+ before_miles=game.state.miles
+ check(act(game,brief,aim_a,brief_counts) and game.state.miles>before_miles and game.state.health<55,"Brief-stop actor resumes travel before complete recovery")
+ game=prepare(Observed,3038)
+ game.state.money=0
+ game.party_health.days_without_fresh=2
+ game.party_health.begin_condition(1,"scurvy",0)
+ game.state.bullets=0
+ game.provisions.fresh.clear()
+ var treatment: Dictionary=profile.duplicate(true)
+ treatment.hunt=false;treatment.preserve=""
+ var treatment_counts: Dictionary={"last_care":game.state.day,"last_forage":-100}
+ before_day=game.state.day
+ check(act(game,treatment,aim_a,treatment_counts) and treatment_counts.get("forages",0)==1 and game.state.day==before_day+1,"Active scurvy prompts treatment forage before the twenty-day prevention interval")
  print("Current balance policy: %d checks, %d failures" % [checks,failures])
  quit(1 if failures else 0)

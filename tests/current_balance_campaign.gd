@@ -19,7 +19,7 @@ func run():
 	var months: Array=[3,5,8]
 	var rosters: Array=ROSTERS.duplicate()
 	var strategies: Array=POLICIES.duplicate()
-	var settings: Dictionary={"accuracy":0.65,"forage_gap":20,"post_food":600,"outfit_dried":20,"oxen":6,"branch":"","hunt_below":90,"care_below":55,"cash_reserve":20,"preserve_meals":3.3,"opportunity":1}
+	var settings: Dictionary={"accuracy":0.65,"forage_gap":20,"post_food":600,"outfit_dried":20,"oxen":6,"branch":"","hunt_below":90,"care_below":55,"cash_reserve":20,"preserve_meals":3.3,"opportunity":1,"health_rest_limit":0,"team_rest_below":65}
 	var seeds:=12
 	var seed_start:=3000
 	var rest_below:=55

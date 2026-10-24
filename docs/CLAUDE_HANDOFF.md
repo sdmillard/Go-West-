@@ -1,6 +1,6 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 24, 2026, after horse travel step 5, the balance pass (see [horses and mules](HORSES.md)), return travel, wagon guards, wagon sales, robbery demands and resizing. **Latest checkpoint:** see the final section below and [total survival balance](TOTAL_SURVIVAL_BALANCE.md) and [sales, demands and display](WAGON_SALES_ROBBERY_AND_DISPLAY.md). Earlier sections are chronological records of prior checkpoints.
+Last updated October 24, 2026, after horse travel step 5 and the concurrent nutrition/recovery pass (see [horses and mules](HORSES.md)), return travel, wagon guards, wagon sales, robbery demands and resizing. **Latest checkpoint:** see the final section below and [nutrition, packs and risk](NUTRITION_PACKS_AND_RISK.md) and [sales, demands and display](WAGON_SALES_ROBBERY_AND_DISPLAY.md). Earlier sections are chronological records of prior checkpoints.
 
 ## Resume here
 
@@ -459,3 +459,35 @@ Priority order: inspect sustained vitamin intake and scurvy recovery; repeated s
 ## Horse balance pass (step 5, October 24)
 
 Built on #82/#83 with their `tests/mount_balance_campaign.gd` (development seeds 75000-75005, salt, April/May, carpenter/banker). On #83 rules mounted bankers took a median 242 days against 204 by wagon: horses rested a fifth of all days. Changes: `mounts.forage_strain` sagebrush 1 / highcountry 0 / forest 0; all-mule strings take no forage strain (`Mounts.wear`); animal parties' load drag in `walking_distance` starts at 75% (people 50%); walkers' journal says "lighten the packs". After: mounted banker 12/12, median 183 days; packing banker 9/12, carpenter 5/12. See [HORSE_BALANCE.md](HORSE_BALANCE.md). Fixture `pre-horse-balance-save-v1.json`; fingerprint 6927c03c... whitelisted. The horse travel roadmap is complete.
+
+
+## Nutrition, packs and risk (October 24)
+
+Spencer explicitly prioritized scurvy and weak walking. He challenged the claim that late journeys prove timing costs are wrong: his usual play keeps moving with sick companions, takes a day of rest if needed, and longer stops only for serious trouble. September is a useful play benchmark. DO NOT automatically buff travel speeds or shorten stop costs based on a cautious bot. This pass leaves all speeds and day prices unchanged.
+
+Read docs/NUTRITION_PACKS_AND_RISK.md, research/RECOVERY_AND_RISK_PROTOCOL.json and research/RECOVERY_AND_RISK_SOURCES.json. Public evidence: docs/balance-recovery-risk-02-summary.json. All 1,440 formal scenarios have zero selected errors. Raw reports and excluded pilots are hash-verified in ignored .tools/recovery-evidence/.
+
+Implementation 6de28c5: scurvy's fed_daily_damage=0 stops deterioration on adequate vitamin-C days while existing recovery still needs fourteen nutritional days (rest counts faster). Traveling can advance recovery; interrupted nutrition resumes damage. Other illnesses, hunger, meat and body-food rules are unchanged. Pack capacity uses f*(1+max(0,0.85-f)): healthy/starting limits remain 200/170 lb; health60 gets150 instead of120 lb; the same110 lb gear leaves40 rather than10 lb for food. This curve is authored tuning, not measured physiology. Retrieval/robbery remain linear, broken legs still contribute zero, and serious illness can still strand a party.
+
+Study actors distinguish active scurvy treatment from twenty-day preventive produce checks. Brief-stop and bold profiles limit ordinary consecutive health rests to one; up to three while still critical below20. Settings are explicit in archives. Baseline game d9ad653 uses identical final actors at361055f; preserve named counterfactual branch codex/recovery-before-policy. Dev-01 pilots use the older treatment actor and are excluded.
+
+Matched route development72/version (81000-81003); fresh144 (82000-82007). Final cautious/traveler/bold arrivals35/37/39 of48, intact29/30/31, successful medians231/231/202days. By September30,1848:0/2/6. Among34 cases where cautious and bold both arrive, bold saves median14.5days, is faster in24, adds5 successes but loses1 cautious success. Do not describe the difference in separate arrival medians as a guaranteed29-day saving, or claim late arrivals are entirely cautious behavior. Continue modeling player purchases, hunting and pressing on.
+
+Matched emergency288/version (83000-83003), fresh576 (84000-84007). Development walking health60 rescue0/24 ->20/24. Fresh walking: ordinary44/48 intact, weak36/48 intact, one-broken-leg41/48 arrivals/40intact. Animal-supported controls all succeeded. This is a post-rescue test, not walking the whole trail from Missouri.
+
+Scurvy is NOT declared fully balanced: fresh route scurvy deaths25/25/16 across styles, with only modest matched overall-route changes. Scarcity, winter, coarse produce units, binary nutrition credit and current forage-day ordering remain abstractions; no free fruit was added. Exact food threshold is not a clinical dose model.
+
+6de28c5 passed all62 suites in a clean isolated checkout (119nutrition/pack,216policy,56emergency,33meat checks), plus24store and20outlaw journeys. Same production sources after publication add evidence/docs/UID only. No UI/art changes. Genuine prior save migrates with unchanged state/RNG. Current fingerprint95ac2b1f8aa23ca82be1c5abdae8ade04eb29346cdbc40c1951b8cf63dd3b744; previous6927c03c33aba3ab718e02606b39caa53355a215aa4182c564764aa580dc5403 whitelisted. Preserve actual saves and the three local debug pilots.
+
+
+### Combined publication after concurrent horse PR #84
+
+Concurrent master ac0072e changed horse forage strain, all-mule forage treatment and the animal load-drag threshold. These are preserved in the merged branch, not overwritten. The nutrition/risk pass itself does not alter travel speeds or stop-day costs. Combined checkpoint ddfab02 passed all62 suites (120nutrition/pack),24store and20outlaw journeys.
+
+New docs/balance-recovery-risk-03-summary.json retains the pre-merge1440 cases plus752 combined checks. The144 original held-out wagon replays match ALL scenario fields exactly, so previous risk/caution comparisons apply to the combined build. Replays are not fresh independent validation. Fresh emergency seeds85000-85007:531/576 reach help,528 intact; walking ordinary43/48 intact, weak32/48 (29intact), broken-leg24/48 intact. All432 animal-supported controls succeed. Different seeds explain that this is NOT a paired claim versus the earlier fresh sample.
+
+Fresh mounted/packing32cases use86000-86003,April/May,salt,carpenter/banker: mounted2/8 and8/8 (intact0/7),packing2/8 and8/8 (intact0/6). Banker medians171.5mounted,221packing. This is combined integration/balance evidence, not an equal-outfit promise.
+
+Current combined fingerprint38d5a0bdaca9f681aca65bb45c0da8a41029739b67400ff71cf0941e09647a75. A genuine immediately preceding horse-update walking save (6f29f0fae730d228ef155a3a0b59928eb063602af261d95367b39519317f186f) migrates unchanged; this and the pre-merge95ac2b1f fingerprint are whitelisted. Both handoff sections were preserved when resolving the merge.
+
+Next decisions remain nutrition scarcity/coarse servings and the player's shopping/hunting/press-on policies. September is a playstyle benchmark; do not force the calendar by blindly changing action costs. Scorbutic travelers can recover while moving if fed; moderate illness no longer makes pack food space disappear immediately. Preserve all prior evidence and actual saves.
