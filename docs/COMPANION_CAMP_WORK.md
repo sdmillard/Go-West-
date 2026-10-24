@@ -12,7 +12,9 @@ Use Rest, hunt, forage, care or preservation as the leader's action. Jobs run du
 
 ## A shared day
 
-Each worker has one job. Workers miss rest recovery and advance injury/illness recovery at the ordinary working rate; resting people get the existing resting rate. People receiving nursing cannot simultaneously work or help haul the hunt. Too ill, injured or unwilling companions rest instead, with an explanation in the journal. Health and willingness are rechecked daily.
+Each worker has one job. Workers miss rest recovery and advance injury/illness recovery at the ordinary working rate; resting people get the existing resting rate. People receiving nursing cannot simultaneously work or help haul the hunt. Their roster row is locked to Rest while eligible treatment is reserved; an existing standing job is paused and resumes when care ends. Reassign the nurse before selecting work for the patient. No kit or an unavailable nurse means there is no active treatment lock.
+
+The leader gets a full personal rest day while being nursed. Committing to another activity ends that nursing assignment first and returns the nurse to Rest, with one journal entry. Opening a menu, viewing a quote or attempting an invalid action does not end treatment. A hunt cannot retain the leader's nursing or rest benefits. Too ill, injured or unwilling companions rest instead, with an explanation in the journal. Health and willingness are rechecked daily.
 
 The day coordinator reserves nursing patients and available kits in party order. Leader-selected care takes priority over delegated care and cannot overspend the final kit. A Caregiver nurse improves treatment through the existing specialist values; that person no longer also grants passive care to the leader. An assigned Hunter can assist the minigame, but a Hunter foraging or drying meat cannot also reload or haul for it. Carpentry and Trading remain as before until their respective tasks are built. Veteran remains a combat special.
 

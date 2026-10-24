@@ -714,6 +714,7 @@ func _show_section(section: String) -> void:
 			body.add_theme_constant_override("separation",1)
 			table.add_child(body)
 			section_rows.add_child(table)
+			var nursing_patients: Dictionary=game.camp_tasks.patient_nurses(game)
 			for member in game.party_health.members:
 				var id: int=int(member.id)
 				if id==0 or not game.party_health.is_active(member):continue
@@ -741,6 +742,10 @@ func _show_section(section: String) -> void:
 					var amount: float=float(member.health)/100.0*float(offer.factor)
 					detail.text="About %.1f-%.1f lb; weather / cargo may reduce it." % [game.provisions.data.foraging.lb_per_worker[0]*amount,game.provisions.data.foraging.lb_per_worker[1]*amount]
 				pick.tooltip_text=detail.text+"\nWorkers miss rest recovery. Unassigned companions rest; hunt helpers haul only when you hunt. Jobs pause on travel, crossing and trading days."
+				if nursing_patients.has(id):
+					pick.text="Rest · being nursed"
+					pick.disabled=true
+					pick.tooltip_text="Resting while "+game.party_health.members[nursing_patients[id]].name+" provides nursing. Reassign the nurse before choosing work. Previous standing task resumes when treatment ends."
 				detail.free()
 			var costs: Dictionary=game.camp_tasks.quote(game)
 			var cost_label:=label("PER CAMP DAY · %d DAY · %d FOOD UNITS\nMATERIALS: %d CARE KIT(S) · %.0f LB MEAT TO DRY · %d LB SALT\nWAGES DUE BY TOMORROW: $%.2f" % [costs.days,costs.meals,costs.kits,costs.meat_lb,costs.salt,costs.wages_cents/100.0])
@@ -889,6 +894,7 @@ func _camp_cell(content: Control,width: int=0) -> PanelContainer:
 
 func _camp_choice_style(choice: Button) -> void:
 	choice.flat=true
+	choice.add_theme_color_override("font_disabled_color",Color("7b5a3f"))
 	for color in ["font_color","font_hover_color","font_pressed_color","font_focus_color"]:
 		choice.add_theme_color_override(color,Color("45372f"))
 	choice.add_theme_stylebox_override("normal",StyleBoxEmpty.new())

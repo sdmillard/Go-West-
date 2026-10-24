@@ -26,6 +26,7 @@ func valid(value: Variant,game,count: int=-1) -> bool:
  return true
 func assign(game,index: int,task: String,patient: int=-1) -> bool:
  if not game.can_service() or index<=0 or index>=game.party_health.members.size() or not game.party_health.is_active(game.party_health.members[index]):return false
+ if task!="rest" and patient_nurses(game).has(index):return false
  var candidate: Dictionary=assignments.duplicate(true)
  candidate[str(index)]={"job":task,"patient":patient}
  if not valid(candidate,game):return false
@@ -147,11 +148,7 @@ func excludes_helper(game,index: int) -> bool:
 
 ## Use the same reservation pass for a read-only roster quote.
 func quote(game) -> Dictionary:
- var model=get_script().new()
- model.assignments=assignments.duplicate(true)
- model.rules=rules.duplicate(true)
- model.quiet=true
- model.begin(game,"rest")
+ var model=preview_day(game)
  var result: Dictionary={"days":1,"meals":int(game.provisions.data.rations_lb[game.state.rations])*int(game.state.party_size),"kits":0,"meat_lb":0.0,"salt":0,"wages_cents":0,"notes":model.planning_notes.duplicate()}
  for entry in model.day_plan.get("jobs",[]):
   if entry.job=="nurse":result.kits+=1
@@ -165,3 +162,23 @@ func quote(game) -> Dictionary:
   var bills: int=maxi(0,floori(float(int(game.state.day)+1-int(contract.next_due_day))/int(contract.interval_days))+1)
   result.wages_cents+=int(contract.arrears_cents)+bills*int(contract.wage_cents)
  return result
+
+func preview_day(game):
+ var model=get_script().new()
+ model.assignments=assignments.duplicate(true)
+ model.rules=rules.duplicate(true)
+ model.quiet=true
+ model.begin(game,"rest")
+ return model
+func patient_nurses(game) -> Dictionary:
+ var result: Dictionary={}
+ var plan: Dictionary=day_plan if not day_plan.is_empty() else preview_day(game).day_plan
+ for entry in plan.get("jobs",[]):
+  if entry.job=="nurse":result[int(entry.patient)]=int(entry.member)
+ return result
+func end_leader_nursing(game) -> void:
+ for key in assignments:
+  var task: Dictionary=assignments[key]
+  if task.job!="nurse" or int(task.patient)!=0:continue
+  assignments[key]={"job":"rest","patient":-1}
+  report(game,"%s stopped nursing %s because the leader chose another activity." % [game.party_health.members[int(key)].name,game.party_health.members[0].name])
