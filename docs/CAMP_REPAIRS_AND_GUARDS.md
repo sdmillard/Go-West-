@@ -39,3 +39,9 @@ Repair progress uses a validated optional camp_repair object; cached projects us
 The new repair work settings change the rules fingerprint. The immediately preceding 420a7c10d6ec416596c727e16b692d949d15293d85e020f1069d63a734228c08 signature is whitelisted. Genuine tests/fixtures/pre-repair-guard-v4.json was captured from 3799a84 before implementation; its state, assignments and random streams migrate without invented repairs.
 
 These work units are authored game rules, not historical measurements. No new profession balance or full-route success claim is made.
+
+## Validation
+
+Checkpoint25ebc81 passed all65 Godot suites in a clean isolated checkout, including46repair/guard and89companion-work checks. The same sources completed24store and20outlaw integration journeys with zero reported errors. Tests cover actual breakdown deferral, travel blocking, ordinary/Carpenter/manual repairs, single-kit reservation, paid local care releasing a canceled nurse's reservation, interruption/reassignment, spare fitting, cached damage and recovery, guard eligibility, exact existing theft weighting, no stacked guards/fatigue, migration and malformed projects.
+
+Current rules fingerprint: 5c957789d728b80a7838f2d63996f1bfa03e261e2652fae3fcd550d56c065baa. Genuine prior fixture migrates with unchanged state/assignments/RNG. Native repair/guard roster and30-day warning were inspected and shown. Verified logs/reports remain ignored .tools/repair-guard-*. Actual player saves and three preexisting debug pilots were preserved. No full-route balance sign-off is claimed.
