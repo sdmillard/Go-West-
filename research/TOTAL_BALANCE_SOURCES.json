@@ -1,0 +1,169 @@
+{
+  "reviewed": "2026-10-24",
+  "scope": "Historical anchors and contemporary evidence; precise gameplay probabilities and tuning are separately identified.",
+  "sources": [
+    {
+      "id": "palmer-1847",
+      "date": "1847 guide describing 1845-1846; 1906 reprint",
+      "url": "https://www.gutenberg.org/cache/epub/46906/pg46906-images.html",
+      "systems": [
+        "food",
+        "money",
+        "load",
+        "animals"
+      ],
+      "observations": "Outfit list pp.258-263; 200 lb flour, 30 pilot bread, 75 bacon, 10 rice, 25 sugar per adult, plus unweighed/other supplies. Hall/Boise emergency flour $20/100 lb. pp.289-291 reproduces a report of 200 lb pack horses on regional journeys with rest.",
+      "limits": "Not an 1848 Independence receipt or a universal carrying maximum; successful exceptional regional travel is not a family default. Mission resupply in the earlier account is not promised in the 1848 setting."
+    },
+    {
+      "id": "marcy-1859",
+      "date": "1859, eleven years after game setting",
+      "url": "https://www.gutenberg.org/cache/epub/23066/pg23066-images.html",
+      "systems": [
+        "load",
+        "animals",
+        "travel",
+        "preservation"
+      ],
+      "observations": "Chapters III-IV: ordinary walking marches with good grass/water and proper management need not reduce animal condition; long mule journeys recommended 125 lb. Region, grazing time, pace and overload matter. Notes winter differences between dry cured grass in Utah/New Mexico and the Missouri country.",
+      "limits": "Qualitative advice, not a daily wear equation. 125 lb is prudent advice, not a species maximum. No adoption of obsolete medical recipes or prejudiced character judgments."
+    },
+    {
+      "id": "nps-wagon",
+      "date": "NPS page updated September 7, 2025",
+      "url": "https://www.nps.gov/jeff/planyourvisit/overland-wagon.htm",
+      "systems": [
+        "load",
+        "travel",
+        "food"
+      ],
+      "observations": "Typical 2500 lb supply guideline; travelers commonly walked beside the wagon; broad four-six month and 10-15 miles/day context.",
+      "limits": "Interpretive summary spanning 1840s-1860s, not a precise 1848 itinerary, effective moving-day-only speed or numeric mortality target."
+    },
+    {
+      "id": "nps-seasons",
+      "date": "Modern NPS interpretation, checked October 24, 2026",
+      "url": "https://www.nps.gov/oreg/learn/historyculture/making-the-trek.htm",
+      "systems": [
+        "weather",
+        "travel",
+        "hunting"
+      ],
+      "observations": "Timing departure for spring grass and clearing passes; avoid winter in the western mountains; opportunities differ across the route.",
+      "limits": "No reconstructed 1848 daily weather series or measured animal encounter odds."
+    },
+    {
+      "id": "ohio-deer-2017",
+      "date": "115 deer measured during 2017 Ohio deer gun season",
+      "url": "https://dam.assets.ohio.gov/image/upload/ohiodnr.gov/documents/wildlife/wild-ohio-harvest-community/Venison%20Yield.pdf",
+      "systems": [
+        "hunting",
+        "food"
+      ],
+      "observations": "Mean 52.19 lb boneless venison from 107.56 lb field-dressed white-tailed deer; 48.52% yield. Sex/age mix and processing vary.",
+      "limits": "Modern Ohio white-tailed sample, not 1848 mule deer or guaranteed yield from every hit. Supports plausibility of current 42-85 usable lb, not exact species-wide bounds."
+    },
+    {
+      "id": "ndsu-game-2019",
+      "date": "NDSU publication FN124 reviewed May 2019, hosted by UC ANR",
+      "url": "https://ucanr.edu/sites/default/files/2020-09/335733.pdf",
+      "systems": [
+        "food",
+        "preservation"
+      ],
+      "observations": "Venison is relatively lean; prompt cooling, clean handling and ambient heat affect spoilage. Nutrition table distinguishes water, fat, protein and energy.",
+      "limits": "Modern food-safety guidance is not an endorsement of unrefrigerated trail storage. Current fixed two-day raw meat life and 21/30-day dried life are authored abstractions, not safety instructions."
+    },
+    {
+      "id": "rutgers-equine",
+      "date": "Current cooperative extension guidance, checked October 24, 2026",
+      "url": "https://extension.rutgers.edu/horse-pasture-management",
+      "systems": [
+        "animals"
+      ],
+      "observations": "Horses require substantial dry-matter forage; good managed pasture can meet maintenance needs for many healthy pleasure horses.",
+      "limits": "Managed pasture/light work is not an expedition under heavy loads. Body condition is simplified; game does not track actual hay, calories or grazing hours."
+    },
+    {
+      "id": "nih-vitamin-c",
+      "date": "Current NIH ODS professional fact sheet checked October 24, 2026",
+      "url": "https://ods.od.nih.gov/factsheets/VitaminC-HealthProfessional/",
+      "systems": [
+        "nutrition",
+        "health"
+      ],
+      "observations": "Scurvy follows sustained vitamin C deficiency, with symptoms potentially appearing within a month; stored body reserves and actual intake matter.",
+      "limits": "No direct conversion from a basket's pounds to vitamin dose; game half-pound produce meal and dried retention are tuning, not clinical thresholds."
+    },
+    {
+      "id": "hadza-gps-2021",
+      "date": "2021 primary GPS research",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8060163/",
+      "systems": [
+        "walking",
+        "foraging"
+      ],
+      "observations": "Measured foraging travel depends on tasks, local ecology and route geometry; daily search distance differs from point-to-point migration.",
+      "limits": "Cannot transfer a group mean to maximum marching speed, random emigrant expertise or ethnicity/sex modifiers. Real subsistence includes knowledge, sharing and more foods than game greens."
+    },
+    {
+      "id": "subsistence-2021",
+      "date": "2021 primary comparative research",
+      "url": "https://doi.org/10.1126/science.abf0130",
+      "systems": [
+        "hunting",
+        "foraging"
+      ],
+      "observations": "Subsistence can yield high returns with substantial effort, technology, cooperation and variable outcomes.",
+      "limits": "Does not justify guaranteed daily success or complete nutrition from lean meat or greens alone."
+    },
+    {
+      "id": "load-carriage",
+      "date": "2013/2014 primary walking experiment",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3922835/",
+      "systems": [
+        "walking",
+        "load"
+      ],
+      "observations": "Added backpack load increases work and metabolic cost.",
+      "limits": "Fixed treadmill conditions do not establish the game's linear health-to-capacity rule, broken-leg binary exclusion or fixed personal gear mass."
+    },
+    {
+      "id": "census-1848-1850",
+      "date": "1850 federal census compendium reporting 1848 inquiry and 1850 local wages",
+      "url": "https://www2.census.gov/prod2/decennial/documents/1850c-05.pdf",
+      "systems": [
+        "money",
+        "wages"
+      ],
+      "observations": "Printed pp.164-165 distinguish boarded field labor and skilled/unboarded wages. Detailed prior inspection and calculations are in HISTORICAL_ECONOMY.md.",
+      "limits": "Not a surveyed emigrant-companion contract market; premiums for traits and profession starting cash remain authored. Previously inspected scan, not newly remeasured in this pass."
+    },
+    {
+      "id": "nps-danger",
+      "date": "Modern NPS synthesis of 1841-1869",
+      "url": "https://www.nps.gov/articles/000/death-on-trails.htm",
+      "systems": [
+        "health",
+        "crime",
+        "crossings"
+      ],
+      "observations": "Disease, accidents, drowning and weather dominate the account; accidental shootings common, murder comparatively rare. It gives broad multi-decade mortality estimates.",
+      "limits": "Not a one-year Oregon-only control sample. Do not force every five-person game's death or win frequency to this aggregate, and do not use classic encounter frequencies as historical measurements."
+    },
+    {
+      "id": "classic-design",
+      "date": "Designer retrospective on 1985 gameplay",
+      "url": "https://www.philipbouchard.com/oregon-trail/hunting.html",
+      "systems": [
+        "hunting",
+        "classic"
+      ],
+      "observations": "Carry caps and hunting encounters are game design decisions; regional variety and player aiming matter.",
+      "limits": "Previously inspected in research/ECONOMY_PRESERVATION_SOURCES.json. 1978 BASIC quantities, 1985 budgets and 1993 GUI are reference behavior, not a common real-world unit system or historical price list."
+    }
+  ],
+  "inaccessible": [
+    "USFS 0651-2833 HTML pages returned 403/internal errors; no numerical packing or calorie claim is based on them."
+  ]
+}

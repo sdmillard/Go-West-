@@ -1,6 +1,6 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 24, 2026, after horse travel step 4 (see [horses and mules](HORSES.md)), return travel, wagon guards, wagon sales, robbery demands and resizing. **Latest checkpoint:** see the final section below and [emergency travel calibration](EMERGENCY_TRAVEL_CALIBRATION.md) and [sales, demands and display](WAGON_SALES_ROBBERY_AND_DISPLAY.md). Earlier sections are chronological records of prior checkpoints.
+Last updated October 24, 2026, after horse travel step 4 (see [horses and mules](HORSES.md)), return travel, wagon guards, wagon sales, robbery demands and resizing. **Latest checkpoint:** see the final section below and [total survival balance](TOTAL_SURVIVAL_BALANCE.md) and [sales, demands and display](WAGON_SALES_ROBBERY_AND_DISPLAY.md). Earlier sections are chronological records of prior checkpoints.
 
 ## Resume here
 
@@ -435,3 +435,22 @@ Additional full-route comparison: 128 journeys/version with provision-first poli
 Validation: checkpoint 267c495 passed all 60 suites in a clean isolated checkout, including 56 emergency checks, 60 guard checks, 152 survival checks and 338 mount-policy checks. Identical production sources at 9606e2f passed 24 store and 20 outlaw integration journeys. Later changes are test expectations, evidence and documentation only. The full-route regression actor now drops actual excess goods instead of endlessly acknowledging overweight; the game capacity rule was not relaxed. Hunting observers separate field meals from actual retained units.
 
 Next: weak-walker fixed gear/food capacity and recovery; full-route low-budget pack provision strategy; animal load, grazing wear and seasonal recovery. Do not claim balance is complete. Preserve the old campaigns, actual player saves and the three preexisting untracked debug pilots. Restart an already-running game after updating.
+
+
+## Total survival balance check (October 24)
+
+Read docs/TOTAL_SURVIVAL_BALANCE.md, research/TOTAL_BALANCE_PROTOCOL.json and research/TOTAL_BALANCE_SOURCES.json. Published compact audit: docs/balance-total-02-summary.json. Raw reports/diagnostics and 44 integration results are hash-verified in ignored .tools/total-balance-evidence/. This is a completed broad check with unresolved balance findings, NOT a complete balance sign-off.
+
+Implementation e517454: animal work uses current load ratio (authored light-work threshold 0.5). Light cautious work can maintain condition on good grass; pace costs also apply to pack walking. Doubling always costs condition. Rest recovery is capped by seasonal grazing. Prices, payloads and basic walking speed are unchanged. Current rules fingerprint 6927c03c33aba3ab718e02606b39caa53355a215aa4182c564764aa580dc5403. Genuine preceding packer-save fixture tested; old fingerprint 02285c8f33534be2cfbab8846219c5186d8c2acbc47f2f81f757e28ee5ea01ed whitelisted.
+
+Study policies now rest oxen with zero condition instead of endlessly acknowledging no_team, and a just-fed walker can progress rather than repeatedly hunting toward an impossible pack reserve. Hunting records last_hunt_day in study counts. Both before/after use these identical actors; baseline game remains master 3b68496, counterfactual policy-only checkpoint b211d72. The counterfactual is retained on branch codex/total-balance-before-policy for reproduction. Old-actor 540/288 pilots with stalls remain diagnostic and are excluded.
+
+Formal total 4,428 scenarios: 810 broad mechanics and 144 transport per version; 288 emergency fixtures per version; 1,620 fresh broad validation; 288 fresh transport validation; 18 branch and 18 aim sensitivities. Full protocol declares all seeds. No game tuning followed held-out seeds 74000-74003 (broad) and 73000-73003 (mount). Game/actor hashes are frozen and checked. Summarizer rejects incomplete/duplicate/unversioned/error-bearing or mismatched evidence; seven corrupted variants were checked.
+
+Results: broad old/new production comparison identical, 318/810 arrivals each. Transport development 54/144 -> 51/144: corrected winter/animal rules are not a blanket survival buff. Fresh May ordinary salted wagon farmer 0/4, carpenter 4/4 (3 intact), banker 4/4 intact; independent provision-first spring wagons farmer 2/8 (1 intact), carpenter 7/8 intact, banker 8/8 intact. Spring mounted farmer/carpenter/banker 0/8, 2/8, 8/8; packing 0/8, 1/8, 4/8; walking from start all 0. Banker arrival medians wagon 210, mounted 223, packing 258.5 days: total delays remain excessive even when moving-day speeds look plausible.
+
+Fresh broad validation 672/1,620 arrivals includes late starts and deliberate crimes; do not present it as a normal-player probability. It records 2,674 scurvy episodes and 1,588 scurvy-attributed deaths, so nutrition/recovery is a major next investigation. Salt/dry/steady/no-hunt 104/99/101/95 arrivals per 180 mixed cases; theft 63, robbery 3, predation 0, recruitment 103. These are declared actors, not every possible tactic or a historical crime rate. Ordinary emergency walkers reach help 24/24, weak health-60 walkers 0/24, one-broken-leg parties 17/24. All successful emergency cases kept five originals.
+
+All 61 suites passed in an isolated checkout, including 20 animal work and 211 current-policy checks. Same production sources passed 24 store and 20 outlaw integrations. No UI/art changes. Preserve actual player saves and three local debug pilots.
+
+Priority order: inspect sustained vitamin intake and scurvy recovery; repeated shop/care/processing delays and reserve policy; weak-walker fixed gear/capacity/recovery; low-budget pack provisioning and animal loads. Respect Spencer's existing one-day-per-store-visit decision unless deliberately replacing the time model. Avoid simply buffing every speed or forcing victory percentages to a multi-decade mortality estimate. Human hunting and clarity playtests remain outstanding.

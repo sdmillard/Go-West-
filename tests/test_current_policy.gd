@@ -46,5 +46,36 @@ func run():
  check(game.provisions.cargo(game.state)>game.provisions.capacity(game.state),"Injured walking fixture cannot carry fixed gear")
  var before_day: int=game.state.day
  check(trim_foot(game,counts) and game.state.day==before_day+1,"Study chooses an actual recovery day when no sensible discard remains")
+ game=prepare(Observed,3035)
+ game.state.ox_health=0
+ game.party_health.daily_onset_chance=0
+ game.survival.forced_weather="clear"
+ before_day=game.state.day
+ check(act(game,profile,aim_a,counts) and game.state.day==before_day+1 and game.state.ox_health>0,"A worn team receives a real recovery day instead of a no-time warning loop")
+ game=prepare(Observed,3036)
+ game.state.vehicle="foot"
+ game.state.household_gear_lb=75
+ game.state.oxen=0
+ game.state.food=0
+ game.state.money=0
+ game.provisions.fresh.clear()
+ for key in ["wheels","axles","tongues","salt","medicine"]:game.state[key]=0
+ game.state.bullets=20
+ for member in game.party_health.members:member.health=60
+ game.state.health=60
+ game.party_health.daily_onset_chance=0
+ game.survival.data.event_chance=0
+ game.survival.forced_weather="clear"
+ game.configure(0,2)
+ game.start_hunt();game.hunt.meat=60;game.finish_hunt()
+ counts.last_hunt_day=game.state.day
+ game.pending={}
+ var walking_profile: Dictionary=profile.duplicate(true)
+ walking_profile.produce=false
+ walking_profile.preserve=""
+ before_day=game.state.day
+ var before_miles: int=game.state.miles
+ check(game.state.food<20 and game.last_hunt_recovery.eaten_food==15,"A weak hunter has eaten but cannot carry the bot's old target buffer")
+ check(act(game,walking_profile,aim_a,counts) and game.state.day==before_day+1 and game.state.miles>before_miles and game.hunt.is_empty(),"A just-fed walker makes real progress instead of hunting forever for an impossible reserve")
  print("Current balance policy: %d checks, %d failures" % [checks,failures])
  quit(1 if failures else 0)

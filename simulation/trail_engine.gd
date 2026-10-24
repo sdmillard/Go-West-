@@ -637,11 +637,12 @@ func _tick_mounts(resting: bool,team_working: bool) -> void:
 	var waterless: bool=current_edge().get("hazard","")=="waterless"
 	if team_working and not Mounts.mounted(plan) and plan.mode!="packing":return
 	if not team_working:
-		if not waterless:state["horse_health"]=mini(100,Mounts.condition(state)+(int(rules.rest_recovery) if resting else 1))
+		if not waterless:state["horse_health"]=mini(100,Mounts.condition(state)+(mini(int(rules.rest_recovery),int(seasonal_pressure().rest_ox_recovery)) if resting else 1))
 		return
 	var base: int=int(context.region(self).strain)+int(seasonal_pressure().working_strain)+int(survival.weather.get("ox_strain",0))
 	if waterless:base+=int(WATERLESS.ox_strain)
-	var strain: int=Mounts.wear(rules,plan,context.region_id(self),base,int(state.pace))
+	var load_ratio: float=provisions.cargo(state)/maxf(1.0,provisions.capacity(state))
+	var strain: int=Mounts.wear(rules,plan,context.region_id(self),base,int(state.pace),load_ratio)
 	state["horse_health"]=maxi(0,Mounts.condition(state)-strain)
 	if state.horse_health==0:Mounts.breakdown(self)
 func mount_plan() -> Dictionary:return Mounts.plan(provisions.data.mounts,state)

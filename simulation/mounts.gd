@@ -13,6 +13,7 @@ static func valid_rules(v: Variant) -> bool:
 		if not v.get(animal) is Dictionary or not whole(v[animal].get("pack_lb"),1,1000) or not whole(v[animal].get("meat_lb"),1,1000):return false
 	for key in ["saddlebag_lb","mounted_miles_per_day","doubled_wear","rest_recovery","breakdown_condition","guard_factor","guard_fatigue"]:
 		if not whole(v.get(key),1,100):return false
+	if not (v.get("light_work_load") is int or v.get("light_work_load") is float) or not is_finite(float(v.light_work_load)) or v.light_work_load<=0 or v.light_work_load>=1:return false
 	if not v.get("forage_strain") is Dictionary:return false
 	for region in v.forage_strain:
 		if not whole(v.forage_strain[region],0,10):return false
@@ -74,12 +75,13 @@ static func base_miles(rules: Dictionary,condition: int,pace: int) -> float:
 	return float(rules.mounted_miles_per_day)*[1.0,1.15,1.3][pace]*(0.55+0.45*clampf(condition/100.0,0.0,1.0))
 
 ## Daily wear on the animals that carry riders or packs. Returns the strain applied.
-static func wear(rules: Dictionary,plan_: Dictionary,region: String,base_strain: int,pace: int) -> int:
+static func wear(rules: Dictionary,plan_: Dictionary,region: String,base_strain: int,pace: int,load_ratio: float=1.0) -> int:
 	if plan_.mode in ["wagon","walking"]:return 0
-	# A carrying animal tires a little even on good grass; riders push harder with the pace.
-	var strain: int=1+base_strain+int(rules.forage_strain.get(region,0))
-	if plan_.mode=="mounted":strain+=pace
-	elif plan_.mode=="doubled":strain=(strain+pace)*int(rules.doubled_wear)
+	# Light work at a cautious pace can be sustained on good grazing; heavier loads,
+	# haste, poor grass and winter still draw down condition. Doubling is always hard work.
+	var workload: int=1 if load_ratio>float(rules.light_work_load) else 0
+	var strain: int=workload+base_strain+int(rules.forage_strain.get(region,0))+pace
+	if plan_.mode=="doubled":strain=maxi(1,strain)*int(rules.doubled_wear)
 	return strain
 
 ## A worn-out animal gives out under its load: one is lost and the rest are rested a little.

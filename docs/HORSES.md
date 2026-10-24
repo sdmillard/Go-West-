@@ -100,3 +100,8 @@ Initial walking and packing quotes now use the actual starting party health (85)
 Exhaustion removes a horse or mule assigned to a saddle or pack, preferring working horses before working mules. Led-only stock and empty trains cannot suffer a carrying breakdown. Remaining stock can take over the lost animal pack, so losing an animal does not necessarily reduce capacity immediately.
 
 The representative train is positioned inside the landscape with a gap between walkers and animals, keeping five walkers visible even with eight animals. Existing pixel assets are unchanged. These are correctness fixes. The subsequent [balance audit](HISTORY_AND_MOUNT_BALANCE.md) records separate current-rule evidence.
+
+
+## Animal work and seasonal grazing (October 24)
+
+The [total survival check](TOTAL_SURVIVAL_BALANCE.md) revises carrying strain: light cautious work can maintain condition on good grass, while full loads, haste, poor forage, waterless legs and winter remain costly. Pack-walking pace now affects animal work too. Rest recovery is limited by seasonal grazing; winter no longer restores summer condition per day. Doubling remains strenuous with any baggage. The 50% light-load threshold is authored, and actual animal size, rider/tack mass and grazing hours are not modeled individually. Prices and payload limits are unchanged. The matched study does not show a universal survival improvement.

@@ -1,0 +1,509 @@
+{
+  "date": "2026-10-24",
+  "baseline_game_commit": "3b68496250b2c6e1f16afc90d054483f1fe79a75",
+  "baseline_with_identical_policy_commit": "b211d72",
+  "after_game_commit": "e517454",
+  "exclusions": "Initial farmer540/mount288 pilots with old actors contain stalls and are diagnostic only. Development emergency snapshots are declared; full-route actions are public. No numerical population mortality target is inferred.",
+  "cohorts": [
+    {
+      "id": "broad_before",
+      "kind": "broad",
+      "dimensions": {
+        "profession": [
+          "farmer",
+          "carpenter",
+          "banker"
+        ],
+        "month": [
+          3,
+          5,
+          8
+        ],
+        "roster": [
+          "ordinary",
+          "mixed_paid",
+          "fragile",
+          "selected",
+          "generated"
+        ],
+        "strategy": [
+          "salt",
+          "dry",
+          "steady",
+          "no_hunt",
+          "theft",
+          "robbery",
+          "already_dead",
+          "predation",
+          "recruit"
+        ],
+        "seed": [
+          71000,
+          71001
+        ]
+      },
+      "files": [
+        ".tools/total-balance-evidence/balance-total-before-dev-02-farmer.json",
+        ".tools/total-balance-evidence/balance-total-before-dev-02-carpenter.json",
+        ".tools/total-balance-evidence/balance-total-before-dev-02-banker.json"
+      ]
+    },
+    {
+      "id": "mount_before",
+      "kind": "mount",
+      "dimensions": {
+        "profession": [
+          "farmer",
+          "carpenter",
+          "banker"
+        ],
+        "mode": [
+          "wagon",
+          "mounted",
+          "packing",
+          "walking"
+        ],
+        "month": [
+          3,
+          5,
+          8
+        ],
+        "strategy": [
+          "salt",
+          "no_hunt"
+        ],
+        "seed": [
+          72000,
+          72001
+        ]
+      },
+      "files": [
+        ".tools/total-balance-evidence/balance-total-mount-before-dev-02.json"
+      ]
+    },
+    {
+      "id": "emergency_before",
+      "kind": "emergency",
+      "dimensions": {
+        "mode": [
+          "wagon",
+          "walking",
+          "packing",
+          "mounted"
+        ],
+        "health_case": [
+          "ordinary",
+          "weakened",
+          "broken_leg"
+        ],
+        "distance": [
+          30,
+          75,
+          150
+        ],
+        "month": [
+          6,
+          8
+        ],
+        "seed": [
+          75000,
+          75001,
+          75002,
+          75003
+        ]
+      },
+      "files": [
+        ".tools/total-balance-evidence/total-emergency-before-01.json"
+      ]
+    },
+    {
+      "id": "broad_after",
+      "kind": "broad",
+      "dimensions": {
+        "profession": [
+          "farmer",
+          "carpenter",
+          "banker"
+        ],
+        "month": [
+          3,
+          5,
+          8
+        ],
+        "roster": [
+          "ordinary",
+          "mixed_paid",
+          "fragile",
+          "selected",
+          "generated"
+        ],
+        "strategy": [
+          "salt",
+          "dry",
+          "steady",
+          "no_hunt",
+          "theft",
+          "robbery",
+          "already_dead",
+          "predation",
+          "recruit"
+        ],
+        "seed": [
+          71000,
+          71001
+        ]
+      },
+      "files": [
+        ".tools/total-balance-evidence/balance-total-after-dev-02-farmer.json",
+        ".tools/total-balance-evidence/balance-total-after-dev-02-carpenter.json",
+        ".tools/total-balance-evidence/balance-total-after-dev-02-banker.json"
+      ]
+    },
+    {
+      "id": "mount_after",
+      "kind": "mount",
+      "dimensions": {
+        "profession": [
+          "farmer",
+          "carpenter",
+          "banker"
+        ],
+        "mode": [
+          "wagon",
+          "mounted",
+          "packing",
+          "walking"
+        ],
+        "month": [
+          3,
+          5,
+          8
+        ],
+        "strategy": [
+          "salt",
+          "no_hunt"
+        ],
+        "seed": [
+          72000,
+          72001
+        ]
+      },
+      "files": [
+        ".tools/total-balance-evidence/balance-total-mount-after-dev-02.json"
+      ]
+    },
+    {
+      "id": "emergency_after",
+      "kind": "emergency",
+      "dimensions": {
+        "mode": [
+          "wagon",
+          "walking",
+          "packing",
+          "mounted"
+        ],
+        "health_case": [
+          "ordinary",
+          "weakened",
+          "broken_leg"
+        ],
+        "distance": [
+          30,
+          75,
+          150
+        ],
+        "month": [
+          6,
+          8
+        ],
+        "seed": [
+          75000,
+          75001,
+          75002,
+          75003
+        ]
+      },
+      "files": [
+        ".tools/total-balance-evidence/total-emergency-after-01.json"
+      ]
+    },
+    {
+      "id": "broad_validation",
+      "kind": "broad",
+      "dimensions": {
+        "profession": [
+          "farmer",
+          "carpenter",
+          "banker"
+        ],
+        "month": [
+          3,
+          5,
+          8
+        ],
+        "roster": [
+          "ordinary",
+          "mixed_paid",
+          "fragile",
+          "selected",
+          "generated"
+        ],
+        "strategy": [
+          "salt",
+          "dry",
+          "steady",
+          "no_hunt",
+          "theft",
+          "robbery",
+          "already_dead",
+          "predation",
+          "recruit"
+        ],
+        "seed": [
+          74000,
+          74001,
+          74002,
+          74003
+        ]
+      },
+      "files": [
+        ".tools/total-balance-evidence/balance-total-heldout-01-farmer.json",
+        ".tools/total-balance-evidence/balance-total-heldout-01-carpenter.json",
+        ".tools/total-balance-evidence/balance-total-heldout-01-banker.json"
+      ]
+    },
+    {
+      "id": "mount_validation",
+      "kind": "mount",
+      "dimensions": {
+        "profession": [
+          "farmer",
+          "carpenter",
+          "banker"
+        ],
+        "mode": [
+          "wagon",
+          "mounted",
+          "packing",
+          "walking"
+        ],
+        "month": [
+          3,
+          5,
+          8
+        ],
+        "strategy": [
+          "salt",
+          "no_hunt"
+        ],
+        "seed": [
+          73000,
+          73001,
+          73002,
+          73003
+        ]
+      },
+      "files": [
+        ".tools/total-balance-evidence/balance-total-mount-heldout-01.json"
+      ]
+    },
+    {
+      "id": "route_main",
+      "kind": "broad",
+      "dimensions": {
+        "profession": [
+          "farmer",
+          "carpenter",
+          "banker"
+        ],
+        "month": [
+          5
+        ],
+        "roster": [
+          "ordinary"
+        ],
+        "strategy": [
+          "salt"
+        ],
+        "seed": [
+          76000,
+          76001
+        ]
+      },
+      "files": [
+        ".tools/total-balance-evidence/balance-total-route-main-01-farmer.json",
+        ".tools/total-balance-evidence/balance-total-route-main-01-carpenter.json",
+        ".tools/total-balance-evidence/balance-total-route-main-01-banker.json"
+      ]
+    },
+    {
+      "id": "route_greenwood",
+      "kind": "broad",
+      "dimensions": {
+        "profession": [
+          "farmer",
+          "carpenter",
+          "banker"
+        ],
+        "month": [
+          5
+        ],
+        "roster": [
+          "ordinary"
+        ],
+        "strategy": [
+          "salt"
+        ],
+        "seed": [
+          76000,
+          76001
+        ]
+      },
+      "files": [
+        ".tools/total-balance-evidence/balance-total-route-greenwood-01-farmer.json",
+        ".tools/total-balance-evidence/balance-total-route-greenwood-01-carpenter.json",
+        ".tools/total-balance-evidence/balance-total-route-greenwood-01-banker.json"
+      ]
+    },
+    {
+      "id": "route_columbia",
+      "kind": "broad",
+      "dimensions": {
+        "profession": [
+          "farmer",
+          "carpenter",
+          "banker"
+        ],
+        "month": [
+          5
+        ],
+        "roster": [
+          "ordinary"
+        ],
+        "strategy": [
+          "salt"
+        ],
+        "seed": [
+          76000,
+          76001
+        ]
+      },
+      "files": [
+        ".tools/total-balance-evidence/balance-total-route-columbia-01-farmer.json",
+        ".tools/total-balance-evidence/balance-total-route-columbia-01-carpenter.json",
+        ".tools/total-balance-evidence/balance-total-route-columbia-01-banker.json"
+      ]
+    },
+    {
+      "id": "aim_035",
+      "kind": "broad",
+      "dimensions": {
+        "profession": [
+          "farmer",
+          "carpenter",
+          "banker"
+        ],
+        "month": [
+          5
+        ],
+        "roster": [
+          "ordinary"
+        ],
+        "strategy": [
+          "salt"
+        ],
+        "seed": [
+          77000,
+          77001
+        ]
+      },
+      "files": [
+        ".tools/total-balance-evidence/balance-total-aim-035-01-farmer.json",
+        ".tools/total-balance-evidence/balance-total-aim-035-01-carpenter.json",
+        ".tools/total-balance-evidence/balance-total-aim-035-01-banker.json"
+      ]
+    },
+    {
+      "id": "aim_065",
+      "kind": "broad",
+      "dimensions": {
+        "profession": [
+          "farmer",
+          "carpenter",
+          "banker"
+        ],
+        "month": [
+          5
+        ],
+        "roster": [
+          "ordinary"
+        ],
+        "strategy": [
+          "salt"
+        ],
+        "seed": [
+          77000,
+          77001
+        ]
+      },
+      "files": [
+        ".tools/total-balance-evidence/balance-total-aim-065-01-farmer.json",
+        ".tools/total-balance-evidence/balance-total-aim-065-01-carpenter.json",
+        ".tools/total-balance-evidence/balance-total-aim-065-01-banker.json"
+      ]
+    },
+    {
+      "id": "aim_090",
+      "kind": "broad",
+      "dimensions": {
+        "profession": [
+          "farmer",
+          "carpenter",
+          "banker"
+        ],
+        "month": [
+          5
+        ],
+        "roster": [
+          "ordinary"
+        ],
+        "strategy": [
+          "salt"
+        ],
+        "seed": [
+          77000,
+          77001
+        ]
+      },
+      "files": [
+        ".tools/total-balance-evidence/balance-total-aim-090-01-farmer.json",
+        ".tools/total-balance-evidence/balance-total-aim-090-01-carpenter.json",
+        ".tools/total-balance-evidence/balance-total-aim-090-01-banker.json"
+      ]
+    }
+  ],
+  "comparisons": [
+    [
+      "broad_before",
+      "broad_after"
+    ],
+    [
+      "mount_before",
+      "mount_after"
+    ],
+    [
+      "emergency_before",
+      "emergency_after"
+    ]
+  ],
+  "frozen_validation": [
+    [
+      "broad_after",
+      "broad_validation"
+    ],
+    [
+      "mount_after",
+      "mount_validation"
+    ]
+  ]
+}
