@@ -142,6 +142,7 @@ func report(game,text: String) -> void:
  else:game.journal.append("Day %d · Camp work: %s" % [game.state.day,text])
 func excludes_helper(game,index: int) -> bool:
  if not enabled() or index==0:return false
+ if patient_nurses(game).has(index):return true
  if not reason(game,index,"hunt_help").is_empty():return true
  if not game.hunt.is_empty() and game.hunt.has("_camp_helpers"):return index not in game.hunt._camp_helpers
  return job(index).job!="hunt_help"

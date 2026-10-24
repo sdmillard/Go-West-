@@ -198,6 +198,7 @@ func run():
  baseline=store.capture(g)
  check(not g.camp_tasks.assign(g,2,"forage") and store.capture(g)==baseline,"Nursed companions cannot be reassigned work while treatment is reserved")
  check(g.camp_tasks.patient_nurses(g).get(2,-1)==1,"Read-only reservation identifies the actual nurse and patient")
+ check(g.hunting_capacity()==42,"Pre-hunt hauling estimate excludes a patient whose old task was hunting help")
  g.camp_tasks.assign(g,1,"rest")
  check(not g.camp_tasks.patient_nurses(g).has(2) and g.camp_tasks.assign(g,2,"forage"),"Reassigning the nurse releases the patient's work lock")
  g=party()

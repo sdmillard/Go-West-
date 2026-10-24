@@ -30,7 +30,7 @@ Deliver stages 1 and 2 as separate reviewed changes if the shared-day refactor i
 
 ## 3. Away hunting and leaving camp
 
-Add same-day foot hunts with actual ammunition, carried rations, clothing and gear. Reuse regional/seasonal hunting and the established retrieval limits. Count the outbound pack plus the catch against carrying capacity; the old whole-party hunt's yield is not a lone hunter's allowance.
+Add same-day foot hunts with actual ammunition, carried rations, clothing and gear. Spencer confirmed that leader and companion outings must use the same outfit and carrying calculation: only participating people and explicitly allocated animals contribute, with the same health, gear and supply costs. Merely owning a horse or leaving helpers in camp grants no hunting cargo. Apply this shared calculation to the leader minigame as well as delegated hunts. Reuse regional/seasonal hunting and the established retrieval limits. Count the outbound pack plus the catch against carrying capacity; the old whole-party hunt's yield is not a lone hunter's allowance.
 
 Away people cannot defend camp, grant passive specialist benefits, haul for another action or receive wages remotely. Automatic wages must use the same eligibility gate as manual payment.
 
