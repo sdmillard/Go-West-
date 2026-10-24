@@ -132,6 +132,17 @@ func run():
  check(g.camp_repair.work.progress==0,"Too-ill repairer cannot produce progress")
  g=party();breakdown(g);g.camp_tasks.assign(g,1,"repair_patch");g.camp_tasks.assign(g,2,"nurse",1);rest(g)
  check(g.camp_repair.work.progress==0,"A repairer receiving nursing is locked out of repairs")
+ g=party();breakdown(g)
+ g.camp_tasks.assign(g,1,"nurse",4);g.camp_tasks.assign(g,2,"repair_patch")
+ g.state.medicine=1
+ # Test-only relocation exposes a real post's paid-care service.
+ g.state.landmark="fort_laramie";g.state.next_landmark="fort_laramie"
+ g._arrive_landmark(true,false)
+ g.open_care()
+ var doctor: int=-1
+ for i in range(g.pending.choices.size()):
+  if g.pending.choices[i].get("member_id",-1)==4 and g.pending.choices[i].get("care",0)==12:doctor=i;break
+ check(doctor>=0 and g.choose(doctor) and g.camp_repair.work.progress==1 and g.state.medicine==0,"Paid local care releases the canceled nurse's kit reservation for the repairer")
  var old: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-repair-guard-v4.json"))
  loaded=store.restore(old)
  check(loaded!=null and loaded.camp_repair.work.is_empty() and loaded.camp_tasks.snapshot()==store.normalize(old.camp_tasks),"Genuine prior schema-4 tasks migrate without invented repairs")

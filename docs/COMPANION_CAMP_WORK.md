@@ -8,7 +8,7 @@ Open **Camp > Companion tasks**. Give each companion a standing job: Rest, Forag
 
 Selecting the first assignment enables shared camp work. Unassigned companions rest; only assigned hunt helpers accompany the leader and haul meat. Clear jobs / Use group actions restores the earlier whole-party action behavior. Existing saves and new journeys begin with group actions, allowing the new labor model to be tested without silently changing a player's existing strategy.
 
-Use Rest, hunt, forage, care or preservation as the leader's action. Jobs run during those camp days, including each day of a multi-day rest. Camp chores pause during travel, crossings, trading and unrelated event delays. Named stock guards still cover the night watch; see the repair/guard notes. Trading alongside camp work is not in this first stage.
+Use Rest, hunt, forage, care or preservation as the leader's action. Jobs run during those camp days, including each day of a multi-day rest. The rest-duration quote warns that assigned tasks repeat for the requested number of days and working companions miss rest recovery. Configuration is retained rather than reset after one day; completed or blocked jobs rest and are rechecked on later days. Camp chores pause during travel, crossings, trading and unrelated event delays. Named stock guards still cover the night watch; see the repair/guard notes. Trading alongside camp work is not in this first stage.
 
 ## A shared day
 

@@ -1306,12 +1306,7 @@ func _choose_service(index: int) -> bool:
 	context.consume(choice)
 	if choice.has("care") and camp_tasks.enabled():
 		camp_tasks.end_leader_nursing(self)
-		camp_tasks.begin(self,"care")
-		var patient_id: int=int(choice.member_id)
-		camp_tasks.day_plan.rest[patient_id]=true
-		for job in camp_tasks.day_plan.jobs:
-			if job.member==patient_id or (job.job=="nurse" and job.patient==patient_id):camp_tasks.day_plan.rest[job.member]=true
-		camp_tasks.day_plan.jobs=camp_tasks.day_plan.jobs.filter(func(j):return j.member!=patient_id and not (j.job=="nurse" and j.patient==patient_id))
+		camp_tasks.begin(self,"care",int(choice.member_id))
 	if choice.has("care"):
 		var member: Dictionary = party_health.members[int(choice.member_id)]
 		party_health.affect(member, int(choice.care)+int(choice.get("care_bonus",0)), state.day, "care")

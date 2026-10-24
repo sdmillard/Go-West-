@@ -54,12 +54,15 @@ func reason(game,index: int,task: String,patient: int=-1) -> String:
 func specialist(game,index: int,background: String) -> bool:
  var profile: Dictionary=game.characters.profiles[index]
  return profile.skill==background or profile.specials.any(func(s):return game.characters.catalog.data.specials[s].get("assists","")==background)
-func begin(game,action: String) -> void:
+func begin(game,action: String,leader_patient: int=-1) -> void:
  if not enabled() or not day_plan.is_empty():return
  day_plan={"rest":{},"jobs":[],"action":action}
  for member in game.party_health.members:
   if game.party_health.is_active(member):day_plan.rest[int(member.id)]=int(member.id)!=0 or action=="rest"
  var patients: Array=[]
+ if leader_patient>=0:
+  patients.append(leader_patient)
+  day_plan.rest[leader_patient]=true
  var kits: int=game.state.medicine
  # Nurses reserve patients first: a patient cannot also do another day's work.
  for index in range(1,game.party_health.members.size()):

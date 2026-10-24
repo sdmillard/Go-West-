@@ -1541,6 +1541,8 @@ func _update_rest_quote() -> void:
 	var meal:=maxi(1,int(game.state.party_size)*int(game.provisions.data.rations_lb[game.state.rations]))
 	rest_quote.text="%d days: %d food units at current rations (%d/day).\nFood on hand: %d units; spoilage can reduce it. Weather, illness and recovery continue. Events, health news or new food warnings stop the rest early." % [value.to_int(),value.to_int()*meal,meal,game.state.food]
 
+	if game.camp_tasks.enabled():
+		rest_quote.text+="\nAssigned tasks continue for up to %d days; workers miss rest recovery. Finished or blocked jobs rest." % value.to_int()
 	var season: String=game.season_notice()
 	if season.is_empty():season=game.season_notice(value.to_int())
 	if not season.is_empty():rest_quote.text+="\n"+season

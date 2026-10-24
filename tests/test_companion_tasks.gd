@@ -275,6 +275,9 @@ func run():
  screen.game=party();screen.game.camp_tasks.assign(screen.game,1,"forage")
  screen.game.seen.append("muddy_trail")
  screen.last_food_alert=0
+ screen.rest_days_input.text="30"
+ screen._update_rest_quote()
+ check("up to 30 days" in screen.rest_quote.text and "workers miss rest recovery" in screen.rest_quote.text,"Long-rest quote warns that standing tasks repeat for the full duration")
  screen.rest_days_input.text="3"
  screen._confirm_rest()
  check(screen.game.state.day==3 and screen.game.camp_tasks.job(1).job=="forage","Routine harvest reports do not interrupt a three-day assigned camp rest")
