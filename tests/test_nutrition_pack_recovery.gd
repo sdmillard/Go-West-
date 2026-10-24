@@ -59,6 +59,9 @@ func run():
   restored.state.health=60
   var clone=store.restore(JSON.parse_string(JSON.stringify(store.capture(restored))))
   check(clone!=null and clone.provisions.capacity(clone.state)==150,"Adjusted capacity derives from live restored people")
+ var horse_sync: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-recovery-horse-sync-save-v1.json"))
+ var synced=store.restore(horse_sync)
+ check(synced!=null and synced.state==store.normalize(horse_sync.state) and str(synced.rng.state)==horse_sync.random,"The concurrent horse-update save migrates without resetting a journey")
  var pack_rules: Dictionary=game.provisions.data.duplicate(true)
  for invalid in [-1,1.01,"soft"]:
   var bad: Dictionary=pack_rules.duplicate(true)
