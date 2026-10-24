@@ -350,3 +350,13 @@ Next authorized change: variable bandit demands, ranging from smaller/larger cas
 
 Publication: [PR #69](https://github.com/sdmillard/Go-West-/pull/69), branch codex/full-balance-pass. The tested implementation and frozen report sources are recorded above.
 
+
+## Variable bandit demands and remaining authorized work (October 23)
+
+Implemented after the frozen PR #69 campaign: actual-holdings-bounded cash/goods bundles and rare explicit loaded-wagon demands. See docs/BANDIT_DEMANDS.md. New demand regression sweep has 3,673 checks across 256 seeded rich-party quotes plus small-purse, empty-party, pending-save, malformed-save, actual surrender, body/food, legacy-$20 and UI cases. Clean final validation/publication follows below.
+
+Spencer's further authorized requests, still to implement:
+- Generate Party button during creation.
+- Travel menu toggle for east/west movement, with actual return to earlier places and river crossings.
+- Replacement wagons sold at stores; oxen separate if needed.
+- On voluntary wagon abandonment, optionally leave companions as guards. Their survival uses cached supplies and ammunition/hunting; guards lower but do not eliminate looting/loss risk. Returning may find surviving guards, deaths, departures or an empty/stolen wagon. Build this on real backtracking and cache accounting. This is distinct from bandits taking a wagon.

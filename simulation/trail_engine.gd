@@ -436,6 +436,7 @@ func can_choose(index: int) -> bool:
 	if pending.is_empty() or index < 0 or index >= pending.choices.size() or state.status != "traveling":
 		return false
 	var choice: Dictionary = pending.choices[index]
+	if choice.has("bandit_payment") and (pending.id!="bandits" or not combat.BanditDemand.valid_choice(choice) or (choice.get("bandit_wagon",false) and state.vehicle!="wagon")):return false
 	if pending.get("recruit_menu",false) or pending.get("dismiss_menu",false):return recruitment.can_choose(self,index)
 	if pending.get("crime_menu",false):return crime.can_choose(self,str(choice.get("crime_command","")))
 	if pending.get("attack_menu",false):return int(choice.get("attack_target",-1))<0 or (crime.attack_ready(self,int(choice.attack_target)) and (choice.get("unarmed",false) or state.bullets>0))
@@ -467,6 +468,7 @@ func choose(index: int) -> bool:
 	if friendly:
 		journal.append("The riders proved friendly. Any ammunition or time spent was still used.")
 	_apply(choice.get("effects", {}), "injuries", choice.get("rest", false))
+	if choice.get("bandit_payment",false):combat.BanditDemand.finish(self,choice)
 	journal.append(choice.result)
 	if choice.has("risk") and rng.randf() < choice.risk.probability:
 		hit=true

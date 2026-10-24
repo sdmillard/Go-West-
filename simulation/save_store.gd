@@ -155,6 +155,8 @@ func valid_menu(menu: Dictionary, game, count: int=5) -> bool:
 		for flag in ["complete", "rest"]:
 			if choice.has(flag) and not choice[flag] is bool:
 				return false
+		if choice.has("bandit_payment") and (menu.id!="bandits" or choice!=menu.choices[0] or not game.combat.BanditDemand.valid_choice(choice)):return false
+		if choice.has("bandit_wagon") and not choice.has("bandit_payment"):return false
 		if choice.has("departure_review") and (not choice.departure_review is bool or not menu.get("service_menu",false)):return false
 		if choice.get("combat","") not in ["","defend","circle"]:return false
 		if choice.has("combat") and not choice.get("risk") is Dictionary:return false

@@ -1,5 +1,6 @@
 extends RefCounted
 ## Bounded authored risk, not a historical combat-frequency model.
+const BanditDemand=preload("res://simulation/bandit_demand.gd")
 var data: Dictionary={}
 var history: Array[Dictionary]=[]
 var error: String=""
@@ -20,6 +21,7 @@ func load_data(value: Variant) -> bool:
 	for key in ["experience_cap","minimum_defenders","poor_health","fair_health"]:
 		if value[key]!=int(value[key]):return false
 	if value.experience_cap>10 or value.minimum_defenders<1 or value.minimum_defenders>5:return false
+	if not BanditDemand.valid_rules(value.get("bandit_demands")):return false
 	data=value.duplicate(true)
 	error=""
 	return true
@@ -34,6 +36,7 @@ func risk(game,tactic: String,base: float) -> float:
 	if game.characters.available(game,"","Veteran"):chance-=float(game.characters.benefits.veteran_risk_reduction)
 	return clampf(chance,float(data.circle_floor if tactic=="circle" else data.defense_floor),float(data.risk_cap))
 func prepare(game,content: Dictionary) -> void:
+	BanditDemand.prepare(game,content,data.bandit_demands)
 	for choice in content.get("choices",[]):
 		if not choice.has("combat"):continue
 		choice.risk.probability=risk(game,choice.combat,float(choice.risk.probability))

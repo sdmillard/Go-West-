@@ -1,6 +1,7 @@
 {
   "opening_route_v1": [
-    "e10d6d15557240c4c3065ec6acc5a922c4130b268f44e3bc08f25faab6cdc8b5"
+    "e10d6d15557240c4c3065ec6acc5a922c4130b268f44e3bc08f25faab6cdc8b5",
+    "70ef4aad8342b811479b0122dc1411ba920da95bfdcf7f169d0753110a4391eb"
   ],
   "note": "Verified previous opening and full-route economy fingerprints only. Economy updates retain existing cash, inventory, party, time and pending transaction quotes; future offers use current prices.",
   "economy_v1": [
