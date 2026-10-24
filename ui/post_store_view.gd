@@ -24,7 +24,7 @@ var rows_layer: Control
 var scenes = preload("res://ui/location_scenes.gd").new()
 const SpeechBubble = preload("res://ui/speech_bubble.gd")
 var refreshing := false
-const GOODS := {"wagon":"WAGON","produce":"FRUIT/GRN","dried_produce":"DRY FRUIT","food": "FOOD LB", "bullets": "BULLETS", "medicine": "CARE KITS", "clothing": "CLOTHES", "oxen": "OXEN", "wheels": "WHEELS", "axles": "AXLES", "tongues": "TONGUES", "salt": "SALT LB"}
+const GOODS := {"wagon":"WAGON","produce":"FRUIT/GRN","dried_produce":"DRY FRUIT","food": "FOOD LB", "bullets": "BULLETS", "medicine": "CARE KITS", "clothing": "CLOTHES", "oxen": "OXEN", "wheels": "WHEELS", "axles": "AXLES", "tongues": "TONGUES", "salt": "SALT LB", "horses": "HORSES", "mules": "MULES", "saddles": "SADDLES", "pack_saddles": "PACK SDL", "saddlebags": "SADDLEBAG"}
 const POST_X := 250
 const PARTY_X := 440
 

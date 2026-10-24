@@ -245,7 +245,21 @@
     "purse_dollars": [
       15,
       60
-    ]
+    ],
+    "mount_stock": {
+      "horses": [0.45, 1, 3],
+      "mules": [0.4, 1, 3],
+      "saddles": [0.35, 1, 2],
+      "pack_saddles": [0.4, 1, 3],
+      "saddlebags": [0.4, 1, 4]
+    },
+    "mount_wants": {
+      "horses": [0.35, 1, 2],
+      "mules": [0.3, 1, 2],
+      "saddles": [0.2, 1, 1],
+      "pack_saddles": [0.15, 1, 2],
+      "saddlebags": [0.15, 1, 2]
+    }
   },
   "emigrant_goods": {
     "note": "An emigrant family is not a trader: it has whatever it happens to spare, parts with it reluctantly, and pays well for what it is short of. Seeded per camp. Authored tuning.",
@@ -354,6 +368,16 @@
     "purse_dollars": [
       0,
       12
-    ]
+    ],
+    "mount_stock": {
+      "horses": [0.12, 1, 1],
+      "saddles": [0.1, 1, 1],
+      "saddlebags": [0.15, 1, 2]
+    },
+    "mount_wants": {
+      "horses": [0.25, 1, 1],
+      "mules": [0.15, 1, 1],
+      "saddlebags": [0.15, 1, 2]
+    }
   }
 }

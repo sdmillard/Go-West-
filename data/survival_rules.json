@@ -238,6 +238,46 @@
       "amount": 10,
       "buy_cents": 200,
       "sell_cents": 50
+    },
+    {
+      "item": "horses",
+      "label": "1 horse",
+      "amount": 1,
+      "buy_cents": 4000,
+      "sell_cents": 1500,
+      "post_lots": 4
+    },
+    {
+      "item": "mules",
+      "label": "1 mule",
+      "amount": 1,
+      "buy_cents": 5000,
+      "sell_cents": 1800,
+      "post_lots": 3
+    },
+    {
+      "item": "saddles",
+      "label": "1 saddle and bridle",
+      "amount": 1,
+      "buy_cents": 1500,
+      "sell_cents": 500,
+      "post_lots": 4
+    },
+    {
+      "item": "pack_saddles",
+      "label": "1 pack saddle",
+      "amount": 1,
+      "buy_cents": 500,
+      "sell_cents": 150,
+      "post_lots": 4
+    },
+    {
+      "item": "saddlebags",
+      "label": "1 pair of saddlebags",
+      "amount": 1,
+      "buy_cents": 300,
+      "sell_cents": 100,
+      "post_lots": 6
     }
   ]
 }

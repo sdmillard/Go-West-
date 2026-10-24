@@ -672,8 +672,8 @@ func _apply(effects: Dictionary, health_cause: String = "injuries", resting: boo
 	if state.extended_route:
 		var changes: Dictionary = {}
 		var lines: Array[String] = []
-		for key in ["food", "money", "bullets", "medicine", "clothing", "oxen", "wheels", "axles", "tongues", "salt"]:
-			var delta := float(state[key]) - float(before[key])
+		for key in ["food", "money", "bullets", "medicine", "clothing", "oxen", "wheels", "axles", "tongues", "salt"]+Mounts.KEYS:
+			var delta := float(state.get(key,0)) - float(before.get(key,0))
 			if key=="money":delta=roundi(delta*100)/100.0
 			if not is_zero_approx(delta):
 				changes[key] = delta
@@ -900,7 +900,7 @@ func _trade_options(offer: Dictionary,at_post: bool) -> Array:
 	var days: int=context.trade_days(offer)
 	var when: String=", 1 day" if days>0 else ""
 	for lot in lots:
-		if lot.item == "salt":continue # Preserve the existing barter offer order.
+		if lot.item == "salt" or lot.item in Mounts.KEYS:continue # Preserve the existing barter offer order.
 		var cost := float(lot.buy_cents) / 100.0
 		var payment := float(lot.sell_cents) / 100.0
 		options.append({"label": "Buy %s · $%.2f%s" % [lot.label, cost, when], "lot": lot, "requires": {"money": cost}, "effects": {"money": -cost, lot.item: lot.amount, "days": days}, "result": "Bought " + lot.label + "."})
@@ -913,6 +913,11 @@ func _trade_options(offer: Dictionary,at_post: bool) -> Array:
 		if lot.item != "salt":continue
 		options.append({"label":"Buy %s · $%.2f%s" % [lot.label,lot.buy_cents/100.0,when],"lot":lot,"requires":{"money":lot.buy_cents/100.0},"effects":{"money":-lot.buy_cents/100.0,"salt":lot.amount,"days":days},"result":"Bought salt for preserving meat."})
 		options.append({"label":"Sell %s · $%.2f%s" % [lot.label,lot.sell_cents/100.0,when],"lot":lot,"requires":{"salt":lot.amount},"effects":{"money":lot.sell_cents/100.0,"salt":-lot.amount,"days":days},"result":"Sold salt."})
+	# Horses, mules and tack come last, after every older offer.
+	for lot in lots:
+		if lot.item not in Mounts.KEYS:continue
+		options.append({"label":"Buy %s · $%.2f%s" % [lot.label,lot.buy_cents/100.0,when],"lot":lot,"requires":{"money":lot.buy_cents/100.0},"effects":{"money":-lot.buy_cents/100.0,lot.item:lot.amount,"days":days},"result":"Bought "+lot.label+"."})
+		options.append({"label":"Sell %s · $%.2f%s" % [lot.label,lot.sell_cents/100.0,when],"lot":lot,"requires":{lot.item:lot.amount},"effects":{"money":lot.sell_cents/100.0,lot.item:-lot.amount,"days":days},"result":"Sold "+lot.label+"."})
 	if days>0:
 		for choice in options:choice["visit_key"]=offer.key+"|visit"
 	context.decorate(self,options,offer)
@@ -1042,6 +1047,9 @@ func _units_used(key: String,amount: int) -> int:
 ## Price a basket at the post: positive counts buy, negative counts sell, in units (pounds of food, single bullets). Read-only.
 func robbery_quote(basket: Dictionary) -> Dictionary:return RobberyDemand.quote(self,basket)
 func demand_robbery(basket: Dictionary) -> bool:return RobberyDemand.start(self,basket)
+## A quiet theft from a store, commissary, trading party or camp: pick the goods; taking more is likelier to be noticed.
+func theft_quote(basket: Dictionary) -> Dictionary:return RobberyDemand.quote(self,basket,"","theft")
+func steal(basket: Dictionary) -> bool:return RobberyDemand.start(self,basket,"theft")
 
 func wagon_sale_quote(cart: Dictionary,keep_oxen: int=-1) -> Dictionary:return provisions.WagonTrade.sale_quote(self,cart,keep_oxen)
 func sell_wagon(cart: Dictionary,keep_oxen: int=-1) -> bool:return provisions.WagonTrade.sell(self,cart,keep_oxen)
@@ -1130,7 +1138,7 @@ func counter_checkout(cart: Dictionary,venue: String="") -> bool:
 
 ## How a counter quantity reads in the journal and on the store screen.
 static func _unit_name(item: String,n: int) -> String:
-	var names: Dictionary={"food":["lb of food","lb of food"],"salt":["lb of salt","lb of salt"],"bullets":["bullet","bullets"],"medicine":["care kit","care kits"],"clothing":["clothing set","clothing sets"],"oxen":["ox","oxen"],"wheels":["wheel","wheels"],"axles":["axle","axles"],"tongues":["tongue","tongues"]}
+	var names: Dictionary={"food":["lb of food","lb of food"],"salt":["lb of salt","lb of salt"],"bullets":["bullet","bullets"],"medicine":["care kit","care kits"],"clothing":["clothing set","clothing sets"],"oxen":["ox","oxen"],"wheels":["wheel","wheels"],"axles":["axle","axles"],"tongues":["tongue","tongues"],"horses":["horse","horses"],"mules":["mule","mules"],"saddles":["saddle","saddles"],"pack_saddles":["pack saddle","pack saddles"],"saddlebags":["pair of saddlebags","pairs of saddlebags"]}
 	return names.get(item,[item,item])[0 if n==1 else 1]
 
 ## The crime preview for this stop's target, or (place) one chosen from crime.local_places, as VILLAINY > STEAL lists them.
