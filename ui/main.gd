@@ -664,7 +664,7 @@ func _show_section(section: String) -> void:
 		section_rows.remove_child(child)
 		child.queue_free()
 	map_view.hide()
-	section_window.get_child(0).custom_minimum_size=Vector2(560,248) if section=="Companion tasks" else Vector2(380,190 if section in ["Camp","Travel"] else 150)
+	section_window.get_child(0).custom_minimum_size=Vector2(500,0) if section=="Companion tasks" else Vector2(380,190 if section in ["Camp","Travel"] else 150)
 	section_window.title=section.to_upper()
 	section_window.get_ok_button().text="BACK" if SECTION_PARENTS.has(section) else "BACK TO TRAIL"
 	var entries: Array=[]
@@ -706,52 +706,31 @@ func _show_section(section: String) -> void:
 			section_rows.add_child(note)
 			entries=[["COMPANION TASKS >",_show_section.bind("Companion tasks")],["REST · CHOOSE DAYS",_rest],["PRESERVE MEAT >",_show_section.bind("Preserve meat")],["DRY FRUIT / GREENS >",_show_section.bind("Dry produce")],["CARE / MEDICAL ATTENTION",_open_care]]
 		"Companion tasks":
-			var note:=label("CAMP WORK ROSTER · HOVER FOR DETAILS")
-			note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
-			section_rows.add_child(note)
-			var headings:=HBoxContainer.new()
-			var companion_heading:=label("COMPANION")
-			companion_heading.custom_minimum_size.x=160
-			headings.add_child(companion_heading)
-			headings.add_child(label("ASSIGNED TASK"))
-			section_rows.add_child(headings)
+			var table:=PanelContainer.new()
+			var border:=style("45372f","45372f",1)
+			border.shadow_size=0
+			table.add_theme_stylebox_override("panel",border)
+			var body:=VBoxContainer.new()
+			body.add_theme_constant_override("separation",1)
+			table.add_child(body)
+			section_rows.add_child(table)
 			for member in game.party_health.members:
 				var id: int=int(member.id)
 				if id==0 or not game.party_health.is_active(member):continue
-				var worker:=VBoxContainer.new()
-				worker.add_theme_constant_override("separation",3)
-				section_rows.add_child(worker)
 				var row:=HBoxContainer.new()
 				row.name="CampCompanion%d" % id
+				row.add_theme_constant_override("separation",1)
+				body.add_child(row)
 				var name_label:=label(member.name.to_upper())
-				name_label.custom_minimum_size.x=160
 				name_label.clip_text=true
 				name_label.tooltip_text=member.name+" · "+game.PartyHealth.condition_label(member.health)
-				row.add_child(name_label)
-				worker.add_child(row)
+				row.add_child(_camp_cell(name_label,160))
 				var task: Dictionary=game.camp_tasks.job(id)
-				var pick:=OptionButton.new()
+				var pick:=_camp_task_menu(id,task)
 				pick.name="CampTask%d" % id
-				for text in game.camp_tasks.LABELS:pick.add_item(text)
-				pick.select(game.camp_tasks.JOBS.find(task.job))
-				pick.item_selected.connect(_assign_camp_task.bind(id))
-				pick.size_flags_horizontal=Control.SIZE_EXPAND_FILL
-				row.add_child(pick)
-				if task.job=="nurse":
-					var patients:=OptionButton.new()
-					for person in game.party_health.members:
-						if int(person.id)==id or not game.party_health.is_active(person):continue
-						patients.add_item(person.name,int(person.id))
-						if int(person.id)==int(task.patient):patients.select(patients.item_count-1)
-					patients.item_selected.connect(func(item: int):_set_camp_task(id,"nurse",patients.get_item_id(item)))
-					var patient_row:=HBoxContainer.new()
-					patient_row.add_child(label("PATIENT"))
-					patients.size_flags_horizontal=Control.SIZE_EXPAND_FILL
-					patient_row.add_child(patients)
-					var inset:=MarginContainer.new()
-					inset.add_theme_constant_override("margin_left",164)
-					inset.add_child(patient_row)
-					worker.add_child(inset)
+				var task_cell:=_camp_cell(pick)
+				task_cell.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+				row.add_child(task_cell)
 				var why: String=game.camp_tasks.reason(game,id,task.job,int(task.patient))
 				var detail:=label(why if not why.is_empty() else {"rest":"Rest recovery; no work.","forage":"Seasonal yield, shared carrying room; food arrives after meals.","dry":"Morning meat after meals; one worker handles the available batch.","salt_dry":"Morning meat and available salt; one worker per batch.","nurse":"1 care kit / day while needed; caregiver improves treatment.","hunt_help":"Works only when you hunt; adds hauling and Hunter benefits."}[task.job])
 				if why.is_empty() and task.job in ["dry","salt_dry"]:
@@ -762,11 +741,7 @@ func _show_section(section: String) -> void:
 					var amount: float=float(member.health)/100.0*float(offer.factor)
 					detail.text="About %.1f-%.1f lb; weather / cargo may reduce it." % [game.provisions.data.foraging.lb_per_worker[0]*amount,game.provisions.data.foraging.lb_per_worker[1]*amount]
 				pick.tooltip_text=detail.text+"\nWorkers miss rest recovery. Unassigned companions rest; hunt helpers haul only when you hunt. Jobs pause on travel, crossing and trading days."
-				for item in range(pick.item_count):
-					var job: String=game.camp_tasks.JOBS[item]
-					pick.get_popup().set_item_tooltip(item,{"rest":"Rest and recover. No work.","forage":"Gather seasonal greens and berries after meals. Uses carrying room.","dry":"Dry morning meat after meals; one worker per batch.","salt_dry":"Dry morning meat using salt for better retention and storage.","nurse":"Use 1 kit each day while needed. Choose a patient below.","hunt_help":"Join your hunt, adding hauling and Hunter reload benefits. Otherwise rest."}[job])
 				detail.free()
-			section_rows.add_child(HSeparator.new())
 			var costs: Dictionary=game.camp_tasks.quote(game)
 			var cost_label:=label("PER CAMP DAY · %d DAY · %d FOOD UNITS\nMATERIALS: %d CARE KIT(S) · %.0f LB MEAT TO DRY · %d LB SALT\nWAGES DUE BY TOMORROW: $%.2f" % [costs.days,costs.meals,costs.kits,costs.meat_lb,costs.salt,costs.wages_cents/100.0])
 			cost_label.name="CampWorkCosts"
@@ -846,6 +821,7 @@ func _show_section(section: String) -> void:
 	if SECTION_PARENTS.has(section):section_rows.add_child(button("< "+str(SECTION_PARENTS[section]).to_upper(),_section_action.bind(_show_section.bind(SECTION_PARENTS[section]))))
 	section_window.reset_size()
 	section_window.popup_centered()
+	if section=="Companion tasks":_fit_camp_roster.call_deferred()
 
 func _enter_camp() -> void:
 	_show_section("Camp")
@@ -856,6 +832,69 @@ func _show_drop_supplies() -> void:
 	section_window.hide()
 	supplies_window.hide()
 	drop_window.open(game)
+
+func _fit_camp_roster() -> void:
+	# Let the table and wrapped cost labels settle before choosing the dialog height.
+	await get_tree().process_frame
+	await get_tree().process_frame
+	if not section_window.visible or section_window.title!="COMPANION TASKS":return
+	var scroll: ScrollContainer=section_window.get_child(0)
+	scroll.custom_minimum_size=Vector2(500,minf(260,section_rows.get_combined_minimum_size().y))
+	section_window.reset_size()
+	section_window.popup_centered(Vector2i(section_window.get_contents_minimum_size()))
+
+func _camp_task_menu(id: int,task: Dictionary) -> MenuButton:
+	var choice:=MenuButton.new()
+	choice.text=game.camp_tasks.LABELS[game.camp_tasks.JOBS.find(task.job)]
+	if task.job=="nurse":choice.text="Nursing "+game.party_health.members[int(task.patient)].name
+	choice.alignment=HORIZONTAL_ALIGNMENT_LEFT
+	_camp_choice_style(choice)
+	var menu:=choice.get_popup()
+	for job in ["rest","forage"]:
+		menu.add_item(game.camp_tasks.LABELS[game.camp_tasks.JOBS.find(job)],game.camp_tasks.JOBS.find(job))
+		menu.set_item_tooltip(menu.item_count-1,"Rest and recover; no work." if job=="rest" else "Gather seasonal greens and berries after meals, within storage room. Workers miss rest recovery.")
+	var drying:=PopupMenu.new()
+	drying.name="DryingOptions"
+	drying.add_item("Air dry",game.camp_tasks.JOBS.find("dry"))
+	drying.add_item("Salt + dry",game.camp_tasks.JOBS.find("salt_dry"))
+	drying.set_item_tooltip(0,"Dry morning meat after meals. One worker handles the available batch.")
+	drying.set_item_tooltip(1,"Use salt for better food retention and storage. Salt cost appears below the roster.")
+	drying.id_pressed.connect(_assign_camp_task.bind(id))
+	menu.add_child(drying)
+	menu.add_submenu_item("Dry meat","DryingOptions",game.camp_tasks.JOBS.find("dry"))
+	var patients:=PopupMenu.new()
+	patients.name="NursingTargets"
+	for person in game.party_health.members:
+		if int(person.id)==id or not game.party_health.is_active(person):continue
+		patients.add_item(person.name,int(person.id))
+		patients.set_item_tooltip(patients.item_count-1,game.PartyHealth.condition_label(person.health)+"; one care kit per day while needed.")
+	patients.id_pressed.connect(func(patient: int):_set_camp_task(id,"nurse",patient))
+	menu.add_child(patients)
+	menu.add_submenu_item("Nursing","NursingTargets",game.camp_tasks.JOBS.find("nurse"))
+	menu.add_item("Help leader hunt",game.camp_tasks.JOBS.find("hunt_help"))
+	menu.set_item_tooltip(menu.item_count-1,"Join your hunt, adding hauling and Hunter benefits. Rest when the leader does something else.")
+	menu.id_pressed.connect(func(item: int):
+		if item not in [game.camp_tasks.JOBS.find("dry"),game.camp_tasks.JOBS.find("nurse")]:_assign_camp_task(item,id))
+	return choice
+
+func _camp_cell(content: Control,width: int=0) -> PanelContainer:
+	var cell:=PanelContainer.new()
+	var paper:=style("edd399","45372f",4)
+	paper.set_border_width_all(0)
+	paper.shadow_size=0
+	cell.add_theme_stylebox_override("panel",paper)
+	cell.custom_minimum_size=Vector2(width,27)
+	cell.add_child(content)
+	return cell
+
+func _camp_choice_style(choice: Button) -> void:
+	choice.flat=true
+	for color in ["font_color","font_hover_color","font_pressed_color","font_focus_color"]:
+		choice.add_theme_color_override(color,Color("45372f"))
+	choice.add_theme_stylebox_override("normal",StyleBoxEmpty.new())
+	var hover:=style("e2c37c","45372f",2)
+	hover.shadow_size=0
+	choice.add_theme_stylebox_override("hover",hover)
 
 func _assign_camp_task(item: int,id: int) -> void:
 	var task: String=game.camp_tasks.JOBS[item]

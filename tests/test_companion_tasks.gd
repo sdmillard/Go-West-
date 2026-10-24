@@ -197,6 +197,32 @@ func run():
  check(roster_row!=null and roster_row.get_child(0).position.x<roster_row.get_child(1).position.x,"Roster pairs a companion name with their task in adjacent columns")
  screen._set_camp_task(1,"forage",-1);await process_frame
  check(screen.game.camp_tasks.job(1).job=="forage" and screen.game.state.day==0,"UI assigns work without spending a day")
+ var nurse_menu=screen.section_rows.find_child("CampTask1",true,false).get_popup().get_node("NursingTargets")
+ check(nurse_menu.item_count==4,"Nursing submenu lists active targets other than the worker")
+ var before_choice: Dictionary=store.capture(screen.game)
+ screen.section_rows.find_child("CampTask1",true,false).get_popup().hide()
+ check(store.capture(screen.game)==before_choice,"Closing the task menu does not change the assignment")
+ nurse_menu.id_pressed.emit(3)
+ await process_frame
+ await process_frame
+ check(screen.game.camp_tasks.job(1).job=="nurse" and screen.game.camp_tasks.job(1).patient==3,"Selecting Nursing > Cara saves the complete assignment")
+ var task_menu=screen.section_rows.find_child("CampTask1",true,false)
+ check(task_menu.text=="Nursing Cara","Roster shows the chosen task and patient in one cell")
+ var dry_menu=task_menu.get_popup().get_node("DryingOptions")
+ dry_menu.id_pressed.emit(screen.game.camp_tasks.JOBS.find("salt_dry"))
+ await process_frame
+ await process_frame
+ check(screen.game.camp_tasks.job(1).job=="salt_dry" and screen.game.state.day==0,"Dry meat > Salt + dry chooses a variant without spending a day")
+ await process_frame
+ await process_frame
+ var full_height: int=screen.section_window.size.y
+ for id in [2,3,4]:screen.game.party_health.kill(screen.game.party_health.members[id],0,"test")
+ screen.game.state.party_size=screen.game.party_health.living_count()
+ screen.game.state.health=screen.game.party_health.average_health()
+ screen._show_section("Companion tasks")
+ for i in range(5):await process_frame
+ check(screen.section_window.size.y<full_height,"Roster window shrinks when fewer companions need rows")
+ check(screen.section_window.size.x<=root.content_scale_size.x and screen.section_window.size.y<=root.content_scale_size.y,"Fitted roster stays inside the game window")
  screen.section_window.hide()
  screen.game=party();screen.game.camp_tasks.assign(screen.game,1,"forage")
  screen.game.seen.append("muddy_trail")
