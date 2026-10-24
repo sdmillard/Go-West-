@@ -1093,7 +1093,9 @@ func _finish_hunt() -> void:
 	var outing: Dictionary = game.hunt.duplicate(true)
 	if game.finish_hunt():
 		var recovered: Dictionary=game.last_hunt_recovery
-		notice("HUNTING REPORT","%d shots · %d lb meat obtained\n%.1f lb eaten at camp · %.1f lb left behind\nPACKED %.1f LB · %d FOOD UNITS\nPacked meat fits the current cargo and hauling limits.\nEat within two trail days or use Camp > Preserve meat.\nOne day passed; meals came from provisions and the catch." % [outing.shots,outing.meat,recovered.eaten_mass,recovered.left,recovered.mass,recovered.food])
+		var report: String="%d shots · %d lb meat obtained\n%.1f lb eaten at camp · %.1f lb left behind\nPACKED %.1f LB · %d FOOD UNITS\nPacked meat fits the current cargo and hauling limits.\nEat within two trail days or use Camp > Preserve meat.\nOne day passed; meals came from provisions and the catch." % [outing.shots,outing.meat,recovered.eaten_mass,recovered.left,recovered.mass,recovered.food]
+		if recovered.other_loss>0:report+="\n%.1f lb lost to other camp events; see the journal." % recovered.other_loss
+		notice("HUNTING REPORT",report)
 	camping = true
 	_refresh()
 

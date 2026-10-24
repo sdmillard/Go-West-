@@ -1473,6 +1473,7 @@ func hauling_capacity(action: String="hunt") -> int:
 	return mini(int(hunting.data.carry_limit),floori(pounds))
 func hunting_capacity() -> int:
 	return hauling_capacity("hunt")
+## Pre-settlement space estimate; last_hunt_recovery records actual meals and loads after settlement.
 func hunt_recovery() -> Dictionary:
 	if hunt.is_empty():return {}
 	var carried:=mini(mini(hunting_capacity(),int(hunt.meat)),maxi(0,floori(provisions.storage_capacity(state)-provisions.cargo(state))))

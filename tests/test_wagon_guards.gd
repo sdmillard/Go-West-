@@ -171,6 +171,9 @@ func run():
  broken=Store.new().capture(game)
  broken.wagon_cache.guards[0].vitamin_days=-1
  check(Store.new().restore(broken)==null,"Reject malformed hidden guard nutrition")
+ broken=Store.new().capture(game)
+ broken.wagon_cache.hunger_days=-1
+ check(Store.new().restore(broken)==null,"Reject a negative hidden camp hunger deficit")
  game=outfit()
  disable_loss(game)
  game.provisions.data.wagon_guards.departure_chance=0
