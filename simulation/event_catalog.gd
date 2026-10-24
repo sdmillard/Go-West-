@@ -1,7 +1,7 @@
 extends RefCounted
 ## Validated declarative content. No scripts or expressions are executed from JSON.
 
-const NUMERIC = ["food", "health", "money", "fuel", "days", "wheels", "axles", "tongues", "medicine", "oxen", "clothing", "bullets", "ox_health", "salt"]
+const NUMERIC = ["food", "health", "money", "fuel", "days", "wheels", "axles", "tongues", "medicine", "oxen", "clothing", "bullets", "ox_health", "salt", "horses", "mules", "horse_health"]
 var events: Array = []
 var error: String = ""
 

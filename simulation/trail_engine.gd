@@ -296,6 +296,7 @@ func _arrive_landmark(revisit: bool=false,roll_stage: bool=true) -> void:
 	if node.id == "fort_kearny" and int(calendar().month) < 6 and int(calendar().year) == 1848:
 		description += "\nYou arrive before June; construction has not yet begun."
 	options.append_array(context.activity_choices(self))
+	if context.data.horse_traders.has(node.id):options.append({"label":"Trade for horses with the %s" % context.data.horse_traders[node.id].name,"action":"trade","horse_traders":true})
 	options.append({"label": "Rest here · 1 day, food consumed", "action": "rest"})
 	pending = {"id": "stop_" + node.id, "landmark": node.id, "title": node.name, "text": description, "choices": options}
 	Direction.adapt_stop(self,pending,approach)
@@ -304,6 +305,8 @@ func _choose_landmark(index: int) -> bool:
 	refresh_stop_offers()
 	var choice: Dictionary = pending.choices[index]
 	if choice.action=="leave" and not characters.departure_candidates(self).is_empty():return open_departure_review()
+	if choice.action == "trade" and choice.get("horse_traders",false):
+		return open_horse_traders()
 	if choice.action == "trade":
 		return open_trade()
 	if choice.action == "notes":
@@ -557,6 +560,8 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 		# Riders tire more slowly than walkers or wagon drivers.
 		var riding: bool=team_working and Mounts.mounted(mount_plan())
 		state.fatigue = clampi(int(state.fatigue) + ((1 + int(state.pace) if riding else 2 + int(state.pace) * 2) if team_working else (-14 if resting else -6)), 0, 100)
+		# Standing watch over the stock costs sleep every night.
+		if state.get("night_guard",false) and Mounts.animals(state)>0:state.fatigue=mini(100,int(state.fatigue)+int(provisions.data.mounts.guard_fatigue))
 		if not team_working and current_edge().get("hazard","")!="waterless":
 			state.ox_health = mini(100, int(state.ox_health) + (int(seasonal_pressure().rest_ox_recovery) if resting else mini(2,int(seasonal_pressure().rest_ox_recovery))))
 		elif state.vehicle!="foot":
@@ -633,6 +638,12 @@ func _tick_mounts(resting: bool,team_working: bool) -> void:
 	state["horse_health"]=maxi(0,Mounts.condition(state)-strain)
 	if state.horse_health==0:Mounts.breakdown(self)
 func mount_plan() -> Dictionary:return Mounts.plan(provisions.data.mounts,state)
+## Someone stands watch over the horses and mules each night. Costs no time.
+func set_night_guard(on: bool) -> bool:
+	if Mounts.animals(state)==0 and on:return false
+	state["night_guard"]=on
+	journal.append("Day %d · %s" % [state.day,"Someone will stand watch over the stock each night." if on else "No more night watch over the stock."])
+	return true
 ## Two riders to a saddled animal when there are too few saddles. Costs no time.
 func set_double_up(on: bool) -> bool:
 	if Mounts.animals(state)==0 and on:return false
@@ -744,6 +755,7 @@ func _roll_trail_event() -> void:
 		if state.vehicle=="foot" and event.id in ["breakdown","wagon_fire","swamped_load","hail_damage"]:continue
 		if state.oxen==0 and event.id=="ox_injury":continue
 		if state.oxen<2 and event.id=="stampede":continue
+		if event.id=="horse_thieves" and Mounts.animals(state)==0:continue
 		if current_edge().get("hazard","")=="river" and event.id in ["breakdown","ox_injury","wandering_ox","stampede"]:continue
 		# Encounters tied to a kind of road happen only on that road.
 		if event.has("hazard") and current_edge().get("hazard","")!=event.hazard:continue
@@ -754,6 +766,10 @@ func _roll_trail_event() -> void:
 		if current_edge().get("hazard","")=="unrest" and event.id in UNREST.events:
 			weighted=event.duplicate(true)
 			weighted.weight=int(event.weight)*int(UNREST.weight_factor)
+		# A night guard on the picket line keeps most horse thieves away.
+		if event.id=="horse_thieves" and state.get("night_guard",false):
+			weighted=weighted.duplicate(true)
+			weighted.weight=maxi(1,int(weighted.weight)/int(provisions.data.mounts.guard_factor))
 		candidates.append(weighted)
 		weight += int(weighted.weight)
 	if weight == 0:
@@ -879,6 +895,25 @@ func open_trade() -> bool:
 		terms=("Their camp is off the road: the first trade costs a day and meals, and further trades while they are nearby take no extra time." if days>0 else "You are camped with them already; further trades take no extra time.")+" Their prices run %d%% above the posts." % markup
 	return _service_menu("Trading post" if at_post else "Passing traders", "Stock and buying demand are limited. Regional prices apply. "+terms+(" Your trading companion negotiated 5% off cash purchases." if characters.available(self,"Trading") else "")+(" "+rumor if not rumor.is_empty() else ""), options)
 
+## A herd's few horses, each for clothing, ammunition, a footsore ox or coin. The first trade costs the visit's day.
+func open_horse_traders() -> bool:
+	var herd: Dictionary=context.data.horse_traders.get(str(state.landmark),{})
+	if herd.is_empty() or not can_service():return false
+	var key: String="herders:"+str(state.landmark)
+	var days: int=0 if context.record.spent.has(key+"|visit") else 1
+	var left: int=int(herd.horses)-int(context.record.spent.get(key+"|buy_horses",0))
+	var options: Array=[]
+	for offer in herd.offers:
+		var effects: Dictionary={"horses":1,"days":days}
+		var requires: Dictionary={}
+		for item in offer.give:
+			requires[item]=offer.give[item]
+			effects[item]=-offer.give[item]
+		var choice: Dictionary={"label":"%s%s · %d left" % [offer.label," · 1 day" if days>0 else "",maxi(0,left)],"requires":requires,"effects":effects,"market_key":key+"|buy_horses","stock_limit":int(herd.horses),"result":offer.label.replace("Trade","Traded").replace("Pay","Paid")+"."}
+		if days>0:choice["visit_key"]=key+"|visit"
+		options.append(choice)
+	return _service_menu(str(herd.name),str(herd.text)+("\nThe first trade costs a day and meals; more trades here take no extra time." if days>0 else ""),options)
+
 func _at_post() -> bool:
 	return not pending.is_empty() and pending.has("landmark") and route.nodes[state.landmark].get("trade_bulk",false)
 
@@ -887,16 +922,22 @@ func _at_post() -> bool:
 func _trade_options(offer: Dictionary,at_post: bool) -> Array:
 	var options: Array = []
 	var lots: Array = survival.data.trade_lots.duplicate(true)
+	# Where goods cost more to buy, they fetch a little more too; the trader's markup is theirs alone.
+	var region_price: float=float(context.region(self).price)
 	for lot in lots:
 		lot.buy_cents=roundi(float(lot.buy_cents)*float(offer.price))
+		lot.sell_cents=roundi(float(lot.sell_cents)*region_price)
 	if at_post:
 		lots[0].amount = 200
 		lots[0].label = "200 lb staple food"
 		lots[0].buy_cents = route.nodes[state.landmark].get("bulk_food_cents",6000)
-		lots[0].sell_cents = 2000
+		lots[0].sell_cents = roundi(2000*region_price)
 	if characters.available(self,"Trading"):
 		for lot in lots:lot.buy_cents=maxi(1,roundi(lot.buy_cents*characters.benefits.trade_buy_factor))
 	if at_post and int(lots[0].sell_cents)>=int(lots[0].buy_cents):lots[0].sell_cents=floori(float(lots[0].buy_cents)*0.5)
+	# Resale cap: nothing sells for as much as it costs at the same counter.
+	for lot in lots:
+		if int(lot.sell_cents)>=int(lot.buy_cents):lot.sell_cents=floori(float(lot.buy_cents)*0.5)
 	var days: int=context.trade_days(offer)
 	var when: String=", 1 day" if days>0 else ""
 	for lot in lots:
@@ -1019,7 +1060,7 @@ func _camp_counter() -> Dictionary:
 		if item=="food":can_buy=mini(can_buy,crime.food_left(self,place))
 		var can_sell: int=int(goods.wants.get(item,0))-_units_used(sell_key,amount)
 		var buy_cents: int=roundi(float(lot.buy_cents)*price*float(goods.reluctance))
-		var sell_cents: int=roundi(float(lot.sell_cents)*float(goods.need.get(item,1.0)))
+		var sell_cents: int=mini(roundi(float(lot.sell_cents)*price*float(goods.need.get(item,1.0))),maxi(1,buy_cents)-1)
 		rows.append(_counter_row(lot,maxi(1,buy_cents),sell_cents,can_buy,can_sell,buy_key,sell_key,goods.stock.has(item),goods.wants.has(item)))
 		rows[-1]["premium"]=float(goods.need.get(item,1.0))
 	rows.append_array(Produce.rows(self,place,"camp"))
@@ -1241,6 +1282,21 @@ func _choose_service(index: int) -> bool:
 		_schedule_event(false)
 	return true
 
+## Thieves take up to two animals, horses before mules; the recovery choices match what was taken.
+func _adapt_horse_thieves(content: Dictionary) -> void:
+	var kind: String="horses" if Mounts.count(state,"horses")>0 else "mules"
+	var taken: int=mini(2,Mounts.count(state,kind))
+	var words: String={"horses":["horse","horses"],"mules":["mule","mules"]}[kind][0 if taken==1 else 1]
+	content.text=content.text.replace("{stock}",("a %s" % words) if taken==1 else "two "+words)
+	content.onset_effects={kind:-taken}
+	for choice in content.choices:
+		for key in ["label","result"]:choice[key]=str(choice[key]).replace("{stock}",words)
+		if choice.effects.has("horses"):
+			choice.effects[kind]=mini(taken,int(choice.effects.horses))
+			if kind!="horses":choice.effects.erase("horses")
+	# With one animal gone, the short search and the long chase come to the same thing.
+	if taken==1:content.choices=content.choices.filter(func(choice):return int(choice.effects.get("days",0))!=1)
+
 ## Stock cross by the water: they ford in low water and swim in high. One choice, set by the stage.
 func horse_crossing() -> Dictionary:
 	var high: bool=state.river_stage=="high"
@@ -1449,6 +1505,41 @@ func ox_slaughter_offer(by_hand: bool = false) -> Dictionary:
 	var factor := float(rules.minimum_yield_factor)+(1.0-float(rules.minimum_yield_factor))*float(state.ox_health)/100.0
 	return {"meat":floori(float(rules.usable_meat_lb)*factor),"remaining":int(state.oxen)-1,"bullets":0 if by_hand else int(rules.bullets),"by_hand":by_hand,"injury_chance":float(rules.hand_injury_chance) if by_hand else 0.0}
 
+func _butcher_by_hand(offer: Dictionary,animal: String) -> void:
+	journal.append("Used the household hand tools instead of ammunition.")
+	if rng.randf() < offer.injury_chance:
+		var living: Array = party_health.members.filter(func(member):return party_health.is_active(member))
+		var worker: Dictionary = living[rng.randi_range(0,living.size()-1)]
+		if not party_health.begin_condition(int(worker.id),"wound",int(state.day)+1):
+			for condition in worker.conditions:
+				if condition.id == "wound":condition.severity=mini(3,int(condition.severity)+1)
+			worker.history.append("Day %d · Butchering aggravated an existing wound." % (int(state.day)+1))
+		_collect_health_events()
+		journal.append("%s was injured while butchering the %s by hand." % [worker.name,animal])
+
+## Butchering a horse or mule at camp: less meat than an ox, scaled by the animals' condition.
+## Starving packers really did eat their stock. Uses the ox rules for bullets and hand injury.
+func mount_slaughter_offer(kind: String,by_hand: bool = false) -> Dictionary:
+	var rules: Dictionary = provisions.data.ox_slaughter
+	if kind not in Mounts.ANIMALS or not can_service() or Mounts.count(state,kind)<1 or (not by_hand and state.bullets < rules.bullets):return {}
+	var meat_lb: float=float(provisions.data.mounts[{"horses":"horse","mules":"mule"}[kind]].meat_lb)
+	var factor := float(rules.minimum_yield_factor)+(1.0-float(rules.minimum_yield_factor))*float(Mounts.condition(state))/100.0
+	return {"kind":kind,"meat":floori(meat_lb*factor),"remaining":Mounts.count(state,kind)-1,"bullets":0 if by_hand else int(rules.bullets),"by_hand":by_hand,"injury_chance":float(rules.hand_injury_chance) if by_hand else 0.0}
+
+func slaughter_mount(kind: String,by_hand: bool = false) -> bool:
+	var offer := mount_slaughter_offer(kind,by_hand)
+	if offer.is_empty():return false
+	var name: String={"horses":"horse","mules":"mule"}[kind]
+	state[kind]=int(state[kind])-1
+	state.bullets-=int(offer.bullets)
+	state.food+=provisions.add_meat(int(offer.meat),int(state.day)+1)
+	supply_history.append({"day":int(state.day)+1,"event":"slaughter_"+name,"changes":{kind:-1,"bullets":-int(offer.bullets),"food":provisions.meat_units(int(offer.meat))}})
+	journal.append("Day %d · Butchered a %s at camp: %d lb usable fresh meat, %d bullet(s), %d %s remain." % [int(state.day)+1,name,offer.meat,offer.bullets,offer.remaining,kind])
+	if by_hand:_butcher_by_hand(offer,name)
+	_tick_day(false)
+	_update_river_stage()
+	return true
+
 func slaughter_ox(by_hand: bool = false) -> bool:
 	var offer := ox_slaughter_offer(by_hand)
 	if offer.is_empty():return false
@@ -1460,17 +1551,7 @@ func slaughter_ox(by_hand: bool = false) -> bool:
 
 	supply_history.append({"day":int(state.day)+1,"event":"slaughter_ox","changes":{"oxen":-1,"bullets":-int(offer.bullets),"food":provisions.meat_units(int(offer.meat))}})
 	journal.append("Day %d · Slaughtered one ox at camp: %d lb usable fresh meat, %d bullet(s), %d oxen remain. All meat recovered; meals and spoilage still apply." % [int(state.day)+1,offer.meat,offer.bullets,offer.remaining])
-	if by_hand:
-		journal.append("Used the household hand tools instead of ammunition.")
-		if rng.randf() < offer.injury_chance:
-			var living: Array = party_health.members.filter(func(member):return party_health.is_active(member))
-			var worker: Dictionary = living[rng.randi_range(0,living.size()-1)]
-			if not party_health.begin_condition(int(worker.id),"wound",int(state.day)+1):
-				for condition in worker.conditions:
-					if condition.id == "wound":condition.severity=mini(3,int(condition.severity)+1)
-				worker.history.append("Day %d · Butchering aggravated an existing wound." % (int(state.day)+1))
-			_collect_health_events()
-			journal.append("%s was injured while butchering the ox by hand." % worker.name)
+	if by_hand:_butcher_by_hand(offer,"ox")
 	_tick_day(false)
 	_update_river_stage()
 	if state.status == "traveling" and pending.is_empty():_schedule_event(false)
@@ -1591,6 +1672,7 @@ func open_local_attack(uid: String) -> bool:
 
 
 func adapt_travel_event(content: Dictionary) -> void:
+	if content.get("id","")=="horse_thieves":_adapt_horse_thieves(content)
 	if state.vehicle!="foot" or content.get("choices",[]).size()<2:return
 	_adapt_wagonless(content)
 	if content.get("id","")=="ox_injury":

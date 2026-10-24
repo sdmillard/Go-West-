@@ -83,10 +83,10 @@ func run():
     check(not game.post_quote({"food":1601}).valid and not game.post_quote({"clothing":-6}).valid and not game.post_quote({}).valid,"The counter refuses more than the stock, more than the party holds, or an empty basket")
     var visit_day: int=game.state.day
     var visit_cash: float=game.state.money
-    check(game.post_checkout({"food":400,"oxen":1,"clothing":-1}) and game.state.day==visit_day+1 and is_equal_approx(game.state.money,visit_cash-76-57.71+5),"One settlement moves a whole basket and costs one day")
+    check(game.post_checkout({"food":400,"oxen":1,"clothing":-1}) and game.state.day==visit_day+1 and is_equal_approx(game.state.money,visit_cash-76-57.71+6.75),"One settlement moves a whole basket and costs one day")
     check(game.post_checkout({"bullets":20}) and game.state.day==visit_day+1 and game.post_store().rows[0].can_buy==1200,"Further settlements on the same visit take no time, and stock stays spent")
     var odd_cash: float=game.state.money
-    check(game.post_checkout({"food":196,"bullets":-7}) and game.post_store().rows[0].can_buy==1004 and is_equal_approx(game.state.money,odd_cash-37.24+0.35),"The counter sells and buys exact amounts, priced by the pound or the piece")
+    check(game.post_checkout({"food":196,"bullets":-7}) and game.post_store().rows[0].can_buy==1004 and is_equal_approx(game.state.money,odd_cash-37.24+0.47),"The counter sells and buys exact amounts, priced by the pound or the piece")
     var counter_save: Dictionary=store.capture(game)
     var counter_copy=store.restore(JSON.parse_string(JSON.stringify(counter_save)))
     check(counter_copy!=null and counter_copy.post_store()==game.post_store(),"Counter stock and the paid visit round-trip through a save")

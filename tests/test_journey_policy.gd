@@ -33,7 +33,7 @@ func run():
 	count={"trades":0}
 	var bullets: int=game.state.bullets
 	check(Policy.raise_toll_money(game,count),"An available trader buys actual supplies")
-	check(game.state.day==241 and is_equal_approx(game.state.money,4.3) and game.state.bullets==bullets-20,"Sale exchanges bullets for cash and spends its real day")
+	check(game.state.day==241 and is_equal_approx(game.state.money,4.5) and game.state.bullets==bullets-20,"Sale exchanges bullets for cash at the regional price and spends its real day")
 	check(count.trades==1 and not count.has("trade_waits"),"Only an actual sale increments trades")
 	game=at_toll(240)
 	for item in ["bullets","wheels","axles","tongues","food","oxen"]:game.state[item]=0

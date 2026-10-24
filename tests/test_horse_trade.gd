@@ -57,7 +57,7 @@ func run():
 	var counter: Dictionary=game.post_store()
 	var price: float=float(game.context.region(game).price)
 	check(row(counter,"horses").can_buy==4 and row(counter,"mules").can_buy==3 and row(counter,"saddlebags").can_buy==6,"A post keeps a few horses and mules and more tack")
-	check(row(counter,"horses").buy_cents>=roundi(4000*price*0.95) and row(counter,"horses").sell_cents==1500,"Horses sell at the regional price and are bought back for less")
+	check(row(counter,"horses").buy_cents>=roundi(4000*price*0.95) and row(counter,"horses").sell_cents==roundi(1500*price),"Horses sell at the regional price and are bought back for less")
 	# No buy-and-sell-back loop: anything bought anywhere sells for less than it cost at Independence or here.
 	var outfit: Dictionary={}
 	for good in game.outfitter.goods:outfit[good.id]=int(good.price_cents)
@@ -71,7 +71,7 @@ func run():
 	check(game.state.horses==horses+2 and game.state.saddles==2 and game.state.saddlebags==2 and game.journal.any(func(line):return "bought 2 horses" in line),"Bought horses and tack join the outfit and the journal")
 	check(game.post_store().rows.filter(func(each):return each.item=="horses")[0].can_buy==2,"The post has two horses left")
 	var money: float=game.state.money
-	check(game.counter_checkout({"horses":-1}) and is_equal_approx(game.state.money,money+15.0) and game.state.horses==horses+1,"A horse sells back to the post for its lower price")
+	check(game.counter_checkout({"horses":-1}) and is_equal_approx(game.state.money,money+roundi(1500*price)/100.0) and game.state.horses==horses+1,"A horse sells back to the post for its lower price")
 	var restored=store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))
 	check(restored!=null and restored.state.horses==game.state.horses and restored.post_store().rows.filter(func(each):return each.item=="horses")[0].can_buy==2,"Horse trades survive a save")
 	# The lot menu offers horses too, after every older offer, and saves with it.

@@ -33,6 +33,7 @@ func load_data(value: Variant) -> bool:
 		if not numeric(camp.get(key)) or camp[key]!=int(camp[key]) or camp[key]<1:return false
 	if camp.barter_lots>value.post_lots or camp.care>=12 or camp.barter_food>100:return false
 	if not valid_goods(value.get("passing_goods"),true) or not valid_goods(value.get("emigrant_goods"),false):return false
+	if not valid_horse_traders(value.get("horse_traders")):return false
 	for id in value.activities:
 		var activity=value.activities[id]
 		if not activity is Dictionary or not activity.get("talk") is String:return false
@@ -67,6 +68,19 @@ func valid_goods(goods: Variant,traders: bool) -> bool:
 			if not spread.all(numeric) or spread[0]<0 or spread[0]>1 or spread[1]<1 or spread[1]!=int(spread[1]) or spread[2]!=int(spread[2]) or spread[2]<spread[1] or spread[2]>1000:return false
 	var purse: Variant=goods.get("purse_dollars")
 	return purse is Array and purse.size()==2 and purse.all(numeric) and purse[0]>=0 and purse[1]>=purse[0] and purse[1]<=80
+## Horse herds at a stop: a name, terms, how many horses they will part with, and what each horse costs.
+func valid_horse_traders(value: Variant) -> bool:
+	if not value is Dictionary or not value.get("note") is String:return false
+	for id in value:
+		if id=="note":continue
+		var herd: Variant=value[id]
+		if not herd is Dictionary or not herd.get("name") is String or not herd.get("text") is String or not numeric(herd.get("horses")) or herd.horses!=int(herd.horses) or herd.horses<1 or herd.horses>8:return false
+		if not herd.get("offers") is Array or herd.offers.is_empty():return false
+		for offer in herd.offers:
+			if not offer is Dictionary or not offer.get("label") is String or not offer.get("give") is Dictionary or offer.give.is_empty():return false
+			for item in offer.give:
+				if item not in ["clothing","oxen","bullets","money","medicine"] or not numeric(offer.give[item]) or offer.give[item]<=0 or offer.give[item]>1000:return false
+	return true
 ## What a trading party met on the road carries, wants and pays out, and its temper. Seeded by the journey and the meeting,
 ## so it holds for the whole visit and through saves.
 func barter_goods(game,key: String) -> Dictionary:
