@@ -65,6 +65,7 @@ var packing_window: AcceptDialog
 var packing_quantities: Dictionary={}
 var packing_quote: Label
 var packing_cache_mode:=false
+var packing_guards: Dictionary={}
 var dismiss_button: Button
 var show_past_travelers := false
 var service_window: AcceptDialog
@@ -639,12 +640,20 @@ func _show_section(section: String) -> void:
 		section_rows.remove_child(child)
 		child.queue_free()
 	map_view.hide()
-	section_window.get_child(0).custom_minimum_size.y=190 if section=="Camp" else 150
+	section_window.get_child(0).custom_minimum_size.y=190 if section in ["Camp","Travel"] else 150
 	section_window.title=section.to_upper()
 	section_window.get_ok_button().text="BACK" if SECTION_PARENTS.has(section) else "BACK TO TRAIL"
 	var entries: Array=[]
 	match section:
 		"Travel":
+			var heading: String=game.Direction.heading(game)
+			section_rows.add_child(label("HEADING "+heading.to_upper()))
+			var next_heading: String="east" if heading=="west" else "west"
+			var reverse:=button("TURN "+next_heading.to_upper(),_section_action.bind(game.turn_direction.bind(next_heading)))
+			reverse.name="TravelDirection"
+			reverse.disabled=not game.Direction.can_turn(game,next_heading)
+			reverse.tooltip_text="Return along the trail through ordinary days, meals and crossings." if not reverse.disabled else "Cannot turn upstream while rafting the Columbia branch."
+			section_rows.add_child(reverse)
 			for setting in [["PACE",pace],["RATIONS",rations]]:
 				section_rows.add_child(label(setting[0]))
 				if setting[1].get_parent():setting[1].get_parent().remove_child(setting[1])
@@ -1080,7 +1089,7 @@ func _refresh_party() -> void:
 			vacancy.disabled=not game.can_service() or game.recruitment.site(game).is_empty()
 			party_rows.add_child(vacancy)
 		else:_add_party_row(game.party_health.members[int(id)])
-	var past: Array=game.party_health.members.filter(func(member):return not game.party_health.is_active(member))
+	var past: Array=game.party_health.members.filter(func(member):return not game.party_health.is_active(member) and not member.get("guarding",false))
 	if not past.is_empty():
 		var history:=button(("HIDE" if show_past_travelers else "SHOW")+" PAST TRAVELERS · %d" % past.size(),_toggle_party_history)
 		history.name="PartyHistory"
@@ -1088,6 +1097,9 @@ func _refresh_party() -> void:
 		if show_past_travelers:
 			for member in past:_add_party_row(member)
 	member_details.text = game.crime.wanted_label(game)+"\n\n"+game.party_health.description(selected_member).replace("PERSONAL HISTORY",game.characters.description(selected_member)+("\n\n"+game.social.description(game,selected_member) if selected_member>0 else "")+"\n\nHEALTH HISTORY")
+	if game.party_health.members[selected_member].get("guarding",false):
+		member_details.text=game.party_health.description(selected_member)
+		return
 	if selected_member<game.characters.profiles.size():
 		var contract: Dictionary=game.characters.profiles[selected_member].contract
 		if not contract.is_empty():
@@ -1104,7 +1116,7 @@ func _refresh_party() -> void:
 		if wages_button.visible:wages_button.size.x=143
 
 func _add_party_row(member: Dictionary) -> void:
-	var condition: String = "LEFT PARTY" if member.get("departed",false) else (game.PartyHealth.condition_label(member.health) if member.alive else "DECEASED")
+	var condition: String = "GUARDING WAGON" if member.get("guarding",false) else "LEFT PARTY" if member.get("departed",false) else (game.PartyHealth.condition_label(member.health) if member.alive else "DECEASED")
 	var text: String = member.name.to_upper() + " · " + condition
 	if game.party_health.is_active(member) and not member.conditions.is_empty():
 		var active: Dictionary = member.conditions[0]
@@ -1374,8 +1386,8 @@ func _refresh() -> void:
 	_refresh_place_actions()
 	pace.selected = int(s.pace)
 	rations.selected = int(s.rations)
-	travel_settings_label.text="PACE: %s\nRATIONS: %s\nCHANGE: TRAVEL >" % [pace.get_item_text(pace.selected),rations.get_item_text(rations.selected)]
-	save_button.disabled = s.status not in ["traveling", "arrived", "lost"] or not game.hunt.is_empty() or not landscape.crossing.is_empty() or _reviewing_crossing()
+	travel_settings_label.text="PACE: %s\nRATIONS: %s\nHEADING: %s\nCHANGE: TRAVEL >" % [pace.get_item_text(pace.selected),rations.get_item_text(rations.selected),game.Direction.heading(game).to_upper()]
+	save_button.disabled = s.status not in ["traveling", "arrived", "lost", "returned_east"] or not game.hunt.is_empty() or not landscape.crossing.is_empty() or _reviewing_crossing()
 	load_button.disabled = not game.hunt.is_empty() or not landscape.crossing.is_empty() or _reviewing_crossing()
 	party_button.disabled = game.party_health.members.is_empty()
 	options_button.disabled = not game.hunt.is_empty() or not landscape.crossing.is_empty() or _reviewing_crossing()
@@ -1459,6 +1471,9 @@ func _refresh() -> void:
 	elif s.status == "arrived":
 		event_title.text = game.route.nodes[s.landmark].name if s.extended_route else "The far bank. A beginning."
 		event_text.text = (game.journey_summary() + "\n\n" + game.route.nodes[s.landmark].text) if s.extended_route else "The first test leg is complete."
+	elif s.status == "returned_east":
+		event_title.text="Back east."
+		event_text.text="Your character decided to go back east."
 	elif s.status == "lost":
 		if game.party_health.members.any(func(member):return not member.alive):choices.add_child(button("LEAVE A GRAVESTONE", _edit_gravestone))
 		choices.add_child(button("MEMORIAL BOOK", _show_memorials))
@@ -1477,7 +1492,7 @@ func _refresh() -> void:
 		event_title.text = "Open prairie"
 		var target: String = "Kansas River"
 		if s.extended_route:
-			target = "%s · %d guide miles ahead" % [game.route.nodes[s.next_landmark].name, s.leg_length - s.leg_miles]
+			target = "%s · %d guide miles %s" % [game.route.nodes[s.landmark if game.Direction.heading(game)=="east" else s.next_landmark].name, s.leg_miles if game.Direction.heading(game)=="east" else s.leg_length-s.leg_miles,game.Direction.heading(game)]
 		event_text.text = ("The wagon is rolling." if traveling else "The wagon is stopped. Continue or rest in camp.") + "\nNEXT: " + target + "\nPARTY: " + ", ".join(game.party_health.members.filter(func(member):return game.party_health.is_active(member)).map(func(member):return member.name))
 		event_text.text+="\n"+game.context.region(game).label+": "+game.context.region(game).note
 		if s.vehicle=="foot":event_text.text=("The party is walking." if traveling else "On foot. Continue or rest; supplies are limited to your packs.")+"\nNEXT: "+target+"\nPARTY: "+", ".join(game.party_health.members.filter(func(member):return game.party_health.is_active(member)).map(func(member):return member.name))+"\n"+game.context.region(game).note
@@ -1528,10 +1543,12 @@ func _show_supplies() -> void:
 	ledger.name="InventoryLedger"
 	supplies_rows.add_child(ledger)
 	var transport: VBoxContainer=ledger.get_meta("transport_rows")
-	if game.state.vehicle=="foot" and not game.wagon_cache.is_empty():
-		var recover:=button("RECOVER WAGON · MILE %d" % game.wagon_cache.mile,_recover_wagon)
-		recover.disabled=not game._can_act()
-		transport.add_child(recover)
+	if not game.wagon_cache.is_empty():
+		transport.add_child(label("Wagon marked on the map · guide mile %d" % game.wagon_cache.mile))
+		if game.Direction.at_cache(game):
+			var recover:=button("INSPECT WAGON HERE",_recover_wagon)
+			recover.disabled=not game.can_service()
+			transport.add_child(recover)
 		if game.CacheSupport.can_pack(game,true):transport.add_child(button("REPACK FROM THE CACHED WAGON",func():_show_packing(true)))
 	var ox_offer: Dictionary = game.ox_slaughter_offer()
 	if not ox_offer.is_empty():
@@ -1547,15 +1564,21 @@ func _packing_cart() -> Dictionary:
 	var cart: Dictionary={}
 	for key in packing_quantities:cart[key]=int(packing_quantities[key].value)
 	return cart
+func _packing_guard_ids() -> Array:
+	return packing_guards.keys().filter(func(id):return packing_guards[id].button_pressed)
 func _update_packing_quote() -> void:
-	var quote: Dictionary=game.pack_quote(_packing_cart(),packing_cache_mode)
+	var quote: Dictionary=game.pack_quote(_packing_cart(),packing_cache_mode,_packing_guard_ids())
 	packing_quote.text="PACK %.1f / %.1f LB\n%s" % [quote.get("cargo_lb",0),quote.get("capacity_lb",0),quote.message]
+	if not packing_cache_mode and not _packing_guard_ids().is_empty():
+		var guard_food:=int(game.state.food)-int(_packing_cart().get("food",0))
+		packing_quote.text+="\nGUARDS: %d · LEFT: %d FOOD, %d CLOTHES, %d BULLETS\nFood can spoil. Guards may hunt, leave, die or lose the wagon." % [_packing_guard_ids().size(),guard_food,int(game.state.clothing)-int(_packing_cart().get("clothing",0)),int(game.state.bullets)-int(_packing_cart().get("bullets",0))]
 	packing_window.get_ok_button().disabled=not quote.valid
 func _show_packing(from_cache: bool=false) -> void:
 	supplies_window.hide()
 	if is_instance_valid(packing_window):packing_window.queue_free()
 	packing_cache_mode=from_cache
 	packing_quantities={}
+	packing_guards={}
 	packing_window=AcceptDialog.new()
 	packing_window.title="REPACK AT WAGON" if from_cache else "ABANDON THE WAGON?"
 	packing_window.get_ok_button().text="REPACK" if from_cache else "LEAVE WAGON"
@@ -1563,8 +1586,23 @@ func _show_packing(from_cache: bool=false) -> void:
 	add_child(packing_window)
 	var content:=VBoxContainer.new()
 	content.custom_minimum_size=Vector2(475,0)
-	packing_window.add_child(content)
+	var packing_scroll:=ScrollContainer.new()
+	packing_scroll.custom_minimum_size=Vector2(495,195)
+	var packing_layout:=VBoxContainer.new()
+	packing_window.add_child(packing_layout)
+	packing_layout.add_child(packing_scroll)
+	packing_scroll.add_child(content)
 	content.add_child(label("Carry only your packs. Everything else stays at the wagon.\nReturning costs real travel; the cache may be gone or spoiled."))
+	if not from_cache:
+		content.add_child(label("LEAVE GUARDS? THEIR PARTY SLOTS STAY RESERVED."))
+		for member in game.party_health.members:
+			if int(member.id)==0 or not game.party_health.is_active(member):continue
+			var guard:=CheckBox.new()
+			guard.text=member.name+" · "+game.PartyHealth.condition_label(int(member.health))
+			guard.tooltip_text="Stays here using only cached food, clothing and ammunition. Reduces your traveling carry capacity. Wages still fall due; pay after reunion. Return in person to learn their fate."
+			guard.toggled.connect(func(_pressed):_update_packing_quote())
+			packing_guards[int(member.id)]=guard
+			content.add_child(guard)
 	var stock: Dictionary=game.CacheSupport.available(game,from_cache)
 	var defaults: Dictionary={"clothing":mini(game.state.party_size,stock.clothing),"bullets":mini(40,stock.bullets),"medicine":mini(2,stock.medicine),"salt":mini(2,stock.salt)}
 	for key in stock:
@@ -1582,14 +1620,14 @@ func _show_packing(from_cache: bool=false) -> void:
 		row.add_child(quantity)
 		packing_quantities[key]=quantity
 	packing_quote=label("")
-	content.add_child(packing_quote)
+	packing_layout.add_child(packing_quote)
 	var starting_quote: Dictionary=game.pack_quote(_packing_cart(),from_cache)
 	packing_quantities.food.value=mini(int(stock.food),maxi(0,floori(float(starting_quote.get("capacity_lb",0))-float(starting_quote.get("cargo_lb",0)))))
 	for quantity in packing_quantities.values():quantity.value_changed.connect(func(_value):_update_packing_quote())
 	packing_window.confirmed.connect(func():
 		packing_window.hide()
 		var cart:=_packing_cart()
-		if game.repack_wagon_cache(cart) if packing_cache_mode else game.abandon_wagon(cart):
+		if game.repack_wagon_cache(cart) if packing_cache_mode else game.abandon_wagon(cart,_packing_guard_ids()):
 			_refresh()
 			_show_supplies())
 	packing_window.canceled.connect(func():
@@ -1839,7 +1877,7 @@ func _normalize_dialog_buttons(dialog: AcceptDialog) -> void:
 func _recover_wagon() -> void:
 	supplies_window.hide()
 	var day: int=game.state.day
-	if not game.recover_wagon():return
+	if not game.inspect_cached_wagon():return
 	_refresh()
 	var message: String
 	if game.state.status!="traveling":message="The recovery journey ended. See the journal for the outcome."

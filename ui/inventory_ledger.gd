@@ -59,7 +59,7 @@ func _init(game):
   equipment.add_child(words(str(item).capitalize()))
   equipment.add_child(words(str(amount)))
   equipment.add_child(words("%.1f" % (amount*float(game.provisions.data.weights_lb[item]))))
- var personal: float=float(game.provisions.data.walking.personal_gear_lb_per_person)*game.state.party_size if game.state.vehicle=="foot" else float(game.provisions.data.household_gear_lb)+float(game.state.get("recruited_gear_lb",0))-float(game.state.get("departed_gear_lb",0))
+ var personal: float=float(game.provisions.data.walking.personal_gear_lb_per_person)*game.state.party_size if game.state.vehicle=="foot" else game.provisions.household_mass(game.state)
  gear.add_child(words("Personal / household gear: %.0f lb · Carried remains: %d lb" % [personal,game.state.get("remains_lb",0)]))
  var transport:=page("Transport")
  transport.name="TransportRows"

@@ -21,7 +21,7 @@ func fingerprint() -> String:
 	return rules_signature
 
 func capture(game) -> Dictionary:
-	if not game.state.extended_route or not game.hunt.is_empty() or game.state.status not in ["traveling", "arrived", "lost"]:
+	if not game.state.extended_route or not game.hunt.is_empty() or game.state.status not in ["traveling", "arrived", "lost", "returned_east"]:
 		return {}
 	return normalize({"format": FORMAT, "version": VERSION, "rules": fingerprint(),
 		"recruitment":game.recruitment.snapshot(),"social":game.social.snapshot(),"crime":game.crime.snapshot(),
@@ -117,6 +117,8 @@ func strings(value: Variant, limit: int = 10000) -> bool:
 	return true
 
 func valid_menu(menu: Dictionary, game, count: int=5) -> bool:
+	if menu.has("approach_direction") and (menu.approach_direction not in ["west","east"] or not menu.has("landmark")):return false
+	if menu.has("retreat_without_crossing") and (menu.retreat_without_crossing!=true or not menu.has("landmark")):return false
 	if menu.is_empty():
 		return true
 	if not menu.get("id") is String or not menu.get("title") is String or not menu.get("text") is String or not menu.get("choices") is Array or menu.choices.is_empty() or menu.choices.size() > 40:
@@ -215,7 +217,7 @@ func restore(value: Variant):
 		return null
 	var s: Dictionary = value.state.duplicate(true)
 	if (migrated or economy_migrated) and not s.has("salt"):s["salt"]=0
-	if not integer(s.get("seed"), -2147483648, 2147483647) or s.get("extended_route") != true or s.get("status") not in ["traveling", "arrived", "lost"]:
+	if not integer(s.get("seed"), -2147483648, 2147483647) or s.get("extended_route") != true or s.get("status") not in ["traveling", "arrived", "lost", "returned_east"]:
 		return null
 	var game = Simulation.new(int(s.seed), str(s.get("mode", "classic")), s.extended_route, str(value.get("route_end","")))
 	if not game.error.is_empty():
@@ -234,6 +236,9 @@ func restore(value: Variant):
 			return null
 	if s.mode not in ["classic", "unhinged"] or not integer(s.pace,0,2) or not integer(s.rations,0,2) or not integer(s.departure_month,3,8) or not integer(s.health,0,100) or not integer(s.ox_health,0,100) or not integer(s.fatigue,0,100) or not strings(s.party,Simulation.MAX_TRAVELERS) or s.party.size()<5 or not strings(s.items,100):
 		return null
+	if not Simulation.Direction.valid_state(s,game.route):return null
+	if s.has("household_gear_lb") and (not (s.household_gear_lb is int or s.household_gear_lb is float) or not is_finite(s.household_gear_lb) or s.household_gear_lb<0 or s.household_gear_lb>100000):return null
+	if s.status=="returned_east" and (s.landmark!=game.route.start or s.miles!=0 or s.next_landmark!=""):return null
 	if not game.route.nodes.has(s.landmark) or (s.next_landmark != "" and not game.route.nodes.has(s.next_landmark)) or not integer(s.day,0,100000) or not integer(s.miles,0,game.route.longest_miles) or s.leg_miles > s.leg_length:
 		return null
 	# Saves from before road choices were on the main road.
@@ -243,7 +248,7 @@ func restore(value: Variant):
 	if not game.combat.valid(value.get("combat_history",[]),int(s.day),s.party.size()):return null
 	if not game.context.valid_record(value.get("context",{"spent":{},"activities":[],"prepared":[]}),game.route):return null
 	if not Simulation.CacheSupport.valid(value.get("wagon_cache",{}),game,int(s.day)):return null
-	if not value.get("wagon_cache",{}).is_empty() and value.wagon_cache.mile>s.miles:return null
+	if not value.get("wagon_cache",{}).is_empty() and value.wagon_cache.mile>s.miles and not s.has("travel_direction"):return null
 	for key in ["pending","service_return","last_crossing","last_events","weather"]:
 		if not value.get(key) is Dictionary:
 			return null
@@ -274,6 +279,8 @@ func restore(value: Variant):
 		var member: Dictionary = value.party[index]
 		if member.get("id") != index or not member.get("name") is String or not member.get("alive") is bool or not integer(member.get("health"),0,100) or not strings(member.get("history")) or not member.get("conditions") is Array or not member.get("cause") is String or not integer(member.get("death_day"),-1,int(s.day)):
 			return null
+		if member.has("guarding") and (member.guarding!=true or index==0 or not member.alive or member.get("departed",false)):return null
+		if member.has("vitamin_days") and not integer(member.vitamin_days,0,100000):return null
 		if index>=5 and not integer(member.get("joined_day"),0,int(s.day)):return null
 		if index<5 and member.has("joined_day"):return null
 		if member.alive != (member.health > 0):
@@ -281,13 +288,14 @@ func restore(value: Variant):
 		if member.has("departed"):
 			if not member.departed is bool or not member.departed or index==0 or not member.alive or not integer(member.get("departure_day"),0,int(s.day)) or not game.route.nodes.has(member.get("departure_place","")) or not member.get("departure_supplies") is Dictionary:return null
 			# Settlement departures happen at towns and forts; flight after violence happens anywhere.
+			if member.has("guard_departure") and member.guard_departure!=true:return null
 			if member.has("fled") and member.fled!=true:return null
 			if member.has("dismissed") and (member.dismissed!=true or member.get("fled",false)):return null
-			if not member.get("fled",false) and not member.get("dismissed",false) and game.route.nodes[member.departure_place].kind not in ["town","fort"]:return null
+			if not member.get("fled",false) and not member.get("dismissed",false) and not member.get("guard_departure",false) and game.route.nodes[member.departure_place].kind not in ["town","fort"]:return null
 			var supplies: Dictionary=member.departure_supplies
 			if supplies.size()!=3 or not integer(supplies.get("food"),0,120) or not integer(supplies.get("clothing"),0,1) or supplies.get("gear_lb")!=game.provisions.data.walking.personal_gear_lb_per_person:return null
 			departed+=1
-		elif member.has("departure_day") or member.has("departure_place") or member.has("departure_supplies") or member.has("fled") or member.has("dismissed"):return null
+		elif member.has("departure_day") or member.has("departure_place") or member.has("departure_supplies") or member.has("fled") or member.has("dismissed") or member.has("guard_departure"):return null
 		alive += 1 if game.party_health.is_active(member) else 0
 		health += int(member.health) if game.party_health.is_active(member) else 0
 		for condition in member.conditions:
@@ -297,6 +305,7 @@ func restore(value: Variant):
 			if not member.immune is Array:return null
 			for id in member.immune:
 				if not game.party_health.conditions.has(id) or not game.party_health.conditions[id].get("immunizing",false):return null
+	if not Simulation.Guards.valid(value.get("wagon_cache",{}),game,int(s.day),value.party):return null
 	if s.extended_route and (alive>Simulation.PARTY_CAPACITY or s.party_size != alive or s.health != (roundi(float(health) / alive) if alive else 0)):
 		return null
 	if not integer(s.get("departed_gear_lb",0),0,(s.party.size()-1)*int(game.provisions.data.walking.personal_gear_lb_per_person)) or s.get("departed_gear_lb",0)!=departed*int(game.provisions.data.walking.personal_gear_lb_per_person):return null

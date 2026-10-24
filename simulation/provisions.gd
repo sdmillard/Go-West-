@@ -5,6 +5,7 @@ var data: Dictionary = {}
 var error := ""
 var fresh: Array[Dictionary] = []
 var carriers: Array[Dictionary] = []
+const WagonTrade=preload("res://simulation/wagon_trade.gd")
 const Produce=preload("res://simulation/produce_trade.gd")
 const Carrying=preload("res://simulation/carrying.gd")
 func _init() -> void:
@@ -56,15 +57,20 @@ func load_data(value: Variant) -> bool:
 	for amount in forage.lb_per_worker:
 		if not number(amount) or amount<0 or amount!=floor(amount):return false
 	if forage.lb_per_worker[0]>forage.lb_per_worker[1]:return false
-	if not Produce.valid_rules(value.get("produce_trade")):return false
+	if not Produce.valid_rules(value.get("produce_trade")) or not WagonTrade.valid_rules(value.get("replacement_wagon")):return false
+	var guards: Variant=value.get("wagon_guards")
+	if not guards is Dictionary or not guards.get("note") is String or not number(guards.get("hunt_below_days")) or guards.hunt_below_days<1 or guards.hunt_below_days>7 or guards.hunt_below_days!=floor(guards.hunt_below_days):return false
+	for key in ["hunt_hit_chance","departure_chance","raid_injury"]:
+		if not number(guards.get(key)) or guards[key]<0 or guards[key]>1:return false
 	data = value.duplicate(true)
 	error = ""
 	return true
 func number(value: Variant) -> bool:
 	return (value is float or value is int) and is_finite(float(value))
+func household_mass(inventory: Dictionary) -> float:
+	return float(inventory.household_gear_lb) if inventory.has("household_gear_lb") else float(data.household_gear_lb)+float(inventory.get("recruited_gear_lb",0))-float(inventory.get("departed_gear_lb",0))
 func cargo(inventory: Dictionary) -> float:
-	var pounds: float = float(data.walking.personal_gear_lb_per_person)*int(inventory.get("party_size",5)) if inventory.get("vehicle","")=="foot" else float(data.household_gear_lb)
-	if inventory.get("vehicle","")!="foot":pounds+=float(inventory.get("recruited_gear_lb",0))-float(inventory.get("departed_gear_lb",0))
+	var pounds: float = float(data.walking.personal_gear_lb_per_person)*int(inventory.get("party_size",5)) if inventory.get("vehicle","")=="foot" else household_mass(inventory)
 	# Bodies carried with the party weigh what they weigh, on foot or in the wagon.
 	pounds+=float(inventory.get("remains_lb",0))
 	for key in data.weights_lb:

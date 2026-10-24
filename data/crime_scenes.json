@@ -445,6 +445,32 @@
       "breakout": 0.4,
       "breakout_shots": 3,
       "wagon_access": false
+    },
+    "independence": {
+      "kind": "store",
+      "title": "The Independence general store",
+      "note": "An authored general store in the Missouri outfitting town, available when returning. Staff identities, stock and crime odds are gameplay estimates, not a reconstruction of a named historical shop.",
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "keeper"
+        },
+        {
+          "id": "hand",
+          "role": "hired hand"
+        }
+      ],
+      "cash_cents": 5000,
+      "food_lot": 200,
+      "loot_limit": 200,
+      "theft_success": 0.55,
+      "compliance": 0.45,
+      "shot_hit": 0.65,
+      "shot_fatal": 0.5,
+      "escape_capture": 0.12,
+      "escape_injury": 0.3,
+      "injury_damage": 20,
+      "wagon_access": true
     }
   },
   "unarmed": {

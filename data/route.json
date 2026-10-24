@@ -1,7 +1,7 @@
 {
   "start": "independence",
   "source": "https://www.gutenberg.org/cache/epub/46906/pg46906-images.html",
-  "source_section": "Palmer 1847 guide, 1906 reprint pp. 277–281: southern route via Bridger and wagon road south of Mount Hood. Numeric source_rows are mileage contributions, not row IDs; source_table_rows index our archived extraction.",
+  "source_section": "Palmer 1847 guide, 1906 reprint pp. 277\u00e2\u20ac\u201c281: southern route via Bridger and wagon road south of Mount Hood. Numeric source_rows are mileage contributions, not row IDs; source_table_rows index our archived extraction.",
   "nodes": [
     {
       "id": "independence",
@@ -22,7 +22,9 @@
           ]
         }
       ],
-      "hunting_region": "woodland"
+      "hunting_region": "woodland",
+      "trade_bulk": true,
+      "bulk_food_cents": 1000
     },
     {
       "id": "elm_grove",
@@ -423,7 +425,7 @@
         {
           "to": "greenwood_cutoff",
           "miles": 46,
-          "label": "Take Greenwood's Cutoff · 46 miles to the Green, 40 without water",
+          "label": "Take Greenwood's Cutoff \u00c2\u00b7 46 miles to the Green, 40 without water",
           "hazard": "waterless",
           "source_rows": [
             6,
@@ -752,7 +754,7 @@
         {
           "to": "fort_walla_walla",
           "miles": 55,
-          "label": "Detour to Fort Walla Walla · Cayuse War country, about 20 miles longer",
+          "label": "Detour to Fort Walla Walla \u00c2\u00b7 Cayuse War country, about 20 miles longer",
           "hazard": "unrest",
           "source_rows": [
             30,
@@ -768,7 +770,7 @@
       "id": "fort_walla_walla",
       "name": "Fort Walla Walla",
       "kind": "fort",
-      "text": "The Hudson's Bay Company's Fort Nez Percés stands where the Walla Walla River meets the Columbia. Since the killings at Waiilatpu the post has been a place of ransom and refuge; most emigrants this year avoid it. Supplies are scarce and dear.",
+      "text": "The Hudson's Bay Company's Fort Nez Perc\u00c3\u00a9s stands where the Walla Walla River meets the Columbia. Since the killings at Waiilatpu the post has been a place of ransom and refuge; most emigrants this year avoid it. Supplies are scarce and dear.",
       "terrain": "plains",
       "trade_bulk": true,
       "bulk_food_cents": 4000,
@@ -870,7 +872,7 @@
         {
           "to": "columbia_raft",
           "miles": 40,
-          "label": "Build a raft and float the Columbia · 3 days building",
+          "label": "Build a raft and float the Columbia \u00c2\u00b7 3 days building",
           "hazard": "river",
           "effects": {
             "days": 3

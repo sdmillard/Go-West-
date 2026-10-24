@@ -55,7 +55,7 @@ func run():
  check(Store.new().restore(bad)==null,"Forged nutrient concentration rejects")
  game=shop(outfit(57,4,2))
  var stock: Dictionary=game.trade_counter()
- check(stock.rows.size()==11 and stock.rows.any(func(row):return row.item=="produce") and stock.rows.any(func(row):return row.item=="dried_produce"),"Post counter exposes both produce types")
+ check(stock.rows.size()==12 and stock.rows.any(func(row):return row.item=="produce") and stock.rows.any(func(row):return row.item=="dried_produce"),"Post counter exposes both produce types")
  var before: Dictionary=Store.new().capture(game)
  var quote: Dictionary=game.counter_quote({"produce":-2,"dried_produce":-1})
  check(quote.valid and Store.new().capture(game)==before,"Sale preview is pure")

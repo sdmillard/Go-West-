@@ -997,7 +997,7 @@ func valid(value: Variant,game) -> bool:
 			if not actor is Dictionary or actor.size()!=4 or actor.get("uid")!=uid or actor.get("place")!=place or actor.get("role")!=role(place,uid) or not whole(actor.get("health"),0,100):return false
 			actor_count+=1
 		var store: Variant=r.services.get(place)
-		if not store is Dictionary or store.size()!=(7 if transient(place) else 6) or (transient(place) and not whole(store.get("mile"),0,int(game.state.miles))) or store.get("owner")!=owner_id(place) or store.get("staff")!=staff_ids(place) or not whole(store.get("cash_cents"),0,int(rules(place).cash_cents)) or not whole(store.get("food_taken"),0,lots) or not whole(store.get("food_sold"),0,lots) or not store.get("alarmed") is bool:return false
+		if not store is Dictionary or store.size()!=(7 if transient(place) else 6) or (transient(place) and not whole(store.get("mile"),0,int(game.route.longest_miles) if game.state.has("travel_direction") else int(game.state.miles))) or store.get("owner")!=owner_id(place) or store.get("staff")!=staff_ids(place) or not whole(store.get("cash_cents"),0,int(rules(place).cash_cents)) or not whole(store.get("food_taken"),0,lots) or not whole(store.get("food_sold"),0,lots) or not store.get("alarmed") is bool:return false
 		if r.actors[owner_id(place)].health==0 and not store.alarmed:return false
 		if store.food_taken+store.food_sold>lots:return false
 		var offers: int=game.context.record.spent.get(market_prefix(place)+"|buy_food",0)

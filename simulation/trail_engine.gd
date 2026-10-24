@@ -6,6 +6,8 @@ const Route = preload("res://simulation/route_catalog.gd")
 const PartyHealth = preload("res://simulation/party_health.gd")
 const Survival = preload("res://simulation/survival_rules.gd")
 const Produce=preload("res://simulation/produce_trade.gd")
+const Direction=preload("res://simulation/travel_direction.gd")
+const Guards=preload("res://simulation/wagon_guards.gd")
 const CacheSupport=preload("res://simulation/wagon_cache.gd")
 const Remains=preload("res://simulation/remains.gd")
 var wagon_cache: Dictionary={}
@@ -203,6 +205,9 @@ func current_edge() -> Dictionary:
 	return route.edge_between(state.landmark, state.next_landmark)
 
 func _set_next_leg(edge_index: int = 0) -> void:
+	if Direction.heading(self)=="east":
+		Direction.next_east(self)
+		return
 	var node: Dictionary = route.nodes[state.landmark]
 	state.terrain = node.get("terrain", "plains")
 	if node.next.is_empty():
@@ -215,10 +220,16 @@ func _set_next_leg(edge_index: int = 0) -> void:
 	state.leg_miles = 0
 	state.river_stage = ""
 
-func _arrive_landmark() -> void:
-	route_path = travelled_path().duplicate()
-	state.landmark = state.next_landmark
-	route_path.append(state.landmark)
+func _arrive_landmark(revisit: bool=false,roll_stage: bool=true) -> void:
+	var approach: String=str(pending.get("approach_direction",Direction.heading(self))) if revisit else Direction.heading(self)
+	route_path=travelled_path().duplicate()
+	if not revisit:
+		state.landmark=state.next_landmark
+		route_path.append(state.landmark)
+	else:
+		state.next_landmark=state.landmark
+		state.leg_miles=0
+		state.leg_length=0
 	var node: Dictionary = route.nodes[state.landmark]
 	journal.append("Day %d · Reached %s. Guide mileage: %d." % [state.day, node.name, state.miles])
 	if node.kind in ["chapter_end", "destination"]:
@@ -230,7 +241,8 @@ func _arrive_landmark() -> void:
 	if node.kind == "river":
 		# Assigned play conditions, not measured/reconstructed weather for a day in 1848.
 		# Snow-fed rivers run high in the June melt; rain-fed ones with spring rains.
-		state.river_stage = "high" if rng.randf() < survival.river_high_chance(int(calendar().month), node.get("river_source","rain")) or survival.wet_ground >= 4 else "low"
+		if roll_stage or state.river_stage=="":
+			state.river_stage = "high" if rng.randf() < survival.river_high_chance(int(calendar().month), node.get("river_source","rain")) or survival.wet_ground >= 4 else "low"
 		description += river_conditions()
 		if node.has("ferry_dollars"):
 			# Ferrymen on the snow-fed rivers charged by the current: high water could double the fare.
@@ -272,6 +284,7 @@ func _arrive_landmark() -> void:
 	options.append_array(context.activity_choices(self))
 	options.append({"label": "Rest here · 1 day, food consumed", "action": "rest"})
 	pending = {"id": "stop_" + node.id, "landmark": node.id, "title": node.name, "text": description, "choices": options}
+	Direction.adapt_stop(self,pending,approach)
 
 func _choose_landmark(index: int) -> bool:
 	refresh_stop_offers()
@@ -380,6 +393,10 @@ func travel() -> bool:
 	if not _can_act():
 		return false
 	if walking_overloaded():return true
+	if state.extended_route and Direction.heading(self)=="east" and state.leg_miles==0:
+		if travelled_path().size()<2:Direction.end_east(self)
+		else:_arrive_landmark(true)
+		return true
 	var on_river: bool = state.extended_route and current_edge().get("hazard","") == "river"
 	if state.extended_route and not on_river and state.vehicle!="foot" and (state.oxen == 0 or state.ox_health == 0):
 		pending = {"id": "no_team", "title": "No team to pull the wagon", "text": "Trade for an ox, rest a worn team, or abandon the wagon through Provisions / Cargo.", "choices": [{"label": "Return to camp", "effects": {}, "result": "The wagon stays in camp."}]}
@@ -402,16 +419,20 @@ func travel() -> bool:
 		if on_river:distance=maxi(1,roundi((int(RIVER.miles)+rng.randi_range(-2,2))*float(survival.weather.speed)))
 		elif state.vehicle=="foot":distance=walking_distance()
 		else:distance = maxi(1, roundi(distance * survival.movement_factor(state.oxen, state.ox_health, state.fatigue, 0, state.terrain, int(calendar().month), context.region(self)) * provisions.movement_factor(provisions.cargo(state),int(state.oxen))))
-		distance = mini(distance, state.leg_length - state.leg_miles)
-		state.leg_miles += distance
-		state.miles += distance
-		if state.vehicle=="foot" and not wagon_cache.is_empty():wagon_cache.found=false
+		var east: bool=Direction.heading(self)=="east"
+		distance=mini(distance,int(state.leg_miles) if east else int(state.leg_length)-int(state.leg_miles))
+		distance=Direction.clamp_at_cache(self,distance)
+		state.leg_miles+=-distance if east else distance
+		state.miles+=-distance if east else distance
+		if state.has("trail_history"):Direction.remember(self)
+		if east and state.leg_miles==0:state["east_arrival"]=true
+		if not wagon_cache.is_empty():wagon_cache.found=false
 	else:
 		state.miles = mini(DESTINATION, state.miles + distance)
 		_tick_day(false)
 	journal.append("Day %d · Traveled to mile %d. Food remaining: %d units." % [state.day, state.miles, state.food])
 	if state.status == "traveling" and not crime.check_pursuit(self) and not crime.check_wanted(self):
-		_schedule_event()
+		if not Direction.cache_notice(self):_schedule_event()
 	return true
 
 func rest() -> bool:
@@ -538,6 +559,8 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 		# Count vitamin-C produce actually consumed, never merely carried or fresh meat.
 		var produce_eaten: float = provisions.eat(eaten,int(state.party_size),int(state.food))
 		party_health.days_without_fresh = 0 if produce_eaten >= state.party_size * float(provisions.data.foraging.vitamin_c_lb_per_person) else party_health.days_without_fresh + 1
+		for member in party_health.members:
+			if party_health.is_active(member) and member.has("vitamin_days"):member.vitamin_days=0 if party_health.days_without_fresh==0 else int(member.vitamin_days)+1
 	state.food = maxi(0, state.food - needed)
 	if not fed:
 		_change_health(-maxi(1, ceili(18.0 * (1.0 - float(eaten) / maxi(1, needed)))) if state.extended_route else -18, "lack of food")
@@ -565,6 +588,7 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 		state.party_size = party_health.living_count()
 	_check_health()
 	if state.extended_route:social.tick(self,resting,fed)
+	if state.extended_route:Guards.tick(self)
 	characters.daily(self,resting,team_working,sick_before)
 	if state.extended_route:crime.check_betrayal(self)
 	if state.extended_route:
@@ -624,7 +648,11 @@ func _schedule_event(allow_random: bool = true) -> void:
 			"choices": [{"label": "Acknowledge", "result": "The party takes stock before continuing.", "effects": {}}]}
 		health_events.clear()
 		return
-	if state.extended_route and state.leg_miles >= state.leg_length:
+	if state.extended_route and state.get("east_arrival",false):
+		state.erase("east_arrival")
+		_arrive_landmark(true)
+		return
+	if state.extended_route and Direction.heading(self)=="west" and state.leg_miles >= state.leg_length:
 		_arrive_landmark()
 		return
 	# Deterministic thresholds take priority; unshown due events remain queued by eligibility.
@@ -859,6 +887,9 @@ func post_store() -> Dictionary:
 		rows.append(_counter_row(lot,int(lot.buy_cents),int(lot.sell_cents),can_buy,can_sell,buy.market_key,sell.market_key,true,true))
 	var name: String=str(route.nodes[state.landmark].get("name",state.landmark))
 	rows.append_array(Produce.rows(self,str(offer.key),"post"))
+	var wagon_row: Dictionary=provisions.WagonTrade.row(self,str(offer.key))
+	if state.vehicle=="foot":rows.push_front(wagon_row)
+	else:rows.append(wagon_row)
 	return {"name":name,"kind":"post","key":str(offer.key),"rows":rows,"days":context.trade_days(offer),"money_cents":roundi(float(state.money)*100.0),"purse_cents":-1,"rumor":crime.news_text(self,str(state.landmark)),"discount":characters.available(self,"Trading")}
 
 ## The trading counter where the party can trade by the unit: a post's store, a passing trading party, or (venue "camp")
@@ -1024,7 +1055,7 @@ func counter_checkout(cart: Dictionary,venue: String="") -> bool:
 		# The unit ledger keeps exact amounts; the lot count rounds up so the lot menu never sells stock the counter took.
 		var used: int=_units_used(key,int(row.amount))+absi(n)
 		context.record.spent[key+"|units"]=used
-		if row.item not in Produce.ITEMS:context.record.spent[key]=ceili(float(used)/int(row.amount))
+		if row.item not in Produce.ITEMS and row.item!="wagon":context.record.spent[key]=ceili(float(used)/int(row.amount))
 		crime.consume_trade({"market_key":key,"effects":{row.item:n}})
 		lines.append(("bought %d %s" if n>0 else "sold %d %s") % [absi(n),_unit_name(row.item,absi(n))])
 	if quote.net_cents>0 and store.purse_cents>=0:
@@ -1169,6 +1200,7 @@ func _depart(plan: Array,fled_reason: String) -> void:
 		state.food-=transfer.food
 		state.clothing-=transfer.clothing
 		state["departed_gear_lb"]=int(state.get("departed_gear_lb",0))+transfer.gear_lb
+		if state.has("household_gear_lb"):state.household_gear_lb=maxi(0,int(state.household_gear_lb)-int(transfer.gear_lb))
 		member["departed"]=true
 		member["departure_day"]=int(state.day)
 		member["departure_place"]=state.landmark
@@ -1326,8 +1358,8 @@ func walking_overloaded() -> bool:
 	if state.vehicle!="foot" or provisions.cargo(state)<=provisions.capacity(state):return false
 	pending={"id":"packs_too_heavy","title":"Too much to carry","text":"Your packs exceed the surviving party's carry limit. Return to camp to drop supplies, or preserve fresh meat through Camp > Preserve meat before walking on.","choices":[{"label":"Return to camp","effects":{},"result":"The party reorganizes its packs."}]}
 	return true
-func pack_quote(cart: Dictionary,from_cache: bool=false) -> Dictionary:return CacheSupport.quote(self,cart,from_cache)
-func abandon_wagon(cart: Dictionary) -> bool:return CacheSupport.pack(self,cart,false)
+func pack_quote(cart: Dictionary,from_cache: bool=false,guard_ids: Array=[]) -> Dictionary:return CacheSupport.quote(self,cart,from_cache,guard_ids)
+func abandon_wagon(cart: Dictionary,guard_ids: Array=[]) -> bool:return CacheSupport.pack(self,cart,false,guard_ids)
 func repack_wagon_cache(cart: Dictionary) -> bool:return CacheSupport.pack(self,cart,true)
 func recover_wagon() -> bool:return CacheSupport.recover(self)
 
@@ -1425,6 +1457,7 @@ func refresh_stop_offers() -> void:
 		pending.choices.append({"label":"Cross on the taken ferry, without its crew · 1 day, risk to supplies","action":"cross","method":"seized","effects":{"days":1},"risk":crime.seized_risk(self,str(state.landmark))})
 
 func _refresh_toll_offer() -> void:
+	if pending.get("retreat_without_crossing",false):return
 	if not pending.has("landmark"):
 		return
 	var node: Dictionary = route.nodes[state.landmark]
@@ -1500,3 +1533,7 @@ func discard_supplies(cart: Dictionary) -> bool:
 
 func produce_drying_offer() -> Dictionary:return Produce.drying_offer(self)
 func dry_produce() -> bool:return Produce.dry(self)
+
+func turn_direction(to: String) -> bool:return Direction.turn(self,to)
+
+func inspect_cached_wagon() -> bool:return CacheSupport.inspect(self)

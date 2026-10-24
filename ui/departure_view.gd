@@ -38,6 +38,7 @@ var draft_terms: Dictionary={}
 var wage_quote_label: Label
 var loading_companion:=false
 var generation_index:=0
+var generate_party_button: Button
 var generate_button: Button
 var bonds_layer: Control
 var bond_boxes: Array = []
@@ -124,10 +125,15 @@ func _ready() -> void:
 		month.add_item(name)
 	month.selected = 1
 	put(month, Rect2(12, 227, 233, 22), party_layer)
+	generate_party_button=Button.new()
+	generate_party_button.text="GENERATE PARTY"
+	generate_party_button.tooltip_text="Generate all four companions: names, appearance, personality, backgrounds, relationships, specials, flaws and wage offers. Your leader, profession, month and supply cart stay. Custom companion bonds reset."
+	generate_party_button.pressed.connect(_generate_party)
+	put(generate_party_button,Rect2(267,240,110,25),party_layer)
 	next_button = Button.new()
 	next_button.text = "ENTER THE STORE >"
 	next_button.pressed.connect(show_store)
-	put(next_button, Rect2(420, 240, 190, 25), party_layer)
+	put(next_button, Rect2(495, 240, 115, 25), party_layer)
 	_build_companions()
 	_build_bonds()
 	_build_appearance()
@@ -347,19 +353,35 @@ func close_editor() -> void:
 func _title_editor() -> void:
 	if editor_title!=null:editor_title.text="EDITING %s · SCROLL FOR MORE" % names[edited_member].text.strip_edges().to_upper()
 
-func _generate_companion() -> void:
-	_store_companion()
+func _apply_generated_member(member: int) -> void:
 	generation_index+=1
 	var offer: Dictionary=draft.generate_candidate(int(game.state.seed),generation_index,"random")
 	var profile: Dictionary=offer.profile
-	profile.id=edited_member
-	draft.profiles[edited_member]=profile
+	profile.id=member
+	draft.profiles[member]=profile
 	var full_name: String=offer.name
-	names[edited_member].text=full_name if full_name.length()<=14 else full_name.get_slice(" ",0)+" "+full_name.get_slice(" ",1).left(1)+"."
-	_title_editor()
-	draft_terms.erase(str(edited_member))
-	if not offer.terms.is_empty():draft_terms[str(edited_member)]=offer.terms
+	names[member].text=full_name if full_name.length()<=14 else full_name.get_slice(" ",0)+" "+full_name.get_slice(" ",1).left(1)+"."
+	draft_terms.erase(str(member))
+	if not offer.terms.is_empty():draft_terms[str(member)]=offer.terms
+
+func _generate_companion() -> void:
+	_store_companion()
+	_apply_generated_member(edited_member)
 	_load_companion()
+	_title_editor()
+	_update_quote()
+
+func _generate_party() -> void:
+	_store_companion()
+	for member in range(1,5):_apply_generated_member(member)
+	for pair in bond_boxes:
+		pair.box.select(0)
+		pair.previous=0
+	bonds_layer.hide()
+	editor_layer.hide()
+	bond_feedback.text="Friends/rivals evolve; partners leave together."
+	_load_companion()
+	_title_editor()
 	_update_quote()
 
 func _special_toggled(on: bool, special: String) -> void:
@@ -460,10 +482,10 @@ func customization() -> Dictionary:
 
 func _build_bonds() -> void:
 	var open_button := Button.new()
-	open_button.text="PARTY RELATIONSHIPS"
+	open_button.text="RELATIONSHIPS"
 	open_button.tooltip_text="Set bonds between your four companions. EDIT sets each companion’s relationship with you."
 	open_button.pressed.connect(open_bonds)
-	put(open_button,Rect2(267,240,145,25),party_layer)
+	put(open_button,Rect2(381,240,110,25),party_layer)
 	bonds_layer=Control.new()
 	put(bonds_layer,Rect2(267,0,355,236),party_layer)
 	paper(Rect2(0,0,355,236),bonds_layer)

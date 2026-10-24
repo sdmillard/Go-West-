@@ -4,6 +4,8 @@ A growing Oregon Trail-inspired game in **Godot 4 / GDScript**. Lead five travel
 
 ![The playable travel screen](docs/preview.png)
 
+[Returning east, replacement wagons and wagon guards](docs/RETURN_TRAVEL_AND_WAGON_GUARDS.md) let an expedition retrace its road, inspect a marked cache and discover the fate of companions left behind. Party creation includes Generate Party.
+
 [Variable bandit demands](docs/BANDIT_DEMANDS.md) can ask for cash, actual carried goods or rarely the loaded wagon, with terms fixed before choosing.
 
 [Wanted encounters and frontier sentences](docs/WANTED_SYSTEM.md) build on witnessed crimes and spreading news, with regional pursuers, rewards, escape choices and save-compatible trials.

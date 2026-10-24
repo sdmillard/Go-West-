@@ -1,5 +1,6 @@
 extends RefCounted
 ## Four-pound fresh-equivalent baskets, kept separate from ordinary staples and meat.
+const WagonTrade=preload("res://simulation/wagon_trade.gd")
 const ITEMS=["produce","dried_produce"]
 static func valid_rules(value: Variant) -> bool:
 	if not value is Dictionary or not value.get("note") is String:return false
@@ -70,11 +71,15 @@ static func model_after(game,effects: Dictionary) -> Dictionary:
 		inventory.food+=n
 	for item in effects:
 		if item in ITEMS:continue
+		if item=="wagon":
+			if not WagonTrade.apply_inventory(game,inventory,int(effects[item])):return {"valid":false}
+			continue
 		var n: int=int(effects[item])
 		if item=="food" and n<0:model.remove(-n)
 		inventory[item]=int(inventory.get(item,0))+n
 	return {"valid":inventory.food>=0,"cargo":model.cargo(inventory),"inventory":inventory}
 static func commit(game,effects: Dictionary) -> void:
+	WagonTrade.commit(game,effects)
 	for item in ITEMS:
 		var n: int=int(effects.get(item,0))
 		if n<0:take(game.provisions,item,-n,int(game.state.day))
