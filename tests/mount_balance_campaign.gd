@@ -43,7 +43,7 @@ func run():
   if argument.begins_with("--strategies="):strategies=Array(argument.get_slice("=",1).split(","))
   if argument.begins_with("--professions="):professions=Array(argument.get_slice("=",1).split(","))
  var path: String="res://docs/balance-"+label+".json"
- if FileAccess.file_exists(path) or not modes.all(func(v):return v in MODES) or not months.all(func(v):return v in [3,4,5,6,7,8]) or not strategies.all(func(v):return v in ["salt","no_hunt"]) or not professions.all(func(v):return v in ["farmer","carpenter","banker"]) or accuracy<0 or accuracy>1 or stress not in ["none","guard","doubled","four_oxen","abandon"] or (stress=="doubled" and modes!=["mounted"]) or (stress in ["four_oxen","abandon"] and modes!=["wagon"]):
+ if FileAccess.file_exists(path) or not modes.all(func(v):return v in MODES) or not months.all(func(v):return v in [3,4,5,6,7,8]) or not strategies.all(func(v):return v in ["salt","no_hunt"]) or not professions.all(func(v):return v in ["farmer","carpenter","banker"]) or accuracy<0 or accuracy>1 or stress not in ["none","guard","doubled","four_oxen","abandon","heavy_pack"] or (stress=="heavy_pack" and modes!=["packing"]) or (stress=="doubled" and modes!=["mounted"]) or (stress in ["four_oxen","abandon"] and modes!=["wagon"]):
   printerr("Invalid cohort or archive already exists");quit(1);return
  var hashes: Dictionary=source_hashes()
  var store=Store.new()
@@ -58,6 +58,7 @@ func run():
       var game=Observed.new(seed_value,"classic",true)
       var cart: Dictionary=outfit(game,mode)
       if stress=="four_oxen":cart.oxen=4
+      if stress=="heavy_pack":cart.mules=8;cart.pack_saddles=8;cart.food=1400
       if stress=="doubled":
        cart.horses=3;cart.saddles=3;cart.saddlebags=3
       var quote: Dictionary=game.outfitter.quote(profession,cart)
@@ -69,6 +70,7 @@ func run():
       if stress=="abandon" and not abandon(game,{}):errors.append({"error":"Could not abandon wagon legally"})
       var profile: Dictionary=policy(mode,strategy,accuracy)
       if stress=="doubled":profile.mount_targets={"horses":3,"mules":3}
+      if stress=="heavy_pack":profile.mount_targets={"mules":8}
       var count: Dictionary={"hunts":0,"rests":0,"trades":0,"travel_days":0,"empty_food_days":0,"care":0,"last_care":-100,"shots":0,"meat_obtained":0,"meat_carried":0,"empty_hunts":0,"preservations":0,"oxen_slaughtered":0}
       var aim:=RandomNumberGenerator.new()
       aim.seed=seed_value ^ 0x41494d
