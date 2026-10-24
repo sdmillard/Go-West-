@@ -88,6 +88,22 @@
       "maximum": 100,
       "step": 1,
       "suggested": 10
+    },
+    {
+      "id": "produce",
+      "label": "FRESH FRUIT / GREENS $0.32 / 4 LB",
+      "price_cents": 32,
+      "maximum": 50,
+      "step": 1,
+      "suggested": 0
+    },
+    {
+      "id": "dried_produce",
+      "label": "DRIED FRUIT $0.40 / BASKET",
+      "price_cents": 40,
+      "maximum": 100,
+      "step": 1,
+      "suggested": 0
     }
   ]
 }

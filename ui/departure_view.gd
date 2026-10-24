@@ -136,9 +136,16 @@ func _ready() -> void:
 	paper(Rect2(0, 236, 622, 37), shop_layer)
 	text("THE GENERAL STORE", Rect2(278, 10, 320, 12), shop_layer)
 	text("Wagon/gear owned. Buy trail supplies.", Rect2(278, 30, 330, 12), shop_layer)
+	var stock_scroll:=ScrollContainer.new()
+	stock_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
+	put(stock_scroll,Rect2(278,44,334,162),shop_layer)
+	var stock_rows:=Control.new()
+	stock_rows.custom_minimum_size=Vector2(314,game.outfitter.goods.size()*18)
+	stock_scroll.add_child(stock_rows)
 	for i in range(game.outfitter.goods.size()):
 		var good: Dictionary = game.outfitter.goods[i]
-		text(good.label, Rect2(278, 46 + i * 18, 230, 18), shop_layer)
+		var caption=text(good.label, Rect2(0, 2 + i * 18, 230, 18), stock_rows)
+		if good.id in ["produce","dried_produce"]:caption.tooltip_text="Each basket supplies 1 food unit from 4 lb fresh produce. "+("Fresh lasts 3 days." if good.id=="produce" else "Dried weighs 0.7 lb and lasts up to 90 days, with less vitamin C.")
 		var quantity := SpinBox.new()
 		quantity.min_value = 0
 		quantity.max_value = good.maximum
@@ -146,7 +153,7 @@ func _ready() -> void:
 		quantity.value = good.suggested
 		quantity.get_line_edit().add_theme_constant_override("minimum_character_width", 1)
 		quantity.value_changed.connect(func(_value): _update_quote())
-		put(quantity, Rect2(521, 44 + i * 18, 86, 18), shop_layer)
+		put(quantity, Rect2(236, i * 18, 78, 18), stock_rows)
 		quantities[good.id] = quantity
 	totals = text("", Rect2(278, 212, 330, 24), shop_layer)
 	feedback = text("", Rect2(137, 240, 330, 29), shop_layer)

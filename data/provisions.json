@@ -76,5 +76,20 @@
     "fresh_days": 3,
     "mass_ratio": 4,
     "vitamin_c_lb_per_person": 0.5
+  },
+  "produce_trade": {
+    "note": "Authored produce baskets, prices, drying and vitamin retention; not measured 1848 tariffs or nutrient assays. One basket represents four pounds of fresh produce, one food unit.",
+    "fresh_cents": 32,
+    "dried_cents": 40,
+    "sell_factor": 0.5,
+    "post_stock": 8,
+    "trader_stock": 4,
+    "camp_stock": 3,
+    "fresh_chance": 0.8,
+    "dried_chance": 0.8,
+    "dry_days": 90,
+    "dry_weight": 0.175,
+    "vitamin_retention": 0.25,
+    "batch_units": 8
   }
 }

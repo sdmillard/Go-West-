@@ -20,7 +20,7 @@ func load_data(data: Variant) -> bool:
 		error = "Outfitting data could not be loaded."
 		return false
 	for section in ["professions", "goods"]:
-		var required: Array = ["banker", "carpenter", "farmer"] if section == "professions" else ["oxen", "food", "clothing", "bullet_boxes", "wheels", "axles", "tongues", "medicine", "salt"]
+		var required: Array = ["banker", "carpenter", "farmer"] if section == "professions" else ["oxen", "food", "clothing", "bullet_boxes", "wheels", "axles", "tongues", "medicine", "salt", "produce", "dried_produce"]
 		var seen: Array = []
 		for entry in data[section]:
 			if not entry is Dictionary or not entry.get("id") is String or entry.id not in required or entry.id in seen or not entry.get("label") is String or entry.label.is_empty():

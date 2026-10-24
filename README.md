@@ -8,6 +8,8 @@ A growing Oregon Trail-inspired game in **Godot 4 / GDScript**. Lead five travel
 
 [Historically scaled wages and economy](docs/HISTORICAL_ECONOMY.md) now distinguish cash plus party food from unboarded labor, with period price anchors and an explicit list of remaining abstractions.
 
+The [current combined balance pass](docs/CURRENT_BALANCE_PASS.md) covers foraging, produce, recruitment and wanted encounters. [Fresh and dried produce](docs/PRODUCE_AND_NUTRITION.md) can be bought during initial outfitting and at trail counters.
+
 The [full survival campaign](docs/BALANCE_CAMPAIGN.md) records the matched development/validation matrix, policy fixes and remaining [human playtest](docs/PLAYTEST_CHECKLIST.md).
 
 [Food value and hauling](docs/FOOD_VALUE_AND_HAULING.md) separate food units from meat weight and make hunting, walking and carried loot depend on health, injuries and willing helpers.
@@ -24,7 +26,7 @@ The [first store action slice](docs/STORE_CRIME_SLICE.md) is playable at Fort Br
 
 ## Play on this computer
 
-Companions have traits, backgrounds, trust in your leadership and memories of selected decisions. View Party shows these beside their health records. The [party framework](docs/PARTY_FRAMEWORK.md) also supports action boundaries, relationships, Stoic's reduced hardship losses and Loyal's lower departure threshold and explicit mercenary wage agreements; the [departure party editor](docs/PARTY_SETUP.md) lets you choose these before setting out. [Creation limits and flaws](docs/PARTY_FLAWS.md) allow two specials per companion, or three with one real drawback. [The expanded character catalog](docs/CHARACTER_CATALOG.md) provides eight temperaments, eight value systems, sixteen specials, twelve flaws, thirteen relationships and reproducible candidate generation for future recruits. Hiring during travel remains deferred.
+Companions have traits, backgrounds, trust in your leadership and memories of selected decisions. View Party shows these beside their health records. The [party framework](docs/PARTY_FRAMEWORK.md) also supports action boundaries, relationships, Stoic's reduced hardship losses and Loyal's lower departure threshold and explicit mercenary wage agreements; the [departure party editor](docs/PARTY_SETUP.md) lets you choose these before setting out. [Creation limits and flaws](docs/PARTY_FLAWS.md) allow two specials per companion, or three with one real drawback. [The expanded character catalog](docs/CHARACTER_CATALOG.md) provides eight temperaments, eight value systems, sixteen specials, twelve flaws, thirteen relationships and reproducible candidate generation for future recruits. Generated companions can be found at eligible stops and emigrant camps when a slot is empty; accepting them preserves the history of departed or dead travelers.
 
 [Background benefits and companion news](docs/BACKGROUND_BENEFITS.md) now add practical hunting, repair, care and purchase benefits, a bounded Veteran combat bonus, visible objections and trust warnings. No skill progression is required.
 
@@ -53,7 +55,7 @@ The experimental absurd-event code and sprites remain available for future devel
 - Crossing mishaps show cargo washing away, then an acknowledgement screen with exact food losses and an injury report. Dated crossing outcomes remain in the trail journal and structured simulation history; ordinary daily rations are separate from accident losses.
 - Daily travel, three paces, three ration levels, food consumption, aggregate party health, rest, victory and loss.
 - View Party shows each traveler's condition, illnesses/injuries and personal history, including recoveries and deaths. Survivors continue and food demand follows their number. Party condition stays verbal; [health tuning](docs/PARTY_HEALTH.md) remains provisional rather than recovered classic formulas.
-- Five named travelers; banker/carpenter/farmer setup and March–August departure. Opening store sells oxen, food, clothing, ammunition and three distinct spare components, with budget validation and exact-cent purchase totals.
+- Five named travelers; banker/carpenter/farmer setup and March–August departure. Opening store sells oxen, food, clothing, ammunition, fresh produce, dried fruit and three distinct spare components, with budget validation and exact-cent purchase totals.
 - Optional care/repair kits, paid local care at selected stopped posts, mild/bad/serious individual conditions, and care history.
 - Daily seasonal weather affecting progress, exposure and river stage; clothing, team size/condition/fatigue, load and terrain affect the trip.
 - Total cargo weight, fresh-meat spoilage, variable hunting yields, ammunition use, trail purchases/sales/barter and repeatable JSON survival encounters. See [food and survival](docs/FOOD_AND_SURVIVAL.md).
@@ -68,7 +70,7 @@ This is a complete playable overland corridor with provisional balancing. Guide 
 
 The [first source-grounded balance pass](docs/BALANCE_PASS_01.md) records BASIC/historical comparisons and deterministic before/after experiments. Cautious movement now averages about 12.1 miles per moving day in that experiment. Rest recovery depends on rations; spontaneous illness no longer causes fractures; automatic cholera onset respects the later epidemic chronology. These are starting bounds and corrections, not final historical calibration.
 
-Starting cash is $600/$900/$1,400 for farmer/carpenter/banker, with the wagon and household gear already owned. Opening oxen cost $20 each, and one-ox departures are allowed with severe hauling limitations. These are period-informed game choices; see [economy and preservation](docs/ECONOMY_AND_PRESERVATION.md) and [team rules](docs/TEAM_SIZE.md).
+Starting cash is $600/$900/$1,400 for farmer/carpenter/banker, with the wagon and household gear already owned. Opening oxen cost $30 each, and one-ox departures are allowed with severe hauling limitations. These are period-informed game choices; see [economy and preservation](docs/ECONOMY_AND_PRESERVATION.md) and [team rules](docs/TEAM_SIZE.md).
 
 ## Test
 

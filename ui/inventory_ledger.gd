@@ -1,11 +1,11 @@
 extends TabContainer
 ## Read-only inventory ledger. Physical pounds are distinct from food-value units.
 static func food_rows(game) -> Array:
- var rows: Array=[{"name":"Staples","units":0,"mass":0.0},{"name":"Fresh meat","units":0,"mass":0.0},{"name":"Greens / berries","units":0,"mass":0.0},{"name":"Dried food","units":0,"mass":0.0}]
+ var rows: Array=[{"name":"Staples","units":0,"mass":0.0},{"name":"Fresh meat","units":0,"mass":0.0},{"name":"Greens / berries","units":0,"mass":0.0},{"name":"Dried meat","units":0,"mass":0.0},{"name":"Dried fruit / greens","units":0,"mass":0.0}]
  var left: int=game.state.food
  for batch in game.provisions.fresh:
   var used: int=mini(left,int(batch.pounds))
-  var index: int=3 if batch.get("preserved",false) else (2 if batch.get("vitamin_c",false) else 1)
+  var index: int=(4 if batch.get("vitamin_c",false) else 3) if batch.get("preserved",false) else (2 if batch.get("vitamin_c",false) else 1)
   rows[index].units+=used
   rows[index].mass+=used*game.provisions.mass_ratio(batch)
   left-=used

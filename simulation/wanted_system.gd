@@ -237,6 +237,7 @@ static func trial(crime,game,current: Dictionary,surrendered: bool) -> void:
 	var banished: Array=[]
 	var seizure: String=""
 	if severity<4:
+		var acting_leader: int=int(game.party_health.members.filter(func(member):return game.party_health.is_active(member))[0].id)
 		var due: int=value*(2 if severity==1 else 1)
 		paid=mini(due,roundi(float(game.state.money)*100))
 		game._apply({"money":-paid/100.0})
@@ -252,14 +253,15 @@ static func trial(crime,game,current: Dictionary,surrendered: bool) -> void:
 			game._apply({id:-amount})
 			remaining=maxi(0,remaining-amount*unit)
 		if severity>=2 and not surrendered:
-			var leader: Dictionary=game.party_health.members[0]
-			var damage: int=game.characters.catalog.health_delta(game.characters.profiles[0],-int(crime.wanted_data.flogging_damage),"frontier punishment",game.party_health.conditions)
+			var leaders: Array=game.party_health.members.filter(func(member):return game.party_health.is_active(member))
+			var leader: Dictionary=leaders[0]
+			var damage: int=game.characters.catalog.health_delta(game.characters.profiles[int(leader.id)],-int(crime.wanted_data.flogging_damage),"frontier punishment",game.party_health.conditions)
 			# Punishment is nonfatal even when Frail amplifies the wound. Future illness still matters.
 			leader.health=maxi(1,int(leader.health)+damage)
-			game.party_health.begin_condition(0,"wound",int(game.state.day),1)
+			game.party_health.begin_condition(int(leader.id),"wound",int(game.state.day),1)
 		if severity>=2:
 			for id in helpers:
-				if game.party_health.is_active(game.party_health.members[id]) and (severity>=3 or crime.rng.randf()<float(crime.wanted_data.helper_banish_chance)):banished.append(id)
+				if int(id)!=acting_leader and game.party_health.is_active(game.party_health.members[id]) and (severity>=3 or crime.rng.randf()<float(crime.wanted_data.helper_banish_chance)):banished.append(id)
 		if severity==3 and crime.rng.randf()<float(crime.wanted_data.seizure_chance):
 			if int(game.state.oxen)>0:
 				game._apply({"oxen":-int(game.state.oxen)})
@@ -312,7 +314,7 @@ static func valid_bounties(crime,r: Dictionary,game) -> bool:
 			posted.append(id)
 			var item: Dictionary=r.incidents[int(id)-1]
 			if not (item.action in ["shoot","assault","pursuit"] or (item.action=="wanted" and int(item.shots)>0) or (item.action in ["robbery","raid"] and value_of(game,item)>=int(crime.wanted_data.robbery_reward_cents))):return false
-			if not r.reports.any(func(report):return report.incident==id and report.identified and crime.arrival(game,report,b.post)<=int(b.day)):return false
+			if not r.reports.any(func(report):return report.incident==id and report.identified and shadow.arrival(game,report,b.post)<=int(b.day)):return false
 		if int(b.cleared_day)>=0 and not r.incidents.any(func(item):return (item.action=="wanted" and int(item.get("bounty",0))==int(b.id) and item.resolution=="paid" and int(item.ended_day)==int(b.cleared_day)) or (item.has("sentence") and int(item.sentence.day)==int(b.cleared_day) and b.incidents.all(func(id):return "incident:%d" % int(id) in item.sentence.charges))):return false
 	return true
 static func valid_extras(crime,r: Dictionary,current: Dictionary,game) -> bool:

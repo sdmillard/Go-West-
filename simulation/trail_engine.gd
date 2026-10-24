@@ -5,6 +5,7 @@ const Outfitting = preload("res://simulation/outfitting.gd")
 const Route = preload("res://simulation/route_catalog.gd")
 const PartyHealth = preload("res://simulation/party_health.gd")
 const Survival = preload("res://simulation/survival_rules.gd")
+const Produce=preload("res://simulation/produce_trade.gd")
 const CacheSupport=preload("res://simulation/wagon_cache.gd")
 const Remains=preload("res://simulation/remains.gd")
 var wagon_cache: Dictionary={}
@@ -158,6 +159,9 @@ func depart(profession: String, names: Array, month: int, cart: Dictionary, cust
 	state.money = float(quote.remaining_cents) / 100.0
 	for key in ["oxen", "food", "clothing", "wheels", "axles", "tongues", "medicine", "salt"]:
 		state[key] = int(cart.get(key, 0))
+	for item in Produce.ITEMS:
+		Produce.add(provisions,item,int(cart.get(item,0)),0)
+		state.food+=int(cart.get(item,0))
 	state.bullets = int(cart.get("bullet_boxes", 0)) * 20
 	state.parts = state.wheels + state.axles + state.tongues
 	state.pace = 0
@@ -530,7 +534,7 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 	var eaten := mini(int(state.food), needed)
 	if state.extended_route:
 		# Count vitamin-C produce actually consumed, never merely carried or fresh meat.
-		var produce_eaten: float = provisions.remove(eaten)
+		var produce_eaten: float = provisions.eat(eaten,int(state.party_size),int(state.food))
 		party_health.days_without_fresh = 0 if produce_eaten >= state.party_size * float(provisions.data.foraging.vitamin_c_lb_per_person) else party_health.days_without_fresh + 1
 	state.food = maxi(0, state.food - needed)
 	if not fed:
@@ -852,6 +856,7 @@ func post_store() -> Dictionary:
 		var can_sell: int=int(sell.stock_limit)*amount-_units_used(sell.market_key,amount) if crime.can_trade(self,sell) else 0
 		rows.append(_counter_row(lot,int(lot.buy_cents),int(lot.sell_cents),can_buy,can_sell,buy.market_key,sell.market_key,true,true))
 	var name: String=str(route.nodes[state.landmark].get("name",state.landmark))
+	rows.append_array(Produce.rows(self,str(offer.key),"post"))
 	return {"name":name,"kind":"post","key":str(offer.key),"rows":rows,"days":context.trade_days(offer),"money_cents":roundi(float(state.money)*100.0),"purse_cents":-1,"rumor":crime.news_text(self,str(state.landmark)),"discount":characters.available(self,"Trading")}
 
 ## The trading counter where the party can trade by the unit: a post's store, a passing trading party, or (venue "camp")
@@ -879,6 +884,7 @@ func trade_counter(venue: String="") -> Dictionary:
 		if item=="food":can_buy=mini(can_buy,crime.food_left(self,str(offer.key)))
 		var can_sell: int=int(goods.wants.get(item,0))-_units_used(sell.market_key,amount) if crime.can_trade(self,sell) else 0
 		rows.append(_counter_row(lot,maxi(1,buy_cents),roundi(float(lot.sell_cents)*float(goods.sell)),can_buy,can_sell,buy.market_key,sell.market_key,goods.stock.has(item),goods.wants.has(item)))
+	rows.append_array(Produce.rows(self,str(offer.key),"traders"))
 	return {"name":"Passing traders","kind":"traders","key":str(offer.key),"mood":goods.mood,"late_food":late,"rows":rows,"days":context.trade_days(offer),"money_cents":roundi(float(state.money)*100.0),"purse_cents":_purse_left(str(offer.key),int(goods.purse_cents)),"rumor":"","discount":characters.available(self,"Trading")}
 
 ## How freely the people at a counter talk: a passing party's mood, a family's reluctance to part with things; a post's clerk is fair.
@@ -928,6 +934,7 @@ func _camp_counter() -> Dictionary:
 		var sell_cents: int=roundi(float(lot.sell_cents)*float(goods.need.get(item,1.0)))
 		rows.append(_counter_row(lot,maxi(1,buy_cents),sell_cents,can_buy,can_sell,buy_key,sell_key,goods.stock.has(item),goods.wants.has(item)))
 		rows[-1]["premium"]=float(goods.need.get(item,1.0))
+	rows.append_array(Produce.rows(self,place,"camp"))
 	return {"name":"Emigrant camp","kind":"camp","key":place,"needs":goods.need.keys(),"rows":rows,"days":0,"money_cents":roundi(float(state.money)*100.0),"purse_cents":_purse_left(place,int(goods.purse_cents)),"rumor":"","discount":false}
 
 func _counter_row(lot: Dictionary,buy_cents: int,sell_cents: int,can_buy: int,can_sell: int,buy_key: String,sell_key: String,sells: bool,buys: bool) -> Dictionary:
@@ -982,6 +989,10 @@ func counter_quote(cart: Dictionary,venue: String="") -> Dictionary:
 			result.message="Unknown goods: %s." % str(key)
 			return result
 	result.effects=effects
+	var after: Dictionary=Produce.model_after(self,effects)
+	if not after.valid:
+		result.message="That basket sells the same food twice."
+		return result
 	if moved==0:
 		result.message="Choose goods to buy or sell."
 	elif store.money_cents+result.net_cents<0:
@@ -992,12 +1003,10 @@ func counter_quote(cart: Dictionary,venue: String="") -> Dictionary:
 		result.valid=true
 		result.message="Settle up · %s" % ("1 day and meals" if result.days>0 else "no extra time")
 	# What the wagon (or the packs) would weigh after this basket, so the party can see the load before settling.
-	var after: Dictionary=state.duplicate()
-	for item in effects:after[item]=int(after.get(item,0))+int(effects[item])
 	result.cargo_lb=provisions.cargo(state)
 	result.capacity_lb=provisions.capacity(state)
-	result.cargo_after_lb=provisions.cargo(after)
-	result.capacity_after_lb=provisions.capacity(after)
+	result.cargo_after_lb=after.cargo
+	result.capacity_after_lb=provisions.capacity(after.inventory)
 	return result
 
 ## Settle a basket at the counter as one visit: stock and demand move by the unit, and the visit's day is charged once.
@@ -1013,7 +1022,7 @@ func counter_checkout(cart: Dictionary,venue: String="") -> bool:
 		# The unit ledger keeps exact amounts; the lot count rounds up so the lot menu never sells stock the counter took.
 		var used: int=_units_used(key,int(row.amount))+absi(n)
 		context.record.spent[key+"|units"]=used
-		context.record.spent[key]=ceili(float(used)/int(row.amount))
+		if row.item not in Produce.ITEMS:context.record.spent[key]=ceili(float(used)/int(row.amount))
 		crime.consume_trade({"market_key":key,"effects":{row.item:n}})
 		lines.append(("bought %d %s" if n>0 else "sold %d %s") % [absi(n),_unit_name(row.item,absi(n))])
 	if quote.net_cents>0 and store.purse_cents>=0:
@@ -1021,6 +1030,7 @@ func counter_checkout(cart: Dictionary,venue: String="") -> bool:
 		context.record.spent[purse_key]=int(context.record.spent.get(purse_key,0))+int(quote.net_cents)
 	if store.days>0:context.record.spent[str(store.key)+"|visit"]=1
 	var effects: Dictionary=quote.effects.duplicate()
+	Produce.commit(self,effects)
 	effects["money"]=quote.net_cents/100.0
 	effects["days"]=quote.days
 	journal.append("Day %d · %s: %s." % [state.day,{"post":"At "+str(store.name),"traders":"Traded with passing traders","camp":"Traded with an emigrant family"}[store.kind],", ".join(lines)])
@@ -1355,7 +1365,7 @@ func slaughter_ox(by_hand: bool = false) -> bool:
 
 func preservation_offer(salted: bool = false) -> Dictionary:
 	if not can_service():return {}
-	var plan: Dictionary=provisions.preservation_plan(int(state.day),int(state.food),int(provisions.data.rations_lb[state.rations])*int(state.party_size))
+	var plan: Dictionary=provisions.preservation_plan(int(state.day),int(state.food),int(provisions.data.rations_lb[state.rations])*int(state.party_size),int(state.party_size))
 	var input: int=plan.input
 	if input < 1:return {}
 	var salt := ceili(float(plan.mass)*float(provisions.data.preservation.salt_per_food_lb)) if salted else 0
@@ -1485,3 +1495,6 @@ func discard_supplies(cart: Dictionary) -> bool:
 	for item in cart:
 		if int(cart[item])>0:discard_supply(item,int(cart[item]))
 	return true
+
+func produce_drying_offer() -> Dictionary:return Produce.drying_offer(self)
+func dry_produce() -> bool:return Produce.dry(self)

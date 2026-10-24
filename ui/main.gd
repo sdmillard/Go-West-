@@ -48,7 +48,7 @@ var ribbon_buttons: Dictionary={}
 var crime_category := ""
 ## The VILLAINY section a crime, attack or remains preview was opened from; its back button returns there.
 var crime_back := ""
-const SECTION_PARENTS={"Attack someone":"Villainy","Party member":"Attack someone","Someone here":"Attack someone","Steal":"Villainy","Rob":"Villainy","Preserve meat":"Camp"}
+const SECTION_PARENTS={"Attack someone":"Villainy","Party member":"Attack someone","Someone here":"Attack someone","Steal":"Villainy","Rob":"Villainy","Preserve meat":"Camp","Dry produce":"Camp"}
 var window_scale: OptionButton
 var fullscreen: CheckBox
 var travel_speed: OptionButton
@@ -656,7 +656,7 @@ func _show_section(section: String) -> void:
 			var note:=label("Opening camp spends no time or supplies.\nChoose an activity; rest is optional.")
 			note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 			section_rows.add_child(note)
-			entries=[["REST · CHOOSE DAYS",_rest],["PRESERVE MEAT >",_show_section.bind("Preserve meat")],["CARE / MEDICAL ATTENTION",_open_care]]
+			entries=[["REST · CHOOSE DAYS",_rest],["PRESERVE MEAT >",_show_section.bind("Preserve meat")],["DRY FRUIT / GREENS >",_show_section.bind("Dry produce")],["CARE / MEDICAL ATTENTION",_open_care]]
 		"Preserve meat":
 			section_rows.add_child(label("Processing uses a work day, not a rest day.\nMeals and spoilage happen before processing."))
 			var available:=false
@@ -669,6 +669,14 @@ func _show_section(section: String) -> void:
 				preserve.tooltip_text="Keeps up to %d days after processing; meals are separate." % offer.days
 				section_rows.add_child(preserve)
 			if not available:section_rows.add_child(label("No suitable fresh meat can be preserved now.\nSalt-assisted drying also requires enough salt."))
+		"Dry produce":
+			var offer: Dictionary=game.produce_drying_offer()
+			section_rows.add_child(label("Set aside fruit / greens for one work day.\nMeals use other provisions. No salt needed.\nDried food is lighter and lasts longer,\nbut supplies less vitamin C than fresh."))
+			if offer.is_empty():section_rows.add_child(label("No fresh produce can be dried before it spoils."))
+			else:
+				var dry:=button("DRY %.0f LB > %.1f LB · 1 DAY" % [offer.mass,offer.weight],_section_action.bind(game.dry_produce))
+				dry.tooltip_text="Keeps up to %d days. Food value retained; vitamin C reduced." % offer.days
+				section_rows.add_child(dry)
 		"Hunt & forage":entries=[["HUNT · 1 DAY, UP TO 5 SHOTS",_start_hunt],["FORAGE FOR GREENS AND BERRIES",_open_forage]]
 		"Villainy":entries=[["ATTACK SOMEONE >",_show_section.bind("Attack someone")],["STEAL >",_show_section.bind("Steal")],["ROB >",_show_section.bind("Rob")],["THE DEAD: BURY, CARRY OR SEARCH >",_open_villainy_remains]]
 		"Attack someone":

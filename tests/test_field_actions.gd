@@ -39,7 +39,7 @@ func run():
 	game.party_health.days_without_fresh=60
 	game.provisions.fresh.assign([{"pounds":100,"expires":2,"preserved":true},{"pounds":2,"expires":5,"mass_ratio":4.0,"vitamin_c":true}])
 	game._tick_day(true)
-	check(game.party_health.days_without_fresh==61 and game.provisions.fresh.back().pounds==2,"Carried produce does not help when only earlier dried meat is eaten")
+	check(game.party_health.days_without_fresh==0 and game.provisions.fresh.back().pounds==1,"Meals share a produce serving alongside older dried meat")
 	game=party()
 	game.provisions.add_produce(8,0)
 	game.state.food+=2

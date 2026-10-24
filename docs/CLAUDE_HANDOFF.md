@@ -1,6 +1,6 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 23, 2026, after the action ribbon, contextual place choices, local targets and unified window exits (see final checkpoint). Sections below cover PRs #19 to #34. **Continue the existing project; do not restart it. Spencer requested a break. This is a saved checkpoint, not a request to continue working now.**
+Last updated October 23, 2026, after the combined balance pass and fresh/dried produce. **Latest checkpoint:** see [current balance report](CURRENT_BALANCE_PASS.md) and the final section below. Earlier sections are chronological records of prior checkpoints.
 
 ## Resume here
 
@@ -330,3 +330,23 @@ Validation: feature checkpoint **80e8870** passed **all 46 suites** in a clean i
 Passing generated reports are preserved in ignored `.tools/wanted-verified-store-journeys.json` and `.tools/wanted-verified-outlaw-journeys.json`; complete suite log is `.tools/wanted-complete-test.log`. Older tracked balance evidence, three untracked debug pilots and player saves were left untouched. Restart an already-running game to load these changes.
 
 Publication: [PR #68](https://github.com/sdmillard/Go-West-/pull/68), branch `codex/wanted-system`; the tested implementation is recorded above. Repository working rules authorize merging once validation passes.
+
+
+## Combined balance and produce checkpoint (October 23)
+
+Spencer clarified that balance means fair, understandable consequences, not equal outcomes. Capital, seasons, payroll, injuries and crimes should retain different risks. Do not tune toward equal win rates or a fabricated historical mortality target.
+
+Fresh produce and dried fruit are available in initial outfitting and post/trader/emigrant counters. See docs/PRODUCE_AND_NUTRITION.md: basket prices 32/40 cents, physical mass 4/0.7 lb, shelf life 3/90 days, reduced vitamin C from dried food. These are thematic parameters. Camp drying reserves up to eight fresh food units before one real work day's meals, without salt. Actual meals supply vitamins; purchasing, selling or carrying does not. Meals share a produce serving before using other provisions, preserving dried reserves. Exact mass, batches, selling, saves and wagon caches retain nutrients. Store lists scroll in fixed panels; native layouts inspected and the opening store shown to Spencer.
+
+Frozen campaign: 1,800 development journeys (seeds 3104–3107), 3,600 independent validation journeys (5000–5007), zero selected invariant/save/setup/policy errors. Three capitals × three months × five rosters × ten strategies. Sources and settings match. Read docs/CURRENT_BALANCE_PASS.md and balance-current-{development-03,heldout-01}-summary.json. Earlier diagnostics remain archived; development-02 had 42 injured-walker policy stalls and is not clean validation. The corrected policy takes a real recovery day when fixed walking gear exceeds injured capacity. Observer parity is tested against the actual engine and RNG; starvation counts actual underfed days.
+
+Additional evidence: 54 opening-fruit comparisons, 192 final emergency fixtures and 1,350 controlled hunts, all with zero selected errors. Emergency-study-01's dead-leader fixture omitted its explicit party-size update; 02 corrected preparation, and 03 adds final-source freezing. Immediate walking remains a severe last resort. Farmer has intact lawful arrivals but cautious low-budget play remains punishing. Held-out May/ordinary/salted cells: farmer 1/8 arrived intact, carpenter 8/8, banker 8/8. Do not reuse held-out seeds for tuning and call them fresh validation.
+
+Actual wanted fixes: transient bounty restoration uses the candidate crime record for report-arrival validation. Nonfatal punishment targets a survivor and does not give health to a dead original leader; the acting leader is retained rather than expelled as a helper. Mixed-diet preservation and food forecasts follow actual meal order. Prior master fingerprint dd57503977a35f4cc96129e69ccd4cb4e58cbbdaee0bb6eb236f9af3e4106f49 is whitelisted; current fingerprint 70ef4aad8342b811479b0122dc1411ba920da95bfdcf7f169d0753110a4391eb.
+
+Feature checkpoint 341cf82 passed all 48 Godot suites in a clean isolated checkout, including 52 produce, 206 observer/policy and 173 wanted checks, plus 24 store and 20 outlaw journeys with zero errors. Reports/logs are in ignored .tools/balance-final-*; disposable checkout removed after preserving outputs. Final publication adds only reports/documentation to that tested implementation. Older tracked reports, player saves and the three preexisting debug pilots are untouched. Human clarity/aiming/pacing playtests remain: docs/PLAYTEST_CHECKLIST.md. Restart an already-running game after updating.
+
+Next authorized change: variable bandit demands, ranging from smaller/larger cash amounts to cash plus goods. Show actual terms before choosing, preserve them across saves and do not reroll on opening. This is a new change after the frozen campaign above; retain that distinction in later reports.
+
+Publication: [PR #69](https://github.com/sdmillard/Go-West-/pull/69), branch codex/full-balance-pass. The tested implementation and frozen report sources are recorded above.
+

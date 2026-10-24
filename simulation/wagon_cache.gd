@@ -148,7 +148,7 @@ static func valid(value: Variant,game,day: int) -> bool:
 		for field in ["pounds","expires"]:
 			var count=batch.get(field)
 			if (not count is int and not count is float) or not is_finite(float(count)) or count!=floor(count) or count<1 or count>1000100:return false
-		if batch.has("vitamin_c") and (not batch.vitamin_c is bool or (batch.vitamin_c and batch.get("preserved",false))):return false
+		if not Provisions.new().valid_nutrients(batch):return false
 		if batch.has("preserved") and not batch.preserved is bool:return false
 		if not Provisions.new().valid_mass_ratio(batch):return false
 		pounds+=int(batch.pounds)
