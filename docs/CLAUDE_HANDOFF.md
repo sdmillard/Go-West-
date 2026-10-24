@@ -1,6 +1,6 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 24, 2026, after horse travel step 4 (see [horses and mules](HORSES.md)), return travel, wagon guards, wagon sales, robbery demands and resizing. **Latest checkpoint:** see the final section below and [total survival balance](TOTAL_SURVIVAL_BALANCE.md) and [sales, demands and display](WAGON_SALES_ROBBERY_AND_DISPLAY.md). Earlier sections are chronological records of prior checkpoints.
+Last updated October 24, 2026, after horse travel step 5, the balance pass (see [horses and mules](HORSES.md)), return travel, wagon guards, wagon sales, robbery demands and resizing. **Latest checkpoint:** see the final section below and [total survival balance](TOTAL_SURVIVAL_BALANCE.md) and [sales, demands and display](WAGON_SALES_ROBBERY_AND_DISPLAY.md). Earlier sections are chronological records of prior checkpoints.
 
 ## Resume here
 
@@ -454,3 +454,8 @@ Fresh broad validation 672/1,620 arrivals includes late starts and deliberate cr
 All 61 suites passed in an isolated checkout, including 20 animal work and 211 current-policy checks. Same production sources passed 24 store and 20 outlaw integrations. No UI/art changes. Preserve actual player saves and three local debug pilots.
 
 Priority order: inspect sustained vitamin intake and scurvy recovery; repeated shop/care/processing delays and reserve policy; weak-walker fixed gear/capacity/recovery; low-budget pack provisioning and animal loads. Respect Spencer's existing one-day-per-store-visit decision unless deliberately replacing the time model. Avoid simply buffing every speed or forcing victory percentages to a multi-decade mortality estimate. Human hunting and clarity playtests remain outstanding.
+
+
+## Horse balance pass (step 5, October 24)
+
+Built on #82/#83 with their `tests/mount_balance_campaign.gd` (development seeds 75000-75005, salt, April/May, carpenter/banker). On #83 rules mounted bankers took a median 242 days against 204 by wagon: horses rested a fifth of all days. Changes: `mounts.forage_strain` sagebrush 1 / highcountry 0 / forest 0; all-mule strings take no forage strain (`Mounts.wear`); animal parties' load drag in `walking_distance` starts at 75% (people 50%); walkers' journal says "lighten the packs". After: mounted banker 12/12, median 183 days; packing banker 9/12, carpenter 5/12. See [HORSE_BALANCE.md](HORSE_BALANCE.md). Fixture `pre-horse-balance-save-v1.json`; fingerprint 6927c03c... whitelisted. The horse travel roadmap is complete.

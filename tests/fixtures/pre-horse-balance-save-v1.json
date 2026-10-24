@@ -1,0 +1,832 @@
+{
+  "characters": [
+    {
+      "appearance": {
+        "clothing": "Red",
+        "hair": "Gray",
+        "heritage": "French Canadian",
+        "outfit": 1,
+        "skin": "Deep"
+      },
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": []
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 0,
+      "memories": [],
+      "relationship": "self",
+      "skill": "Leadership",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [],
+      "trust": 50
+    },
+    {
+      "appearance": {
+        "clothing": "Ochre",
+        "hair": "Blond",
+        "heritage": "German American",
+        "outfit": 0,
+        "skin": "Tan"
+      },
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": [
+          "robbery",
+          "murder",
+          "cannibalism"
+        ]
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 1,
+      "memories": [
+        {
+          "day": 10,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        }
+      ],
+      "relationship": "fellow_traveler",
+      "skill": "Hunting",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [
+        "Cautious",
+        "Compassionate"
+      ],
+      "trust": 51
+    },
+    {
+      "appearance": {
+        "clothing": "Ochre",
+        "hair": "Brown",
+        "heritage": "Mexican",
+        "outfit": 0,
+        "skin": "Medium"
+      },
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": [
+          "robbery",
+          "murder",
+          "cannibalism"
+        ]
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 2,
+      "memories": [
+        {
+          "day": 10,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        }
+      ],
+      "relationship": "fellow_traveler",
+      "skill": "Caregiving",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [
+        "Bold",
+        "Compassionate"
+      ],
+      "trust": 51
+    },
+    {
+      "appearance": {
+        "clothing": "Ochre",
+        "hair": "Brown",
+        "heritage": "Mexican",
+        "outfit": 0,
+        "skin": "Light"
+      },
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": [
+          "murder"
+        ]
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 3,
+      "memories": [],
+      "relationship": "fellow_traveler",
+      "skill": "Carpentry",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [
+        "Bold",
+        "Pragmatic"
+      ],
+      "trust": 50
+    },
+    {
+      "appearance": {
+        "clothing": "Red",
+        "hair": "Gray",
+        "heritage": "Not specified",
+        "outfit": 0,
+        "skin": "Deep"
+      },
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": [
+          "robbery",
+          "murder",
+          "cannibalism"
+        ]
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 4,
+      "memories": [
+        {
+          "day": 10,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        }
+      ],
+      "relationship": "fellow_traveler",
+      "skill": "Trading",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [
+        "Bold",
+        "Compassionate"
+      ],
+      "trust": 51
+    }
+  ],
+  "characters_version": 3,
+  "combat_history": [],
+  "context": {
+    "activities": [],
+    "prepared": [],
+    "spent": {
+
+    }
+  },
+  "crime": {
+    "random": "-7809981488701563792",
+    "record": {
+      "active": {
+
+      },
+      "actors": {
+        "clerk:fort_laramie": {
+          "health": 100,
+          "place": "fort_laramie",
+          "role": "clerk",
+          "uid": "clerk:fort_laramie"
+        },
+        "corporal:fort_kearny": {
+          "health": 100,
+          "place": "fort_kearny",
+          "role": "corporal of the guard",
+          "uid": "corporal:fort_kearny"
+        },
+        "hand:fort_boise": {
+          "health": 100,
+          "place": "fort_boise",
+          "role": "hired hand",
+          "uid": "hand:fort_boise"
+        },
+        "hand:fort_bridger": {
+          "health": 100,
+          "place": "fort_bridger",
+          "role": "hired hand",
+          "uid": "hand:fort_bridger"
+        },
+        "hand:fort_hall": {
+          "health": 100,
+          "place": "fort_hall",
+          "role": "hired hand",
+          "uid": "hand:fort_hall"
+        },
+        "hand:fort_laramie": {
+          "health": 100,
+          "place": "fort_laramie",
+          "role": "hired hand",
+          "uid": "hand:fort_laramie"
+        },
+        "hand:fort_walla_walla": {
+          "health": 100,
+          "place": "fort_walla_walla",
+          "role": "hired hand",
+          "uid": "hand:fort_walla_walla"
+        },
+        "hand:independence": {
+          "health": 100,
+          "place": "independence",
+          "role": "hired hand",
+          "uid": "hand:independence"
+        },
+        "hand:kansas_river": {
+          "health": 100,
+          "place": "kansas_river",
+          "role": "ferry hand",
+          "uid": "hand:kansas_river"
+        },
+        "keeper:barlow_pass": {
+          "health": 100,
+          "place": "barlow_pass",
+          "role": "gatekeeper",
+          "uid": "keeper:barlow_pass"
+        },
+        "keeper:fort_boise": {
+          "health": 100,
+          "place": "fort_boise",
+          "role": "keeper",
+          "uid": "keeper:fort_boise"
+        },
+        "keeper:fort_bridger": {
+          "health": 100,
+          "place": "fort_bridger",
+          "role": "keeper",
+          "uid": "keeper:fort_bridger"
+        },
+        "keeper:fort_hall": {
+          "health": 100,
+          "place": "fort_hall",
+          "role": "keeper",
+          "uid": "keeper:fort_hall"
+        },
+        "keeper:fort_kearny": {
+          "health": 100,
+          "place": "fort_kearny",
+          "role": "commissary sergeant",
+          "uid": "keeper:fort_kearny"
+        },
+        "keeper:fort_laramie": {
+          "health": 100,
+          "place": "fort_laramie",
+          "role": "keeper",
+          "uid": "keeper:fort_laramie"
+        },
+        "keeper:fort_walla_walla": {
+          "health": 100,
+          "place": "fort_walla_walla",
+          "role": "keeper",
+          "uid": "keeper:fort_walla_walla"
+        },
+        "keeper:independence": {
+          "health": 100,
+          "place": "independence",
+          "role": "keeper",
+          "uid": "keeper:independence"
+        },
+        "keeper:kansas_river": {
+          "health": 100,
+          "place": "kansas_river",
+          "role": "ferryman",
+          "uid": "keeper:kansas_river"
+        },
+        "private:fort_kearny": {
+          "health": 100,
+          "place": "fort_kearny",
+          "role": "private",
+          "uid": "private:fort_kearny"
+        },
+        "sentry:fort_kearny": {
+          "health": 100,
+          "place": "fort_kearny",
+          "role": "sentry",
+          "uid": "sentry:fort_kearny"
+        }
+      },
+      "attacks": [],
+      "betrayals": [],
+      "bonds": [
+        {
+          "a": 1,
+          "b": 4,
+          "kind": "family"
+        },
+        {
+          "a": 2,
+          "b": 4,
+          "kind": "partner"
+        }
+      ],
+      "bounties": [],
+      "human_food": [],
+      "incidents": [],
+      "meals": {
+
+      },
+      "people": {
+        "party:91:original:0": {
+          "name": "A",
+          "slot": 0
+        },
+        "party:91:original:1": {
+          "name": "B",
+          "slot": 1
+        },
+        "party:91:original:2": {
+          "name": "C",
+          "slot": 2
+        },
+        "party:91:original:3": {
+          "name": "D",
+          "slot": 3
+        },
+        "party:91:original:4": {
+          "name": "E",
+          "slot": 4
+        }
+      },
+      "remains": [],
+      "reports": [],
+      "services": {
+        "barlow_pass": {
+          "alarmed": false,
+          "cash_cents": 4000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:barlow_pass",
+          "staff": [
+            "keeper:barlow_pass"
+          ]
+        },
+        "fort_boise": {
+          "alarmed": false,
+          "cash_cents": 3000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:fort_boise",
+          "staff": [
+            "keeper:fort_boise",
+            "hand:fort_boise"
+          ]
+        },
+        "fort_bridger": {
+          "alarmed": false,
+          "cash_cents": 5000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:fort_bridger",
+          "staff": [
+            "keeper:fort_bridger",
+            "hand:fort_bridger"
+          ]
+        },
+        "fort_hall": {
+          "alarmed": false,
+          "cash_cents": 4000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:fort_hall",
+          "staff": [
+            "keeper:fort_hall",
+            "hand:fort_hall"
+          ]
+        },
+        "fort_kearny": {
+          "alarmed": false,
+          "cash_cents": 2500,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:fort_kearny",
+          "staff": [
+            "keeper:fort_kearny",
+            "sentry:fort_kearny",
+            "corporal:fort_kearny",
+            "private:fort_kearny"
+          ]
+        },
+        "fort_laramie": {
+          "alarmed": false,
+          "cash_cents": 6000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:fort_laramie",
+          "staff": [
+            "keeper:fort_laramie",
+            "clerk:fort_laramie",
+            "hand:fort_laramie"
+          ]
+        },
+        "fort_walla_walla": {
+          "alarmed": false,
+          "cash_cents": 4000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:fort_walla_walla",
+          "staff": [
+            "keeper:fort_walla_walla",
+            "hand:fort_walla_walla"
+          ]
+        },
+        "independence": {
+          "alarmed": false,
+          "cash_cents": 5000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:independence",
+          "staff": [
+            "keeper:independence",
+            "hand:independence"
+          ]
+        },
+        "kansas_river": {
+          "alarmed": false,
+          "cash_cents": 1500,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:kansas_river",
+          "staff": [
+            "keeper:kansas_river",
+            "hand:kansas_river"
+          ]
+        }
+      },
+      "version": 9
+    }
+  },
+  "crossing_history": [
+    {
+      "clothing_lost": 0,
+      "day": 4,
+      "food_lost": 0,
+      "health_lost": 0,
+      "landmark": "wakarusa",
+      "lost": false,
+      "method": "horses",
+      "mishap": false,
+      "place": "Wakarusa Creek",
+      "stage": "low",
+      "summary": "Wakarusa Creek · fording with the horses. No cargo lost. The party reached the far bank."
+    },
+    {
+      "clothing_lost": 0,
+      "day": 6,
+      "food_lost": 0,
+      "health_lost": 0,
+      "landmark": "kansas_river",
+      "lost": false,
+      "method": "ferry",
+      "mishap": false,
+      "place": "Kansas River",
+      "stage": "high",
+      "summary": "Kansas River · ferry. No cargo lost. The party reached the far bank."
+    }
+  ],
+  "days_without_fresh": 10,
+  "format": "westward-probably",
+  "fresh": [],
+  "health_events": [],
+  "health_random": "-2697377687874573757",
+  "journal": [
+    "Independence, 1848. Outfit your wagon.",
+    "Departed 5 1, 1848 as a banker. Party: A, B, C, D, E.",
+    "Supplies cost $550.30. Cash remaining: $924.70.",
+    "Left Independence without a wagon, as packers: 5 under saddle, 3 packing.",
+    "Day 1 · Clear. Team condition good; working.",
+    "Day 1 · Traveled to mile 28. Food remaining: 485 units.",
+    "Day 2 · Clear. Team condition good; working.",
+    "Day 2 · Traveled to mile 33. Food remaining: 470 units.",
+    "Day 2 · Reached Elm Grove. Guide mileage: 33.",
+    "Leaving Elm Grove.",
+    "Day 3 · Clear. Team condition good; working.",
+    "Day 3 · Traveled to mile 53. Food remaining: 455 units.",
+    "Day 3 · Reached Wakarusa Creek. Guide mileage: 53.",
+    "Day 4 · Clear. Team condition good; resting.",
+    "Day 4 · Wakarusa Creek · fording with the horses. No cargo lost. The party reached the far bank.",
+    "Crossed Wakarusa Creek by horses.",
+    "Leaving Wakarusa Creek.",
+    "Day 5 · Clear. Team condition good; working.",
+    "Day 5 · Traveled to mile 81. Food remaining: 425 units.",
+    "Day 5 · Reached Kansas River. Guide mileage: 81.",
+    "Day 5 · Supplies: Cash ($) -1.00. Daily rations counted separately.",
+    "Day 6 · Clear. Team condition good; resting.",
+    "Day 6 · Kansas River · ferry. No cargo lost. The party reached the far bank.",
+    "Crossed Kansas River by ferry.",
+    "Leaving Kansas River.",
+    "Day 7 · Clear. Team condition good; working.",
+    "Day 7 · Traveled to mile 110. Food remaining: 395 units.",
+    "Day 8 · Clear. Team condition good; working.",
+    "Day 8 · Traveled to mile 139. Food remaining: 380 units.",
+    "Day 9 · Clear. Team condition good; working.",
+    "Day 9 · Traveled to mile 168. Food remaining: 365 units.",
+    "Day 9 · A has exhaustion.",
+    "Day 9 · Illness in the party. A is exhausted and unwell. Check their personal condition and make time to rest.",
+    "Day 10 · B: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 10 · C: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 10 · E: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 10 · Clear. Team condition good; resting.",
+    "You stop to let the party recover.",
+    "The party takes stock before continuing."
+  ],
+  "last_crossing": {
+    "clothing_lost": 0,
+    "day": 6,
+    "food_lost": 0,
+    "health_lost": 0,
+    "landmark": "kansas_river",
+    "lost": false,
+    "method": "ferry",
+    "mishap": false,
+    "place": "Kansas River",
+    "stage": "high",
+    "summary": "Kansas River · ferry. No cargo lost. The party reached the far bank."
+  },
+  "last_events": {
+    "illness": 9
+  },
+  "outings": 0,
+  "party": [
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [
+        {
+          "elapsed": 2,
+          "id": "exhaustion",
+          "severity": 1,
+          "started_day": 9
+        }
+      ],
+      "death_day": -1,
+      "health": 97,
+      "history": [
+        "Day 9 · A has exhaustion."
+      ],
+      "id": 0,
+      "name": "A"
+    },
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 100,
+      "history": [],
+      "id": 1,
+      "name": "B"
+    },
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 100,
+      "history": [],
+      "id": 2,
+      "name": "C"
+    },
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 100,
+      "history": [],
+      "id": 3,
+      "name": "D"
+    },
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 100,
+      "history": [],
+      "id": 4,
+      "name": "E"
+    }
+  ],
+  "pending": {
+
+  },
+  "random": "8899426206141825144",
+  "recruitment": {
+    "searches": {
+
+    },
+    "slots": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "route_end": "oregon_city",
+  "route_path": [
+    "independence",
+    "elm_grove",
+    "wakarusa",
+    "kansas_river"
+  ],
+  "rules": "6927c03c33aba3ab718e02606b39caa53355a215aa4182c564764aa580dc5403",
+  "seen": [
+    "muddy_trail"
+  ],
+  "service_return": {
+
+  },
+  "social": {
+    "last_day": 7,
+    "pairs": [
+      {
+        "a": 1,
+        "affinity": 3,
+        "b": 2,
+        "history": [
+          {
+            "day": 7,
+            "text": "B and C: camp conversations (+3 closeness)."
+          }
+        ]
+      },
+      {
+        "a": 1,
+        "affinity": 2,
+        "b": 3,
+        "history": [
+          {
+            "day": 7,
+            "text": "B and D: camp conversations (+2 closeness)."
+          }
+        ]
+      },
+      {
+        "a": 1,
+        "affinity": 69,
+        "b": 4,
+        "history": [
+          {
+            "day": 7,
+            "text": "B and E: camp conversations (+4 closeness)."
+          }
+        ]
+      },
+      {
+        "a": 2,
+        "affinity": -1,
+        "b": 3,
+        "history": [
+          {
+            "day": 7,
+            "text": "C and D: camp conversations (-1 closeness)."
+          }
+        ]
+      },
+      {
+        "a": 2,
+        "affinity": 85,
+        "b": 4,
+        "history": [
+          {
+            "day": 7,
+            "text": "C and E: camp conversations (+5 closeness)."
+          }
+        ]
+      },
+      {
+        "a": 3,
+        "affinity": -2,
+        "b": 4,
+        "history": [
+          {
+            "day": 7,
+            "text": "D and E: camp conversations (-2 closeness)."
+          }
+        ]
+      }
+    ],
+    "romance": true
+  },
+  "state": {
+    "axles": 0,
+    "bullets": 100,
+    "clothing": 5,
+    "day": 10,
+    "departure_month": 5,
+    "extended_route": true,
+    "fatigue": 0,
+    "food": 350,
+    "fuel": 0,
+    "health": 99,
+    "horse_health": 99,
+    "horses": 5,
+    "household_gear_lb": 75,
+    "items": [],
+    "landmark": "kansas_river",
+    "leg_length": 93,
+    "leg_miles": 87,
+    "loss_reason": "",
+    "medicine": 2,
+    "miles": 168,
+    "mode": "classic",
+    "money": 923.7,
+    "mules": 3,
+    "next_landmark": "big_blue",
+    "ox_health": 100,
+    "oxen": 0,
+    "pace": 0,
+    "pack_saddles": 3,
+    "parts": 0,
+    "party": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ],
+    "party_size": 5,
+    "profession": "banker",
+    "rations": 2,
+    "river_stage": "",
+    "saddlebags": 5,
+    "saddles": 5,
+    "salt": 5,
+    "seed": 91,
+    "status": "traveling",
+    "terrain": "plains",
+    "tongues": 0,
+    "vehicle": "foot",
+    "weather": "Clear",
+    "wheels": 0
+  },
+  "supply_history": [
+    {
+      "changes": {
+        "money": -1
+      },
+      "day": 5,
+      "event": "stop_kansas_river"
+    }
+  ],
+  "survival_random": "2203801381840829779",
+  "version": 1,
+  "wagon_cache": {
+
+  },
+  "weather": {
+    "exposure": 0,
+    "id": "clear",
+    "label": "Clear",
+    "speed": 1,
+    "weight": 50,
+    "wet": 0
+  },
+  "wet_ground": 0
+}

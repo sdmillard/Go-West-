@@ -129,6 +129,18 @@ func run():
 	var old: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-horses-save-v1.json"))
 	var upgraded=store.restore(old)
 	check(upgraded!=null and upgraded.state==store.normalize(old.state) and upgraded.Mounts.animals(upgraded.state)==0 and str(upgraded.rng.state)==old.random,"A real save from before horses loads unchanged with no animals")
+	var balanced: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-horse-balance-save-v1.json"))
+	var rebalanced=store.restore(balanced)
+	check(rebalanced!=null and rebalanced.state==store.normalize(balanced.state),"A mounted save from before the horse balance pass loads")
+	# Balance pass: mules shrug off poor forage, and animals carry a fair load without slowing.
+	var mount_rules: Dictionary=game.provisions.data.mounts
+	check(game.Mounts.wear(mount_rules,{"mode":"packing","saddled_horses":0,"pack_horses":0},"sagebrush",0,0,1.0)==1 and game.Mounts.wear(mount_rules,{"mode":"packing","saddled_horses":0,"pack_horses":2},"sagebrush",0,0,1.0)==1+int(mount_rules.forage_strain.sagebrush),"An all-mule string takes no forage strain; horses do")
+	var train=packers({"wagon":0,"oxen":0,"mules":4,"pack_saddles":4,"food":20,"clothing":5})
+	train.survival.weather={"id":"clear","label":"Clear","speed":1.0}
+	train.state.fatigue=0
+	var light: int=train.walking_distance()
+	train.state.food=int((train.provisions.capacity(train.state)*0.7-train.provisions.cargo(train.state))/float(train.provisions.data.weights_lb.food))+20
+	check(train.provisions.cargo(train.state)/train.provisions.capacity(train.state)>0.6 and train.walking_distance()==light,"A pack train carrying two-thirds of its limit keeps its pace")
 	snapshot.state.horse_health=101
 	check(store.restore(JSON.parse_string(JSON.stringify(snapshot)))==null,"Out-of-range horse condition is rejected")
 	# No wagon, no wagon troubles: encounters speak of the party and strain the horses.
