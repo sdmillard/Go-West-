@@ -91,6 +91,6 @@ func refresh():
  get_ok_button().disabled=not q.get("valid",false)
  if not q.get("valid",false):summary.text=q.get("message","Cannot set out.");return
  var c: Dictionary=config()
- summary.text="OUTBOUND %.1f / %.1f LB · UP TO %d LB CATCH\nPACK: %d FOOD UNITS (includes one reserve day), %d CLOTHING, %d BULLETS\nONLY THESE PEOPLE AND ALLOCATED ANIMALS HELP.\n%s" % [q.pack_lb,q.capacity_lb,q.catch_lb,q.inventory.food,q.inventory.clothing,q.inventory.bullets,"Leader hunt: one shared day. Other camp tasks can continue." if actor_id()<0 else "One trip. Mounted hunters can rejoin the moving train; delays can strand them. Animal and pack supplies leave camp now."]
+ summary.text="OUTBOUND %.1f / %.1f LB · UP TO %d LB CATCH\nPACK: %d FOOD UNITS (includes one reserve day), %d CLOTHING, %d BULLETS\nONLY THESE PEOPLE AND ALLOCATED ANIMALS HELP.\n%s" % [q.pack_lb,q.capacity_lb,q.catch_lb,q.inventory.food,q.inventory.clothing,q.inventory.bullets,"Leader hunt: one shared day. Other camp tasks can continue." if actor_id()<0 else "One trip. Riders can follow; forks are 50/50 and river crossings can kill. Two days overdue triggers a missing-person notice. Animals and packed supplies leave camp now."]
 
 func actor_id() -> int:return -1 if actor.selected==0 else actor.get_selected_id()

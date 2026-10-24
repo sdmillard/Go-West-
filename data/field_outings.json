@@ -1,1 +1,9 @@
-{"note":"Authored outing encounter tuning, not measured historical rates.","hit_chance":0.65,"hunter_bonus":0.10,"mishap_chance":0.08}
+{
+  "note": "Authored outing encounter tuning, not measured historical rates.",
+  "hit_chance": 0.65,
+  "hunter_bonus": 0.1,
+  "mishap_chance": 0.08,
+  "fork_follow_chance": 0.5,
+  "lone_crossing_drowning_chance": 0.1,
+  "missing_after_days": 2
+}

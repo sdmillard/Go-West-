@@ -149,11 +149,68 @@ func run():
  check(g.field_outings.start(g,1,"ride_horse",1,5),"A hunter can set out from the near-bank camp")
  crossing=g.pending.choices.find_custom(func(c):return c.get("method","")=="ferry")
  g.choose(crossing);g.choose(1);g.choose(crossing)
- check(g.field_outings.record.trips.size()==1 and g.field_outings.record.trips[0].stage=="stranded" and g.state.party_size==4,"A due rider is left on the near bank when the train crosses")
+ check(g.field_outings.record.trips.size()==1 and g.field_outings.record.trips[0].camp.has("crossing") and g.state.party_size==4,"A due rider reaches the river and must resolve their own crossing")
  check(store.restore(JSON.parse_string(JSON.stringify(store.capture(g))))!=null,"Far-bank party and near-bank hunter save as distinct locations")
+ var river_departure_snapshot: Dictionary=store.capture(g)
  var prior: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-carry-curve-v5.json"))
  var migrated=store.restore(prior)
  check(migrated!=null and migrated.state==store.normalize(prior.state) and str(migrated.rng.state)==prior.random and migrated.field_outings.snapshot()==store.normalize(prior.field_outings),"Genuine previous-curve outing preserves its reserved animals, packs, health, deadlines and random streams")
+ # River pursuit consumes its own day and resolves the actual crossing rules.
+ var river_save: Dictionary=river_departure_snapshot
+ var crossed_live:=false
+ var drowned
+ for crossing_seed in range(1,60):
+  var candidate=store.restore(river_save)
+  configure(candidate)
+  candidate.field_outings.rules.lone_crossing_drowning_chance=0
+  candidate.field_outings.record.trips[0].camp.crossing.stage="low"
+  var random:=RandomNumberGenerator.new();random.seed=crossing_seed
+  candidate.field_outings.record.trips[0].camp.camp_random=str(random.state)
+  day(candidate)
+  if candidate.field_outings.record.trips.is_empty():
+   check(candidate.state.day==2 and candidate.state.party_size==5 and candidate.state.horses==2,"An outrider crosses during one actual shared day and reunites on the far bank")
+   crossed_live=true;break
+ check(crossed_live,"A seeded river crossing survives")
+ for crossing_seed in range(1,80):
+  var candidate=store.restore(river_save)
+  configure(candidate)
+  candidate.field_outings.rules.lone_crossing_drowning_chance=1
+  candidate.field_outings.record.trips[0].camp.crossing.stage="high"
+  var random:=RandomNumberGenerator.new();random.seed=crossing_seed
+  candidate.field_outings.record.trips[0].camp.camp_random=str(random.state)
+  day(candidate)
+  if not candidate.field_outings.record.trips.is_empty() and candidate.field_outings.record.trips[0].camp.get("return_failed",false):
+   drowned=candidate;break
+ check(drowned!=null,"A lone outrider can actually drown in a crossing")
+ if drowned!=null:
+  check(drowned.party_health.members[1].alive and drowned.party_health.members[1].away and drowned.state.horses==1,"Unknown death never returns a ghost rider or duplicates the lost horse")
+  check(not drowned.journal.any(func(line):return "beginning to fear" in line) and drowned.field_outings.public_status(drowned.field_outings.record.trips[0])=="AWAY" and drowned.field_outings.public_kit(drowned.field_outings.record.trips[0])=="ride_horse","An offscreen death is not announced or revealed by the trip roster instantly")
+  loaded=store.restore(JSON.parse_string(JSON.stringify(store.capture(drowned))))
+  check(loaded!=null,"Unknown drowning and lost field supplies save safely")
+  if loaded!=null:
+   configure(loaded);day(drowned);day(loaded)
+   check(store.capture(drowned)==store.capture(loaded),"Missing notification and actual hidden fate resume deterministically")
+  check(drowned.journal.filter(func(line):return "beginning to fear" in line).size()==1,"Two days overdue produces one uncertain missing-person notification")
+  day(drowned)
+  check(drowned.journal.filter(func(line):return "beginning to fear" in line).size()==1,"Missing-person notification does not repeat every day")
+ # Changing heading toward a mounted hunter does not stop reunion.
+ var returning=party();returning.field_outings.start(returning,1,"ride_horse",3,5)
+ returning.travel();returning.pending={}
+ check(returning.turn_direction("east") and not returning.pending.get("outing_warning",false),"Turning toward an outrider does not require leaving them behind")
+ returning.travel();day(returning)
+ check(returning.field_outings.record.trips.is_empty() and returning.state.party_size==5,"A reversing train and its outrider can meet")
+ for follows in [0.0,1.0]:
+  var forked=party()
+  forked.route_path=forked.route.main_path_to("little_sandy")
+  forked.state.landmark="little_sandy";forked.state.next_landmark="little_sandy";forked.state.miles=int(forked.route.node_miles().little_sandy)
+  forked.state.leg_length=0;forked.state.leg_miles=0;forked._arrive_landmark(true,false)
+  forked.field_outings.rules.fork_follow_chance=follows
+  forked.field_outings.start(forked,1,"ride_horse",1,5)
+  var leave: int=forked.pending.choices.find_custom(func(c):return c.get("action","")=="leave")
+  forked.choose(leave);forked.choose(1);forked.choose(leave);forked.travel()
+  check(forked.field_outings.record.trips.is_empty() if follows==1 else forked.field_outings.record.trips[0].camp.get("wrong_turn",false),"Fork choice can follow the train or lose its trail without an automatic hard block")
+  check(store.restore(JSON.parse_string(JSON.stringify(store.capture(forked))))!=null,"Fork outcome and independent hunter location survive a save")
+ check(is_equal_approx(Sim.new(1,"classic",true).field_outings.rules.fork_follow_chance,0.5),"Ordinary fork-follow chance is the requested fifty-fifty")
  # Outing conservation and offscreen fates.
  g=party();g.field_outings.rules.hit_chance=10;g.hunting.data.regions.woodland.empty_chance=0;g.hunting.data.regions.plains.empty_chance=0
  g.field_outings.start(g,1,"foot",1,5);day(g)

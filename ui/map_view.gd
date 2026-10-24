@@ -296,7 +296,7 @@ func _get_tooltip(at: Vector2) -> String:
 	var names: Array[String]=[]
 	for trip in game.field_outings.record.trips:
 		var point: Variant=outing_point(trip.origin)
-		if point is Vector2 and point.distance_to(at)<7.0/zoom:names.append("%s: %s; expected day %d. Departure camp at mile %d." % [game.party_health.members[trip.member].name,trip.stage,trip.due,trip.mile])
+		if point is Vector2 and point.distance_to(at)<7.0/zoom:names.append("%s: %s; expected day %d. Search area at mile %d." % [game.party_health.members[trip.member].name,game.field_outings.public_status(trip),game.field_outings.expected_day(trip),trip.mile])
 	if not names.is_empty():return "\n".join(names)+" Travel here and use Camp > Field trips to look for stranded hunters."
 	var best := ""
 	var nearest := 6.0 / zoom

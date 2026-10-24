@@ -1847,7 +1847,6 @@ func produce_drying_offer() -> Dictionary:return Produce.drying_offer(self)
 func dry_produce() -> bool:return Produce.dry(self)
 
 func turn_direction(to: String) -> bool:
-	if Direction.can_turn(self,to) and Direction.heading(self)!=to and field_outings.warn(self,false,true):return false
 	return Direction.turn(self,to)
 
 func inspect_cached_wagon() -> bool:return CacheSupport.inspect(self)

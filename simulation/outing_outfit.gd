@@ -10,12 +10,12 @@ static func stock(kit: String) -> Dictionary:
   "pack_mule":result.mules=1;result.pack_saddles=1
   "horse_and_mule":result.horses=1;result.mules=1;result.saddles=1;result.saddlebags=1;result.pack_saddles=1
  return result
-static func capacity(game,members: Array,kit: String) -> float:
+static func capacity(game,members: Array,kit: String,allocated: Dictionary={}) -> float:
  var people:=0.0
  for id in members:
   var person: Dictionary=id if id is Dictionary else game.party_health.members[int(id)]
   people+=float(game.hunting.data.carry_per_person_lb)*game.provisions.Carrying.factor(person,game.provisions.data.walking.health_load_curve)
- var inventory: Dictionary=stock(kit)
+ var inventory: Dictionary=stock(kit) if allocated.is_empty() else allocated.duplicate()
  inventory.merge({"vehicle":"foot","party_size":members.size()})
  var animals: float=game.Mounts.plan(game.provisions.data.mounts,inventory).animal_lb
  return minf(float(game.hunting.data.carry_limit),people+animals)
@@ -73,8 +73,8 @@ static func restore_stock(game,animals: Dictionary,condition: int) -> void:
  for key in animals:game.state[key]=int(game.state.get(key,0))+int(animals[key])
  if incoming>0:game.state.horse_health=roundi(float(current*before+condition*incoming)/(before+incoming))
 
-static func wear(game,kit: String,size: int,habitat: String,load_ratio: float) -> int:
- var inventory: Dictionary=stock(kit)
+static func wear(game,kit: String,size: int,habitat: String,load_ratio: float,allocated: Dictionary={}) -> int:
+ var inventory: Dictionary=stock(kit) if allocated.is_empty() else allocated.duplicate()
  inventory.merge({"vehicle":"foot","party_size":size})
  var base: int=int(game.context.data.regions[habitat].strain)+int(game.seasonal_pressure().working_strain)+int(game.survival.weather.get("ox_strain",0))
  return game.Mounts.wear(game.provisions.data.mounts,game.Mounts.plan(game.provisions.data.mounts,inventory),habitat,base,0,load_ratio)

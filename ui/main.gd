@@ -714,7 +714,7 @@ func _show_section(section: String) -> void:
 			entries=[["COMPANION TASKS >",_show_section.bind("Companion tasks")],["FIELD TRIPS / RETURNING HUNTERS >",_show_section.bind("Field trips")],["REST · CHOOSE DAYS",_rest],["PRESERVE MEAT >",_show_section.bind("Preserve meat")],["DRY FRUIT / GREENS >",_show_section.bind("Dry produce")],["CARE / MEDICAL ATTENTION",_open_care]]
 		"Field trips":
 			for trip in game.field_outings.record.trips:
-				var info:=label("%s · %s · EXPECTED DAY %d\nDEPARTURE CAMP: MILE %d · %s" % [game.party_health.members[trip.member].name,str(trip.stage).to_upper(),trip.due,trip.mile,outing_window.KIT_LABELS[game.field_outings.Outfit.KITS.find(trip.kit)]])
+				var info:=label("%s · %s · EXPECTED DAY %d\nSEARCH AREA: MILE %d · %s" % [game.party_health.members[trip.member].name,game.field_outings.public_status(trip),game.field_outings.expected_day(trip),trip.mile,outing_window.KIT_LABELS[game.field_outings.Outfit.KITS.find(game.field_outings.public_kit(trip))]])
 				info.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 				section_rows.add_child(info)
 			if game.field_outings.record.trips.is_empty():section_rows.add_child(label("No hunting parties are away."))
