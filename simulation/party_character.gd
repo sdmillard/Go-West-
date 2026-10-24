@@ -400,7 +400,8 @@ func acceptable_terms(wage_cents: Variant, interval_days: Variant, profile: Dict
 
 func advance_contracts(game) -> void:
 	for profile in profiles:
-		if profile.id==0 or profile.contract.is_empty() or not game.party_health.is_active(game.party_health.members[profile.id]):continue
+		if profile.id==0 or profile.contract.is_empty():continue
+		if not game.party_health.is_active(game.party_health.members[profile.id]) and not game.Guards.actual_alive(game,int(profile.id)):continue
 		var contract: Dictionary=profile.contract
 		if contract.last_due_day>=0 and contract.last_due_day<game.state.day and contract.last_assessed_day<contract.last_due_day:
 			contract.last_assessed_day=contract.last_due_day
@@ -417,7 +418,7 @@ func advance_contracts(game) -> void:
 func can_receive_wages(game, index: int) -> bool:
 	if index<=0 or index>=profiles.size() or game.state.status not in ["traveling","arrived"]:return false
 	var member: Dictionary=game.party_health.members[index]
-	if not member.alive:return false
+	if not member.alive or member.get("guarding",false):return false
 	if not member.get("departed",false):return true
 	return game.pending.get("landmark",game.service_return.get("landmark",""))==member.departure_place
 

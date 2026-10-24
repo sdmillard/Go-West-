@@ -55,7 +55,7 @@ func _ready() -> void:
 	status.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(status)
 	status.size = Vector2(616, 20)
-	for spec in [["-", 12, 30, -1], ["+", 46, 30, 1], ["FIT", 80, 42, 0], ["WAGON", 126, 60, 2]]:
+	for spec in [["-", 12, 30, -1], ["+", 46, 30, 1], ["FIT", 80, 42, 0], ["PARTY", 126, 60, 2], ["CACHE",190,52,3]]:
 		var button := Button.new()
 		button.text = spec[0]
 		button.position = Vector2(spec[1], 340)
@@ -65,11 +65,12 @@ func _ready() -> void:
 		button.pressed.connect(func():
 			if action == 0: reset_view()
 			elif action == 2: focus_wagon()
+			elif action == 3: focus_cache()
 			else: set_zoom(zoom + action, ORIGIN + MAP_SIZE / 2))
 		add_child(button)
 		button.size = Vector2(spec[2], 18)
 	zoom_label = Label.new()
-	zoom_label.position = Vector2(192, 343)
+	zoom_label.position = Vector2(250, 343)
 	zoom_label.add_theme_font_size_override("font_size", 8)
 	zoom_label.add_theme_color_override("font_color", PAPER)
 	zoom_label.text = "1X"
@@ -77,7 +78,7 @@ func _ready() -> void:
 	var hint := Label.new()
 	hint.add_theme_color_override("font_color", PAPER)
 	hint.text = "SCROLL TO ZOOM / DRAG TO PAN"
-	hint.position = Vector2(226, 343)
+	hint.position = Vector2(282, 343)
 	hint.add_theme_font_size_override("font_size", 8)
 	add_child(hint)
 	close_button = Button.new()
@@ -149,7 +150,8 @@ func open() -> void:
 		where = "outfitting at " + where
 	else:
 		where = "at " + where
-	status.text = ("Day %d  -  %d guide miles traveled  -  %s" % [s.day, s.miles, where]).to_upper()
+	if game.Direction.heading(game)=="east" and j.on_road:where="%d miles east toward %s" % [s.leg_miles,game.route.nodes[s.landmark].name]
+	status.text = ("Day %d  -  guide mile %d  -  %s  -  %s" % [s.day,s.miles,game.Direction.heading(game),where]).to_upper()
 	status.tooltip_text = status.text
 	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	show()
@@ -238,6 +240,12 @@ func _draw_map() -> void:
 		trace(road(path[i], path[i + 1]), JOURNEY, 2)
 	if j.on_road:
 		trace(j.partial, JOURNEY, 2)
+	if game.state.has("trail_history"):
+		for key in game.state.trail_history:
+			var from: String=key.get_slice(">",0)
+			var to: String=key.get_slice(">",1)
+			var edge: Dictionary=game.route.edge_between(from,to)
+			trace(part_of(road(from,to),float(game.state.trail_history[key])/float(edge.miles)),JOURNEY,2)
 	for id in stops:
 		if not game.route.nodes.has(id):
 			continue
@@ -249,6 +257,12 @@ func _draw_map() -> void:
 		map_canvas.draw_rect(Rect2(p - Vector2(r - 1, r - 1), Vector2(r * 2 - 1, r * 2 - 1)), JOURNEY if visited else PAPER)
 	tag(stops["independence"], "INDEPENDENCE", "below")
 	tag(stops["oregon_city"], "OREGON CITY", "left")
+	var cache_at: Variant=cache_point()
+	if cache_at is Vector2:
+		map_canvas.draw_rect(Rect2(cache_at-Vector2(3,3),Vector2(7,5)),Color("e2ab4c"))
+		map_canvas.draw_rect(Rect2(cache_at-Vector2(3,3),Vector2(7,5)),INK,false,1.0)
+		tag(cache_at,"WAGON CACHE","left" if cache_at.distance_to(stops["independence"])<25 else "below")
+
 	# The wagon: a small covered wagon standing on the party's spot, with a blinking ring.
 	var here: Vector2 = (j.here).round()
 	if blink < 0.6:
@@ -269,6 +283,8 @@ func _get_tooltip(at: Vector2) -> String:
 	if data.is_empty() or not Rect2(ORIGIN, MAP_SIZE).has_point(at):
 		return ""
 	at = screen_to_map(at)
+	var cache_at: Variant=cache_point()
+	if cache_at is Vector2 and cache_at.distance_to(at)<7.0/zoom:return "Abandoned wagon · guide mile %d. Travel there to inspect it." % game.wagon_cache.mile
 	var best := ""
 	var nearest := 6.0 / zoom
 	for id in stops:
@@ -323,3 +339,15 @@ func _gui_input(event: InputEvent) -> void:
 		pan += event.relative
 		clamp_pan()
 		accept_event()
+
+func cache_point() -> Variant:
+	var at: Dictionary=game.Direction.cache_position(game)
+	if at.is_empty() or not stops.has(at.from) or not stops.has(at.to):return null
+	var edge: Dictionary=game.route.edge_between(at.from,at.to)
+	return part_of(road(at.from,at.to),float(at.offset)/float(edge.miles))[-1]
+
+func focus_cache() -> void:
+	var at: Variant=cache_point()
+	if not at is Vector2:return
+	pan=MAP_SIZE/2-at*zoom
+	clamp_pan()

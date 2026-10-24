@@ -99,7 +99,7 @@ static func valid_choice(choice: Dictionary) -> bool:
  return not wagon or (choice.effects.get("vehicle") is String and choice.effects.vehicle=="foot")
 static func finish(game,choice: Dictionary) -> void:
  if not choice.get("bandit_wagon",false):return
- game.wagon_cache={}
+ # An older abandoned cache is separate from the wagon being robbed now.
  for body in game.crime.record.remains:
   if body.state=="carried":
    body.state="lying"

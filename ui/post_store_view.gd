@@ -22,7 +22,7 @@ var rows_layer: Control
 var scenes = preload("res://ui/location_scenes.gd").new()
 const SpeechBubble = preload("res://ui/speech_bubble.gd")
 var refreshing := false
-const GOODS := {"produce":"FRUIT/GRN","dried_produce":"DRY FRUIT","food": "FOOD LB", "bullets": "BULLETS", "medicine": "CARE KITS", "clothing": "CLOTHES", "oxen": "OXEN", "wheels": "WHEELS", "axles": "AXLES", "tongues": "TONGUES", "salt": "SALT LB"}
+const GOODS := {"wagon":"WAGON","produce":"FRUIT/GRN","dried_produce":"DRY FRUIT","food": "FOOD LB", "bullets": "BULLETS", "medicine": "CARE KITS", "clothing": "CLOTHES", "oxen": "OXEN", "wheels": "WHEELS", "axles": "AXLES", "tongues": "TONGUES", "salt": "SALT LB"}
 const POST_X := 250
 const PARTY_X := 440
 
@@ -127,6 +127,7 @@ func open(where: String = "") -> void:
 		var goods: String = GOODS.get(row.item, row.item.to_upper())
 		var unit: String = "lb" if row.item in ["food", "salt"] else "each"
 		var tip := "Buy at $%.3f or sell at $%.3f %s. You hold %d. The post can sell %d more and buy %d." % [row.buy_cents / 100.0 / row.amount, row.sell_cents / 100.0 / row.amount, "a pound" if unit == "lb" else "each", row.held, row.can_buy, row.can_sell]
+		if row.item=="wagon":tip="Empty covered wagon: no oxen, food or new household outfit. Your current belongings are loaded. One per store; team and supplies are bought separately."
 		if row.item in game.Produce.ITEMS:tip="One basket = one food unit from 4 lb fresh produce. "+("Dried: lighter, up to 90 days, less vitamin C." if row.item=="dried_produce" else "Fresh: 4 lb, spoils in 3 days, more vitamin C.")+" Only eating it helps; prices are per basket."
 		# Goods move by the unit (a pound, a bullet, an ox). Counts follow the basket, so goods cross over as you choose them.
 		# A passing party prices only what it carries and what it wants; the rest shows a dash.

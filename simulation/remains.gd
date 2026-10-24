@@ -361,7 +361,7 @@ static func valid(r: Dictionary,game) -> bool:
 		if not item is Dictionary or item.size()!=10 or item.get("id")!=index+1 or not item.get("person") is String or item.person in seen:return false
 		seen.append(item.person)
 		if not item.get("name") is String or item.name.is_empty() or item.name.length()>120 or not item.get("cause") is String or item.cause.length()>120:return false
-		if not whole(item.get("day"),0,day) or not whole(item.get("mile"),0,int(game.state.miles)) or item.get("state") not in STATES or not item.get("disturbed") is bool:return false
+		if not whole(item.get("day"),0,day) or not whole(item.get("mile"),0,int(game.route.longest_miles)) or item.get("state") not in STATES or not item.get("disturbed") is bool:return false
 		if item.disturbed and item.state=="lost":return false
 		# Companions who know this body was butchered; they remember it after the meat is gone.
 		if not item.get("witnesses") is Array or (item.state!="processed" and not item.witnesses.is_empty()):return false

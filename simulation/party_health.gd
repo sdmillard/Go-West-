@@ -109,7 +109,7 @@ static func condition_label(health: int) -> String:
 	return "VERY POOR"
 
 static func is_active(member: Dictionary) -> bool:
-	return member.alive and not member.get("departed",false)
+	return member.alive and not member.get("departed",false) and not member.get("guarding",false)
 
 func living_count() -> int:
 	var count := 0
@@ -206,7 +206,7 @@ func _pick_condition(available: Array[String], month: int, region: String) -> St
 # Contagious illness can pass to anyone in the party who is currently well and
 # not immune. People who fell ill today do not pass it on until tomorrow.
 # Daily chance that each well traveler develops scurvy after a long run of
-# meals without fresh meat. It rises every 15 days past onset_days.
+# meals without vitamin-C foods. It rises every 15 days past onset_days.
 func scurvy_chance(days_without_fresh: int) -> float:
 	if scurvy.is_empty() or days_without_fresh <= int(scurvy.onset_days):
 		return 0.0
@@ -214,11 +214,9 @@ func scurvy_chance(days_without_fresh: int) -> float:
 	return minf(float(scurvy.max_chance), float(scurvy.base_chance) + steps * float(scurvy.chance_per_15_days))
 
 func _deficiency(day: int, rations: int, days_without_fresh: int) -> void:
-	var chance := scurvy_chance(days_without_fresh)
-	if chance <= 0.0:
-		return
 	for member in members:
-		if is_active(member) and member.conditions.is_empty() and rng.randf() < chance:
+		var chance := scurvy_chance(int(member.get("vitamin_days",days_without_fresh)))
+		if is_active(member) and member.conditions.is_empty() and chance>0 and rng.randf() < chance:
 			begin_condition(int(member.id), scurvy.condition, day, roll_severity(rations))
 
 func _spread(day: int, rations: int) -> void:
@@ -244,7 +242,7 @@ func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 
 			if not is_active(member):
 				break
 			# Deficiency illness only mends on days with fresh food.
-			if days_without_fresh == 0 or not definition.get("needs_fresh_food", false):
+			if int(member.get("vitamin_days",days_without_fresh)) == 0 or not definition.get("needs_fresh_food", false):
 				active.elapsed += 2 if resting else 1
 			if active.elapsed >= definition.recovery_days:
 				member.conditions.erase(active)
@@ -272,6 +270,7 @@ func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 
 
 func description(member_id: int) -> String:
 	var member: Dictionary = members[member_id]
+	if member.get("guarding",false):return member.name.to_upper()+"\n\nGUARDING THE WAGON\nLast known condition: "+condition_label(int(member.health))+"\nReturn to the map marker to learn what happened.\nTheir party slot remains reserved."
 	if member.get("departed",false):
 		return "%s\n\nLEFT THE PARTY · DAY %d\nLocation: %s\n\n%s" % [member.name.to_upper(),member.departure_day,member.departure_place,"\n".join(member.history)]
 	var lines: Array[String] = [member.name.to_upper()]

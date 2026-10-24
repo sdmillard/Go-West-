@@ -91,5 +91,17 @@
     "dry_weight": 0.175,
     "vitamin_retention": 0.25,
     "batch_units": 8
+  },
+  "replacement_wagon": {
+    "price_cents": 7500,
+    "stock_per_post": 1,
+    "note": "Empty covered wagon, no team or new household outfit. Period-informed $75 base estimate; regional prices apply. Post availability is an authored rescue opportunity, not a verified inventory."
+  },
+  "wagon_guards": {
+    "hunt_below_days": 3,
+    "hunt_hit_chance": 0.55,
+    "departure_chance": 0.12,
+    "raid_injury": 0.35,
+    "note": "Authored offscreen camp abstraction. Guards use cached food, clothing and ammunition; one uncertain hunting shot per outing. Regional animals and health-based hauling apply. Protection lowers but never eliminates cache loss; outcomes are learned on return."
   }
 }
