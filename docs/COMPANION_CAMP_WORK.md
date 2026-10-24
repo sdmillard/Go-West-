@@ -29,3 +29,9 @@ Character schema 4 adds a strictly validated task collection keyed by actual tra
 The genuine schema-3 fixture at tests/fixtures/pre-camp-tasks-v3.json was captured from master aa0a096 before these changes, with rules fingerprint 38d5a0bdaca9f681aca65bb45c0da8a41029739b67400ff71cf0941e09647a75. Its state and random streams migrate unchanged, with no invented assignments. The former fingerprint is whitelisted; camp_tasks.json is now included in the rule signature.
 
 This is an implementation milestone, not a survival balance sign-off. Existing journey actors use group actions. Future comparison actors must assign jobs before measuring possible farmer time savings. The earlier 5-10 / 13-26 day estimates remain hypothetical overlap estimates, not measured results for this feature.
+
+## Validation
+
+Implementation checkpoint f4d42d0 passed all 64 Godot suites in a clean isolated checkout, including 61 companion-work checks. The same sources completed 24 store and 20 outlaw integration journeys with zero reported errors. Native roster views, including the scrolled lower rows, were inspected and shown to Spencer. The new suite exercises overlapping nursing/drying/forage/hunting, per-person recovery, blocked or unwilling workers, morning-only drying, shared kits, patient/helper exclusivity, multi-day rest, small-harvest nutrition/cargo/discards, malformed saves and genuine schema-3 migration.
+
+Current rules fingerprint: 420a7c10d6ec416596c727e16b692d949d15293d85e020f1069d63a734228c08. Logs and verified integration reports remain in ignored .tools/camp-tasks-* files. The initial failed save/observer checks are retained separately from the final passing run. No full-route balance benefit or new art is claimed. Actual player saves and the three preexisting debug pilots were preserved.
