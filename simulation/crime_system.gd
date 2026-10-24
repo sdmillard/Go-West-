@@ -1,6 +1,6 @@
 extends RefCounted
 ## Persistent local people, finite loot and staged incidents. No UI or global RNG.
-const COMMANDS=["theft","robbery","shoot","assault","raid","take","flee","breakout","surrender","finish","payoff","back"]
+const COMMANDS=["theft","robbery","shoot","assault","raid","take","flee","breakout","surrender","finish","payoff","back","ride"]
 const STAGES=["loot","escape","standoff","report","done"]
 const ATTEMPTS=["unseen","noticed","complied","resisted","missed","wounded","killed","raided","caught"]
 const RESOLUTIONS=["","left","escaped","captured","surrendered","party_lost","tried","paid"]
@@ -357,12 +357,15 @@ func menu(game) -> Dictionary:
 			options=[option("Take %d lb food and $%.2f · 1 day" % [loot.food,loot.money/100.0],"take"),option("Leave the supplies and try to get away","flee")]
 	elif current.stage=="escape":
 		text="%s. Staff have been alerted. Attempting escape costs one day; you may be injured or captured. Surrender brings a trial; a known killing can mean hanging." % current.attempt.capitalize()
-		options=[option("Try to escape · 1 day","flee"),option("Surrender","surrender")]
+		options=[option(("Ride for it · 1 day" if game.Mounts.mounted(Wanted.flight_plan(game)) else "Try to escape · 1 day"),"flee"),option("Surrender","surrender")]
+		if Wanted.can_ride_off(game):options.append(option(Wanted.RIDE_LABEL,"ride"))
 	elif current.stage=="standoff":
 		var shots: int=mini(int(scene.breakout_shots),int(game.state.bullets))
 		text=("Soldiers from %s rode after you and have caught up. " % game.route.nodes[place].name if current.action=="pursuit" else "Soldiers have blocked the way out. ")+"Shooting your way out spends up to %d bullets; some of you will likely be hurt, and you may still be taken. Surrender brings a trial; a known killing can mean hanging." % int(scene.breakout_shots)
 		options=[option("Shoot your way out · %d bullet(s)" % shots,"breakout"),option("Surrender","surrender")]
-		if current.action=="pursuit":options.append(option("Flee the detachment · 1 day, risk of capture","flee"))
+		if current.action=="pursuit":
+			options.append(option("Flee the detachment · 1 day, risk of capture","flee"))
+			if Wanted.can_ride_off(game):options.append(option(Wanted.RIDE_LABEL,"ride"))
 	elif current.has("sentence"):
 		text=current.sentence.text
 		options=[option("Acknowledge the sentence","finish")]
@@ -398,8 +401,8 @@ func can_choose(game,command: String) -> bool:
 		var quote:=loot_quote(game,current.place)
 		# Passage is itself the prize at a gate or ferry, even with an empty cash box.
 		return command=="flee" or (command=="take" and (quote.food>0 or quote.money>0 or not quote.get("goods",{}).is_empty() or rules(current.place).kind in ["toll","ferry"]))
-	if current.stage=="standoff":return command=="surrender" or (command=="flee" and current.action=="pursuit") or (command=="breakout" and game.state.bullets>0)
-	return current.stage=="escape" and command in ["flee","surrender"]
+	if current.stage=="standoff":return command=="surrender" or (command=="flee" and current.action=="pursuit") or (command=="ride" and current.action=="pursuit" and Wanted.can_ride_off(game)) or (command=="breakout" and game.state.bullets>0)
+	return current.stage=="escape" and (command in ["flee","surrender"] or (command=="ride" and Wanted.can_ride_off(game)))
 ## Local people who hold any knowledge of this incident; later reports can only come from them.
 func local_witnesses(current: Dictionary) -> Array:
 	# Staff order, not dictionary order: saved JSON sorts keys.
@@ -503,7 +506,7 @@ func advance(game,days: int=1) -> bool:
 func choose(game,command: String) -> bool:
 	if not can_choose(game,command):return false
 	if incident().get("action","")=="wanted":return Wanted.choose(self,game,incident(),command)
-	if incident().get("action","")=="pursuit" and command=="flee":return Wanted.flee_pursuit(self,game,incident())
+	if incident().get("action","")=="pursuit" and command in ["flee","ride"]:return Wanted.flee_pursuit(self,game,incident(),command=="ride")
 	if command in ["back","finish"]:
 		if command=="finish":
 			incident().stage="done"
@@ -572,11 +575,15 @@ func choose(game,command: String) -> bool:
 		if current.attempt=="unseen":result(game,"left")
 		else:current.stage="escape"
 	elif command=="surrender":result(game,"surrendered")
-	elif command=="flee":
+	elif command in ["flee","ride"]:
 		var current:=incident()
+		if command=="ride" and not Wanted.cut_loose(self,game):return false
+		# Riders get clear of the scene more often, though never surely.
+		var capture: float=maxf(minf(float(scene.escape_capture),float(modifiers.floor)),float(scene.escape_capture)-Wanted.flight_bonus(self,game))
+		if store.alarmed:Wanted.ride_hard(game)
 		if store.alarmed:
 			if not advance(game):return true
-			if rng.randf()<scene.escape_capture:
+			if rng.randf()<capture:
 				# Soldiers stop the party instead of simply taking it.
 				if rules(place).kind=="fort":
 					current.stage="standoff"

@@ -69,11 +69,19 @@ Horses, mules, saddles, pack saddles and saddlebags are trade goods at every pos
 
 The horse keys are optional: a party that never bought an animal, and every older record, has none, so their state and saves are unchanged. `tests/fixtures/pre-horses-save-v1.json` is a real save from the previous rules. The previous rules fingerprint is whitelisted in `data/save_migrations.json`.
 
+## Escaping on horseback
+
+- **A bonus, never a sure thing (Spencer).** Riding parties add `mounted_flight_bonus` (0.15, `wanted` in `data/crime_scenes.json`) to their escape odds; horse condition replaces ox condition as the speed term. The 85% escape cap stays, so even riders can be caught. In a crime scene's escape the bonus lowers the capture chance, down to the scene's floor at most.
+- **Doubling up counts as riding** for a getaway: the flight plan always allows two to a saddle. A dash wears the horses as a hard day's ride at the fastest pace, sets the party doubling up when it had to, and can break the animals down.
+- **Cut loose and ride.** A wagon party with horses enough for everyone two to a saddle, and no wagon already left behind, gets a third choice at an escape or a posse standoff: leave the wagon and ride. Nobody planned this, so the game grabs goods in a random order (food, bullets, clothing, medicine, salt; 30 to 100% of each while it fits), sheds food until the load rides, and leaves everything else, spare parts included, in the abandoned wagon at that spot. The journal lists what was grabbed. No extra day passes beyond the flight itself. At a stop, the wagon stands at the end of the leg that led there, so the party can come back for it.
+
 ## Not yet built
 
-Later steps from the design: flight bonuses in the wanted system, and fleeing a wagon on horseback with an automatic, hasty saddlebag pack; a balance study of wagon, packer and walking journeys.
+A balance study of wagon, packer and walking journeys.
 
 ## Validation
+
+`tests/test_horse_flight.gd`: rider, wagon and walker flight odds, the escape cap, worn horses, doubled flight, the hard dash, who can cut loose, the scramble (what fits, the wagon left behind, no extra day, spare parts, the same seed scrambles the same way), saves after a getaway, the ride choice at a noticed theft at Fort Bridger and the save after it, no ride without horses, and the pre-horse-flight fixture.
 
 `tests/test_horse_country.gd`: horse thieves (two horses, mules when there are no horses, one led horse behind a wagon), no thieves without animals, the night guard's effect and fatigue, saves, butchering horses and mules (condition, by hand), the Nez Perce traders (terms, day, stock, saves), regional sell prices with the resale cap, the pre-horse-thieves fixture, and the Travel and Supplies buttons.
 
