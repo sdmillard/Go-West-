@@ -12,6 +12,7 @@ const Guards=preload("res://simulation/wagon_guards.gd")
 const CacheSupport=preload("res://simulation/wagon_cache.gd")
 const Remains=preload("res://simulation/remains.gd")
 const Mounts=preload("res://simulation/mounts.gd")
+var camp_repair=preload("res://simulation/camp_repair.gd").new()
 var camp_tasks=preload("res://simulation/camp_tasks.gd").new()
 var wagon_cache: Dictionary={}
 const MAX_TRAVELERS := 32
@@ -416,6 +417,7 @@ func configure(pace: int, rations: int) -> void:
 		state.rations = clampi(rations, 0, 2)
 
 func travel() -> bool:
+	if camp_repair.blocked(self):return false
 	if not _can_act():
 		return false
 	if walking_overloaded():return true
@@ -489,6 +491,8 @@ func can_choose(index: int) -> bool:
 	if pending.get("riders_menu",false):return crime.Wanted.can_choose_rider(self,index)
 	if pending.get("attack_menu",false):return int(choice.get("attack_target",-1))<0 or (crime.attack_ready(self,int(choice.attack_target)) and (choice.get("unarmed",false) or state.bullets>0))
 	if pending.get("remains_menu",false):return Remains.can_choose(self,str(choice.get("remains_command","")),int(choice.get("remains_id",0)),int(choice.get("member",-1)))
+	if camp_repair.blocked(self) and choice.get("action","") in ["leave","cross"]:return false
+	if choice.has("camp_repair_part") and (state.vehicle!="wagon" or not camp_repair.work.is_empty()):return false
 	if choice.get("care",0)==12 and not context.local_care(self):return false
 	if choice.get("method","")=="ferry" and crime.ferry_refused(self,str(state.landmark)):return false
 	if not context.can_trade(choice) or not crime.can_trade(self,choice) or (choice.has("activity") and choice.activity in context.record.activities):return false
@@ -510,6 +514,10 @@ func choose(index: int) -> bool:
 	if pending.has("landmark"):
 		return _choose_landmark(index)
 	var choice: Dictionary = pending.choices[index]
+	if choice.get("camp_repair_part","") in camp_repair.PARTS:
+		if not camp_repair.queue(self,str(choice.camp_repair_part)):return false
+		pending={}
+		return true
 	var member_id: int = pending.get("member_id", 0)
 	var fight_id: String=pending.id
 	var friendly: bool=pending.get("friendly",false)
@@ -555,6 +563,8 @@ func _can_act() -> bool:
 	return pending.is_empty() and state.status == "traveling" and hunt.is_empty()
 
 func _tick_day(resting: bool, team_working: bool = false, camp_action: String = "") -> void:
+	state.erase("camp_watch_day")
+	state.erase("camp_watch_member")
 	if not resting or (not camp_action.is_empty() and camp_action!="rest"):camp_tasks.end_leader_nursing(self)
 	if state.extended_route and not camp_action.is_empty():camp_tasks.begin(self,camp_action)
 	var sick_before: bool=characters.has_sick(self)
@@ -569,7 +579,7 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 		var riding: bool=team_working and Mounts.mounted(mount_plan())
 		state.fatigue = clampi(int(state.fatigue) + ((1 + int(state.pace) if riding else 2 + int(state.pace) * 2) if team_working else (-14 if resting else -6)), 0, 100)
 		# Standing watch over the stock costs sleep every night.
-		if state.get("night_guard",false) and Mounts.animals(state)>0:state.fatigue=mini(100,int(state.fatigue)+int(provisions.data.mounts.guard_fatigue))
+		if not camp_tasks.enabled() and state.get("night_guard",false) and Mounts.animals(state)>0:state.fatigue=mini(100,int(state.fatigue)+int(provisions.data.mounts.guard_fatigue))
 		if not team_working and current_edge().get("hazard","")!="waterless":
 			state.ox_health = mini(100, int(state.ox_health) + (int(seasonal_pressure().rest_ox_recovery) if resting else mini(2,int(seasonal_pressure().rest_ox_recovery))))
 		elif state.vehicle!="foot":
@@ -640,6 +650,7 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 	_check_health()
 	var camp_rest: Dictionary=camp_tasks.day_plan.get("rest",{}).duplicate()
 	if state.extended_route and not camp_tasks.day_plan.is_empty():camp_tasks.finish(self)
+	if state.extended_route and camp_rest.is_empty():camp_tasks.other_day_watch(self)
 	if state.extended_route:social.tick(self,resting,fed)
 	if state.extended_route:Guards.tick(self)
 	characters.daily(self,resting,team_working,sick_before,camp_rest)
@@ -778,6 +789,7 @@ func _roll_trail_event() -> void:
 	var candidates: Array = []
 	var weight := 0
 	for event in trail_events.events:
+		if camp_repair.blocked(self) and event.id=="breakdown":continue
 		if state.vehicle=="foot" and event.id in ["breakdown","wagon_fire","swamped_load","hail_damage"]:continue
 		if state.oxen==0 and event.id=="ox_injury":continue
 		if state.oxen<2 and event.id=="stampede":continue
@@ -793,7 +805,7 @@ func _roll_trail_event() -> void:
 			weighted=event.duplicate(true)
 			weighted.weight=int(event.weight)*int(UNREST.weight_factor)
 		# A night guard on the picket line keeps most horse thieves away.
-		if event.id=="horse_thieves" and state.get("night_guard",false):
+		if event.id=="horse_thieves" and camp_tasks.stock_guarded(self):
 			weighted=weighted.duplicate(true)
 			weighted.weight=maxi(1,int(weighted.weight)/int(provisions.data.mounts.guard_factor))
 		candidates.append(weighted)
@@ -836,12 +848,14 @@ func _present_trail_event(event: Dictionary) -> void:
 		if choice.get("service", "") == "repair":
 			choice["requires"] = {part: 1}
 			choice["effects"] = {part: -1}
-		elif content.id=="breakdown" and characters.available(self,"Carpentry") and choice.get("effects",{}).get("days",0)>1:
+		elif content.id=="breakdown" and not camp_tasks.enabled() and characters.available(self,"Carpentry") and choice.get("effects",{}).get("days",0)>1:
 			var original_days: int=choice.effects.days
 			var days: int=maxi(1,int(choice.effects.days)-int(characters.benefits.carpentry_days_saved))
 			choice.effects.days=days
 			choice.label=choice.label.replace("%d days" % original_days,"%d day(s)" % days)+" · carpenter"
 			choice.result="The repair is complete after %d day(s), with a companion's carpentry." % days
+	if content.id=="breakdown":
+		content.choices.append({"label":"Make camp and assign a repair crew","camp_repair_part":part,"effects":{},"result":"Stopped to organize the repair."})
 	if content.has("condition"):
 		var severity: int = party_health.roll_severity(state.rations) if party_health.conditions[content.condition].kind == "illness" else 1
 		party_health.begin_condition(member_id, content.condition, state.day, severity)

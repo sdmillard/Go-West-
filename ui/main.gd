@@ -692,13 +692,16 @@ func _show_section(section: String) -> void:
 				doubling.name="DoubleUp"
 				doubling.tooltip_text="Without a wagon and with too few saddles, two ride each saddled animal. You keep riding pace, but the animals wear out about four times as fast. Good for a getaway, not for the long road."
 				section_rows.add_child(doubling)
-				var guard:=button("NIGHT GUARD ON THE STOCK: "+("ON" if game.state.get("night_guard",false) else "OFF"),func():
-					game.set_night_guard(not game.state.get("night_guard",false))
-					_refresh()
-					_show_section("Travel"))
-				guard.name="NightGuard"
-				guard.tooltip_text="Someone stands watch over the horses and mules each night. Horse thieves seldom get past a guard, but the watch costs sleep: the party tires faster."
-				section_rows.add_child(guard)
+				if game.camp_tasks.enabled():
+					section_rows.add_child(label("Stock watch: assign Guard stock in Camp."))
+				else:
+					var guard:=button("NIGHT GUARD ON THE STOCK: "+("ON" if game.state.get("night_guard",false) else "OFF"),func():
+						game.set_night_guard(not game.state.get("night_guard",false))
+						_refresh()
+						_show_section("Travel"))
+					guard.name="NightGuard"
+					guard.tooltip_text="Someone stands watch over the horses and mules each night. Horse thieves seldom get past a guard, but the watch costs sleep: the party tires faster."
+					section_rows.add_child(guard)
 			section_rows.add_child(label("Choices take effect on the next trail day."))
 		"Camp":
 			var note:=label("Opening camp spends no time or supplies.\nChoose an activity; rest is optional.")
@@ -733,7 +736,7 @@ func _show_section(section: String) -> void:
 				task_cell.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 				row.add_child(task_cell)
 				var why: String=game.camp_tasks.reason(game,id,task.job,int(task.patient))
-				var detail:=label(why if not why.is_empty() else {"rest":"Rest recovery; no work.","forage":"Seasonal yield, shared carrying room; food arrives after meals.","dry":"Morning meat after meals; one worker handles the available batch.","salt_dry":"Morning meat and available salt; one worker per batch.","nurse":"1 care kit / day while needed; caregiver improves treatment.","hunt_help":"Works only when you hunt; adds hauling and Hunter benefits."}[task.job])
+				var detail:=label(why if not why.is_empty() else {"rest":"Rest recovery; no work.","forage":"Seasonal yield, shared carrying room; food arrives after meals.","dry":"Morning meat after meals; one worker handles the available batch.","salt_dry":"Morning meat and available salt; one worker per batch.","nurse":"1 care kit / day while needed; caregiver improves treatment.","hunt_help":"Works only when you hunt; adds hauling and Hunter benefits.","repair_patch":"Patch the broken part: one kit to start, two work units; Carpenter works faster.","repair_wood":"Carpentry required: three work units, no kit. Progress survives interruption.","guard":"Stand watch over horses/mules; uses the existing theft protection once. No rest recovery."}[task.job])
 				if why.is_empty() and task.job in ["dry","salt_dry"]:
 					var work: Dictionary=game.preservation_offer(task.job=="salt_dry")
 					detail.text="Up to %.0f lb > %d food; %d lb salt. Meals first." % [work.mass,work.kept,work.salt]
@@ -741,7 +744,7 @@ func _show_section(section: String) -> void:
 					var offer: Dictionary=game.forage_offer(true)
 					var amount: float=float(member.health)/100.0*float(offer.factor)
 					detail.text="About %.1f-%.1f lb; weather / cargo may reduce it." % [game.provisions.data.foraging.lb_per_worker[0]*amount,game.provisions.data.foraging.lb_per_worker[1]*amount]
-				pick.tooltip_text=detail.text+"\nWorkers miss rest recovery. Unassigned companions rest; hunt helpers haul only when you hunt. Jobs pause on travel, crossing and trading days."
+				pick.tooltip_text=detail.text+"\nWorkers miss rest recovery. Unassigned companions rest; hunt helpers haul only when you hunt. Camp chores pause on travel, crossing and trading days; named guards still stand night watch."
 				if nursing_patients.has(id):
 					pick.text="Rest · being nursed"
 					pick.disabled=true
@@ -753,6 +756,27 @@ func _show_section(section: String) -> void:
 			cost_label.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 			cost_label.tooltip_text="Estimate with the leader resting, based on morning supplies. Your chosen action can change available inputs; wages follow existing payment terms. Jobs share one day. Hunting uses only the bullets you fire.\n"+"\n".join(costs.notes)
 			section_rows.add_child(cost_label)
+			if game.camp_repair.blocked(game):
+				var project: Dictionary=game.camp_repair.work
+				var status:=label("BROKEN "+str(project.part).to_upper()+" · "+str(project.progress)+" WORK DONE"+(" · "+str(project.method).to_upper() if not str(project.method).is_empty() else ""))
+				status.tooltip_text="Wagon travel is stopped until repaired or a spare is fitted. Progress belongs to the wagon and survives interruptions."
+				section_rows.add_child(status)
+				if not str(project.method).is_empty():status.text="BROKEN "+str(project.part).to_upper()+" · "+str(project.method).to_upper()+" "+str(project.progress)+"/"+str(game.camp_tasks.rules.repair_work_days[project.method])+" WORK"
+				var self_repair:=MenuButton.new()
+				self_repair.text="WORK ON REPAIR YOURSELF >"
+				for method in ["patch","wood"]:
+					var item: int=0 if method=="patch" else 1
+					self_repair.get_popup().add_item(method.to_upper()+" · 1 WORK DAY",item)
+					var why: String=game.camp_repair.reason(game,0,method)
+					self_repair.get_popup().set_item_disabled(item,not why.is_empty())
+					self_repair.get_popup().set_item_tooltip(item,why if not why.is_empty() else "Spend the leader's day on this repair. Nursing the leader ends before work starts.")
+				self_repair.get_popup().id_pressed.connect(func(item: int):_section_action(_work_on_wagon.bind("patch" if item==0 else "wood")))
+				section_rows.add_child(self_repair)
+				if int(game.state.get(project.part,0))>0:section_rows.add_child(button("FIT SPARE "+str(project.part).to_upper()+" · NO DAY",func():
+					game.camp_repair.fit_spare(game)
+					_refresh()
+					_show_section.call_deferred("Companion tasks")))
+			if costs.watch:section_rows.add_child(label("STOCK WATCH: ONE ASSIGNED GUARD"))
 			if not costs.notes.is_empty():
 				var blocked:=label("SOME JOBS CANNOT RUN · HOVER FOR DETAILS")
 				blocked.tooltip_text="\n".join(costs.notes)
@@ -838,6 +862,11 @@ func _show_drop_supplies() -> void:
 	supplies_window.hide()
 	drop_window.open(game)
 
+func _work_on_wagon(method: String) -> void:
+	if game.camp_repair.leader_work(game,method):
+		_refresh()
+		if game.can_service():_show_section("Companion tasks")
+
 func _fit_camp_roster() -> void:
 	# Let the table and wrapped cost labels settle before choosing the dialog height.
 	await get_tree().process_frame
@@ -876,10 +905,19 @@ func _camp_task_menu(id: int,task: Dictionary) -> MenuButton:
 	patients.id_pressed.connect(func(patient: int):_set_camp_task(id,"nurse",patient))
 	menu.add_child(patients)
 	menu.add_submenu_item("Nursing","NursingTargets",game.camp_tasks.JOBS.find("nurse"))
+	var repairs:=PopupMenu.new()
+	repairs.name="RepairOptions"
+	repairs.add_item("Patch · kit required to start",game.camp_tasks.JOBS.find("repair_patch"))
+	repairs.add_item("Make wooden repair · Carpenter",game.camp_tasks.JOBS.find("repair_wood"))
+	repairs.id_pressed.connect(_assign_camp_task.bind(id))
+	menu.add_child(repairs)
+	menu.add_submenu_item("Repair wagon","RepairOptions",20)
+	menu.add_item("Guard stock",game.camp_tasks.JOBS.find("guard"))
+	menu.set_item_tooltip(menu.item_count-1,"Watch horses and mules at night. In camp this costs the worker's rest; on travel nights the existing watch sleep cost applies. Protection never stacks.")
 	menu.add_item("Help leader hunt",game.camp_tasks.JOBS.find("hunt_help"))
 	menu.set_item_tooltip(menu.item_count-1,"Join your hunt, adding hauling and Hunter benefits. Rest when the leader does something else.")
 	menu.id_pressed.connect(func(item: int):
-		if item not in [game.camp_tasks.JOBS.find("dry"),game.camp_tasks.JOBS.find("nurse")]:_assign_camp_task(item,id))
+		if item not in [20,game.camp_tasks.JOBS.find("dry"),game.camp_tasks.JOBS.find("nurse")]:_assign_camp_task(item,id))
 	return choice
 
 func _camp_cell(content: Control,width: int=0) -> PanelContainer:
@@ -1640,7 +1678,7 @@ func _refresh() -> void:
 		landscape.river_scene = game.route.nodes[s.next_landmark].kind == "river" and s.leg_length - s.leg_miles <= 12
 	var animating: bool = not landscape.crossing.is_empty()
 	landscape.scrolling = traveling and landscape.scene_id.is_empty() and not animating
-	var blocked: bool = animating or _reviewing_crossing() or not game.pending.is_empty() or s.status != "traveling"
+	var blocked: bool = animating or _reviewing_crossing() or not game.pending.is_empty() or s.status != "traveling" or game.camp_repair.blocked(game)
 	travel_button.disabled = blocked
 	travel_button.text = "PAUSE" if traveling else "CONTINUE >"
 	rest_button.disabled = animating or _reviewing_crossing() or not (game.can_service() or game._can_act())

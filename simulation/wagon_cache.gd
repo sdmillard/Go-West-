@@ -78,6 +78,9 @@ static func pack(game,cart: Dictionary,from_cache: bool=false,guard_ids: Array=[
 		game.state[key]=int(offer.inventory[key])
 	if not from_cache:
 		game.wagon_cache={"household_gear_lb":maxf(0.0,game.provisions.household_mass(game.state)-float(game.provisions.data.walking.personal_gear_lb_per_person)*(int(game.state.party_size)-guard_ids.size())),"location":location(game),"mile":int(game.state.miles),"day":int(game.state.day)+(0 if forced else 1),"found":true,"inventory":left,"fresh":offer.stored.duplicate(true)}
+		if not game.camp_repair.work.is_empty():
+			game.wagon_cache["camp_repair"]=game.camp_repair.work.duplicate(true)
+			game.camp_repair.work={}
 		game.Guards.assign(game,guard_ids)
 	else:
 		game.wagon_cache.inventory=left
@@ -159,6 +162,7 @@ static func _recover_here(game) -> bool:
 	game.state.parts=game.state.wheels+game.state.axles+game.state.tongues
 	game.state["household_gear_lb"]=game.provisions.household_mass(game.state)+float(game.wagon_cache.get("household_gear_lb",maxf(0.0,float(game.provisions.data.household_gear_lb)-float(game.provisions.data.walking.personal_gear_lb_per_person)*int(game.state.party_size))))
 	game.state.vehicle="wagon"
+	game.camp_repair.work=game.wagon_cache.get("camp_repair",{}).duplicate(true)
 	game.wagon_cache={}
 	game._tick_day(false)
 	game.journal.append("Day %d · Recovered and hitched the wagon. Forward progress resumes from mile %d; backtracking miles must be traveled again." % [game.state.day,game.state.miles])
@@ -188,6 +192,7 @@ static func valid(value: Variant,game,day: int) -> bool:
 		var mileage:=0
 		for index in range(at.path.size()-1):mileage+=int(game.route.edge_between(at.path[index],at.path[index+1]).miles)
 		if mileage+int(at.offset)!=int(value.mile):return false
+	if not game.camp_repair.valid(value.get("camp_repair",{}),game):return false
 	if not game.Guards.valid(value,game,day):return false
 	if value.inventory.size()!=game.provisions.data.weights_lb.size():return false
 	for key in game.provisions.data.weights_lb:

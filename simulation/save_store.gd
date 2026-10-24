@@ -25,7 +25,7 @@ func capture(game) -> Dictionary:
 		return {}
 	return normalize({"format": FORMAT, "version": VERSION, "rules": fingerprint(),
 		"recruitment":game.recruitment.snapshot(),"social":game.social.snapshot(),"crime":game.crime.snapshot(),
-		"characters_version":4,"camp_tasks":game.camp_tasks.snapshot(),"characters":game.characters.profiles.duplicate(true),
+		"camp_repair":game.camp_repair.work.duplicate(true),"characters_version":4,"camp_tasks":game.camp_tasks.snapshot(),"characters":game.characters.profiles.duplicate(true),
 		"combat_history":game.combat.history.duplicate(true),"context":game.context.record.duplicate(true),"route_end":game.route.end_id,"wagon_cache":game.wagon_cache.duplicate(true), "state":game.state.duplicate(true), "pending":game.pending.duplicate(true),
 		"seen":game.seen.duplicate(), "journal":Array(game.journal),
 		"last_crossing":game.last_crossing.duplicate(true), "crossing_history":game.crossing_history.duplicate(true),
@@ -134,6 +134,7 @@ func valid_menu(menu: Dictionary, game, count: int=5) -> bool:
 		if choice.has("portage_risk") and (choice.get("action","")!="leave" or not (choice.portage_risk is int or choice.portage_risk is float) or not is_finite(float(choice.portage_risk)) or choice.portage_risk<0 or choice.portage_risk>1):return false
 		if choice.has("edge") and (choice.get("action","")!="leave" or not menu.has("landmark") or not integer(choice.edge,1,game.route.nodes[menu.landmark].next.size()-1)):return false
 		if menu.has("crime_menu") and (menu.crime_menu!=true or menu.id!="crime" or not menu.get("service_menu",false) or choice.get("crime_command","") not in game.crime.COMMANDS):return false
+		if choice.has("camp_repair_part") and (menu.id!="breakdown" or choice.camp_repair_part not in ["wheels","axles","tongues"] or not choice.get("effects",{}) is Dictionary or not choice.get("effects",{}).is_empty()):return false
 		if choice.has("crime_command") and not menu.get("crime_menu",false):return false
 		if menu.has("attack_menu") and (menu.attack_menu!=true or menu.id!="attack" or not menu.get("service_menu",false) or not integer(choice.get("attack_target"),-1,count-1)):return false
 		if choice.has("attack_target") and not menu.get("attack_menu",false):return false
@@ -355,6 +356,11 @@ func restore(value: Variant):
 	if s.get("camp_greens_lb",0)>0:
 		if not integer(s.get("camp_greens_expires"),int(s.day)+1,int(s.day)+int(game.provisions.data.foraging.fresh_days)+1):return null
 	elif s.get("camp_greens_expires",0)!=0:return null
+	if not game.camp_repair.valid(value.get("camp_repair",{}),game):return null
+	game.camp_repair.work=normalize(value.get("camp_repair",{}))
+	if not game.camp_repair.work.is_empty() and s.vehicle!="wagon":return null
+	if s.has("camp_watch_day")!=s.has("camp_watch_member"):return null
+	if s.has("camp_watch_day") and (not integer(s.camp_watch_day,0,int(s.day)) or not integer(s.camp_watch_member,1,value.party.size()-1)):return null
 	game.combat.history.assign(normalize(value.get("combat_history",[])))
 	game.context.record=normalize(value.get("context",{"spent":{},"activities":[],"prepared":[]}))
 	game.wagon_cache=normalize(value.get("wagon_cache",{}))
