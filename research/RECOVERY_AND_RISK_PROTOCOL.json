@@ -1,0 +1,454 @@
+{
+  "date": "2026-10-24",
+  "baseline_game_commit": "d9ad653",
+  "baseline_with_identical_policy_commit": "361055f",
+  "after_game_commit": "6de28c5",
+  "exclusions": "Dev-01 pilots predate sustained-treatment decisions and are excluded. No numerical change to travel speed, shopping, rest or hunting-day costs. Patient-rest limits are study decisions only. Emergency snapshots are declared fixtures.",
+  "cohorts": [
+    {
+      "id": "cautious_before",
+      "kind": "broad",
+      "dimensions": {
+        "profession": [
+          "farmer",
+          "carpenter",
+          "banker"
+        ],
+        "month": [
+          4,
+          5
+        ],
+        "roster": [
+          "ordinary"
+        ],
+        "strategy": [
+          "salt"
+        ],
+        "seed": [
+          81000,
+          81001,
+          81002,
+          81003
+        ]
+      },
+      "files": [
+        ".tools/recovery-evidence/balance-recovery-before-dev-cautious-02-farmer.json",
+        ".tools/recovery-evidence/balance-recovery-before-dev-cautious-02-carpenter.json",
+        ".tools/recovery-evidence/balance-recovery-before-dev-cautious-02-banker.json"
+      ]
+    },
+    {
+      "id": "cautious_after",
+      "kind": "broad",
+      "dimensions": {
+        "profession": [
+          "farmer",
+          "carpenter",
+          "banker"
+        ],
+        "month": [
+          4,
+          5
+        ],
+        "roster": [
+          "ordinary"
+        ],
+        "strategy": [
+          "salt"
+        ],
+        "seed": [
+          81000,
+          81001,
+          81002,
+          81003
+        ]
+      },
+      "files": [
+        ".tools/recovery-evidence/balance-recovery-publication-dev-cautious-02-farmer.json",
+        ".tools/recovery-evidence/balance-recovery-publication-dev-cautious-02-carpenter.json",
+        ".tools/recovery-evidence/balance-recovery-publication-dev-cautious-02-banker.json"
+      ]
+    },
+    {
+      "id": "cautious_validation",
+      "kind": "broad",
+      "dimensions": {
+        "profession": [
+          "farmer",
+          "carpenter",
+          "banker"
+        ],
+        "month": [
+          4,
+          5
+        ],
+        "roster": [
+          "ordinary"
+        ],
+        "strategy": [
+          "salt"
+        ],
+        "seed": [
+          82000,
+          82001,
+          82002,
+          82003,
+          82004,
+          82005,
+          82006,
+          82007
+        ]
+      },
+      "files": [
+        ".tools/recovery-evidence/balance-recovery-heldout-cautious-01-farmer.json",
+        ".tools/recovery-evidence/balance-recovery-heldout-cautious-01-carpenter.json",
+        ".tools/recovery-evidence/balance-recovery-heldout-cautious-01-banker.json"
+      ]
+    },
+    {
+      "id": "traveler_before",
+      "kind": "broad",
+      "dimensions": {
+        "profession": [
+          "farmer",
+          "carpenter",
+          "banker"
+        ],
+        "month": [
+          4,
+          5
+        ],
+        "roster": [
+          "ordinary"
+        ],
+        "strategy": [
+          "salt"
+        ],
+        "seed": [
+          81000,
+          81001,
+          81002,
+          81003
+        ]
+      },
+      "files": [
+        ".tools/recovery-evidence/balance-recovery-before-dev-traveler-02-farmer.json",
+        ".tools/recovery-evidence/balance-recovery-before-dev-traveler-02-carpenter.json",
+        ".tools/recovery-evidence/balance-recovery-before-dev-traveler-02-banker.json"
+      ]
+    },
+    {
+      "id": "traveler_after",
+      "kind": "broad",
+      "dimensions": {
+        "profession": [
+          "farmer",
+          "carpenter",
+          "banker"
+        ],
+        "month": [
+          4,
+          5
+        ],
+        "roster": [
+          "ordinary"
+        ],
+        "strategy": [
+          "salt"
+        ],
+        "seed": [
+          81000,
+          81001,
+          81002,
+          81003
+        ]
+      },
+      "files": [
+        ".tools/recovery-evidence/balance-recovery-publication-dev-traveler-02-farmer.json",
+        ".tools/recovery-evidence/balance-recovery-publication-dev-traveler-02-carpenter.json",
+        ".tools/recovery-evidence/balance-recovery-publication-dev-traveler-02-banker.json"
+      ]
+    },
+    {
+      "id": "traveler_validation",
+      "kind": "broad",
+      "dimensions": {
+        "profession": [
+          "farmer",
+          "carpenter",
+          "banker"
+        ],
+        "month": [
+          4,
+          5
+        ],
+        "roster": [
+          "ordinary"
+        ],
+        "strategy": [
+          "salt"
+        ],
+        "seed": [
+          82000,
+          82001,
+          82002,
+          82003,
+          82004,
+          82005,
+          82006,
+          82007
+        ]
+      },
+      "files": [
+        ".tools/recovery-evidence/balance-recovery-heldout-traveler-01-farmer.json",
+        ".tools/recovery-evidence/balance-recovery-heldout-traveler-01-carpenter.json",
+        ".tools/recovery-evidence/balance-recovery-heldout-traveler-01-banker.json"
+      ]
+    },
+    {
+      "id": "bold_before",
+      "kind": "broad",
+      "dimensions": {
+        "profession": [
+          "farmer",
+          "carpenter",
+          "banker"
+        ],
+        "month": [
+          4,
+          5
+        ],
+        "roster": [
+          "ordinary"
+        ],
+        "strategy": [
+          "steady"
+        ],
+        "seed": [
+          81000,
+          81001,
+          81002,
+          81003
+        ]
+      },
+      "files": [
+        ".tools/recovery-evidence/balance-recovery-before-dev-bold-02-farmer.json",
+        ".tools/recovery-evidence/balance-recovery-before-dev-bold-02-carpenter.json",
+        ".tools/recovery-evidence/balance-recovery-before-dev-bold-02-banker.json"
+      ]
+    },
+    {
+      "id": "bold_after",
+      "kind": "broad",
+      "dimensions": {
+        "profession": [
+          "farmer",
+          "carpenter",
+          "banker"
+        ],
+        "month": [
+          4,
+          5
+        ],
+        "roster": [
+          "ordinary"
+        ],
+        "strategy": [
+          "steady"
+        ],
+        "seed": [
+          81000,
+          81001,
+          81002,
+          81003
+        ]
+      },
+      "files": [
+        ".tools/recovery-evidence/balance-recovery-publication-dev-bold-02-farmer.json",
+        ".tools/recovery-evidence/balance-recovery-publication-dev-bold-02-carpenter.json",
+        ".tools/recovery-evidence/balance-recovery-publication-dev-bold-02-banker.json"
+      ]
+    },
+    {
+      "id": "bold_validation",
+      "kind": "broad",
+      "dimensions": {
+        "profession": [
+          "farmer",
+          "carpenter",
+          "banker"
+        ],
+        "month": [
+          4,
+          5
+        ],
+        "roster": [
+          "ordinary"
+        ],
+        "strategy": [
+          "steady"
+        ],
+        "seed": [
+          82000,
+          82001,
+          82002,
+          82003,
+          82004,
+          82005,
+          82006,
+          82007
+        ]
+      },
+      "files": [
+        ".tools/recovery-evidence/balance-recovery-heldout-bold-01-farmer.json",
+        ".tools/recovery-evidence/balance-recovery-heldout-bold-01-carpenter.json",
+        ".tools/recovery-evidence/balance-recovery-heldout-bold-01-banker.json"
+      ]
+    },
+    {
+      "id": "emergency_before",
+      "kind": "emergency",
+      "dimensions": {
+        "mode": [
+          "wagon",
+          "walking",
+          "packing",
+          "mounted"
+        ],
+        "health_case": [
+          "ordinary",
+          "weakened",
+          "broken_leg"
+        ],
+        "distance": [
+          30,
+          75,
+          150
+        ],
+        "month": [
+          6,
+          8
+        ],
+        "seed": [
+          83000,
+          83001,
+          83002,
+          83003
+        ]
+      },
+      "files": [
+        ".tools/recovery-evidence/recovery-emergency-before-dev-02.json"
+      ]
+    },
+    {
+      "id": "emergency_after",
+      "kind": "emergency",
+      "dimensions": {
+        "mode": [
+          "wagon",
+          "walking",
+          "packing",
+          "mounted"
+        ],
+        "health_case": [
+          "ordinary",
+          "weakened",
+          "broken_leg"
+        ],
+        "distance": [
+          30,
+          75,
+          150
+        ],
+        "month": [
+          6,
+          8
+        ],
+        "seed": [
+          83000,
+          83001,
+          83002,
+          83003
+        ]
+      },
+      "files": [
+        ".tools/recovery-evidence/recovery-emergency-publication-dev-02.json"
+      ]
+    },
+    {
+      "id": "emergency_validation",
+      "kind": "emergency",
+      "dimensions": {
+        "mode": [
+          "wagon",
+          "walking",
+          "packing",
+          "mounted"
+        ],
+        "health_case": [
+          "ordinary",
+          "weakened",
+          "broken_leg"
+        ],
+        "distance": [
+          30,
+          75,
+          150
+        ],
+        "month": [
+          6,
+          8
+        ],
+        "seed": [
+          84000,
+          84001,
+          84002,
+          84003,
+          84004,
+          84005,
+          84006,
+          84007
+        ]
+      },
+      "files": [
+        ".tools/recovery-evidence/recovery-emergency-heldout-01.json"
+      ]
+    }
+  ],
+  "comparisons": [
+    [
+      "cautious_before",
+      "cautious_after"
+    ],
+    [
+      "traveler_before",
+      "traveler_after"
+    ],
+    [
+      "bold_before",
+      "bold_after"
+    ],
+    [
+      "emergency_before",
+      "emergency_after"
+    ]
+  ],
+  "frozen_validation": [
+    [
+      "cautious_after",
+      "cautious_validation"
+    ],
+    [
+      "traveler_after",
+      "traveler_validation"
+    ],
+    [
+      "bold_after",
+      "bold_validation"
+    ],
+    [
+      "emergency_after",
+      "emergency_validation"
+    ]
+  ]
+}

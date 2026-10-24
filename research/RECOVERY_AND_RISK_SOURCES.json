@@ -1,0 +1,39 @@
+{
+  "reviewed": "2026-10-24",
+  "sources": [
+    {
+      "id": "nhs-scurvy",
+      "url": "https://www.nhs.uk/conditions/scurvy/",
+      "date": "Page reviewed September 27, 2023; accessed October 24, 2026",
+      "supports": "Vitamin C deficiency is treatable; mild cases can respond to dietary fruit/vegetables and improvement commonly occurs within days.",
+      "limits": "Not a measured 1848 dose or a guarantee that any small basket treats severe scurvy. Exact game feeding threshold and damage remain authored."
+    },
+    {
+      "id": "gilley-2024",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11316608/",
+      "date": "2024 primary pediatric case series, 47 patients",
+      "supports": "Vitamin C deficiency can produce major gait and musculoskeletal symptoms and responds to treatment; prompt recognition matters.",
+      "limits": "Selected modern pediatric clinical sample, not an emigrant survival-rate or pack-strength study. Therapeutic supplementation is not directly equivalent to the game's fruit basket."
+    },
+    {
+      "id": "merck-scurvy",
+      "url": "https://www.merckmanuals.com/professional/nutritional-disorders/vitamin-deficiency-dependency-and-toxicity/vitamin-c-deficiency?media=print",
+      "date": "Contemporary professional reference, accessed October 24, 2026",
+      "supports": "Functions can improve within days of treatment while some signs take weeks to resolve.",
+      "limits": "Game does not prescribe doses or model clinical physiology; the retained fourteen nutritional recovery-day requirement is a game rule."
+    },
+    {
+      "id": "load-evidence",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3922835/",
+      "date": "2013/2014 primary load-carriage study; previously reviewed",
+      "supports": "Load has a real work and energy cost.",
+      "limits": "Does not establish that a game health score equals a linear percentage of pack strength, or validate the new authored relief curve."
+    },
+    {
+      "id": "user-playstyle",
+      "date": "Spencer, October 24, 2026",
+      "supports": "Usually keeps moving with ill companions; ordinary stops around one day, longer only for serious problems; September arrival is a useful classic-play benchmark.",
+      "limits": "A playstyle target, not a measured historical arrival distribution. No travel speed, store-day cost or rest-day cost was changed to force that date."
+    }
+  ]
+}

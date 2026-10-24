@@ -1,6 +1,6 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 24, 2026, after horse travel step 4 (see [horses and mules](HORSES.md)), return travel, wagon guards, wagon sales, robbery demands and resizing. **Latest checkpoint:** see the final section below and [total survival balance](TOTAL_SURVIVAL_BALANCE.md) and [sales, demands and display](WAGON_SALES_ROBBERY_AND_DISPLAY.md). Earlier sections are chronological records of prior checkpoints.
+Last updated October 24, 2026, after horse travel step 4 (see [horses and mules](HORSES.md)), return travel, wagon guards, wagon sales, robbery demands and resizing. **Latest checkpoint:** see the final section below and [nutrition, packs and risk](NUTRITION_PACKS_AND_RISK.md) and [sales, demands and display](WAGON_SALES_ROBBERY_AND_DISPLAY.md). Earlier sections are chronological records of prior checkpoints.
 
 ## Resume here
 
@@ -454,3 +454,22 @@ Fresh broad validation 672/1,620 arrivals includes late starts and deliberate cr
 All 61 suites passed in an isolated checkout, including 20 animal work and 211 current-policy checks. Same production sources passed 24 store and 20 outlaw integrations. No UI/art changes. Preserve actual player saves and three local debug pilots.
 
 Priority order: inspect sustained vitamin intake and scurvy recovery; repeated shop/care/processing delays and reserve policy; weak-walker fixed gear/capacity/recovery; low-budget pack provisioning and animal loads. Respect Spencer's existing one-day-per-store-visit decision unless deliberately replacing the time model. Avoid simply buffing every speed or forcing victory percentages to a multi-decade mortality estimate. Human hunting and clarity playtests remain outstanding.
+
+
+## Nutrition, packs and risk (October 24)
+
+Spencer explicitly prioritized scurvy and weak walking. He challenged the claim that late journeys prove timing costs are wrong: his usual play keeps moving with sick companions, takes a day of rest if needed, and longer stops only for serious trouble. September is a useful play benchmark. DO NOT automatically buff travel speeds or shorten stop costs based on a cautious bot. This pass leaves all speeds and day prices unchanged.
+
+Read docs/NUTRITION_PACKS_AND_RISK.md, research/RECOVERY_AND_RISK_PROTOCOL.json and research/RECOVERY_AND_RISK_SOURCES.json. Public evidence: docs/balance-recovery-risk-02-summary.json. All 1,440 formal scenarios have zero selected errors. Raw reports and excluded pilots are hash-verified in ignored .tools/recovery-evidence/.
+
+Implementation 6de28c5: scurvy's fed_daily_damage=0 stops deterioration on adequate vitamin-C days while existing recovery still needs fourteen nutritional days (rest counts faster). Traveling can advance recovery; interrupted nutrition resumes damage. Other illnesses, hunger, meat and body-food rules are unchanged. Pack capacity uses f*(1+max(0,0.85-f)): healthy/starting limits remain 200/170 lb; health60 gets150 instead of120 lb; the same110 lb gear leaves40 rather than10 lb for food. This curve is authored tuning, not measured physiology. Retrieval/robbery remain linear, broken legs still contribute zero, and serious illness can still strand a party.
+
+Study actors distinguish active scurvy treatment from twenty-day preventive produce checks. Brief-stop and bold profiles limit ordinary consecutive health rests to one; up to three while still critical below20. Settings are explicit in archives. Baseline game d9ad653 uses identical final actors at361055f; preserve named counterfactual branch codex/recovery-before-policy. Dev-01 pilots use the older treatment actor and are excluded.
+
+Matched route development72/version (81000-81003); fresh144 (82000-82007). Final cautious/traveler/bold arrivals35/37/39 of48, intact29/30/31, successful medians231/231/202days. By September30,1848:0/2/6. Among34 cases where cautious and bold both arrive, bold saves median14.5days, is faster in24, adds5 successes but loses1 cautious success. Do not describe the difference in separate arrival medians as a guaranteed29-day saving, or claim late arrivals are entirely cautious behavior. Continue modeling player purchases, hunting and pressing on.
+
+Matched emergency288/version (83000-83003), fresh576 (84000-84007). Development walking health60 rescue0/24 ->20/24. Fresh walking: ordinary44/48 intact, weak36/48 intact, one-broken-leg41/48 arrivals/40intact. Animal-supported controls all succeeded. This is a post-rescue test, not walking the whole trail from Missouri.
+
+Scurvy is NOT declared fully balanced: fresh route scurvy deaths25/25/16 across styles, with only modest matched overall-route changes. Scarcity, winter, coarse produce units, binary nutrition credit and current forage-day ordering remain abstractions; no free fruit was added. Exact food threshold is not a clinical dose model.
+
+6de28c5 passed all62 suites in a clean isolated checkout (119nutrition/pack,216policy,56emergency,33meat checks), plus24store and20outlaw journeys. Same production sources after publication add evidence/docs/UID only. No UI/art changes. Genuine prior save migrates with unchanged state/RNG. Current fingerprint95ac2b1f8aa23ca82be1c5abdae8ade04eb29346cdbc40c1951b8cf63dd3b744; previous6927c03c33aba3ab718e02606b39caa53355a215aa4182c564764aa580dc5403 whitelisted. Preserve actual saves and the three local debug pilots.
