@@ -99,7 +99,7 @@ static func dry(game) -> bool:
 	# Set this batch aside; it cannot also feed today's meals. Other food pays the work day.
 	take(game.provisions,"produce",int(offer.input),int(game.state.day)+1)
 	game.state.food-=int(offer.input)
-	game._tick_day(false)
+	game._tick_day(false,false,"dry_produce")
 	if game.state.status!="traveling":return true
 	add(game.provisions,"dried_produce",int(offer.input),int(game.state.day))
 	game.state.food+=int(offer.input)

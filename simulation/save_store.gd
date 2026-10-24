@@ -5,7 +5,7 @@ const FORMAT := "westward-probably"
 const VERSION := 1
 const DEFAULT_PATH := "user://journey.json"
 const MAX_BYTES := 2097152
-const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes", "social_rules", "appearance", "recruitment", "robbery_demands"]
+const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes", "social_rules", "appearance", "recruitment", "robbery_demands", "camp_tasks"]
 var error := ""
 var rules_signature := ""
 var load_note := ""
@@ -25,7 +25,7 @@ func capture(game) -> Dictionary:
 		return {}
 	return normalize({"format": FORMAT, "version": VERSION, "rules": fingerprint(),
 		"recruitment":game.recruitment.snapshot(),"social":game.social.snapshot(),"crime":game.crime.snapshot(),
-		"characters_version":3,"characters":game.characters.profiles.duplicate(true),
+		"characters_version":4,"camp_tasks":game.camp_tasks.snapshot(),"characters":game.characters.profiles.duplicate(true),
 		"combat_history":game.combat.history.duplicate(true),"context":game.context.record.duplicate(true),"route_end":game.route.end_id,"wagon_cache":game.wagon_cache.duplicate(true), "state":game.state.duplicate(true), "pending":game.pending.duplicate(true),
 		"seen":game.seen.duplicate(), "journal":Array(game.journal),
 		"last_crossing":game.last_crossing.duplicate(true), "crossing_history":game.crossing_history.duplicate(true),
@@ -313,7 +313,7 @@ func restore(value: Variant):
 	if s.extended_route and (alive>Simulation.PARTY_CAPACITY or s.party_size != alive or s.health != (roundi(float(health) / alive) if alive else 0)):
 		return null
 	if not integer(s.get("departed_gear_lb",0),0,(s.party.size()-1)*int(game.provisions.data.walking.personal_gear_lb_per_person)) or s.get("departed_gear_lb",0)!=departed*int(game.provisions.data.walking.personal_gear_lb_per_person):return null
-	if departed>0 and value.get("characters_version")!=3:return null
+	if departed>0 and not integer(value.get("characters_version"),3,4):return null
 	var fresh := 0
 	for batch in value.fresh:
 		if not batch is Dictionary:return null
@@ -337,7 +337,7 @@ func restore(value: Variant):
 	game.state = normalize(s)
 	if value.has("characters"):
 		var characters_version: Variant=value.get("characters_version",1)
-		if not integer(characters_version,1,3) or not game.characters.valid(value.characters,value.party.size(),int(s.day),int(characters_version)==1,int(characters_version)):return null
+		if not integer(characters_version,1,4) or not game.characters.valid(value.characters,value.party.size(),int(s.day),int(characters_version)==1,int(characters_version)):return null
 		game.characters.profiles.assign(normalize(value.characters))
 		if int(characters_version)==1:game.characters.upgrade()
 		elif int(characters_version)==2:
@@ -347,6 +347,14 @@ func restore(value: Variant):
 		# Add a neutral starting profile to older records without inventing past decisions.
 		game.characters.start(int(s.seed),value.party.size())
 		for profile in game.characters.profiles:profile.erase("appearance")
+	if int(value.get("characters_version",1))>=4:
+		if not game.camp_tasks.valid(value.get("camp_tasks"),game,value.party.size()):return null
+		game.camp_tasks.assignments=normalize(value.camp_tasks)
+	elif value.has("camp_tasks"):return null
+	if not integer(s.get("camp_greens_lb",0),0,int(game.provisions.data.foraging.mass_ratio)-1):return null
+	if s.get("camp_greens_lb",0)>0:
+		if not integer(s.get("camp_greens_expires"),int(s.day)+1,int(s.day)+int(game.provisions.data.foraging.fresh_days)+1):return null
+	elif s.get("camp_greens_expires",0)!=0:return null
 	game.combat.history.assign(normalize(value.get("combat_history",[])))
 	game.context.record=normalize(value.get("context",{"spent":{},"activities":[],"prepared":[]}))
 	game.wagon_cache=normalize(value.get("wagon_cache",{}))

@@ -167,6 +167,7 @@ func run():
 	snapshot=store.capture(game)
 	var legacy=snapshot.duplicate(true)
 	legacy.erase("characters_version")
+	legacy.erase("camp_tasks")
 	for old_profile in legacy.characters:
 		for key in game.characters.FRAMEWORK_FIELDS:old_profile.erase(key)
 	legacy.characters[1].trust=48
@@ -177,7 +178,7 @@ func run():
 		var malformed=snapshot.duplicate(true)
 		malformed.characters[1].erase(field)
 		check(store.restore(malformed)==null,"Current records require framework field: "+field)
-	for version in [0,4,"2",null]:
+	for version in [0,5,"2",null]:
 		var malformed=snapshot.duplicate(true)
 		malformed.characters_version=version
 		check(store.restore(malformed)==null,"Reject unknown or malformed character schema")

@@ -7,8 +7,8 @@ func _change_health(delta: int,cause: String) -> void:
   audit.underfed_days+=1
   last_underfed=int(state.day)
  super._change_health(delta,cause)
-func _tick_day(resting: bool,team_working: bool=false) -> void:
- super._tick_day(resting,team_working)
+func _tick_day(resting: bool,team_working: bool=false,camp_action: String="") -> void:
+ super._tick_day(resting,team_working,camp_action)
  audit.days+=1
  audit["rest_days" if resting else ("working_days" if team_working else "other_days")]+=1
  if party_health.days_without_fresh==0:audit.vitamin_days+=1

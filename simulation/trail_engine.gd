@@ -12,6 +12,7 @@ const Guards=preload("res://simulation/wagon_guards.gd")
 const CacheSupport=preload("res://simulation/wagon_cache.gd")
 const Remains=preload("res://simulation/remains.gd")
 const Mounts=preload("res://simulation/mounts.gd")
+var camp_tasks=preload("res://simulation/camp_tasks.gd").new()
 var wagon_cache: Dictionary={}
 const MAX_TRAVELERS := 32
 const PARTY_CAPACITY := 5
@@ -326,7 +327,7 @@ func _choose_landmark(index: int) -> bool:
 			pending.text+="\n\n"+choice.result+(" Crossing preparation is complete; water still poses a risk." if context.data.activities[choice.activity].kind=="prepare" else " The team benefits from better grazing.")
 		return true
 	if choice.action == "rest":
-		_tick_day(true)
+		_tick_day(true,false,"rest")
 		_update_river_stage()
 		journal.append("Day %d · Rested at %s." % [state.day, route.nodes[state.landmark].name])
 		if not crime.check_pursuit(self):crime.check_wanted(self)
@@ -463,7 +464,7 @@ func travel() -> bool:
 func rest() -> bool:
 	if not _can_act():
 		return false
-	_tick_day(true)
+	_tick_day(true,false,"rest")
 	journal.append("Day %d · Rested in camp. Food remaining: %d units." % [state.day, state.food])
 	if state.status == "traveling" and not crime.check_pursuit(self) and not crime.check_wanted(self):
 		_schedule_event()
@@ -553,9 +554,11 @@ func choose(index: int) -> bool:
 func _can_act() -> bool:
 	return pending.is_empty() and state.status == "traveling" and hunt.is_empty()
 
-func _tick_day(resting: bool, team_working: bool = false) -> void:
+func _tick_day(resting: bool, team_working: bool = false, camp_action: String = "") -> void:
+	if state.extended_route and not camp_action.is_empty():camp_tasks.begin(self,camp_action)
 	var sick_before: bool=characters.has_sick(self)
 	state.day += 1
+	if not camp_tasks.day_plan.is_empty():camp_tasks.prepare(self)
 	if state.extended_route:
 		var climate: Dictionary=context.region(self).duplicate()
 		climate.id=context.region_id(self)
@@ -590,7 +593,12 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 	if state.extended_route:
 		# Count vitamin-C produce actually consumed, never merely carried or fresh meat.
 		var field_before: int=provisions.fresh.filter(func(b):return b.get("_hunt_meal",false)).reduce(func(n,b):return n+int(b.pounds),0)
-		var produce_eaten: float = provisions.eat(eaten,int(state.party_size),int(state.food))
+		var loose: int=int(state.get("camp_greens_lb",0))
+		if int(state.get("camp_greens_expires",0))<=int(state.day):loose=0
+		if state.has("camp_greens_lb"):
+			state.camp_greens_lb=0
+			state.camp_greens_expires=0
+		var produce_eaten: float = provisions.eat(eaten,int(state.party_size),int(state.food),float(loose))
 		if not hunt.is_empty():hunt["_meal_food"]=field_before-provisions.fresh.filter(func(b):return b.get("_hunt_meal",false)).reduce(func(n,b):return n+int(b.pounds),0)
 		party_health.days_without_fresh = 0 if produce_eaten >= state.party_size * float(provisions.data.foraging.vitamin_c_lb_per_person) else party_health.days_without_fresh + 1
 		for member in party_health.members:
@@ -599,6 +607,12 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 	var recovered_food: bool=provisions.Shortfall.tick(self,eaten,needed) if state.extended_route else true
 	if not fed:
 		if not state.extended_route:_change_health(-18,"lack of food")
+	elif not camp_tasks.day_plan.is_empty():
+		for member in party_health.members:
+			if not party_health.is_active(member):continue
+			var rests: bool=camp_tasks.day_plan.rest.get(int(member.id),false)
+			var change: int=int(survival.data.rest_recovery[state.rations]) if rests else [-3,0,1][state.rations]-[0,1,4][state.pace]
+			party_health.affect(member,change if recovered_food else mini(0,change),state.day,"ill health" if rests else "exhaustion")
 	elif resting:
 		if recovered_food:_change_health(int(survival.data.rest_recovery[state.rations]) if state.extended_route else 7,"ill health")
 	else:
@@ -618,14 +632,16 @@ func _tick_day(resting: bool, team_working: bool = false) -> void:
 					exposed += 1
 		var nutrition: int = state.rations if fed else 0
 		var risk_multiplier: float = [2.0, 1.3, 0.7][nutrition] * (0.6 if resting else 1.0) * (1.4 if unprotected and survival.weather.exposure else 1.0) * float(survival.weather.get("illness_risk",1.0))
-		party_health.tick(state.day, resting, risk_multiplier, nutrition, int(calendar().year), int(calendar().month) if state.extended_route else 0, context.region_id(self) if state.extended_route else "", party_health.days_without_fresh)
+		party_health.tick(state.day, resting, risk_multiplier, nutrition, int(calendar().year), int(calendar().month) if state.extended_route else 0, context.region_id(self) if state.extended_route else "", party_health.days_without_fresh,camp_tasks.day_plan.get("rest",{}))
 		_collect_health_events()
 		state.health = party_health.average_health()
 		state.party_size = party_health.living_count()
 	_check_health()
+	var camp_rest: Dictionary=camp_tasks.day_plan.get("rest",{}).duplicate()
+	if state.extended_route and not camp_tasks.day_plan.is_empty():camp_tasks.finish(self)
 	if state.extended_route:social.tick(self,resting,fed)
 	if state.extended_route:Guards.tick(self)
-	characters.daily(self,resting,team_working,sick_before)
+	characters.daily(self,resting,team_working,sick_before,camp_rest)
 	if state.extended_route:crime.check_betrayal(self)
 	if state.extended_route:
 		journal.append("Day %d · %s. Team condition %s; %s." % [state.day, state.weather, PartyHealth.condition_label(state.ox_health).to_lower(), "working" if team_working else "resting"])
@@ -669,7 +685,7 @@ func _check_health() -> void:
 		pending = {}
 		if party_health.members.any(func(member):return member.get("departed",false)):state.loss_reason="No travelers remain with the wagon. Departures and deaths are recorded separately in View Party."
 
-func _apply(effects: Dictionary, health_cause: String = "injuries", resting: bool = false) -> void:
+func _apply(effects: Dictionary, health_cause: String = "injuries", resting: bool = false, camp_action: String = "") -> void:
 	var before := state.duplicate(true)
 	for key in effects:
 		if key == "item":
@@ -706,7 +722,7 @@ func _apply(effects: Dictionary, health_cause: String = "injuries", resting: boo
 	for day in range(int(effects.get("days", 0))):
 		if state.status != "traveling":
 			break
-		_tick_day(resting)
+		_tick_day(resting,false,camp_action)
 	_check_health()
 
 func _schedule_event(allow_random: bool = true) -> void:
@@ -854,13 +870,13 @@ func _service_menu(title: String, text: String, options: Array) -> bool:
 	return true
 
 ## Read-only seasonal offer. Empty searches still cost a day; river legs cannot be foraged.
-func forage_offer() -> Dictionary:
+func forage_offer(companion: bool=false) -> Dictionary:
 	var rules: Dictionary = provisions.data.foraging
 	var season: float = rules.months[int(calendar().month)-1]
 	var factor: float = season * float(rules.regions.get(context.region_id(self),0))
 	var workers := 0.0
 	for member in party_health.members:
-		if party_health.is_active(member) and not member.conditions.any(func(c): return c.id == "broken_leg"):
+		if party_health.is_active(member) and not member.conditions.any(func(c): return c.id == "broken_leg") and (companion or not camp_tasks.enabled() or int(member.id)==0):
 			workers += member.health / 100.0
 	var blocked: bool = current_edge().get("hazard", "") in ["river", "waterless"] or survival.weather.id in ["blizzard", "snow"]
 	return {"available": factor > 0 and workers > 0 and not blocked, "factor": factor, "workers": workers}
@@ -872,17 +888,21 @@ func open_forage() -> bool:
 		options.append({"label":"Search for greens and berries · 1 day and meals", "foraging":true, "effects":{"days":1}, "result":""})
 	return _service_menu("Foraging", "Gather seasonal greens and berries nearby. Yield depends on the season, region and healthy walkers; a search may find little. This supplements meals rather than replacing staple provisions. Produce spoils in three days and provides vitamin C only when eaten. No gathering on waterless or rafting legs, in snow, or outside the growing season." + (" Nothing suitable is available here now." if not offer.available else ""), options)
 
-func _gather_forage(offer: Dictionary) -> void:
+func _gather_forage(offer: Dictionary, shared: bool=false) -> void:
 	if state.status != "traveling": return
 	var rules: Dictionary = provisions.data.foraging
 	var pounds := mini(int(rules.maximum_lb), floori(rng.randi_range(int(rules.lb_per_worker[0]),int(rules.lb_per_worker[1])) * float(offer.workers) * float(offer.factor)))
 	var room := maxf(0, provisions.storage_capacity(state) - provisions.cargo(state))
 	pounds = mini(pounds, floori(room))
+	if shared or camp_tasks.enabled():
+		pounds+=int(state.get("camp_greens_lb",0))
+		state.camp_greens_lb=pounds % int(rules.mass_ratio)
+		state.camp_greens_expires=int(state.day)+int(rules.fresh_days)+1 if state.camp_greens_lb>0 else 0
 	var units: int = provisions.add_produce(pounds,int(state.day))
 	state.food += units
-	var report := "Foraged %d lb of greens and berries (%d food units)." % [units * int(rules.mass_ratio),units] if units > 0 else "The search yielded no usable food within your carrying room."
+	var report := "Foraged %d lb of greens and berries (%d food units)." % [units * int(rules.mass_ratio),units] if units > 0 else ("Gathered %d lb greens for vitamin-C meals (less than one food unit)." % int(state.get("camp_greens_lb",0)) if int(state.get("camp_greens_lb",0))>0 else "The search yielded no usable food within your carrying room.")
 	journal.append("Day %d · %s" % [state.day,report])
-	health_events.append(report)
+	if not shared:health_events.append(report)
 
 func open_trade() -> bool:
 	if not can_service():return false
@@ -1242,7 +1262,7 @@ func open_care() -> bool:
 			continue
 		options.append({"label": "Care for %s · 1 kit, 1 day" % member.name, "member_id": member.id, "care": 6, "requires": {"medicine": 1}, "effects": {"medicine": -1, "days": 1}, "result": "Used care supplies for " + member.name + "."})
 		if context.local_care(self) and not crime.refuses(self,str(state.landmark)) and not crime.closed(str(state.landmark)):options.append({"label": "Seek local care for %s · $20, 1 day" % member.name, "member_id": member.id, "care": 12, "requires": {"money": 20}, "effects": {"money": -20, "days": 1}, "result": "Paid $20 for medical attention for " + member.name + "."})
-	if characters.available(self,"Caregiving"):
+	if not camp_tasks.enabled() and characters.available(self,"Caregiving"):
 		for option in options:
 			option.care_bonus=int(characters.benefits.care_health_bonus)
 			option.recovery_bonus=int(characters.benefits.care_recovery_bonus)
@@ -1269,6 +1289,13 @@ func _choose_service(index: int) -> bool:
 	if choice.get("foraging",false) and not forage.available: return false
 	crime.consume_trade(choice)
 	context.consume(choice)
+	if choice.has("care") and camp_tasks.enabled():
+		camp_tasks.begin(self,"care")
+		var patient_id: int=int(choice.member_id)
+		camp_tasks.day_plan.rest[patient_id]=true
+		for job in camp_tasks.day_plan.jobs:
+			if job.member==patient_id or (job.job=="nurse" and job.patient==patient_id):camp_tasks.day_plan.rest[job.member]=true
+		camp_tasks.day_plan.jobs=camp_tasks.day_plan.jobs.filter(func(j):return j.member!=patient_id and not (j.job=="nurse" and j.patient==patient_id))
 	if choice.has("care"):
 		var member: Dictionary = party_health.members[int(choice.member_id)]
 		party_health.affect(member, int(choice.care)+int(choice.get("care_bonus",0)), state.day, "care")
@@ -1278,8 +1305,8 @@ func _choose_service(index: int) -> bool:
 		member.history.append("Day %d · Received care." % state.day)
 		characters.care(self,int(choice.member_id))
 		state.health = party_health.average_health()
-	_apply(choice.effects, "injuries", choice.has("care"))
-	if choice.get("foraging",false): _gather_forage(forage)
+	_apply(choice.effects, "injuries", choice.has("care"),"care" if choice.has("care") else ("forage" if choice.get("foraging",false) else ""))
+	if choice.get("foraging",false) and not camp_tasks.enabled(): _gather_forage(forage)
 	if not choice.result.is_empty():
 		journal.append("Day %d · %s" % [state.day, choice.result])
 	pending = service_return if state.status == "traveling" else {}
@@ -1424,8 +1451,10 @@ func start_hunt() -> bool:
 		return false
 	# Settle the day after the outing: today's successful catch can feed today's camp.
 	last_hunt_recovery={}
+	camp_tasks.begin(self,"hunt")
 	hunting_outings += 1
 	hunt = hunting.begin(int(state.seed), hunting_outings, int(state.miles), route.nodes[state.landmark].get("hunting_region","plains"))
+	if camp_tasks.enabled():hunt["_camp_helpers"]=camp_tasks.day_plan.get("jobs",[]).filter(func(j):return j.job=="hunt_help").map(func(j):return int(j.member))
 	hunt.day = state.day+1
 	journal.append("Day %d · Set out to hunt. The outing will take one day, including meals at camp." % (state.day+1))
 	return true
@@ -1470,7 +1499,7 @@ func move_hunter(point: Vector2) -> void:
 func hauling_capacity(action: String="hunt") -> int:
 	var pounds:=0.0
 	for member in party_health.members:
-		if characters.willing(int(member.id),action):
+		if characters.willing(int(member.id),action) and (action!="hunt" or not camp_tasks.excludes_helper(self,int(member.id))):
 			pounds+=float(hunting.data.carry_per_person_lb)*provisions.Carrying.factor(member)
 	return mini(int(hunting.data.carry_limit),floori(pounds))
 func hunting_capacity() -> int:
@@ -1489,7 +1518,7 @@ func finish_hunt() -> bool:
 	var units: int=provisions.add_meat(retrieved,int(state.day)+1)
 	if units>0:provisions.fresh.back()["_hunt_meal"]=true
 	state.food+=units
-	_tick_day(false)
+	_tick_day(false,false,"hunt")
 	var remaining: int=0
 	var ratio: float=float(retrieved)/units if units>0 else 1.0
 	var batch: Dictionary={}
@@ -1592,8 +1621,8 @@ func slaughter_ox(by_hand: bool = false) -> bool:
 	if state.status == "traveling" and pending.is_empty():_schedule_event(false)
 	return true
 
-func preservation_offer(salted: bool = false) -> Dictionary:
-	if not can_service():return {}
+func preservation_offer(salted: bool = false, workday: bool=false) -> Dictionary:
+	if not workday and not can_service():return {}
 	var plan: Dictionary=provisions.preservation_plan(int(state.day),int(state.food),int(provisions.data.rations_lb[state.rations])*int(state.party_size),int(state.party_size))
 	var input: int=plan.input
 	if input < 1:return {}
@@ -1604,7 +1633,7 @@ func preservation_offer(salted: bool = false) -> Dictionary:
 func preserve_meat(salted: bool = false) -> bool:
 	var offer := preservation_offer(salted)
 	if offer.is_empty():return false
-	_tick_day(false) # Meals and spoilage happen before processing; never rescue spoiled meat.
+	_tick_day(false,false,"dry") # Meals and spoilage happen before processing; never rescue spoiled meat.
 	if state.status != "traveling":return true
 	var input: int=mini(int(offer.input),provisions.processable())
 	while salted and input>0 and ceili(provisions.fresh_mass(input)*float(provisions.data.preservation.salt_per_food_lb))>int(state.salt):input-=1
@@ -1618,9 +1647,10 @@ func preserve_meat(salted: bool = false) -> bool:
 	return true
 
 func discard_supply(item: String, amount: int) -> bool:
-	if not can_service() or item not in provisions.data.weights_lb or amount <= 0 or amount > int(state.get(item, 0)):
+	if not can_service() or (item not in provisions.data.weights_lb and item!="camp_greens_lb") or amount <= 0 or amount > int(state.get(item, 0)):
 		return false
 	_apply({item: -amount})
+	if item=="camp_greens_lb" and state.camp_greens_lb==0:state.camp_greens_expires=0
 	journal.append("Day %d · Left %d %s behind to lighten the %s." % [state.day, amount, item, "wagon" if state.vehicle=="wagon" else "packs"])
 	return true
 
