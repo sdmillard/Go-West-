@@ -1,4 +1,5 @@
 extends RefCounted
+const Encounters=preload("res://simulation/outing_encounters.gd")
 const Follow=preload("res://simulation/outing_follow.gd")
 const Outfit=preload("res://simulation/outing_outfit.gd")
 var moving:=false
@@ -101,6 +102,13 @@ func tick(game) -> void:
   var actual: Dictionary=cache.guards[0]
   var active: bool=actual.alive and not actual.get("departed",false)
   var was_left: bool=actual.get("departed",false)
+  if active and not cache.has("crossing"):
+   var incident: Dictionary=Encounters.attempt(game,trip,random)
+   actual=cache.guards[0];active=actual.alive and not actual.get("departed",false)
+   if incident.elapsed:
+    cache.camp_day=int(game.state.day);cache.camp_random=str(random.state)
+    trip.due+=1
+    continue
   if active and cache.has("crossing"):
    Follow.cross(game,trip,random)
    cache.camp_day=int(game.state.day);cache.camp_random=str(random.state)
@@ -188,6 +196,7 @@ func _return(game,trip: Dictionary) -> void:
  else:
   game.Remains.add(game,game.crime.person_id(int(game.state.seed),int(trip.member)),original.name,original.cause,int(original.death_day),0,false)
  for line in trip.camp.camp_log:game.journal.append(str(line)+" [Learned on return]")
+ game.combat.history.append_array(trip.camp.get("combat_history",[]).duplicate(true))
  # Restore personal supplies and real tack before calculating room for the catch.
  var catches: Array=[]
  for key in trip.camp.inventory:
@@ -265,7 +274,7 @@ func valid(value: Variant,game,party: Array,day: int) -> bool:
   if origin_mile!=int(trip.mile):return false
   var camp: Variant=trip.get("camp")
   if not camp is Dictionary or not game.Guards.valid(camp,game,day) or camp.guards.size()!=1 or int(camp.guards[0].id)!=int(trip.member) or camp.guards[0].name!=party[int(trip.member)].name:return false
-  if not Follow.valid(camp,game):return false
+  if not Follow.valid(camp,game) or not Encounters.valid(camp,game):return false
   if not camp.get("field_working") is bool or not camp.get("inventory") is Dictionary or camp.inventory.size()!=game.provisions.data.weights_lb.size() or not camp.get("fresh") is Array or camp.fresh.size()>1000:return false
   for key in game.provisions.data.weights_lb:
    if not game.crime.whole(camp.inventory.get(key),0,1000000):return false

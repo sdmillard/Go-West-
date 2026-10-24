@@ -1,4 +1,5 @@
 extends RefCounted
+const Actor=preload("res://simulation/outing_actor.gd")
 ## Mounted return navigation; isolated crossings use the actual river engine.
 static func route_path(game,trip: Dictionary) -> Array:
  var hunter: Array=trip.origin.path.duplicate()
@@ -66,30 +67,10 @@ static func advance(game,trip: Dictionary,random) -> String:
 static func cross(game,trip: Dictionary,random) -> void:
  if not trip.camp.has("departure_kit"):trip.camp["departure_kit"]=trip.kit
  var crossing: Dictionary=trip.camp.crossing
- var child=load("res://simulation/trail_engine.gd").new(int(random.randi()),"classic",true)
- child.depart("banker",["One","Two","Three","Four","Five"],5,{"wagon":0,"food":0})
- child.state=game.state.duplicate(true)
- child.party_health.members.assign(game.party_health.members.duplicate(true))
- for person in child.party_health.members:person["guarding"]=true;person.erase("away")
- var actual: Dictionary=trip.camp.guards[0].duplicate(true)
- child.party_health.members[int(trip.member)]=actual
- child.characters.profiles.assign(game.characters.profiles.duplicate(true))
- child.state.day=int(game.state.day)-1;child.state.party_size=1;child.state.health=actual.health
- child.state.vehicle="foot";child.state.oxen=0;child.state.ox_health=100;child.state.money=0
- child.state.household_gear_lb=float(trip.camp.household_gear_lb);child.state.miles=int(trip.mile)
- for field in ["hunger_days","camp_greens_lb","camp_greens_expires","remains_lb","east_arrival"]:child.state.erase(field)
- if trip.camp.has("hunger_days"):child.state.hunger_days=trip.camp.hunger_days
- for good in trip.camp.inventory:child.state[good]=int(trip.camp.inventory[good])
- for good in trip.stock:child.state[good]=int(trip.stock[good])
- child.state.horse_health=int(trip.condition);child.state.rations=int(trip.camp.camp_rations);child.state.pace=0
+ var child=Actor.build(game,trip,random)
  child.state.landmark=crossing.place;child.state.next_landmark=crossing.place;child.state.leg_miles=0;child.state.leg_length=0
  child.state.travel_direction=crossing.heading;child.state.river_stage=crossing.stage
- child.route_path=trip.origin.path.duplicate()
  if child.route_path[-1]!=crossing.place:child.route_path.append(crossing.place)
- child.provisions.fresh.assign(trip.camp.fresh.duplicate(true));child.provisions.carriers=child.party_health.members
- child.party_health.days_without_fresh=int(trip.camp.camp_deficiency)
- child.party_health.daily_onset_chance=game.party_health.daily_onset_chance
- child.survival.forced_weather=game.survival.forced_weather;child.rng.state=random.state
  child._arrive_landmark(true,false)
  var option: int=child.pending.choices.find_custom(func(choice):return choice.get("method","")=="horses")
  if option<0:option=child.pending.choices.find_custom(func(choice):return choice.get("method","") in ["swim","wade"])
@@ -97,30 +78,22 @@ static func cross(game,trip: Dictionary,random) -> void:
  if option<0 or not child.choose(option):
   trip.camp.camp_log.append("The hunter could not find a usable crossing and waited on the bank.")
   return
- random.state=child.rng.state;actual=child.party_health.members[int(trip.member)]
+ random.state=child.rng.state
+ var actual: Dictionary=child.party_health.members[int(trip.member)]
  if child.last_crossing.get("mishap",false) and actual.alive and random.randf()<float(game.field_outings.rules.lone_crossing_drowning_chance):
   actual.health=0;actual.alive=false;actual.death_day=int(game.state.day);actual.cause="drowning at "+game.route.nodes[crossing.place].name
  for line in child.journal.slice(before):trip.camp.camp_log.append(str(line))
- trip.camp.guards[0]=actual.duplicate(true)
- for good in trip.camp.inventory:trip.camp.inventory[good]=int(child.state.get(good,0))
- trip.camp.fresh=child.provisions.fresh.duplicate(true);trip.camp.camp_deficiency=child.party_health.days_without_fresh
- if child.state.has("hunger_days"):trip.camp.hunger_days=child.state.hunger_days
- else:trip.camp.erase("hunger_days")
- for good in trip.stock:trip.stock[good]=int(child.state.get(good,0))
- trip.condition=game.Mounts.condition(child.state)
+ Actor.sync(game,trip,child)
  if not actual.alive:
-  for good in trip.camp.inventory:trip.camp.inventory[good]=0
-  trip.camp.fresh=[];trip.camp.household_gear_lb=0
-  trip.stock=game.field_outings.Outfit.stock("foot");trip.kit="foot"
-  trip.camp["return_failed"]=true;trip.stage="stranded"
-  trip.camp.camp_log.append("The lone hunter did not survive the crossing. Their animal and remaining outfit were lost.")
+  Actor.lost(game,trip,"The lone hunter did not survive the crossing. Their animal and remaining outfit were lost.")
  else:
   if not trip.camp.has("crossed"):trip.camp["crossed"]={}
   trip.camp.crossed[str(crossing.place)+str(crossing.heading)]=true
   move_to(game,trip,child.CacheSupport.location(child),int(child.state.miles))
-  if game.Mounts.animals(trip.stock)==0:trip.kit="foot";trip.stock=game.field_outings.Outfit.stock("foot");trip.stage="stranded"
+  Actor.lost_mount(game,trip)
  trip.camp.erase("crossing")
 static func valid(camp: Dictionary,game) -> bool:
+ if camp.has("combat_history") and not game.combat.valid(camp.combat_history,int(game.state.day),game.characters.profiles.size()):return false
  if camp.has("departure_kit") and camp.departure_kit not in game.field_outings.Outfit.KITS:return false
  if camp.has("return_after_day") and not game.crime.whole(camp.return_after_day,0,int(game.state.day)+1):return false
  for field in ["wrong_turn","return_failed","missing_notified"]:

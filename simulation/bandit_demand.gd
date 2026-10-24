@@ -1,7 +1,7 @@
 extends RefCounted
 ## A demand is drawn once, then lives in the saved pending choice, never in the UI.
-const GOODS=["food","bullets","oxen","clothing","medicine","salt","wheels","axles","tongues"]
-const NAMES={"food":["food unit","food units"],"bullets":["bullet","bullets"],"oxen":["ox","oxen"],"clothing":["clothing set","clothing sets"],"medicine":["care kit","care kits"],"salt":["lb salt","lb salt"],"wheels":["wheel","wheels"],"axles":["axle","axles"],"tongues":["wagon tongue","wagon tongues"]}
+const GOODS=["food","bullets","oxen","clothing","medicine","salt","wheels","axles","tongues","horses","mules"]
+const NAMES={"horses":["horse","horses"],"mules":["mule","mules"],"food":["food unit","food units"],"bullets":["bullet","bullets"],"oxen":["ox","oxen"],"clothing":["clothing set","clothing sets"],"medicine":["care kit","care kits"],"salt":["lb salt","lb salt"],"wheels":["wheel","wheels"],"axles":["axle","axles"],"tongues":["wagon tongue","wagon tongues"]}
 static func number(v: Variant) -> bool:return (v is int or v is float) and is_finite(v)
 static func whole(v: Variant,low: int,high: int) -> bool:return number(v) and v==floor(v) and v>=low and v<=high
 static func valid_rules(v: Variant) -> bool:

@@ -16,7 +16,7 @@ func party():
  g.state.next_landmark="elm_grove";g.state.leg_length=20;g.state.leg_miles=1;g.state.miles=1
  g.seen.append("muddy_trail")
  g.party_health.daily_onset_chance=0;g.survival.forced_weather="clear";g.survival.data.event_chance=0
- g.field_outings.rules.mishap_chance=0;g.field_outings.rules.hit_chance=0;g.field_outings.rules.hunter_bonus=0
+ g.field_outings.rules.mishap_chance=0;g.field_outings.rules.hit_chance=0;g.field_outings.rules.hunter_bonus=0;g.field_outings.rules.bandit_daily_chance=0
  for p in g.characters.profiles:
   if int(p.id)>0:p.boundaries.forbidden=[];p.trust=50
  return g
@@ -25,7 +25,7 @@ func day(g):
  g.rest()
 func configure(g):
  g.party_health.daily_onset_chance=0;g.survival.forced_weather="clear";g.survival.data.event_chance=0
- g.field_outings.rules.mishap_chance=0;g.field_outings.rules.hit_chance=0;g.field_outings.rules.hunter_bonus=0
+ g.field_outings.rules.mishap_chance=0;g.field_outings.rules.hit_chance=0;g.field_outings.rules.hunter_bonus=0;g.field_outings.rules.bandit_daily_chance=0
 func run():
  var store=Store.new()
  var g=party()
@@ -245,6 +245,52 @@ func run():
   g.choose(1)
   check(g.pending.get("crime_menu",false),"Back restores the real crime escape menu")
  else:check(false,"Seeded noticed crime available for flight warning test")
+ # Bandits use only the isolated hunter's outfit and combat ability.
+ var won:=false
+ for encounter_seed in range(1,50):
+  var fighter=party();fighter.characters.profiles[1].traits[0]="Bold"
+  fighter.field_outings.rules.bandit_daily_chance=1;fighter.field_outings.rules.bandit_lone_fatal_on_hit=0
+  fighter.field_outings.start(fighter,1,"ride_horse",1,15)
+  var random:=RandomNumberGenerator.new();random.seed=encounter_seed
+  fighter.field_outings.record.trips[0].camp.camp_random=str(random.state)
+  day(fighter)
+  if fighter.field_outings.record.trips.is_empty() and fighter.combat.history.any(func(c):return c.outcome=="won"):
+   check(fighter.state.bullets==89 and fighter.state.horses==2 and fighter.state.party_size==5,"Winning solo defense spends ten field bullets plus one hunting shot, restores unused ammunition and returns one actual mount")
+   check(fighter.combat.history.back().victim==1 and fighter.journal.any(func(line):return "Bandits encountered" in line),"Only the actual traveler fought; their encounter enters history on return")
+   won=true;break
+ check(won,"A properly armed Bold outrider can win an actual bandit encounter")
+ var runner=party();runner.characters.profiles[1].traits[0]="Bold"
+ runner.field_outings.rules.bandit_daily_chance=1;runner.field_outings.rules.bandit_goods={"horses":1}
+ runner.field_outings.start(runner,1,"ride_horse",1,5);day(runner)
+ check(runner.field_outings.record.trips.size()==1 and runner.field_outings.record.trips[0].camp.encounters[0].tactic=="flee","An underarmed Bold rider can try to flee instead of losing the horse")
+ check(runner.state.day==1 and runner.field_outings.record.trips[0].camp.inventory.food==3 and runner.state.food==482 and runner.field_outings.record.trips[0].camp.inventory.bullets==5,"Escape consumes one actual day and one field meal, with no extra hunting or duplicated camp meals")
+ check(store.restore(JSON.parse_string(JSON.stringify(store.capture(runner))))!=null,"The chase, delayed return and actual injury outcome save correctly")
+ var robbed=party();robbed.characters.profiles[1].traits[0]="Cautious"
+ robbed.field_outings.rules.bandit_daily_chance=1;robbed.field_outings.rules.bandit_goods={"horses":1}
+ robbed.field_outings.start(robbed,1,"ride_horse",1,5);day(robbed)
+ check(robbed.field_outings.record.trips.size()==1 and robbed.field_outings.record.trips[0].camp.encounters[0].tactic=="yield" and robbed.field_outings.record.trips[0].kit=="foot","A cautious hunter can surrender their actual horse and be stranded on foot")
+ check(store.restore(JSON.parse_string(JSON.stringify(store.capture(robbed))))!=null,"The robbery, actual stolen mount and stranded hunter save together")
+ robbed.pending={}
+ check(robbed.field_outings.recover_here(robbed) and robbed.state.horses==1 and robbed.state.party_size==5,"Recovering the robbed hunter cannot recreate the stolen horse")
+ var killed
+ for encounter_seed in range(1,60):
+  var fighter=party();fighter.characters.profiles[1].traits[0]="Bold"
+  fighter.field_outings.rules.bandit_daily_chance=1;fighter.field_outings.rules.bandit_lone_fatal_on_hit=1
+  fighter.field_outings.start(fighter,1,"ride_horse",1,15)
+  var random:=RandomNumberGenerator.new();random.seed=encounter_seed
+  fighter.field_outings.record.trips[0].camp.camp_random=str(random.state)
+  day(fighter)
+  if not fighter.field_outings.record.trips.is_empty() and fighter.field_outings.record.trips[0].camp.get("return_failed",false):killed=fighter;break
+ check(killed!=null,"An isolated gunfight can actually kill the hunter")
+ if killed!=null:
+  check(killed.combat.history.is_empty() and killed.party_health.members[1].alive and killed.state.horses==1,"Unwitnessed fatal combat remains unknown to the wagon and never returns its horse")
+  check(store.restore(JSON.parse_string(JSON.stringify(store.capture(killed))))!=null,"Unknown fatal bandit encounter survives save/load")
+  day(killed);day(killed)
+  check(killed.journal.filter(func(line):return "beginning to fear" in line).size()==1,"Bandit disappearance uses the same delayed uncertain missing notification")
+ var repeated=party();repeated.characters.profiles[1].traits[0]="Cautious"
+ repeated.field_outings.rules.bandit_daily_chance=1;repeated.field_outings.rules.bandit_goods={"clothing":1}
+ repeated.field_outings.start(repeated,1,"ride_horse",3,5);day(repeated);day(repeated)
+ check(repeated.field_outings.record.trips.size()==1 and repeated.field_outings.record.trips[0].camp.encounters.size()==1,"The initial slice limits bandit encounters to one per trip")
  var screen=Main.instantiate();root.add_child(screen);await process_frame
  screen.departure_view.hide();screen.game=party();screen._refresh();screen._open_field_trip(-1)
  check(screen.outing_window.visible and screen.outing_window.actor_id()==-1 and screen.outing_window.quote().valid,"Leader outfitting is a real valid UI choice")
