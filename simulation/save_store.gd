@@ -186,7 +186,7 @@ func valid_effects(effects: Variant) -> bool:
 	if not effects is Dictionary:
 		return false
 	for key in effects:
-		if key not in ["food","health","money","fuel","wheels","axles","tongues","medicine","clothing","bullets","oxen","ox_health","horse_health","days","item","vehicle","salt"]:
+		if key not in ["food","health","money","fuel","wheels","axles","tongues","medicine","clothing","bullets","oxen","ox_health","horse_health","days","item","vehicle","salt","horses","mules","saddles","pack_saddles","saddlebags"]:
 			return false
 		var value = effects[key]
 		if key in ["item","vehicle"]:

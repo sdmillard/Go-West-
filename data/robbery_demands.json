@@ -1,5 +1,8 @@
 {
   "value_penalty": 0.45,
   "wagon_penalty": 0.15,
-  "note": "Authored intimidation response, not historical compliance statistics. Demand value is compared with the target inventory; taking an essential wagon adds resistance. Existing party health, willing helpers, staff and experience modifiers still apply."
+  "mount_penalty": 0.15,
+  "theft_value_penalty": 0.5,
+  "animal_noise": 0.06,
+  "note": "Authored intimidation response, not historical compliance statistics. Demand value is compared with the target inventory; taking an essential wagon, or a family's or trader's last saddle and pack animals, adds resistance. A quiet theft is likelier to be noticed the more of the goods it takes, and each animal led off is noise in the dark. Existing party health, willing helpers, staff and experience modifiers still apply."
 }

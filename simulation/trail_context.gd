@@ -1,5 +1,7 @@
 extends RefCounted
 ## Authored regional pressures and deterministic trading opportunities.
+## Saddle and pack animals and their tack, traded alongside the staples.
+const MOUNT_GOODS=["horses","mules","saddles","pack_saddles","saddlebags"]
 var data: Dictionary={}
 var error: String=""
 var record: Dictionary={"spent":{},"activities":[],"prepared":[]}
@@ -57,11 +59,11 @@ func valid_goods(goods: Variant,traders: bool) -> bool:
 		for key in ["reluctance","need"]:
 			var spread: Variant=goods.get(key)
 			if not spread is Array or spread.size()!=2 or not spread.all(numeric) or spread[0]<=0 or spread[1]<spread[0] or spread[1]>3:return false
-	for side in ["stock","wants"]:
+	for side in ["stock","wants","mount_stock","mount_wants"]:
 		if not goods.get(side) is Dictionary:return false
 		for item in goods[side]:
 			var spread: Variant=goods[side][item]
-			if not item in ["food","bullets","medicine","clothing","oxen","wheels","axles","tongues","salt"] or not spread is Array or spread.size()!=3:return false
+			if not item in (MOUNT_GOODS if side.begins_with("mount_") else ["food","bullets","medicine","clothing","oxen","wheels","axles","tongues","salt"]) or not spread is Array or spread.size()!=3:return false
 			if not spread.all(numeric) or spread[0]<0 or spread[0]>1 or spread[1]<1 or spread[1]!=int(spread[1]) or spread[2]!=int(spread[2]) or spread[2]<spread[1] or spread[2]>1000:return false
 	var purse: Variant=goods.get("purse_dollars")
 	return purse is Array and purse.size()==2 and purse.all(numeric) and purse[0]>=0 and purse[1]>=purse[0] and purse[1]<=80
@@ -99,6 +101,11 @@ func _roll_goods(goods: Dictionary,rng: RandomNumberGenerator) -> Dictionary:
 			var spread: Array=goods[side][item]
 			if rng.randf()<float(spread[0]):result[side][item]=rng.randi_range(int(spread[1]),int(spread[2]))
 	result["purse_cents"]=rng.randi_range(int(goods.purse_dollars[0]),int(goods.purse_dollars[1]))*100
+	# Stock and tack are rolled last, so every older meeting keeps the goods and purse it always had.
+	for side in ["stock","wants"]:
+		for item in goods["mount_"+side]:
+			var spread: Array=goods["mount_"+side][item]
+			if rng.randf()<float(spread[0]):result[side][item]=rng.randi_range(int(spread[1]),int(spread[2]))
 	return result
 func numeric(value: Variant) -> bool:
 	return (value is int or value is float) and is_finite(float(value))
@@ -119,11 +126,12 @@ func decorate(game,options: Array,offer: Dictionary) -> void:
 	for choice in options:
 		var effects: Dictionary=choice.effects
 		var side: String="sell" if effects.get("money",0)>0 else "buy"
-		for item in game.provisions.data.weights_lb.keys()+["oxen"]:
+		for item in game.provisions.data.weights_lb.keys()+["oxen"]+MOUNT_GOODS:
 			if (side=="buy" and effects.get(item,0)>0) or (side=="sell" and effects.get(item,0)<0):
 				choice["market_key"]=offer.key+"|"+side+"_"+item
-				choice["stock_limit"]=offer.lots
-				var left: int=offer.lots-int(record.spent.get(choice.market_key,0))
+				# A post keeps only a few horses and saddles on hand.
+				choice["stock_limit"]=mini(int(offer.lots),int(choice.get("lot",{}).get("post_lots",offer.lots))) if offer.post else offer.lots
+				var left: int=int(choice.stock_limit)-int(record.spent.get(choice.market_key,0))
 				choice.label+=" · %d offer(s) left" % maxi(0,left)
 				break
 func can_trade(choice: Dictionary) -> bool:
@@ -133,7 +141,7 @@ func consume(choice: Dictionary) -> void:
 		record.spent[choice.market_key]=int(record.spent.get(choice.market_key,0))+1
 		# Once the store counter has sold by the unit, the unit ledger is the exact count; a whole lot adds its amount.
 		var units: String=choice.market_key+"|units"
-		if record.spent.has(units):record.spent[units]=int(record.spent[units])+absi(int(choice.effects.get(choice.market_key.substr(choice.market_key.rfind("|")+1).get_slice("_",1),0)))
+		if record.spent.has(units):record.spent[units]=int(record.spent[units])+absi(int(choice.effects.get(choice.market_key.substr(choice.market_key.rfind("|")+1).split("_",true,1)[1],0)))
 	if choice.has("visit_key"):record.spent[choice.visit_key]=1
 ## A trading visit costs one day, charged on its first transaction, at a post or with passing traders.
 func trade_days(offer: Dictionary) -> int:

@@ -1,10 +1,13 @@
 extends RefCounted
 ## Pure demand preview; actual goods transfer stays inside the witnessed crime incident.
 static var data: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/robbery_demands.json"))
-const GOODS=["food","bullets","clothing","oxen","wheels","axles","tongues","medicine","salt","wagon"]
+const GOODS=["food","bullets","clothing","oxen","wheels","axles","tongues","medicine","salt","wagon","horses","mules","saddles","pack_saddles","saddlebags"]
+const ANIMALS=["horses","mules"]
+## Places with goods to pick from; a gate or ferry is robbed of its cash box and passage instead.
+const STOCKED=["store","fort","traders","emigrants"]
 static func valid_rules(v: Variant) -> bool:
  if not v is Dictionary or not v.get("note") is String:return false
- for key in ["value_penalty","wagon_penalty"]:
+ for key in ["value_penalty","wagon_penalty","mount_penalty","theft_value_penalty","animal_noise"]:
   var n: Variant=v.get(key)
   if not (n is int or n is float) or not is_finite(n) or n<0 or n>1:return false
  return true
@@ -21,7 +24,7 @@ static func stock(game,place: String,initial: bool=false) -> Dictionary:
  if kind=="traders":raw=game.context.barter_goods(game,place).stock
  elif kind=="emigrants":raw=game.context.camp_goods(game,place).stock
  else:
-  for lot in game.survival.data.trade_lots:raw[lot.item]=int(game.context.data.post_lots)*int(lot.amount)
+  for lot in game.survival.data.trade_lots:raw[lot.item]=mini(int(game.context.data.post_lots),int(lot.get("post_lots",game.context.data.post_lots)))*int(lot.amount)
  if kind in ["store","fort","emigrants"]:raw["wagon"]=1
  for item in raw:
   if item=="food" or item not in GOODS:continue
@@ -35,6 +38,13 @@ static func stock(game,place: String,initial: bool=false) -> Dictionary:
   result[item]=maxi(0,int(raw[item])+extra-used)
   if item=="wagon":result[item]=mini(1,int(result[item]))
  return result
+## What a quiet theft can carry off: the goods, but not the cash box or a wagon.
+static func theft_stock(game,place: String,initial: bool=false) -> Dictionary:
+ var result: Dictionary=stock(game,place,initial)
+ result.erase("cash_cents")
+ result.erase("wagon")
+ return result if game.crime.rules(place).kind in STOCKED else {}
+static func animals(basket: Dictionary) -> int:return int(basket.get("horses",0))+int(basket.get("mules",0))
 static func price(game,item: String) -> float:
  if item=="cash_cents":return 1.0
  if item=="wagon":return float(game.provisions.data.replacement_wagon.price_cents)
@@ -48,11 +58,12 @@ static func value(game,basket: Dictionary) -> float:
  var total:=0.0
  for item in basket:total+=float(basket[item])*price(game,item)
  return total
-static func quote(game,basket: Dictionary,place: String="") -> Dictionary:
- var result: Dictionary={"valid":false,"message":"Choose a demand within the target's available goods."}
+static func quote(game,basket: Dictionary,place: String="",action: String="robbery") -> Dictionary:
+ var theft: bool=action=="theft"
+ var result: Dictionary={"valid":false,"message":"Choose goods to take from what they have." if theft else "Choose a demand within the target's available goods."}
  if place=="":place=game.crime.target(game)
  if place=="" or basket.is_empty():return result
- var available:=stock(game,place)
+ var available:=theft_stock(game,place) if theft else stock(game,place)
  var selected: Dictionary={}
  for item in basket:
   if not available.has(item) or not game.crime.whole(basket[item],0,int(available[item])):return result
@@ -60,6 +71,9 @@ static func quote(game,basket: Dictionary,place: String="") -> Dictionary:
  if selected.is_empty():return result
  if selected.get("wagon",0)>0 and game.state.vehicle!="foot":
   result.message="You already have a wagon. This expedition cannot tow a second one."
+  return result
+ if selected.get("wagon",0)>0 and int(game.state.oxen)+int(selected.get("oxen",0))<1:
+  result.message="A wagon needs oxen to pull it. Demand oxen with it, or bring your own."
   return result
  var after: Dictionary=game.state.duplicate(true)
  if selected.get("wagon",0)>0:
@@ -72,23 +86,36 @@ static func quote(game,basket: Dictionary,place: String="") -> Dictionary:
  var loot_mass:=0.0
  for item in selected:
   if game.provisions.data.weights_lb.has(item):loot_mass+=int(selected[item])*float(game.provisions.data.weights_lb[item])
- var alongside: bool=after.vehicle=="wagon" and game.crime.rules(place).wagon_access
+ # Theft is carried off quietly by hand; a holdup can load alongside the wagon where the place allows it.
+ var alongside: bool=not theft and after.vehicle=="wagon" and game.crime.rules(place).wagon_access
  var haul_limit: float=game.hauling_capacity("robbery")
  if not alongside and loot_mass>haul_limit:
   result.message="Not enough fit, willing helpers to haul the requested loot (%.1f / %.1f lb). Reduce your demand." % [loot_mass,haul_limit]
   return result
  var ratio: float=value(game,selected)/maxf(1.0,value(game,available))
- var chance: float=clampf(float(game.crime.odds(game,place).compliance)-float(data.value_penalty)*ratio-(float(data.wagon_penalty) if selected.get("wagon",0)>0 else 0.0),float(game.crime.modifiers.floor),float(game.crime.modifiers.ceiling))
- result.merge({"valid":cargo<=capacity,"basket":selected,"value_cents":roundi(value(game,selected)),"compliance":chance,"cargo_lb":cargo,"capacity_lb":capacity,"message":"A larger demand makes resistance more likely. Resistance, injury, capture and witnesses still apply." if cargo<=capacity else "The demanded goods would exceed your carrying limit. Reduce the demand or include an available wagon."},true)
+ var floor_: float=float(game.crime.modifiers.floor)
+ var ceiling: float=float(game.crime.modifiers.ceiling)
+ var fits: bool=cargo<=capacity
+ if theft:
+  # Taking more of what is there is likelier to be missed, and every animal led off is noise in the dark.
+  var base: float=float(game.crime.odds(game,place).theft_success)
+  var unseen: float=game.crime.bounded(base,base-float(data.theft_value_penalty)*ratio-float(data.animal_noise)*animals(selected),floor_,ceiling)
+  result.merge({"valid":fits,"basket":selected,"value_cents":roundi(value(game,selected)),"unseen":unseen,"cargo_lb":cargo,"capacity_lb":capacity,"message":"Taking more makes it likelier someone notices. Witnesses and escape risks still apply." if fits else "The goods would exceed your carrying limit. Take less."},true)
+  return result
+ # Taking a family's or a trading party's last saddle and pack animals strands them; they fight harder for them.
+ var stranding: bool=game.crime.rules(place).kind in ["traders","emigrants"] and animals(selected)>0 and animals(selected)>=animals(available)
+ var chance: float=clampf(float(game.crime.odds(game,place).compliance)-float(data.value_penalty)*ratio-(float(data.wagon_penalty) if selected.get("wagon",0)>0 else 0.0)-(float(data.mount_penalty) if stranding else 0.0),floor_,ceiling)
+ result.merge({"valid":fits,"basket":selected,"value_cents":roundi(value(game,selected)),"compliance":chance,"cargo_lb":cargo,"capacity_lb":capacity,"message":"A larger demand makes resistance more likely. Resistance, injury, capture and witnesses still apply." if fits else "The demanded goods would exceed your carrying limit. Reduce the demand or include an available wagon."},true)
  return result
-static func start(game,basket: Dictionary) -> bool:
- if not game.pending.get("crime_menu",false) or not game.crime.incident().is_empty() or not game.crime.can_choose(game,"robbery"):return false
- var offer:=quote(game,basket)
+static func start(game,basket: Dictionary,action: String="robbery") -> bool:
+ if not game.pending.get("crime_menu",false) or not game.crime.incident().is_empty() or not game.crime.can_choose(game,action):return false
+ if action=="theft" and theft_stock(game,game.crime.target(game)).is_empty():return false
+ var offer:=quote(game,basket,"",action)
  if not offer.valid:return false
- game.pending["robbery_demand"]=offer.basket.duplicate(true)
- return game.crime.choose(game,"robbery")
+ game.pending[action+"_demand"]=offer.basket.duplicate(true)
+ return game.crime.choose(game,action)
 static func loot(game,current: Dictionary) -> Dictionary:
- var offer:=quote(game,current.demand,str(current.place))
+ var offer:=quote(game,current.demand,str(current.place),str(current.action))
  var basket: Dictionary=current.demand
  return {"food":int(basket.get("food",0)) if offer.valid else 0,"money":int(basket.get("cash_cents",0)) if offer.valid else 0,"goods":basket.duplicate(true) if offer.valid else {},"valid":offer.valid,"message":offer.message,"wagon_access":int(basket.get("wagon",0))>0 or game.state.vehicle=="wagon","haul_limit_lb":game.hauling_capacity("robbery")}
 static func take(game,current: Dictionary,goods: Dictionary) -> void:
@@ -111,7 +138,8 @@ static func take(game,current: Dictionary,goods: Dictionary) -> void:
   actual[item]=amount
  current["taken_goods"]=actual
  game.state.parts=int(game.state.wheels)+int(game.state.axles)+int(game.state.tongues)
- game.journal.append("Day %d · Seized demanded goods: %s. The wagon's former owners can still resist your escape." % [game.state.day,describe(actual)])
+ if current.action=="theft":game.journal.append("Day %d · Carried off unseen: %s." % [game.state.day,describe(actual)])
+ else:game.journal.append("Day %d · Seized demanded goods: %s. The wagon's former owners can still resist your escape." % [game.state.day,describe(actual)])
 static func describe(basket: Dictionary) -> String:
  var lines: Array[String]=[]
  var ordered: Array=basket.keys()
@@ -119,12 +147,12 @@ static func describe(basket: Dictionary) -> String:
  for item in ordered:
   if int(basket[item])<=0:continue
   if item=="cash_cents":lines.append("$%.2f" % (int(basket[item])/100.0))
-  else:lines.append("%d %s" % [basket[item],{"medicine":"care kits","clothing":"clothing sets","food":"food units"}.get(item,item)])
+  else:lines.append("%d %s" % [basket[item],{"medicine":"care kits","clothing":"clothing sets","food":"food units","pack_saddles":"pack saddles"}.get(item,item)])
  return ", ".join(lines) if not lines.is_empty() else "nothing"
 static func valid(game,current: Dictionary) -> bool:
  if not current.has("demand"):return not current.has("taken_goods")
- if current.action!="robbery" or not current.demand is Dictionary or current.demand.is_empty():return false
- var available:=stock(game,str(current.place),true)
+ if current.action not in ["robbery","theft"] or not current.demand is Dictionary or current.demand.is_empty():return false
+ var available:=theft_stock(game,str(current.place),true) if current.action=="theft" else stock(game,str(current.place),true)
  for item in current.demand:
   if not available.has(item) or not game.crime.whole(current.demand[item],1,int(available[item])):return false
  if int(current.food)>int(current.demand.get("food",0)) or int(current.cash_cents)>int(current.demand.get("cash_cents",0)):return false

@@ -13,7 +13,7 @@ const KINDS={
 	"toll":{"journal":"Toll gate","noun":"the toll gate","theft":"Slip the wagons past the gate without paying · 1 day","raid":"Search the gatekeeper's cabin for the toll money · 1 day","take":"Take $%.2f from the toll box and pass the gate · 1 day","passage":"the gate will be behind you"},
 	"fort":{"journal":"Fort","noun":"the army post","theft":"Take rations from the commissary tent · 1 day","raid":"Search the commissary tent for rations and the cash box · 1 day"},
 	"traders":{"journal":"Trader","noun":"a trading party","theft":"Take goods from the traders' packs without paying · 1 day","raid":"Search the traders' packs · 1 day"},
-	"emigrants":{"journal":"Emigrant","noun":"an emigrant family","theft":"Take food from their wagon while they sleep · 1 day","raid":"Search their wagon · 1 day"},
+	"emigrants":{"journal":"Emigrant","noun":"an emigrant family","theft":"Take from their camp while they sleep · 1 day","raid":"Search their wagon · 1 day"},
 	"ferry":{"journal":"Ferry","noun":"the ferry","theft":"Cast off with the ferry while the crew is away · 1 day","raid":"Take the ferry and the crew's cash box · 1 day","take":"Take $%.2f and the ferry · 1 day","passage":"the ferry will be yours to work across"}}
 ## Attempts that reach the loot stage; only these can win passage at a gate or ferry.
 const LOOTING=["unseen","complied","killed","raided"]
@@ -343,8 +343,12 @@ func menu(game) -> Dictionary:
 	elif current.stage=="loot":
 		var loot:=loot_quote(game,place)
 		if current.has("demand"):
-			text=current.attempt.capitalize()+". Demand: "+game.RobberyDemand.describe(current.demand)+". Collecting uses one day. Witnesses and escape risks still apply. "+str(loot.get("message",""))
-			options=[option("Collect the demanded goods · 1 day","take"),option("Leave the demand and try to get away","flee")]
+			if current.action=="theft":
+				text="Unseen so far. To take: "+game.RobberyDemand.describe(current.demand)+". Carrying it off uses one day. "+str(loot.get("message",""))
+				options=[option("Carry off the goods · 1 day","take"),option("Leave it all and slip away","flee")]
+			else:
+				text=current.attempt.capitalize()+". Demand: "+game.RobberyDemand.describe(current.demand)+". Collecting uses one day. Witnesses and escape risks still apply. "+str(loot.get("message",""))
+				options=[option("Collect the demanded goods · 1 day","take"),option("Leave the demand and try to get away","flee")]
 		elif scene.kind in ["toll","ferry"]:
 			text="%s. You can take $%.2f from the cash box, and %s. Doing it uses one more day. Nearby staff can respond as you leave." % [current.attempt.capitalize(),loot.money/100.0,words.passage]
 			options=[option(words.take % (loot.money/100.0),"take"),option("Give it up and try to get away","flee")]
@@ -365,7 +369,9 @@ func menu(game) -> Dictionary:
 	else:
 		text="Incident %d: %s; %s. Food taken: %d lb. Cash taken: $%.2f. Shots: %d. People here who saw it: %d. See the journal and party records for injuries and reactions." % [current.id,current.attempt,current.resolution,current.food,current.cash_cents/100.0,current.shots,local_witnesses(current).size()]
 		options=[option("Acknowledge the outcome","finish")]
-	if current.has("demand"):
+	if current.has("demand") and current.action=="theft":
+		if current.stage!="loot":text+="\nMeant to take: "+game.RobberyDemand.describe(current.demand)
+	elif current.has("demand"):
 		text+="\nDemand: "+game.RobberyDemand.describe(current.demand)
 		if current.stage=="loot":text+="\nOnly the agreed demand can be collected. Extra goods require another dangerous attempt."
 	options.append(option(({"traders":"Leave the traders alone","emigrants":"Leave the family be"}.get(scene.kind,"Back to the stop")) if current.is_empty() else "Encounter in progress","back"))
@@ -522,6 +528,11 @@ func choose(game,command: String) -> bool:
 			if not demanded.valid:return false
 			current["demand"]=demanded.basket.duplicate(true)
 			scene.compliance=demanded.compliance
+		elif command=="theft" and game.pending.has("theft_demand"):
+			var chosen: Dictionary=game.RobberyDemand.quote(game,game.pending.theft_demand,place,"theft")
+			if not chosen.valid:return false
+			current["demand"]=chosen.basket.duplicate(true)
+			scene.theft_success=chosen.unseen
 		record.incidents.append(current)
 		record.active={"id":id}
 		if command=="theft":current.attempt="unseen" if rng.randf()<scene.theft_success else "noticed"

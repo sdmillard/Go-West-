@@ -985,6 +985,12 @@ func _service_choice(index: int) -> void:
 		_pause_travel()
 		robbery_demand_view.open(game)
 		return
+	# A theft from a place with goods picks what to carry off first; a gate or ferry has only its passage.
+	if game.pending.get("crime_menu",false) and game.crime.incident().is_empty() and game.pending.choices[index].get("crime_command","")=="theft" and not game.RobberyDemand.theft_stock(game,game.crime.target(game)).is_empty():
+		service_window.hide()
+		_pause_travel()
+		robbery_demand_view.open(game,"theft")
+		return
 	crime_category=""
 	service_window.hide()
 	if game.pending.choices[index].has("counter"):
