@@ -496,6 +496,8 @@
     "seizure_chance": 0.25,
     "helper_banish_chance": 0.5,
     "flogging_damage": 30,
-    "mounted_flight_bonus": 0.15
+    "mounted_flight_bonus": 0.15,
+    "left_behind_taken": 0.4,
+    "left_behind_trust": 60
   }
 }

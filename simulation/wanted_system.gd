@@ -4,11 +4,12 @@ const PREFIXES={"posse":"wanted_posse:","regulators":"wanted_regulators:","bount
 const POSTS=["fort_laramie","fort_bridger","fort_hall","fort_boise"]
 const SENTENCES=["restitution","robbery","assault","hanged"]
 const RIDE_LABEL="Cut loose and ride · leave the wagon, grab what you can, 1 day"
+const CHOOSE_LABEL="Cut loose and ride · too few horses: choose who rides, the rest stay with the wagon"
 static func valid_rules(value: Variant) -> bool:
-	if not value is Dictionary or value.size()!=16 or not value.get("note") is String:return false
-	for key in ["posse_max_mile","decay_days","cooldown_days","army_max_days","bounty_min_cents","bounty_max_cents","bounty_step_cents","robbery_reward_cents","flogging_damage"]:
+	if not value is Dictionary or value.size()!=18 or not value.get("note") is String:return false
+	for key in ["posse_max_mile","decay_days","cooldown_days","army_max_days","bounty_min_cents","bounty_max_cents","bounty_step_cents","robbery_reward_cents","flogging_damage","left_behind_trust"]:
 		if not whole(value.get(key),1,100000):return false
-	for key in ["daily_base","daily_cap","seizure_chance","helper_banish_chance","mounted_flight_bonus"]:
+	for key in ["daily_base","daily_cap","seizure_chance","helper_banish_chance","mounted_flight_bonus","left_behind_taken"]:
 		if not number(value.get(key)) or value[key]<0 or value[key]>1:return false
 	return number(value.get("payoff_factor")) and value.payoff_factor>=1 and value.payoff_factor<=2 and value.bounty_max_cents>=value.bounty_min_cents
 ## How the party would run: in the saddle (two to a horse if need be), behind the oxen, or on foot.
@@ -32,26 +33,121 @@ static func ride_hard(game) -> void:
 	var wear: int=game.Mounts.wear(game.provisions.data.mounts,plan,game.context.region_id(game),0,2)
 	game.state["horse_health"]=maxi(0,game.Mounts.condition(game.state)-wear)
 	if game.state.horse_health==0:game.Mounts.breakdown(game)
-## A wagon party can cut loose: everyone onto the horses (doubled if need be), the wagon left where it stands.
+## A wagon party can cut loose: as many as the saddled animals carry two to a saddle, the wagon left where it stands.
 static func can_ride_off(game) -> bool:
 	if game.state.vehicle!="wagon" or not game.wagon_cache.is_empty():return false
 	if game.state.next_landmark==game.state.landmark and game.travelled_path().size()<2:return false
+	return seats(game)>0
+## Riders the saddled animals can carry in a getaway, two to a saddle.
+static func seats(game) -> int:
+	return 2*mini(game.Mounts.count(game.state,"saddles"),game.Mounts.count(game.state,"horses")+game.Mounts.count(game.state,"mules"))
+## Whether the whole party fits on the animals, doubled if need be.
+static func everyone_rides(game,left: Array=[]) -> bool:
 	var inventory: Dictionary=game.state.duplicate()
 	inventory["vehicle"]="foot"
 	inventory["double_up"]=true
+	inventory["party_size"]=int(game.state.party_size)-left.size()
 	return game.Mounts.mounted(game.Mounts.plan(game.provisions.data.mounts,inventory))
+static func ride_label(game) -> String:
+	return RIDE_LABEL if everyone_rides(game) else CHOOSE_LABEL
+## Who stays with the wagon: active companions not picked to ride. The leader always rides.
+static func left_behind(game,riding: Array) -> Array:
+	return game.party_health.members.filter(func(member):return int(member.id)>0 and game.party_health.is_active(member) and int(member.id) not in riding).map(func(member):return int(member.id))
+## The first pick: the leader, then companions in party order until the saddles are full.
+static func default_riders(game) -> Array:
+	var riding: Array=[0]
+	for member in game.party_health.members:
+		if riding.size()>=seats(game):break
+		if int(member.id)>0 and game.party_health.is_active(member):riding.append(int(member.id))
+	return riding
+static func valid_riders(game,riding: Variant) -> bool:
+	if not riding is Array or riding.is_empty() or riding.size()>seats(game) or not can_ride_off(game):return false
+	var seen: Array=[]
+	for id in riding:
+		if not whole(id,0,game.party_health.members.size()-1) or int(id) in seen or not game.party_health.is_active(game.party_health.members[int(id)]):return false
+		seen.append(int(id))
+	return 0 in seen
+## The picker: each companion can be taken or left; the leader rides. Choices carry rider_member: an id to toggle, -1 to ride, -2 to go back.
+static func riders_menu(game,riding: Array) -> Dictionary:
+	var names:=func(ids):return ", ".join(ids.map(func(id):return game.party_health.members[int(id)].name)) if not ids.is_empty() else "nobody"
+	var left:=left_behind(game,riding)
+	var text: String="Saddles for %d, two to a horse. Riding: %s. Staying with the wagon: %s.\nThose left behind guard the wagon and its goods until you come back for them, if the pursuers don't take them in first." % [seats(game),names.call(riding),names.call(left)]
+	var choices: Array=[]
+	for member in game.party_health.members:
+		var id: int=int(member.id)
+		if id==0 or not game.party_health.is_active(member):continue
+		choices.append({"label":("Leave %s with the wagon" if id in riding else "Take %s along") % member.name,"rider_member":id,"effects":{},"result":""})
+	choices.append({"label":"Ride off · %d riding, %d staying, 1 day" % [riding.size(),left.size()],"rider_member":-1,"effects":{},"result":""})
+	choices.append({"label":"Back","rider_member":-2,"effects":{},"result":""})
+	return {"id":"riders","riders_menu":true,"service_menu":true,"title":"Who rides?","text":text,"riding":riding.duplicate(),"choices":choices}
+static func can_choose_rider(game,index: int) -> bool:
+	if not game.pending.get("riders_menu",false) or index<0 or index>=game.pending.choices.size():return false
+	var riding: Array=game.pending.riding
+	var id: int=int(game.pending.choices[index].rider_member)
+	if id==-2:return true
+	if id==-1:return valid_riders(game,riding)
+	return id in riding or riding.size()<seats(game)
+static func choose_rider(game,index: int) -> bool:
+	if not can_choose_rider(game,index):return false
+	var riding: Array=game.pending.riding.duplicate()
+	var id: int=int(game.pending.choices[index].rider_member)
+	if id==-2:
+		game.pending=game.crime.menu(game)
+		return true
+	if id==-1:
+		game.pending=game.crime.menu(game)
+		return game.crime.choose(game,"ride",left_behind(game,riding))
+	if id in riding:riding.erase(id)
+	else:riding.append(id)
+	riding.sort()
+	game.pending=riders_menu(game,riding)
+	return true
+## Temperaments that never wait at an abandoned wagon: too frightened, or looking out for themselves.
+const SCATTER=["Nervous","Self-serving"]
+## Whether a companion left at the wagon slips away as the riders go. Broken trust always does;
+## the fearful and the self-serving do unless Loyal; the Loyal stay; others go more often the lower their trust.
+static func slips_away(crime,game,id: int) -> bool:
+	var profile: Dictionary=game.characters.profiles[id]
+	var trust: float=float(profile.trust)
+	if trust<=float(profile.get("thresholds",{}).get("breaking",20)):return true
+	if "Loyal" in profile.get("specials",[]):return false
+	if profile.traits.any(func(name):return name in SCATTER):return true
+	return crime.rng.randf()<clampf((float(crime.wanted_data.left_behind_trust)-trust)/100.0,0.0,1.0)
+## What becomes of those left with the wagon: some slip away at once, and pursuers coming on the wagon may take in the rest.
+## The party learns it when it comes back.
+static func left_at_wagon(crime,game,pursued: bool) -> void:
+	var cache: Dictionary=game.wagon_cache
+	if not cache.has("guards"):return
+	var food=game.Guards.Food.new()
+	food.data=game.provisions.data.duplicate(true)
+	food.fresh.assign(cache.fresh.duplicate(true))
+	var day: int=int(game.state.day)
+	for member in cache.guards:
+		if not member.alive or member.get("departed",false):continue
+		if slips_away(crime,game,int(member.id)):
+			game.Guards._leave(game,cache,member,food,day,"slipped away as the riders left")
+		elif pursued and crime.rng.randf()<float(crime.wanted_data.left_behind_taken):
+			member["departed"]=true
+			member["guard_departure"]=true
+			member["departure_day"]=day
+			member["departure_place"]=cache.location.from
+			member["departure_supplies"]={"food":0,"clothing":0,"gear_lb":int(game.provisions.data.walking.personal_gear_lb_per_person)}
+			member.history.append("Day %d · Taken in by the pursuers at the abandoned wagon." % day)
+			cache.household_gear_lb=maxf(0.0,float(cache.household_gear_lb)-float(game.provisions.data.walking.personal_gear_lb_per_person))
+			game.Guards._log(cache,day,"%s was taken in by the pursuers who came on the wagon." % member.name)
+	cache.fresh=food.fresh.duplicate(true)
 ## Nobody planned this: whatever comes to hand goes into the saddlebags and packs, in no sensible order,
 ## and the rest stays with the wagon. Spare wagon parts stay behind.
-static func cut_loose(crime,game) -> bool:
-	if not can_ride_off(game):return false
-	game.state["double_up"]=game.state.get("double_up",false) or game.Mounts.plan(game.provisions.data.mounts,game.state.merged({"vehicle":"foot"})).mode!="mounted"
+static func cut_loose(crime,game,left: Array=[]) -> bool:
+	if not can_ride_off(game) or not everyone_rides(game,left) or not (left.is_empty() or game.Guards.valid_selection(game,left)):return false
+	game.state["double_up"]=game.state.get("double_up",false) or game.Mounts.plan(game.provisions.data.mounts,game.state.merged({"vehicle":"foot","party_size":int(game.state.party_size)-left.size()})).mode!="mounted"
 	var items: Array=["food","bullets","clothing","medicine","salt"]
 	var stock: Dictionary=game.CacheSupport.available(game)
 	var cart: Dictionary={}
 	for key in stock:cart[key]=0
-	var capacity: float=float(game.CacheSupport.quote(game,cart,false,[],false,true).get("capacity_lb",0.0))
+	var capacity: float=float(game.CacheSupport.quote(game,cart,false,left,false,true).get("capacity_lb",0.0))
 	var weights: Dictionary=game.provisions.data.weights_lb
-	var room: float=capacity-float(game.provisions.data.walking.personal_gear_lb_per_person)*int(game.state.party_size)
+	var room: float=capacity-float(game.provisions.data.walking.personal_gear_lb_per_person)*(int(game.state.party_size)-left.size())
 	# Shuffle with the crime's own generator so a saved game replays the same scramble.
 	for i in range(items.size()-1,0,-1):
 		var j: int=crime.rng.randi_range(0,i)
@@ -64,14 +160,15 @@ static func cut_loose(crime,game) -> bool:
 		grab=mini(grab,floori(maxf(0.0,room)/each)) if each>0 else grab
 		cart[key]=maxi(0,grab)
 		room-=grab*each
-	var offer: Dictionary=game.CacheSupport.quote(game,cart,false,[],false,true)
+	var offer: Dictionary=game.CacheSupport.quote(game,cart,false,left,false,true)
 	# Fresh meat weighs more than the pound guess: shed food until the load fits.
 	while not offer.valid and int(cart.food)>0:
 		cart.food=maxi(0,int(cart.food)-maxi(1,int(cart.food)/10))
-		offer=game.CacheSupport.quote(game,cart,false,[],false,true)
+		offer=game.CacheSupport.quote(game,cart,false,left,false,true)
 	if not offer.valid:return false
-	game.CacheSupport.pack(game,cart,false,[],true)
-	game.journal.append("Day %d · Cut loose from the wagon and rode for it. Grabbed in a hurry: %s. Everything else stays with the wagon." % [game.state.day,game.RobberyDemand.describe(cart)])
+	var names: Array=left.map(func(id):return game.party_health.members[int(id)].name)
+	game.CacheSupport.pack(game,cart,false,left,true)
+	game.journal.append("Day %d · Cut loose from the wagon and rode for it. Grabbed in a hurry: %s. Everything else stays with the wagon%s." % [game.state.day,game.RobberyDemand.describe(cart)," and "+", ".join(names) if not names.is_empty() else ""])
 	return true
 static func number(value: Variant) -> bool:return (value is int or value is float) and is_finite(value)
 static func whole(value: Variant,low: int,high: int) -> bool:return number(value) and value==floor(value) and value>=low and value<=high
@@ -193,7 +290,7 @@ static func menu(crime,game,current: Dictionary) -> Dictionary:
 		var killing: bool=known.any(func(item):return item.severity==4)
 		text="They recognize the party from word along the road. "+("A killing is known: conviction means hanging." if killing else "Surrender brings a trial, restitution or punishment; it does not automatically end the journey.")+"\nFleeing takes a day. A failed escape can leave someone wounded. Fighting spends up to three bullets and risks injury or death."
 		options=[crime.option("Surrender for trial","surrender"),crime.option(("Ride for it · 1 day, risk of capture" if game.Mounts.mounted(flight_plan(game)) else "Flee · 1 day, risk of capture"),"flee"),crime.option("Fight · up to 3 bullets, 1 day","breakout")]
-		if can_ride_off(game):options.append(crime.option(RIDE_LABEL,"ride"))
+		if can_ride_off(game):options.append(crime.option(ride_label(game),"ride"))
 		if int(current.bounty)>0:options.append(crime.option("Pay off the reward seekers · $%.2f" % (payoff(crime,current)/100.0),"payoff"))
 	else:
 		text=current.get("sentence",{}).get("text","The encounter ended: "+str(current.resolution)+". Read the journal for wounds and losses.")
@@ -210,7 +307,7 @@ static func can_choose(crime,game,current: Dictionary,command: String) -> bool:
 static func end_encounter(crime,game,current: Dictionary,resolution: String) -> void:
 	current.ended_day=int(game.state.day)
 	crime.result(game,resolution)
-static func choose(crime,game,current: Dictionary,command: String) -> bool:
+static func choose(crime,game,current: Dictionary,command: String,left: Array=[]) -> bool:
 	if not can_choose(crime,game,current,command):return false
 	if command=="finish":
 		current.stage="done"
@@ -227,7 +324,9 @@ static func choose(crime,game,current: Dictionary,command: String) -> bool:
 		game.journal.append("Day %d · Paid reward seekers $%.2f. The posting is settled; word of past crimes remains." % [game.state.day,cents/100.0])
 		end_encounter(crime,game,current,"paid")
 	elif command in ["flee","ride"]:
-		if command=="ride" and not cut_loose(crime,game):return false
+		if command=="ride":
+			if not cut_loose(crime,game,left):return false
+			left_at_wagon(crime,game,true)
 		if not crime.advance(game):return true
 		var scene: Dictionary=crime.rules(current.place)
 		var chance: float=flight_chance(crime,game,scene)
@@ -262,8 +361,10 @@ static func choose(crime,game,current: Dictionary,command: String) -> bool:
 	if game.state.status=="traveling":game.pending=menu(crime,game,current)
 	return true
 ## A later army detachment can be fled, unlike soldiers already blocking a fort gate.
-static func flee_pursuit(crime,game,current: Dictionary,ride: bool=false) -> bool:
-	if ride and not cut_loose(crime,game):return false
+static func flee_pursuit(crime,game,current: Dictionary,ride: bool=false,left: Array=[]) -> bool:
+	if ride:
+		if not cut_loose(crime,game,left):return false
+		left_at_wagon(crime,game,true)
 	if not crime.advance(game):return true
 	var scene: Dictionary=crime.rules(current.place)
 	var chance: float=flight_chance(crime,game,scene)

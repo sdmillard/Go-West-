@@ -137,6 +137,8 @@ func valid_menu(menu: Dictionary, game, count: int=5) -> bool:
 		if choice.has("crime_command") and not menu.get("crime_menu",false):return false
 		if menu.has("attack_menu") and (menu.attack_menu!=true or menu.id!="attack" or not menu.get("service_menu",false) or not integer(choice.get("attack_target"),-1,count-1)):return false
 		if choice.has("attack_target") and not menu.get("attack_menu",false):return false
+		if menu.has("riders_menu") and (menu.riders_menu!=true or menu.id!="riders" or not menu.get("service_menu",false) or not integer(choice.get("rider_member"),-2,count-1)):return false
+		if choice.has("rider_member") and not menu.get("riders_menu",false):return false
 		if choice.has("unarmed") and (choice.unarmed != true or not menu.get("attack_menu",false) or int(choice.get("attack_target",-1)) < 0):return false
 		if menu.has("remains_menu") and (menu.remains_menu!=true or menu.id!="remains" or not menu.get("service_menu",false) or choice.get("remains_command","") not in game.Remains.COMMANDS or not integer(choice.get("remains_id"),0,200) or not integer(choice.get("member",-1),-1,count-1)):return false
 		if choice.has("remains_command") and not menu.get("remains_menu",false):return false
@@ -394,6 +396,13 @@ func restore(value: Variant):
 		var target: int=int(game.pending.choices[0].get("attack_target",-1))
 		if not game.crime.attack_ready(game,target):return null
 		game.pending=game.crime.attack_menu(game,target)
+	# An open riders picker must still belong to a getaway that needs it; its choices are regenerated.
+	if game.pending.get("riders_menu",false):
+		var riding: Variant=game.pending.get("riding")
+		if not riding is Array or not game.crime.can_choose(game,"ride") or game.crime.Wanted.everyone_rides(game):return null
+		riding=riding.map(func(id):return int(id) if (id is int or id is float) and id==floor(id) else -1)
+		if not game.crime.Wanted.valid_riders(game,riding):return null
+		game.pending=game.crime.Wanted.riders_menu(game,riding)
 	# An open list of the dead must still offer exactly what can be done; its text is regenerated.
 	if game.pending.get("remains_menu",false):
 		var authoritative: Dictionary=game.Remains.menu(game)
@@ -420,7 +429,9 @@ func restore(value: Variant):
 		var saved_commands: Array = game.pending.choices.map(func(choice):return choice.get("crime_command",""))
 		var current_commands: Array = authoritative.choices.map(func(choice):return choice.crime_command)
 		var previous_pursuit: bool=economy_migrated and game.crime.incident().get("action","")=="pursuit" and saved_commands==current_commands.filter(func(command):return command!="flee")
-		if saved_commands != current_commands and not previous_pursuit and not (economy_migrated and saved_commands == current_commands.filter(func(command):return command!="assault")):return null
+		# Older rules offered riding off only when everyone fit on the horses.
+		var before_riders: bool=economy_migrated and saved_commands==current_commands.filter(func(command):return command!="ride")
+		if saved_commands != current_commands and not previous_pursuit and not before_riders and not (economy_migrated and saved_commands == current_commands.filter(func(command):return command!="assault")):return null
 		game.pending=authoritative
 	for profile in game.characters.profiles:
 		for memory in profile.memories:
