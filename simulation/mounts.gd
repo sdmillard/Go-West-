@@ -85,7 +85,12 @@ static func wear(rules: Dictionary,plan_: Dictionary,region: String,base_strain:
 ## A worn-out animal gives out under its load: one is lost and the rest are rested a little.
 static func breakdown(game) -> void:
 	var rules: Dictionary=game.provisions.data.mounts
-	var kind: String="horses" if count(game.state,"horses")>0 else "mules"
+	var working: Dictionary=game.mount_plan()
+	if working.mode not in ["mounted","doubled","packing"]:return
+	var horses: int=int(working.saddled_horses)+int(working.pack_horses)
+	var mules: int=int(working.saddled_mules)+int(working.pack_mules)
+	if horses+mules==0:return
+	var kind: String="horses" if horses>0 else "mules"
 	game.state[kind]=int(game.state[kind])-1
 	game.state["horse_health"]=int(rules.breakdown_condition)
 	var name: String="horse" if kind=="horses" else "mule"

@@ -37,7 +37,15 @@ func run():
 	var legacy: Dictionary={"oxen":6,"food":600}
 	var listed: Dictionary={"wagon":1,"oxen":6,"food":600}
 	check(setup.outfitter.quote("farmer",legacy).total_cents==setup.outfitter.quote("farmer",listed).total_cents,"A cart from before the wagon was listed still buys one")
-	check(setup.outfitter.quote("farmer",{"wagon":0,"oxen":0,"food":100}).valid,"No wagon and no oxen is a valid walking outfit")
+	var walking_cart: Dictionary={"wagon":0,"oxen":0,"food":95}
+	var walking_quote: Dictionary=setup.outfitter.quote("farmer",walking_cart)
+	check(walking_quote.valid and walking_quote.team_capacity_lb==170,"Walking outfit uses the starting party health, not full health")
+	check(setup.depart("farmer",["A","B","C","D","E"],5,walking_cart) and setup.provisions.capacity(setup.state)==walking_quote.team_capacity_lb and setup.provisions.cargo(setup.state)==walking_quote.cargo_lb,"A boundary walking quote matches actual departure load and capacity")
+	check(not setup.outfitter.quote("farmer",{"wagon":0,"food":96}).valid and not setup.outfitter.quote("farmer",{"wagon":0,"food":100}).valid,"Walking outfits above the real 170 lb limit are rejected")
+	var packing_cart: Dictionary={"wagon":0,"horses":1,"mules":2,"pack_saddles":1,"food":295}
+	check(setup.outfitter.quote("farmer",packing_cart).valid,"A working mule adds 200 lb to the starting walkers")
+	packing_cart.food=296
+	check(not setup.outfitter.quote("farmer",packing_cart).valid,"Packing quotes use starting health too")
 	check(not setup.outfitter.quote("farmer",{"wagon":1,"oxen":0,"food":100}).valid,"A wagon still needs an ox")
 	check(not setup.outfitter.quote("farmer",{"wagon":0,"food":600}).valid,"Without animals, the outfit must fit five walkers' packs")
 	var quote: Dictionary=setup.outfitter.quote("banker",PACKERS)
@@ -86,6 +94,20 @@ func run():
 	game.travel()
 	check(game.state.horses+game.state.mules==7 and game.state.horse_health==int(rules.breakdown_condition),"An animal ridden to nothing gives out and is left behind")
 	check(game.journal.any(func(line):return "gave out" in line),"The journal records the lost animal")
+	var working_mule=packers({"wagon":0,"horses":1,"mules":2,"pack_saddles":1,"food":80})
+	var capacity_before: float=working_mule.provisions.capacity(working_mule.state)
+	working_mule.Mounts.breakdown(working_mule)
+	check(working_mule.state.horses==1 and working_mule.state.mules==1 and working_mule.provisions.capacity(working_mule.state)==capacity_before,"A working mule gives out before an unused led horse; another mule can take its pack")
+	check("mule" in working_mule.journal.back() and working_mule.supply_history.back().changes=={"mules":-1},"Breakdown records the species actually lost")
+	working_mule.Mounts.breakdown(working_mule)
+	check(working_mule.state.mules==0 and working_mule.state.horses==1 and working_mule.provisions.capacity(working_mule.state)==capacity_before-25,"After both mules give out, the remaining horse takes the smaller pack load")
+	var led=packers({"wagon":0,"horses":1,"food":80})
+	var led_before: Dictionary=led.state.duplicate(true)
+	led.Mounts.breakdown(led)
+	check(led.state==led_before,"Led-only animals do not give out under a nonexistent load")
+	var empty=packers({"wagon":0,"food":80})
+	empty.Mounts.breakdown(empty)
+	check(not empty.state.has("mules") and not empty.state.has("horses"),"An empty train never creates negative stock")
 	# Horses led behind a wagon neither wear nor change the wagon.
 	wagon=wagon_party({"horses":2,"saddles":2})
 	var wagon_speed: int=wagon.provisions.capacity(wagon.state)
@@ -123,7 +145,7 @@ func run():
 	game.state["horse_health"]=90
 	game._apply(flee.effects)
 	check(game.state.horse_health<=76 and game.state.ox_health==100,"Horse strain lands on the horses; the lost day is a camp day")
-	var walkers=packers({"wagon":0,"food":80,"clothing":5})
+	var walkers=packers({"wagon":0,"food":65,"clothing":5})
 	var riders: Dictionary={}
 	for event in walkers.trail_events.events:
 		if event.id=="riders":riders=event.duplicate(true)
@@ -160,7 +182,7 @@ func run():
 	game.survival.wet_ground=4
 	game._update_river_stage()
 	check(game.pending.choices.any(func(choice):return choice.get("label","").begins_with("Swim the horses")),"Rising water turns the horse ford into a swim")
-	walkers=packers({"wagon":0,"food":80,"clothing":5})
+	walkers=packers({"wagon":0,"food":65,"clothing":5})
 	walkers.state.next_landmark="big_blue"
 	walkers._arrive_landmark()
 	check(walkers.pending.choices.any(func(choice):return choice.get("method","")=="swim") and not walkers.pending.choices.any(func(choice):return choice.get("method","")=="horses"),"Walkers without animals still swim with their packs")
@@ -172,6 +194,24 @@ func run():
 	main._refresh()
 	await process_frame
 	check(main.landscape.mount_rows().size()==8 and main.landscape.mount_rows().count(main.landscape.MOUNT_PACK_MULE)==3,"The travel view draws five riders and three pack mules")
+	check(main.landscape.party_layout(Vector2(150,132)).on_foot==0,"Mounted parties draw no extra walkers")
+	main.landscape.mount_plan=game.Mounts.plan(rules,{"vehicle":"foot","party_size":5,"mules":8,"pack_saddles":8})
+	for origin in [Vector2(140,135),Vector2(147,131),Vector2(153,132)]:
+		var layout: Dictionary=main.landscape.party_layout(origin)
+		var people: Rect2=Rect2(layout.walkers-Vector2(5,26),Vector2(92,27))
+		var visible: bool=Rect2(0,0,432,150).encloses(people)
+		for animal in layout.animals:
+			var bounds: Rect2=Rect2(animal-Vector2(0,39),Vector2(48,44))
+			visible=visible and Rect2(0,0,432,150).encloses(bounds) and not bounds.intersects(people)
+		check(visible and layout.animals.size()==8 and layout.on_foot==5,"All five walkers remain visible and clear of eight animals, moving or stopped")
+	main.landscape.walkers=1
+	main.landscape.mount_plan=game.Mounts.plan(rules,{"vehicle":"foot","party_size":1,"mules":1,"pack_saddles":1})
+	var solo: Dictionary=main.landscape.party_layout(Vector2(140,135))
+	check(solo.on_foot==1 and solo.animals.size()==1 and solo.walkers.x+11<solo.animals[0].x,"A lone walker stays separate from a single pack animal")
+	main.landscape.mount_plan=game.Mounts.plan(rules,{"vehicle":"foot","party_size":5,"horses":3,"saddles":3,"double_up":true})
+	check(main.landscape.party_layout(Vector2(150,132)).on_foot==0,"Doubled riders do not also appear on foot")
+	main.landscape.walkers=5
+	main.landscape.mount_plan=main.game.mount_plan()
 	check("MOUNTED" in main.stats.text and "HORSES 5 MULES 3" in main.stats.text,"The ledger shows the mounted party and its animals")
 	main.landscape.start_crossing({"method":"horses","stage":"high","place":"Big Blue River","mishap":false})
 	main.landscape.crossing_elapsed=main.landscape.crossing_duration*0.5

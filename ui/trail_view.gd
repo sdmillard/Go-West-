@@ -196,21 +196,33 @@ func _draw_herd(moving: bool) -> void:
 		var step:=int(clock_time*FPS+index*3)%FRAMES if moving else 0
 		draw_texture_rect_region(OXEN,Rect2(25+index*31,106-(index%2)*4,48,32),Rect2(step*48,0,48,32))
 
-## Walkers alone, or a string of riders, led and pack animals in single file with any walkers
-## behind. A small representative string is drawn; the ledger gives the exact count.
+## Keep the whole representative train inside the 432-pixel landscape, with a clear gap
+## between walkers and animals. The ledger gives the exact animal count.
+func party_layout(origin: Vector2) -> Dictionary:
+	var count: int=mount_rows().size()
+	var on_foot: int=0 if mount_plan.get("mode","") in ["mounted","doubled"] else walkers
+	var walking_width: float=(on_foot-1)*19.0+16.0 if on_foot>0 else 0.0
+	var gap: float=12.0 if on_foot>0 and count>0 else 0.0
+	var animal_width: float=(count-1)*30.0+48.0 if count>0 else 0.0
+	var width: float=walking_width+gap+animal_width
+	var left: float=clampf(origin.x+70.0-animal_width+48.0-walking_width-gap,8.0,424.0-width)
+	var animals: Array[Vector2]=[]
+	for index in range(count):
+		animals.append(Vector2(left+walking_width+gap+(count-1-index)*30.0,origin.y-(index%2)*3))
+	return {"animals":animals,"walkers":Vector2(left+5.0,origin.y),"on_foot":on_foot}
+
 func _draw_party(origin: Vector2,moving: bool) -> void:
 	var rows: Array=mount_rows()
 	if rows.is_empty():
 		_draw_walkers(origin,moving)
 		return
-	var on_foot: int=0 if mount_plan.get("mode","") in ["mounted","doubled"] else walkers
-	var front: float=origin.x+70.0
+	var layout: Dictionary=party_layout(origin)
 	for index in range(rows.size()):
-		var x: float=front-index*30.0
-		var y: float=origin.y-(index%2)*3
+		var x: float=layout.animals[index].x
+		var y: float=layout.animals[index].y
 		var step:=int(clock_time*FPS+index*3)%FRAMES if moving else 0
 		draw_texture_rect_region(HORSES,Rect2(x,y-39,48,44),Rect2(step*48,int(rows[index])*44,48,44))
-	if on_foot>0:_draw_walkers(Vector2(front-rows.size()*30.0-on_foot*19.0+30.0,origin.y),moving)
+	if layout.on_foot>0:_draw_walkers(layout.walkers,moving)
 func mount_rows() -> Array:
 	var rows: Array=[]
 	if mount_plan.is_empty() or mount_plan.get("mode","walking")=="wagon":return rows

@@ -7,6 +7,10 @@ var goods: Array = []
 var error := ""
 
 func _init() -> void:
+	# Quote the same starting health and carry rules that departure will use.
+	var starting_party = preload("res://simulation/party_health.gd").new()
+	starting_party.start(["A","B","C","D","E"],0)
+	provisions.carriers = starting_party.members
 	if not FileAccess.file_exists("res://data/outfitting.json"):
 		error = "Missing outfitting data."
 		return
