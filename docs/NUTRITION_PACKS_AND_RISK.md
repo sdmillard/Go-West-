@@ -2,7 +2,7 @@
 
 October 24, 2026. Spencer asked to address nutrition and weak walking first, and challenged the assumption that long elapsed journeys prove time costs are wrong. His usual play keeps moving with sick companions, rests briefly, and reserves longer stops for serious trouble.
 
-**Travel speeds and day costs have not changed.** The study now distinguishes cautious play, brief stops and pushing on. The results show a worthwhile payoff from riskier decisions without establishing that every late arrival is a timing bug.
+**This nutrition/risk change does not alter travel speeds or day costs.** The published build also preserves the independently merged horse-balance PR #84; its animal-load changes are checked separately below. The study now distinguishes cautious play, brief stops and pushing on. The results show a worthwhile payoff from riskier decisions without establishing that every late arrival is a timing bug.
 
 ## Gameplay changes
 
@@ -41,7 +41,7 @@ The limited actors resume moving before everyone is well. Animal exhaustion, ove
 
 ## Matched and fresh evidence
 
-The [public audit](balance-recovery-risk-02-summary.json) contains **1,440 source-frozen cases with zero selected state/save/setup/policy errors**, checked by the [protocol](../research/RECOVERY_AND_RISK_PROTOCOL.json).
+The [original audit](balance-recovery-risk-02-summary.json) contains **1,440 source-frozen cases with zero selected state/save/setup/policy errors**, checked by the [protocol](../research/RECOVERY_AND_RISK_PROTOCOL.json).
 
 - Full-route development: 72 before and 72 after, seeds 81000-81003.
 - Fresh full-route validation: 144 after, seeds 82000-82007.
@@ -94,6 +94,21 @@ Checkpoint 6de28c5 passed **all 62 Godot suites** in an isolated checkout, inclu
 
 Tests check weak severe scurvy surviving sustained nutritional recovery, deterioration when intake stops, unrelated illness still causing damage, monotonic pack capacity, broken-leg exclusion, unchanged retrieval limits, actual gear mass, brief-stop progression, early active treatment and JSON saves. A real preceding walking save loads without changing inventory, health, time or random streams. Existing old saves remain supported. One repeated-hunt assertion was corrected to accept meals from retained meat instead of requiring every day's newest catch to be eaten first; pound conservation and absence of hunger still apply.
 
-Current fingerprint: 95ac2b1f8aa23ca82be1c5abdae8ade04eb29346cdbc40c1951b8cf63dd3b744. Previous 6927c03c33aba3ab718e02606b39caa53355a215aa4182c564764aa580dc5403 is whitelisted.
+Pre-merge checkpoint fingerprint: 95ac2b1f8aa23ca82be1c5abdae8ade04eb29346cdbc40c1951b8cf63dd3b744. Previous 6927c03c33aba3ab718e02606b39caa53355a215aa4182c564764aa580dc5403 is whitelisted.
 
 Raw reports, excluded diagnostics and integration evidence are hash-verified in ignored .tools/recovery-evidence/. Public compact rows retain actual outcomes, counts, daily audits, fixture identities and computed dates. The publishing script reuses strict source/configuration/completeness checks and validates matching strategy scenarios and serialization. Preserve counterfactual branch codex/recovery-before-policy to reproduce the baseline. Player saves, earlier archives and the three local debug pilots are preserved.
+
+
+## Concurrent horse update: combined publication
+
+PR #84 (ac0072e) landed during this work. It reduces certain horse forage strains, treats all-mule strings differently and starts animal load drag later. Those independent changes are preserved. They are not nutrition changes or a new global timing adjustment.
+
+Combined checkpoint **ddfab02** passed **all 62 suites**, now including **120** nutrition/pack checks and a genuine save captured from the horse-update build. The same checkpoint passed 24 store and 20 outlaw integration journeys with zero errors.
+
+The [combined audit](balance-recovery-risk-03-summary.json) retains the original evidence and adds **752 combined checks**, for 2,192 versioned cases in total:
+
+- **144 replays**, using the original final route seeds and decisions. Every scenario row, including outcomes, supplies, timing, daily audits and decision counts, matches exactly. These are replays, not independent new validation. The preceding wagon risk comparison therefore still applies to this combined build.
+- **576 fresh emergency fixtures**, seeds 85000-85007: 531 reached help, 528 intact. Ordinary walking 43/48 intact; health-60 walking 32/48 reached help (29 intact); one-broken-leg walking 24/48 intact. All 432 animal-supported controls reached help. These use different seeds from the earlier fresh sample; do not attribute rate differences to the horse update.
+- **32 fresh mounted/packing journeys**, seeds 86000-86003, April/May, salted provision-first, carpenter/banker. Arrivals out of eight each: mounted carpenter 2 (none intact), mounted banker 8 (7 intact), packing carpenter 2 (none intact), packing banker 8 (6 intact). Median banker arrivals: mounted 171.5 days, packing 221 days. This confirms that the combined animal mechanics run through full journeys, not that all budgets or parties are equally viable.
+
+Current combined fingerprint: 38d5a0bdaca9f681aca65bb45c0da8a41029739b67400ff71cf0941e09647a75. Both the actual horse-update fingerprint 6f29f0fae730d228ef155a3a0b59928eb063602af261d95367b39519317f186f and the pre-merge nutrition fingerprint are whitelisted, along with the prior supported versions. Actual older journey state and random streams remain intact on migration. All evidence is labeled by its real source version.

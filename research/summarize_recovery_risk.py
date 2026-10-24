@@ -30,6 +30,15 @@ def main():
    second_only_arrives=sum(bb[k]["outcome"]=="arrived" and aa[k]["outcome"]!="arrived" for k in aa),
    second_faster_in_both=sum(y["days"]<x["days"] for x,y in both),
    median_day_delta_among_both=statistics.median(y["days"]-x["days"] for x,y in both)))
+ if "cautious_combined" in result["cohorts"]:
+  result["combined_replay_equivalence"]={}
+  fields=("profession","month","roster","seed")
+  for style in ("cautious","traveler","bold"):
+   a,b=[result["cohorts"][style+suffix] for suffix in ("_validation","_combined")]
+   aa={tuple(r[k] for k in fields):r for r in a["runs"]}
+   bb={tuple(r[k] for k in fields):r for r in b["runs"]}
+   if set(aa)!=set(bb) or a["settings"]!=b["settings"]:raise ValueError("Different replay configuration")
+   result["combined_replay_equivalence"][style]=dict(n=len(aa),identical_scenarios=sum(aa[k]==bb[k] for k in aa),changed_outcomes=sum(aa[k]["outcome"]!=bb[k]["outcome"] for k in aa))
  # Keep each scenario independently readable without expanding every numeric row.
  blocks={}
  for key,c in result["cohorts"].items():

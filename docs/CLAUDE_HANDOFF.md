@@ -478,3 +478,16 @@ Matched emergency288/version (83000-83003), fresh576 (84000-84007). Development 
 Scurvy is NOT declared fully balanced: fresh route scurvy deaths25/25/16 across styles, with only modest matched overall-route changes. Scarcity, winter, coarse produce units, binary nutrition credit and current forage-day ordering remain abstractions; no free fruit was added. Exact food threshold is not a clinical dose model.
 
 6de28c5 passed all62 suites in a clean isolated checkout (119nutrition/pack,216policy,56emergency,33meat checks), plus24store and20outlaw journeys. Same production sources after publication add evidence/docs/UID only. No UI/art changes. Genuine prior save migrates with unchanged state/RNG. Current fingerprint95ac2b1f8aa23ca82be1c5abdae8ade04eb29346cdbc40c1951b8cf63dd3b744; previous6927c03c33aba3ab718e02606b39caa53355a215aa4182c564764aa580dc5403 whitelisted. Preserve actual saves and the three local debug pilots.
+
+
+### Combined publication after concurrent horse PR #84
+
+Concurrent master ac0072e changed horse forage strain, all-mule forage treatment and the animal load-drag threshold. These are preserved in the merged branch, not overwritten. The nutrition/risk pass itself does not alter travel speeds or stop-day costs. Combined checkpoint ddfab02 passed all62 suites (120nutrition/pack),24store and20outlaw journeys.
+
+New docs/balance-recovery-risk-03-summary.json retains the pre-merge1440 cases plus752 combined checks. The144 original held-out wagon replays match ALL scenario fields exactly, so previous risk/caution comparisons apply to the combined build. Replays are not fresh independent validation. Fresh emergency seeds85000-85007:531/576 reach help,528 intact; walking ordinary43/48 intact, weak32/48 (29intact), broken-leg24/48 intact. All432 animal-supported controls succeed. Different seeds explain that this is NOT a paired claim versus the earlier fresh sample.
+
+Fresh mounted/packing32cases use86000-86003,April/May,salt,carpenter/banker: mounted2/8 and8/8 (intact0/7),packing2/8 and8/8 (intact0/6). Banker medians171.5mounted,221packing. This is combined integration/balance evidence, not an equal-outfit promise.
+
+Current combined fingerprint38d5a0bdaca9f681aca65bb45c0da8a41029739b67400ff71cf0941e09647a75. A genuine immediately preceding horse-update walking save (6f29f0fae730d228ef155a3a0b59928eb063602af261d95367b39519317f186f) migrates unchanged; this and the pre-merge95ac2b1f fingerprint are whitelisted. Both handoff sections were preserved when resolving the merge.
+
+Next decisions remain nutrition scarcity/coarse servings and the player's shopping/hunting/press-on policies. September is a playstyle benchmark; do not force the calendar by blindly changing action costs. Scorbutic travelers can recover while moving if fed; moderate illness no longer makes pack food space disappear immediately. Preserve all prior evidence and actual saves.
