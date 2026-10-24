@@ -59,7 +59,7 @@ func _initialize() -> void:
 	game.hunt.meat = 500
 	game.state.food = 1840 # gear and other items weigh 645, leaving 15 lb
 	game.provisions.fresh.clear()
-	check(game.finish_hunt() and game.state.food == 1848 and game.provisions.cargo(game.state)==2500, "Hunt return also respects free cargo space")
+	check(game.finish_hunt() and game.state.food == 1847 and game.provisions.cargo(game.state)==2499 and game.last_hunt_recovery.eaten_food==15 and game.last_hunt_recovery.mass==14, "Hunt return also respects free cargo space")
 	check(game.provisions.expected_days(600,5,2) == 40, "Food estimate uses living party and ration level")
 	print("Provisions: %d checks, %d failures" % [checks, failures])
 	quit(1 if failures else 0)

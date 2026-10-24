@@ -9,6 +9,7 @@ const WagonTrade=preload("res://simulation/wagon_trade.gd")
 const Produce=preload("res://simulation/produce_trade.gd")
 const Carrying=preload("res://simulation/carrying.gd")
 const Mounts=preload("res://simulation/mounts.gd")
+const Shortfall=preload("res://simulation/food_shortage.gd")
 func _init() -> void:
 	load_data(JSON.parse_string(FileAccess.get_file_as_string("res://data/provisions.json")))
 func load_data(value: Variant) -> bool:
@@ -23,9 +24,9 @@ func load_data(value: Variant) -> bool:
 		return false
 	if not value.get("preservation") is Dictionary:return false
 	if not value.get("walking") is Dictionary:return false
-	for key in ["carry_lb_per_person","personal_gear_lb_per_person","miles_per_day"]:
+	for key in ["carry_lb_per_person","personal_gear_lb_per_person","miles_per_day","packing_miles_per_day"]:
 		if not number(value.walking.get(key)) or value.walking[key]<=0:return false
-	if value.walking.personal_gear_lb_per_person>=value.walking.carry_lb_per_person:return false
+	if value.walking.personal_gear_lb_per_person>=value.walking.carry_lb_per_person or not Shortfall.valid_rules(value.get("shortfall")):return false
 	for key in ["cache_loss_base","cache_loss_daily","cache_loss_cap"]:
 		if not number(value.walking.get(key)) or value.walking[key]<0 or value.walking[key]>1:return false
 	if not value.get("ox_slaughter") is Dictionary:return false

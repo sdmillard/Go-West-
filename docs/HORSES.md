@@ -80,7 +80,7 @@ The horse keys are optional: a party that never bought an animal, and every olde
 
 ## Not yet built
 
-The [historical and travel balance audit](HISTORY_AND_MOUNT_BALANCE.md) is complete: 1,112 formal journeys identify unresolved pack pace, elapsed travel time, food dependence and grazing/load calibration. Next: fix those findings and validate with fresh seeds.
+The [historical and travel balance audit](HISTORY_AND_MOUNT_BALANCE.md) is complete: 1,112 formal journeys identify unresolved pack pace, elapsed travel time, food dependence and grazing/load calibration. The subsequent [emergency travel calibration](EMERGENCY_TRAVEL_CALIBRATION.md) revises walking/packing pace and food-shortage behavior with fresh comparisons. Animal payloads, grazing and winter recovery still need review.
 
 ## Validation
 

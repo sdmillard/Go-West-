@@ -1,6 +1,6 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 24, 2026, after horse travel step 4 (see [horses and mules](HORSES.md)), return travel, wagon guards, wagon sales, robbery demands and resizing. **Latest checkpoint:** see the final two sections below and [sales, demands and display](WAGON_SALES_ROBBERY_AND_DISPLAY.md). Earlier sections are chronological records of prior checkpoints.
+Last updated October 24, 2026, after horse travel step 4 (see [horses and mules](HORSES.md)), return travel, wagon guards, wagon sales, robbery demands and resizing. **Latest checkpoint:** see the final section below and [emergency travel calibration](EMERGENCY_TRAVEL_CALIBRATION.md) and [sales, demands and display](WAGON_SALES_ROBBERY_AND_DISPLAY.md). Earlier sections are chronological records of prior checkpoints.
 
 ## Resume here
 
@@ -416,3 +416,22 @@ Results are NOT a successful balance sign-off. Spring hunting wagon arrivals out
 Priority: separate normal pack-assisted walking from emergency walking, then reconcile load/animal condition and seasonal grazing with food/resupply/time. Pack base12 receives further penalties; ordinary packers average around8mi/moving day. Marcy1859 recommends125lb on long mule journeys vs current200; properly managed good grazing can maintain condition, while current carrying wear is always positive. Horse recovery stays4 in winter outside waterless stretches while oxen respect season. These are open calibration issues: do not simply cut payloads before fixing time or treat a later guide as a universal1848 limit. Sources/uncertainty are in research/HISTORY_MOUNT_BALANCE_SOURCES.json. Fort Kearny June1848 and automatic cholera1849 gates already exist. README budgets corrected to675/975/1475 with explicit75-dollar wagon.
 
 3d2c9c5 passed all59 Godot suites in an isolated checkout, including300 mount-policy state/RNG/action checks. Same production sources at5b5a609 passed24store and20outlaw integrations. Logs and integration reports remain ignored .tools/history-*. Player saves, proprietary assets and the three preexisting debug pilots were preserved. No new all-traits/all-crimes population balance or human playtest is claimed. Next is calibration, then fresh validation seeds.
+
+
+## Emergency travel and hunting meals (October 24)
+
+Spencer reported that leaving the wagon rapidly killed travelers and successful daily hunting still left weak parties starving. See [EMERGENCY_TRAVEL_CALIBRATION.md](EMERGENCY_TRAVEL_CALIBRATION.md) and research/EMERGENCY_TRAVEL_SOURCES.json for sources, exact rules, paired evidence and limits.
+
+Shipped changes: gradual fractional food-shortage debt instead of 18 health damage immediately; no health recovery while repaying hunger; identical shortage transitions for offscreen guards; walking base 20 and packing base 22 before existing penalties. Mounted base 32, health-dependent capacity, species yields, 0.5 meat food units/lb and 200 lb retrieval cap remain. These tuning numbers are authored, not a clinical model.
+
+Hunting now settles its one real day on return, allowing the catch to feed camp BEFORE fitting remaining meat in packs. Actual eaten/packed/left/other-loss pounds conserve the catch. Original supplies and expiry are preserved. last_hunt_recovery is the actual transient report; hunt_recovery() is only a pre-settlement space estimate. The native hunting report was inspected and shown to Spencer. No persistent carcass stash exists. Existing drying applies to retained meat.
+
+FoodShortage canonicalizes fractional debt to thousandths for exact JSON saves. The genuine pre-emergency fixture loads with no invented debt; old rules fingerprint 9c71783d9a386c0c2ca5f82f2a08c277ccaa5ae4c2ae0563391f05ad9e8d77d7 is whitelisted. New fingerprint: 02285c8f33534be2cfbab8846219c5186d8c2acbc47f2f81f757e28ee5ea01ed.
+
+Formal final comparison: 576 identical initial emergencies/version, seeds 69000-69007, old master 39776c2 versus game checkpoint 9606e2f. Ordinary walkers reach help 20/48 -> 42/48; broken-leg parties 0/48 -> 20/48; health-60 walkers remain 0/48. Successful cases retain all five originals. Wagon/packing/mounted controls reach help 48/48 in each health case. Raw snapshots remain ignored; the published compact paired report verifies every initial fixture after removing only rules fingerprints and retains source/fixture hashes. The summarizer rejects missing, duplicate, changed or error-bearing cases. Development seeds were 67000-67003.
+
+Additional full-route comparison: 128 journeys/version with provision-first policy, seeds 69000-69007. Arrivals before -> after out of 16: farmer wagon 2 -> 5, banker wagon 14 -> 15, banker mounted 9 -> 14, banker packing 0 -> 8. Farmer mounted/packing and both walking cohorts remain 0. After-arrival intact parties: farmer wagon 2, banker wagon 15, mounted 9, packing 7. Median banker packing journey is 327.5 days: surviving is not the same as historical-duration fidelity. Two farmer wagon and four banker packing runs hit the year limit. Both reports have zero selected software/policy/save errors. Development route seeds were 68000-68003. Do not tune on these held-out seeds and call them fresh.
+
+Validation: checkpoint 267c495 passed all 60 suites in a clean isolated checkout, including 56 emergency checks, 60 guard checks, 152 survival checks and 338 mount-policy checks. Identical production sources at 9606e2f passed 24 store and 20 outlaw integration journeys. Later changes are test expectations, evidence and documentation only. The full-route regression actor now drops actual excess goods instead of endlessly acknowledging overweight; the game capacity rule was not relaxed. Hunting observers separate field meals from actual retained units.
+
+Next: weak-walker fixed gear/food capacity and recovery; full-route low-budget pack provision strategy; animal load, grazing wear and seasonal recovery. Do not claim balance is complete. Preserve the old campaigns, actual player saves and the three preexisting untracked debug pilots. Restart an already-running game after updating.

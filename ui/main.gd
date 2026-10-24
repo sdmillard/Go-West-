@@ -1091,11 +1091,11 @@ func _finish_hunt() -> void:
 	if game.hunt.is_empty():
 		return
 	var outing: Dictionary = game.hunt.duplicate(true)
-	var recovered: Dictionary=game.hunt_recovery()
-	var before: int = game.state.food
 	if game.finish_hunt():
-		var carried: int = game.state.food - before
-		notice("HUNTING REPORT","%d shots · %d lb meat obtained\n%d lb brought to camp · %d lb left behind\nUse fresh meat within two trail days, or dry it through Camp > Preserve meat. Salt improves the result.\nRecovered meat supplies %d food units.\nThe outing used one day and that day's rations." % [outing.shots,outing.meat,recovered.mass,recovered.left,carried])
+		var recovered: Dictionary=game.last_hunt_recovery
+		var report: String="%d shots · %d lb meat obtained\n%.1f lb eaten at camp · %.1f lb left behind\nPACKED %.1f LB · %d FOOD UNITS\nPacked meat fits the current cargo and hauling limits.\nEat within two trail days or use Camp > Preserve meat.\nOne day passed; meals came from provisions and the catch." % [outing.shots,outing.meat,recovered.eaten_mass,recovered.left,recovered.mass,recovered.food]
+		if recovered.other_loss>0:report+="\n%.1f lb lost to other camp events; see the journal." % recovered.other_loss
+		notice("HUNTING REPORT",report)
 	camping = true
 	_refresh()
 

@@ -15,7 +15,6 @@ var hunting_study := false
 func hunt_outing(game, profile: Dictionary, aim: RandomNumberGenerator, count: Dictionary) -> bool:
 	if not game.start_hunt():return game.state.status != "traveling"
 	count.hunts += 1
-	var before_food: int = game.state.food
 	var before_bullets: int = game.state.bullets
 	if hunting_study:
 		# Choose visible animals by meat yield; reposition along the lower clearing
@@ -54,10 +53,11 @@ func hunt_outing(game, profile: Dictionary, aim: RandomNumberGenerator, count: D
 	count.shots += before_bullets-int(game.state.bullets)
 	count.meat_obtained += int(game.hunt.meat)
 	if game.hunt.meat == 0:count.empty_hunts+=1
-	var recovered: Dictionary=game.hunt_recovery()
 	var finished: bool = game.finish_hunt()
-	count.meat_carried += int(recovered.get("mass",0))
-	count["meat_food_units"]=int(count.get("meat_food_units",0))+int(game.state.food)-before_food
+	var recovered: Dictionary=game.last_hunt_recovery
+	count.meat_carried += float(recovered.get("mass",0))
+	count["meat_food_units"]=int(count.get("meat_food_units",0))+int(recovered.get("food",0))
+	count["field_meal_units"]=int(count.get("field_meal_units",0))+int(recovered.get("eaten_food",0))
 	return finished
 
 func _initialize() -> void:

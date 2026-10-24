@@ -240,7 +240,7 @@ func restore(value: Variant):
 			return null
 	if s.mode not in ["classic", "unhinged"] or not integer(s.pace,0,2) or not integer(s.rations,0,2) or not integer(s.departure_month,3,8) or not integer(s.health,0,100) or not integer(s.ox_health,0,100) or not integer(s.fatigue,0,100) or not strings(s.party,Simulation.MAX_TRAVELERS) or s.party.size()<5 or not strings(s.items,100):
 		return null
-	if not Simulation.Direction.valid_state(s,game.route):return null
+	if not Simulation.Direction.valid_state(s,game.route) or not game.provisions.Shortfall.valid_state(s):return null
 	if s.has("household_gear_lb") and (not (s.household_gear_lb is int or s.household_gear_lb is float) or not is_finite(s.household_gear_lb) or s.household_gear_lb<0 or s.household_gear_lb>100000):return null
 	if s.status=="returned_east" and (s.landmark!=game.route.start or s.miles!=0 or s.next_landmark!=""):return null
 	if not game.route.nodes.has(s.landmark) or (s.next_landmark != "" and not game.route.nodes.has(s.next_landmark)) or not integer(s.day,0,100000) or not integer(s.miles,0,game.route.longest_miles) or s.leg_miles > s.leg_length:

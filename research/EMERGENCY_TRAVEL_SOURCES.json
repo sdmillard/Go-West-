@@ -1,0 +1,61 @@
+{
+  "reviewed": "2026-10-24",
+  "sources": [
+    {
+      "id": "blm-walking",
+      "url": "https://www.blm.gov/sites/default/files/docs/2025-12/nhotic-student-pre-reading.pdf",
+      "date": "Modern BLM interpretation, checked 2026-10-24",
+      "supports": "Most emigrants walked beside their wagons; aims of 20 miles contrasted with more typical 10-15 mile progress and 5-6 months.",
+      "limits": "School synthesis, not a daily 1848 survey or a walking-without-supplies survival rate."
+    },
+    {
+      "id": "hadza-gps-2021",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8060163/",
+      "date": "2021 primary GPS study",
+      "supports": "Observed mean adult daily walking 7.6 km women, 12.9 km men, in the studied foraging ecology; patterns vary with tasks and landscape.",
+      "limits": "Search loops and camp activity, not maximum marching distance. No transfer of group averages to game ethnicity or sex stats; no direct 1848 climate or food-yield analogue."
+    },
+    {
+      "id": "hadza-energetics-2012",
+      "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0040503",
+      "date": "2012 primary study, 30 adults over 11 days",
+      "supports": "Measured energy expenditure and walking; high habitual activity did not imply simple unlimited increases in total expenditure.",
+      "limits": "Small population-specific sample; not a direct conversion of game pounds into calories or a daily survival guarantee."
+    },
+    {
+      "id": "kraft-2021",
+      "url": "https://doi.org/10.1126/science.abf0130",
+      "date": "2021 primary cross-cultural subsistence study",
+      "supports": "Human food acquisition depends on high-intensity work, sophisticated techniques, cooperation and sharing; returns can be high and variable.",
+      "limits": "Does not justify guaranteed meat every outing or infer that Western trail greens alone meet all energy needs."
+    },
+    {
+      "id": "load-carriage",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3922835/",
+      "date": "2013/2014 primary walking experiment",
+      "supports": "Added backpack load increases mechanical work and metabolic cost.",
+      "limits": "Fixed-speed smooth treadmill setting; cannot establish one long-haul emigrant pace or a linear health-to-capacity formula."
+    },
+    {
+      "id": "pct-case-2021",
+      "url": "https://physoc.onlinelibrary.wiley.com/doi/10.14814/phy2.14767",
+      "date": "2021 primary case study",
+      "supports": "A highly fit young adult completed a 112-day 2019 hike with repeated resupply, substantial exertion and foot problems.",
+      "limits": "One selected athlete, modern gear and town food; not a default family pace or evidence for living from hunting alone."
+    },
+    {
+      "id": "fasting-1966",
+      "url": "https://www.jci.org/articles/view/105481",
+      "date": "1966 primary human metabolic study",
+      "supports": "Human physiology adapts to food deprivation over time; hunger cannot be represented as immediate loss of all reserves.",
+      "limits": "Clinical setting, not a safe fasting duration or mortality schedule for ill/exposed emigrants. Exact game damage/debt values remain authored."
+    },
+    {
+      "id": "army-pace",
+      "url": "https://www.lineofdeparture.army.mil/Journals/Infantry/Infantry-Fall-2024/Soldier-Load/",
+      "date": "2024 Army professional article summarizing ATP 3-21.18; indexed text checked, full-page access: 403",
+      "supports": "Indexed figure summary reports 20-32 km/day and different road/cross-country march rates.",
+      "limits": "Conditioned military context, not a civilian target. Full page inaccessible in this pass; used only as a secondary cross-check, not the primary calibration anchor."
+    }
+  ]
+}

@@ -40,10 +40,11 @@
   "walking": {
     "carry_lb_per_person": 40,
     "personal_gear_lb_per_person": 15,
-    "miles_per_day": 12,
+    "miles_per_day": 20,
     "cache_loss_base": 0.15,
     "cache_loss_daily": 0.03,
-    "cache_loss_cap": 0.85
+    "cache_loss_cap": 0.85,
+    "packing_miles_per_day": 22
   },
   "foraging": {
     "note": "Authored seasonal gameplay estimates, not measured harvests or dietary vitamin C doses. Greens and berries supplement meals; four physical pounds supply one food unit. A shared half-pound of produce per living traveler counts as a vitamin-C meal.",
@@ -128,5 +129,17 @@
       "sagebrush": 2,
       "forest": 1
     }
+  },
+  "shortfall": {
+    "note": "Authored gradual shortage model, not a clinical survival clock. Fractional missed ration-days accumulate; regular meals repay the deficit before health can recover. Hunger raises fatigue and later damage. Injury, exposure, illness and thirst remain separate.",
+    "base_damage": 2,
+    "ramp_days": 7,
+    "maximum_extra_damage": 4,
+    "fatigue": 4,
+    "recovery": [
+      0,
+      0.5,
+      1
+    ]
   }
 }
