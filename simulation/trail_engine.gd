@@ -851,7 +851,7 @@ func _trade_options(offer: Dictionary,at_post: bool) -> Array:
 		lots[0].sell_cents = 2000
 	if characters.available(self,"Trading"):
 		for lot in lots:lot.buy_cents=maxi(1,roundi(lot.buy_cents*characters.benefits.trade_buy_factor))
-	if at_post:lots[0].sell_cents=mini(int(lots[0].sell_cents),floori(float(lots[0].buy_cents)*0.5))
+	if at_post and int(lots[0].sell_cents)>=int(lots[0].buy_cents):lots[0].sell_cents=floori(float(lots[0].buy_cents)*0.5)
 	var days: int=context.trade_days(offer)
 	var when: String=", 1 day" if days>0 else ""
 	for lot in lots:
