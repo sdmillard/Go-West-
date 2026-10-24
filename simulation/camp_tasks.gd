@@ -1,7 +1,7 @@
 extends RefCounted
 ## Standing camp jobs. No clock, UI or random stream of its own.
-const JOBS=["rest","forage","dry","salt_dry","nurse","hunt_help"]
-const LABELS=["Rest","Forage","Dry meat","Salt + dry meat","Nurse a patient","Help leader hunt"]
+const JOBS=["rest","forage","dry","salt_dry","nurse","hunt_help","repair_patch","repair_wood","guard"]
+const LABELS=["Rest","Forage","Dry meat","Salt + dry meat","Nurse a patient","Help leader hunt","Patch wagon","Wooden wagon repair","Guard stock"]
 var assignments: Dictionary={}
 var quiet:=false
 var planning_notes: Array[String]=[]
@@ -37,8 +37,12 @@ func reason(game,index: int,task: String,patient: int=-1) -> String:
  if not game.party_health.is_active(member):return "Not with the party."
  if task=="rest":return ""
  if member.health<int(rules.minimum_health) or member.conditions.any(func(c):return c.severity>=3):return "Too ill or injured to work."
- if not game.characters.willing(index,{"nurse":"care","dry":"preserve","salt_dry":"preserve","forage":"forage","hunt_help":"hunt"}.get(task,task)):return "Refuses at current trust or boundaries."
+ if not game.characters.willing(index,{"nurse":"care","dry":"preserve","salt_dry":"preserve","forage":"forage","hunt_help":"hunt","repair_patch":"repair","repair_wood":"repair","guard":"defend"}.get(task,task)):return "Refuses at current trust or boundaries."
  if task in ["forage","hunt_help"] and member.conditions.any(func(c):return c.id=="broken_leg"):return "A broken leg prevents this work."
+ if task=="guard" and game.Mounts.animals(game.state)==0:return "No horses or mules need a stock watch."
+ if task in ["repair_patch","repair_wood"]:
+  var why: String=game.camp_repair.reason(game,index,"patch" if task=="repair_patch" else "wood")
+  if not why.is_empty():return why
  if task=="forage" and not game.forage_offer(true).available:return "No suitable gathering in this season or weather."
  if task in ["dry","salt_dry"] and game.preservation_offer(task=="salt_dry",true).is_empty():return "No suitable meat / salt after tomorrow's meals and spoilage."
  if task=="nurse":
@@ -50,12 +54,15 @@ func reason(game,index: int,task: String,patient: int=-1) -> String:
 func specialist(game,index: int,background: String) -> bool:
  var profile: Dictionary=game.characters.profiles[index]
  return profile.skill==background or profile.specials.any(func(s):return game.characters.catalog.data.specials[s].get("assists","")==background)
-func begin(game,action: String) -> void:
+func begin(game,action: String,leader_patient: int=-1) -> void:
  if not enabled() or not day_plan.is_empty():return
  day_plan={"rest":{},"jobs":[],"action":action}
  for member in game.party_health.members:
   if game.party_health.is_active(member):day_plan.rest[int(member.id)]=int(member.id)!=0 or action=="rest"
  var patients: Array=[]
+ if leader_patient>=0:
+  patients.append(leader_patient)
+  day_plan.rest[leader_patient]=true
  var kits: int=game.state.medicine
  # Nurses reserve patients first: a patient cannot also do another day's work.
  for index in range(1,game.party_health.members.size()):
@@ -73,6 +80,8 @@ func begin(game,action: String) -> void:
   day_plan.rest[index]=false
   day_plan.jobs.append({"member":index,"job":"nurse","patient":int(task.patient)})
  var drying_claimed:=false
+ var repair_claimed:=false
+ var guard_claimed:=false
  for member in game.party_health.members:
   var index: int=int(member.id)
   if index==0 or not game.party_health.is_active(member):continue
@@ -89,11 +98,33 @@ func begin(game,action: String) -> void:
     continue
    entry.offer=game.preservation_offer(task.job=="salt_dry",true)
    drying_claimed=true
+  if task.job in ["repair_patch","repair_wood"]:
+   var method: String="patch" if task.job=="repair_patch" else "wood"
+   var repair_why: String=game.camp_repair.reason(game,index,method,kits)
+   if repair_claimed or action=="repair" or not repair_why.is_empty():
+    report(game,"%s: %s Resting instead." % [member.name,repair_why if not repair_why.is_empty() else "Another worker has the wagon repair."])
+    continue
+   if method=="patch" and not game.camp_repair.work.kit_spent:kits-=1
+   entry.method=method
+   repair_claimed=true
+  if task.job=="guard":
+   if guard_claimed:continue
+   guard_claimed=true
   day_plan.rest[index]=false
   day_plan.jobs.append(entry)
 func prepare(game) -> void:
  if day_plan.is_empty():return
  for entry in day_plan.jobs:
+  if entry.job in ["repair_patch","repair_wood"]:
+   entry.ready=true
+   if entry.method=="patch" and not game.camp_repair.work.kit_spent:
+    if game.state.medicine<1:
+     day_plan.rest[entry.member]=true;entry.ready=false
+     continue
+    game.state.medicine-=1
+    game.camp_repair.work.kit_spent=true
+    game.supply_history.append({"day":game.state.day,"event":"camp_repair_materials","changes":{"medicine":-1},"worker":entry.member})
+   game.camp_repair.work.method=entry.method
   if entry.job!="nurse":continue
   if game.state.medicine<1:
    day_plan.rest[entry.member]=true
@@ -116,6 +147,11 @@ func finish(game) -> void:
  for entry in day_plan.jobs:
   var member: Dictionary=game.party_health.members[entry.member]
   if not game.party_health.is_active(member):continue
+  if entry.job in ["repair_patch","repair_wood"] and entry.get("ready",false):game.camp_repair.advance(game,int(entry.member))
+  if entry.job=="guard":
+   game.state["camp_watch_day"]=int(game.state.day)
+   game.state["camp_watch_member"]=int(entry.member)
+   report(game,"%s stood watch over the stock." % member.name)
   if entry.job=="forage":workers+=float(member.health)/100.0
   if entry.job in ["dry","salt_dry"]:
    # Today's catch is dinner, not a morning drying input.
@@ -150,9 +186,11 @@ func excludes_helper(game,index: int) -> bool:
 ## Use the same reservation pass for a read-only roster quote.
 func quote(game) -> Dictionary:
  var model=preview_day(game)
- var result: Dictionary={"days":1,"meals":int(game.provisions.data.rations_lb[game.state.rations])*int(game.state.party_size),"kits":0,"meat_lb":0.0,"salt":0,"wages_cents":0,"notes":model.planning_notes.duplicate()}
+ var result: Dictionary={"days":1,"meals":int(game.provisions.data.rations_lb[game.state.rations])*int(game.state.party_size),"kits":0,"meat_lb":0.0,"salt":0,"wages_cents":0,"repair_kits":0,"watch":false,"notes":model.planning_notes.duplicate()}
  for entry in model.day_plan.get("jobs",[]):
   if entry.job=="nurse":result.kits+=1
+  if entry.job=="repair_patch" and not game.camp_repair.work.kit_spent:result.kits+=1;result.repair_kits+=1
+  if entry.job=="guard":result.watch=true
   if entry.job in ["dry","salt_dry"]:
    result.meat_lb+=float(entry.offer.mass)
    result.salt+=int(entry.offer.salt)
@@ -183,3 +221,21 @@ func end_leader_nursing(game) -> void:
   if task.job!="nurse" or int(task.patient)!=0:continue
   assignments[key]={"job":"rest","patient":-1}
   report(game,"%s stopped nursing %s because the leader chose another activity." % [game.party_health.members[int(key)].name,game.party_health.members[0].name])
+
+func stock_guarded(game) -> bool:
+ if not enabled():return bool(game.state.get("night_guard",false))
+ if int(game.state.get("camp_watch_day",-1))!=int(game.state.day):return false
+ var index: int=int(game.state.get("camp_watch_member",-1))
+ return index>0 and index<game.party_health.members.size() and game.party_health.is_active(game.party_health.members[index])
+
+func other_day_watch(game) -> void:
+ # Travel/trading do not run camp chores, but the named night watch still has a job.
+ if not enabled():return
+ for member in game.party_health.members:
+  var index: int=int(member.id)
+  if index<=0 or job(index).job!="guard" or not reason(game,index,"guard").is_empty():continue
+  game.state["camp_watch_day"]=int(game.state.day)
+  game.state["camp_watch_member"]=index
+  game.state.fatigue=mini(100,int(game.state.fatigue)+int(game.provisions.data.mounts.guard_fatigue))
+  report(game,"%s stood night watch after the day's activity; the watch cost sleep." % member.name)
+  return

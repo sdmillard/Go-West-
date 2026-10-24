@@ -1,6 +1,6 @@
 # Companion assignments: implementation plan
 
-Approved October 24, 2026. The first playable camp-day stage is built; see [behavior and current limits](COMPANION_CAMP_WORK.md). The remaining stages below are pending. This turns [the agreed design](COMPANION_TASKS_PLAN.md) into small, playable stages.
+Approved October 24, 2026. The first camp-day stage and the repair/stock-guard stage are built; see [behavior and current limits](COMPANION_CAMP_WORK.md). The remaining stages below are pending. This turns [the agreed design](COMPANION_TASKS_PLAN.md) into small, playable stages.
 
 ## Design target
 
@@ -20,7 +20,7 @@ Acceptance: a leader can hunt while one companion nurses and another dries an ex
 
 Persist assignments with strict validation, character schema 4 and a genuine pre-change save fixture. Preserve old journeys with no assignments as an explicit compatible default.
 
-## 2. Finish the camp roster
+## 2. Finish the camp roster (implemented)
 
 Add wagon repair and stock guard. Keep repair progress when interrupted. Use the existing stock-theft and night-guard systems rather than rolling two independent defenses. Specify what ordinary workers can repair and what needs a Carpenter before exposing the choice.
 

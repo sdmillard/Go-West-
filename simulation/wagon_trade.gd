@@ -24,7 +24,7 @@ static func commit(game,effects: Dictionary) -> void:
 static func sale_quote(game,cart: Dictionary,keep_oxen: int=-1) -> Dictionary:
  var result: Dictionary={"valid":false,"message":"No open post will buy the wagon here."}
  var counter: Dictionary=game.post_store()
- if game.state.vehicle!="wagon" or counter.is_empty():return result
+ if game.state.vehicle!="wagon" or counter.is_empty() or game.camp_repair.blocked(game):return result
  var key: String=counter.key
  if int(game.context.record.spent.get(key+"|sell_wagon|units",0))>=1:
   result.message="This post has already bought a wagon from you."

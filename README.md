@@ -6,7 +6,7 @@ A growing Oregon Trail-inspired game in **Godot 4 / GDScript**. Lead five travel
 
 [Wagon sales, custom robbery demands and resizing](docs/WAGON_SALES_ROBBERY_AND_DISPLAY.md) add reviewed keep/sell/leave decisions, value-sensitive intimidation and configurable window scaling.
 
-[Companion camp work](docs/COMPANION_CAMP_WORK.md) lets travelers nurse, forage, dry meat or help the leader hunt during one shared camp day. Open Camp > Companion tasks to assign standing jobs.
+[Companion camp work](docs/COMPANION_CAMP_WORK.md) lets travelers nurse, forage, dry meat or help the leader hunt during one shared camp day. [Repairs and named stock guards](docs/CAMP_REPAIRS_AND_GUARDS.md) add persistent broken-part projects and the existing night-watch protection to the roster. Open Camp > Companion tasks to assign standing jobs.
 
 [Nutrition, weak packs and risk](docs/NUTRITION_PACKS_AND_RISK.md) improves scurvy recovery and moderate-illness carrying, and tests brief stops against pushing on. Travel speeds and stop costs are unchanged; riskier choices can shorten journeys.
 
