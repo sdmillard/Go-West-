@@ -1,4 +1,4 @@
-extends "res://tests/full_trail_balance.gd"
+extends "res://tests/current_journey_policy.gd"
 ## Actual arrival at the new venue, one chosen offense, then normal full-road policy.
 func _initialize():call_deferred("run")
 func crime_choice(game,command: String) -> bool:
@@ -11,7 +11,7 @@ func run():
 	var rows: Array=[]
 	var errors: Array=[]
 	var store=Store.new()
-	var policy: Dictionary={"id":"store","pace":0,"rations":1,"rest":true,"hunt":true,"accuracy":0.65,"hunt_below":45,"adaptive_rations":true,"preserve":"salt","slaughter":true}
+	var policy: Dictionary={"id":"store","pace":0,"rations":1,"rest":true,"hunt":true,"accuracy":0.65,"hunt_below":90,"adaptive_rations":true,"preserve":"salt","slaughter":true,"slaughter_team_floor":4,"rest_below":55,"preserve_meals":3.3,"opportunity":1,"produce":true}
 	for action in ["none","theft","robbery","shoot"]:
 		for seed_value in range(6):
 			var game=Simulation.new(seed_value,"classic",true)
@@ -61,7 +61,7 @@ func run():
 			if store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))==null:errors.append({"seed":seed_value,"action":action,"error":"final save"})
 			rows.append({"seed":seed_value,"action":action,"attempted":attempted,"outcome":outcome,"days":game.state.day,"survivors":game.state.party_size,"cash":game.state.money,"incidents":game.crime.record.incidents,"deaths":game.party_health.members.filter(func(member):return not member.alive).size(),"departures":game.party_health.members.filter(func(member):return member.get("departed",false)).size()})
 	var file=FileAccess.open("res://docs/first-store-journeys.json",FileAccess.WRITE)
-	file.store_string(JSON.stringify({"rules_signature":store.fingerprint(),"runs":rows,"errors":errors,"policy":"24 actual full-route journeys: 4 actions x6seeds; banker suggested outfit, March/May/August, existing cautious salted-hunt65% aim policy. At Fort Bridger buy one ammunition lot if necessary for a gun offense, then attempt chosen action once, take reachable loot and try to escape, fight later pursuers if armed or surrender, then resume normal survival decisions. Natural disease/weather and actual time, ammunition, injuries, death, stock and companion reactions apply. This integration sample is not the final survival balance campaign."},"\t"))
+	file.store_string(JSON.stringify({"rules_signature":store.fingerprint(),"runs":rows,"errors":errors,"policy":"24 actual full-route journeys: 4 actions x6seeds; banker suggested outfit, March/May/August, current exact-counter/foraging cautious salted-hunt65% aim policy, preserving four working oxen and using real recovery rather than no-time walking loops. At Fort Bridger buy one ammunition lot if necessary for a gun offense, then attempt chosen action once, take reachable loot and try to escape, fight later pursuers if armed or surrender, then resume normal survival decisions. Natural disease/weather and actual time, ammunition, injuries, death, stock and companion reactions apply. This integration sample is not the final survival balance campaign."},"\t"))
 	file.close()
 	print("Store journeys: %d runs, %d errors" % [rows.size(),errors.size()])
 	quit(0 if rows.size()==24 and errors.is_empty() else 1)

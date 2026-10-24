@@ -360,3 +360,5 @@ Spencer's further authorized requests, still to implement:
 - Travel menu toggle for east/west movement, with actual return to earlier places and river crossings.
 - Replacement wagons sold at stores; oxen separate if needed.
 - On voluntary wagon abandonment, optionally leave companions as guards. Their survival uses cached supplies and ammunition/hunting; guards lower but do not eliminate looting/loss risk. Returning may find surviving guards, deaths, departures or an empty/stolen wagon. Build this on real backtracking and cache accounting. This is distinct from bandits taking a wagon.
+
+Further steering: remove the dedicated backtrack-to-wagon UI button once normal east/west travel works; mark the abandoned wagon on the map. Continuing east beyond Independence should end peacefully with the character deciding to go back east, distinct from death and arrival in Oregon.
