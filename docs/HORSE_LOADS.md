@@ -52,3 +52,7 @@ Checkpoint 092af2e passed all 67 suites plus 24 store and 20 current-policy outl
 ![Outfitting a heavier hunting return](horse-load-outfitting.png)
 
 ![Complete jumping deer animation](hunting-headroom.png)
+
+## Emergency supplies and balance follow-up
+
+Same-day outings can now pack short food/clothing rather than refusing a starving hunter. The outfit warns that success is not guaranteed; no stock is invented. Multi-day reserve requirements remain. See [the hunting balance pass](HUNTING_BALANCE_PASS.md) for 1,428 matched journeys, limitations and the unresolved leader return-time tradeoff.
