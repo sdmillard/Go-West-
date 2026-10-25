@@ -209,7 +209,9 @@ func _draw_livestock(moving: bool,camped: bool) -> void:
 func _draw_cross_livestock(t: float,frame: int,high: bool,ferry: bool) -> void:
 	for spec in [["dairy_cows",CROSS_COW,-4.0],["goats",CROSS_GOAT,4.0]]:
 		if int(livestock_counts.get(spec[0],0))<1:continue
-		var at: Vector2=_on_path(t,float(spec[2]))
+		var stock_t: float=t+(3.0 if spec[0]=="dairy_cows" else -7.0) if ferry else t
+		var side: float=(12.0 if spec[0]=="dairy_cows" else 9.0) if ferry else float(spec[2])
+		var at: Vector2=_on_path(stock_t,side)
 		var row: int=0 if ferry or not _in_water(at) else (2 if high or crossing.get("method","")=="float" else 1)
 		_sprite(spec[1],Vector2i(48,40),Vector2i(12,34),frame,row,at)
 func _draw_herd(moving: bool) -> void:
@@ -614,7 +616,7 @@ func _draw_crossing() -> void:
 		if _in_water(stern):
 			for i in range(4):
 				_water_rect(Rect2(stern.x - 6 - i * 5 + (frame % 2), stern.y + i * 3, 4, 1), Color("f6e7bc"))
-	_draw_cross_livestock(phase.cargo-18.0,frame,high,method in ["ferry","seized"])
+	_draw_cross_livestock(phase.cargo if method=="ferry" else phase.cargo-18.0,frame,high,method=="ferry")
 	if rough:
 		var spot := _on_path(phase.cargo + 8.0)
 		for i in range(7):
