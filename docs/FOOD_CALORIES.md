@@ -45,8 +45,33 @@ New meat/dried mass ratios use canonical decimal precision, and the displayed pr
 - [USDA FSIS jerky](https://www.fsis.usda.gov/food-safety/safe-food-handling-and-preparation/meat-fish/jerky): drying removes moisture and makes meat nutrient-dense/lightweight. [USU drying guidance](https://extension.usu.edu/preserve-the-harvest/research/home-drying-foods) likewise describes calorie concentration per weight. [NCHFP jerky](https://nchfp.uga.edu/how/dry/recipes/jerky) recommends removing fat, so real preparation can lose energy through discarded fat/drippings. There is no universal 10-20% calorie loss established here. Full retained energy for successful drying of the already-defined edible yield is a deliberate game abstraction.
 - [Joel Palmer,1845-46 journal](https://www.gutenberg.org/cache/epub/46906/pg46906-images.html), May 31 return journey: tongues and marrow bones were eaten. [Lodisa Frizzell's 1852 journal](https://www.gutenberg.org/cache/epub/31449/pg31449-images.html), June 1: marrow-bone soup accompanied rice. These establish use beyond steaks; they do not establish a universal offal yield or calorie bonus for every emigrant party. Broth water adds volume, not energy.
 
-## Validation plan
+## Validation and results
 
 Focused tests cover named-species energy, actual mixed kills, physical recovery once, zero drying food loss, tiny batches, no double processing, canonical JSON round trips and an authentic previous-rule save containing preserved meat and a reserved mounted trip. Preserve all old quantities/mass/RNG; apply new calculations only to subsequent harvests.
 
-Run all 73 suites and 24 store +20 current-policy outlaw journeys on frozen final sources. Repeat the unchanged mobile-camp strategy matrix using new development 185000-185003 and held-out 195000-195003 seeds, three professions, May/July, serial/parallel/mobile, same shared equipment and steady pace:144 new-version journeys. Old-version mobile controls use the same seeds and policy. Reports and actual food/time/survival outcomes remain separate from claims of historical accuracy or optimal player behavior. Farmer starts should be harder but viable; do not equalize profession win rates or tune to held-out worlds.
+The final runtime/test checkpoint is 855f8c8. The unchanged mobile-camp strategy matrix uses development 185000-185003 and held-out 195000-195003 seeds, three professions, May/July, serial/parallel/mobile, shared equipment and steady pace: 144 new-version journeys. The previous-version mobile controls at 57171dd use the same seeds and unchanged strategy: 48 control journeys. Reports and actual food/time/survival outcomes remain separate from claims of historical accuracy or optimal player behavior. Farmer starts should be harder but viable; do not equalize profession win rates or tune to held-out worlds.
+
+
+The final 144 journeys and 24 store + 20 current-policy outlaw integrations completed without source, state, save or policy errors. Compact evidence is in [strategy summary](calorie-food-summary-01.json) and [old/new comparison and archive digests](calorie-food-control-01.json). Full reports are retained in parent .tools/hunting-calorie-*-02.json, with separate hunting-calorie-control-*-01.json old-version archives. Copies were SHA-256 verified against the isolated originals.
+
+| Held-out mobile journeys | Old arrivals / 8 | New arrivals / 8 | Old / new underfed days, summed | Old / new companion food returned |
+|---|---:|---:|---:|---:|
+| Farmer | 0 | 0 | 235 / 197 | 291 / 376 |
+| Carpenter | 6 | 5 | 98 / 106 | 242 / 217 |
+| Banker | 7 | 7 | 43 / 43 | 239 / 261 |
+
+Development mobile arrivals were farmer 0 -> 0, carpenter 7 -> 7, banker 7 -> 8. Across all three new strategies there was one farmer development arrival (serial), and none in these held-out worlds. These small fixed-policy results do not establish practical farmer viability, and more delivered food does not guarantee a completed journey. The change combines calorie conversion and preservation retention; do not attribute its outcome solely to one of them.
+
+An initial outlaw integration failed its existing two-month progress check: one scurvy-afflicted survivor stayed at mile 1440 hunting/resting into day 365. The diagnostic trace showed a policy loop, not blocked game controls. Only the current-outlaw integration profile now uses the already-supported two-day health-rest cap (three when critically ill). The archived outlaw runner and the matched survival-strategy policies remain untouched. Its final rerun passes all 20 scenarios. Initial failed report/logs and preliminary -01 campaign reports are kept separately and excluded from the final summaries.
+
+Native UI review confirmed the ledger tooltip appears on hover and stays within the game window. The main ledger still displays units. A label mouse-filter correction was needed to make the new tooltip reachable.
+
+## Ration-label discussion
+
+Spencer considered 800 kcal per unit, then agreed to retain 1,000. Leaving existing daily amounts unchanged at 800 would make Bare / Meager / Filling 800 / 1,600 / 2,400 kcal. A lower unit value also creates 25% more unrounded units from the same recovered animal; it is a mechanical change, not merely a label.
+
+Around 2,000 can be meager relative to sustained walking and trail labor, while 3,000 is a more credible ordinary travel allowance. [REI's modern backpacking guide](https://www.rei.com/learn/expert-advice/planning-menu.html) gives a variable 2,500-4,500 kcal/day comparator, not a measured emigrant requirement. Food needs are not yet individually calculated by body size, occupation or weather.
+
+Current ration effects are indexed game rules: 1 / 2 / 3 units per present traveler; steady-pace ordinary health change -4 / -1 / 0; rest recovery +3 / +5 / +7 before other damage; illness risk multipliers 2.0 / 1.3 / 0.7 and ration-dependent severity rolls. Hunger debt also recovers more slowly at low rations, and scurvy still requires vitamin-C produce.
+
+All 73 Godot suites passed on the final frozen checkpoint, including 29 focused calorie/preservation/save checks. Final log: parent .tools/calorie-final-tests-02.log. The first complete suite run also passed; it preceded the tooltip and integration-policy correction. Player saves and preexisting local farmer diagnostic files were preserved.

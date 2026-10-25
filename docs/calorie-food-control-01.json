@@ -1,0 +1,197 @@
+{
+  "before_commit": "57171ddf05a35174d6e8c9ff19b9dbc87d31a6f4",
+  "after_commit": "855f8c8",
+  "manifest": [
+    {
+      "path": "hunting-calorie-development-serial-02.json",
+      "sha256": "f5e837e793429eece8c63552577b1e47031a0a7c58cd12f7e0a92f74d35a80ef"
+    },
+    {
+      "path": "hunting-calorie-development-parallel-02.json",
+      "sha256": "c9ad527edc01de09b28ca142e7c9ac2d4796c78f4d622de1248165fa52eaa6c3"
+    },
+    {
+      "path": "hunting-calorie-development-mobile-02.json",
+      "sha256": "ad04cd409129c74031b3d95b046f745879ad5f92c411b42a29ce6239d4941eb7"
+    },
+    {
+      "path": "hunting-calorie-validation-serial-02.json",
+      "sha256": "793e68b492a31b9516fcab54e0e6955996eb81e2cf119fcf1a5d8796a9468287"
+    },
+    {
+      "path": "hunting-calorie-validation-parallel-02.json",
+      "sha256": "358e70235d16c4a50b966867f2d3e93518dad5fbdc82419d4cd5eb40a362a5b1"
+    },
+    {
+      "path": "hunting-calorie-validation-mobile-02.json",
+      "sha256": "0b55d91000a481747802aab1b48f578ce10c64bb08f8a0933dd283f6f93858e5"
+    },
+    {
+      "path": "calorie-final-store-journeys.json",
+      "sha256": "a5f50eeab2c271003f43ba46f673ef69914d7297a806d73c8c6a2f63f9b90a08"
+    },
+    {
+      "path": "calorie-final-current-outlaw-journeys.json",
+      "sha256": "69a8130b457a8cec2c37afd6ee2e2f9aa8d16480259a48fd37666f41659c5d28"
+    },
+    {
+      "path": "hunting-calorie-control-development-mobile-01.json",
+      "sha256": "f2a7bf941e555ce7eb2c1213f5b21a0d164cc48445bf48f5eb2ca45f71e95b58",
+      "runs": 24
+    },
+    {
+      "path": "hunting-calorie-control-validation-mobile-01.json",
+      "sha256": "0c067615c97dc7e0b609def003fc297f334c2d5e66af24441727efef1ac96f76",
+      "runs": 24
+    }
+  ],
+  "unchanged_strategy_files": [
+    "tests/mobile_camp_campaign.gd",
+    "tests/coordinated_camp_campaign.gd",
+    "tests/current_journey_policy.gd",
+    "tests/hunting_balance_campaign.gd",
+    "tests/full_trail_balance.gd"
+  ],
+  "changed_source_files": [
+    "data/hunting.json",
+    "data/provisions.json",
+    "data/save_migrations.json",
+    "simulation/field_outings.gd",
+    "simulation/hunting.gd",
+    "simulation/provisions.gd",
+    "simulation/trail_engine.gd",
+    "tests/current_outlaw_journeys.gd",
+    "tests/test_food_energy.gd",
+    "tests/test_meat_accounting.gd",
+    "tests/test_oxen.gd",
+    "tests/test_preservation.gd"
+  ],
+  "groups": [
+    {
+      "phase": "development",
+      "profession": "farmer",
+      "runs": 8,
+      "before_arrivals": 0,
+      "after_arrivals": 0,
+      "before_underfed_days": 237,
+      "after_underfed_days": 219,
+      "before_returned_food": 393,
+      "after_returned_food": 486,
+      "paired_outcomes": {
+        "neither": 8
+      },
+      "paired_arrival_day_changes": []
+    },
+    {
+      "phase": "development",
+      "profession": "carpenter",
+      "runs": 8,
+      "before_arrivals": 7,
+      "after_arrivals": 7,
+      "before_underfed_days": 59,
+      "after_underfed_days": 26,
+      "before_returned_food": 422,
+      "after_returned_food": 654,
+      "paired_outcomes": {
+        "both_arrived": 7,
+        "neither": 1
+      },
+      "paired_arrival_day_changes": [
+        -56,
+        0,
+        4,
+        0,
+        -1,
+        -28,
+        7
+      ]
+    },
+    {
+      "phase": "development",
+      "profession": "banker",
+      "runs": 8,
+      "before_arrivals": 7,
+      "after_arrivals": 8,
+      "before_underfed_days": 30,
+      "after_underfed_days": 2,
+      "before_returned_food": 296,
+      "after_returned_food": 423,
+      "paired_outcomes": {
+        "both_arrived": 7,
+        "new_only": 1
+      },
+      "paired_arrival_day_changes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "phase": "validation",
+      "profession": "farmer",
+      "runs": 8,
+      "before_arrivals": 0,
+      "after_arrivals": 0,
+      "before_underfed_days": 235,
+      "after_underfed_days": 197,
+      "before_returned_food": 291,
+      "after_returned_food": 376,
+      "paired_outcomes": {
+        "neither": 8
+      },
+      "paired_arrival_day_changes": []
+    },
+    {
+      "phase": "validation",
+      "profession": "carpenter",
+      "runs": 8,
+      "before_arrivals": 6,
+      "after_arrivals": 5,
+      "before_underfed_days": 98,
+      "after_underfed_days": 106,
+      "before_returned_food": 242,
+      "after_returned_food": 217,
+      "paired_outcomes": {
+        "both_arrived": 5,
+        "neither": 2,
+        "old_only": 1
+      },
+      "paired_arrival_day_changes": [
+        0,
+        0,
+        -3,
+        -4,
+        0
+      ]
+    },
+    {
+      "phase": "validation",
+      "profession": "banker",
+      "runs": 8,
+      "before_arrivals": 7,
+      "after_arrivals": 7,
+      "before_underfed_days": 43,
+      "after_underfed_days": 43,
+      "before_returned_food": 239,
+      "after_returned_food": 261,
+      "paired_outcomes": {
+        "both_arrived": 7,
+        "neither": 1
+      },
+      "paired_arrival_day_changes": [
+        0,
+        0,
+        0,
+        0,
+        -4,
+        0,
+        0
+      ]
+    }
+  ],
+  "caveat": "Species calorie density and drying retention change together. Whole-unit rounding and abstract purchased bundles remain. The current-outlaw integration policy separately bounds recovery stops; the compared mobile strategies are unchanged. Old and new rules/source fingerprints remain separate."
+}
