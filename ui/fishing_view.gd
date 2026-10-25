@@ -35,9 +35,9 @@ func _ready() -> void:
 func open(value) -> void:
  game=value;active=false
  var leader: int=game.camp_tasks.leader_id(game)
- scenery.reset(game.characters.profiles[leader] if leader>=0 else {})
  for child in choices.get_children():choices.remove_child(child);child.queue_free()
  var access: Dictionary=game.fishing_offer()
+ scenery.reset(game.characters.profiles[leader] if leader>=0 else {},str(access.site))
  info.text="%s · %.0f ROAD MILES TO WATER\nOne day including travel, fishing and meals." % [str(access.name).to_upper(),access.distance]
  for kit in ["foot","ride_horse_light"]:
   var quote: Dictionary=game.fishing_quote(kit)

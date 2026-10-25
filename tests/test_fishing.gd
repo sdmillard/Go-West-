@@ -122,6 +122,16 @@ func run():
     if image.get_pixel(x,y).a not in [0.0,1.0]:crisp=false
   check(crisp,"Fishing art has crisp alpha")
  var scene=preload("res://ui/fishing_scene.gd").new()
+ var sites: Dictionary=Model.new().data.sites
+ check(scene.BACKGROUNDS.size()==sites.size(),"Every fishable river has regional art")
+ for site in sites:
+  scene.reset({},site)
+  var image: Image=scene.background().get_image()
+  check(image.get_size()==Vector2i(432,150),"Regional bank keeps scene geometry")
+  check(image.get_pixel(64,138)==scene.BANK.get_image().get_pixel(64,138),"Angler stands on the regional bank")
+ scene.reset({},"unknown_future_site")
+ check(scene.background()==scene.BANK,"Unmapped future river has the original fallback")
+
  root.add_child(scene);await process_frame
  var activity: Dictionary=Model.new().begin(81,3,{"casts":2},6)
  scene.reset()
@@ -164,6 +174,7 @@ func run():
  screen.game.state.leg_miles=8;screen._show_section("Hunt & forage")
  check(screen.section_rows.get_children().any(func(n):return n is Button and n.text=="FISH · HORSE REQUIRED"),"UI labels horse-only fishing")
  screen._open_fishing()
+ check(screen.fishing_window.scenery.site_id==str(screen.game.fishing_offer().site),"Actual fishing menu selects the reachable river background")
  check(screen.fishing_window.choices.get_child(0).disabled and not screen.fishing_window.choices.get_child(1).disabled,"Horse-only setup disables foot choice")
  screen.queue_free();await process_frame
  print("Fishing: %d checks, %d failures" % [checks,failures])
