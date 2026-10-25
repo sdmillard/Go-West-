@@ -22,8 +22,8 @@
   "full_load_speed": 0.75,
   "preservation": {
     "batch_lb": 100,
-    "retained_food": 0.8,
-    "salted_retained_food": 0.9,
+    "retained_food": 1.0,
+    "salted_retained_food": 1.0,
     "dried_weight": 0.35,
     "days": 21,
     "salted_days": 30,
@@ -180,5 +180,10 @@
       0.5,
       1
     ]
+  },
+  "food_energy": {
+    "unit_kcal": 1000,
+    "generic_meat_kcal_per_lb": 500,
+    "note": "Calorie anchor for abstract food units, not a claim that every physical pound has equal energy. Existing purchased provisions remain an abstract mixed bundle at their existing weight/price. Generic lean meat uses a conservative rounded estimate; named game uses species values. Whole-unit rounding is a gameplay approximation."
   }
 }

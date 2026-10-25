@@ -51,7 +51,7 @@ func run():
 	check(game.slaughter_ox() and game.state.oxen==5 and game.state.bullets==199 and game.state.food==785 and game.state.day==1,"One animal costs exactly one bullet and one day; all meat credited before fifteen-pound meal")
 	check(game.provisions.fresh_pounds(game.state.food)==185,"At-camp meat is fresh and bypasses hunting's one hundred pound cap")
 	check(game.supply_history[0].event=="slaughter_ox" and game.supply_history[0].changes.food==200,"Journal ledger separates full yield from ordinary meals")
-	check(game.preserve_meat(true) and game.provisions.preserved_pounds(game.state.food)==45,"Ox meat enters the existing salt-preservation model")
+	check(game.preserve_meat(true) and game.provisions.preserved_pounds(game.state.food)==50,"Ox meat enters the existing salt-preservation model")
 	var store=Store.new()
 	var snapshot:=store.capture(game)
 	var copy=store.restore(JSON.parse_string(JSON.stringify(snapshot)))

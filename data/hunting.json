@@ -13,7 +13,8 @@
       "height": 24,
       "speed": 9,
       "meat_min": 200,
-      "meat_max": 450
+      "meat_max": 450,
+      "kcal_per_lb": 600
     },
     {
       "id": "deer",
@@ -23,7 +24,8 @@
       "height": 22,
       "speed": 17,
       "meat_min": 42,
-      "meat_max": 85
+      "meat_max": 85,
+      "kcal_per_lb": 550
     },
     {
       "id": "rabbit",
@@ -33,7 +35,8 @@
       "height": 11,
       "speed": 26,
       "meat_min": 1,
-      "meat_max": 2
+      "meat_max": 2,
+      "kcal_per_lb": 520
     }
   ],
   "regions": {
@@ -95,5 +98,6 @@
     "travel_hours_per_day": 8,
     "radius_miles": 8,
     "minimum_search_fraction": 0.25
-  }
+  },
+  "calorie_note": "Rounded kcal per physical pound of recovered edible portions, informed by USDA and ADF&G lean-game tables. Existing meat yields are edible yield, not whole carcass weight. Useful organs and fat are included in the generic recovered mix, never added twice. No separate broth/offal bonus. Preparation/condition varies."
 }

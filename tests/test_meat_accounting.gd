@@ -29,8 +29,8 @@ func run():
 	p.remove(15);inventory.food-=15
 	var dry: Dictionary=p.preserve(plan.input,1,true)
 	inventory.food-=dry.lost
-	check(dry.kept==18 and dry.salt==2 and is_equal_approx(dry.weight,12.6),"Salt and dried weight follow physical forty-pound input while meals retain ninety percent")
-	check(is_equal_approx(p.cargo(inventory)-base,12.6),"Dried cargo reconciles with retained food")
+	check(dry.kept==20 and dry.salt==2 and is_equal_approx(dry.weight,14.0),"Salt and dried weight follow physical forty-pound input while meals retain all food value")
+	check(is_equal_approx(p.cargo(inventory)-base,14.0),"Dried cargo reconciles with retained food")
 	check(p.preserve(20,1,false).input==0,"Preserved food cannot be dried again")
 	p=Provisions.new();p.add_meat(400,0)
 	check(p.processable()==50 and p.fresh_mass(p.processable())==100,"Processing cap is physical pounds, not ration units")
