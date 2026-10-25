@@ -71,7 +71,7 @@ static func adapt_stop(game,menu: Dictionary,approach: String) -> void:
   var path: Array=game.travelled_path()
   choice.label="Continue east beyond Independence" if path.size()<2 else "Head east toward "+game.route.nodes[path[-2]].name
   if not retreat and node.has("toll_dollars"):
-   var toll: float=(0.0 if game.state.vehicle=="foot" else float(node.toll_dollars))+float(node.get("toll_per_ox",0))*int(game.state.oxen)
+   var toll: float=(0.0 if game.state.vehicle=="foot" else float(node.toll_dollars))+float(node.get("toll_per_ox",0))*(int(game.state.oxen)+game.livestock.count(game.state,"dairy_cows")+game.livestock.count(game.state,"goats"))
    choice.label+=" · toll $%.2f" % toll
    choice.requires={"money":toll}
    choice.effects={"money":-toll}

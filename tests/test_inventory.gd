@@ -39,7 +39,7 @@ func run():
  var ox_event: Dictionary=game.trail_events.events.filter(func(event):return event.id=="ox_injury")[0]
  game._present_trail_event(ox_event)
  check("on foot" in game.pending.text and not "pull more slowly" in game.pending.text,"Ox injury refers to herded animals rather than an absent pulling team")
- check(game.pending.choices[0].rest and game.state.ox_health==int(before.state.ox_health)-20,"Foot wording preserves the actual injury and rest mechanics")
+ check(game.pending.choices[0].rest and game.team_conditions.record.oxen[0]==int(before.team_conditions.oxen[0])-20 and game.team_conditions.record.oxen.slice(1)==before.team_conditions.oxen.slice(1),"Foot injury affects one herded ox and retains the rest choice")
  var restored=Store.new().restore(JSON.parse_string(JSON.stringify(Store.new().capture(game))))
  check(restored!=null and restored.pending.text==game.pending.text,"Foot-specific event text survives saving and loading")
  game.choose(1)

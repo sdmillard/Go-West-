@@ -5,7 +5,7 @@ const FORMAT := "westward-probably"
 const VERSION := 1
 const DEFAULT_PATH := "user://journey.json"
 const MAX_BYTES := 2097152
-const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes", "social_rules", "appearance", "recruitment", "robbery_demands", "camp_tasks", "field_outings", "fishing"]
+const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes", "social_rules", "appearance", "recruitment", "robbery_demands", "camp_tasks", "field_outings", "fishing", "livestock"]
 var error := ""
 var rules_signature := ""
 var load_note := ""
@@ -24,7 +24,7 @@ func capture(game) -> Dictionary:
 	if not game.state.extended_route or not game.hunt.is_empty() or game.state.status not in ["traveling", "arrived", "lost", "returned_east"]:
 		return {}
 	return normalize({"format": FORMAT, "version": VERSION, "rules": fingerprint(),
-		"recruitment":game.recruitment.snapshot(),"social":game.social.snapshot(),"crime":game.crime.snapshot(),
+		"team_conditions":game.team_conditions.snapshot(game),"livestock":game.livestock.record.duplicate(true),"recruitment":game.recruitment.snapshot(),"social":game.social.snapshot(),"crime":game.crime.snapshot(),
 		"camp_repair":game.camp_repair.work.duplicate(true),"field_outings":game.field_outings.snapshot(),"characters_version":5,"camp_tasks":game.camp_tasks.snapshot(),"characters":game.characters.profiles.duplicate(true),
 		"combat_history":game.combat.history.duplicate(true),"context":game.context.record.duplicate(true),"route_end":game.route.end_id,"wagon_cache":game.wagon_cache.duplicate(true), "state":game.state.duplicate(true), "pending":game.pending.duplicate(true),
 		"seen":game.seen.duplicate(), "journal":Array(game.journal),
@@ -197,7 +197,7 @@ func valid_effects(effects: Variant) -> bool:
 	if not effects is Dictionary:
 		return false
 	for key in effects:
-		if key not in ["food","health","money","fuel","wheels","axles","tongues","medicine","clothing","bullets","oxen","ox_health","horse_health","days","item","vehicle","salt","horses","mules","saddles","pack_saddles","saddlebags"]:
+		if key not in ["food","health","money","fuel","wheels","axles","tongues","medicine","clothing","bullets","oxen","ox_health","horse_health","days","item","vehicle","salt","horses","mules","saddles","pack_saddles","saddlebags","dairy_cows","goats","hens","poultry_feed"]:
 			return false
 		var value = effects[key]
 		if key in ["item","vehicle"]:
@@ -235,6 +235,10 @@ func restore(value: Variant):
 	var game = Simulation.new(int(s.seed), str(s.get("mode", "classic")), s.extended_route, str(value.get("route_end","")))
 	if not game.error.is_empty():
 		return null
+	if not (migrated or economy_migrated) and (not value.has("livestock") or not value.has("team_conditions")):return null
+	var stock: Variant=value.get("livestock",{"animals":[],"products":[],"next_id":0,"care":true})
+	if not game.livestock.valid(stock,s):return null
+	game.livestock.record=normalize(stock)
 	for key in game.state:
 		if not s.has(key):
 			return null
@@ -328,6 +332,8 @@ func restore(value: Variant):
 	for batch in value.fresh:
 		if not batch is Dictionary:return null
 		if not game.provisions.valid_nutrients(batch):return null
+		if batch.has("table_product") and (not batch.table_product is bool or batch.get("preserved",false) or batch.get("vitamin_c",false)):return null
+		if batch.has("livestock_day") and not integer(batch.livestock_day,0,int(s.day)):return null
 		if batch.has("preserved") and not batch.preserved is bool:return null
 		if not game.provisions.valid_mass_ratio(batch):return null
 		if not integer(batch.get("pounds"),1,1000000) or not integer(batch.get("expires"),int(s.day)+1,1000100):
@@ -345,6 +351,10 @@ func restore(value: Variant):
 		if not id is String or not integer(value.last_events[id],0,int(s.day)):
 			return null
 	game.state = normalize(s)
+	if value.has("team_conditions"):
+		if not game.team_conditions.valid(value.team_conditions,s):return null
+		game.team_conditions.record=normalize(value.team_conditions)
+	else:game.team_conditions.start_legacy(game)
 	if value.has("characters"):
 		var characters_version: Variant=value.get("characters_version",1)
 		if not integer(characters_version,1,5) or not game.characters.valid(value.characters,value.party.size(),int(s.day),int(characters_version)==1,int(characters_version)):return null

@@ -2,6 +2,13 @@ extends Control
 ## Composites original native-resolution pixel assets. All motion lands on whole pixels.
 const Palette=preload("res://ui/traveler_palette.gd")
 var traveler_profiles: Array = []
+var livestock_counts: Dictionary={}
+const LIVESTOCK_COW=preload("res://art/pixels/livestock_cow.png")
+const LIVESTOCK_GOAT=preload("res://art/pixels/livestock_goat.png")
+const LIVESTOCK_HEN=preload("res://art/pixels/livestock_chicken.png")
+const LIVESTOCK_COOP=preload("res://art/pixels/livestock_coop.png")
+const CROSS_COW=preload("res://art/pixels/cross_livestock_cow.png")
+const CROSS_GOAT=preload("res://art/pixels/cross_livestock_goat.png")
 const WAGON = preload("res://art/pixels/wagon.png")
 const OXEN = preload("res://art/pixels/oxen.png")
 const WALKER = preload("res://art/pixels/walker.png")
@@ -146,6 +153,7 @@ func _draw() -> void:
 		if vehicle=="foot":
 			_draw_herd(false)
 			_draw_party(Vector2(140,135),false)
+		_draw_livestock(false,true)
 		_draw_weather()
 		return # Parked wagons/people are composed into each arrival illustration.
 	# Parallax: each layer of the backdrop slides at its own speed, nearest fastest, and the
@@ -175,6 +183,7 @@ func _draw() -> void:
 		draw_line(Vector2(220 + shift, 117), Vector2(262 + shift, 117), Color("76503c"), 1)
 		draw_texture_rect_region(OXEN, Rect2(227 + shift, 103, 48, 32), Rect2(frame * 48, 0, 48, 32))
 		draw_texture_rect_region(OXEN, Rect2(261 + shift, 103, 48, 32), Rect2(((frame + 4) % FRAMES) * 48, 0, 48, 32))
+	_draw_livestock(scrolling or motion>0,false)
 	match encounter:
 		"elder_god":
 			draw_texture(ELDER, Vector2(51, 48))
@@ -190,6 +199,19 @@ func _draw() -> void:
 			draw_rect(Rect2(159, 132, 60, 2), Color("a16b43"))
 	_draw_weather()
 
+func _draw_livestock(moving: bool,camped: bool) -> void:
+	var frame: int=int(clock_time*FPS)%FRAMES
+	for spec in [["dairy_cows",LIVESTOCK_COW,320],["goats",LIVESTOCK_GOAT,373]]:
+		if int(livestock_counts.get(spec[0],0))>0:draw_texture_rect_region(spec[1],Rect2(spec[2],99,48,44),Rect2(frame*48,44 if moving else 0,48,44))
+	if int(livestock_counts.get("hens",0))>0:
+		if camped:draw_texture_rect_region(LIVESTOCK_HEN,Rect2(277,100,48,44),Rect2(frame*48,0,48,44))
+		else:draw_texture(LIVESTOCK_COOP,Vector2(126,100) if vehicle=="foot" else Vector2(130,85))
+func _draw_cross_livestock(t: float,frame: int,high: bool,ferry: bool) -> void:
+	for spec in [["dairy_cows",CROSS_COW,-4.0],["goats",CROSS_GOAT,4.0]]:
+		if int(livestock_counts.get(spec[0],0))<1:continue
+		var at: Vector2=_on_path(t,float(spec[2]))
+		var row: int=0 if ferry or not _in_water(at) else (2 if high or crossing.get("method","")=="float" else 1)
+		_sprite(spec[1],Vector2i(48,40),Vector2i(12,34),frame,row,at)
 func _draw_herd(moving: bool) -> void:
 	# A small representative herd follows the walkers; the ledger gives the exact count.
 	for index in range(mini(herded_oxen,3)):
@@ -592,6 +614,7 @@ func _draw_crossing() -> void:
 		if _in_water(stern):
 			for i in range(4):
 				_water_rect(Rect2(stern.x - 6 - i * 5 + (frame % 2), stern.y + i * 3, 4, 1), Color("f6e7bc"))
+	_draw_cross_livestock(phase.cargo-18.0,frame,high,method in ["ferry","seized"])
 	if rough:
 		var spot := _on_path(phase.cargo + 8.0)
 		for i in range(7):

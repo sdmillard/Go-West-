@@ -58,6 +58,8 @@ var health_events: Array[String] = []
 var survival = Survival.new()
 var trail_events = Catalog.new()
 var service_return: Dictionary = {}
+var team_conditions=preload("res://simulation/team_conditions.gd").new()
+var livestock=preload("res://simulation/livestock.gd").new()
 var fishing=preload("res://simulation/fishing.gd").new()
 var hunting = preload("res://simulation/hunting.gd").new()
 var hunting_outings := 0
@@ -121,6 +123,9 @@ func _init(seed_value: int = 1848, mode: String = "classic", setup: bool = false
 	if not provisions.error.is_empty():
 		error = provisions.error
 		state.status = "error"
+	if not livestock.error.is_empty():
+		error=livestock.error
+		state.status="error"
 	if not fishing.error.is_empty():
 		error=fishing.error
 		state.status="error"
@@ -174,8 +179,12 @@ func depart(profession: String, names: Array, month: int, cart: Dictionary, cust
 	state.money = float(quote.remaining_cents) / 100.0
 	for key in ["oxen", "food", "clothing", "wheels", "axles", "tongues", "medicine", "salt"]:
 		state[key] = int(cart.get(key, 0))
+	for key in livestock.GOODS:
+		if int(cart.get(key,0))>0:state[key]=int(cart[key])
+	livestock.sync(self)
 	for key in Mounts.KEYS:
 		if int(cart.get(key,0))>0:state[key]=int(cart[key])
+	team_conditions.start_legacy(self)
 	if not quote.wagon:
 		# Packers leave without a wagon: only personal gear travels with them, and no wheel can crack.
 		state.vehicle="foot"
@@ -268,7 +277,7 @@ func _arrive_landmark(revisit: bool=false,roll_stage: bool=true) -> void:
 		description += river_conditions()
 		if node.has("ferry_dollars"):
 			# Ferrymen on the snow-fed rivers charged by the current: high water could double the fare.
-			var fare: float=float(node.get("ferry_high_dollars",node.ferry_dollars)) if state.river_stage=="high" else float(node.ferry_dollars)
+			var fare: float=(float(node.get("ferry_high_dollars",node.ferry_dollars)) if state.river_stage=="high" else float(node.ferry_dollars))+float(livestock.data.ferry_head_cents)/100.0*(livestock.count(state,"dairy_cows")+livestock.count(state,"goats"))
 			options.append({"label": "Hire the ferry · $%.2f, 1 day" % fare,
 				"action": "cross", "method": "ferry", "requires": {"money": fare}, "effects": {"money": -fare, "days": 1}})
 		options.append({"label": "Attempt a ford · 1 day, risk to supplies", "action": "cross", "method": "ford", "effects": {"days": 1}, "risk": 0.65 if state.river_stage == "high" else 0.08})
@@ -294,7 +303,7 @@ func _arrive_landmark(revisit: bool=false,roll_stage: bool=true) -> void:
 		options[0] = {"label":"Portage around the rapids · %d days" % int(RIVER.portage_days), "action":"leave", "effects":{"days":int(RIVER.portage_days)}}
 		options.insert(1,{"label":"Run the rapids · 1 day, risk of wreck", "action":"leave", "effects":{"days":1}, "portage_risk":float(RIVER.portage_risk)})
 	if node.has("toll_dollars"):
-		var toll := (0.0 if state.vehicle=="foot" else float(node.toll_dollars)) + float(node.get("toll_per_ox",0)) * int(state.oxen)
+		var toll := (0.0 if state.vehicle=="foot" else float(node.toll_dollars)) + float(node.get("toll_per_ox",0)) * (int(state.oxen)+livestock.count(state,"dairy_cows")+livestock.count(state,"goats"))
 		options[0].label = "Pay Barlow toll · $%.2f, then continue" % toll
 		if state.vehicle=="foot":options[0].label="Continue on foot · no wagon toll" if toll==0 else "Pay stock toll · $%.2f" % toll
 		options[0]["requires"] = {"money":toll}
@@ -362,8 +371,10 @@ func _choose_landmark(index: int) -> bool:
 		if choice.method=="horses" and last_crossing.stage=="high" and Mounts.animals(state)>0:
 			var kind: String="mules" if Mounts.count(state,"mules")>0 and (Mounts.count(state,"horses")==0 or rng.randf()<0.4) else "horses"
 			state[kind]=int(state[kind])-1
+			team_conditions.sync(self)
 			last_crossing["animal_lost"]=kind
 	if not last_crossing.is_empty():
+		livestock.cross(self,last_crossing)
 		last_crossing.merge({"day": state.day, "landmark": state.landmark,
 			"food_lost": food_before - int(state.food),
 			"clothing_lost": clothing_before - int(state.clothing),
@@ -432,7 +443,7 @@ func travel() -> bool:
 		else:_arrive_landmark(true)
 		return true
 	var on_river: bool = state.extended_route and current_edge().get("hazard","") == "river"
-	if state.extended_route and not on_river and state.vehicle!="foot" and (state.oxen == 0 or state.ox_health == 0):
+	if state.extended_route and not on_river and state.vehicle!="foot" and (team_conditions.pulling(state) == 0 or state.ox_health == 0):
 		pending = {"id": "no_team", "title": "No team to pull the wagon", "text": "Trade for an ox, rest a worn team, or abandon the wagon through Provisions / Cargo.", "choices": [{"label": "Return to camp", "effects": {}, "result": "The wagon stays in camp."}]}
 		return true
 	var pace_miles: int = int(survival.data.pace_miles[state.pace]) if state.extended_route else PACE_MILES[state.pace]
@@ -454,7 +465,7 @@ func travel() -> bool:
 		if walking_overloaded():return true
 		if on_river:distance=maxi(1,roundi((int(RIVER.miles)+rng.randi_range(-2,2))*float(survival.weather.speed)))
 		elif state.vehicle=="foot":distance=walking_distance()
-		else:distance = maxi(1, roundi(distance * survival.movement_factor(state.oxen, state.ox_health, state.fatigue, 0, state.terrain, int(calendar().month), context.region(self)) * provisions.movement_factor(provisions.cargo(state),int(state.oxen))))
+		else:distance = maxi(1, roundi(distance * survival.movement_factor(team_conditions.pulling(state), state.ox_health, state.fatigue, 0, state.terrain, int(calendar().month), context.region(self)) * provisions.movement_factor(provisions.cargo(state),team_conditions.pulling(state))))
 		var east: bool=Direction.heading(self)=="east"
 		distance=mini(distance,int(state.leg_miles) if east else int(state.leg_length)-int(state.leg_miles))
 		distance=Direction.clamp_at_cache(self,distance)
@@ -582,6 +593,7 @@ func _can_act() -> bool:
 	return pending.is_empty() and state.status == "traveling" and hunt.is_empty()
 
 func _tick_day(resting: bool, team_working: bool = false, camp_action: String = "") -> void:
+	if not team_conditions.valid(team_conditions.record,state):team_conditions.start_legacy(self)
 	state.erase("camp_watch_day")
 	state.erase("camp_watch_member")
 	var wagon_hunt: bool=camp_action=="hunt" and hunt.get("field",{}).get("kit","")=="wagon"
@@ -609,6 +621,7 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 			if current_edge().get("hazard","")=="waterless":strain+=int(WATERLESS.ox_strain)
 			state.ox_health=maxi(0,int(state.ox_health)-strain)
 		_tick_mounts(resting,team_working)
+		team_conditions.settle(self,false,team_working and state.vehicle!="foot",(int(seasonal_pressure().rest_ox_recovery) if resting else mini(2,int(seasonal_pressure().rest_ox_recovery))) if not team_working and current_edge().get("hazard","")!="waterless" else -1)
 	if state.extended_route:
 		var spoiled := provisions.spoil(int(state.day), int(state.food))
 		if spoiled > 0:
@@ -616,6 +629,7 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 			journal.append("Day %d · Discarded %d ration-lb spoiled meat." % [state.day, spoiled])
 			supply_history.append({"day":state.day,"event":"spoilage","changes":{"food":-spoiled}})
 		Remains.spoil(self)
+		livestock.tick(self,resting,team_working)
 	var needed: int = (int(provisions.data.rations_lb[state.rations]) if state.extended_route else RATION_LB[state.rations]) * state.party_size
 	# Those chosen to eat human meat are fed from it first; nobody else is ever served it.
 	if state.extended_route:needed-=Remains.serve(self)
@@ -635,6 +649,7 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 		for member in party_health.members:
 			if party_health.is_active(member) and member.has("vitamin_days"):member.vitamin_days=0 if party_health.days_without_fresh==0 else int(member.vitamin_days)+1
 	state.food = maxi(0, state.food - needed)
+	if state.extended_route:livestock.pack(self)
 	var recovered_food: bool=provisions.Shortfall.tick(self,eaten,needed) if state.extended_route else true
 	if not fed:
 		if not state.extended_route:_change_health(-18,"lack of food")
@@ -719,6 +734,7 @@ func _check_health() -> void:
 		if party_health.members.any(func(member):return member.get("departed",false)):state.loss_reason="No travelers remain with the wagon. Departures and deaths are recorded separately in View Party."
 
 func _apply(effects: Dictionary, health_cause: String = "injuries", resting: bool = false, camp_action: String = "") -> void:
+	if team_conditions.record.oxen.size()!=int(state.oxen):team_conditions.start_legacy(self)
 	var before := state.duplicate(true)
 	for key in effects:
 		if key == "item":
@@ -741,7 +757,7 @@ func _apply(effects: Dictionary, health_cause: String = "injuries", resting: boo
 	if state.extended_route:
 		var changes: Dictionary = {}
 		var lines: Array[String] = []
-		for key in ["food", "money", "bullets", "medicine", "clothing", "oxen", "wheels", "axles", "tongues", "salt"]+Mounts.KEYS:
+		for key in ["food", "money", "bullets", "medicine", "clothing", "oxen", "wheels", "axles", "tongues", "salt"]+Mounts.KEYS+livestock.GOODS:
 			var delta := float(state.get(key,0)) - float(before.get(key,0))
 			if key=="money":delta=roundi(delta*100)/100.0
 			if not is_zero_approx(delta):
@@ -751,6 +767,8 @@ func _apply(effects: Dictionary, health_cause: String = "injuries", resting: boo
 		if not changes.is_empty():
 			supply_history.append({"day": state.day, "event": pending.get("id", "trail"), "changes": changes})
 			journal.append("Day %d · Supplies: %s. Daily rations counted separately." % [state.day, "; ".join(lines)])
+	team_conditions.settle(self,pending.get("id","")=="ox_injury")
+	livestock.sync(self)
 	# Delay is ordinary elapsed time: it consumes rations and cannot revive a lost party.
 	for day in range(int(effects.get("days", 0))):
 		if state.status != "traveling":
@@ -1048,6 +1066,7 @@ func post_store() -> Dictionary:
 		rows.append(_counter_row(lot,int(lot.buy_cents),int(lot.sell_cents),can_buy,can_sell,buy.market_key,sell.market_key,true,true))
 	var name: String=str(route.nodes[state.landmark].get("name",state.landmark))
 	rows.append_array(Produce.rows(self,str(offer.key),"post"))
+	rows.append_array(livestock.rows(self,str(offer.key)))
 	var wagon_row: Dictionary=provisions.WagonTrade.row(self,str(offer.key))
 	if state.vehicle=="foot":rows.push_front(wagon_row)
 	else:rows.append(wagon_row)
@@ -1238,6 +1257,7 @@ func counter_checkout(cart: Dictionary,venue: String="") -> bool:
 	effects["days"]=quote.days
 	journal.append("Day %d · %s: %s." % [state.day,{"post":"At "+str(store.name),"traders":"Traded with passing traders","camp":"Traded with an emigrant family"}[store.kind],", ".join(lines)])
 	_apply(effects)
+	livestock.sync(self)
 	refresh_stop_offers()
 	if quote.days>0:_update_river_stage()
 	return true
@@ -1649,7 +1669,7 @@ func finish_hunt() -> bool:
 			field.stock[kind]-=1;condition=int(provisions.data.mounts.breakdown_condition) if Mounts.animals(field.stock)>0 else 0
 			journal.append("An outing animal gave out under its load and was lost. Its surviving tack returned.")
 			health_events.append("An outing animal gave out. Rest the animals or bring back a lighter load.")
-		field_outings.Outfit.restore_stock(self,field.stock,condition)
+		field_outings.Outfit.restore_stock(self,field.stock,condition,field.get("animal_conditions",{}),int(field.get("condition_base",100)))
 	var remaining: int=0
 	var ratio: float=float(retrieved)/units if units>0 else 1.0
 	var batch: Dictionary={}
@@ -1724,6 +1744,7 @@ func slaughter_mount(kind: String,by_hand: bool = false) -> bool:
 	if offer.is_empty():return false
 	var name: String={"horses":"horse","mules":"mule"}[kind]
 	state[kind]=int(state[kind])-1
+	team_conditions.sync(self)
 	state.bullets-=int(offer.bullets)
 	state.food+=provisions.add_meat(int(offer.meat),int(state.day)+1)
 	supply_history.append({"day":int(state.day)+1,"event":"slaughter_"+name,"changes":{kind:-1,"bullets":-int(offer.bullets),"food":provisions.meat_units(int(offer.meat))}})
@@ -1737,6 +1758,7 @@ func slaughter_ox(by_hand: bool = false) -> bool:
 	var offer := ox_slaughter_offer(by_hand)
 	if offer.is_empty():return false
 	state.oxen-=1
+	team_conditions.sync(self)
 	state.bullets-=int(offer.bullets)
 	state.food+=provisions.add_meat(int(offer.meat),int(state.day)+1)
 	# At-camp meat is available for today's meals. All usable meat is recovered,
@@ -1825,7 +1847,7 @@ func _refresh_toll_offer() -> void:
 				choice["requires"] = {}
 				choice["effects"] = {}
 		return
-	var toll := snappedf((0.0 if state.vehicle=="foot" else float(node.toll_dollars)) + float(node.get("toll_per_ox",0)) * int(state.oxen),0.01)
+	var toll := snappedf((0.0 if state.vehicle=="foot" else float(node.toll_dollars)) + float(node.get("toll_per_ox",0)) * (int(state.oxen)+livestock.count(state,"dairy_cows")+livestock.count(state,"goats")),0.01)
 	for choice in pending.choices:
 		if choice.get("action","") == "leave":
 			choice.label = "Pay Barlow toll · $%.2f, then continue" % toll

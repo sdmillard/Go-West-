@@ -1,0 +1,62 @@
+{
+  "note": "Authored conservative trail production and condition estimates, not measured 1848 yields. Adult milk animals are purchased already in milk, with 180 days of remaining lactation; no breeding. Hens need grain, not human food. Prices for goats, hens and feed are estimates.",
+  "milk_days": 1,
+  "egg_days": 14,
+  "care_hours_per_person": 0.5,
+  "moving_care_hours": 2.0,
+  "resting_care_hours": 4.0,
+  "sell_factor": 0.5,
+  "months": [
+    0.25,
+    0.3,
+    0.55,
+    0.85,
+    1,
+    1,
+    0.85,
+    0.75,
+    0.7,
+    0.55,
+    0.35,
+    0.25
+  ],
+  "animals": {
+    "dairy_cows": {
+      "label": "Milk cow",
+      "price_cents": 7500,
+      "maximum": 4,
+      "daily_lb": 8.0,
+      "kcal_per_lb": 277,
+      "care_hours": 0.4,
+      "lactation_days": 180,
+      "meat_lb": 250,
+      "meat_kcal_per_lb": 900,
+      "stock": 2
+    },
+    "goats": {
+      "label": "Milk goat",
+      "price_cents": 1000,
+      "maximum": 8,
+      "daily_lb": 2.0,
+      "kcal_per_lb": 313,
+      "care_hours": 0.2,
+      "lactation_days": 180,
+      "meat_lb": 25,
+      "meat_kcal_per_lb": 490,
+      "stock": 3
+    },
+    "hens": {
+      "label": "Laying hen",
+      "price_cents": 50,
+      "maximum": 24,
+      "daily_lb": 0.11,
+      "kcal_per_lb": 650,
+      "care_hours": 0.025,
+      "lactation_days": 0,
+      "meat_lb": 2,
+      "meat_kcal_per_lb": 750,
+      "stock": 6
+    }
+  },
+  "ferry_head_cents": 10
+}

@@ -83,6 +83,7 @@ static func sell(game,cart: Dictionary,keep_oxen: int=-1) -> bool:
  for item in offer.pack.inventory:game.state[item]=int(offer.pack.inventory[item])
  game.provisions.fresh.assign(offer.pack.carried.duplicate(true))
  game.state.oxen=int(offer.keep_oxen)
+ game.team_conditions.sync(game)
  game.state.parts=int(game.state.wheels)+int(game.state.axles)+int(game.state.tongues)
  game.state.vehicle="foot"
  game.state.household_gear_lb=float(game.provisions.data.walking.personal_gear_lb_per_person)*int(game.state.party_size)
