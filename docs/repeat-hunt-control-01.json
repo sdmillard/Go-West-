@@ -1,0 +1,200 @@
+{
+  "before_commit": "0278205",
+  "after_commit": "cd4bc77",
+  "manifest": [
+    {
+      "path": "hunting-repeat-development-mobile-02.json",
+      "sha256": "e1f39c56ea29006fe689f7408b856991461a858fd8dc6fd069a89fe698485ead",
+      "runs": 24
+    },
+    {
+      "path": "hunting-repeat-development-parallel-02.json",
+      "sha256": "f8a68657d3809eaf1676bf0b68612d993fd32747964dc1688b3de40dce4ce784",
+      "runs": 24
+    },
+    {
+      "path": "hunting-repeat-development-serial-02.json",
+      "sha256": "182286aa2bb2f2770f91848c1ddceb01ac28595c4df687a1fb7fced4d9900dbf",
+      "runs": 24
+    },
+    {
+      "path": "hunting-repeat-validation-mobile-02.json",
+      "sha256": "ebb420848f36769de027d087cedc8b8470bae29b811ed8e99fcbdbef7dc580a1",
+      "runs": 24
+    },
+    {
+      "path": "hunting-repeat-validation-parallel-02.json",
+      "sha256": "544ecbc69de3beb70e2491681f3696fe5ec85de7df015e69e508e2867ffc16c6",
+      "runs": 24
+    },
+    {
+      "path": "hunting-repeat-validation-serial-02.json",
+      "sha256": "c6b8061216521f2e6faf274b36f17226f35840923402ffdd9e97e9f34dfd465a",
+      "runs": 24
+    },
+    {
+      "path": "hunting-repeat-control-development-02.json",
+      "sha256": "e98063f080febee2e7f4967673ae747c6c8c12d13dd1a6d30bd7ca4675e560a3",
+      "runs": 24
+    },
+    {
+      "path": "hunting-repeat-control-validation-02.json",
+      "sha256": "e07cf709d11acb9a9f2ad320f608b8c2dfb775261fb58cac432b11f933dd4f2c",
+      "runs": 24
+    },
+    {
+      "path": "repeat-store-journeys-02.json",
+      "sha256": "d7006c8dd1e6b5b41c8615da25458ceaa019e70655efb07b937f9702d74dccc6",
+      "runs": 24
+    },
+    {
+      "path": "repeat-current-outlaw-journeys-02.json",
+      "sha256": "4e7ff63f612b35141d2656be565f90fbb6be52a6317d7cf97018138685c3cee5",
+      "runs": 20
+    }
+  ],
+  "groups": [
+    {
+      "phase": "development",
+      "profession": "farmer",
+      "runs": 8,
+      "before_arrivals": 1,
+      "after_arrivals": 1,
+      "before_returned_food": 103,
+      "after_returned_food": 270,
+      "before_shots": 32,
+      "after_shots": 59,
+      "paired_outcomes": {
+        "both_arrived": 1,
+        "new_only": 0,
+        "old_only": 0,
+        "neither": 7
+      },
+      "paired_arrival_day_changes": [
+        -17
+      ]
+    },
+    {
+      "phase": "development",
+      "profession": "carpenter",
+      "runs": 8,
+      "before_arrivals": 7,
+      "after_arrivals": 7,
+      "before_returned_food": 23,
+      "after_returned_food": 363,
+      "before_shots": 12,
+      "after_shots": 50,
+      "paired_outcomes": {
+        "both_arrived": 7,
+        "new_only": 0,
+        "old_only": 0,
+        "neither": 1
+      },
+      "paired_arrival_day_changes": [
+        0,
+        0,
+        0,
+        0,
+        12,
+        0,
+        0
+      ]
+    },
+    {
+      "phase": "development",
+      "profession": "banker",
+      "runs": 8,
+      "before_arrivals": 8,
+      "after_arrivals": 8,
+      "before_returned_food": 86,
+      "after_returned_food": 289,
+      "before_shots": 30,
+      "after_shots": 48,
+      "paired_outcomes": {
+        "both_arrived": 8,
+        "new_only": 0,
+        "old_only": 0,
+        "neither": 0
+      },
+      "paired_arrival_day_changes": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        2,
+        0,
+        -1
+      ]
+    },
+    {
+      "phase": "validation",
+      "profession": "farmer",
+      "runs": 8,
+      "before_arrivals": 0,
+      "after_arrivals": 0,
+      "before_returned_food": 44,
+      "after_returned_food": 299,
+      "before_shots": 21,
+      "after_shots": 72,
+      "paired_outcomes": {
+        "both_arrived": 0,
+        "new_only": 0,
+        "old_only": 0,
+        "neither": 8
+      },
+      "paired_arrival_day_changes": []
+    },
+    {
+      "phase": "validation",
+      "profession": "carpenter",
+      "runs": 8,
+      "before_arrivals": 5,
+      "after_arrivals": 6,
+      "before_returned_food": 22,
+      "after_returned_food": 187,
+      "before_shots": 11,
+      "after_shots": 25,
+      "paired_outcomes": {
+        "both_arrived": 5,
+        "new_only": 1,
+        "old_only": 0,
+        "neither": 2
+      },
+      "paired_arrival_day_changes": [
+        0,
+        0,
+        0,
+        0,
+        -26
+      ]
+    },
+    {
+      "phase": "validation",
+      "profession": "banker",
+      "runs": 8,
+      "before_arrivals": 7,
+      "after_arrivals": 7,
+      "before_returned_food": 88,
+      "after_returned_food": 111,
+      "before_shots": 12,
+      "after_shots": 20,
+      "paired_outcomes": {
+        "both_arrived": 7,
+        "new_only": 0,
+        "old_only": 0,
+        "neither": 1
+      },
+      "paired_arrival_day_changes": [
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0
+      ]
+    }
+  ],
+  "caveat": "The rule change includes finite encounter generation and escape behavior as well as follow-up shots. Control/after source fingerprints differ; never pool these cohorts as one version."
+}
