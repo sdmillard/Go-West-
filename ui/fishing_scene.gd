@@ -2,6 +2,23 @@ extends Control
 ## Presentation only. Animation never changes the fishing clock, RNG or catch.
 const Palette=preload("res://ui/traveler_palette.gd")
 const BANK=preload("res://art/pixels/fishing_riverbank.png")
+const BACKGROUNDS := {
+ "wakarusa": preload("res://art/pixels/fishing_riverbank_prairie.png"),
+ "kansas_river": preload("res://art/pixels/fishing_riverbank_prairie.png"),
+ "big_blue": preload("res://art/pixels/fishing_riverbank_prairie.png"),
+ "south_platte": preload("res://art/pixels/fishing_riverbank_platte.png"),
+ "north_platte": preload("res://art/pixels/fishing_riverbank_platte.png"),
+ "greenwood_cutoff": preload("res://art/pixels/fishing_riverbank_green.png"),
+ "green_river": preload("res://art/pixels/fishing_riverbank_green.png"),
+ "snake_river": preload("res://art/pixels/fishing_riverbank_snake.png"),
+ "fort_boise": preload("res://art/pixels/fishing_riverbank_boise.png"),
+ "umatilla": preload("res://art/pixels/fishing_riverbank_umatilla.png"),
+ "john_day": preload("res://art/pixels/fishing_riverbank_john_day.png"),
+ "deschutes": preload("res://art/pixels/fishing_riverbank_deschutes.png"),
+}
+var site_id: String=""
+func background() -> Texture2D:
+ return BACKGROUNDS.get(site_id,BANK)
 const ANGLER=preload("res://art/pixels/fishing_angler.png")
 const BOBBER=preload("res://art/pixels/fishing_bobber.png")
 const SPLASH=preload("res://art/pixels/fishing_splash.png")
@@ -22,7 +39,8 @@ func _ready() -> void:
  mouse_filter=Control.MOUSE_FILTER_IGNORE
  texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
  clip_contents=true
-func reset(profile: Dictionary={}) -> void:
+func reset(profile: Dictionary={}, site: String="") -> void:
+ site_id=site
  traveler_profile=profile
  encounter={}
  presentation="";age=1.0;clock=0.0;splash_age=1.0
@@ -65,7 +83,7 @@ func bobber_pose() -> Dictionary:
 func _draw() -> void:
  var scale_by:=size/Vector2(432,150)
  draw_set_transform(Vector2.ZERO,0,scale_by)
- draw_texture(BANK,Vector2.ZERO)
+ draw_texture(background(),Vector2.ZERO)
  var current: Dictionary=pose()
  var tip: Vector2=rod_tip(current).round()
  var bobber: Vector2=WATER

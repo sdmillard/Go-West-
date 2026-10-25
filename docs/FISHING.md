@@ -44,3 +44,10 @@ Focused coverage includes walking/mounted boundaries, missing and away horses, m
 Native setup, bite and return screens were visually reviewed in the game window. The initial slice used temporary scenery. [The art handoff](FISHING_ART_BRIEF.md) and [final asset contract](../art/aseprite/FISHING.md) describe the supplied artwork and its draft integration.
 
 Full reports and final logs remain in parent .tools/fishing-*. Copies of both integration reports were SHA-256 verified against the isolated originals before cleanup. [Evidence manifest](fishing-evidence.json) records hashes and the rules signature. Player saves and preexisting diagnostic files are preserved.
+
+
+## Regional scenery (October 25, 2026)
+
+Spencer approved all eight regional backgrounds from the updated fishing-art-drafts.zip. The fishing minigame now selects scenery by the reachable river site in its setup screen and retains it through casting and landing. Prairie scenery covers Wakarusa/Kansas/Big Blue; open Platte covers South/North Platte; Green covers the crossing and Greenwood branch. Snake, Boise, Umatilla, John Day and Deschutes each have a separate scene. Unknown future sites fall back to the original bank.
+
+These are representative regional landscapes, not surveyed 1848 viewpoints. The supplied Aseprite source is art/aseprite/scenes/fishing_regions.lua; all eight installed 432 × 150 PNGs rebuild pixel-identically with the existing palette. Sprite positions remain unchanged: angler feet (64,138), bobber waterline (288,110). Native previews checked all eight with the angler in place. No fishing probabilities, access ranges, calories or save rules change.

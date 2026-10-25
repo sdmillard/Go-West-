@@ -680,3 +680,8 @@ Spencer proposed river-specific weighted native fish lists, seasonal abundance, 
 - Frozen runtime e2cb920: 76 suites passed, plus 144 journeys, 48 old-rule controls, 1,800 controlled trips and unchanged 24 store/20 outlaw integrations. Full reports in parent .tools; compact source/rules/results and verified archive hashes in seasonal-fish-summary-01.json / seasonal-fish-validation-01.json. UI preview screenshots retained in .tools/seasonal-fish-*.png.
 - Prairie fishing is supplemental, not a reliable five-person food engine. Held-out farmer arrivals remain 0/8 for each tested fishing policy; do not call farmer balance solved. No tuning to those held-out results. New salmon are localized and seasonal. Historical habitat/nutrition sources inform approximations, not measured 1848 encounter rates.
 - Next requested mechanics: audit fishing completed, then dairy cows/goats/chickens. Pelts/trade valuables/heirlooms are also proposed. No livestock implementation in this patch.
+
+
+## Latest checkpoint: regional fishing scenery (October 25, 2026)
+
+Spencer supplied an updated fishing-art-drafts.zip containing eight river backgrounds and approved all eight. Installed original supplied PNGs and the Lua source; verified source rebuilds are pixel-identical. ui/fishing_scene.gd maps all 12 current fishing sites to these eight backgrounds; fishing_view passes the selected accessible river on open. Fallback remains the original background for unknown future sites. No simulation, economy, species or save-rule changes. See FISHING.md. Fishing checks now total 105, including mapping, standing position and actual menu selection; native eight-scene preview is .tools/regional-fish-in-game.png.
