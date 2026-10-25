@@ -14,7 +14,7 @@ Build review copies with art/aseprite/build.ps1 -Scene fishing, or run Aseprite 
 | fishing_splash | 16 x 16 | 64 x 16 | Four impact/ripple frames |
 | fishing_catch | 16 x 8 | 32 x 8 | Two flop poses; optional standalone asset |
 
-Frame time is 160 ms for presentation. Cast, strike and landing run once; waiting/bobber effects loop. The land row already contains the fish, so the renderer never draws an additional catch on top.
+Frame time is 160 ms for presentation. Cast, strike and landing run once; waiting/idle/nibble effects loop. A bite plays the submerge row once and holds its final frame. The land row already contains the fish, so the renderer never draws an additional catch on top.
 
 Angler top-left is (52,108); ground registration (12,30) places feet at (64,138). Water contact is (288,110). Bobber registration is (3,6); splash registration (8,12). The separate cream line renders behind the angler and follows the rod tip of each action frame.
 

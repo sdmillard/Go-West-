@@ -136,7 +136,10 @@ func run():
  check(scene.pose().frame==2,"Repeated UI refresh does not restart a cast")
  scene.advance(0.4)
  check(scene.pose().action=="wait","Casting completes once and resumes waiting")
- activity.phase="bite";scene.observe(activity)
+ activity.phase="bite";activity.phase_time=0.0;scene.observe(activity)
+ check(scene.bobber_pose().row==2 and scene.bobber_pose().frame==0,"Bite starts at the first dip frame")
+ activity.phase_time=0.8
+ check(scene.bobber_pose().frame==3,"Submerged bobber holds its final frame until the strike")
  check(scene.pose().bobber,"Bite keeps a visible bobber effect")
  Model.new().click(activity);scene.observe(activity)
  check(scene.pose().action=="land" and not scene.pose().bobber,"A successful strike shows one landing fish and removes the bobber")

@@ -56,6 +56,12 @@ func rod_tip(current: Dictionary) -> Vector2:
   "strike":return ANGLER_AT+Vector2(29-frame*2,4)
   "land":return ANGLER_AT+Vector2(27,2)
  return ANGLER_AT+Vector2(30,8+frame/2)
+func bobber_pose() -> Dictionary:
+ if encounter.is_empty():return {"row":0,"frame":0}
+ if encounter.phase=="bite":
+  return {"row":2,"frame":mini(3,int(float(encounter.phase_time)/FRAME_SECONDS))}
+ var nibbling: bool=encounter.phase=="waiting" and float(encounter.phase_time)>float(encounter.casts[encounter.cast].wait)*0.75
+ return {"row":1 if nibbling else 0,"frame":int(clock/FRAME_SECONDS)%4}
 func _draw() -> void:
  var scale_by:=size/Vector2(432,150)
  draw_set_transform(Vector2.ZERO,0,scale_by)
@@ -68,9 +74,8 @@ func _draw() -> void:
  if current.bobber:
   # Cream line is runtime geometry; rod-tip positions follow the supplied Lua source.
   draw_line(tip,bobber,Color("f6e7bc"),1.0,false)
-  var row: int=2 if encounter.phase=="bite" else (1 if float(encounter.phase_time)>float(encounter.casts[encounter.cast].wait)*0.75 else 0)
-  var frame: int=int(clock/FRAME_SECONDS)%4
-  draw_texture_rect_region(BOBBER,Rect2(bobber-Vector2(3,6),Vector2(8,8)),Rect2(frame*8,row*8,8,8))
+  var bob: Dictionary=bobber_pose()
+  draw_texture_rect_region(BOBBER,Rect2(bobber-Vector2(3,6),Vector2(8,8)),Rect2(bob.frame*8,bob.row*8,8,8))
  if splash_age>=0 and splash_age<FRAME_SECONDS*4:
   draw_texture_rect_region(SPLASH,Rect2(WATER-Vector2(8,12),Vector2(16,16)),Rect2(mini(3,int(splash_age/FRAME_SECONDS))*16,0,16,16))
  # The landing row already includes its fish; never add a duplicate catch sprite.
