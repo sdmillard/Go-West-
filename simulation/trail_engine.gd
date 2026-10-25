@@ -1244,7 +1244,7 @@ func counter_checkout(cart: Dictionary,venue: String="") -> bool:
 		# The unit ledger keeps exact amounts; the lot count rounds up so the lot menu never sells stock the counter took.
 		var used: int=_units_used(key,int(row.amount))+absi(n)
 		context.record.spent[key+"|units"]=used
-		if row.item not in Produce.ITEMS and row.item!="wagon":context.record.spent[key]=ceili(float(used)/int(row.amount))
+		if row.item not in Produce.ITEMS and row.item not in livestock.GOODS and row.item!="wagon":context.record.spent[key]=ceili(float(used)/int(row.amount))
 		crime.consume_trade({"market_key":key,"effects":{row.item:n}})
 		lines.append(("bought %d %s" if n>0 else "sold %d %s") % [absi(n),_unit_name(row.item,absi(n))])
 	if quote.net_cents>0 and store.purse_cents>=0:

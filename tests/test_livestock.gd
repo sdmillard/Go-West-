@@ -115,6 +115,15 @@ func run():
  if migrated!=null:
   check(migrated.state.food==prior.state.food and migrated.state.money==prior.state.money and migrated.livestock.record.animals.is_empty(),"Migration gives no free food, cash or livestock")
   check(str(migrated.rng.state)==prior.random,"Migration preserves random stream")
+ # Buy the new goods through the actual counter, including a bulk grain quantity.
+ g=game({})
+ g.state.landmark="fort_laramie";g.state.next_landmark="fort_laramie";g._arrive_landmark(true,false)
+ check(g.post_checkout({"dairy_cows":1,"goats":1,"hens":6,"poultry_feed":100}),"Actual post sells milk animals, hens and bulk grain")
+ check(g.state.dairy_cows==1 and g.state.goats==1 and g.state.hens==6 and g.state.poultry_feed==94,"Purchase visit settles its day, production and real grain consumption")
+ check(copy(g)!=null,"Bulk livestock/feed counter ledger survives JSON saving")
+ g.pending={}
+ var current_day: int=g.state.day
+ check(g.livestock.drop_grain(g,4) and g.state.day==current_day and g.state.poultry_feed==90,"Grain discards use actual quarter-pound quantities without a day")
  # Full packs do not prevent drinking milk at camp before hauling the remainder.
  g=game({"dairy_cows":1});g.state.vehicle="foot";g.state.food=125
  g.state["household_gear_lb"]=75;g.state.clothing=0;g.state.bullets=0

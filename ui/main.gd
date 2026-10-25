@@ -1339,6 +1339,7 @@ func _update_hunt_report() -> void:
 
 func _finish_hunt() -> void:
 	hunt_window.hide()
+	livestock_window.hide()
 	fishing_window.hide()
 	fishing_window.active=false
 	hunt_view.active = false
@@ -1501,6 +1502,7 @@ func _new_journey() -> void:
 	service_window.hide()
 	options_window.hide()
 	hunt_window.hide()
+	livestock_window.hide()
 	fishing_window.hide()
 	fishing_window.active=false
 	hunt_view.active = false
