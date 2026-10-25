@@ -46,7 +46,7 @@ func open(current,member: int=-1):
  game=current;loading=true
  actor.clear();actor.add_item("Leader · play the hunt",-1)
  for person in game.party_health.members:
-  if int(person.id)>0 and game.party_health.is_active(person):actor.add_item(person.name,int(person.id))
+  if int(person.id)!=game.camp_tasks.leader_id(game) and game.party_health.is_active(person):actor.add_item(person.name,int(person.id))
  actor.select(0 if member<0 else maxi(0,actor.get_item_index(member)))
  loading=false
  load_preference()
@@ -59,7 +59,7 @@ func load_preference():
  var id: int=actor_id()
  if id<0:
   for person in game.party_health.members:
-   if int(person.id)==0 or not game.party_health.is_active(person):continue
+   if int(person.id)==game.camp_tasks.leader_id(game) or not game.party_health.is_active(person):continue
    var check:=CheckBox.new()
    check.text=person.name
    check.disabled=game.camp_tasks.enabled() and game.camp_tasks.job(int(person.id)).job!="hunt_help"

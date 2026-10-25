@@ -908,7 +908,7 @@ func forage_offer(companion: bool=false) -> Dictionary:
 	var factor: float = season * float(rules.regions.get(context.region_id(self),0))
 	var workers := 0.0
 	for member in party_health.members:
-		if party_health.is_active(member) and not member.conditions.any(func(c): return c.id == "broken_leg") and (companion or not camp_tasks.enabled() or int(member.id)==0):
+		if party_health.is_active(member) and not member.conditions.any(func(c): return c.id == "broken_leg") and (companion or not camp_tasks.enabled() or int(member.id)==camp_tasks.leader_id(self)):
 			workers += member.health / 100.0
 	var blocked: bool = current_edge().get("hazard", "") in ["river", "waterless"] or survival.weather.id in ["blizzard", "snow"]
 	return {"available": factor > 0 and workers > 0 and not blocked, "factor": factor, "workers": workers}
@@ -1483,7 +1483,7 @@ func start_hunt(outfit: Dictionary={}) -> bool:
 		if not field.get("valid",false):return false
 		if field.kit!="wagon" and not camp_tasks.enabled():
 			for person in party_health.members:
-				if int(person.id)>0 and party_health.is_active(person):camp_tasks.assign(self,int(person.id),"hunt_help" if int(person.id) in field.members else "rest")
+				if int(person.id)!=camp_tasks.leader_id(self) and party_health.is_active(person):camp_tasks.assign(self,int(person.id),"hunt_help" if int(person.id) in field.members else "rest")
 	# Settle the day after the outing: today's successful catch can feed today's camp.
 	last_hunt_recovery={}
 	if field.is_empty() or field.kit!="wagon":camp_tasks.end_leader_nursing(self)
@@ -1494,12 +1494,16 @@ func start_hunt(outfit: Dictionary={}) -> bool:
 	if not field.is_empty():
 		field["condition"]=Mounts.condition(state)
 		hunt["field"]=field
-		hunt["_camp_helpers"]=field.members.filter(func(id):return int(id)!=0)
+		hunt["_camp_helpers"]=field.members.filter(func(id):return int(id)!=camp_tasks.leader_id(self))
 		for job in camp_tasks.day_plan.get("jobs",[]):
 			if job.job=="hunt_help" and int(job.member) not in field.members:camp_tasks.day_plan.rest[job.member]=true
 		if not camp_tasks.day_plan.is_empty():camp_tasks.day_plan.jobs=camp_tasks.day_plan.jobs.filter(func(job):return job.job!="hunt_help" or int(job.member) in field.members)
+		# Everyone who actually leaves on the selected hunt works that day, including
+		# a weak but willing helper whose standing camp job would otherwise fall back to rest.
+		for id in field.members:
+			if not camp_tasks.day_plan.is_empty():camp_tasks.day_plan.rest[int(id)]=false
 		if field.kit=="wagon":
-			hunt["_camp_helpers"]=field.crew.filter(func(id):return int(id)!=0)
+			hunt["_camp_helpers"]=field.crew.filter(func(id):return int(id)!=camp_tasks.leader_id(self))
 			camp_tasks.day_plan={"rest":{},"jobs":[],"action":"hunt"}
 			for person in party_health.members:
 				if party_health.is_active(person):camp_tasks.day_plan.rest[int(person.id)]=false

@@ -82,7 +82,7 @@ static func quote(game,members: Array,kit: String,days: int,bullets: int,return_
   if not game.crime.whole(id,0,game.party_health.members.size()-1) or int(id) in seen:return result
   var person: Dictionary=game.party_health.members[int(id)]
   if not game.party_health.is_active(person) or game.provisions.Carrying.factor(person,game.provisions.data.walking.health_load_curve)<=0 or not game.characters.willing(int(id),"hunt"):return result
-  if int(id)>0 and game.camp_tasks.patient_nurses(game).has(int(id)):result.message="A patient receiving nursing must rest.";return result
+  if int(id)!=game.camp_tasks.leader_id(game) and game.camp_tasks.patient_nurses(game).has(int(id)):result.message="A patient receiving nursing must rest.";return result
   seen.append(int(id))
  var animals: Dictionary=stock(kit)
  for key in animals:

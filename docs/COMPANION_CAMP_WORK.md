@@ -41,3 +41,8 @@ Current rules fingerprint: 420a7c10d6ec416596c727e16b692d949d15293d85e020f1069d6
 Final UI checkpoint b994305 passed all64 suites, including73 companion-work checks. It follows Spencer's bordered chore-chart sketch, with hover descriptions, cascading task options, combined Nursing/name rows, a shared cost footer and content-fitted window. The24store/20outlaw integration pass at08e75b9 uses identical simulation/data sources; later changes are UI, tests and documentation only. Final native table and submenu views were inspected and shown.
 
 Nursing rest enforcement checkpoint a90ba4a passed all64 suites (88companion-work checks) and24store/20outlaw integration journeys in an isolated checkout. It verifies the leader's personal rest/recovery, cancellation before hunting or forage, no cancellation on invalid actions, companion work locks, hauling previews, release after treatment and the locked roster row. Native patient-lock view inspected and shown. The schema and rule fingerprint are unchanged.
+
+
+## Surviving leader and actual hunters
+
+The first active traveler takes the main leader action if the original leader dies. They are omitted from companion job, helper and separate field-trip selections, and cannot simultaneously do a standing chore. Nursing that person ends when they choose another activity. Anyone actually selected for a hunt works that day, including a weak but willing helper whose standing job might otherwise fall back to Rest. This does not change hauling or ordinary recovery rates. See [the coordinated camp-work comparison](COORDINATED_CAMP_RESULTS.md).
