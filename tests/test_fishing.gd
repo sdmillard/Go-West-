@@ -111,6 +111,47 @@ func run():
  if restored!=null:
   check(restored.state==Save.new().normalize(previous.state) and restored.field_outings.snapshot()==Save.new().normalize(previous.field_outings) and str(restored.rng.state)==previous.random,"Previous stock, away horse, trip and RNG are preserved")
   check(restored.state.horses==0,"Old reserved horse remains unavailable for fishing")
+ # Artwork contracts and presentation must not alter fishing outcomes.
+ for item in [["fishing_riverbank",Vector2(432,150)],["fishing_angler",Vector2(128,128)],["fishing_bobber",Vector2(32,24)],["fishing_splash",Vector2(64,16)],["fishing_catch",Vector2(32,8)]]:
+  var texture: Texture2D=load("res://art/pixels/"+item[0]+".png")
+  check(texture.get_size()==item[1],"Fishing art has exact frame geometry")
+  var image: Image=texture.get_image()
+  var crisp:=true
+  for y in range(image.get_height()):
+   for x in range(image.get_width()):
+    if image.get_pixel(x,y).a not in [0.0,1.0]:crisp=false
+  check(crisp,"Fishing art has crisp alpha")
+ var scene=preload("res://ui/fishing_scene.gd").new()
+ root.add_child(scene);await process_frame
+ var activity: Dictionary=Model.new().begin(81,3,{"casts":2},6)
+ scene.reset()
+ var unmodified: Dictionary=activity.duplicate(true)
+ scene.observe(activity);scene.advance(0.2)
+ check(scene.pose().action=="wait" and activity==unmodified,"Idle presentation cannot change the fishing state")
+ Model.new().click(activity);scene.observe(activity)
+ check(scene.pose().action=="cast" and scene.pose().frame==0,"A real cast starts the casting animation")
+ scene.advance(0.32)
+ check(scene.pose().frame==2,"Animation advances through exact sheet frames")
+ scene.observe(activity)
+ check(scene.pose().frame==2,"Repeated UI refresh does not restart a cast")
+ scene.advance(0.4)
+ check(scene.pose().action=="wait","Casting completes once and resumes waiting")
+ activity.phase="bite";scene.observe(activity)
+ check(scene.pose().bobber,"Bite keeps a visible bobber effect")
+ Model.new().click(activity);scene.observe(activity)
+ check(scene.pose().action=="land" and not scene.pose().bobber,"A successful strike shows one landing fish and removes the bobber")
+ scene.advance(0.7)
+ check(scene.pose().action=="wait","Landing is a one-shot animation")
+ activity.phase="waiting";Model.new().click(activity);scene.observe(activity)
+ check(scene.pose().action=="strike","A premature strike uses the empty strike pose")
+ scene.reset()
+ check(scene.encounter.is_empty() and scene.pose().action=="wait","A new outing clears previous catch animation")
+ var source: Texture2D=load("res://art/pixels/fishing_angler.png")
+ var profile: Dictionary={"id":0,"appearance":preload("res://simulation/traveler_appearance.gd").default_for(0)}
+ profile.appearance.skin="Deep";profile.appearance.clothing="Green"
+ var recolored: Texture2D=preload("res://ui/traveler_palette.gd").texture(source,profile)
+ check(source.get_image().get_data()!=recolored.get_image().get_data() and source.get_size()==recolored.get_size(),"Angler follows traveler recoloring without changing geometry")
+ scene.queue_free();await process_frame
  # Actual menu visibility and horse-only choice restrictions.
  var screen=load("res://ui/main.tscn").instantiate()
  root.add_child(screen);await process_frame
