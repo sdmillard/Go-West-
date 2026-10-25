@@ -74,6 +74,13 @@ func _hunt(game,trip: Dictionary,random) -> bool:
  load.merge({"vehicle":"foot","party_size":1})
  var room: int=maxi(0,floori(limit-Outfit.mass(game,[actual],trip.kit,cache.inventory,cache.fresh,trip.stock,Outfit.mode(trip))))
  if room<=0:return false
+ var search_factor:=1.0
+ if trip.stage=="away" and int(game.state.day)>=int(trip.started)+int(trip.days):
+  var pack_lb: float=Outfit.mass(game,[actual],trip.kit,cache.inventory,cache.fresh,trip.stock,Outfit.mode(trip))
+  search_factor=Outfit.search_plan(game,[actual],trip.kit,trip.stock,Outfit.mode(trip),pack_lb,int(trip.condition),int(trip.days)>1).search_factor
+ var search:=RandomNumberGenerator.new()
+ search.seed=int(game.state.seed)+int(trip.id)*719+int(game.state.day)*1301081
+ var search_ok: bool=search.randf()<search_factor
  cache.inventory.bullets-=1
  var region: Dictionary=game.hunting.data.regions[cache.habitat]
  var season: float=float(game.provisions.data.foraging.months[int(game.calendar().month)-1])
@@ -91,6 +98,7 @@ func _hunt(game,trip: Dictionary,random) -> bool:
    which+=1
   var species: Dictionary=game.hunting.data.species[which]
   pounds=mini(room,random.randi_range(int(species.meat_min),int(species.meat_max)))
+ if not search_ok:pounds=0
  var units: int=food.add_meat(pounds,int(game.state.day))
  if units>0:food.fresh.back()["_outing_catch"]=true
  cache.fresh=food.fresh.duplicate(true);cache.inventory.food+=units

@@ -1489,7 +1489,7 @@ func start_hunt(outfit: Dictionary={}) -> bool:
 	if field.is_empty() or field.kit!="wagon":camp_tasks.end_leader_nursing(self)
 	camp_tasks.begin(self,"hunt")
 	hunting_outings += 1
-	hunt = hunting.begin(int(state.seed), hunting_outings, int(state.miles), route.nodes[state.landmark].get("hunting_region","plains"),not field.is_empty() and field.kit=="wagon")
+	hunt = hunting.begin(int(state.seed), hunting_outings, int(state.miles), route.nodes[state.landmark].get("hunting_region","plains"),not field.is_empty() and field.kit=="wagon",float(field.get("search_factor",1.0)))
 	if camp_tasks.enabled():hunt["_camp_helpers"]=camp_tasks.day_plan.get("jobs",[]).filter(func(j):return j.job=="hunt_help").map(func(j):return int(j.member))
 	if not field.is_empty():
 		field["condition"]=Mounts.condition(state)

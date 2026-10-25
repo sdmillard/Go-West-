@@ -19,8 +19,8 @@ def summarize(paths):
         inputs.append({"path":path.name,"sha256":hashlib.sha256(raw).hexdigest(),"rules":data["rules_signature"],"sources":data["source_hashes"],"runs":len(data["runs"])})
         phase = "validation" if "validation" in path.name else "development"
         for row in data["runs"]:
-            item = dict(row,phase=phase,reserve_meals=data["reserve_meals"],accuracy=data["player_accuracy"])
-            key = tuple(item[k] for k in ("phase","reserve_meals","accuracy","profession","month","equipment","method","seed"))
+            item = dict(row,phase=phase,reserve_meals=data["reserve_meals"],accuracy=data["player_accuracy"],pace=data.get("pace",0),outfit_profile=data.get("outfit_profile","standard"))
+            key = tuple(item[k] for k in ("phase","reserve_meals","accuracy","pace","outfit_profile","profession","month","equipment","method","seed"))
             if key in seen:
                 raise ValueError(f"Duplicate cohort row {key}")
             seen.add(key)
@@ -29,16 +29,16 @@ def summarize(paths):
         raise ValueError("Source/rule fingerprints differ across final archives")
     groups = defaultdict(list)
     for row in records:
-        groups[tuple(row[k] for k in ("phase","reserve_meals","accuracy","profession","equipment","method"))].append(row)
+        groups[tuple(row[k] for k in ("phase","reserve_meals","accuracy","pace","outfit_profile","profession","equipment","method"))].append(row)
     result = []
-    baselines = {tuple(r[k] for k in ("phase","reserve_meals","accuracy","profession","month","equipment","seed")):r for r in records if r["method"]=="legacy"}
+    baselines = {tuple(r[k] for k in ("phase","reserve_meals","accuracy","pace","outfit_profile","profession","month","equipment","seed")):r for r in records if r["method"]=="legacy"}
     for key, rows in sorted(groups.items()):
-        identity = dict(zip(("phase","reserve_meals","accuracy","profession","equipment","method"),key))
+        identity = dict(zip(("phase","reserve_meals","accuracy","pace","outfit_profile","profession","equipment","method"),key))
         arrived = [r for r in rows if r["outcome"]=="arrived"]
         pairs = Counter()
         day_changes = []
         for row in rows:
-            baseline = baselines[tuple(row[k] for k in ("phase","reserve_meals","accuracy","profession","month","equipment","seed"))]
+            baseline = baselines[tuple(row[k] for k in ("phase","reserve_meals","accuracy","pace","outfit_profile","profession","month","equipment","seed"))]
             a,b = row["outcome"]=="arrived",baseline["outcome"]=="arrived"
             pairs["both_arrived" if a and b else "method_only" if a else "baseline_only" if b else "neither_arrived"] += 1
             if a and b:day_changes.append(row["days"]-baseline["days"])

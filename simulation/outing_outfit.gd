@@ -35,6 +35,28 @@ static func mass(game,members: Array,kit: String,inventory: Dictionary,fresh: Ar
 static func load_profile(game,members: Array,kit: String,cargo: float,allocated: Dictionary={},return_mode: String="ride") -> Dictionary:
  var plan: Dictionary=game.Mounts.plan(game.provisions.data.mounts,transport(game,members,kit,allocated,return_mode))
  return game.Mounts.burden(game.provisions.data.mounts,plan,cargo,people(game,members,int(plan.riding_people)))
+static func search_plan(game,members: Array,kit: String,allocated: Dictionary,return_mode: String,pack_lb: float,condition: int=-1,already_out: bool=false) -> Dictionary:
+ var result: Dictionary={"search_factor":1.0,"search_hours":0.0,"return_hours":0.0,"extra_return_hours":0.0}
+ if not rides(kit):return result
+ var rules: Dictionary=game.hunting.data.return_time
+ var healthy: int=game.Mounts.condition(game.state) if condition<0 else condition
+ var base: Dictionary=game.Mounts.plan(game.provisions.data.mounts,transport(game,members,kit,allocated,"ride"))
+ var chosen: Dictionary=game.Mounts.plan(game.provisions.data.mounts,transport(game,members,kit,allocated,return_mode))
+ var normal_load: Dictionary=load_profile(game,members,kit,capacity(game,members,kit,allocated,"ride"),allocated,"ride")
+ var chosen_load: Dictionary=load_profile(game,members,kit,capacity(game,members,kit,allocated,return_mode),allocated,return_mode)
+ var outbound_load: Dictionary=load_profile(game,members,kit,pack_lb,allocated,"ride")
+ var ride_speed: float=planning_speed(game,base,healthy)/float(rules.travel_hours_per_day)
+ var chosen_speed: float=planning_speed(game,chosen,healthy)/float(rules.travel_hours_per_day)
+ var outbound_hours: float=0.0 if already_out else float(rules.radius_miles)/maxf(0.1,ride_speed*game.Mounts.speed_factor(base,outbound_load))
+ var baseline_return: float=float(rules.radius_miles)/maxf(0.1,ride_speed*game.Mounts.speed_factor(base,normal_load))
+ var chosen_return: float=float(rules.radius_miles)/maxf(0.1,chosen_speed*game.Mounts.speed_factor(chosen,chosen_load))
+ var normal_search: float=maxf(1.0,float(rules.outing_hours)-outbound_hours-baseline_return)
+ var extra: float=maxf(0,chosen_return-baseline_return)
+ var fraction: float=clampf((normal_search-extra)/normal_search,float(rules.minimum_search_fraction),1.0)
+ return {"search_factor":fraction,"search_hours":normal_search*fraction,"return_hours":chosen_return,"extra_return_hours":extra}
+static func planning_speed(game,plan: Dictionary,condition: int) -> float:
+ if game.Mounts.mounted(plan):return game.Mounts.base_miles(game.provisions.data.mounts,condition,0)
+ return float(game.provisions.data.walking.packing_miles_per_day if plan.mode=="packing" else game.provisions.data.walking.miles_per_day)
 static func wagon_quote(game,members: Array) -> Dictionary:
  var fail: Dictionary={"valid":false,"message":"Take everyone currently with you to bring the wagon."}
  var active: Array=game.party_health.members.filter(func(p):return game.party_health.is_active(p)).map(func(p):return int(p.id))
@@ -98,6 +120,7 @@ static func quote(game,members: Array,kit: String,days: int,bullets: int,return_
  var working: float=capacity(game,members,kit,animals,normal)
  var profile: Dictionary=load_profile(game,members,kit,pack,animals,return_mode)
  var room: int=maxi(0,floori(limit-pack))
+ result.merge(search_plan(game,members,kit,animals,return_mode,pack,-1,days>1),true)
  result.merge({"valid":room>0,"message":"Ready." if room>0 else "The outbound pack fills this party's carrying allowance.","short_provisions":short_provisions,"members":seen,"kit":kit,"days":days,"inventory":inventory,"stock":animals,"fresh":carried,"pack_lb":pack,"capacity_lb":limit,"working_lb":working,"catch_lb":room,"mounted":rides(kit),"return_mode":return_mode,"rider_lb":profile.rider_lb,"tack_lb":profile.tack_lb},true)
  return result
 static func reserve(game,offer: Dictionary) -> void:
