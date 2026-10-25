@@ -44,3 +44,11 @@ Original pixel art is rebuilt through the Aseprite Lua pipeline. No proprietary 
 These sources inform the distinction between riding, packing and overload. They do not establish the game's fixed animal sizes, rider allowance, strenuous ceiling or noise rate. Whole-route balance with dispatched hunters and deliberate heavy loads remains a separate study; ordinary journey bots do not exercise every new mode.
 
 The focused suite covers physical budgets, health boundaries, quotations without side effects, load wear/speed, save migration, lost animals and recovered tack, whole-party membership, interrupted chores, costs, accessibility, noise and ground placement. Native Godot screens were inspected.
+
+## Validated checkpoint
+
+Checkpoint 092af2e passed all 67 suites plus 24 store and 20 current-policy outlaw journeys, with zero reported errors in the final isolated runs. These verify integration; full-route balance of new hunting choices remains pending.
+
+![Outfitting a heavier hunting return](horse-load-outfitting.png)
+
+![Complete jumping deer animation](hunting-headroom.png)
