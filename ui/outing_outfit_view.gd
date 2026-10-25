@@ -110,7 +110,7 @@ func refresh():
  if wagon:
   summary.text="EVERYONE COMES · UP TO %d LB FREE CARGO\nUses wagon supplies; works the ox team for one day.\nNoise can scare game away. No camp chores today." % q.catch_lb
  else:
-  summary.text="PACK %.1f LB · WORKING %.0f / ALLOWED %.0f LB\nUP TO %d LB CATCH · RIDER %.0f + TACK %.0f LB ON ANIMALS\n%d FOOD, %d CLOTHING, %d BULLETS · reserve included\n%s" % [q.pack_lb,q.working_lb,q.capacity_lb,q.catch_lb,q.rider_lb,q.tack_lb,q.inventory.food,q.inventory.clothing,q.inventory.bullets,"One shared day; other camp jobs continue." if actor_id()<0 else "Riders can follow. Loaded returns are slower; crossings and bandits can kill."]
+  summary.text="PACK %.1f LB · WORKING %.0f / ALLOWED %.0f LB\nUP TO %d LB CATCH · RIDER %.0f + TACK %.0f LB ON ANIMALS\n%d FOOD, %d CLOTHING, %d BULLETS · %s\n%s" % [q.pack_lb,q.working_lb,q.capacity_lb,q.catch_lb,q.rider_lb,q.tack_lb,q.inventory.food,q.inventory.clothing,q.inventory.bullets,"SHORT SUPPLIES: catch not guaranteed" if q.get("short_provisions",false) else "reserve included","One shared day; other camp jobs continue." if actor_id()<0 else "Riders can follow. Loaded returns are slower; crossings and bandits can kill."]
  reset_size()
 
 
