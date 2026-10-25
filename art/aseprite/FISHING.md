@@ -24,6 +24,6 @@ Exact skin/hair/clothing palette colors allow ui/traveler_palette.gd to recolor 
 
 ui/fishing_scene.gd is presentation only. It observes actual cast/catch transitions, animates the supplied sheets, and never modifies activity data, timers, randomness or yields. Repeated refreshes do not restart action animations. ui/fishing_view.gd retains all existing controls and calls the existing fishing simulation.
 
-The review checkout holds draft copies pending Spencer's visual approval under art/aseprite/README.md. Canonical master remains unchanged until approval and merge.
+Spencer approved the in-game preview on October 25, 2026. These assets are approved for installation under art/aseprite/README.md.
 
 Verification: all 74 Godot suites passed on final runtime/test checkpoint 4fea357, including 78 focused fishing checks. All five PNGs regenerate byte-for-byte and pass the Aseprite size, frame-count, palette and alpha verifier. Native setup, bite, landing and report screens reviewed. Existing 44 integrations belong to the preceding gameplay checkpoint; they were not rerun for this presentation-only change. See docs/fishing-art-evidence.json.

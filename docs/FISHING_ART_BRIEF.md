@@ -29,4 +29,4 @@ Please deliver Lua sources, the proposed asset dimensions and enlarged previews 
 
 ## Supplied draft integration
 
-Spencer supplied fishing-art-drafts.zip. Its five sheets match this contract and rebuild byte-for-byte from scenes/fishing.lua using the unchanged shared kit. [The precise asset contract](../art/aseprite/FISHING.md) records source rod-tip coordinates, palette mapping and animation behavior. The live-game installation is pending visual approval; draft integration is on codex/fishing-art in the separate review checkout.
+Spencer supplied fishing-art-drafts.zip. Its five sheets match this contract and rebuild byte-for-byte from scenes/fishing.lua using the unchanged shared kit. [The precise asset contract](../art/aseprite/FISHING.md) records source rod-tip coordinates, palette mapping and animation behavior. Spencer approved the in-game preview on October 25, 2026; the assets are approved for the live game.

@@ -31,7 +31,7 @@
   ],
   "aseprite_verifier": "All five sheets pass dimensions, frame count, named palette and crisp alpha checks.",
   "simulation_data_changed": false,
-  "status": "Prepared in review checkout; awaiting visual approval before merging.",
+  "status": "In-game visual preview approved by Spencer on October 25, 2026.",
   "suites": 74,
   "focused_fishing_checks": 78,
   "full_test_log": "parent .tools/fishing-art-final-tests-02.log",
