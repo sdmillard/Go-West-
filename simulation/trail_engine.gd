@@ -58,6 +58,7 @@ var health_events: Array[String] = []
 var survival = Survival.new()
 var trail_events = Catalog.new()
 var service_return: Dictionary = {}
+var fishing=preload("res://simulation/fishing.gd").new()
 var hunting = preload("res://simulation/hunting.gd").new()
 var hunting_outings := 0
 var last_hunt_recovery: Dictionary = {}
@@ -1512,6 +1513,36 @@ func start_hunt(outfit: Dictionary={}) -> bool:
 	journal.append("Day %d · Set out to hunt. The outing will take one day, including meals at camp." % (state.day+1))
 	return true
 
+func fishing_offer() -> Dictionary:
+	return fishing.access(self)
+func fishing_quote(kit: String) -> Dictionary:
+	return fishing.quote(self,kit)
+func start_fishing(kit: String) -> bool:
+	var offer: Dictionary=fishing_quote(kit)
+	if not offer.get("valid",false):return false
+	service_return=pending.duplicate(true)
+	pending={}
+	camp_tasks.end_leader_nursing(self)
+	camp_tasks.begin(self,"fish")
+	hunting_outings+=1
+	offer["condition"]=Mounts.condition(state)
+	hunt=fishing.begin(int(state.seed),hunting_outings,offer,int(calendar().month))
+	field_outings.Outfit.reserve(self,offer)
+	last_hunt_recovery={}
+	journal.append("Day %d · Set out to fish at %s, %.0f road miles away; one day including travel and meals." % [state.day+1,offer.site_name,offer.distance])
+	return true
+func fishing_click() -> bool:
+	return fishing.click(hunt) if hunt.get("activity","")=="fish" else false
+func advance_fishing(delta: float) -> void:
+	if hunt.get("activity","")=="fish":fishing.tick(hunt,delta)
+func finish_fishing() -> bool:
+	if hunt.get("activity","")!="fish":return false
+	var return_menu: Dictionary=service_return.duplicate(true)
+	service_return={}
+	var result: bool=finish_hunt()
+	if result and pending.is_empty() and state.status=="traveling":pending=return_menu
+	return result
+
 func hunt_outfit_quote(members: Array,kit: String,bullets: int,return_mode: String="ride") -> Dictionary:
 	var leader: int=-1
 	for person in party_health.members:
@@ -1524,7 +1555,7 @@ func hunt_ammo() -> int:
 	return int(hunt.field.inventory.bullets) if hunt.has("field") and hunt.field.kit!="wagon" else int(state.bullets)
 
 func hunt_shot(target: int) -> bool:
-	if hunt.is_empty() or hunt.ended or hunt.reload > 0 or hunt_ammo() < 1 or hunt.shots >= hunting.data.shot_limit or target < -1 or target >= hunt.animals.size():
+	if hunt.is_empty() or hunt.get("activity","")=="fish" or hunt.ended or hunt.reload > 0 or hunt_ammo() < 1 or hunt.shots >= hunting.data.shot_limit or target < -1 or target >= hunt.animals.size():
 		return false
 	if target in hunt.targets or (target >= 0 and hunt.animals[target].escaped):
 		return false
@@ -1546,11 +1577,11 @@ func hunt_shot(target: int) -> bool:
 	return true
 
 func advance_hunt(delta: float) -> void:
-	if not hunt.is_empty() and is_finite(delta) and delta > 0:
+	if not hunt.is_empty() and hunt.get("activity","")!="fish" and is_finite(delta) and delta > 0:
 		hunting.tick(hunt, delta)
 
 func hunt_fire_at(point: Vector2) -> bool:
-	if hunt.is_empty() or not point.is_finite():
+	if hunt.is_empty() or hunt.get("activity","")=="fish" or not point.is_finite():
 		return false
 	var accepted := hunt_shot(hunting.target_at(hunt, point))
 	if accepted:
@@ -1558,7 +1589,7 @@ func hunt_fire_at(point: Vector2) -> bool:
 	return accepted
 
 func move_hunter(point: Vector2) -> void:
-	if not hunt.is_empty() and not hunt.ended and point.is_finite():
+	if not hunt.is_empty() and hunt.get("activity","")!="fish" and not hunt.ended and point.is_finite():
 		hunt.destination = point.clamp(Vector2(8, 120), Vector2(424, 146))
 
 func hauling_capacity(action: String="hunt") -> int:
@@ -1581,7 +1612,7 @@ func hunt_calorie_density() -> float:
 	var mass:=0.0;var energy:=0.0
 	for index in hunt.get("targets",[]):
 		var animal: Dictionary=hunt.animals[index]
-		var weight: float=float(animal.get("meat",hunting.data.species[int(animal.kind)].meat))
+		var weight: float=float(animal.meat) if animal.has("meat") else float(hunting.data.species[int(animal.kind)].meat)
 		var density: float=float(animal.get("kcal_per_lb",provisions.data.food_energy.generic_meat_kcal_per_lb))
 		mass+=weight;energy+=weight*density
 	return energy/mass if mass>0 else float(provisions.data.food_energy.generic_meat_kcal_per_lb)
@@ -1598,7 +1629,7 @@ func finish_hunt() -> bool:
 	var units: int=provisions.add_meat(retrieved,int(state.day)+1,density)
 	if units>0:provisions.fresh.back()["_hunt_meal"]=true
 	state.food+=units
-	_tick_day(false,hunt.has("field") and hunt.field.kit=="wagon","hunt")
+	_tick_day(false,hunt.has("field") and hunt.field.kit=="wagon",str(hunt.get("activity","hunt")))
 	if hunt.has("field") and hunt.field.kit!="wagon":
 		var field: Dictionary=hunt.field
 		var return_mode: String=str(field.get("return_mode","ride"))
@@ -1610,8 +1641,8 @@ func finish_hunt() -> bool:
 			var kind: String=profile.worst_kind
 			if kind not in Mounts.ANIMALS or int(field.stock[kind])<1:kind="horses" if int(field.stock.horses)>0 else "mules"
 			field.stock[kind]-=1;condition=int(provisions.data.mounts.breakdown_condition) if Mounts.animals(field.stock)>0 else 0
-			journal.append("A hunting animal gave out under its load and was lost. Its surviving tack returned.")
-			health_events.append("A hunting animal gave out. Rest the animals or bring back a lighter load.")
+			journal.append("An outing animal gave out under its load and was lost. Its surviving tack returned.")
+			health_events.append("An outing animal gave out. Rest the animals or bring back a lighter load.")
 		field_outings.Outfit.restore_stock(self,field.stock,condition)
 	var remaining: int=0
 	var ratio: float=float(retrieved)/units if units>0 else 1.0
@@ -1631,7 +1662,7 @@ func finish_hunt() -> bool:
 		provisions.fresh.append(batch)
 		state.food+=keep
 	last_hunt_recovery={"mass":keep*ratio,"food":keep,"eaten_mass":eaten*ratio,"eaten_food":eaten,"retrieved":retrieved,"retrieved_kcal":provisions.meat_calories(retrieved,density),"kcal_per_lb":density,"other_loss":other_loss*ratio,"left":maxf(0,float(outing.meat)-(eaten+keep+other_loss)*ratio)}
-	journal.append("Day %d · Hunting: %d shots, %d lb obtained; %.1f lb eaten at camp, %.1f lb packed (%d food units); %.1f lb left behind." % [state.day,outing.shots,outing.meat,last_hunt_recovery.eaten_mass,last_hunt_recovery.mass,keep,last_hunt_recovery.left])
+	journal.append((("Day %d · Fishing: %d casts, %d lb edible fish obtained;" if outing.get("activity","")=="fish" else "Day %d · Hunting: %d shots, %d lb obtained;")+" %.1f lb eaten at camp, %.1f lb packed (%d food units); %.1f lb left behind.") % [state.day,outing.shots,outing.meat,last_hunt_recovery.eaten_mass,last_hunt_recovery.mass,keep,last_hunt_recovery.left])
 	hunt={}
 	_schedule_event(false)
 	return true

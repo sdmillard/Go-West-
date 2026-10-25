@@ -1,7 +1,7 @@
 extends RefCounted
 ## Standing camp jobs. No clock, UI or random stream of its own.
-const JOBS=["rest","forage","dry","salt_dry","nurse","hunt_help","repair_patch","repair_wood","guard"]
-const LABELS=["Rest","Forage","Dry meat","Salt + dry meat","Nurse a patient","Help leader hunt","Patch wagon","Wooden wagon repair","Guard stock"]
+const JOBS=["rest","forage","dry","salt_dry","nurse","hunt_help","repair_patch","repair_wood","guard","fish"]
+const LABELS=["Rest","Forage","Dry meat","Salt + dry meat","Nurse a patient","Help leader hunt","Patch wagon","Wooden wagon repair","Guard stock","Fish nearby"]
 var assignments: Dictionary={}
 var quiet:=false
 var planning_notes: Array[String]=[]
@@ -42,12 +42,13 @@ func reason(game,index: int,task: String,patient: int=-1) -> String:
  if not game.party_health.is_active(member):return "Not with the party."
  if task=="rest":return ""
  if member.health<int(rules.minimum_health) or member.conditions.any(func(c):return c.severity>=3):return "Too ill or injured to work."
- if not game.characters.willing(index,{"nurse":"care","dry":"preserve","salt_dry":"preserve","forage":"forage","hunt_help":"hunt","repair_patch":"repair","repair_wood":"repair","guard":"defend"}.get(task,task)):return "Refuses at current trust or boundaries."
- if task in ["forage","hunt_help"] and member.conditions.any(func(c):return c.id=="broken_leg"):return "A broken leg prevents this work."
+ if not game.characters.willing(index,{"nurse":"care","dry":"preserve","salt_dry":"preserve","forage":"forage","fish":"forage","hunt_help":"hunt","repair_patch":"repair","repair_wood":"repair","guard":"defend"}.get(task,task)):return "Refuses at current trust or boundaries."
+ if task in ["forage","hunt_help","fish"] and member.conditions.any(func(c):return c.id=="broken_leg"):return "A broken leg prevents this work."
  if task=="guard" and game.Mounts.animals(game.state)==0:return "No horses or mules need a stock watch."
  if task in ["repair_patch","repair_wood"]:
   var why: String=game.camp_repair.reason(game,index,"patch" if task=="repair_patch" else "wood")
   if not why.is_empty():return why
+ if task=="fish" and not game.fishing_offer().walk:return "No river within walking range. Distant fishing requires the mounted outing."
  if task=="forage" and not game.forage_offer(true).available:return "No suitable gathering in this season or weather."
  if task in ["dry","salt_dry"] and game.preservation_offer(task=="salt_dry",true).is_empty():return "No suitable meat / salt after tomorrow's meals and spoilage."
  if task=="nurse":
@@ -159,6 +160,10 @@ func finish(game) -> void:
    game.state["camp_watch_member"]=int(entry.member)
    report(game,"%s stood watch over the stock." % member.name)
   if entry.job=="forage":workers+=float(member.health)/100.0
+  if entry.job=="fish":
+   var catch: Dictionary=game.fishing.camp_catch(game,int(entry.member))
+   game.supply_history.append({"day":game.state.day,"event":"camp_fishing","changes":{"food":catch.food},"worker":entry.member,"mass":catch.mass})
+   report(game,"%s returned with %d lb edible fish (%d food units), after meals." % [member.name,catch.mass,catch.food])
   if entry.job in ["dry","salt_dry"]:
    # Today's catch is dinner, not a morning drying input.
    var catches: Array=game.provisions.fresh.filter(func(b):return b.get("_hunt_meal",false))

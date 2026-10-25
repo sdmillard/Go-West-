@@ -14,6 +14,7 @@ const PIXEL_FONT = preload("res://art/pixels/trail_font.fnt")
 const LEDGER_ICONS = preload("res://art/pixels/ledger_icons.png")
 const TOOLTIP_WIDTH := 240.0
 const NOTICE_WIDTH := 460
+var fishing_window=preload("res://ui/fishing_view.gd").new()
 var game = Simulation.new(1848, "classic", true)
 var landscape: Control
 var date_label: Label
@@ -553,6 +554,11 @@ Northern shortcuts and Columbia rafting are not yet playable. Weather, medical e
 	stop_rows.add_theme_constant_override("separation",8)
 	stop_scroll.add_child(stop_rows)
 	hunt_window = AcceptDialog.new()
+	add_child(fishing_window)
+	fishing_window.start_requested.connect(func(kit: String):
+		if game.start_fishing(kit):fishing_window.show_activity();_refresh()
+		else:notice("FISHING",game.fishing_quote(kit).get("message","Cannot set out now.")))
+	fishing_window.returned.connect(_finish_fishing)
 	hunt_window.title = "HUNTING ON THE PRAIRIE"
 	hunt_window.get_ok_button().text = "RETURN TO CAMP"
 	hunt_window.confirmed.connect(_finish_hunt)
@@ -762,7 +768,7 @@ func _show_section(section: String) -> void:
 				task_cell.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 				row.add_child(task_cell)
 				var why: String=game.camp_tasks.reason(game,id,task.job,int(task.patient))
-				var detail:=label(why if not why.is_empty() else {"rest":"Rest recovery; no work.","forage":"Seasonal yield, shared carrying room; food arrives after meals.","dry":"Morning meat after meals; one worker handles the available batch.","salt_dry":"Morning meat and available salt; one worker per batch.","nurse":"1 care kit / day while needed; caregiver improves treatment.","hunt_help":"Works only when you hunt; adds hauling and Hunter benefits.","repair_patch":"Patch the broken part: one kit to start, two work units; Carpenter works faster.","repair_wood":"Carpentry required: three work units, no kit. Progress survives interruption.","guard":"Stand watch over horses/mules; uses the existing theft protection once. No rest recovery."}[task.job])
+				var detail:=label(why if not why.is_empty() else {"rest":"Rest recovery; no work.","forage":"Seasonal yield, shared carrying room; food arrives after meals.","fish":"Nearby river only; one working day, no bullets. Catch arrives after meals.","dry":"Morning meat after meals; one worker handles the available batch.","salt_dry":"Morning meat and available salt; one worker per batch.","nurse":"1 care kit / day while needed; caregiver improves treatment.","hunt_help":"Works only when you hunt; adds hauling and Hunter benefits.","repair_patch":"Patch the broken part: one kit to start, two work units; Carpenter works faster.","repair_wood":"Carpentry required: three work units, no kit. Progress survives interruption.","guard":"Stand watch over horses/mules; uses the existing theft protection once. No rest recovery."}[task.job])
 				if why.is_empty() and task.job in ["dry","salt_dry"]:
 					var work: Dictionary=game.preservation_offer(task.job=="salt_dry")
 					detail.text="Up to %.0f lb > %d food; %d lb salt. Meals first." % [work.mass,work.kept,work.salt]
@@ -833,7 +839,10 @@ func _show_section(section: String) -> void:
 				var dry:=button("DRY %.0f LB > %.1f LB · 1 DAY" % [offer.mass,offer.weight],_section_action.bind(game.dry_produce))
 				dry.tooltip_text="Keeps up to %d days. Food value retained; vitamin C reduced." % offer.days
 				section_rows.add_child(dry)
-		"Hunt & forage":entries=[["HUNT · 1 DAY, UP TO 5 SHOTS",_start_hunt],["FORAGE FOR GREENS AND BERRIES",_open_forage]]
+		"Hunt & forage":
+			entries=[["HUNT · 1 DAY, UP TO 5 SHOTS",_start_hunt],["FORAGE FOR GREENS AND BERRIES",_open_forage]]
+			var water: Dictionary=game.fishing_offer()
+			if water.visible:entries.append(["FISH · "+("HORSE REQUIRED" if not water.walk else "1 DAY"),_open_fishing])
 		"Villainy":entries=[["ATTACK SOMEONE >",_show_section.bind("Attack someone")],["STEAL >",_show_section.bind("Steal")],["ROB >",_show_section.bind("Rob")],["THE DEAD: BURY, CARRY OR SEARCH >",_open_villainy_remains]]
 		"Attack someone":
 			entries=[["PARTY MEMBER >",_show_section.bind("Party member")],["SOMEONE HERE >",_show_section.bind("Someone here")]]
@@ -873,6 +882,7 @@ func _show_section(section: String) -> void:
 		var entry:=button(item[0],_section_action.bind(item[1]))
 		entry.custom_minimum_size.y=27
 		if item[1]==Callable(self,"_start_hunt"):entry.disabled=not game.pending.is_empty() or game.state.bullets==0
+		if item[1]==Callable(self,"_open_fishing"):entry.disabled=not game.can_service()
 		section_rows.add_child(entry)
 	if SECTION_PARENTS.has(section):section_rows.add_child(button("< "+str(SECTION_PARENTS[section]).to_upper(),_section_action.bind(_show_section.bind(SECTION_PARENTS[section]))))
 	section_window.reset_size()
@@ -914,6 +924,7 @@ func _camp_task_menu(id: int,task: Dictionary) -> MenuButton:
 	for job in ["rest","forage"]:
 		menu.add_item(game.camp_tasks.LABELS[game.camp_tasks.JOBS.find(job)],game.camp_tasks.JOBS.find(job))
 		menu.set_item_tooltip(menu.item_count-1,"Rest and recover; no work." if job=="rest" else "Gather seasonal greens and berries after meals, within storage room. Workers miss rest recovery.")
+	if game.fishing_offer().walk:menu.add_item("Fish nearby",game.camp_tasks.JOBS.find("fish"))
 	var drying:=PopupMenu.new()
 	drying.name="DryingOptions"
 	drying.add_item("Air dry",game.camp_tasks.JOBS.find("dry"))
@@ -1276,6 +1287,17 @@ func _cancel_service() -> void:
 	if game.pending.get("service_menu", false):
 		_choose(game.pending.choices.size() - 1)
 
+func _open_fishing() -> void:
+	section_window.hide()
+	_pause_travel()
+	if game.can_service() and game.fishing_offer().visible:fishing_window.open(game)
+func _finish_fishing() -> void:
+	if game.finish_fishing():
+		var catch: Dictionary=game.last_hunt_recovery
+		notice("FISHING REPORT","%.1f lb eaten at camp · %.1f lb left behind\nPACKED %.1f LB · %d FOOD UNITS\nOne day passed, including travel and meals.\nEat within two trail days or preserve the catch in camp." % [catch.eaten_mass,catch.left,catch.mass,catch.food])
+		camping=true
+		_refresh()
+
 func _start_hunt() -> void:
 	_open_field_trip(-1)
 
@@ -1314,6 +1336,8 @@ func _update_hunt_report() -> void:
 
 func _finish_hunt() -> void:
 	hunt_window.hide()
+	fishing_window.hide()
+	fishing_window.active=false
 	hunt_view.active = false
 	if game.hunt.is_empty():
 		return
@@ -1474,6 +1498,8 @@ func _new_journey() -> void:
 	service_window.hide()
 	options_window.hide()
 	hunt_window.hide()
+	fishing_window.hide()
+	fishing_window.active=false
 	hunt_view.active = false
 	party_window.hide()
 	selected_member = 0
@@ -1987,7 +2013,7 @@ func _load_journey() -> void:
 	_pause_travel()
 	var result: Dictionary = save_store.load_game(save_path)
 	if not result.is_empty():
-		for window in [guide,journal_window,party_window,drop_window,section_window,options_window,food_notice,rest_window,stop_window,service_window,hunt_window,supplies_window,grave_window,memorial_window]:
+		for window in [fishing_window,guide,journal_window,party_window,drop_window,section_window,options_window,food_notice,rest_window,stop_window,service_window,hunt_window,supplies_window,grave_window,memorial_window]:
 			window.hide()
 		hunt_view.active = false
 		landscape.cancel_crossing()
