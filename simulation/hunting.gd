@@ -32,7 +32,7 @@ func load_data(value: Variant) -> bool:
 		if not species is Dictionary or not species.get("id") is String or species.id in ids or not species.get("label") is String:
 			return false
 		ids.append(species.id)
-		for key in ["meat", "meat_min", "meat_max", "width", "height", "speed"]:
+		for key in ["meat", "meat_min", "meat_max", "width", "height", "speed", "kcal_per_lb"]:
 			if not species.get(key) is float and not species.get(key) is int:
 				return false
 			if not is_finite(float(species[key])) or species[key] <= 0 or species[key] != int(species[key]):
@@ -76,7 +76,7 @@ func begin(seed_value: int, outing: int, miles: int, habitat: String = "", wagon
 		var species: Dictionary = data.species[kind]
 		animals.append({"kind": kind, "x": rng.randf_range(45, 330), "y": 96 + index * 10,
 			"direction": -1 if rng.randf() < 0.5 else 1, "escaped": false,
-			"meat": rng.randi_range(int(species.meat_min), int(species.meat_max))})
+			"meat": rng.randi_range(int(species.meat_min), int(species.meat_max)), "kcal_per_lb":float(species.kcal_per_lb)})
 	# Noise rolls are separate, preserving on-foot seeds and shot mechanics.
 	if wagon:
 		var noise:=RandomNumberGenerator.new()

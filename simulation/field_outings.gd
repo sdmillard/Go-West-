@@ -98,7 +98,7 @@ func _hunt(game,trip: Dictionary,random) -> bool:
    # A successful animal is removed; an unsuccessful shot may be followed up
    # while it remains in sight. Every actual shot costs exactly one bullet.
    var pounds: int=mini(room,int(plan.animals[target].meat))
-   var added: int=food.add_meat(pounds,int(game.state.day))
+   var added: int=food.add_meat(pounds,int(game.state.day),float(plan.animals[target].get("kcal_per_lb",game.provisions.data.food_energy.generic_meat_kcal_per_lb)))
    if added>0:food.fresh.back()["_outing_catch"]=true
    cache.fresh=food.fresh.duplicate(true);cache.inventory.food+=added
    caught+=pounds;units+=added;target+=1

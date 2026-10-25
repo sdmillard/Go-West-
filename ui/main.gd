@@ -362,7 +362,7 @@ func _build_ui() -> void:
 		rations.add_item(text)
 	rations.selected = 1
 	rations.item_selected.connect(_settings_changed)
-	rations.tooltip_text = "Bare 1, meager 2, filling 3 food units per living traveler per day. Low rations slow recovery even in camp."
+	rations.tooltip_text = "Bare 1, meager 2, filling 3 food units per living traveler per day. One food unit represents about 1,000 kcal. Low rations slow recovery even in camp."
 	for index in range(3):
 		rations.get_popup().set_item_tooltip(index, ["Bare: 1 food unit per traveler a day. Recovery slows and illness risk rises.", "Meager: 2 food units per traveler a day.", "Filling: 3 food units per traveler a day. Best for health and recovery."][index])
 	add_child(rations)
@@ -1683,6 +1683,7 @@ func _refresh() -> void:
 		date_label.text = "INDEPENDENCE, 1848   |   PREPARING FOR DEPARTURE   |   CLASSIC"
 	ledger_title.text="* PACKS & LIVESTOCK *" if s.vehicle=="foot" else "* WAGON LEDGER *"
 	stats.text = "FOOD    %4d UNITS\nHEALTH    %s\nCASH      $%.2f\nOXEN %d   CLOTHES %d\nBULLETS   %d\nSPARES W%d A%d T%d" % [s.food, game.party_condition(), s.money, s.oxen, s.clothing, s.bullets, s.wheels, s.axles, s.tongues]
+	stats.tooltip_text="Food: %d units, about %d kcal.\nOne unit represents about %d kcal; the unit is an abstraction, not a pound of every food.\nCurrent daily target: %d units for the present party." % [s.food,game.provisions.food_calories(s.food),game.provisions.data.food_energy.unit_kcal,int(game.provisions.data.rations_lb[s.rations])*int(s.party_size)]
 	var plan: Dictionary=game.mount_plan()
 	stats.text += "\nCARE %d CARGO %.0f/%.0f\n%s\n%s" % [s.medicine, game.provisions.cargo(s),game.provisions.capacity(s), s.weather.to_upper(),game.Mounts.label(plan) if s.vehicle=="foot" else "TEAM %s / %s" % [game.PartyHealth.condition_label(s.ox_health), "TIRED" if s.fatigue >= 50 else "FRESH"]]
 	if game.Mounts.animals(s)>0:stats.text+="\nHORSES %d MULES %d · %s" % [game.Mounts.count(s,"horses"),game.Mounts.count(s,"mules"),game.PartyHealth.condition_label(game.Mounts.condition(s)).to_upper()]

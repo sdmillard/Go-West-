@@ -1576,7 +1576,15 @@ func hunting_capacity() -> int:
 func hunt_recovery() -> Dictionary:
 	if hunt.is_empty():return {}
 	var carried:=mini(mini(hunting_capacity(),int(hunt.meat)),maxi(0,floori(provisions.storage_capacity(state)-provisions.cargo(state))))
-	return {"mass":carried,"food":provisions.meat_units(carried),"left":int(hunt.meat)-carried}
+	return {"mass":carried,"food":provisions.meat_units(carried,hunt_calorie_density()),"left":int(hunt.meat)-carried}
+func hunt_calorie_density() -> float:
+	var mass:=0.0;var energy:=0.0
+	for index in hunt.get("targets",[]):
+		var animal: Dictionary=hunt.animals[index]
+		var weight: float=float(animal.get("meat",hunting.data.species[int(animal.kind)].meat))
+		var density: float=float(animal.get("kcal_per_lb",provisions.data.food_energy.generic_meat_kcal_per_lb))
+		mass+=weight;energy+=weight*density
+	return energy/mass if mass>0 else float(provisions.data.food_energy.generic_meat_kcal_per_lb)
 func finish_hunt() -> bool:
 	if hunt.is_empty():return false
 	var outing: Dictionary=hunt.duplicate(true)
@@ -1586,7 +1594,8 @@ func finish_hunt() -> bool:
 	# Retrieval work remains limited by health and willing helpers, but eating at camp
 	# does not require the meat to fit into tomorrow's walking packs first.
 	var retrieved: int=mini(hunting_capacity(),int(hunt.meat))
-	var units: int=provisions.add_meat(retrieved,int(state.day)+1)
+	var density: float=hunt_calorie_density()
+	var units: int=provisions.add_meat(retrieved,int(state.day)+1,density)
 	if units>0:provisions.fresh.back()["_hunt_meal"]=true
 	state.food+=units
 	_tick_day(false,hunt.has("field") and hunt.field.kit=="wagon","hunt")
@@ -1621,7 +1630,7 @@ func finish_hunt() -> bool:
 		batch.pounds=keep
 		provisions.fresh.append(batch)
 		state.food+=keep
-	last_hunt_recovery={"mass":keep*ratio,"food":keep,"eaten_mass":eaten*ratio,"eaten_food":eaten,"retrieved":retrieved,"other_loss":other_loss*ratio,"left":maxf(0,float(outing.meat)-(eaten+keep+other_loss)*ratio)}
+	last_hunt_recovery={"mass":keep*ratio,"food":keep,"eaten_mass":eaten*ratio,"eaten_food":eaten,"retrieved":retrieved,"retrieved_kcal":provisions.meat_calories(retrieved,density),"kcal_per_lb":density,"other_loss":other_loss*ratio,"left":maxf(0,float(outing.meat)-(eaten+keep+other_loss)*ratio)}
 	journal.append("Day %d · Hunting: %d shots, %d lb obtained; %.1f lb eaten at camp, %.1f lb packed (%d food units); %.1f lb left behind." % [state.day,outing.shots,outing.meat,last_hunt_recovery.eaten_mass,last_hunt_recovery.mass,keep,last_hunt_recovery.left])
 	hunt={}
 	_schedule_event(false)
@@ -1723,7 +1732,7 @@ func preserve_meat(salted: bool = false) -> bool:
 	state.food-=int(result.lost)
 	state.salt-=int(result.salt)
 	supply_history.append({"day":state.day,"event":"preservation","changes":{"food":-int(result.lost),"salt":-int(result.salt)},"processed":result.input,"processed_mass_lb":result.mass,"retained":result.kept,"dried_weight_lb":result.weight,"expires":result.expires})
-	journal.append("Day %d · %s: %.1f lb fresh meat became %d food units dried food (%.1f lb cargo); %d lb salt used. Processing lost %d ration-lb. Keeps up to %d days after today." % [state.day,"Salt-assisted drying" if salted else "Drying meat",result.mass,result.kept,result.weight,result.salt,result.lost,offer.days])
+	journal.append("Day %d · %s: %.1f lb fresh meat became %d food units dried food (%.1f lb cargo); %d lb salt used. Food value retained. Keeps up to %d days after today." % [state.day,"Salt-assisted drying" if salted else "Drying meat",result.mass,result.kept,result.weight,result.salt,offer.days])
 	_update_river_stage()
 	if pending.is_empty():_schedule_event(false)
 	return true

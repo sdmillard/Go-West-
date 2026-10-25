@@ -44,6 +44,10 @@ func load_data(value: Variant) -> bool:
 	for key in ["food", "clothing", "bullets", "wheels", "axles", "tongues", "medicine", "salt"]:
 		if not number(value.weights_lb.get(key)) or value.weights_lb[key] <= 0:
 			return false
+	var energy: Variant=value.get("food_energy")
+	if not energy is Dictionary or not energy.get("note") is String:return false
+	for key in ["unit_kcal","generic_meat_kcal_per_lb"]:
+		if not number(energy.get(key)) or energy[key]<=0 or energy[key]>10000:return false
 	var previous := 0
 	for amount in value.rations_lb:
 		if not number(amount) or amount <= previous or amount != int(amount):
@@ -174,15 +178,18 @@ func preserve(amount: int, day: int, salted: bool) -> Dictionary:
 		remaining-=used
 	fresh=fresh.filter(func(batch):return batch.pounds>0)
 	var kept:=floori(input*float(data.preservation.salted_retained_food if salted else data.preservation.retained_food))
-	var ratio: float=(mass/input if input>0 else 1.0)*float(data.preservation.dried_weight)
+	var ratio: float=float("%.12f" % ((mass/input if input>0 else 1.0)*float(data.preservation.dried_weight)))
 	var expires:=day+int(data.preservation.salted_days if salted else data.preservation.days)+1
 	if kept>0:fresh.append({"pounds":kept,"expires":expires,"preserved":true,"mass_ratio":ratio})
-	return {"input":input,"mass":mass,"kept":kept,"lost":input-kept,"expires":expires,"weight":snappedf(kept*ratio,0.1),"salt":ceili(mass*float(data.preservation.salt_per_food_lb)) if salted else 0}
-func meat_units(physical_lb: int) -> int:
-	return maxi(1,roundi(physical_lb*float(data.meat_food_per_lb))) if physical_lb>0 else 0
-func add_meat(physical_lb: int,day: int) -> int:
-	var units:=meat_units(physical_lb)
-	if units>0:fresh.append({"pounds":units,"expires":day+int(data.fresh_days)+1,"mass_ratio":float(physical_lb)/units})
+	return {"input":input,"mass":mass,"kept":kept,"lost":input-kept,"expires":expires,"weight":float(roundi(kept*ratio*10.0+0.0000001))/10.0,"salt":ceili(mass*float(data.preservation.salt_per_food_lb)) if salted else 0}
+func meat_calories(physical_lb: float,kcal_per_lb: float=-1.0) -> float:
+	return maxf(0,physical_lb)*float(data.food_energy.generic_meat_kcal_per_lb if kcal_per_lb<0 else kcal_per_lb)
+func food_calories(units: float) -> float:return maxf(0,units)*float(data.food_energy.unit_kcal)
+func meat_units(physical_lb: int,kcal_per_lb: float=-1.0) -> int:
+	return maxi(1,roundi(meat_calories(physical_lb,kcal_per_lb)/float(data.food_energy.unit_kcal))) if physical_lb>0 else 0
+func add_meat(physical_lb: int,day: int,kcal_per_lb: float=-1.0) -> int:
+	var units:=meat_units(physical_lb,kcal_per_lb)
+	if units>0:fresh.append({"pounds":units,"expires":day+int(data.fresh_days)+1,"mass_ratio":float("%.12f" % (float(physical_lb)/units))})
 	return units
 func add_produce(physical_lb: int, day: int) -> int:
 	var units := floori(physical_lb / float(data.foraging.mass_ratio))

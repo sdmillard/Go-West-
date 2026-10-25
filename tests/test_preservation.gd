@@ -28,14 +28,14 @@ func run() -> void:
 		check(not game.provisions.load_data(bad),"Reject preservation ratio above one: "+field)
 		check(game.provisions.load_data(original),"Valid preservation data recovers")
 	check(game.preservation_offer().input==85 and game.preservation_offer(true).salt==5,"Preview accounts for meals before processing and rounds salt requirement up")
-	check(game.preserve_meat() and game.state.day==1 and game.state.food==568 and game.state.salt==10,"Drying spends one day, fifteen meal pounds and seventeen processing pounds")
-	check(game.provisions.fresh_pounds(568)==0 and game.provisions.preserved_pounds(568)==68,"Fresh batch converts to retained ration equivalents exactly once")
-	check(is_equal_approx(game.provisions.cargo(game.state),1178.8),"Dried food mass is separate from retained meals and actual salt cargo")
+	check(game.preserve_meat() and game.state.day==1 and game.state.food==585 and game.state.salt==10,"Drying spends one day, fifteen meal units, with no automatic processing loss")
+	check(game.provisions.fresh_pounds(585)==0 and game.provisions.preserved_pounds(585)==85,"Fresh batch converts to retained ration equivalents exactly once")
+	check(is_equal_approx(game.provisions.cargo(game.state),1184.8),"Dried food mass is separate from retained meals and actual salt cargo")
 	check(not game.preserve_meat() and game.state.day==1,"Already dried food cannot be processed again for an advantage")
-	check(game.supply_history[-1].event=="preservation" and game.supply_history[-1].changes.food==-17,"Processing losses recorded separately from ordinary meals")
+	check(game.supply_history[-1].event=="preservation" and game.supply_history[-1].changes.food==0,"Preservation records no invented food loss; daily meals remain separate")
 	check(game.provisions.fresh[0].expires==23,"Unsalted food has a finite twenty-one-day window after processing")
 	game=outfit()
-	check(game.preserve_meat(true) and game.state.food==576 and game.state.salt==5,"Salt improves retained yield, costs real stock and consumes one day")
+	check(game.preserve_meat(true) and game.state.food==585 and game.state.salt==5,"Salt keeps the same food value, costs real stock and extends storage")
 	check(game.provisions.fresh[0].expires==32 and game.provisions.fresh[0].preserved,"Salted food has a finite thirty-day window after processing")
 	var store=Store.new()
 	game.party_health.daily_onset_chance=JSON.parse_string(FileAccess.get_file_as_string("res://data/health_conditions.json")).daily_onset_chance
@@ -127,7 +127,7 @@ func run() -> void:
 			child.pressed.emit()
 			pressed=true
 			break
-	check(pressed and screen.game.state.day==1 and screen.game.state.salt==5 and screen.game.provisions.preserved_pounds(screen.game.state.food)==76,"Actual provisions button invokes salted preservation")
+	check(pressed and screen.game.state.day==1 and screen.game.state.salt==5 and screen.game.provisions.preserved_pounds(screen.game.state.food)==85,"Actual provisions button invokes salted preservation")
 	if "--capture" in OS.get_cmdline_user_args():
 		await process_frame
 		await RenderingServer.frame_post_draw
