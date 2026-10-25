@@ -8,7 +8,7 @@ These are authored one-way access radii, measured along the current route edge t
 
 Choose transport, then CAST. Wait for BITE and click STRIKE within the reaction window. Striking early wastes the cast; waiting too long loses the fish. Empty casts are possible. Each outing has a maximum of six casts and a 35-second play clock. Round-trip travel reduces the casts available, and winter lowers bite opportunities. Returning early still costs one trail day including meals.
 
-The first version uses existing river artwork and native retro controls, with no copied or newly generated art. It is a timing minigame, not a simulation of species-specific tackle or rod physics.
+The artwork integration uses the supplied original Aseprite riverbank, angler, bobber and splash sheets with native retro controls. Casting, striking and landing play once; waiting loops and a bite submerges the bobber until resolved. The angler follows the active leader's appearance. It remains a timing minigame, not a simulation of species-specific tackle or rod physics. Spencer approved the in-game artwork preview on October 25, 2026.
 
 Basic reusable line/hooks are included with household tools for this slice. No ammunition is required or consumed. Fishing does not yet add a separately priced tackle inventory, bait collection, broken hooks or modern reels. Actual stock, saddle, packed meals, health-dependent hauling, rider/tack weight and existing animal load/condition rules come from the shared outing model. Light work on good grazing can have zero condition loss; heat, poor grazing and heavier loads can increase wear.
 
@@ -22,7 +22,7 @@ Camp > Companion tasks offers Fish nearby within walking range. A willing, suffi
 
 ## Architecture and compatibility
 
-simulation/fishing.gd owns access, quotes, seeded opportunities, reaction timing and companion catch calculations. ui/fishing_view.gd presents those rules. The existing active-outing guard and food settlement are shared with hunting, without allowing rifle actions in fishing. Saving during the minigame is blocked; returning settles exactly one day and restores reserved animal/tack stock. Completed catches and companion assignments persist through existing JSON save data.
+simulation/fishing.gd owns access, quotes, seeded opportunities, reaction timing and companion catch calculations. ui/fishing_view.gd presents those rules; ui/fishing_scene.gd draws the supplied sprites without changing simulation state. The existing active-outing guard and food settlement are shared with hunting, without allowing rifle actions in fishing. Saving during the minigame is blocked; returning settles exactly one day and restores reserved animal/tack stock. Completed catches and companion assignments persist through existing JSON save data.
 
 The previous ebf0f6da...952c rules fingerprint is accepted through the compatible migration whitelist. Old stock and active trips are not recalculated. Hunting keeps its existing default ammunition requirement and random stream when fishing is unused. Fishing shares the existing outing counter, so an actual fishing trip changes the later activity seed.
 
@@ -41,6 +41,6 @@ Frozen runtime/test checkpoint e3c8324 passed all 74 Godot suites, including 55 
 
 Focused coverage includes walking/mounted boundaries, missing and away horses, missing saddles, unfit animals, weather, eastward heading, read-only previews, zero-ammo and zero-food attempts, finite casts, premature/late strikes, large time steps, exactly one elapsed day, stock reservation/return, condition wear under heat, fish mass/food save round trips, standing companion tasks and actual UI visibility/disabled choices. A genuine previous-version active-outrider save loads with stock, trip and RNG preserved.
 
-Native setup, bite and return screens were visually reviewed in the game window. Existing scenery is temporary; [the art handoff](FISHING_ART_BRIEF.md) specifies proposed original assets and animation registration.
+Native setup, bite and return screens were visually reviewed in the game window. The initial slice used temporary scenery. [The art handoff](FISHING_ART_BRIEF.md) and [final asset contract](../art/aseprite/FISHING.md) describe the supplied artwork and its draft integration.
 
 Full reports and final logs remain in parent .tools/fishing-*. Copies of both integration reports were SHA-256 verified against the isolated originals before cleanup. [Evidence manifest](fishing-evidence.json) records hashes and the rules signature. Player saves and preexisting diagnostic files are preserved.

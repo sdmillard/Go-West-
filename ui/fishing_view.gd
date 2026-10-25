@@ -1,5 +1,5 @@
 extends AcceptDialog
-## Uses existing river scenery; controls and timing come from the simulation.
+## Original fishing sprites; controls and timing come from the simulation.
 signal start_requested(kit: String)
 signal returned
 var game
@@ -8,7 +8,7 @@ var report:=Label.new()
 var choices:=VBoxContainer.new()
 var action:=Button.new()
 var timer_bar:=ProgressBar.new()
-var scenery:=TextureRect.new()
+var scenery:=preload("res://ui/fishing_scene.gd").new()
 var active:=false
 func _ready() -> void:
  title="FISHING"
@@ -21,11 +21,6 @@ func _ready() -> void:
  info.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
  info.custom_minimum_size.x=432
  rows.add_child(info)
- scenery.texture=load("res://ui/location_scenes.gd").new().texture_for("wakarusa")
- scenery.custom_minimum_size=Vector2(432,150)
- scenery.expand_mode=TextureRect.EXPAND_IGNORE_SIZE
- scenery.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
- scenery.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
  rows.add_child(scenery)
  rows.add_child(choices)
  report.custom_minimum_size=Vector2(432,42)
@@ -39,6 +34,8 @@ func _ready() -> void:
  rows.add_child(action)
 func open(value) -> void:
  game=value;active=false
+ var leader: int=game.camp_tasks.leader_id(game)
+ scenery.reset(game.characters.profiles[leader] if leader>=0 else {})
  for child in choices.get_children():choices.remove_child(child);child.queue_free()
  var access: Dictionary=game.fishing_offer()
  info.text="%s · %.0f ROAD MILES TO WATER\nOne day including travel, fishing and meals." % [str(access.name).to_upper(),access.distance]
@@ -61,11 +58,13 @@ func show_activity() -> void:
  refresh();reset_size()
 func _process(delta: float) -> void:
  if visible and active:
+  scenery.advance(delta)
   game.advance_fishing(delta)
   refresh()
 func refresh() -> void:
  if game.hunt.get("activity","")!="fish":return
  var outing: Dictionary=game.hunt
+ scenery.observe(outing)
  info.text="%s · %d LB EDIBLE FISH\nCASTS %d / %d · %d SECONDS LEFT" % [str(outing.field.site_name).to_upper(),outing.meat,outing.shots,outing.casts.size(),maxi(0,ceili(float(game.fishing.data.duration)-float(outing.elapsed)))]
  report.text=outing.message
  action.disabled=outing.ended
