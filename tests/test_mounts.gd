@@ -42,18 +42,18 @@ func run():
 	check(walking_quote.valid and walking_quote.team_capacity_lb==200,"Good starting health retains full walking capacity")
 	check(setup.depart("farmer",["A","B","C","D","E"],5,walking_cart) and setup.provisions.capacity(setup.state)==walking_quote.team_capacity_lb and setup.provisions.cargo(setup.state)==walking_quote.cargo_lb,"A boundary walking quote matches actual departure load and capacity")
 	check(not setup.outfitter.quote("farmer",{"wagon":0,"food":126}).valid and not setup.outfitter.quote("farmer",{"wagon":0,"food":130}).valid,"Walking outfits above the real 200 lb limit are rejected")
-	var packing_cart: Dictionary={"wagon":0,"horses":1,"mules":2,"pack_saddles":1,"food":325}
-	check(setup.outfitter.quote("farmer",packing_cart).valid,"A working mule adds 200 lb to the starting walkers")
-	packing_cart.food=326
+	var packing_cart: Dictionary={"wagon":0,"horses":1,"mules":2,"pack_saddles":1,"food":350}
+	check(setup.outfitter.quote("farmer",packing_cart).valid,"A working mule adds 225 lb to the starting walkers")
+	packing_cart.food=351
 	check(not setup.outfitter.quote("farmer",packing_cart).valid,"Packing quotes enforce actual healthy human and animal limits")
 	check(not setup.outfitter.quote("farmer",{"wagon":1,"oxen":0,"food":100}).valid,"A wagon still needs an ox")
 	check(not setup.outfitter.quote("farmer",{"wagon":0,"food":600}).valid,"Without animals, the outfit must fit five walkers' packs")
 	var quote: Dictionary=setup.outfitter.quote("banker",PACKERS)
-	check(quote.valid and quote.mounts.mode=="mounted" and quote.team_capacity_lb==800,"Five riders with bags and three pack mules carry 75 lb gear, 125 lb bags and 600 lb packs")
+	check(quote.valid and quote.mounts.mode=="mounted" and quote.team_capacity_lb==1050,"Five riders with bags and three pack mules carry 375 lb riding freight and 675 lb pack freight, including their personal gear")
 	check(setup.outfitter.quote("banker",{"wagon":0,"horses":3,"saddles":3,"food":100}).mounts.mode=="packing","Too few saddles means walking pace")
 	var game=packers()
 	check(game.state.vehicle=="foot" and game.state.horses==5 and game.state.mules==3 and game.state.saddles==5,"Packers leave Independence with their stock and tack and no wagon")
-	check(game.provisions.capacity(game.state)==800 and game.mount_plan().mode=="mounted","Departed packers keep the outfit's carrying capacity")
+	check(game.provisions.capacity(game.state)==1050 and game.mount_plan().mode=="mounted","Departed packers keep the outfit's carrying capacity")
 	check(game.provisions.household_mass(game.state)==75,"Packers bring only personal gear")
 	var plan: Dictionary=game.mount_plan()
 	check(plan.saddled_horses==5 and plan.pack_mules==3 and plan.bags==5,"Horses go under the saddles and mules under the packs")
@@ -100,7 +100,7 @@ func run():
 	check(working_mule.state.horses==1 and working_mule.state.mules==1 and working_mule.provisions.capacity(working_mule.state)==capacity_before,"A working mule gives out before an unused led horse; another mule can take its pack")
 	check("mule" in working_mule.journal.back() and working_mule.supply_history.back().changes=={"mules":-1},"Breakdown records the species actually lost")
 	working_mule.Mounts.breakdown(working_mule)
-	check(working_mule.state.mules==0 and working_mule.state.horses==1 and working_mule.provisions.capacity(working_mule.state)==capacity_before-25,"After both mules give out, the remaining horse takes the smaller pack load")
+	check(working_mule.state.mules==0 and working_mule.state.horses==1 and working_mule.provisions.capacity(working_mule.state)==capacity_before,"After both mules give out, the remaining horse takes the same pack load")
 	var led=packers({"wagon":0,"horses":1,"food":80})
 	var led_before: Dictionary=led.state.duplicate(true)
 	led.Mounts.breakdown(led)
@@ -115,10 +115,10 @@ func run():
 	check(wagon.Mounts.condition(wagon.state)==100 and wagon.mount_plan().mode=="wagon" and wagon.provisions.capacity(wagon.state)==wagon_speed,"Horses led behind a wagon add no capacity and no wear")
 	# Leaving the wagon puts the animals to work.
 	var offer: Dictionary=wagon.pack_quote({"food":80,"clothing":5,"bullets":20})
-	check(offer.valid and offer.capacity_lb==200 and "walk" in offer.message,"Two saddle horses for five people: the party walks and bagless horses add nothing")
+	check(offer.valid and offer.capacity_lb==220 and "walk" in offer.message,"Two saddle horses for five people: the party walks and bagless horses have freight room after riders and tack")
 	wagon=wagon_party({"horses":5,"saddles":5,"saddlebags":5,"mules":2,"pack_saddles":2})
 	offer=wagon.pack_quote({"food":400,"clothing":5,"bullets":20})
-	check(offer.valid and offer.capacity_lb==75+125+400 and "ride" in offer.message,"Abandoning the wagon with horses and tack quotes the mounted carry limit")
+	check(offer.valid and offer.capacity_lb==375+450 and "ride" in offer.message,"Abandoning the wagon with horses and tack quotes the mounted carry limit")
 	check(wagon.abandon_wagon({"food":400,"clothing":5,"bullets":20}) and wagon.state.vehicle=="foot" and wagon.state.horses==5 and wagon.mount_plan().mode=="mounted","The party rides on from the abandoned wagon")
 	# Saves keep the animals, and records from before horses load with none.
 	game=packers()

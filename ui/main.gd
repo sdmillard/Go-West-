@@ -689,6 +689,16 @@ func _show_section(section: String) -> void:
 				setting[1].show()
 				setting[1].custom_minimum_size=Vector2(350,24)
 			if game.Mounts.animals(game.state)>0:
+				if game.state.vehicle=="foot":
+					for choice in [["LEAD ANIMALS", "lead_mounts"],["ALLOW HEAVY LOAD", "strenuous_load"]]:
+						var flag: String=choice[1]
+						var toggle:=button(choice[0]+": "+("ON" if game.state.get(flag,false) else "OFF"),func():
+							if flag=="lead_mounts":game.set_lead_mounts(not game.state.get(flag,false))
+							else:game.set_strenuous_load(not game.state.get(flag,false))
+							_refresh()
+							_show_section("Travel"))
+						toggle.tooltip_text="Leading frees rider weight but uses walking pace. Heavy loads slow travel and wear animals faster."
+						section_rows.add_child(toggle)
 				var doubling:=button("DOUBLE UP: "+("ON" if game.state.get("double_up",false) else "OFF"),func():
 					game.set_double_up(not game.state.get("double_up",false))
 					_refresh()
@@ -1275,12 +1285,12 @@ func _open_field_trip(member: int=-1) -> void:
 
 func _launch_outing(member: int,config: Dictionary) -> void:
 	if member>=0:
-		if game.field_outings.start(game,member,config.kit,int(config.days),int(config.bullets)):
+		if game.field_outings.start(game,member,config.kit,int(config.days),int(config.bullets),str(config.get("return_mode","ride"))):
 			outing_window.hide()
 			_refresh()
 	else:
 		if game.start_hunt(config):
-			game.field_outings.record.preferences["leader"]={"kit":config.kit,"days":1,"bullets":int(config.bullets)}
+			game.field_outings.record.preferences["leader"]={"kit":config.kit,"days":1,"bullets":int(config.bullets),"return_mode":str(config.get("return_mode","ride"))}
 			outing_window.hide()
 			_open_hunt_window()
 func _open_hunt_window() -> void:

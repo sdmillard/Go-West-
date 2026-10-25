@@ -75,6 +75,7 @@ func household_mass(inventory: Dictionary) -> float:
 	return float(inventory.household_gear_lb) if inventory.has("household_gear_lb") else float(data.household_gear_lb)+float(inventory.get("recruited_gear_lb",0))-float(inventory.get("departed_gear_lb",0))
 func cargo(inventory: Dictionary) -> float:
 	var pounds: float = float(data.walking.personal_gear_lb_per_person)*int(inventory.get("party_size",5)) if inventory.get("vehicle","")=="foot" else household_mass(inventory)
+	pounds+=Mounts.spare_tack(data.mounts,inventory,Mounts.plan(data.mounts,inventory))
 	# Bodies carried with the party weigh what they weigh, on foot or in the wagon.
 	pounds+=float(inventory.get("remains_lb",0))+float(inventory.get("camp_greens_lb",0))
 	for key in data.weights_lb:
@@ -89,15 +90,20 @@ func cart_cargo(cart: Dictionary) -> float:
 	return cargo(inventory)+int(cart.get("produce",0))*float(data.foraging.mass_ratio)+int(cart.get("dried_produce",0))*float(data.foraging.mass_ratio)*float(data.produce_trade.dry_weight)
 func team_capacity(oxen: int) -> float:
 	return minf(float(data.cargo_guideline_lb),maxi(0,oxen)*float(data.working_load_per_ox_lb))
+func human_capacity(inventory: Dictionary,plan: Dictionary) -> float:
+	var walkers: Array=Mounts.walking_members(carriers,int(plan.riding_people))
+	return Carrying.capacity(walkers,float(data.walking.carry_lb_per_person),data.walking.health_load_curve) if not carriers.is_empty() else float(data.walking.carry_lb_per_person)*maxi(0,int(inventory.party_size)-int(plan.riding_people))
 func capacity(inventory: Dictionary) -> float:
 	if inventory.get("vehicle","")!="foot":return team_capacity(int(inventory.oxen))
 	var plan: Dictionary=Mounts.plan(data.mounts,inventory)
-	# Riders carry only their personal gear; walkers carry full packs.
-	if Mounts.mounted(plan):return snappedf(float(data.walking.personal_gear_lb_per_person)*int(inventory.party_size)+float(plan.animal_lb),0.1)
-	var people: float=Carrying.capacity(carriers,float(data.walking.carry_lb_per_person),data.walking.health_load_curve) if not carriers.is_empty() else float(data.walking.carry_lb_per_person)*int(inventory.party_size)
-	return snappedf(people+float(plan.animal_lb),0.1)
+	return snappedf(human_capacity(inventory,plan)+float(plan.animal_lb),0.1)
 func storage_capacity(inventory: Dictionary) -> float:
-	return capacity(inventory) if inventory.get("vehicle","")=="foot" else float(data.cargo_guideline_lb)
+	if inventory.get("vehicle","")!="foot":return float(data.cargo_guideline_lb)
+	var plan: Dictionary=Mounts.plan(data.mounts,inventory)
+	return snappedf(human_capacity(inventory,plan)+Mounts.freight_limit(plan),0.1)
+func load_profile(inventory: Dictionary) -> Dictionary:
+	var plan: Dictionary=Mounts.plan(data.mounts,inventory)
+	return Mounts.burden(data.mounts,plan,cargo(inventory),human_capacity(inventory,plan))
 func movement_factor(pounds: float, oxen: int = 4) -> float:
 	var capacity := team_capacity(oxen)
 	if capacity <= 0:return 0.0

@@ -200,7 +200,7 @@ func _draw_herd(moving: bool) -> void:
 ## between walkers and animals. The ledger gives the exact animal count.
 func party_layout(origin: Vector2) -> Dictionary:
 	var count: int=mount_rows().size()
-	var on_foot: int=0 if mount_plan.get("mode","") in ["mounted","doubled"] else walkers
+	var on_foot: int=maxi(0,walkers-int(mount_plan.get("riding_people",0)))
 	var walking_width: float=(on_foot-1)*19.0+16.0 if on_foot>0 else 0.0
 	var gap: float=12.0 if on_foot>0 and count>0 else 0.0
 	var animal_width: float=(count-1)*30.0+48.0 if count>0 else 0.0
@@ -222,11 +222,11 @@ func _draw_party(origin: Vector2,moving: bool) -> void:
 		var y: float=layout.animals[index].y
 		var step:=int(clock_time*FPS+index*3)%FRAMES if moving else 0
 		draw_texture_rect_region(HORSES,Rect2(x,y-39,48,44),Rect2(step*48,int(rows[index])*44,48,44))
-	if layout.on_foot>0:_draw_walkers(layout.walkers,moving)
+	if layout.on_foot>0:_draw_walkers(layout.walkers,moving,int(mount_plan.get("riding_people",0)))
 func mount_rows() -> Array:
 	var rows: Array=[]
 	if mount_plan.is_empty() or mount_plan.get("mode","walking")=="wagon":return rows
-	var riding: bool=mount_plan.mode in ["mounted","doubled"]
+	var riding: bool=int(mount_plan.get("riding_people",0))>0
 	var pairs: int=maxi(0,int(mount_plan.riders)-int(mount_plan.saddled)) if mount_plan.mode=="doubled" else 0
 	for index in range(int(mount_plan.saddled)):
 		var mule: bool=index>=int(mount_plan.saddled_horses)
@@ -241,12 +241,12 @@ func mount_rows() -> Array:
 	for index in range(int(mount_plan.led)):rows.append(MOUNT_LED)
 	return rows.slice(0,8)
 
-func _draw_walkers(origin: Vector2,moving: bool) -> void:
-	for index in range(walkers):
+func _draw_walkers(origin: Vector2,moving: bool,offset: int=0) -> void:
+	for index in range(maxi(0,walkers-offset)):
 		var x:=origin.x+index*19
 		var y:=origin.y-(index%2)*3
 		var step:=int(clock_time*FPS+index*3)%FRAMES if moving else 0
-		var profile: Dictionary=traveler_profiles[index] if index<traveler_profiles.size() else {"id":index}
+		var profile: Dictionary=traveler_profiles[index+offset] if index+offset<traveler_profiles.size() else {"id":index}
 		var row: int=int(profile.get("appearance",{}).get("outfit",index%2))
 		draw_texture_rect_region(Palette.texture(WALKER,profile),Rect2(x-5,y-23,16,24),Rect2(step*16,row*24,16,24))
 

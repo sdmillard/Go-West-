@@ -62,7 +62,7 @@ func run():
 	var held: Dictionary={"food":game.state.food,"bullets":game.state.bullets,"clothing":game.state.clothing}
 	check(Wanted.cut_loose(game.crime,game),"The party cuts loose from the wagon")
 	check(game.state.vehicle=="foot" and game.state.horses==3 and game.state.double_up and game.mount_plan().mode=="doubled","They ride off doubled up on their horses")
-	check(game.provisions.cargo(game.state)<=game.provisions.capacity(game.state) and not game.wagon_cache.is_empty() and game.state.day==day,"What they grabbed fits; the rest waits in the abandoned wagon; no extra day passes")
+	check(game.provisions.cargo(game.state)<=game.provisions.storage_capacity(game.state) and not game.wagon_cache.is_empty() and game.state.day==day,"What they grabbed fits; the rest waits in the abandoned wagon; no extra day passes")
 	check(game.state.wheels==0 and game.wagon_cache.inventory.wheels==1,"Spare wagon parts stay with the wagon")
 	check(game.state.food<held.food and game.journal.any(func(line):return "Grabbed in a hurry" in line),"Nobody planned this: most of the food stays behind, and the journal says what was grabbed")
 	var again=wagon_with_horses()

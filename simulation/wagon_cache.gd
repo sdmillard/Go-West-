@@ -62,10 +62,10 @@ static func quote(game,cart: Dictionary,from_cache: bool=false,guard_ids: Array=
 	# Horses, mules and their tack stay with the party and carry what they can.
 	inventory.merge(game.Mounts.carried(game.state))
 	var cargo: float=pack.cargo(inventory)
-	var capacity: float=pack.capacity(inventory)
+	var capacity: float=pack.storage_capacity(inventory)
 	var mode: String=game.Mounts.plan(game.provisions.data.mounts,inventory).mode
 	var ready: String={"mounted":"Ready to ride on. Money, tools and surviving animals stay with you.","doubled":"Ready to ride on doubled up. That wears the animals out fast.","packing":"Ready to walk with the pack animals. Money, tools and surviving animals stay with you."}.get(mode,"Ready to walk. Money, tools and surviving oxen stay with you.")
-	for key in game.Mounts.KEYS+["double_up"]:inventory.erase(key)
+	for key in game.Mounts.KEYS+["double_up","lead_mounts","strenuous_load"]:inventory.erase(key)
 	result.merge({"valid":cargo<=capacity,"message":ready if cargo<=capacity else "Reduce your pack to the carry limit of your party and animals.","cargo_lb":cargo,"capacity_lb":capacity,"inventory":selected,"carried":carried,"stored":stored,"stock":stock},true)
 	return result
 static func pack(game,cart: Dictionary,from_cache: bool=false,guard_ids: Array=[],forced: bool=false) -> bool:

@@ -25,10 +25,14 @@ static func advance(game,trip: Dictionary,random) -> String:
  var target: int=int(game.state.miles)
  var current: int=int(trip.mile)
  var west: bool=target>=current
- var food=game.provisions.get_script().new();food.data=game.provisions.data;food.fresh.assign(trip.camp.fresh)
- var load: Dictionary=trip.camp.inventory.duplicate();load.merge({"vehicle":"foot","party_size":1})
- var ratio: float=food.cargo(load)/maxf(1,game.field_outings.Outfit.capacity(game,trip.camp.guards,trip.kit,trip.stock))
- var miles: int=maxi(1,floori(game.Mounts.base_miles(game.provisions.data.mounts,int(trip.condition),0)*clampf(1.0-0.4*ratio,0.5,1.0)))
+ var outfit=game.field_outings.Outfit
+ var mass: float=outfit.mass(game,trip.camp.guards,trip.kit,trip.camp.inventory,trip.camp.fresh,trip.stock,outfit.mode(trip))
+ var plan: Dictionary=game.Mounts.plan(game.provisions.data.mounts,outfit.transport(game,trip.camp.guards,trip.kit,trip.stock,outfit.mode(trip)))
+ var profile: Dictionary=outfit.load_profile(game,trip.camp.guards,trip.kit,mass,trip.stock,outfit.mode(trip))
+ var base: float=game.Mounts.base_miles(game.provisions.data.mounts,int(trip.condition),0) if game.Mounts.mounted(plan) else float(game.provisions.data.walking.packing_miles_per_day)
+ var terrain: String=str(game.route.nodes[trip.origin.from].get("terrain","plains"))
+ var terrain_factor: float=0.8 if terrain=="mountains" else (0.9 if terrain=="forest" else 1.0)
+ var miles: int=maxi(1,floori(base*game.Mounts.speed_factor(plan,profile)*float(game.survival.weather.speed)*terrain_factor*float(game.seasonal_pressure().travel)))
  var finish: int=mini(target,current+miles) if west else maxi(target,current-miles)
  var milestones: Array=[]
  var total:=0
@@ -94,6 +98,7 @@ static func cross(game,trip: Dictionary,random) -> void:
  trip.camp.erase("crossing")
 static func valid(camp: Dictionary,game) -> bool:
  if camp.has("combat_history") and not game.combat.valid(camp.combat_history,int(game.state.day),game.characters.profiles.size()):return false
+ if camp.has("return_mode") and camp.return_mode not in game.field_outings.Outfit.RETURN_MODES:return false
  if camp.has("departure_kit") and camp.departure_kit not in game.field_outings.Outfit.KITS:return false
  if camp.has("return_after_day") and not game.crime.whole(camp.return_after_day,0,int(game.state.day)+1):return false
  for field in ["wrong_turn","return_failed","missing_notified"]:

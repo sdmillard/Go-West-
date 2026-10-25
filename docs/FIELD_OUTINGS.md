@@ -48,13 +48,9 @@ Base limits remain 40 lb per walker and 50 lb per retrieval participant, with th
 
 These health breakpoints are explicit gameplay interpretation, not clinical measurements of strength. [Army load-carriage research](https://www.army.mil/article/234235/) supports treating load, terrain, fatigue and speed as interacting costs; it does not justify interpreting an abstract health score as a literal lifting-strength percentage. A revised day-hunt kit or multiple retrieval trips would be separate changes. The present change does not invent extra hauling or remove the actual pack costs.
 
-## Horse cargo reference and remaining design
+## Horse cargo revision
 
-The [Forest Service packing guide](https://www.fs.usda.gov/t-d/pubs/pdfimage/95231202.pdf) gives horse pack loads around 200-300 lb and calls for properly balanced loads. [University of Minnesota Extension](https://extension.umn.edu/agriculture/animals-and-livestock/horse/guidelines-for-weight-carrying-capacity-of-horses) discusses approximately 20% of ideal body weight for an average light riding horse, including rider and tack, with conformation and conditioning affecting suitability. These are different working contexts, not a universal spare-cargo allowance.
-
-Spencer supplied a game screenshot of a person leading a saddled horse carrying a deer. The basic transport arrangement is plausible; a game image does not establish safe load placement. Saddlebags are not the only way a riding horse can carry cargo. Current presets still use 175 lb pack-horse cargo, 200 lb pack-mule cargo and 25 lb saddlebag cargo. A ride-out/lead-home return with securely lashed meat and a greater saddle cargo allowance is a requested design direction, **not implemented by this checkpoint**. Do not claim the 25 lb bag limit is the horse's anatomical capacity or that a horse can take a full pack load while also carrying a rider.
-
-Spencer also clarified that a loaded riding horse may still move with increased wear, rather than treating saddlebag volume as a hard anatomical load limit. A future load/return-mode change should distinguish a comfortable working load from a possible strenuous load, account for rider and tack, and feed extra cargo into speed and animal condition. A heavily loaded outrider must not retain unloaded catch-up speed. This is pending; current presets and their wear calculation remain the shipped limits.
+The requested rider/tack/cargo budgets, strenuous loads and ride-out/lead-home modes are now implemented. See [horse loads and wagon hunts](HORSE_LOADS.md) for current limits, physical accounting, evidence and limitations. The earlier 25 lb saddlebag allowance is no longer treated as the anatomical carrying limit. Good/Fair human carrying remains unchanged.
 
 ## Isolated bandit encounters
 
