@@ -63,46 +63,47 @@ func start(game,index: int,kit: String,days: int,bullets: int,return_mode: Strin
 func recount(game) -> void:
  game.state.party_size=game.party_health.living_count()
  game.state.health=game.party_health.average_health()
+func hunting_plan(game,trip: Dictionary) -> Dictionary:
+ # Use the leader's encounter count/species and return-search thinning on a local
+ # model. Planning never changes the leader's or the trip's random stream.
+ var search_factor:=1.0
+ if trip.stage=="away" and int(game.state.day)>=int(trip.started)+int(trip.days):
+  var person: Dictionary=trip.camp.guards[0]
+  var pack_lb: float=Outfit.mass(game,[person],trip.kit,trip.camp.inventory,trip.camp.fresh,trip.stock,Outfit.mode(trip))
+  search_factor=Outfit.search_plan(game,[person],trip.kit,trip.stock,Outfit.mode(trip),pack_lb,int(trip.condition),int(trip.days)>1).search_factor
+ var model=game.hunting.get_script().new()
+ model.data=game.hunting.data.duplicate(true)
+ var encounter: Dictionary=model.begin(int(game.state.seed)^int(game.state.day)*1301081,int(trip.id),int(trip.mile),str(trip.camp.habitat),false,search_factor)
+ var animals: Array=encounter.animals
+ animals.sort_custom(func(a,b):return int(a.meat)>int(b.meat))
+ return {"animals":animals,"search_factor":search_factor,"shot_limit":int(game.hunting.data.shot_limit)}
 func _hunt(game,trip: Dictionary,random) -> bool:
  var cache: Dictionary=trip.camp
  var actual: Dictionary=cache.guards[0]
  if not actual.alive or actual.get("departed",false) or int(cache.inventory.bullets)<1:return false
  var limit: float=Outfit.capacity(game,[actual],trip.kit,trip.stock,Outfit.mode(trip))
- var food=game.provisions.get_script().new()
- food.data=game.provisions.data.duplicate(true);food.fresh.assign(cache.fresh)
- var load: Dictionary=cache.inventory.duplicate()
- load.merge({"vehicle":"foot","party_size":1})
- var room: int=maxi(0,floori(limit-Outfit.mass(game,[actual],trip.kit,cache.inventory,cache.fresh,trip.stock,Outfit.mode(trip))))
- if room<=0:return false
- var search_factor:=1.0
- if trip.stage=="away" and int(game.state.day)>=int(trip.started)+int(trip.days):
-  var pack_lb: float=Outfit.mass(game,[actual],trip.kit,cache.inventory,cache.fresh,trip.stock,Outfit.mode(trip))
-  search_factor=Outfit.search_plan(game,[actual],trip.kit,trip.stock,Outfit.mode(trip),pack_lb,int(trip.condition),int(trip.days)>1).search_factor
- var search:=RandomNumberGenerator.new()
- search.seed=int(game.state.seed)+int(trip.id)*719+int(game.state.day)*1301081
- var search_ok: bool=search.randf()<search_factor
- cache.inventory.bullets-=1
- var region: Dictionary=game.hunting.data.regions[cache.habitat]
+ if limit-Outfit.mass(game,[actual],trip.kit,cache.inventory,cache.fresh,trip.stock,Outfit.mode(trip))<2:return false
+ var plan: Dictionary=hunting_plan(game,trip)
  var season: float=float(game.provisions.data.foraging.months[int(game.calendar().month)-1])
  var expert: bool=game.camp_tasks.specialist(game,int(trip.member),"Hunting")
- var chance: float=float(rules.hit_chance)+(float(rules.hunter_bonus) if expert else 0.0)
- var pounds:=0
- if random.randf()>float(region.empty_chance) and random.randf()<chance*(0.5+0.5*season):
-  var total:=0
-  for weight in region.weights:total+=int(weight)
-  var roll: int=random.randi_range(1,total)
-  var which:=0
-  for weight in region.weights:
-   roll-=int(weight)
-   if roll<=0:break
-   which+=1
-  var species: Dictionary=game.hunting.data.species[which]
-  pounds=mini(room,random.randi_range(int(species.meat_min),int(species.meat_max)))
- if not search_ok:pounds=0
- var units: int=food.add_meat(pounds,int(game.state.day))
- if units>0:food.fresh.back()["_outing_catch"]=true
- cache.fresh=food.fresh.duplicate(true);cache.inventory.food+=units
- cache.camp_log.append("Day %d · Spent one bullet hunting; hauled %d lb meat (%d food units)." % [game.state.day,pounds,units])
+ var chance: float=clampf((float(rules.hit_chance)+(float(rules.hunter_bonus) if expert else 0.0))*(0.5+0.5*season),0.0,1.0)
+ var food=game.provisions.get_script().new()
+ food.data=game.provisions.data.duplicate(true);food.fresh.assign(cache.fresh)
+ var shots:=0;var caught:=0;var units:=0;var target:=0
+ while target<plan.animals.size() and shots<int(plan.shot_limit) and int(cache.inventory.bullets)>0:
+  var room: int=maxi(0,floori(limit-Outfit.mass(game,[actual],trip.kit,cache.inventory,cache.fresh,trip.stock,Outfit.mode(trip))))
+  if room<2:break
+  cache.inventory.bullets-=1;shots+=1
+  if random.randf()<chance:
+   # A successful animal is removed; an unsuccessful shot may be followed up
+   # while it remains in sight. Every actual shot costs exactly one bullet.
+   var pounds: int=mini(room,int(plan.animals[target].meat))
+   var added: int=food.add_meat(pounds,int(game.state.day))
+   if added>0:food.fresh.back()["_outing_catch"]=true
+   cache.fresh=food.fresh.duplicate(true);cache.inventory.food+=added
+   caught+=pounds;units+=added;target+=1
+  elif random.randf()<float(rules.miss_escape_chance):target+=1
+ cache.camp_log.append("Day %d · Found %d animals; fired %d shot(s); hauled %d lb meat (%d food units)." % [game.state.day,plan.animals.size(),shots,caught,units])
  return true
 func tick(game) -> void:
  for trip in record.trips.duplicate():

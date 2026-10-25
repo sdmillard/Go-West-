@@ -4,11 +4,12 @@ var audit: Dictionary={"shots":0,"meat_food":0,"meat_lb":0.0,"returned_catch_uni
 func _hunt(game,trip: Dictionary,random) -> bool:
  var food: int=trip.camp.inventory.food
  var bullets: int=trip.camp.inventory.bullets
+ var mass: float=trip.camp.fresh.reduce(func(n,b):return n+int(b.pounds)*game.provisions.mass_ratio(b),0.0)
  var okay: bool=super._hunt(game,trip,random)
  var units: int=maxi(0,int(trip.camp.inventory.food)-food)
  audit.shots+=bullets-int(trip.camp.inventory.bullets)
  audit.meat_food+=units
- if units>0:audit.meat_lb+=units*game.provisions.mass_ratio(trip.camp.fresh.back())
+ audit.meat_lb+=maxf(0,trip.camp.fresh.reduce(func(n,b):return n+int(b.pounds)*game.provisions.mass_ratio(b),0.0)-mass)
  return okay
 func tick(game) -> void:
  var before: Array=[]

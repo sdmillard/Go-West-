@@ -1,0 +1,1482 @@
+{
+  "total_runs": 144,
+  "inputs": [
+    {
+      "path": "hunting-repeat-development-mobile-02.json",
+      "sha256": "e1f39c56ea29006fe689f7408b856991461a858fd8dc6fd069a89fe698485ead",
+      "phase": "development",
+      "policy": "mobile",
+      "runs": 24
+    },
+    {
+      "path": "hunting-repeat-development-parallel-02.json",
+      "sha256": "f8a68657d3809eaf1676bf0b68612d993fd32747964dc1688b3de40dce4ce784",
+      "phase": "development",
+      "policy": "parallel",
+      "runs": 24
+    },
+    {
+      "path": "hunting-repeat-development-serial-02.json",
+      "sha256": "182286aa2bb2f2770f91848c1ddceb01ac28595c4df687a1fb7fced4d9900dbf",
+      "phase": "development",
+      "policy": "serial",
+      "runs": 24
+    },
+    {
+      "path": "hunting-repeat-validation-mobile-02.json",
+      "sha256": "ebb420848f36769de027d087cedc8b8470bae29b811ed8e99fcbdbef7dc580a1",
+      "phase": "validation",
+      "policy": "mobile",
+      "runs": 24
+    },
+    {
+      "path": "hunting-repeat-validation-parallel-02.json",
+      "sha256": "544ecbc69de3beb70e2491681f3696fe5ec85de7df015e69e508e2867ffc16c6",
+      "phase": "validation",
+      "policy": "parallel",
+      "runs": 24
+    },
+    {
+      "path": "hunting-repeat-validation-serial-02.json",
+      "sha256": "c6b8061216521f2e6faf274b36f17226f35840923402ffdd9e97e9f34dfd465a",
+      "phase": "validation",
+      "policy": "serial",
+      "runs": 24
+    }
+  ],
+  "settings": {
+    "reserve_meals": 2,
+    "player_accuracy": 0.65,
+    "pace": 1,
+    "outfit_profile": "standard",
+    "motion_policy_version": 1
+  },
+  "rules_signature": "f7eeb308d59b4214a9935a1f5f1f2482e1780bb2317daa67b9fda79e6840d498",
+  "source_hashes": {
+    "data/appearance.json": "59d47bc3af292ea8a47fd9f9c7bccf51b6a73b74ce2e379b0fd3c956968fbe15",
+    "data/camp_tasks.json": "d8fe9ae3998b646ee1b97cc25e452f951ab91189d8686f9ce3200588ff499372",
+    "data/character_catalog.json": "09bfaac277a6affc948cdb148f811e78be9ff7c36568656a933408433d869709",
+    "data/combat_rules.json": "8e66c77298a219ae09f8af8c9352638f67ca0ff0f623f286e1868fb010f227cc",
+    "data/crime_scenes.json": "5c39b3800d671c3f603c56853b119706bfe3897d6d340a585b0bc517badc804c",
+    "data/events.json": "92553914f1b86377d290d29086361e1b9cadce027b53459785f131b947f167b7",
+    "data/field_outings.json": "2795f06066594861bdf1dfe73de6c7408062abadc18c2af9a5e39928fbd103fc",
+    "data/health_conditions.json": "738b36ee0d6d913731113ef667f9fdad86cb937432013413cd692853b4342a39",
+    "data/hunting.json": "faba6e70caef8a95073092a79f069c8bc737a64cb5847c8bf2851b2479d5c3e7",
+    "data/location_scenes.json": "c83c95452bdc9d1363e1d986920114d73ca5250de1209ee69e980952648f3865",
+    "data/map.json": "b7901aded45ef703256260d9d5f0a3116c28cf5c58e0d49c5f1d0dc8ababbafc",
+    "data/outfitting.json": "08a3550cc590ad6b02e28af840171c58c89618dc5d012960b22cc4d66df71dfd",
+    "data/party_benefits.json": "34570796d75535ee475b745540b2d36090d376109a179393cfd94c5aa7c2956c",
+    "data/provisions.json": "232c99c4ae13625cc7b42bd019bf38dbd3b302e5823853e58ec9a811a1905b4f",
+    "data/recruitment.json": "2ab34cf68166ff24a80e53212a49a56a6bf706a35f13420e0ee0caf0b069494b",
+    "data/robbery_demands.json": "ee44b0749aafee4cc9c69c6ad771edfd632bc7aa68fa3afd4e284d2c643e73d9",
+    "data/route.json": "07fdb32ad03a0c116a5c29effa0f100b680baf569a67eb8a722427b1e6ab90f4",
+    "data/save_migrations.json": "12bc514c0096bf3c091859f8c29c8f25dbe526e23c0e95465a4a4179fceaa616",
+    "data/scene_ambience.json": "d70843fe5553ffc3a9849f38461f838287dc53f3b462e4a091680b4b5b68f937",
+    "data/social_rules.json": "0881a6a6bda117ad493093029b1225631a6b1c9ea1bcb605f9a2766cdb53d0c8",
+    "data/survival_rules.json": "f15b2570c913dd87265583619d09ea5e0419c89f6307fc3ee6619dbefb8b5473",
+    "data/trail_context.json": "dde8603f760c3fa3d715dfc864711f52597382733c189ef30beca9ece1546cf4",
+    "data/trail_events.json": "9038f6ef7af1f49f5663f897fa13a5bd4671a9dbbe6f2b096a7e2af6ce2d9cd3",
+    "data/trail_news.json": "839ff4aa42b1c0a1dba2d9707fa2eed6be6b776f3019396e984419bcbb39754d",
+    "simulation/bandit_demand.gd": "3111e49cfed4d19d329812d826ad12a766738d011143f08ce73d5acf8b769dd5",
+    "simulation/camp_repair.gd": "d58ab07df9cac493febe2346bf039e8b946de6a4b29523e1103b07fe05b2d47a",
+    "simulation/camp_tasks.gd": "c1c979e297bb823f2396bde57b46795f6b2d489161d0d56d840f663cdfbe5b4b",
+    "simulation/carrying.gd": "e90b98f48fa90f2e7e44c5c1c493d5783f88beec48076f0b0bfd37f2de2bb070",
+    "simulation/character_catalog.gd": "37cd3d67e87d6425c5126c67beb917ce2303c2218d02e3eaa2455c6d7a380a96",
+    "simulation/combat.gd": "d363ac8683951057fb1d039ed3d8492ce60ffd5bb984b39001e232ddc7382c2b",
+    "simulation/crime_system.gd": "489c3bb2d3721834531d6eae639174319313daa68ce1435d158c0278d6ed37e1",
+    "simulation/discard_plan.gd": "e872ae9857c62bfbf80b7224ef1052f8ca1c88de8eeb4e38c5a5f375d8acdde4",
+    "simulation/event_catalog.gd": "6be0059b606d0c3e0623ce811c71d6587bce4465e5577eb934f9be8924cf1ea4",
+    "simulation/field_outings.gd": "f05497f68d6330f023ffd128fbfd9cdd244d28315ccb29aaced3ee92a3dbae61",
+    "simulation/food_shortage.gd": "c6e35031203cb26eab48a50c637dd069e4a3ae2562bb7537bc99eaadf7581891",
+    "simulation/grave_store.gd": "ce13273ecee4d73114564c37908b7f3a2c473530672a265b0eae2c029a4ba71d",
+    "simulation/hunting.gd": "16c087e2c509ad6fe0362536dbcefa4fcc55ecd959e72a0339124f29f5c4c1aa",
+    "simulation/mounts.gd": "38bcb3b33424a1169ff2a2d117a774e431f48dca6b1720d52012b63eb55cd311",
+    "simulation/outfitting.gd": "e7e63cbd908207a1473180186f1c9ef4e4b9ad0271643aff2ba7b1b552c73a6e",
+    "simulation/outing_actor.gd": "096354f0490fc69e7ec56300fa742e06efb92459f5bce49d35b5ff055c9277dc",
+    "simulation/outing_encounters.gd": "466da0f8533c97776501bb85c4c52e418be16a4ad16abc502ce5037f67bf9870",
+    "simulation/outing_follow.gd": "de50fd1c09d5d14267db82995dcca11cd30560a2ee9c3a75e9c0e9cb4c37499b",
+    "simulation/outing_outfit.gd": "1cfa961d0df2643edfa96b28fdaba26da64367383f6d7546dc1897c5bb12d06e",
+    "simulation/party_character.gd": "3e62ed40c760a32fea7504513caf3a2ac4d54618627dd78789343f6d13331c09",
+    "simulation/party_health.gd": "619b535925f62da385f73f031e973fe780f8c03afdfe8b1daa194c0000c4f70c",
+    "simulation/party_recruitment.gd": "22bf5f85244a9e672703bd8cb4a286bdae4f036b563773ec2658853569187faa",
+    "simulation/party_social.gd": "7f53661a4f05d9055f615ef6fe03a49c420ae4c6b4e3e3f60a7738af52b4dc8e",
+    "simulation/produce_trade.gd": "189fc579ebfd3bf6eb6f597fe53cb75ea12bc3d35f4df54bc2adc835f0c28b75",
+    "simulation/provisions.gd": "0a07249249ccba1400cd16e4da8de40537e8a9ab964fc8e7d0cfeb31220cea4b",
+    "simulation/remains.gd": "6bf04a1f19299d231dee130687004ac4ba6fc1f6558b2b2dfc1217fd95e60fb4",
+    "simulation/robbery_demand.gd": "70804f8dce7bcb69e444502f4c86dcecefeca5b91c1c92c3ec49a0734313b9f3",
+    "simulation/route_catalog.gd": "f8e42f847e7c2a2328ddf9e8b8ae6b689dcb2ad24d4aa1fb4361ea6fd8e666d7",
+    "simulation/save_store.gd": "db9446601f0f1448367132708de89e80bc19c4994a49c97c1bfa1e4a7413ac75",
+    "simulation/survival_rules.gd": "8d547f56e2838e44ad1368fed0c082ec388530b52eec74807a3740a7490cffeb",
+    "simulation/trail_context.gd": "12ab831f4beaba4c5f9d56552146b0e07d34a1a426191be4f518b1de8e0e6599",
+    "simulation/trail_engine.gd": "bccc1808e67c1ad0ac31b7cec46941c7c9482530e54e05fd89142391153eebe8",
+    "simulation/trail_news.gd": "7cf725ae5554ecde199cce47b22d1b1d6398bd5afdec86c88bb46f29907ff16d",
+    "simulation/travel_direction.gd": "54f0b2bf84d8eba3e953b74faeeb8289a415397a5cc9e63b224c90c26017342e",
+    "simulation/traveler_appearance.gd": "1be477cbb1b7bb23c480fa23717ed305cef48b1d0031db07b66e8e5e0cb65ecb",
+    "simulation/wagon_cache.gd": "b34e897e83156166b9edaff81aa7b5b299f9966b137aaeec03c4ef75b86466e3",
+    "simulation/wagon_guards.gd": "9cb7b1db51d11ea1d9b509ba17d5cc9fd60a3a729905a962998d94c6e19a0f6c",
+    "simulation/wagon_trade.gd": "9bf44ba777ffc00da11effaa02bae60d7977eb3620e35ee4a281b306cdda35f9",
+    "simulation/wanted_system.gd": "c4d843fa7fddae063adaeb6bdd3e7d3ae2161d52f222e4647b68aac8cdd9ce50",
+    "tests/balance_campaign.gd": "96a8e0f70b66a8b22cf56923caf3f1d90a04c9f4350da1439909392106041bc3",
+    "tests/balance_observer.gd": "251e920f750d0337f3570f09c99ea7c24ce213ef435481d778d24a64f4a87e96",
+    "tests/balance_report.gd": "9231b99e3b73012842d2f25e4b947e154fb310e0e3b48be40a5aa95bb5cda20e",
+    "tests/camp_balance_observer.gd": "859104e37a06a831b1662ee3ded54a5f9cb93ce22b986d1e68a1def2acde27f8",
+    "tests/camp_work_audit.gd": "dd8b46f512f9f2b2ed6039904b9e15f4ee956c6b0d7c75db94e450974ea5ad07",
+    "tests/combat_risk_study.gd": "e92bc72e8b0a15984c429615ed13136c3ee2a74980a426b9bbe4f24720a72332",
+    "tests/coordinated_camp_campaign.gd": "b4b8c8f305feecab357f718f32f38aaaad39a9993dc74ad167f414885abeb389",
+    "tests/current_balance_campaign.gd": "c7b5ee1397314be2810b3eb6aa4b2fc3311d1d6e999ef90287166c77233e4ab7",
+    "tests/current_emergency_study.gd": "c465b088ef9935db3de3c510a70917c5ca448251597edfe3e32284f35a87fec6",
+    "tests/current_hunting_study.gd": "deb3463f27e1ff5a59eb13fc7b1d1cfb227bc3bb5eac9283cb40875534dacb51",
+    "tests/current_journey_policy.gd": "ced1bdc9eb8579a7433860ab30177394d179e597e54202667b54398403692cb7",
+    "tests/current_outlaw_journeys.gd": "007bcfc96ca3a565aed21b7770001664914972d232166ad7dff2a3fcf21acd4a",
+    "tests/emergency_journeys.gd": "1875ba41b8361f6db104911cd2193aff1d732cc5d411f923b6f827b74ed15a7b",
+    "tests/emergency_travel_campaign.gd": "ddd71876cae8f0bb4c2bdf192ab309e2d231529f99445e56d18715231caa3f1d",
+    "tests/food_decision_study.gd": "1b7c486453887bab7a7f9560e86718aa82054cc57b68e918e46f98b4857d6df9",
+    "tests/full_trail_balance.gd": "821a06f4c4bbf05f3c47d440314e9c2702e8fda21b67eec1df8de58c131aa1af",
+    "tests/full_trail_policy.gd": "87f21e8592d966bdafcdf57051a712002535bf72a61b5e16b6747d5de7c53cae",
+    "tests/generated_party_journeys.gd": "16b5dbd0812615bdbb2818a7ac785a63f34a4472ba25d58aadd8fd1680b5b991",
+    "tests/historical_diagnostic.gd": "03824e489518e4650c44d5ff9153642413f676925f0b5b7fa48d1eb1aeb4b154",
+    "tests/hunt_balance_food.gd": "700bb5b278256c4f275babf91cf1d7fe05d6c4dd0c998d0bd942b50dd6c912ba",
+    "tests/hunt_balance_observer.gd": "64fdf019db348475f2eee039110220dfbf788eff6347c1c4239e5c8dab675b0c",
+    "tests/hunt_balance_outings.gd": "8523a968e374d9240c92fafcbcc8dba1156f29102a4eef75899b04d19290939e",
+    "tests/hunting_balance_campaign.gd": "85c2bba520d1c923e77566686507f737f008b7a0dbdd437a02c78435932b136f",
+    "tests/journey_trade_policy.gd": "2af3c09bb7d1cdb2c8e222baff902127ddeb4785bf142d3c0f13300d6759c497",
+    "tests/mobile_camp_campaign.gd": "6a52c88af92477b5c45d096e70bbf990081238f4bd10e88d75bebe01ba80fca7",
+    "tests/mobile_camp_observer.gd": "a699a5bf30f5bca6847ddf94b64c450bcac26851009af1985c3915ffe40d3e52",
+    "tests/mount_balance_campaign.gd": "fbd4478f8ec9bdbe3b53d5d9648f4cf0b8f129a5f22d68ebd60be4594fc10941",
+    "tests/mount_provisioned_campaign.gd": "dcec43df3416ab9b2c84dd84f3e8652300a01de8b3d9fe75149d595be66866a8",
+    "tests/outlaw_journeys.gd": "02ceff650cc7b91795d31f020839e71a5ebb39b02601ff63b46a5980e53ce9e0",
+    "tests/pace_aim_no_slaughter.gd": "133f46fb8b9c086f5d12603e0c5a8aa90f2c6c61c684d5023022df415237766b",
+    "tests/pace_aim_study.gd": "a4ada4bdd28ae7ef60c5e3e456aab3e81bd29b28d70cfda34211c32f9d39c645",
+    "tests/replay_policy_cap.gd": "da9cfeba95ae25f8582e117229645a96063b593b4b3ee3d1b2e74d15ef413cc4",
+    "tests/rest_care_diagnostic.gd": "da30fc9c11a8886b14ae033315b8ced97483032efae22481a762adeeacb5f301",
+    "tests/seasonal_pressure_study.gd": "2a976f3ebccee735dc6245c5269627f3e10f414bb0407d13de2f96bba24900b3",
+    "tests/specialist_balance.gd": "56b0a5f2c6b6527519bd423b06460205a144d1e9652da0f77e44ecad0e36c436",
+    "tests/store_crime_journeys.gd": "059bad2ecce6d0f4a8aef372cddea0581b01ddcf2435105e4f8fa599483ceb84",
+    "tests/survival_policy.gd": "779cce1800650563cbc0ae28b28e7fbf73c88928241677ecaf018980f5e4c6e9",
+    "tests/team_survival_study.gd": "d3d772cc1e04940093300ae62fd2456830b734e9651cfb85860b13e86c88f236",
+    "tests/test_animal_work_balance.gd": "b6e2238388e299dd26416617af1b4902d7ff0c4337d8637c5fe3f2eaa9b05aa5",
+    "tests/test_appearance.gd": "45642e60dabf8f5338b904a1efe7e51e6aafd8333f2551ab4693ccb7ecd9c9ca",
+    "tests/test_art.gd": "0be01207dba781cf87dd81f1729d579fd4c0cf5aaa013410d4060c1a0916f75b",
+    "tests/test_bandit_demands.gd": "a80876732472e612bf28108c47c08b105c304938d11b5cf475f0cdab217363a5",
+    "tests/test_branches.gd": "303a0aa11bce1b5c6e4bfeb76892a6f3a69b665dfe5aa6663d05b3bbeb7d6a91",
+    "tests/test_camp_repair_guard.gd": "d8d19b2c5ab75964470fe92748f06595cae899c4e68a51f4241451ed2f530f4d",
+    "tests/test_camp_rest.gd": "4bfb58b7411dc2f1c38e08eac4c66656677dcafe2018d400c4ba044b03e55984",
+    "tests/test_care_combat.gd": "716e6ccfd526a88bef915a1fa2fdd613686f1ad648f67fdbe7d6ff6e9382b30b",
+    "tests/test_character_catalog.gd": "0cd7d4013ca60d3d2e923107f5d661195a31c3567fdc4689a9ef0507e383c496",
+    "tests/test_climate.gd": "dc68ad2c905c25fcfd0a962c9b5852729089b9605fba8d16d62f21edd94f4038",
+    "tests/test_companion_tasks.gd": "7166ddcb906c6c5fa6ec087165788986f37142b7af483c08c848976d287cfac5",
+    "tests/test_companions.gd": "75de2214920d3b873aec50bb561d88b3e634aad8c11214bf18780cef5b582d15",
+    "tests/test_coordinated_camp.gd": "7a6ab8839145cf97c05fcaa7b02e072840f34f42794c3735826b538dd7d2ddbd",
+    "tests/test_crime.gd": "84077043194ecfc85973892f66ab4147c8fd6a96a7d55ed935a6958216a3f57c",
+    "tests/test_current_policy.gd": "c2af29f0dda2439c989f4090ce981824aaa076db3b55bf353b28b6e1b5f5f8c0",
+    "tests/test_departures.gd": "3635c3c9347d461887e9f22bde3504f59ce97bbfe9aa874e9c22210534ae89a5",
+    "tests/test_discards.gd": "4df31623bd9a1fb3ca36efd212745edbb2a8ab109b496bb751b507e453e05e31",
+    "tests/test_disease.gd": "6256bdf995970be44c39ca34c433ef6c24b09bb29ce00b957c307a9701cc5c9a",
+    "tests/test_emergency_travel.gd": "b79315815bf0c674ae9accabeae4ea6cea507daa78241096bea9befd6e3a3d15",
+    "tests/test_field_actions.gd": "e234d6c29554440f7b3033dd651949a09adf569767d39ce5de008bda7f95357a",
+    "tests/test_field_outings.gd": "b26331278cb6a3c46191ed81f3efcf8f6d9665d5a3d3fd8947636160253440ae",
+    "tests/test_full_trail.gd": "5afa3f02f6f71b7f1d9c88c0f3205e7194162b927e6ce809f824835f28bdc375",
+    "tests/test_graves.gd": "b3ff389a53723eac43b0b8bd8ddedac71b8d1f38ca22cdfdc1f7d60a0c228eae",
+    "tests/test_health.gd": "3c859869cd56b9bd3efd026f36bac7ae8ca652e6f9df962e83bdab4b1abd401f",
+    "tests/test_historical_economy.gd": "6cffe2814b8eac1ea4aedf638de290269e6af03572f8547233f89a722ee8949e",
+    "tests/test_horse_country.gd": "3fdd9cc87332057f33fcab12f2a0f1141c9cccbfe26e38a73babe5352be9447d",
+    "tests/test_horse_flight.gd": "07373031d5de141f8b2cf4321265a0b251ca52b3a80916f194fdf05e9085bda6",
+    "tests/test_horse_loads.gd": "9b976f8d2606fd8db3d7b9712c8fb3d48e773743224475cb9385c4d40220236a",
+    "tests/test_horse_trade.gd": "aade7fbcb023e6e4bd5f2cfc13d6b4c555811bf524e0defc68301b2062c3b96d",
+    "tests/test_hunt_time.gd": "c38ac4e6139c4eb1ffbd898b2c04f87ba67341528b2db2e6776e885febc43dd3",
+    "tests/test_hunting.gd": "255202552b291d51a84378de4f60b7023f69c940136a3a9f7962b7484b56b450",
+    "tests/test_hunting_balance.gd": "79514be194d8a34bb12c2fb5800ac91cbe82d85f382d7f80366b5cc072d5f395",
+    "tests/test_inventory.gd": "07685f441d8626ad4496b99aaaf5072850fe2cbd94b8a847c6f813c16b00da4b",
+    "tests/test_journey_policy.gd": "4f9b897a4d0625cd52645bf049ac7e73fd4aaa64c5f26a9fb430dc1fcf0a3425",
+    "tests/test_local_targets.gd": "79a67d2e7fe165a6609b38b3c73a51bc7dbe7747d66250010cb3fc1905796f02",
+    "tests/test_meat_accounting.gd": "ac751acc84710c18984801208201cda8fed3b5b0a228a79f8efe7be17f28a13b",
+    "tests/test_mobile_camp.gd": "a5536ab4b41d7342b7c9384b7a7e9af16342b8ee1fcb026fdffc45a6b1a23c23",
+    "tests/test_motion.gd": "1b68a1a14f3536de3b0dfb02dbe4e43b6661fa269adc8d894fdb608662d51e74",
+    "tests/test_mount_campaign.gd": "691d9aa144d615e31a02dd871d523cbc7d97418fdebe64f1e6e4b25f3c542a9c",
+    "tests/test_mounts.gd": "53695158bbd8cd9671d51361740d63ed3327d0403bcd80fb6d085fc7f028f8f5",
+    "tests/test_news.gd": "19b3a3008feced4721e97abbab2bcef2d7c6b82879898685e85286f7d737c386",
+    "tests/test_nutrition_pack_recovery.gd": "21af8ad1f51e28de168e50065abe8b88b61f0fd231a5a2bb9b5c4b50d03b1632",
+    "tests/test_oxen.gd": "8f86a9269df320f79ab075a13a26aade4bf13b7c9259a90b632cbfda81437f69",
+    "tests/test_party_benefits.gd": "3ebe7fd885bd1e9bdb05d7acb24f300be0207a59df0c9785c6a919db6cb0f278",
+    "tests/test_party_character.gd": "a9ef9d0452c19353d34ddf88e32b7daef79b9e1bd8f898f457b77545ace972a9",
+    "tests/test_party_flaws.gd": "e87836b7d2929bfd8ed4c1930a6ad0dcab86b3725e716f1d0388eb1518dd86ae",
+    "tests/test_party_framework.gd": "2f2ea90154754883eba4d9459c09a8dfb1232a2be75d84d8d92f0ed5f496cec7",
+    "tests/test_party_setup.gd": "5bd76f821e42c62649b36924b3603036f41533c4ff0e9ef28a729e5e69611160",
+    "tests/test_preservation.gd": "e757736f0e5b9e13f85ae8fcc84554cff0c8851f5f8758c134d36de941235528",
+    "tests/test_produce.gd": "601d44ebe64c51cfa93249365c8974300c9c8304b6020b4646db4530157f2d88",
+    "tests/test_provisions.gd": "5c5d7323819202aea6d6aad1f7ac80efae2f2d5466423b9025ebe7b60cb02359",
+    "tests/test_recruitment.gd": "436acecdf46673e617e7c69db82e2cfe50b927609f23ba21e854d118d1aa2253",
+    "tests/test_remains.gd": "39ac254fa658c682dc22fee085b14b6a863ad9aa3d4f4b16325c40e173f38641",
+    "tests/test_repeat_hunts.gd": "9bfe5ec387634a73810ac6525873d8a4b421e11885c770cb3f7a47097128af3c",
+    "tests/test_return_travel.gd": "01bb0ff8d20f9db95a58a03e7c6072414945cb81c28fd36f4724fd45a14445ba",
+    "tests/test_ribbon.gd": "ad6beaac50e9ae56792405946e509fc82c683be7630776a2c884c67c0cab2cb1",
+    "tests/test_robbery_demands.gd": "bee2c44e43c82a01acae9876737ba07c41f6d63ff0cab255e544cce893384592",
+    "tests/test_route.gd": "31cb1d4cf2bd0b484689f34ab83077d0c9db7fe87c6268a2158c2db8a712d2aa",
+    "tests/test_saves.gd": "8d94b2a99c7c023c6ee3af5f1d165217ed5355866dcde7d5008874b7e5205948",
+    "tests/test_simulation.gd": "851209c1c649bca1fd0120f13fb966be4d05da32999f6e49659bdfd621b42bc3",
+    "tests/test_social.gd": "f82046a0fa02b447fbcb9ab8acb7516ae0fd0b8d9fefd8edc03e770dcec38293",
+    "tests/test_survival.gd": "1512e49f6d19f7f0815d7c0caa804bdaec5751a4f2b9d7ca8abb75c8afb0d829",
+    "tests/test_trail_context.gd": "d1a0fb03219fa7da4f5ce4a89cd032f60836124b6e8fbfc276bb7de4a0d0f253",
+    "tests/test_ui.gd": "dd4e6ed39236cb6971dd67e0f9a0d0782ddbac7f3ee05527d32f7f61e5d7f3e2",
+    "tests/test_wage_autopay.gd": "1566646aceaf85567412554d49daebb3f4614c8fc3e0c55808f0b310e6923855",
+    "tests/test_wagon_guards.gd": "b67e7adcd1d1ea88305cc3aa3fc46dad9466d02d31a34d7b9f668817e8b5c3aa",
+    "tests/test_wagon_sale_display.gd": "bbd6a353ec92a8f2d3fbf56d0401ca031d9585743fb8d54be475121145d37e07",
+    "tests/test_wagon_trade.gd": "17d75850b9e699acf430d249abf980312d2ed02730380176082b6ec7030fb970",
+    "tests/test_walking.gd": "4968fa0fe88d77af7330575f4b6baba1014ce2dc5e56706c2e48e8d850882b0c",
+    "tests/test_wanted.gd": "57930d595e7c41fc20d94974e1456c52a299e164b229453f3acc8bc3bca911e7",
+    "tests/test_winter.gd": "2ef7344e79f559efad1e28e952d65443d09979ffaecf457400bc644ce3ae061a",
+    "tests/test_working_team_policy.gd": "0acf5afa14f5f9901ab7201ce7252f86a851dfe1de3f441d680c3c474d0c5bf0"
+  },
+  "groups": [
+    {
+      "phase": "development",
+      "policy": "mobile",
+      "profession": "banker",
+      "runs": 8,
+      "arrivals": 8,
+      "intact_arrivals": 8,
+      "outcomes": {
+        "arrived": 8
+      },
+      "paired_arrivals": {
+        "both_arrived": 8
+      },
+      "paired_day_changes": [
+        5,
+        -10,
+        3,
+        -14,
+        3,
+        -85,
+        -18,
+        2
+      ],
+      "median_paired_day_change": -4.0,
+      "paired_stationary_changes": [
+        9,
+        -3,
+        -3,
+        -3,
+        9,
+        -83,
+        -18,
+        -1
+      ],
+      "median_paired_stationary_change": -3.0,
+      "paired_progress_day_changes": [
+        -4,
+        -7,
+        6,
+        -11,
+        -6,
+        -2,
+        0,
+        3
+      ],
+      "mean_original_survivors": 5,
+      "mean_underfed_days": 0,
+      "motion_totals": {
+        "away_travel_days": 22,
+        "camp_action_days": 327,
+        "distance_progress_days": 1111,
+        "moving_hunt_days": 15,
+        "moving_hunt_food_units": 178,
+        "moving_returned_food_units": 186,
+        "multi_job_days": 183,
+        "stationary_days": 588,
+        "support_during_hunts": 2,
+        "travel_attempt_days": 1215
+      },
+      "actions": {
+        "care": 32,
+        "event_or_other": 261,
+        "forage": 29,
+        "rest": 256,
+        "travel": 1215,
+        "dry": 6,
+        "hunt": 4
+      },
+      "camp_work": {
+        "care_kits": 15,
+        "drying_batches": 6,
+        "food_processed": 300,
+        "food_retained": 270,
+        "forager_days": 365,
+        "nursing_visits": 15,
+        "rest_person_days": 1165,
+        "salt_used": 30
+      },
+      "dispatches": 30,
+      "field_deaths": 0,
+      "returned_catch_food": 289
+    },
+    {
+      "phase": "development",
+      "policy": "mobile",
+      "profession": "carpenter",
+      "runs": 8,
+      "arrivals": 7,
+      "intact_arrivals": 7,
+      "outcomes": {
+        "arrived": 7,
+        "lost": 1
+      },
+      "paired_arrivals": {
+        "both_arrived": 4,
+        "strategy_only": 3,
+        "neither_arrived": 1
+      },
+      "paired_day_changes": [
+        5,
+        -10,
+        3,
+        -14
+      ],
+      "median_paired_day_change": -3.5,
+      "paired_stationary_changes": [
+        9,
+        -3,
+        -3,
+        -3
+      ],
+      "median_paired_stationary_change": -3.0,
+      "paired_progress_day_changes": [
+        -4,
+        -7,
+        6,
+        -11
+      ],
+      "mean_original_survivors": 4.38,
+      "mean_underfed_days": 8.12,
+      "motion_totals": {
+        "away_travel_days": 22,
+        "camp_action_days": 474,
+        "distance_progress_days": 1101,
+        "moving_hunt_days": 13,
+        "moving_hunt_food_units": 194,
+        "moving_returned_food_units": 146,
+        "multi_job_days": 304,
+        "stationary_days": 737,
+        "support_during_hunts": 120,
+        "travel_attempt_days": 1203
+      },
+      "actions": {
+        "care": 29,
+        "event_or_other": 263,
+        "forage": 31,
+        "rest": 260,
+        "travel": 1203,
+        "dry": 8,
+        "hunt": 146
+      },
+      "camp_work": {
+        "care_kits": 14,
+        "drying_batches": 5,
+        "food_processed": 250,
+        "food_retained": 225,
+        "forager_days": 608,
+        "nursing_visits": 14,
+        "rest_person_days": 1178,
+        "salt_used": 25
+      },
+      "dispatches": 30,
+      "field_deaths": 0,
+      "returned_catch_food": 363
+    },
+    {
+      "phase": "development",
+      "policy": "mobile",
+      "profession": "farmer",
+      "runs": 8,
+      "arrivals": 1,
+      "intact_arrivals": 0,
+      "outcomes": {
+        "lost": 7,
+        "arrived": 1
+      },
+      "paired_arrivals": {
+        "neither_arrived": 7,
+        "strategy_only": 1
+      },
+      "paired_day_changes": [],
+      "median_paired_day_change": null,
+      "paired_stationary_changes": [],
+      "median_paired_stationary_change": null,
+      "paired_progress_day_changes": [],
+      "mean_original_survivors": 0.38,
+      "mean_underfed_days": 28.75,
+      "motion_totals": {
+        "away_travel_days": 112,
+        "camp_action_days": 697,
+        "distance_progress_days": 916,
+        "moving_hunt_days": 16,
+        "moving_hunt_food_units": 257,
+        "moving_returned_food_units": 165,
+        "multi_job_days": 232,
+        "stationary_days": 874,
+        "support_during_hunts": 57,
+        "travel_attempt_days": 1002
+      },
+      "actions": {
+        "care": 17,
+        "dry": 9,
+        "event_or_other": 177,
+        "forage": 55,
+        "hunt": 406,
+        "rest": 210,
+        "travel": 1002
+      },
+      "camp_work": {
+        "care_kits": 9,
+        "drying_batches": 16,
+        "food_processed": 606,
+        "food_retained": 525,
+        "forager_days": 471,
+        "nursing_visits": 9,
+        "rest_person_days": 1081,
+        "salt_used": 44
+      },
+      "dispatches": 32,
+      "field_deaths": 1,
+      "returned_catch_food": 270
+    },
+    {
+      "phase": "development",
+      "policy": "parallel",
+      "profession": "banker",
+      "runs": 8,
+      "arrivals": 8,
+      "intact_arrivals": 7,
+      "outcomes": {
+        "arrived": 8
+      },
+      "paired_arrivals": {
+        "both_arrived": 8
+      },
+      "paired_day_changes": [
+        5,
+        -10,
+        3,
+        -14,
+        3,
+        -85,
+        -13,
+        1
+      ],
+      "median_paired_day_change": -4.5,
+      "paired_stationary_changes": [
+        9,
+        -3,
+        -3,
+        -3,
+        9,
+        -82,
+        -13,
+        -1
+      ],
+      "median_paired_stationary_change": -3.0,
+      "paired_progress_day_changes": [
+        -4,
+        -7,
+        6,
+        -11,
+        -6,
+        -3,
+        0,
+        2
+      ],
+      "mean_original_survivors": 4.88,
+      "mean_underfed_days": 0,
+      "motion_totals": {
+        "away_travel_days": 0,
+        "camp_action_days": 326,
+        "distance_progress_days": 1109,
+        "moving_hunt_days": 0,
+        "moving_hunt_food_units": 0,
+        "moving_returned_food_units": 0,
+        "multi_job_days": 181,
+        "stationary_days": 594,
+        "support_during_hunts": 1,
+        "travel_attempt_days": 1213
+      },
+      "actions": {
+        "care": 32,
+        "event_or_other": 268,
+        "forage": 30,
+        "rest": 254,
+        "travel": 1213,
+        "dry": 7,
+        "hunt": 3
+      },
+      "camp_work": {
+        "care_kits": 15,
+        "drying_batches": 6,
+        "food_processed": 300,
+        "food_retained": 270,
+        "forager_days": 362,
+        "nursing_visits": 15,
+        "rest_person_days": 1176,
+        "salt_used": 30
+      },
+      "dispatches": 0,
+      "field_deaths": 0,
+      "returned_catch_food": 0
+    },
+    {
+      "phase": "development",
+      "policy": "parallel",
+      "profession": "carpenter",
+      "runs": 8,
+      "arrivals": 7,
+      "intact_arrivals": 6,
+      "outcomes": {
+        "arrived": 7,
+        "lost": 1
+      },
+      "paired_arrivals": {
+        "both_arrived": 4,
+        "strategy_only": 3,
+        "neither_arrived": 1
+      },
+      "paired_day_changes": [
+        5,
+        -10,
+        3,
+        -14
+      ],
+      "median_paired_day_change": -3.5,
+      "paired_stationary_changes": [
+        9,
+        -3,
+        -3,
+        -3
+      ],
+      "median_paired_stationary_change": -3.0,
+      "paired_progress_day_changes": [
+        -4,
+        -7,
+        6,
+        -11
+      ],
+      "mean_original_survivors": 4,
+      "mean_underfed_days": 11.88,
+      "motion_totals": {
+        "away_travel_days": 0,
+        "camp_action_days": 574,
+        "distance_progress_days": 1099,
+        "moving_hunt_days": 0,
+        "moving_hunt_food_units": 0,
+        "moving_returned_food_units": 0,
+        "multi_job_days": 378,
+        "stationary_days": 841,
+        "support_during_hunts": 206,
+        "travel_attempt_days": 1201
+      },
+      "actions": {
+        "care": 29,
+        "event_or_other": 267,
+        "forage": 34,
+        "rest": 256,
+        "travel": 1201,
+        "dry": 7,
+        "hunt": 248
+      },
+      "camp_work": {
+        "care_kits": 14,
+        "drying_batches": 5,
+        "food_processed": 250,
+        "food_retained": 225,
+        "forager_days": 767,
+        "nursing_visits": 14,
+        "rest_person_days": 1179,
+        "salt_used": 25
+      },
+      "dispatches": 0,
+      "field_deaths": 0,
+      "returned_catch_food": 0
+    },
+    {
+      "phase": "development",
+      "policy": "parallel",
+      "profession": "farmer",
+      "runs": 8,
+      "arrivals": 0,
+      "intact_arrivals": 0,
+      "outcomes": {
+        "lost": 8
+      },
+      "paired_arrivals": {
+        "neither_arrived": 8
+      },
+      "paired_day_changes": [],
+      "median_paired_day_change": null,
+      "paired_stationary_changes": [],
+      "median_paired_stationary_change": null,
+      "paired_progress_day_changes": [],
+      "mean_original_survivors": 0,
+      "mean_underfed_days": 30.5,
+      "motion_totals": {
+        "away_travel_days": 0,
+        "camp_action_days": 781,
+        "distance_progress_days": 879,
+        "moving_hunt_days": 0,
+        "moving_hunt_food_units": 0,
+        "moving_returned_food_units": 0,
+        "multi_job_days": 261,
+        "stationary_days": 946,
+        "support_during_hunts": 91,
+        "travel_attempt_days": 958
+      },
+      "actions": {
+        "care": 18,
+        "dry": 10,
+        "event_or_other": 165,
+        "forage": 48,
+        "hunt": 501,
+        "rest": 204,
+        "travel": 958
+      },
+      "camp_work": {
+        "care_kits": 10,
+        "drying_batches": 15,
+        "food_processed": 642,
+        "food_retained": 561,
+        "forager_days": 528,
+        "nursing_visits": 10,
+        "rest_person_days": 1164,
+        "salt_used": 50
+      },
+      "dispatches": 0,
+      "field_deaths": 0,
+      "returned_catch_food": 0
+    },
+    {
+      "phase": "development",
+      "policy": "serial",
+      "profession": "banker",
+      "runs": 8,
+      "arrivals": 8,
+      "intact_arrivals": 7,
+      "outcomes": {
+        "arrived": 8
+      },
+      "paired_arrivals": {
+        "both_arrived": 8
+      },
+      "paired_day_changes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "median_paired_day_change": 0.0,
+      "paired_stationary_changes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "median_paired_stationary_change": 0.0,
+      "paired_progress_day_changes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_original_survivors": 4.88,
+      "mean_underfed_days": 2,
+      "motion_totals": {
+        "away_travel_days": 0,
+        "camp_action_days": 409,
+        "distance_progress_days": 1132,
+        "moving_hunt_days": 0,
+        "moving_hunt_food_units": 0,
+        "moving_returned_food_units": 0,
+        "multi_job_days": 0,
+        "stationary_days": 681,
+        "support_during_hunts": 0,
+        "travel_attempt_days": 1236
+      },
+      "actions": {
+        "care": 26,
+        "event_or_other": 272,
+        "forage": 39,
+        "rest": 257,
+        "travel": 1236,
+        "dry": 25,
+        "hunt": 62
+      },
+      "camp_work": {
+        "care_kits": 0,
+        "drying_batches": 0,
+        "food_processed": 0,
+        "food_retained": 0,
+        "forager_days": 0,
+        "nursing_visits": 0,
+        "rest_person_days": 107,
+        "salt_used": 0
+      },
+      "dispatches": 0,
+      "field_deaths": 0,
+      "returned_catch_food": 0
+    },
+    {
+      "phase": "development",
+      "policy": "serial",
+      "profession": "carpenter",
+      "runs": 8,
+      "arrivals": 4,
+      "intact_arrivals": 4,
+      "outcomes": {
+        "arrived": 4,
+        "lost": 3,
+        "year_limit": 1
+      },
+      "paired_arrivals": {
+        "both_arrived": 4,
+        "neither_arrived": 4
+      },
+      "paired_day_changes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "median_paired_day_change": 0.0,
+      "paired_stationary_changes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "median_paired_stationary_change": 0.0,
+      "paired_progress_day_changes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_original_survivors": 2.62,
+      "mean_underfed_days": 14.38,
+      "motion_totals": {
+        "away_travel_days": 0,
+        "camp_action_days": 580,
+        "distance_progress_days": 1068,
+        "moving_hunt_days": 0,
+        "moving_hunt_food_units": 0,
+        "moving_returned_food_units": 0,
+        "multi_job_days": 0,
+        "stationary_days": 830,
+        "support_during_hunts": 0,
+        "travel_attempt_days": 1164
+      },
+      "actions": {
+        "care": 27,
+        "event_or_other": 250,
+        "forage": 85,
+        "rest": 242,
+        "travel": 1164,
+        "dry": 27,
+        "hunt": 199
+      },
+      "camp_work": {
+        "care_kits": 0,
+        "drying_batches": 0,
+        "food_processed": 0,
+        "food_retained": 0,
+        "forager_days": 0,
+        "nursing_visits": 0,
+        "rest_person_days": 329,
+        "salt_used": 0
+      },
+      "dispatches": 0,
+      "field_deaths": 0,
+      "returned_catch_food": 0
+    },
+    {
+      "phase": "development",
+      "policy": "serial",
+      "profession": "farmer",
+      "runs": 8,
+      "arrivals": 0,
+      "intact_arrivals": 0,
+      "outcomes": {
+        "lost": 8
+      },
+      "paired_arrivals": {
+        "neither_arrived": 8
+      },
+      "paired_day_changes": [],
+      "median_paired_day_change": null,
+      "paired_stationary_changes": [],
+      "median_paired_stationary_change": null,
+      "paired_progress_day_changes": [],
+      "mean_original_survivors": 0,
+      "mean_underfed_days": 30.75,
+      "motion_totals": {
+        "away_travel_days": 0,
+        "camp_action_days": 814,
+        "distance_progress_days": 918,
+        "moving_hunt_days": 0,
+        "moving_hunt_food_units": 0,
+        "moving_returned_food_units": 0,
+        "multi_job_days": 0,
+        "stationary_days": 1001,
+        "support_during_hunts": 0,
+        "travel_attempt_days": 998
+      },
+      "actions": {
+        "care": 20,
+        "dry": 40,
+        "event_or_other": 187,
+        "forage": 55,
+        "hunt": 435,
+        "rest": 264,
+        "travel": 998
+      },
+      "camp_work": {
+        "care_kits": 0,
+        "drying_batches": 0,
+        "food_processed": 0,
+        "food_retained": 0,
+        "forager_days": 0,
+        "nursing_visits": 0,
+        "rest_person_days": 567,
+        "salt_used": 0
+      },
+      "dispatches": 0,
+      "field_deaths": 0,
+      "returned_catch_food": 0
+    },
+    {
+      "phase": "validation",
+      "policy": "mobile",
+      "profession": "banker",
+      "runs": 8,
+      "arrivals": 7,
+      "intact_arrivals": 7,
+      "outcomes": {
+        "arrived": 7,
+        "lost": 1
+      },
+      "paired_arrivals": {
+        "both_arrived": 6,
+        "strategy_only": 1,
+        "serial_only": 1
+      },
+      "paired_day_changes": [
+        17,
+        -98,
+        5,
+        -5,
+        -17,
+        0
+      ],
+      "median_paired_day_change": -2.5,
+      "paired_stationary_changes": [
+        16,
+        -84,
+        5,
+        -6,
+        -4,
+        -4
+      ],
+      "median_paired_stationary_change": -4.0,
+      "paired_progress_day_changes": [
+        1,
+        -14,
+        0,
+        1,
+        -13,
+        4
+      ],
+      "mean_original_survivors": 4.38,
+      "mean_underfed_days": 5.62,
+      "motion_totals": {
+        "away_travel_days": 10,
+        "camp_action_days": 370,
+        "distance_progress_days": 1084,
+        "moving_hunt_days": 10,
+        "moving_hunt_food_units": 118,
+        "moving_returned_food_units": 111,
+        "multi_job_days": 193,
+        "stationary_days": 622,
+        "support_during_hunts": 31,
+        "travel_attempt_days": 1186
+      },
+      "actions": {
+        "care": 26,
+        "dry": 5,
+        "event_or_other": 252,
+        "forage": 25,
+        "rest": 235,
+        "travel": 1186,
+        "hunt": 79
+      },
+      "camp_work": {
+        "care_kits": 15,
+        "drying_batches": 5,
+        "food_processed": 184,
+        "food_retained": 156,
+        "forager_days": 387,
+        "nursing_visits": 15,
+        "rest_person_days": 1088,
+        "salt_used": 10
+      },
+      "dispatches": 10,
+      "field_deaths": 0,
+      "returned_catch_food": 111
+    },
+    {
+      "phase": "validation",
+      "policy": "mobile",
+      "profession": "carpenter",
+      "runs": 8,
+      "arrivals": 6,
+      "intact_arrivals": 5,
+      "outcomes": {
+        "arrived": 6,
+        "lost": 2
+      },
+      "paired_arrivals": {
+        "both_arrived": 3,
+        "strategy_only": 3,
+        "neither_arrived": 1,
+        "serial_only": 1
+      },
+      "paired_day_changes": [
+        22,
+        -33,
+        -5
+      ],
+      "median_paired_day_change": -5,
+      "paired_stationary_changes": [
+        20,
+        -35,
+        -6
+      ],
+      "median_paired_stationary_change": -6,
+      "paired_progress_day_changes": [
+        2,
+        2,
+        1
+      ],
+      "mean_original_survivors": 3.62,
+      "mean_underfed_days": 10.62,
+      "motion_totals": {
+        "away_travel_days": 9,
+        "camp_action_days": 500,
+        "distance_progress_days": 1054,
+        "moving_hunt_days": 8,
+        "moving_hunt_food_units": 129,
+        "moving_returned_food_units": 124,
+        "multi_job_days": 231,
+        "stationary_days": 736,
+        "support_during_hunts": 77,
+        "travel_attempt_days": 1154
+      },
+      "actions": {
+        "care": 26,
+        "dry": 3,
+        "event_or_other": 236,
+        "forage": 38,
+        "hunt": 195,
+        "rest": 238,
+        "travel": 1154
+      },
+      "camp_work": {
+        "care_kits": 14,
+        "drying_batches": 10,
+        "food_processed": 430,
+        "food_retained": 378,
+        "forager_days": 476,
+        "nursing_visits": 14,
+        "rest_person_days": 1235,
+        "salt_used": 35
+      },
+      "dispatches": 13,
+      "field_deaths": 0,
+      "returned_catch_food": 187
+    },
+    {
+      "phase": "validation",
+      "policy": "mobile",
+      "profession": "farmer",
+      "runs": 8,
+      "arrivals": 0,
+      "intact_arrivals": 0,
+      "outcomes": {
+        "lost": 8
+      },
+      "paired_arrivals": {
+        "neither_arrived": 8
+      },
+      "paired_day_changes": [],
+      "median_paired_day_change": null,
+      "paired_stationary_changes": [],
+      "median_paired_stationary_change": null,
+      "paired_progress_day_changes": [],
+      "mean_original_survivors": 0,
+      "mean_underfed_days": 27.38,
+      "motion_totals": {
+        "away_travel_days": 56,
+        "camp_action_days": 518,
+        "distance_progress_days": 815,
+        "moving_hunt_days": 22,
+        "moving_hunt_food_units": 277,
+        "moving_returned_food_units": 212,
+        "multi_job_days": 222,
+        "stationary_days": 687,
+        "support_during_hunts": 47,
+        "travel_attempt_days": 886
+      },
+      "actions": {
+        "care": 15,
+        "event_or_other": 169,
+        "forage": 70,
+        "hunt": 275,
+        "rest": 151,
+        "travel": 886,
+        "dry": 7
+      },
+      "camp_work": {
+        "care_kits": 10,
+        "drying_batches": 11,
+        "food_processed": 529,
+        "food_retained": 463,
+        "forager_days": 450,
+        "nursing_visits": 10,
+        "rest_person_days": 848,
+        "salt_used": 40
+      },
+      "dispatches": 40,
+      "field_deaths": 0,
+      "returned_catch_food": 299
+    },
+    {
+      "phase": "validation",
+      "policy": "parallel",
+      "profession": "banker",
+      "runs": 8,
+      "arrivals": 7,
+      "intact_arrivals": 7,
+      "outcomes": {
+        "arrived": 7,
+        "lost": 1
+      },
+      "paired_arrivals": {
+        "both_arrived": 6,
+        "strategy_only": 1,
+        "serial_only": 1
+      },
+      "paired_day_changes": [
+        17,
+        -98,
+        5,
+        -5,
+        -17,
+        0
+      ],
+      "median_paired_day_change": -2.5,
+      "paired_stationary_changes": [
+        16,
+        -84,
+        5,
+        -6,
+        -4,
+        -3
+      ],
+      "median_paired_stationary_change": -3.5,
+      "paired_progress_day_changes": [
+        1,
+        -14,
+        0,
+        1,
+        -13,
+        3
+      ],
+      "mean_original_survivors": 4.38,
+      "mean_underfed_days": 5.5,
+      "motion_totals": {
+        "away_travel_days": 0,
+        "camp_action_days": 367,
+        "distance_progress_days": 1084,
+        "moving_hunt_days": 0,
+        "moving_hunt_food_units": 0,
+        "moving_returned_food_units": 0,
+        "multi_job_days": 190,
+        "stationary_days": 619,
+        "support_during_hunts": 28,
+        "travel_attempt_days": 1186
+      },
+      "actions": {
+        "care": 26,
+        "dry": 5,
+        "event_or_other": 252,
+        "forage": 25,
+        "rest": 235,
+        "travel": 1186,
+        "hunt": 76
+      },
+      "camp_work": {
+        "care_kits": 15,
+        "drying_batches": 5,
+        "food_processed": 184,
+        "food_retained": 156,
+        "forager_days": 381,
+        "nursing_visits": 15,
+        "rest_person_days": 1088,
+        "salt_used": 10
+      },
+      "dispatches": 0,
+      "field_deaths": 0,
+      "returned_catch_food": 0
+    },
+    {
+      "phase": "validation",
+      "policy": "parallel",
+      "profession": "carpenter",
+      "runs": 8,
+      "arrivals": 6,
+      "intact_arrivals": 5,
+      "outcomes": {
+        "arrived": 6,
+        "lost": 2
+      },
+      "paired_arrivals": {
+        "both_arrived": 3,
+        "strategy_only": 3,
+        "neither_arrived": 1,
+        "serial_only": 1
+      },
+      "paired_day_changes": [
+        22,
+        -33,
+        -5
+      ],
+      "median_paired_day_change": -5,
+      "paired_stationary_changes": [
+        20,
+        -35,
+        -6
+      ],
+      "median_paired_stationary_change": -6,
+      "paired_progress_day_changes": [
+        2,
+        2,
+        1
+      ],
+      "mean_original_survivors": 3.62,
+      "mean_underfed_days": 11.75,
+      "motion_totals": {
+        "away_travel_days": 0,
+        "camp_action_days": 534,
+        "distance_progress_days": 1054,
+        "moving_hunt_days": 0,
+        "moving_hunt_food_units": 0,
+        "moving_returned_food_units": 0,
+        "multi_job_days": 278,
+        "stationary_days": 773,
+        "support_during_hunts": 110,
+        "travel_attempt_days": 1154
+      },
+      "actions": {
+        "care": 26,
+        "dry": 3,
+        "event_or_other": 239,
+        "forage": 39,
+        "hunt": 229,
+        "rest": 237,
+        "travel": 1154
+      },
+      "camp_work": {
+        "care_kits": 14,
+        "drying_batches": 9,
+        "food_processed": 406,
+        "food_retained": 359,
+        "forager_days": 557,
+        "nursing_visits": 14,
+        "rest_person_days": 1207,
+        "salt_used": 35
+      },
+      "dispatches": 0,
+      "field_deaths": 0,
+      "returned_catch_food": 0
+    },
+    {
+      "phase": "validation",
+      "policy": "parallel",
+      "profession": "farmer",
+      "runs": 8,
+      "arrivals": 0,
+      "intact_arrivals": 0,
+      "outcomes": {
+        "lost": 8
+      },
+      "paired_arrivals": {
+        "neither_arrived": 8
+      },
+      "paired_day_changes": [],
+      "median_paired_day_change": null,
+      "paired_stationary_changes": [],
+      "median_paired_stationary_change": null,
+      "paired_progress_day_changes": [],
+      "mean_original_survivors": 0,
+      "mean_underfed_days": 32,
+      "motion_totals": {
+        "away_travel_days": 0,
+        "camp_action_days": 583,
+        "distance_progress_days": 799,
+        "moving_hunt_days": 0,
+        "moving_hunt_food_units": 0,
+        "moving_returned_food_units": 0,
+        "multi_job_days": 261,
+        "stationary_days": 755,
+        "support_during_hunts": 97,
+        "travel_attempt_days": 868
+      },
+      "actions": {
+        "care": 16,
+        "dry": 9,
+        "event_or_other": 172,
+        "forage": 64,
+        "hunt": 365,
+        "rest": 129,
+        "travel": 868
+      },
+      "camp_work": {
+        "care_kits": 10,
+        "drying_batches": 5,
+        "food_processed": 250,
+        "food_retained": 225,
+        "forager_days": 526,
+        "nursing_visits": 10,
+        "rest_person_days": 814,
+        "salt_used": 25
+      },
+      "dispatches": 0,
+      "field_deaths": 0,
+      "returned_catch_food": 0
+    },
+    {
+      "phase": "validation",
+      "policy": "serial",
+      "profession": "banker",
+      "runs": 8,
+      "arrivals": 7,
+      "intact_arrivals": 6,
+      "outcomes": {
+        "arrived": 7,
+        "lost": 1
+      },
+      "paired_arrivals": {
+        "both_arrived": 7,
+        "neither_arrived": 1
+      },
+      "paired_day_changes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "median_paired_day_change": 0,
+      "paired_stationary_changes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "median_paired_stationary_change": 0,
+      "paired_progress_day_changes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_original_survivors": 4.25,
+      "mean_underfed_days": 5.88,
+      "motion_totals": {
+        "away_travel_days": 0,
+        "camp_action_days": 446,
+        "distance_progress_days": 1125,
+        "moving_hunt_days": 0,
+        "moving_hunt_food_units": 0,
+        "moving_returned_food_units": 0,
+        "multi_job_days": 0,
+        "stationary_days": 716,
+        "support_during_hunts": 0,
+        "travel_attempt_days": 1227
+      },
+      "actions": {
+        "care": 31,
+        "event_or_other": 270,
+        "forage": 39,
+        "rest": 284,
+        "travel": 1227,
+        "dry": 26,
+        "hunt": 66
+      },
+      "camp_work": {
+        "care_kits": 0,
+        "drying_batches": 0,
+        "food_processed": 0,
+        "food_retained": 0,
+        "forager_days": 0,
+        "nursing_visits": 0,
+        "rest_person_days": 421,
+        "salt_used": 0
+      },
+      "dispatches": 0,
+      "field_deaths": 0,
+      "returned_catch_food": 0
+    },
+    {
+      "phase": "validation",
+      "policy": "serial",
+      "profession": "carpenter",
+      "runs": 8,
+      "arrivals": 4,
+      "intact_arrivals": 2,
+      "outcomes": {
+        "arrived": 4,
+        "lost": 4
+      },
+      "paired_arrivals": {
+        "both_arrived": 4,
+        "neither_arrived": 4
+      },
+      "paired_day_changes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "median_paired_day_change": 0.0,
+      "paired_stationary_changes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "median_paired_stationary_change": 0.0,
+      "paired_progress_day_changes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_original_survivors": 2,
+      "mean_underfed_days": 22.75,
+      "motion_totals": {
+        "away_travel_days": 0,
+        "camp_action_days": 607,
+        "distance_progress_days": 978,
+        "moving_hunt_days": 0,
+        "moving_hunt_food_units": 0,
+        "moving_returned_food_units": 0,
+        "multi_job_days": 0,
+        "stationary_days": 837,
+        "support_during_hunts": 0,
+        "travel_attempt_days": 1067
+      },
+      "actions": {
+        "care": 31,
+        "event_or_other": 230,
+        "forage": 85,
+        "rest": 200,
+        "travel": 1067,
+        "dry": 30,
+        "hunt": 261
+      },
+      "camp_work": {
+        "care_kits": 0,
+        "drying_batches": 0,
+        "food_processed": 0,
+        "food_retained": 0,
+        "forager_days": 0,
+        "nursing_visits": 0,
+        "rest_person_days": 276,
+        "salt_used": 0
+      },
+      "dispatches": 0,
+      "field_deaths": 0,
+      "returned_catch_food": 0
+    },
+    {
+      "phase": "validation",
+      "policy": "serial",
+      "profession": "farmer",
+      "runs": 8,
+      "arrivals": 0,
+      "intact_arrivals": 0,
+      "outcomes": {
+        "lost": 8
+      },
+      "paired_arrivals": {
+        "neither_arrived": 8
+      },
+      "paired_day_changes": [],
+      "median_paired_day_change": null,
+      "paired_stationary_changes": [],
+      "median_paired_stationary_change": null,
+      "paired_progress_day_changes": [],
+      "mean_original_survivors": 0,
+      "mean_underfed_days": 35.5,
+      "motion_totals": {
+        "away_travel_days": 0,
+        "camp_action_days": 721,
+        "distance_progress_days": 818,
+        "moving_hunt_days": 0,
+        "moving_hunt_food_units": 0,
+        "moving_returned_food_units": 0,
+        "multi_job_days": 0,
+        "stationary_days": 887,
+        "support_during_hunts": 0,
+        "travel_attempt_days": 889
+      },
+      "actions": {
+        "care": 25,
+        "dry": 42,
+        "event_or_other": 166,
+        "forage": 89,
+        "hunt": 417,
+        "rest": 148,
+        "travel": 889
+      },
+      "camp_work": {
+        "care_kits": 0,
+        "drying_batches": 0,
+        "food_processed": 0,
+        "food_retained": 0,
+        "forager_days": 0,
+        "nursing_visits": 0,
+        "rest_person_days": 236,
+        "salt_used": 0
+      },
+      "dispatches": 0,
+      "field_deaths": 0,
+      "returned_catch_food": 0
+    }
+  ]
+}

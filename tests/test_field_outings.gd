@@ -26,6 +26,13 @@ func day(g):
 func configure(g):
  g.party_health.daily_onset_chance=0;g.survival.forced_weather="clear";g.survival.data.event_chance=0
  g.field_outings.rules.mishap_chance=0;g.field_outings.rules.hit_chance=0;g.field_outings.rules.hunter_bonus=0;g.field_outings.rules.bandit_daily_chance=0
+func hunting_shots(g) -> int:
+ var pattern:=RegEx.new();pattern.compile("fired ([0-9]+) shot")
+ var total:=0
+ for line in g.journal:
+  var result=pattern.search(str(line))
+  if result!=null:total+=int(result.get_string(1))
+ return total
 func run():
  var store=Store.new()
  var g=party()
@@ -67,7 +74,7 @@ func run():
   configure(loaded);day(g);day(loaded)
   check(store.capture(g)==store.capture(loaded),"Return, supplies, health and random streams match after loading")
  check(g.field_outings.record.trips.is_empty() and g.state.party_size==5 and not g.party_health.members[1].has("away"),"Foot hunter returns to the waiting party on the due day")
- check(g.state.food==485 and g.state.clothing==5 and g.state.bullets==99,"Camp and field meals/ammunition are charged once; unused pack supplies return")
+ check(g.state.food==485 and g.state.clothing==5 and g.state.bullets==100-hunting_shots(g) and hunting_shots(g)<=5 and g.journal.any(func(line):return "Found " in line),"Camp and field meals/ammunition are charged once; unused pack supplies return")
  g=party()
  var money: int=roundi(g.state.money*100)
  g.characters.profiles[1].specials=["Mercenary"]
@@ -255,7 +262,7 @@ func run():
   fighter.field_outings.record.trips[0].camp.camp_random=str(random.state)
   day(fighter)
   if fighter.field_outings.record.trips.is_empty() and fighter.combat.history.any(func(c):return c.outcome=="won"):
-   check(fighter.state.bullets==89 and fighter.state.horses==2 and fighter.state.party_size==5,"Winning solo defense spends ten field bullets plus one hunting shot, restores unused ammunition and returns one actual mount")
+   check(fighter.state.bullets==90-hunting_shots(fighter) and hunting_shots(fighter)<=5 and fighter.state.horses==2 and fighter.state.party_size==5,"Winning solo defense spends ten field bullets plus actual hunting shots, restores unused ammunition and returns one actual mount")
    check(fighter.combat.history.back().victim==1 and fighter.journal.any(func(line):return "Bandits encountered" in line),"Only the actual traveler fought; their encounter enters history on return")
    won=true;break
  check(won,"A properly armed Bold outrider can win an actual bandit encounter")

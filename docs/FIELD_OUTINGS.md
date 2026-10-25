@@ -79,3 +79,8 @@ The archived outlaw actor exposed one scurvy/rest loop after the carrying change
 ![Outfitting a mounted trip](field-outfitting.png)
 
 ![An uncertain missing-person notice](field-missing-notice.png)
+
+
+## Follow-up shots
+
+Companions can now shoot again after a miss while game remains visible, up to the leader-configured five shots per day and their actual ammunition. A miss can scare the animal away; empty searches spend no bullets. The shared finite encounter model and return-search fraction limit available animals. Every successful animal is removed and real pack/cargo room bounds recovery. See [follow-up shots and evidence](COMPANION_REPEAT_SHOTS.md).

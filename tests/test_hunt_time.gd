@@ -49,28 +49,28 @@ func run():
  var copy=Save.new().restore(old)
  check(copy!=null and copy.state==Save.new().normalize(old.state) and str(copy.rng.state)==old.random,"Genuine previous-rule active outing restores stock, state and main RNG")
  if copy!=null:check(copy.field_outings.snapshot()==Save.new().normalize(old.field_outings),"Migration preserves the actual trip and private random stream")
- var first_day_same:=true;var normal_hits:=0;var led_hits:=0
+ var first_day_same:=true;var normal_opportunities:=0;var led_opportunities:=0
  for seed_value in range(600,700):
   for at in [1,2]:
-   var hits: Array=[]
+   var opportunities: Array=[]
    for mode in ["ride","lead"]:
     var field=party(seed_value)
     check(field.field_outings.start(field,1,"ride_horse",2,5,mode),"Real companion outfit can start for return-time comparison")
     var trip: Dictionary=field.field_outings.record.trips[0]
     field.state.day=at
-    var prior: int=trip.camp.inventory.food
+    var prior: int=field.field_outings.hunting_plan(field,trip).animals.size()
     var ammunition: int=trip.camp.inventory.bullets
     var random:=RandomNumberGenerator.new();random.seed=seed_value+at*1701
+    opportunities.append(prior>0)
     field.field_outings._hunt(field,trip,random)
-    hits.append(int(trip.camp.inventory.food)>prior)
-    check(trip.camp.inventory.bullets==ammunition-1,"Return planning does not duplicate field ammunition costs")
-   if at==1:first_day_same=first_day_same and hits[0]==hits[1]
+    check(trip.camp.inventory.bullets>=maxi(0,ammunition-int(field.hunting.data.shot_limit)) and trip.camp.inventory.bullets<=ammunition,"Return planning does not duplicate field ammunition costs")
+   if at==1:first_day_same=first_day_same and opportunities[0]==opportunities[1]
    else:
-    if hits[0]:normal_hits+=1
-    if hits[1]:led_hits+=1
-    check(not hits[1] or hits[0],"Reduced field search only removes existing opportunities")
+    if opportunities[0]:normal_opportunities+=1
+    if opportunities[1]:led_opportunities+=1
+    check(not opportunities[1] or opportunities[0],"Reduced field search only removes existing opportunities")
  check(first_day_same,"Companion's earlier hunting days are not penalized for the later return")
- check(led_hits>0 and led_hits<normal_hits,"Companion return day uses the same effective search tradeoff")
+ check(led_opportunities>0 and led_opportunities<normal_opportunities,"Companion return day uses the same effective search tradeoff")
  var main=load("res://ui/main.tscn").instantiate();root.add_child(main);await process_frame
  main.game=party();main.departure_view.hide()
  main.outing_window.open(main.game,-1)
