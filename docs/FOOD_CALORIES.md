@@ -6,7 +6,7 @@ Spencer asked for plausible calories from an animal's edible yield, the amount a
 
 One food unit represents approximately 1,000 kcal. Existing Bare / Meager / Filling settings stay 1 / 2 / 3 units per present traveler per day (about 1,000 / 2,000 / 3,000 kcal). The main display remains food units and familiar ration choices. Calorie totals are available on ledger/ration tooltips; players need not calculate them.
 
-Existing purchased provisions remain an abstract mixed bundle at their existing weight and price. A unit's calorie anchor is not a claim that a pound of flour, meat and greens has the same energy. Individual shop-food recipes and nutritional differences between every food type remain unmodeled. No prices, initial funds, purchase quantities, hauling limits or automated travel policies are changed in this pass.
+Existing purchased provisions remain an abstract mixed bundle at their existing weight and price. A unit's calorie anchor is not a claim that a pound of flour, meat and greens has the same energy. Individual shop-food recipes and nutritional differences between every food type remain unmodeled. No prices, initial funds, purchase quantities or hauling limits change. The matched survival-strategy policies remain unchanged; the separate current-outlaw integration policy now bounds consecutive health rests.
 
 ## Recovered game calculation
 
@@ -14,11 +14,11 @@ Existing purchased provisions remain an abstract mixed bundle at their existing 
 2. Existing hunters, health, equipment, cargo and return-time rules determine physical pounds retrieved.
 3. Apply species calorie density to those pounds, then convert to food units.
 
-| Animal | Rounded recovered edible energy | Example:100 lb actually retrieved |
+| Animal | Rounded recovered edible energy | Example: 100 lb actually retrieved |
 |---|---:|---:|
-| Deer |550 kcal/lb |55 units |
-| Bison |600 kcal/lb |60 units |
-| Rabbit |520 kcal/lb |52 units |
+| Deer | 550 kcal/lb | 55 units |
+| Bison | 600 kcal/lb | 60 units |
+| Rabbit | 520 kcal/lb | 52 units |
 
 These are rounded lean-game estimates informed by USDA/ADF&G values, not nutrient assays of the game's randomly generated animals. Edible muscle, usable organs and reasonable recoverable fat are treated as one pool. Nothing adds a second free offal, marrow or broth bonus. The mix does not assume a whole pound of pure fat or that every scrap of every carcass is recovered.
 
@@ -43,7 +43,7 @@ New meat/dried mass ratios use canonical decimal precision, and the displayed pr
 - [UW Extension cooked game table](https://uwyoextension.org/uwnutrition/2025-uwyo-extension-hunting-guide/): cooked venison 134 kcal/3 oz, about 715 kcal per cooked pound. Cooked weight and fresh recovered weight cannot be substituted directly.
 - [NCOAE trail meal planning](https://ncoae.org/blog/trail-nutrition-planning-and-prepping-backcountry-meals/): modern backpacking planning average 3,500 kcal/day, varying with conditions. The game's ration targets are authored selectable energy levels, not measured 1848 requirements, and do not dynamically add calories for every workload.
 - [USDA FSIS jerky](https://www.fsis.usda.gov/food-safety/safe-food-handling-and-preparation/meat-fish/jerky): drying removes moisture and makes meat nutrient-dense/lightweight. [USU drying guidance](https://extension.usu.edu/preserve-the-harvest/research/home-drying-foods) likewise describes calorie concentration per weight. [NCHFP jerky](https://nchfp.uga.edu/how/dry/recipes/jerky) recommends removing fat, so real preparation can lose energy through discarded fat/drippings. There is no universal 10-20% calorie loss established here. Full retained energy for successful drying of the already-defined edible yield is a deliberate game abstraction.
-- [Joel Palmer,1845-46 journal](https://www.gutenberg.org/cache/epub/46906/pg 46906-images.html), May 31 return journey: tongues and marrow bones were eaten. [Lodisa Frizzell's 1852 journal](https://www.gutenberg.org/cache/epub/31449/pg 31449-images.html), June 1: marrow-bone soup accompanied rice. These establish use beyond steaks; they do not establish a universal offal yield or calorie bonus for every emigrant party. Broth water adds volume, not energy.
+- [Joel Palmer,1845-46 journal](https://www.gutenberg.org/cache/epub/46906/pg46906-images.html), May 31 return journey: tongues and marrow bones were eaten. [Lodisa Frizzell's 1852 journal](https://www.gutenberg.org/cache/epub/31449/pg31449-images.html), June 1: marrow-bone soup accompanied rice. These establish use beyond steaks; they do not establish a universal offal yield or calorie bonus for every emigrant party. Broth water adds volume, not energy.
 
 ## Validation plan
 

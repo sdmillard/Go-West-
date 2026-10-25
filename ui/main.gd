@@ -307,6 +307,7 @@ func _build_ui() -> void:
 	ledger_title=label("* WAGON LEDGER *")
 	place(ledger_title, Rect2(9, 8, 164, 12), ledger)
 	stats = label("")
+	stats.mouse_filter=Control.MOUSE_FILTER_STOP
 	stats.add_theme_constant_override("line_spacing", 1)
 	place(stats, Rect2(21, 25, 152, 100), ledger)
 	# One 8 x 8 icon per ledger line (9 px font line + 1 px spacing): food, health, cash, oxen, bullets, spares.
@@ -1683,7 +1684,7 @@ func _refresh() -> void:
 		date_label.text = "INDEPENDENCE, 1848   |   PREPARING FOR DEPARTURE   |   CLASSIC"
 	ledger_title.text="* PACKS & LIVESTOCK *" if s.vehicle=="foot" else "* WAGON LEDGER *"
 	stats.text = "FOOD    %4d UNITS\nHEALTH    %s\nCASH      $%.2f\nOXEN %d   CLOTHES %d\nBULLETS   %d\nSPARES W%d A%d T%d" % [s.food, game.party_condition(), s.money, s.oxen, s.clothing, s.bullets, s.wheels, s.axles, s.tongues]
-	stats.tooltip_text="Food: %d units, about %d kcal.\nOne unit represents about %d kcal; the unit is an abstraction, not a pound of every food.\nCurrent daily target: %d units for the present party." % [s.food,game.provisions.food_calories(s.food),game.provisions.data.food_energy.unit_kcal,int(game.provisions.data.rations_lb[s.rations])*int(s.party_size)]
+	stats.tooltip_text="Food: %d units (about %d kcal).\nOne unit is about %d kcal. Party target: %d units/day.\nFood units are approximate; supply weight is separate." % [s.food,game.provisions.food_calories(s.food),game.provisions.data.food_energy.unit_kcal,int(game.provisions.data.rations_lb[s.rations])*int(s.party_size)]
 	var plan: Dictionary=game.mount_plan()
 	stats.text += "\nCARE %d CARGO %.0f/%.0f\n%s\n%s" % [s.medicine, game.provisions.cargo(s),game.provisions.capacity(s), s.weather.to_upper(),game.Mounts.label(plan) if s.vehicle=="foot" else "TEAM %s / %s" % [game.PartyHealth.condition_label(s.ox_health), "TIRED" if s.fatigue >= 50 else "FRESH"]]
 	if game.Mounts.animals(s)>0:stats.text+="\nHORSES %d MULES %d · %s" % [game.Mounts.count(s,"horses"),game.Mounts.count(s,"mules"),game.PartyHealth.condition_label(game.Mounts.condition(s)).to_upper()]
