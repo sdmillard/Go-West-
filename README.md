@@ -6,6 +6,8 @@ A growing Oregon Trail-inspired game in **Godot 4 / GDScript**. Lead five travel
 
 [Wagon sales, custom robbery demands and resizing](docs/WAGON_SALES_ROBBERY_AND_DISPLAY.md) add reviewed keep/sell/leave decisions, value-sensitive intimidation and configurable window scaling.
 
+[Parallel camp work and hunting on the move](docs/MOBILE_CAMP_RESULTS.md) measures actual moving hunts and shared stops across 144 matched journeys. Farmer survival remains open; companion hunting attempts are the next rule to review.
+
 [Coordinated camp-work testing](docs/COORDINATED_CAMP_RESULTS.md) compares real companion foraging, nursing and preservation with ordinary journeys, and fixes hunters receiving rest recovery after the original leader dies.
 
 [Hunting return time and farmer follow-up](docs/HUNTING_RETURN_TIME_RESULTS.md) adds a visible search-time cost for slower returns and compares 2,016 journeys. The tested lean outfit underperformed; the suggested supplies are unchanged.
