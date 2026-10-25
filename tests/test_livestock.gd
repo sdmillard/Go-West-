@@ -153,9 +153,9 @@ func run():
  g=game({"dairy_cows":1,"goats":1,"hens":6,"poultry_feed":100,"horses":1,"saddles":1})
  check(g.field_outings.start(g,1,"ride_horse_light",2,5),"Outrider starts beside a real household herd")
  var random:=RandomNumberGenerator.new();random.seed=301090
- var child=preload("res://simulation/outing_actor.gd").build(g,g.field_outings.record.trips[0],random)
- check(g.livestock.GOODS.all(func(k):return int(child.state.get(k,0))==0) and float(child.state.get("livestock_products_lb",0))==0,"Detached actor owns only explicitly allocated stock and provisions")
- check(g.livestock.record.animals.size()==8 and child.team_conditions.record.horses.size()==1,"Outrider allocation leaves household livestock with the party")
+ var detached=preload("res://simulation/outing_actor.gd").build(g,g.field_outings.record.trips[0],random)
+ check(g.livestock.GOODS.all(func(k):return int(detached.state.get(k,0))==0) and float(detached.state.get("livestock_products_lb",0))==0,"Detached actor owns only explicitly allocated stock and provisions")
+ check(g.livestock.record.animals.size()==8 and detached.team_conditions.record.horses.size()==1,"Outrider allocation leaves household livestock with the party")
  # Real window, its care switch and per-animal working selection.
  var panel=preload("res://ui/livestock_view.gd").new();root.add_child(panel);await process_frame
  g=game();panel.open(g)
