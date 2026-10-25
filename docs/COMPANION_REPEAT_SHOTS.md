@@ -36,3 +36,7 @@ All **72 suites**, including **122 focused repeat-shot checks**, passed. The fin
 [New-version compact evidence](repeat-hunt-summary-01.json) records source/rule fingerprints and input digests. [Matched old/new comparison](repeat-hunt-control-01.json) records paired arrivals/time differences and hashes of all ten archived reports. Final parent archives are .tools/hunting-repeat-{development,validation}-{serial,parallel,mobile}-02.json and hunting-repeat-control-{development,validation}-02.json; every copy was SHA-256 checked. Integration archives are .tools/repeat-store-journeys-02.json and repeat-current-outlaw-journeys-02.json. Full test log: .tools/repeat-final-tests-02.log. The earlier -01 reports are preliminary; never pool them into the final sample.
 
 ![Companion outfit explains actual daily shots](companion-repeat-shots.png)
+
+## Intended difficulty
+
+Spencer clarified that a leaner farmer start should be harder than a well-funded start. The target is a viable route through sensible, affordable choices, not equal profession win rates or a smooth journey. Completed farmer runs establish possibility, but these narrow scripts do not establish whether success is reasonably attainable without exceptional luck or foreknowledge. Do not automatically increase farmer starting money or equalize outcomes in response to a low scripted arrival rate.
