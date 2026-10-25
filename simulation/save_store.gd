@@ -5,7 +5,7 @@ const FORMAT := "westward-probably"
 const VERSION := 1
 const DEFAULT_PATH := "user://journey.json"
 const MAX_BYTES := 2097152
-const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes", "social_rules", "appearance", "recruitment", "robbery_demands", "camp_tasks", "field_outings"]
+const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes", "social_rules", "appearance", "recruitment", "robbery_demands", "camp_tasks", "field_outings", "fishing"]
 var error := ""
 var rules_signature := ""
 var load_note := ""
@@ -41,7 +41,7 @@ func save_game(game, path: String = DEFAULT_PATH) -> bool:
 	error = ""
 	var snapshot := capture(game)
 	if snapshot.is_empty():
-		error = "Finish the hunt or depart before saving."
+		error = "Return from the outing or depart before saving."
 		return false
 	return write_document(snapshot, path)
 

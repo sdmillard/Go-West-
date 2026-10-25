@@ -72,16 +72,17 @@ static func wagon_quote(game,members: Array) -> Dictionary:
  var used: float=game.provisions.cargo(game.state)
  var limit: float=game.provisions.storage_capacity(game.state)
  return {"valid":used<limit,"message":"Ready." if used<limit else "The wagon has no cargo room. Drop supplies first.","members":active,"crew":crew,"kit":"wagon","days":1,"inventory":inventory,"stock":stock("foot"),"fresh":[],"pack_lb":used,"capacity_lb":limit,"working_lb":game.provisions.team_capacity(game.state.oxen),"catch_lb":maxi(0,floori(limit-used)),"mounted":false,"return_mode":"ride","rider_lb":0.0,"tack_lb":0.0}
-static func quote(game,members: Array,kit: String,days: int,bullets: int,return_mode: String="ride") -> Dictionary:
+static func quote(game,members: Array,kit: String,days: int,bullets: int,return_mode: String="ride",activity: String="hunt") -> Dictionary:
  var result: Dictionary={"valid":false,"message":"Choose a healthy, willing outing party and real equipment."}
  if kit=="wagon":return wagon_quote(game,members)
  if return_mode not in RETURN_MODES:return result
- if kit not in KITS or days<1 or days>3 or bullets<1 or bullets>30 or members.is_empty() or members.size()>5:return result
+ if activity not in ["hunt","fish"]:return result
+ if kit not in KITS or days<1 or days>3 or bullets<(0 if activity=="fish" else 1) or bullets>30 or members.is_empty() or members.size()>5:return result
  var seen: Array=[]
  for id in members:
   if not game.crime.whole(id,0,game.party_health.members.size()-1) or int(id) in seen:return result
   var person: Dictionary=game.party_health.members[int(id)]
-  if not game.party_health.is_active(person) or game.provisions.Carrying.factor(person,game.provisions.data.walking.health_load_curve)<=0 or not game.characters.willing(int(id),"hunt"):return result
+  if not game.party_health.is_active(person) or game.provisions.Carrying.factor(person,game.provisions.data.walking.health_load_curve)<=0 or not game.characters.willing(int(id),"forage" if activity=="fish" else "hunt"):return result
   if int(id)!=game.camp_tasks.leader_id(game) and game.camp_tasks.patient_nurses(game).has(int(id)):result.message="A patient receiving nursing must rest.";return result
   seen.append(int(id))
  var animals: Dictionary=stock(kit)

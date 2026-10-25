@@ -1,0 +1,21 @@
+{
+  "note": "Authored same-day hook-and-line fishing, not measured catch rates. Reach is road distance to a known river stop on the current leg, not a GIS model. Basic reusable line/hooks belong to household tools in this first slice; no modern reel or guaranteed salmon haul.",
+  "foot_radius": 4,
+  "horse_radius": 12,
+  "foot_mph": 2,
+  "horse_mph": 4,
+  "day_hours": 10,
+  "duration": 35.0,
+  "max_casts": 6,
+  "bite_seconds": 1.2,
+  "wait_min": 1.5,
+  "wait_max": 4.0,
+  "bite_chance": 0.7,
+  "edible_lb": [
+    1,
+    4
+  ],
+  "kcal_per_lb": 600,
+  "cold_factor": 0.5,
+  "worker_hook_chance": 0.6
+}
