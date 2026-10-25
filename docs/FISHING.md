@@ -34,3 +34,13 @@ The previous ebf0f6da...952c rules fingerprint is accepted through the compatibl
 - [Oregon Department of Fish and Wildlife, trout techniques](https://myodfw.com/articles/how-fish-trout) informs the distinction between water access, a bite and hooking a fish. Its modern tackle recommendations are not a historical equipment list.
 
 Distances, travel speeds, cast counts, reaction windows, seasonal factors, catch sizes and calories are explicitly authored estimates. This slice adds an alternative food activity; it does not establish survival balance or historical catch rates.
+
+## Verification
+
+Frozen runtime/test checkpoint e3c8324 passed all 74 Godot suites, including 55 focused fishing checks, plus 24 store and 20 current-policy outlaw journeys. Their actual journey rows exactly match the previous calorie-calibration version when fishing is unused. These are regression checks, not a fishing-enabled survival balance campaign.
+
+Focused coverage includes walking/mounted boundaries, missing and away horses, missing saddles, unfit animals, weather, eastward heading, read-only previews, zero-ammo and zero-food attempts, finite casts, premature/late strikes, large time steps, exactly one elapsed day, stock reservation/return, condition wear under heat, fish mass/food save round trips, standing companion tasks and actual UI visibility/disabled choices. A genuine previous-version active-outrider save loads with stock, trip and RNG preserved.
+
+Native setup, bite and return screens were visually reviewed in the game window. Existing scenery is temporary; [the art handoff](FISHING_ART_BRIEF.md) specifies proposed original assets and animation registration.
+
+Full reports and final logs remain in parent .tools/fishing-*. Copies of both integration reports were SHA-256 verified against the isolated originals before cleanup. [Evidence manifest](fishing-evidence.json) records hashes and the rules signature. Player saves and preexisting diagnostic files are preserved.

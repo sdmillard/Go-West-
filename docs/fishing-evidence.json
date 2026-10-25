@@ -1,0 +1,25 @@
+{
+  "runtime_commit": "e3c8324",
+  "suites": 74,
+  "focused_fishing_checks": 55,
+  "comparison_commit": "906bd48706251d082a5c93ceceb23d7bb6276654",
+  "integration_archives": [
+    {
+      "path": "fishing-store-journeys.json",
+      "sha256": "50093068aa350029b7d5ca11d230c12354023278f6fb1d1804694669788b54e8",
+      "runs": 24,
+      "errors": 0,
+      "unchanged_journey_rows_vs_previous": true,
+      "rules_signature": "55df67bad67f2a01742f2be3a6ba5ea60ea886d8cb3b6331d4bde7779d307b06"
+    },
+    {
+      "path": "fishing-current-outlaw-journeys.json",
+      "sha256": "6040792e8f1d72410704c2efc2b349a14dcd984cdbfd6c2236a22c101a9a7307",
+      "runs": 20,
+      "errors": 0,
+      "unchanged_journey_rows_vs_previous": true,
+      "rules_signature": "55df67bad67f2a01742f2be3a6ba5ea60ea886d8cb3b6331d4bde7779d307b06"
+    }
+  ],
+  "scope": "Regression and focused feature verification; not a fishing-enabled survival balance campaign."
+}
