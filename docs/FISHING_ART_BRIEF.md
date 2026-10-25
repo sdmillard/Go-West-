@@ -26,3 +26,7 @@ These names and sizes are a proposed handoff contract; the current UI does not l
 - A modest hook-and-line arrangement suits the slice. Do not introduce modern spinning reels, plastic lures or visible underwater targets as assumptions about the gameplay.
 
 Please deliver Lua sources, the proposed asset dimensions and enlarged previews first. List animation row/frame order and any registration points. The implementation thread will connect frames to the model's ready, waiting, bite and landed outcomes after art approval.
+
+## Supplied draft integration
+
+Spencer supplied fishing-art-drafts.zip. Its five sheets match this contract and rebuild byte-for-byte from scenes/fishing.lua using the unchanged shared kit. [The precise asset contract](../art/aseprite/FISHING.md) records source rod-tip coordinates, palette mapping and animation behavior. The live-game installation is pending visual approval; draft integration is on codex/fishing-art in the separate review checkout.

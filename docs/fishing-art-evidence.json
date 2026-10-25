@@ -1,0 +1,44 @@
+{
+  "runtime_test_commit": "4fea357",
+  "art_pack": "fishing-art-drafts.zip",
+  "art_pack_sha256": "9630911b414a3e94fc60366ee35741346d0b124091185bc20728c39d23273b5a",
+  "assets": [
+    {
+      "path": "art/pixels/fishing_riverbank.png",
+      "sha256": "2f38cf3a29b8b57e288168b554245d783826bc632eab2d0aefb087a358b49a8e",
+      "rebuild_matches_supplied": true
+    },
+    {
+      "path": "art/pixels/fishing_angler.png",
+      "sha256": "87de6b69bb9ce915ee860181a8fda37f21be679b72f38ddf9d5415422c5b2de8",
+      "rebuild_matches_supplied": true
+    },
+    {
+      "path": "art/pixels/fishing_bobber.png",
+      "sha256": "34c126ed2ba134828bc04b82ee8240db59e6cf52a38c861c0040e3213a6a8b58",
+      "rebuild_matches_supplied": true
+    },
+    {
+      "path": "art/pixels/fishing_splash.png",
+      "sha256": "a7b96a7f4cacd2a7ce1b808a7347a2a039b757d700f3034e72b95ea291311aaf",
+      "rebuild_matches_supplied": true
+    },
+    {
+      "path": "art/pixels/fishing_catch.png",
+      "sha256": "869295de8d2e016c8d027f3c8097b98c26179f268c58e0c3baf6fe0f0df67a25",
+      "rebuild_matches_supplied": true
+    }
+  ],
+  "aseprite_verifier": "All five sheets pass dimensions, frame count, named palette and crisp alpha checks.",
+  "simulation_data_changed": false,
+  "status": "Prepared in review checkout; awaiting visual approval before merging.",
+  "suites": 74,
+  "focused_fishing_checks": 78,
+  "full_test_log": "parent .tools/fishing-art-final-tests-02.log",
+  "visual_review": [
+    "horse-required",
+    "bite",
+    "landed",
+    "report"
+  ]
+}
