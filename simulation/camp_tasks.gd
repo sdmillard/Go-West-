@@ -163,7 +163,7 @@ func finish(game) -> void:
   if entry.job=="fish":
    var catch: Dictionary=game.fishing.camp_catch(game,int(entry.member))
    game.supply_history.append({"day":game.state.day,"event":"camp_fishing","changes":{"food":catch.food},"worker":entry.member,"mass":catch.mass})
-   report(game,"%s returned with %d lb edible fish (%d food units), after meals." % [member.name,catch.mass,catch.food])
+   report(game,"%s returned with %.2f lb edible fish (%d food units), after meals." % [member.name,catch.mass,catch.food])
   if entry.job in ["dry","salt_dry"]:
    # Today's catch is dinner, not a morning drying input.
    var catches: Array=game.provisions.fresh.filter(func(b):return b.get("_hunt_meal",false))

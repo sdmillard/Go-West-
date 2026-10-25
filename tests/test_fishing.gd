@@ -45,7 +45,7 @@ func run():
  check(not g.can_service() and not g.travel() and Save.new().capture(g).is_empty(),"Activity blocks travel, services and mid-cast saves")
  check(not g.hunt_shot(0) and not g.hunt_fire_at(Vector2.ZERO),"Fishing cannot fire the rifle through hunting APIs")
  var casts: int=g.hunt.casts.size()
- for item in g.hunt.casts:item.bite=true;item.mass=4
+ for item in g.hunt.casts:item.bite=true;item.mass=4;item.kcal_per_lb=600.0
  for index in range(casts):
   check(g.fishing_click(),"Cast accepted")
   g.advance_fishing(float(g.hunt.casts[g.hunt.cast].wait))

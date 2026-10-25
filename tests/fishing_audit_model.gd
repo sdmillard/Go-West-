@@ -3,5 +3,5 @@ extends "res://simulation/fishing.gd"
 var returns: Array=[]
 func camp_catch(game,index: int) -> Dictionary:
  var result: Dictionary=super.camp_catch(game,index)
- returns.append({"day":int(game.state.day),"member":index,"mass":int(result.mass),"food":int(result.food),"left":int(result.get("left",0))})
+ returns.append({"day":int(game.state.day),"member":index,"mass":float(result.mass),"food":int(result.food),"left":float(result.get("left",0)),"retrieved_kcal":float(result.get("retrieved_kcal",0))})
  return result
