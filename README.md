@@ -6,7 +6,9 @@ A growing Oregon Trail-inspired game in **Godot 4 / GDScript**. Lead five travel
 
 [Wagon sales, custom robbery demands and resizing](docs/WAGON_SALES_ROBBERY_AND_DISPLAY.md) add reviewed keep/sell/leave decisions, value-sensitive intimidation and configurable window scaling.
 
-[The first hunting balance pass](docs/HUNTING_BALANCE_PASS.md) compares 1,428 journeys and fixes day hunts refusing starving parties. Farmer survival and the led-return time tradeoff remain open.
+[Hunting return time and farmer follow-up](docs/HUNTING_RETURN_TIME_RESULTS.md) adds a visible search-time cost for slower returns and compares 2,016 journeys. The tested lean outfit underperformed; the suggested supplies are unchanged.
+
+[The first hunting balance pass](docs/HUNTING_BALANCE_PASS.md) compares 1,428 journeys and fixes day hunts refusing starving parties. Farmer survival remains open.
 
 [Horse loads and wagon hunts](docs/HORSE_LOADS.md) account for riders, tack and freight, with heavy or led returns and an optional noisy whole-party wagon hunt. Deer antlers and rabbit ears now fit their animation cells.
 

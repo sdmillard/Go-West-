@@ -56,3 +56,7 @@ Checkpoint 092af2e passed all 67 suites plus 24 store and 20 current-policy outl
 ## Emergency supplies and balance follow-up
 
 Same-day outings can now pack short food/clothing rather than refusing a starving hunter. The outfit warns that success is not guaranteed; no stock is invented. Multi-day reserve requirements remain. See [the hunting balance pass](HUNTING_BALANCE_PASS.md) for 1,428 matched journeys, limitations and the unresolved leader return-time tradeoff.
+
+## Loaded-return search time
+
+Slower riding/led returns now reserve search time within the same day. The outfitter previews the tradeoff; a multi-day companion only reserves time on its last hunting day and does not repeat the outward journey. See [return-time and farmer results](HUNTING_RETURN_TIME_RESULTS.md). Actual hauling and prices remain unchanged.
