@@ -61,7 +61,7 @@ static func wagon_quote(game,members: Array) -> Dictionary:
  var fail: Dictionary={"valid":false,"message":"Take everyone currently with you to bring the wagon."}
  var active: Array=game.party_health.members.filter(func(p):return game.party_health.is_active(p)).map(func(p):return int(p.id))
  if members.size()!=active.size() or not active.all(func(id):return id in members):return fail
- if game.state.vehicle!="wagon" or game.state.oxen<1 or game.state.ox_health<1:fail.message="A wagon and a working ox team are required.";return fail
+ if game.state.vehicle!="wagon" or game.team_conditions.pulling(game.state)<1 or game.state.ox_health<1:fail.message="A wagon and a working ox team are required.";return fail
  var region: String=game.context.region_id(game)
  if not game.hunting.data.regions[region].wagon_access:fail.message="The wagon cannot reach this hunting ground. Use people or animals here.";return fail
  var crew: Array=active.filter(func(id):return game.provisions.Carrying.factor(game.party_health.members[id],game.provisions.data.walking.health_load_curve)>0 and game.characters.willing(id,"hunt"))
@@ -71,7 +71,7 @@ static func wagon_quote(game,members: Array) -> Dictionary:
  for key in game.provisions.data.weights_lb:inventory[key]=0
  var used: float=game.provisions.cargo(game.state)
  var limit: float=game.provisions.storage_capacity(game.state)
- return {"valid":used<limit,"message":"Ready." if used<limit else "The wagon has no cargo room. Drop supplies first.","members":active,"crew":crew,"kit":"wagon","days":1,"inventory":inventory,"stock":stock("foot"),"fresh":[],"pack_lb":used,"capacity_lb":limit,"working_lb":game.provisions.team_capacity(game.state.oxen),"catch_lb":maxi(0,floori(limit-used)),"mounted":false,"return_mode":"ride","rider_lb":0.0,"tack_lb":0.0}
+ return {"valid":used<limit,"message":"Ready." if used<limit else "The wagon has no cargo room. Drop supplies first.","members":active,"crew":crew,"kit":"wagon","days":1,"inventory":inventory,"stock":stock("foot"),"fresh":[],"pack_lb":used,"capacity_lb":limit,"working_lb":game.provisions.team_capacity(game.team_conditions.pulling(game.state)),"catch_lb":maxi(0,floori(limit-used)),"mounted":false,"return_mode":"ride","rider_lb":0.0,"tack_lb":0.0}
 static func quote(game,members: Array,kit: String,days: int,bullets: int,return_mode: String="ride",activity: String="hunt") -> Dictionary:
  var result: Dictionary={"valid":false,"message":"Choose a healthy, willing outing party and real equipment."}
  if kit=="wagon":return wagon_quote(game,members)
@@ -126,15 +126,31 @@ static func quote(game,members: Array,kit: String,days: int,bullets: int,return_
  return result
 static func reserve(game,offer: Dictionary) -> void:
  if offer.kit=="wagon":return
+ var selected: Array=[]
+ offer["animal_conditions"]={"horses":[],"mules":[]}
+ for kind in ["horses","mules"]:
+  var n: int=int(offer.stock.get(kind,0))
+  for i in range(n):
+   if not game.team_conditions.record[kind].is_empty():
+    var best: int=game.team_conditions.record[kind].find(game.team_conditions.record[kind].max())
+    var health: int=game.team_conditions.record[kind][best]
+    game.team_conditions.record[kind].remove_at(best)
+    selected.append(health);offer.animal_conditions[kind].append(health)
+ if not selected.is_empty():offer["condition"]=game.team_conditions.mean(selected)
+ offer["condition_base"]=int(offer.get("condition",100))
  game.provisions.remove(int(offer.inventory.food))
  for key in offer.inventory:game.state[key]-=int(offer.inventory[key])
  for key in offer.stock:game.state[key]=int(game.state.get(key,0))-int(offer.stock[key])
-static func restore_stock(game,animals: Dictionary,condition: int) -> void:
+ game.team_conditions.sync(game)
+static func restore_stock(game,animals: Dictionary,condition: int,original: Dictionary={},base: int=100) -> void:
  var before: int=game.Mounts.animals(game.state)
  var incoming: int=int(animals.get("horses",0))+int(animals.get("mules",0))
  var current: int=game.Mounts.condition(game.state)
  for key in animals:game.state[key]=int(game.state.get(key,0))+int(animals[key])
- if incoming>0:game.state.horse_health=roundi(float(current*before+condition*incoming)/(before+incoming))
+ if incoming>0:
+  for kind in ["horses","mules"]:
+   for i in range(int(animals.get(kind,0))):game.team_conditions.record[kind].append(clampi(int(original[kind][i])+condition-base,0,100) if original.has(kind) and i<original[kind].size() else condition)
+  game.team_conditions.sync(game)
 
 static func wear(game,kit: String,size: int,habitat: String,load_ratio: float,allocated: Dictionary={},return_mode: String="ride") -> int:
  var inventory: Dictionary=transport(game,range(size),kit,allocated,return_mode)

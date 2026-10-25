@@ -51,6 +51,9 @@ func start(game,index: int,kit: String,days: int,bullets: int,return_mode: Strin
  trip.camp["return_mode"]=return_mode
  trip.camp["departure_kit"]=kit
  Outfit.reserve(game,offer)
+ trip.condition=int(offer.get("condition",trip.condition))
+ trip["animal_conditions"]=offer.get("animal_conditions",{"horses":[],"mules":[]}).duplicate(true)
+ trip["condition_base"]=int(offer.get("condition_base",trip.condition))
  game.state.household_gear_lb=maxf(0,game.provisions.household_mass(game.state)-float(game.provisions.data.walking.personal_gear_lb_per_person))
  original["away"]=true
  original.history.append("Day %d · Left on a %d-day %s hunting trip. Expected day %d." % [game.state.day,days,"mounted" if offer.mounted else "foot",trip.due])
@@ -233,7 +236,7 @@ func _return(game,trip: Dictionary) -> void:
  game.state.food+=all_food-caught
  var restored_stock: Dictionary=trip.stock.duplicate()
  for key in trip.camp.get("cached_tack",{}):restored_stock[key]+=int(trip.camp.cached_tack[key])
- Outfit.restore_stock(game,restored_stock,int(trip.condition))
+ Outfit.restore_stock(game,restored_stock,int(trip.condition),trip.get("animal_conditions",{}),int(trip.get("condition_base",100)))
  recount(game)
  var lost:=0
  for batch in catches:
@@ -285,7 +288,7 @@ func valid(value: Variant,game,party: Array,day: int) -> bool:
  var ids: Array=[]
  var members: Array=[]
  for trip in value.trips:
-  if not trip is Dictionary or trip.size()!=15:return false
+  if not trip is Dictionary or trip.size()!=(17 if trip.has("animal_conditions") else 15) or trip.has("animal_conditions")!=trip.has("condition_base"):return false
   if not game.crime.whole(trip.get("id"),1,int(value.next_id)-1) or trip.id in ids or not game.crime.whole(trip.get("member"),1,party.size()-1) or trip.member in members:return false
   ids.append(trip.id);members.append(trip.member)
   if not party[int(trip.member)].get("away",false):return false
@@ -298,6 +301,12 @@ func valid(value: Variant,game,party: Array,day: int) -> bool:
   var origin_mile: int=int(trip.origin.offset)
   for i in range(trip.origin.path.size()-1):origin_mile+=int(game.route.edge_between(trip.origin.path[i],trip.origin.path[i+1]).miles)
   if origin_mile!=int(trip.mile):return false
+  if trip.has("animal_conditions"):
+   if not trip.animal_conditions is Dictionary or trip.animal_conditions.size()!=2 or not game.crime.whole(trip.get("condition_base"),0,100):return false
+   for kind in ["horses","mules"]:
+    if not trip.animal_conditions.get(kind) is Array or trip.animal_conditions[kind].size()>1:return false
+    for health in trip.animal_conditions[kind]:
+     if not game.crime.whole(health,0,100):return false
   var camp: Variant=trip.get("camp")
   if not camp is Dictionary or not game.Guards.valid(camp,game,day) or camp.guards.size()!=1 or int(camp.guards[0].id)!=int(trip.member) or camp.guards[0].name!=party[int(trip.member)].name:return false
   if camp.has("cached_tack"):

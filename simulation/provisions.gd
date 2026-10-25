@@ -81,6 +81,7 @@ func cargo(inventory: Dictionary) -> float:
 	var pounds: float = float(data.walking.personal_gear_lb_per_person)*int(inventory.get("party_size",5)) if inventory.get("vehicle","")=="foot" else household_mass(inventory)
 	pounds+=Mounts.spare_tack(data.mounts,inventory,Mounts.plan(data.mounts,inventory))
 	# Bodies carried with the party weigh what they weigh, on foot or in the wagon.
+	pounds+=preload("res://simulation/livestock.gd").cargo(inventory)+float(inventory.get("livestock_products_lb",0))+int(inventory.get("poultry_feed",0))*0.25
 	pounds+=float(inventory.get("remains_lb",0))+float(inventory.get("camp_greens_lb",0))
 	for key in data.weights_lb:
 		pounds += maxf(0, float(inventory.get(key, 0))) * float(data.weights_lb[key])
@@ -98,7 +99,7 @@ func human_capacity(inventory: Dictionary,plan: Dictionary) -> float:
 	var walkers: Array=Mounts.walking_members(carriers,int(plan.riding_people))
 	return Carrying.capacity(walkers,float(data.walking.carry_lb_per_person),data.walking.health_load_curve) if not carriers.is_empty() else float(data.walking.carry_lb_per_person)*maxi(0,int(inventory.party_size)-int(plan.riding_people))
 func capacity(inventory: Dictionary) -> float:
-	if inventory.get("vehicle","")!="foot":return team_capacity(int(inventory.oxen))
+	if inventory.get("vehicle","")!="foot":return team_capacity(preload("res://simulation/team_conditions.gd").pulling(inventory))
 	var plan: Dictionary=Mounts.plan(data.mounts,inventory)
 	return snappedf(human_capacity(inventory,plan)+float(plan.animal_lb),0.1)
 func storage_capacity(inventory: Dictionary) -> float:
@@ -142,7 +143,7 @@ func fresh_mass(amount: int) -> float:
 	var left:=amount
 	var mass:=0.0
 	for batch in fresh:
-		if batch.get("preserved",false) or batch.get("vitamin_c",false):continue
+		if batch.get("preserved",false) or batch.get("vitamin_c",false) or batch.get("table_product",false):continue
 		var used:=mini(left,int(batch.pounds))
 		mass+=used*mass_ratio(batch)
 		left-=used
@@ -151,7 +152,7 @@ func processable() -> int:
 	var room: float=data.preservation.batch_lb
 	var amount:=0
 	for batch in fresh:
-		if batch.get("preserved",false) or batch.get("vitamin_c",false):continue
+		if batch.get("preserved",false) or batch.get("vitamin_c",false) or batch.get("table_product",false):continue
 		var used:=mini(int(batch.pounds),floori((room+0.000001)/mass_ratio(batch)))
 		amount+=used
 		room-=used*mass_ratio(batch)
@@ -172,7 +173,7 @@ func preserve(amount: int, day: int, salted: bool) -> Dictionary:
 	var mass:=fresh_mass(input)
 	var remaining:=input
 	for batch in fresh:
-		if batch.get("preserved",false) or batch.get("vitamin_c",false):continue
+		if batch.get("preserved",false) or batch.get("vitamin_c",false) or batch.get("table_product",false):continue
 		var used:=mini(remaining,int(batch.pounds))
 		batch.pounds-=used
 		remaining-=used

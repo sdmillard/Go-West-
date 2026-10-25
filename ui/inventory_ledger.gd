@@ -73,7 +73,8 @@ func _init(game):
  transport.name="TransportRows"
  set_tab_title(2,"Transport")
  transport.add_child(words((game.Mounts.label(game.mount_plan())+" · NO WAGON") if game.state.vehicle=="foot" else "TRAVELING WITH THE WAGON"))
- transport.add_child(words("%d oxen %s · Condition: %s" % [game.state.oxen,"herded alongside your party" if game.state.vehicle=="foot" else "in the wagon team",game.PartyHealth.condition_label(game.state.ox_health)]))
+ transport.add_child(words("%d oxen %s · Condition: %s" % [game.state.oxen,"herded alongside your party" if game.state.vehicle=="foot" else "owned; %d in the working team" % game.team_conditions.pulling(game.state),game.PartyHealth.condition_label(game.state.ox_health)]))
+ transport.add_child(words("Individual animal conditions and working-team selection: Livestock."))
  transport.add_child(words("Oxen graze; they do not eat the party's provisions."))
  if game.Mounts.animals(game.state)>0 or game.Mounts.TACK.any(func(key):return game.Mounts.count(game.state,key)>0):
   var plan: Dictionary=game.mount_plan()
@@ -87,7 +88,7 @@ func _init(game):
   if burden.ratio>1:transport.add_child(words("Above working load: slower travel and extra animal wear."))
   if not game.wagon_cache.is_empty():transport.add_child(words("Wagon cache: mile %d · %s" % [game.wagon_cache.mile,"located" if game.wagon_cache.found else "not yet checked"]))
  else:
-  transport.add_child(words("Team load guideline: %.0f lb · Pulling speed: %d%%" % [game.provisions.team_capacity(game.state.oxen),roundi(game.survival.team_factor(game.state.oxen)*100)]))
+  transport.add_child(words("Team load guideline: %.0f lb · Pulling speed: %d%%" % [game.provisions.team_capacity(game.team_conditions.pulling(game.state)),roundi(game.survival.team_factor(game.team_conditions.pulling(game.state))*100)]))
  transport.add_child(words("Hunting retrieval: %d lb · Willing helpers at current health" % game.hunting_capacity()))
  transport.add_child(words("Broken legs prevent helping with retrieval and carrying."))
  set_meta("transport_rows",transport)

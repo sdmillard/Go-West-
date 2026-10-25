@@ -14,6 +14,7 @@ const PIXEL_FONT = preload("res://art/pixels/trail_font.fnt")
 const LEDGER_ICONS = preload("res://art/pixels/ledger_icons.png")
 const TOOLTIP_WIDTH := 240.0
 const NOTICE_WIDTH := 460
+var livestock_window=preload("res://ui/livestock_view.gd").new()
 var fishing_window=preload("res://ui/fishing_view.gd").new()
 var game = Simulation.new(1848, "classic", true)
 var landscape: Control
@@ -554,6 +555,8 @@ Northern shortcuts and Columbia rafting are not yet playable. Weather, medical e
 	stop_rows.add_theme_constant_override("separation",8)
 	stop_scroll.add_child(stop_rows)
 	hunt_window = AcceptDialog.new()
+	add_child(livestock_window)
+	livestock_window.changed.connect(_refresh)
 	add_child(fishing_window)
 	fishing_window.start_requested.connect(func(kit: String):
 		if game.start_fishing(kit):fishing_window.show_activity();_refresh()
@@ -728,7 +731,7 @@ func _show_section(section: String) -> void:
 			var note:=label("Opening camp spends no time or supplies.\nChoose an activity; rest is optional.")
 			note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 			section_rows.add_child(note)
-			entries=[["COMPANION TASKS >",_show_section.bind("Companion tasks")],["FIELD TRIPS / RETURNING HUNTERS >",_show_section.bind("Field trips")],["REST · CHOOSE DAYS",_rest],["PRESERVE MEAT >",_show_section.bind("Preserve meat")],["DRY FRUIT / GREENS >",_show_section.bind("Dry produce")],["CARE / MEDICAL ATTENTION",_open_care]]
+			entries=[["LIVESTOCK / WORKING TEAM >",func():section_window.hide();livestock_window.open(game)],["COMPANION TASKS >",_show_section.bind("Companion tasks")],["FIELD TRIPS / RETURNING HUNTERS >",_show_section.bind("Field trips")],["REST · CHOOSE DAYS",_rest],["PRESERVE MEAT >",_show_section.bind("Preserve meat")],["DRY FRUIT / GREENS >",_show_section.bind("Dry produce")],["CARE / MEDICAL ATTENTION",_open_care]]
 		"Field trips":
 			for trip in game.field_outings.record.trips:
 				var info:=label("%s · %s · EXPECTED DAY %d\nSEARCH AREA: MILE %d · %s" % [game.party_health.members[trip.member].name,game.field_outings.public_status(trip),game.field_outings.expected_day(trip),trip.mile,outing_window.KIT_LABELS[game.field_outings.Outfit.KITS.find(game.field_outings.public_kit(trip))]])
@@ -1336,6 +1339,7 @@ func _update_hunt_report() -> void:
 
 func _finish_hunt() -> void:
 	hunt_window.hide()
+	livestock_window.hide()
 	fishing_window.hide()
 	fishing_window.active=false
 	hunt_view.active = false
@@ -1498,6 +1502,7 @@ func _new_journey() -> void:
 	service_window.hide()
 	options_window.hide()
 	hunt_window.hide()
+	livestock_window.hide()
 	fishing_window.hide()
 	fishing_window.active=false
 	hunt_view.active = false
@@ -1727,6 +1732,7 @@ func _refresh() -> void:
 	landscape.terrain = s.terrain
 	landscape.miles = s.miles
 	landscape.vehicle = s.vehicle
+	landscape.livestock_counts={"dairy_cows":int(s.get("dairy_cows",0)),"goats":int(s.get("goats",0)),"hens":int(s.get("hens",0))}
 	landscape.herded_oxen=int(s.oxen) if s.vehicle=="foot" else 0
 	landscape.mount_plan=game.mount_plan() if s.vehicle=="foot" and game.Mounts.animals(s)>0 else {}
 	landscape.walkers=int(s.party_size)
@@ -1837,6 +1843,7 @@ func _show_supplies() -> void:
 		supplies_window.hide()
 		_show_drop_supplies())
 	drop.name="DropSupplies"
+	actions.add_child(button("LIVESTOCK >",func():supplies_window.hide();livestock_window.open(game)))
 	actions.add_child(drop)
 	if game.CacheSupport.can_pack(game,false):
 		var abandon:=button("ABANDON WAGON / CHOOSE PACKS",func():_show_packing(false))

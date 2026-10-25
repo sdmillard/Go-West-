@@ -4,6 +4,8 @@ static func build(game,trip: Dictionary,random):
  var child=load("res://simulation/trail_engine.gd").new(int(random.randi()),"classic",true)
  child.depart("banker",["One","Two","Three","Four","Five"],5,{"wagon":0,"food":0})
  child.state=game.state.duplicate(true)
+ # An outrider takes only the explicit expedition outfit, never a copy of the wagon herd or grain.
+ for field in game.livestock.GOODS+["livestock_products_lb","working_oxen"]:child.state.erase(field)
  child.party_health.members.assign(game.party_health.members.duplicate(true))
  for person in child.party_health.members:person["guarding"]=true;person.erase("away")
  var actual: Dictionary=trip.camp.guards[0].duplicate(true)
@@ -18,6 +20,7 @@ static func build(game,trip: Dictionary,random):
  for good in trip.camp.inventory:child.state[good]=int(trip.camp.inventory[good])
  for good in trip.stock:child.state[good]=int(trip.stock[good])
  child.state.horse_health=int(trip.condition);child.state.rations=int(trip.camp.camp_rations);child.state.pace=0
+ child.team_conditions.start_legacy(child)
  child.state.landmark=trip.origin.from;child.state.next_landmark=trip.origin.to
  child.state.leg_miles=int(trip.origin.offset);child.state.leg_length=int(game.route.edge_between(trip.origin.from,trip.origin.to).get("miles",0))
  child.route_path=trip.origin.path.duplicate();child.pending={}

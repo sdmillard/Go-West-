@@ -152,6 +152,38 @@
       "maximum": 100,
       "step": 1,
       "suggested": 0
+    },
+    {
+      "id": "dairy_cows",
+      "label": "MILK COW  $75.00 EACH",
+      "price_cents": 7500,
+      "maximum": 4,
+      "step": 1,
+      "suggested": 0
+    },
+    {
+      "id": "goats",
+      "label": "MILK GOAT  $10.00 EACH",
+      "price_cents": 1000,
+      "maximum": 8,
+      "step": 1,
+      "suggested": 0
+    },
+    {
+      "id": "hens",
+      "label": "LAYING HEN  $0.50 EACH",
+      "price_cents": 50,
+      "maximum": 24,
+      "step": 1,
+      "suggested": 0
+    },
+    {
+      "id": "poultry_feed",
+      "label": "POULTRY GRAIN $0.01 / QUARTER LB",
+      "price_cents": 1,
+      "maximum": 4000,
+      "step": 4,
+      "suggested": 0
     }
   ]
 }
