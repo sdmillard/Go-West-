@@ -68,14 +68,18 @@ static func quote(game,members: Array,kit: String,days: int,bullets: int,return_
  if kit!="foot" and game.Mounts.condition(game.state)<40:result.message="The animals are too worn for an outing.";return result
  var size: int=members.size()
  var rations: int=int(game.provisions.data.rations_lb[game.state.rations])
- # One extra day's provisions is real reserve for a delayed return.
- var food: int=rations*size*(days+1)
+ # A same-day hunt can be a last attempt to obtain food. Pack only real stock;
+ # a longer expedition still needs its meals, clothing and a reserve day.
+ var requested_food: int=rations*size*(days+1)
+ var food: int=mini(int(game.state.food),requested_food) if days==1 else requested_food
+ var clothing: int=mini(int(game.state.clothing),size) if days==1 else size
  var inventory: Dictionary={}
  for key in game.provisions.data.weights_lb:inventory[key]=0
- inventory.food=food;inventory.clothing=size;inventory.bullets=bullets
- if int(game.state.food)<food or int(game.state.clothing)<size or int(game.state.bullets)<bullets:
-  result.message="Not enough food, clothing or ammunition for this party and a one-day reserve."
+ inventory.food=food;inventory.clothing=clothing;inventory.bullets=bullets
+ if int(game.state.food)<food or int(game.state.clothing)<clothing or int(game.state.bullets)<bullets:
+  result.message="Not enough supplies for the selected ammunition or a longer trip with its reserve."
   return result
+ var short_provisions: bool=food<requested_food or clothing<size
  var model=game.provisions.get_script().new()
  model.data=game.provisions.data.duplicate(true);model.fresh.assign(game.provisions.fresh.duplicate(true))
  # Actual tracked food is packed first, preserving its physical weight and expiry.
@@ -94,7 +98,7 @@ static func quote(game,members: Array,kit: String,days: int,bullets: int,return_
  var working: float=capacity(game,members,kit,animals,normal)
  var profile: Dictionary=load_profile(game,members,kit,pack,animals,return_mode)
  var room: int=maxi(0,floori(limit-pack))
- result.merge({"valid":room>0,"message":"Ready." if room>0 else "The outbound pack fills this party's carrying allowance.","members":seen,"kit":kit,"days":days,"inventory":inventory,"stock":animals,"fresh":carried,"pack_lb":pack,"capacity_lb":limit,"working_lb":working,"catch_lb":room,"mounted":rides(kit),"return_mode":return_mode,"rider_lb":profile.rider_lb,"tack_lb":profile.tack_lb},true)
+ result.merge({"valid":room>0,"message":"Ready." if room>0 else "The outbound pack fills this party's carrying allowance.","short_provisions":short_provisions,"members":seen,"kit":kit,"days":days,"inventory":inventory,"stock":animals,"fresh":carried,"pack_lb":pack,"capacity_lb":limit,"working_lb":working,"catch_lb":room,"mounted":rides(kit),"return_mode":return_mode,"rider_lb":profile.rider_lb,"tack_lb":profile.tack_lb},true)
  return result
 static func reserve(game,offer: Dictionary) -> void:
  if offer.kit=="wagon":return
