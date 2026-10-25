@@ -16,5 +16,6 @@
     "clothing": 1,
     "horses": 2,
     "mules": 2
-  }
+  },
+  "miss_escape_chance": 0.35
 }

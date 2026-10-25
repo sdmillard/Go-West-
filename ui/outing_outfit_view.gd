@@ -115,6 +115,7 @@ func refresh():
  if not wagon and float(q.get("search_factor",1.0))<1.0:
   summary.text+="\nSLOWER RETURN: %.0f%% SEARCH TIME · %.1f H RETURN BUFFER" % [q.search_factor*100,q.return_hours]
   summary.tooltip_text="Same one-day outing. More time reserved for the loaded return means fewer chances to find game. Hours are planning estimates; aim time and meat yield are unchanged."
+ if actor_id()>=0:summary.text+="\nUp to %d shots per hunting day; misses cost ammunition." % int(game.hunting.data.shot_limit)
  reset_size()
 
 
