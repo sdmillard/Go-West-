@@ -88,5 +88,12 @@
       "wagon_access": false
     }
   },
-  "wagon_noise_chance": 0.35
+  "wagon_noise_chance": 0.35,
+  "return_time": {
+    "note": "Authored fair-weather day-hunt planning budget, not measured historical hours. A slower loaded return reserves search time; the interactive aiming time remains unchanged.",
+    "outing_hours": 10,
+    "travel_hours_per_day": 8,
+    "radius_miles": 8,
+    "minimum_search_fraction": 0.25
+  }
 }

@@ -11,6 +11,11 @@ func load_data(value: Variant) -> bool:
 	error = "Invalid hunting rules"
 	if not value is Dictionary:
 		return false
+	var time: Variant=value.get("return_time")
+	if not time is Dictionary or not time.get("note") is String:return false
+	for key in ["outing_hours","travel_hours_per_day","radius_miles","minimum_search_fraction"]:
+		if not (time.get(key) is float or time.get(key) is int) or not is_finite(float(time[key])) or time[key]<=0:return false
+	if time.outing_hours>24 or time.travel_hours_per_day>24 or time.radius_miles>50 or time.minimum_search_fraction>1:return false
 	if not value.get("wagon_noise_chance") is float or not is_finite(value.wagon_noise_chance) or value.wagon_noise_chance<0 or value.wagon_noise_chance>1:return false
 	for key in ["duration", "reload_seconds", "shot_limit", "carry_limit", "carry_per_person_lb"]:
 		if not value.get(key) is float and not value.get(key) is int:
@@ -51,7 +56,7 @@ func load_data(value: Variant) -> bool:
 	return true
 var rng := RandomNumberGenerator.new()
 
-func begin(seed_value: int, outing: int, miles: int, habitat: String = "", wagon: bool = false) -> Dictionary:
+func begin(seed_value: int, outing: int, miles: int, habitat: String = "", wagon: bool = false, search_factor: float = 1.0) -> Dictionary:
 	rng.seed = seed_value + 719 * outing + 98471
 	var region := habitat if data.regions.has(habitat) else ("woodland" if miles < 81 else "plains")
 	var rules: Dictionary = data.regions[region]
@@ -77,6 +82,13 @@ func begin(seed_value: int, outing: int, miles: int, habitat: String = "", wagon
 		var noise:=RandomNumberGenerator.new()
 		noise.seed=seed_value+719*outing+801737
 		animals=animals.filter(func(_animal):return noise.randf()>=float(data.wagon_noise_chance))
+		count=animals.size()
+	# Planning for a slower return leaves fewer search opportunities, without changing
+	# shots, yields or the normal outing's random stream.
+	if search_factor<1.0:
+		var search:=RandomNumberGenerator.new()
+		search.seed=seed_value+719*outing+1301081
+		animals=animals.filter(func(_animal):return search.randf()<clampf(search_factor,0.0,1.0))
 		count=animals.size()
 	var cover: Array = []
 	for index in range(4):

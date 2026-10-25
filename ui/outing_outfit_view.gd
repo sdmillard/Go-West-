@@ -31,7 +31,7 @@ func _init():
  rows.add_child(helpers)
  summary.tooltip_text="Good / Fair: full human carrying. Poor: gradually reduced to half. Very Poor: falls toward zero. Broken legs prevent hauling. The outbound pack uses part of this capacity; allocated tack and animals add only their own cargo."
  summary.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
- summary.custom_minimum_size=Vector2(500,80)
+ summary.custom_minimum_size=Vector2(500,0)
  rows.add_child(summary)
  actor.item_selected.connect(func(_i):load_preference())
  kit.item_selected.connect(func(_i):refresh())
@@ -94,6 +94,7 @@ func quote() -> Dictionary:
  return q
 func refresh():
  if loading or game==null:return
+ summary.tooltip_text="Good and Fair retain full human carrying. More time reserved for a slower loaded return means fewer chances to find game."
  var selected: String=game.field_outings.Outfit.KITS[kit.selected]
  var wagon: bool=selected=="wagon"
  helpers.visible=actor_id()<0 and not wagon
@@ -111,6 +112,9 @@ func refresh():
   summary.text="EVERYONE COMES · UP TO %d LB FREE CARGO\nUses wagon supplies; works the ox team for one day.\nNoise can scare game away. No camp chores today." % q.catch_lb
  else:
   summary.text="PACK %.1f LB · WORKING %.0f / ALLOWED %.0f LB\nUP TO %d LB CATCH · RIDER %.0f + TACK %.0f LB ON ANIMALS\n%d FOOD, %d CLOTHING, %d BULLETS · %s\n%s" % [q.pack_lb,q.working_lb,q.capacity_lb,q.catch_lb,q.rider_lb,q.tack_lb,q.inventory.food,q.inventory.clothing,q.inventory.bullets,"SHORT SUPPLIES: catch not guaranteed" if q.get("short_provisions",false) else "reserve included","One shared day; other camp jobs continue." if actor_id()<0 else "Riders can follow. Loaded returns are slower; crossings and bandits can kill."]
+ if not wagon and float(q.get("search_factor",1.0))<1.0:
+  summary.text+="\nSLOWER RETURN: %.0f%% SEARCH TIME · %.1f H RETURN BUFFER" % [q.search_factor*100,q.return_hours]
+  summary.tooltip_text="Same one-day outing. More time reserved for the loaded return means fewer chances to find game. Hours are planning estimates; aim time and meat yield are unchanged."
  reset_size()
 
 

@@ -2,6 +2,8 @@ extends "res://tests/current_journey_policy.gd"
 const Observed=preload("res://tests/hunt_balance_observer.gd")
 var reserve_meals:=2
 var player_accuracy:=0.65
+var travel_pace:=0
+var outfit_profile: String="standard"
 const METHODS=["legacy","foot","ride","heavy","lead","wagon","outrider"]
 func source_hashes() -> Dictionary:
  var result: Dictionary={}
@@ -13,10 +15,11 @@ func starting_cart(game,method: String,equipment: String) -> Dictionary:
  var cart: Dictionary={}
  for good in game.outfitter.goods:cart[good.id]=int(good.suggested)
  cart.dried_produce=20
+ if outfit_profile=="lean":cart.oxen=4;cart.food=1200
  if equipment=="shared" or method in ["ride","heavy","lead","outrider"]:cart.merge({"horses":1,"saddles":1,"saddlebags":1},true)
  return cart
 func policy(method: String) -> Dictionary:
- return {"method":method,"pace":0,"rations":1,"rest":true,"hunt":true,"accuracy":player_accuracy,"hunt_below":90,"rest_below":55,"health_rest_limit":1,"care_below":55,"produce":true,"forage_gap":20,"preserve":"salt","preserve_meals":3.3,"slaughter":true,"slaughter_team_floor":4,"opportunity":1,"cash_reserve":20}
+ return {"method":method,"pace":travel_pace,"rations":1,"rest":true,"hunt":true,"accuracy":player_accuracy,"hunt_below":90,"rest_below":55,"health_rest_limit":1,"care_below":55,"produce":true,"forage_gap":20,"preserve":"salt","preserve_meals":3.3,"slaughter":true,"slaughter_team_floor":4,"opportunity":1,"cash_reserve":20}
 func count_template() -> Dictionary:
  return {"hunts":0,"rests":0,"trades":0,"travel_days":0,"empty_food_days":0,"care":0,"last_care":-100,"shots":0,"meat_obtained":0,"meat_carried":0,"empty_hunts":0,"preservations":0,"oxen_slaughtered":0}
 func without_hunt(game,p: Dictionary,aim,count: Dictionary) -> bool:
@@ -109,11 +112,13 @@ func run():
    "--months":months=Array(value.split(",")).map(func(v):return int(v))
    "--professions":professions=Array(value.split(","))
    "--equipment":equipment=Array(value.split(","))
+   "--pace":travel_pace=clampi(int(value),0,2)
+   "--outfit":outfit_profile=value
    "--accuracy":player_accuracy=clampf(float(value),0,1)
    "--reserve-meals":reserve_meals=clampi(int(value),1,8)
    "--methods":methods=Array(value.split(","))
  var path: String="res://.tools/hunting-"+label+".json"
- if FileAccess.file_exists(path) or not months.all(func(v):return v in [3,4,5,6,7,8]) or not professions.all(func(v):return v in ["farmer","carpenter","banker"]) or not equipment.all(func(v):return v in ["shared","practical"]) or not methods.all(func(v):return v in METHODS):
+ if outfit_profile not in ["standard","lean"] or FileAccess.file_exists(path) or not months.all(func(v):return v in [3,4,5,6,7,8]) or not professions.all(func(v):return v in ["farmer","carpenter","banker"]) or not equipment.all(func(v):return v in ["shared","practical"]) or not methods.all(func(v):return v in METHODS):
   printerr("Invalid cohort or existing report");quit(1);return
  var store=Store.new();var frozen: Dictionary=source_hashes();var rules: String=store.fingerprint()
  var rows: Array=[];var errors: Array=[]
@@ -154,6 +159,6 @@ func run():
       rows.append(row);await process_frame
      print("%s month%d %s %s: %d journeys, %d errors" % [profession,month,kit,method,rows.size(),errors.size()])
  if frozen!=source_hashes() or rules!=store.fingerprint():errors.append({"error":"Sources changed during campaign"})
- FileAccess.open(path,FileAccess.WRITE).store_string(JSON.stringify({"rules_signature":rules,"source_hashes":frozen,"seed_start":seed_start,"seeds":seeds,"reserve_meals":reserve_meals,"player_accuracy":player_accuracy,"months":months,"professions":professions,"equipment":equipment,"methods":methods,"runs":rows,"errors":errors},"\t"))
+ FileAccess.open(path,FileAccess.WRITE).store_string(JSON.stringify({"rules_signature":rules,"source_hashes":frozen,"seed_start":seed_start,"seeds":seeds,"reserve_meals":reserve_meals,"player_accuracy":player_accuracy,"pace":travel_pace,"outfit_profile":outfit_profile,"months":months,"professions":professions,"equipment":equipment,"methods":methods,"runs":rows,"errors":errors},"\t"))
  print("Hunting campaign: %d journeys, %d errors" % [rows.size(),errors.size()])
  quit(0 if errors.is_empty() and rows.size()==professions.size()*months.size()*equipment.size()*methods.size()*seeds else 1)
