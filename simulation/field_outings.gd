@@ -38,7 +38,7 @@ func same_road(game,trip: Dictionary) -> bool:
  return true
 func start(game,index: int,kit: String,days: int,bullets: int,return_mode: String="ride") -> bool:
  if kit=="wagon":return false
- if not game.can_service() or index<=0 or index>=game.party_health.members.size() or game.state.party_size<2:return false
+ if not game.can_service() or index==game.camp_tasks.leader_id(game) or index<=0 or index>=game.party_health.members.size() or game.state.party_size<2:return false
  var offer: Dictionary=Outfit.quote(game,[index],kit,days,bullets,return_mode)
  if not offer.valid:return false
  if days>1 and not offer.mounted:return false

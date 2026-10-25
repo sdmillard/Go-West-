@@ -11,6 +11,10 @@ func source_hashes() -> Dictionary:
   for file in DirAccess.get_files_at("res://"+folder):
    if file.ends_with(".gd") or file.ends_with(".json"):result[folder+"/"+file]=FileAccess.get_sha256("res://"+folder+"/"+file)
  return result
+func make_study_game(seed_value: int):
+ return Observed.new(seed_value,"classic",true)
+func extra_settings() -> Dictionary:return {}
+func extra_row(_game,_count: Dictionary) -> Dictionary:return {}
 func starting_cart(game,method: String,equipment: String) -> Dictionary:
  var cart: Dictionary={}
  for good in game.outfitter.goods:cart[good.id]=int(good.suggested)
@@ -127,7 +131,7 @@ func run():
    for kit in equipment:
     for method in methods:
      for seed_value in range(seed_start,seed_start+seeds):
-      var game=Observed.new(seed_value,"classic",true)
+      var game=make_study_game(seed_value)
       var cart: Dictionary=starting_cart(game,method,kit)
       var row: Dictionary={"profession":profession,"month":month,"equipment":kit,"method":method,"seed":seed_value,"outfit":cart}
       var opening: Dictionary=game.outfitter.quote(profession,cart);row.opening_cost_cents=opening.total_cents
@@ -156,9 +160,12 @@ func run():
       if outcome=="action_limit":errors.append({"run":row,"error":outcome})
       if store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))==null:errors.append({"run":row,"error":"Final save: "+store.error})
       row.merge({"outcome":outcome,"days":game.state.day,"miles":game.state.miles,"survivors":game.state.party_size,"original_present":game.party_health.members.slice(0,5).filter(func(m):return game.party_health.is_active(m)).size(),"away":game.field_outings.record.trips.size(),"original_survived":game.party_health.members.slice(0,5).filter(func(m):return game.field_outings.actual_alive(int(m.id)) if m.get("away",false) else game.party_health.is_active(m)).size(),"cash":game.state.money,"food":game.state.food,"oxen":game.state.oxen,"horses":game.Mounts.count(game.state,"horses"),"horse_condition":game.Mounts.condition(game.state),"counts":count,"audit":game.audit,"meals_eaten":game.provisions.eaten_units,"spoilage_food_units":game.provisions.spoiled_units,"field":game.field_outings.audit,"curve":curve,"route":game.travelled_path(),"loss_reason":game.state.loss_reason,"death_causes":game.party_health.members.filter(func(m):return not m.alive).map(func(m):return m.cause)})
+      row.merge(extra_row(game,count),true)
       rows.append(row);await process_frame
      print("%s month%d %s %s: %d journeys, %d errors" % [profession,month,kit,method,rows.size(),errors.size()])
  if frozen!=source_hashes() or rules!=store.fingerprint():errors.append({"error":"Sources changed during campaign"})
- FileAccess.open(path,FileAccess.WRITE).store_string(JSON.stringify({"rules_signature":rules,"source_hashes":frozen,"seed_start":seed_start,"seeds":seeds,"reserve_meals":reserve_meals,"player_accuracy":player_accuracy,"pace":travel_pace,"outfit_profile":outfit_profile,"months":months,"professions":professions,"equipment":equipment,"methods":methods,"runs":rows,"errors":errors},"\t"))
+ var report: Dictionary={"rules_signature":rules,"source_hashes":frozen,"seed_start":seed_start,"seeds":seeds,"reserve_meals":reserve_meals,"player_accuracy":player_accuracy,"pace":travel_pace,"outfit_profile":outfit_profile,"months":months,"professions":professions,"equipment":equipment,"methods":methods,"runs":rows,"errors":errors}
+ report.merge(extra_settings(),true)
+ FileAccess.open(path,FileAccess.WRITE).store_string(JSON.stringify(report,"\t"))
  print("Hunting campaign: %d journeys, %d errors" % [rows.size(),errors.size()])
  quit(0 if errors.is_empty() and rows.size()==professions.size()*months.size()*equipment.size()*methods.size()*seeds else 1)

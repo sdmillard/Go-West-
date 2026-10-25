@@ -745,7 +745,7 @@ func _show_section(section: String) -> void:
 			var nursing_patients: Dictionary=game.camp_tasks.patient_nurses(game)
 			for member in game.party_health.members:
 				var id: int=int(member.id)
-				if id==0 or not game.party_health.is_active(member):continue
+				if id==game.camp_tasks.leader_id(game) or not game.party_health.is_active(member):continue
 				var row:=HBoxContainer.new()
 				row.name="CampCompanion%d" % id
 				row.add_theme_constant_override("separation",1)
