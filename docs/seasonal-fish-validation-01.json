@@ -1,0 +1,140 @@
+{
+  "runtime_commit": "e2cb920",
+  "control_commit": "546489f",
+  "archives": [
+    {
+      "path": "hunting-seasonal-development-off-01.json",
+      "source": "C:\\Users\\Spencer\\Projects\\Oregon Trail\\.tools\\seasonal-fish-validation\\.tools\\hunting-seasonal-development-off-01.json",
+      "sha256": "4614561e5e1ca16a6f4609dd9d35f7d23c89b27fd3334aecade1d4afa887b14c",
+      "runs": 24
+    },
+    {
+      "path": "hunting-seasonal-development-leader-01.json",
+      "source": "C:\\Users\\Spencer\\Projects\\Oregon Trail\\.tools\\seasonal-fish-validation\\.tools\\hunting-seasonal-development-leader-01.json",
+      "sha256": "f78d1aec520a9089c4a928e6be48bd3befac6fc001de0d08e0b82f99ac2dc058",
+      "runs": 24
+    },
+    {
+      "path": "hunting-seasonal-development-support-01.json",
+      "source": "C:\\Users\\Spencer\\Projects\\Oregon Trail\\.tools\\seasonal-fish-validation\\.tools\\hunting-seasonal-development-support-01.json",
+      "sha256": "70c6c482087e4a69ee6b10b3560b331014abd3a004f59bc6acd26f75fe15a852",
+      "runs": 24
+    },
+    {
+      "path": "hunting-seasonal-control-development-support-01.json",
+      "source": "C:\\Users\\Spencer\\Projects\\Oregon Trail\\.tools\\seasonal-fish-control\\.tools\\hunting-seasonal-control-development-support-01.json",
+      "sha256": "94ae459b109f69059b352fd49af0985b5339d74956ff89c77bd0b4f88e5eac6b",
+      "runs": 24
+    },
+    {
+      "path": "hunting-seasonal-validation-off-01.json",
+      "source": "C:\\Users\\Spencer\\Projects\\Oregon Trail\\.tools\\seasonal-fish-validation\\.tools\\hunting-seasonal-validation-off-01.json",
+      "sha256": "5913e95375acea17beff0f824ef411a857c6cbc332e5ed0668054d15f20463e4",
+      "runs": 24
+    },
+    {
+      "path": "hunting-seasonal-validation-leader-01.json",
+      "source": "C:\\Users\\Spencer\\Projects\\Oregon Trail\\.tools\\seasonal-fish-validation\\.tools\\hunting-seasonal-validation-leader-01.json",
+      "sha256": "6b4669a42ff407480859111d6bfc0c19406b240db9ad0ffcd3d662c9e833205e",
+      "runs": 24
+    },
+    {
+      "path": "hunting-seasonal-validation-support-01.json",
+      "source": "C:\\Users\\Spencer\\Projects\\Oregon Trail\\.tools\\seasonal-fish-validation\\.tools\\hunting-seasonal-validation-support-01.json",
+      "sha256": "f0ff26758beafcd17ab1d2f659bf098dfdb4a829dbbe956b197d22f390e58234",
+      "runs": 24
+    },
+    {
+      "path": "hunting-seasonal-control-validation-support-01.json",
+      "source": "C:\\Users\\Spencer\\Projects\\Oregon Trail\\.tools\\seasonal-fish-control\\.tools\\hunting-seasonal-control-validation-support-01.json",
+      "sha256": "d221afe93057502aa6880b1009a631831a30af945fad393d2840038ff655e79b",
+      "runs": 24
+    },
+    {
+      "path": "seasonal-yield-audit-01.json",
+      "source": "C:\\Users\\Spencer\\Projects\\Oregon Trail\\.tools\\seasonal-fish-validation\\.tools\\seasonal-yield-audit-01.json",
+      "sha256": "2bf3d17659443154e9640cb0c1227a96d87ce7b318c967b89e496a86cb93c5aa",
+      "runs": 1800
+    },
+    {
+      "path": "seasonal-store-journeys.json",
+      "source": "C:\\Users\\Spencer\\Projects\\Oregon Trail\\.tools\\seasonal-fish-validation\\docs\\first-store-journeys.json",
+      "sha256": "55daece5bf15fe7b2ef783987e7c36d5669a81b3962299b61be73fffbac60560",
+      "runs": 24
+    },
+    {
+      "path": "seasonal-outlaw-journeys.json",
+      "source": "C:\\Users\\Spencer\\Projects\\Oregon Trail\\.tools\\seasonal-fish-validation\\.tools\\current-outlaw-journeys.json",
+      "sha256": "5e830a8d441c4030cb0a62ed892b4469b8fbbec489df05387ae33e8c76bb91fb",
+      "runs": 20
+    }
+  ],
+  "unchanged_policy_sha256": {
+    "tests/current_journey_policy.gd": "ced1bdc9eb8579a7433860ab30177394d179e597e54202667b54398403692cb7",
+    "tests/full_trail_policy.gd": "87f21e8592d966bdafcdf57051a712002535bf72a61b5e16b6747d5de7c53cae",
+    "tests/journey_trade_policy.gd": "2af3c09bb7d1cdb2c8e222baff902127ddeb4785bf142d3c0f13300d6759c497",
+    "tests/replay_policy_cap.gd": "da9cfeba95ae25f8582e117229645a96063b593b4b3ee3d1b2e74d15ef413cc4",
+    "tests/survival_policy.gd": "779cce1800650563cbc0ae28b28e7fbf73c88928241677ecaf018980f5e4c6e9",
+    "tests/test_current_policy.gd": "c2af29f0dda2439c989f4090ce981824aaa076db3b55bf353b28b6e1b5f5f8c0",
+    "tests/test_journey_policy.gd": "4f9b897a4d0625cd52645bf049ac7e73fd4aaa64c5f26a9fb430dc1fcf0a3425",
+    "tests/test_working_team_policy.gd": "0acf5afa14f5f9901ab7201ce7252f86a851dfe1de3f441d680c3c474d0c5bf0",
+    "tests/fishing_campaign.gd": "1f041c85efa8a85f4851b4c8b0c9ecb75ec5f94f70c7f6726b0a252d47d05a4c"
+  },
+  "paired_support": [
+    {
+      "phase": "development",
+      "profession": "farmer",
+      "runs": 8,
+      "old_arrivals": 0,
+      "new_arrivals": 1
+    },
+    {
+      "phase": "development",
+      "profession": "carpenter",
+      "runs": 8,
+      "old_arrivals": 6,
+      "new_arrivals": 6
+    },
+    {
+      "phase": "development",
+      "profession": "banker",
+      "runs": 8,
+      "old_arrivals": 6,
+      "new_arrivals": 6
+    },
+    {
+      "phase": "validation",
+      "profession": "farmer",
+      "runs": 8,
+      "old_arrivals": 0,
+      "new_arrivals": 0
+    },
+    {
+      "phase": "validation",
+      "profession": "carpenter",
+      "runs": 8,
+      "old_arrivals": 7,
+      "new_arrivals": 7
+    },
+    {
+      "phase": "validation",
+      "profession": "banker",
+      "runs": 8,
+      "old_arrivals": 8,
+      "new_arrivals": 8
+    }
+  ],
+  "unfished_integrations": [
+    {
+      "report": "seasonal-store-journeys.json",
+      "runs": 24,
+      "identical_to": "fishing-store-journeys.json"
+    },
+    {
+      "report": "seasonal-outlaw-journeys.json",
+      "runs": 20,
+      "identical_to": "fishing-current-outlaw-journeys.json"
+    }
+  ],
+  "full_suite_exit_code": 0
+}

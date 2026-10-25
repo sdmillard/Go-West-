@@ -185,10 +185,10 @@ func preserve(amount: int, day: int, salted: bool) -> Dictionary:
 func meat_calories(physical_lb: float,kcal_per_lb: float=-1.0) -> float:
 	return maxf(0,physical_lb)*float(data.food_energy.generic_meat_kcal_per_lb if kcal_per_lb<0 else kcal_per_lb)
 func food_calories(units: float) -> float:return maxf(0,units)*float(data.food_energy.unit_kcal)
-func meat_units(physical_lb: int,kcal_per_lb: float=-1.0) -> int:
-	return maxi(1,roundi(meat_calories(physical_lb,kcal_per_lb)/float(data.food_energy.unit_kcal))) if physical_lb>0 else 0
-func add_meat(physical_lb: int,day: int,kcal_per_lb: float=-1.0) -> int:
-	var units:=meat_units(physical_lb,kcal_per_lb)
+func meat_units(physical_lb: float,kcal_per_lb: float=-1.0,minimum_one: bool=true) -> int:
+	return maxi(1 if minimum_one else 0,roundi(meat_calories(physical_lb,kcal_per_lb)/float(data.food_energy.unit_kcal))) if physical_lb>0 else 0
+func add_meat(physical_lb: float,day: int,kcal_per_lb: float=-1.0,minimum_one: bool=true) -> int:
+	var units:=meat_units(physical_lb,kcal_per_lb,minimum_one)
 	if units>0:fresh.append({"pounds":units,"expires":day+int(data.fresh_days)+1,"mass_ratio":float("%.12f" % (float(physical_lb)/units))})
 	return units
 func add_produce(physical_lb: int, day: int) -> int:

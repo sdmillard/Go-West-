@@ -5,15 +5,15 @@ from collections import defaultdict,Counter
 from statistics import mean,median
 import json,hashlib,argparse,math
 POLICIES=("off","leader","support")
-def summarize(folder):
- archives=sorted(folder.glob("hunting-fishing-audit-*-01.json"))
+def summarize(folder,development_start=205000,validation_start=215000,pattern="hunting-fishing-audit-*-01.json",yield_name="fishing-yield-audit-01.json"):
+ archives=sorted(folder.glob(pattern))
  if len(archives)!=6:raise ValueError("Expected six full-route archives")
  rows=[];manifest=[];rules=None;sources=None;settings=None;seen=set()
  for path in archives:
   raw=path.read_bytes();d=json.loads(raw)
   if d["errors"] or len(d["runs"])!=24:raise ValueError("Failed/incomplete journey archive")
   phase="validation" if "validation" in path.name else "development"
-  if d["seed_start"]!={"development":205000,"validation":215000}[phase] or d["seeds"]!=4:raise ValueError("Unexpected seed cohort")
+  if d["seed_start"]!={"development":development_start,"validation":validation_start}[phase] or d["seeds"]!=4:raise ValueError("Unexpected seed cohort")
   policy=d["fishing_policy"]
   if policy not in POLICIES:raise ValueError("Unknown fishing strategy")
   current={key:d[key] for key in ("pace","outfit_profile","months","professions","equipment","methods","reserve_meals","player_accuracy","camp_work_policy","motion_policy","fishing_policy_version","fishing_hook_accuracy","fishing_repeat_rule")}
@@ -51,7 +51,7 @@ def summarize(folder):
    leader_fishing_days=len(leader),leader_caught_edible_lb=sum(r["caught_edible_lb"] for r in leader),leader_retrieved_lb=sum(r["retrieved"] for r in leader),leader_meal_food_units=sum(r["eaten_food"] for r in leader),leader_packed_food_units=sum(r["food"] for r in leader),leader_party_food_delta=sum(r["party_food_delta"] for r in leader),leader_left_lb=round(sum(r["left"] for r in leader),3),
    companion_fishing_days=len(helpers),companion_returned_edible_lb=sum(r["mass"] for r in helpers),companion_returned_food_units=sum(r["food"] for r in helpers),
    sampled_access={key:sum(r["counts"][key] for r in data) for key in ("fishing_access_walk_days","fishing_access_horse_only_days","fishing_water_but_no_horse_days","fishing_blocked_weather_days")}))
- p=folder/"fishing-yield-audit-01.json";raw=p.read_bytes();d=json.loads(raw)
+ p=folder/yield_name;raw=p.read_bytes();d=json.loads(raw)
  if d["errors"] or len(d["runs"])!=1800 or d["rules_signature"]!=rules or d["source_hashes"]!=sources:raise ValueError("Yield audit incompatible/incomplete")
  manifest.append(dict(path=p.name,sha256=hashlib.sha256(raw).hexdigest(),runs=1800))
  cells=defaultdict(list)
@@ -60,12 +60,12 @@ def summarize(folder):
  for (distance,ration,health),data in sorted(cells.items()):
   if len(data)!=100 or {r["seed"] for r in data}!=set(range(225000,225100)):raise ValueError("Incomplete yield cell")
   energy=sum(r["retrieved_kcal"] for r in data)
-  generated=sum(max(1,math.floor(r["retrieved_kcal"]/1000+0.5)) if r["retrieved"]>0 else 0 for r in data)
+  generated=sum(r.get("generated_food",max(1,math.floor(r["retrieved_kcal"]/1000+0.5)) if r["retrieved"]>0 else 0) for r in data)
   yields.append(dict(distance=distance,ration=ration,health=health,trips=100,mean_casts=round(mean(r["casts_used"] for r in data),3),mean_caught_edible_lb=round(mean(r["caught_edible_lb"] for r in data),3),mean_retrieved_lb=round(mean(r["retrieved"] for r in data),3),mean_generated_food_units=generated/100,mean_party_food_delta=round(mean(r["party_food_delta"] for r in data),3),mean_packed_food_units=round(mean(r["food"] for r in data),3),zero_catch_trips=sum(r["caught_edible_lb"]==0 for r in data),rounding_energy_bias_pct=round(100*(generated*1000-energy)/energy,3) if energy else None))
- return dict(full_journeys=len(rows),controlled_trips=1800,settings=settings,rules_signature=rules,source_hashes=sources,inputs=manifest,groups=results,yield_cells=yields,caveat="Generic fish rules fixed at 600 kcal/edible lb. These bounded scripts are not optimal human strategies. Party food delta includes meals and other camp work; fishing is not standalone food sufficiency. Species-by-river profiles are future tuning.")
+ return dict(full_journeys=len(rows),controlled_trips=1800,settings=settings,rules_signature=rules,source_hashes=sources,inputs=manifest,groups=results,yield_cells=yields,caveat="Use the archived rules signature for the actual fish profiles. These bounded scripts are not optimal human strategies. Party food delta includes meals and other camp work. Historical generic reports lack generated_food; only those legacy rows use the old minimum-one reconstruction.")
 if __name__=="__main__":
- p=argparse.ArgumentParser();p.add_argument("--folder",type=Path,default=Path(".tools"));p.add_argument("--output",type=Path,required=True);a=p.parse_args()
- result=summarize(a.folder);a.output.write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8");print("Summarized",result["full_journeys"],"journeys and",result["controlled_trips"],"controlled trips")
+ p=argparse.ArgumentParser();p.add_argument("--folder",type=Path,default=Path(".tools"));p.add_argument("--output",type=Path,required=True);p.add_argument("--development-start",type=int,default=205000);p.add_argument("--validation-start",type=int,default=215000);p.add_argument("--pattern",default="hunting-fishing-audit-*-01.json");p.add_argument("--yield-name",default="fishing-yield-audit-01.json");a=p.parse_args()
+ result=summarize(a.folder,a.development_start,a.validation_start,a.pattern,a.yield_name);a.output.write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8");print("Summarized",result["full_journeys"],"journeys and",result["controlled_trips"],"controlled trips")
  for r in result["groups"]:print(r["phase"],r["policy"],r["profession"],"arrivals",r["arrivals"],"underfed",r["underfed_days"],"leader days",r["leader_fishing_days"],"helper food",r["companion_returned_food_units"])
  for r in result["yield_cells"]:
   if r["health"]==100:print("YIELD",r)

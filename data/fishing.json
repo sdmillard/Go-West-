@@ -1,5 +1,5 @@
 {
-  "note": "Authored same-day hook-and-line fishing, not measured catch rates. Reach is road distance to a known river stop on the current leg, not a GIS model. Basic reusable line/hooks belong to household tools in this first slice; no modern reel or guaranteed salmon haul.",
+  "note": "Historical habitat-informed hook-and-line profiles. Whole weights, edible fractions, odds, seasonal factors and size frequencies are authored approximations, not measured 1848 catch rates. Basic line/hooks are household tools.",
   "foot_radius": 4,
   "horse_radius": 12,
   "foot_mph": 2,
@@ -17,5 +17,531 @@
   ],
   "kcal_per_lb": 600,
   "cold_factor": 0.5,
-  "worker_hook_chance": 0.6
+  "worker_hook_chance": 0.6,
+  "species": {
+    "channel_catfish": {
+      "label": "Channel catfish",
+      "whole_lb": [
+        1,
+        4
+      ],
+      "large_lb": [
+        5,
+        10
+      ],
+      "large_chance": 0.08,
+      "edible_fraction": 0.5,
+      "kcal_per_lb": 430,
+      "nutrition_note": "USDA raw wild channel catfish ~431 kcal/edible lb."
+    },
+    "white_sucker": {
+      "label": "White sucker",
+      "whole_lb": [
+        0.5,
+        2.5
+      ],
+      "large_lb": [
+        3,
+        4
+      ],
+      "large_chance": 0.04,
+      "edible_fraction": 0.55,
+      "kcal_per_lb": 420,
+      "nutrition_note": "USDA raw white sucker ~417 kcal/edible lb."
+    },
+    "flannelmouth_sucker": {
+      "label": "Flannelmouth sucker",
+      "whole_lb": [
+        1,
+        3
+      ],
+      "large_lb": [
+        4,
+        6
+      ],
+      "large_chance": 0.05,
+      "edible_fraction": 0.55,
+      "kcal_per_lb": 420,
+      "nutrition_note": "White-sucker raw-food proxy; not a species assay."
+    },
+    "cutthroat": {
+      "label": "Colorado River cutthroat trout",
+      "whole_lb": [
+        0.5,
+        2
+      ],
+      "large_lb": [
+        2.5,
+        4
+      ],
+      "large_chance": 0.06,
+      "edible_fraction": 0.55,
+      "kcal_per_lb": 540,
+      "nutrition_note": "Wild rainbow trout raw-food proxy; not a cutthroat assay."
+    },
+    "redband": {
+      "label": "Redband trout",
+      "whole_lb": [
+        0.5,
+        2.5
+      ],
+      "large_lb": [
+        3,
+        5
+      ],
+      "large_chance": 0.06,
+      "edible_fraction": 0.55,
+      "kcal_per_lb": 540,
+      "nutrition_note": "USDA wild rainbow raw-food reference ~540 kcal/edible lb."
+    },
+    "whitefish": {
+      "label": "Mountain whitefish",
+      "whole_lb": [
+        0.5,
+        1.5
+      ],
+      "large_lb": [
+        2,
+        3
+      ],
+      "large_chance": 0.04,
+      "edible_fraction": 0.55,
+      "kcal_per_lb": 600,
+      "nutrition_note": "Rounded generic whitefish edible-flesh proxy; not a mountain-whitefish assay."
+    },
+    "chinook": {
+      "label": "Chinook salmon",
+      "whole_lb": [
+        6,
+        16
+      ],
+      "large_lb": [
+        18,
+        28
+      ],
+      "large_chance": 0.05,
+      "edible_fraction": 0.6,
+      "kcal_per_lb": 810,
+      "nutrition_note": "NOAA raw Chinook 179 kcal/100g ~812 kcal/edible lb."
+    }
+  },
+  "profiles": {
+    "prairie": {
+      "label": "Prairie river",
+      "monthly_bite_factor": [
+        0.35,
+        0.4,
+        0.55,
+        0.8,
+        1,
+        1.1,
+        1.1,
+        1,
+        0.9,
+        0.7,
+        0.5,
+        0.35
+      ],
+      "species": {
+        "channel_catfish": {
+          "weight": 4,
+          "months": [
+            0.2,
+            0.2,
+            0.4,
+            0.8,
+            1,
+            1.3,
+            1.3,
+            1.2,
+            1,
+            0.6,
+            0.3,
+            0.2
+          ]
+        },
+        "white_sucker": {
+          "weight": 3,
+          "months": [
+            1,
+            1,
+            2,
+            2,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      }
+    },
+    "green": {
+      "label": "Green River basin",
+      "monthly_bite_factor": [
+        0.35,
+        0.4,
+        0.55,
+        0.75,
+        0.9,
+        1,
+        1,
+        0.95,
+        0.9,
+        0.75,
+        0.5,
+        0.35
+      ],
+      "species": {
+        "flannelmouth_sucker": {
+          "weight": 4,
+          "months": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "cutthroat": {
+          "weight": 2,
+          "months": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "whitefish": {
+          "weight": 3,
+          "months": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      }
+    },
+    "snake": {
+      "label": "Lower Snake River",
+      "monthly_bite_factor": [
+        0.4,
+        0.45,
+        0.65,
+        0.85,
+        1,
+        1,
+        0.9,
+        0.85,
+        1,
+        0.9,
+        0.6,
+        0.4
+      ],
+      "species": {
+        "redband": {
+          "weight": 3,
+          "months": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "whitefish": {
+          "weight": 4,
+          "months": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "chinook": {
+          "weight": 3,
+          "months": [
+            0,
+            0,
+            0,
+            0,
+            0.25,
+            1,
+            1,
+            0.5,
+            1,
+            1,
+            0.25,
+            0
+          ]
+        }
+      }
+    },
+    "umatilla": {
+      "label": "Umatilla River",
+      "monthly_bite_factor": [
+        0.4,
+        0.45,
+        0.65,
+        0.85,
+        1,
+        1,
+        0.85,
+        0.75,
+        0.95,
+        0.9,
+        0.6,
+        0.4
+      ],
+      "species": {
+        "redband": {
+          "weight": 4,
+          "months": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "whitefish": {
+          "weight": 4,
+          "months": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "chinook": {
+          "weight": 3,
+          "months": [
+            0,
+            0,
+            0,
+            0.25,
+            1,
+            1,
+            0.25,
+            0,
+            0.5,
+            1,
+            0.25,
+            0
+          ]
+        }
+      }
+    },
+    "john_day": {
+      "label": "John Day River",
+      "monthly_bite_factor": [
+        0.4,
+        0.45,
+        0.65,
+        0.9,
+        1,
+        1,
+        0.85,
+        0.75,
+        0.95,
+        0.9,
+        0.6,
+        0.4
+      ],
+      "species": {
+        "redband": {
+          "weight": 4,
+          "months": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "whitefish": {
+          "weight": 4,
+          "months": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "chinook": {
+          "weight": 2,
+          "months": [
+            0,
+            0,
+            0,
+            0.25,
+            1,
+            1,
+            0.25,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    },
+    "deschutes": {
+      "label": "Deschutes River",
+      "monthly_bite_factor": [
+        0.4,
+        0.45,
+        0.65,
+        0.9,
+        1,
+        1,
+        0.9,
+        0.85,
+        1,
+        0.95,
+        0.6,
+        0.4
+      ],
+      "species": {
+        "redband": {
+          "weight": 4,
+          "months": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "whitefish": {
+          "weight": 4,
+          "months": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "chinook": {
+          "weight": 3,
+          "months": [
+            0,
+            0,
+            0,
+            0.25,
+            1,
+            1,
+            0.25,
+            0.5,
+            1,
+            1,
+            0.25,
+            0
+          ]
+        }
+      }
+    }
+  },
+  "sites": {
+    "wakarusa": "prairie",
+    "kansas_river": "prairie",
+    "big_blue": "prairie",
+    "south_platte": "prairie",
+    "north_platte": "prairie",
+    "greenwood_cutoff": "green",
+    "green_river": "green",
+    "snake_river": "snake",
+    "fort_boise": "snake",
+    "umatilla": "umatilla",
+    "john_day": "john_day",
+    "deschutes": "deschutes"
+  }
 }

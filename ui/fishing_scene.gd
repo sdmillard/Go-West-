@@ -15,7 +15,7 @@ var age:=1.0
 var clock:=0.0
 var splash_age:=1.0
 var previous_shots:=0
-var previous_meat:=0
+var previous_meat:=0.0
 var previous_cast:=0
 func _ready() -> void:
  custom_minimum_size=Vector2(432,150)
@@ -32,11 +32,11 @@ func observe(activity: Dictionary) -> void:
  if activity.get("activity","")!="fish":return
  if int(activity.shots)>previous_shots:
   presentation="cast";age=0.0;splash_age=-0.48
- if int(activity.meat)>previous_meat:
+ if float(activity.meat)>previous_meat:
   presentation="land";age=0.0;splash_age=0.0
  elif int(activity.cast)>previous_cast and int(activity.shots)==previous_shots:
   presentation="strike";age=0.0;splash_age=0.0
- previous_shots=int(activity.shots);previous_meat=int(activity.meat);previous_cast=int(activity.cast)
+ previous_shots=int(activity.shots);previous_meat=float(activity.meat);previous_cast=int(activity.cast)
  encounter=activity
  queue_redraw()
 func advance(delta: float) -> void:

@@ -49,7 +49,7 @@ func open(value) -> void:
   pick.pressed.connect(func():start_requested.emit(kit))
   choices.add_child(pick)
  choices.show();action.hide();timer_bar.hide()
- report.text="A horse is required at this distance." if not access.walk else "Choose how to reach the riverbank."
+ report.text=("A horse is required at this distance." if not access.walk else "Choose how to reach the riverbank.")+"\nSeasonal possibilities: "+", ".join(game.fishing.pool(access.site,int(game.calendar().month)).map(func(f):return str(f.label)))
  get_ok_button().text="CLOSE"
  reset_size();popup_centered()
 func show_activity() -> void:
@@ -65,7 +65,7 @@ func refresh() -> void:
  if game.hunt.get("activity","")!="fish":return
  var outing: Dictionary=game.hunt
  scenery.observe(outing)
- info.text="%s · %d LB EDIBLE FISH\nCASTS %d / %d · %d SECONDS LEFT" % [str(outing.field.site_name).to_upper(),outing.meat,outing.shots,outing.casts.size(),maxi(0,ceili(float(game.fishing.data.duration)-float(outing.elapsed)))]
+ info.text="%s · %.2f LB EDIBLE FISH\nCASTS %d / %d · %d SECONDS LEFT" % [str(outing.field.site_name).to_upper(),outing.meat,outing.shots,outing.casts.size(),maxi(0,ceili(float(game.fishing.data.duration)-float(outing.elapsed)))]
  report.text=outing.message
  action.disabled=outing.ended
  action.text={"ready":"CAST","waiting":"WAIT...","bite":"BITE! STRIKE!"}.get(outing.phase,"CAST")

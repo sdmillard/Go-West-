@@ -1,6 +1,10 @@
 extends "res://tests/fishing_campaign.gd"
 ## Controlled one-day public-action probes. These are not full-route arrivals.
 func run():
+ var label: String="fishing-yield-audit-01"
+ for argument in OS.get_cmdline_user_args():
+  if argument.begins_with("--yield-label="):label=argument.get_slice("=",1).validate_filename()
+ if FileAccess.file_exists("res://.tools/"+label+".json"):printerr("Existing yield report");quit(1);return
  var rows: Array=[];var errors: Array=[]
  var frozen: Dictionary=source_hashes();var store=Store.new();var rules: String=store.fingerprint()
  for distance in [0,4,12]:
@@ -24,6 +28,6 @@ func run():
      if row.day_end!=row.day+1 or row.bullets_delta!=0 or row.miles_delta!=0 or store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))==null:errors.append("Accounting or save failed")
      if seed_value%20==0:await process_frame
  if frozen!=source_hashes() or rules!=store.fingerprint():errors.append("Sources changed")
- FileAccess.open("res://.tools/fishing-yield-audit-01.json",FileAccess.WRITE).store_string(JSON.stringify({"runs":rows,"errors":errors,"rules_signature":rules,"source_hashes":frozen,"seed_start":225000,"seeds":100,"note":"Five present travelers; actual one-day fishing, normal meals; other companions assigned Rest. No extra fish, removed travel costs or forced catches."},"\t"))
+ FileAccess.open("res://.tools/"+label+".json",FileAccess.WRITE).store_string(JSON.stringify({"runs":rows,"errors":errors,"rules_signature":rules,"source_hashes":frozen,"seed_start":225000,"seeds":100,"note":"Five present travelers; actual one-day fishing, normal meals; other companions assigned Rest. No extra fish, removed travel costs or forced catches."},"\t"))
  print("Fishing yield audit: %d trips, %d errors" % [rows.size(),errors.size()])
  quit(0 if rows.size()==1800 and errors.is_empty() else 1)

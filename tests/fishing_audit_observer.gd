@@ -13,7 +13,7 @@ func start_fishing(kit: String) -> bool:
  return okay
 func finish_fishing() -> bool:
  if hunt.get("activity","")!="fish":return false
- var caught: int=int(hunt.meat);var casts: int=int(hunt.shots)
+ var caught: float=float(hunt.meat);var casts: int=int(hunt.shots)
  var okay: bool=super.finish_fishing()
  if okay:
   var entry: Dictionary=launch.duplicate(true)
