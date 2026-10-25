@@ -6,6 +6,8 @@ A growing Oregon Trail-inspired game in **Godot 4 / GDScript**. Lead five travel
 
 [Wagon sales, custom robbery demands and resizing](docs/WAGON_SALES_ROBBERY_AND_DISPLAY.md) add reviewed keep/sell/leave decisions, value-sensitive intimidation and configurable window scaling.
 
+[Livestock and individual teams](docs/LIVESTOCK.md) adds milk cows, goats, hens, grain, daily care and production. New animals arrive healthy; choose working oxen and rest or swap reserves.
+
 [Seasonal river fish](docs/SEASONAL_FISH.md) adds named catches, whole weights, species calories and seasonal river pools. Food rounds once per outing (4.49 → 4; 4.5 → 5).
 
 [The fishing audit](docs/FISHING_AUDIT.md) measures 144 journeys and 1,800 controlled trips. Current solo catch size and the whole-day cost constrain its usefulness; shared-stop companion fishing performs better in these narrow tests.

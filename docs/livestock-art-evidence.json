@@ -1,0 +1,68 @@
+{
+  "approved": "Spencer approved the supplied livestock pack in this chat, October 25, 2026",
+  "assets": [
+    {
+      "file": "art/pixels/cross_livestock_cow.png",
+      "sha256": "06c51f3c156d25d9ab0cacce2631670dc759117d23395ec5fb977bddaebb6567",
+      "dimensions": [
+        384,
+        120
+      ],
+      "rebuilt_pixel_identically": true
+    },
+    {
+      "file": "art/pixels/cross_livestock_goat.png",
+      "sha256": "733f12a920543ed3a42b6c278a6b1c501020dea37be7ec93fa2e0067497dbefc",
+      "dimensions": [
+        384,
+        120
+      ],
+      "rebuilt_pixel_identically": true
+    },
+    {
+      "file": "art/pixels/livestock_chicken.png",
+      "sha256": "a98897e4557abcdd2fd2e84360bbea98c387da8c99b0c2bf509399438ad1cd03",
+      "dimensions": [
+        384,
+        88
+      ],
+      "rebuilt_pixel_identically": true
+    },
+    {
+      "file": "art/pixels/livestock_coop.png",
+      "sha256": "e886967b7f2df23fb6853caa5092d35444d1e1fa28daea32d004f2915aaf501b",
+      "dimensions": [
+        32,
+        32
+      ],
+      "rebuilt_pixel_identically": true
+    },
+    {
+      "file": "art/pixels/livestock_cow.png",
+      "sha256": "eedb1d3dd5be09b9ba6117ece1497aec9ee064c13d3ee95b7517358242fdbe60",
+      "dimensions": [
+        384,
+        88
+      ],
+      "rebuilt_pixel_identically": true
+    },
+    {
+      "file": "art/pixels/livestock_goat.png",
+      "sha256": "ebacb8dd33e2b234164b6bfef898eae267c3e621b67a85b98be11feddd0ae315",
+      "dimensions": [
+        384,
+        88
+      ],
+      "rebuilt_pixel_identically": true
+    },
+    {
+      "file": "art/pixels/livestock_icons.png",
+      "sha256": "5ec1bb93bec04055b964eeb5a5b751896e24326a29e8bbfbe71d0cd32b70ed8a",
+      "dimensions": [
+        48,
+        16
+      ],
+      "rebuilt_pixel_identically": true
+    }
+  ]
+}

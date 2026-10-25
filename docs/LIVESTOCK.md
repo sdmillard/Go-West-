@@ -41,4 +41,21 @@ Emergency butchery permanently removes one animal and takes a day. Cow/goat gun 
 
 Spencer supplied and approved livestock-art-drafts.zip. Original Lua source is art/aseprite/scenes/livestock.lua; verification is art/aseprite/verify_livestock.lua. Native PNGs are installed; reproducible editable files regenerate into ignored output. Travel/camp/crossing sprites and ledger icons use the supplied frame registration. Walking crossing rows have no water pixels. No proprietary artwork is included.
 
-Genuine pre-livestock and older saves retain supplies, cash, elapsed time, random streams and old condition. Legacy shared condition is initially assigned uniformly to the existing animals. They receive no new livestock, feed or health. New animal/selected-team/product records are saved and validated. See [validation protocol](LIVESTOCK_VALIDATION_PROTOCOL.md); final results will be recorded after frozen testing. Farmer balance is not declared solved.
+Genuine pre-livestock and older saves retain supplies, cash, elapsed time, random streams and old condition. Legacy shared condition is initially assigned uniformly to the existing animals. They receive no new livestock, feed or health. New animal/selected-team/product records are saved and validated. See [validation protocol](LIVESTOCK_VALIDATION_PROTOCOL.md) and [source-stamped results](livestock-validation-01.json). Farmer balance is not declared solved.
+
+
+## Frozen validation results
+
+All 77 Godot suites passed on publication runtime 27a4b01, including 185 focused livestock/individual-team checks. Seven supplied sprite sheets rebuilt pixel-identically; native travel, ledger, selected-team, ford and ferry previews were inspected. The full test log and its SHA-256 are recorded in the results JSON.
+
+### Journey pilot
+
+Gameplay was frozen at b10d2d6. The final ferry presentation correction at 27a4b01 changes only ui/trail_view.gd; archived simulation/data/policy sources match publication after Git line-ending normalization. All 36 declared pilot journeys, 24 store journeys and 20 current-outlaw journeys completed with no state, policy or save errors. Full archives/logs remain in ignored .tools; report copies were SHA-256 verified against isolated originals. Earlier development runs are retained separately and are not pooled into these 80 final journeys.
+
+| Profession | Baseline arrivals | Dairy mix arrivals | Eight oxen arrivals |
+|---|---:|---:|---:|
+| Farmer | 0/4 | 0/4 | 0/4 |
+| Carpenter | 4/4 | 3/4 | 3/4 |
+| Banker | 4/4 | 4/4 | 4/4 |
+
+The dairy arm bought one cow, one goat, six hens and 50 lb grain with its original cash budget. Across these runs it produced about 202-203 gross food units and 78 eggs per journey; this is not net additional stored food, and feed was not restocked by the policy. The spare-ox arm made 86 actual working-team selections across its 12 journeys. Counts include repeated rotations; they do not measure 86 distinct animals. Different purchases and food streams change subsequent encounters and decisions, so these small outcome differences do not establish a causal penalty or advantage. No rates were tuned to these results. Farmer viability remains a separate survival-balance task.
