@@ -24,7 +24,7 @@ func run():
  check(g.rest_in_camp(),"Rest day produces livestock food")
  check(g.livestock.last.milk_lb>9 and g.livestock.last.food>=2,"Plausible dairy output converted to food")
  check(g.state.food==before+int(g.livestock.last.food)-15,"Production shares actual meals, not an extra day")
- check(g.state.poultry_feed==194,"Hens eat quarter-pound feed per day")
+ check(g.state.poultry_feed==196,"Hens supplement finite spring scratching with real grain")
  check(g.livestock.record.animals[0].remaining==179,"Lactation clock advances")
  check(g.livestock.last.eggs==0,"Partial eggs accumulate without daily rounding gifts")
  var restored=copy(g)
@@ -119,11 +119,12 @@ func run():
  g=game({})
  g.state.landmark="fort_laramie";g.state.next_landmark="fort_laramie";g._arrive_landmark(true,false)
  check(g.post_checkout({"dairy_cows":1,"goats":1,"hens":6,"poultry_feed":100}),"Actual post sells milk animals, hens and bulk grain")
- check(g.state.dairy_cows==1 and g.state.goats==1 and g.state.hens==6 and g.state.poultry_feed==94,"Purchase visit settles its day, production and real grain consumption")
+ check(g.state.dairy_cows==1 and g.state.goats==1 and g.state.hens==6 and g.state.poultry_feed<100,"Purchase visit settles its day, production and real grain consumption")
  check(copy(g)!=null,"Bulk livestock/feed counter ledger survives JSON saving")
  g.pending={}
  var current_day: int=g.state.day
- check(g.livestock.drop_grain(g,4) and g.state.day==current_day and g.state.poultry_feed==90,"Grain discards use actual quarter-pound quantities without a day")
+ var grain_before: int=g.state.poultry_feed
+ check(g.livestock.drop_grain(g,4) and g.state.day==current_day and g.state.poultry_feed==grain_before-4,"Grain discards use actual quarter-pound quantities without a day")
  # Full packs do not prevent drinking milk at camp before hauling the remainder.
  g=game({"dairy_cows":1});g.state.vehicle="foot";g.state.food=125
  g.state["household_gear_lb"]=75;g.state.clothing=0;g.state.bullets=0

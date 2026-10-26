@@ -184,6 +184,14 @@
       "maximum": 4000,
       "step": 4,
       "suggested": 0
+    },
+    {
+      "id": "livestock_fodder",
+      "label": "DAIRY FODDER $0.02 / LB",
+      "price_cents": 2,
+      "maximum": 2500,
+      "step": 25,
+      "suggested": 0
     }
   ]
 }

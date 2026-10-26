@@ -17,7 +17,15 @@ func open(value) -> void:
 func refresh() -> void:
  for child in rows.get_children():rows.remove_child(child);child.queue_free()
  var o: Dictionary=game.livestock.outlook(game)
- note("GRAIN %.2f LB · HENS NEED %.2f LB / DAY\nCARE %.1f / %.1f HOURS AVAILABLE · SEASON %d%%" % [game.livestock.count(game.state,"poultry_feed")*0.25,int(o.feed_needed)*0.25,o.hours,o.budget,roundi(float(o.season)*100)])
+ note("GRAIN %.2f LB · DAIRY FODDER %.2f LB\nCARE %.1f / %.1f HOURS AVAILABLE" % [game.livestock.Feeding.available(game,"poultry_feed"),game.livestock.Feeding.available(game,"livestock_fodder"),o.hours,o.budget])
+ note("TRAVEL FEED ESTIMATE: scratch %.2f lb equiv. · shared portions %.2f lb · grain %.2f lb · fodder %.2f lb" % [o.feeding.scratch_lb,o.feeding.scraps_lb,o.feeding.grain_lb,o.feeding.fodder_lb])
+ for kind in game.livestock.ANIMALS:
+  if game.livestock.count(game.state,kind)>0:note("%s FEED COVERAGE: %d%%" % [game.livestock.data.animals[kind].label.to_upper(),roundi(float(o.feeding.animals[kind].intake)*100)])
+ if o.waterless:note("WATERLESS ROAD: adequate feed does not prevent thirst.")
+ note("GRAZING SEASON %d%% · LAYING DAYLIGHT %d%%" % [roundi(float(o.season)*100),roundi(float(game.livestock.data.feeding.laying_months[int(game.calendar().month)-1])*100)])
+ var sharing:=CheckBox.new();sharing.text="Share leftover portions with hens";sharing.button_pressed=game.livestock.record.get("share_scraps",true);sharing.disabled=not game.can_service()
+ sharing.tooltip_text="Uses actual partial food servings, capped per person. The party's current daily ration and vitamin-bearing fruit portions are protected. This consumes food; it is not a free by-product."
+ sharing.toggled.connect(func(on):game.livestock.set_scraps(game,on);refresh();changed.emit());rows.add_child(sharing)
  var grain_row:=HBoxContainer.new();rows.add_child(grain_row)
  var amount:=SpinBox.new();amount.min_value=0;amount.max_value=game.livestock.count(game.state,"poultry_feed");amount.step=1;amount.value=mini(4,int(amount.max_value));grain_row.add_child(amount)
  var discard:=Button.new();discard.text="DROP GRAIN (QUARTER LB UNITS)";discard.disabled=not game.can_service()
@@ -28,8 +36,15 @@ func refresh() -> void:
   var drop_food:=Button.new();drop_food.text="DISCARD TABLE FOOD / PARTIAL PORTIONS";drop_food.disabled=not game.can_service()
   drop_food.pressed.connect(func():game.livestock.discard_products(game);refresh();changed.emit());rows.add_child(drop_food)
  note("TABLE FOOD: %.2f UNITS · %.2f LB (includes partial portions)" % [game.livestock.available_kcal()/1000.0,float(game.state.get("livestock_products_lb",0))])
+ var fodder_row:=HBoxContainer.new();rows.add_child(fodder_row)
+ var fodder:=SpinBox.new();fodder.min_value=0;fodder.max_value=game.livestock.count(game.state,"livestock_fodder");fodder.step=1;fodder.value=mini(25,int(fodder.max_value));fodder_row.add_child(fodder)
+ var drop_fodder:=Button.new();drop_fodder.text="DROP DAIRY FODDER (LB)";drop_fodder.disabled=not game.can_service()
+ drop_fodder.pressed.connect(func():game.livestock.drop_feed(game,"livestock_fodder",int(fodder.value));refresh();changed.emit());fodder_row.add_child(drop_fodder)
+ if game.livestock.FEED_REMAINDERS.any(func(key):return float(game.state.get(key,0))>0):
+  var partial_feed:=Button.new();partial_feed.text="DISCARD PARTIAL FEED SERVINGS";partial_feed.disabled=not game.can_service()
+  partial_feed.pressed.connect(func():game.livestock.discard_feed_remainders(game);refresh();changed.emit());rows.add_child(partial_feed)
  var care:=CheckBox.new();care.text="Daily milking / feeding chores";care.button_pressed=game.livestock.record.care;care.disabled=not game.can_service()
- care.tooltip_text="Uses available healthy household members and adds fatigue. Nursing patients and companions doing other work today cannot also tend stock. Idle travel-day camp orders do not reserve workers. Hens still consume their grain."
+ care.tooltip_text="Uses available healthy household members and adds fatigue. Nursing patients and companions doing other work today cannot also tend stock. Idle travel-day camp orders do not reserve workers. Hens still use grain as needed."
  care.toggled.connect(func(on):game.livestock.set_care(game,on);refresh();changed.emit());rows.add_child(care)
  if not game.livestock.last.is_empty():
   var last: Dictionary=game.livestock.last

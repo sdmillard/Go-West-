@@ -1,5 +1,5 @@
 {
-  "note": "Authored conservative trail production and condition estimates, not measured 1848 yields. Adult milk animals are purchased already in milk, with 180 days of remaining lactation; no breeding. Hens need grain, not human food. Prices for goats, hens and feed are estimates. Milk and eggs retain exact calories and separate expiry until served; fractional portions remain physical food.",
+  "note": "Authored trail husbandry estimates informed by smallholding references, not measured 1848 yields. Adult milk animals are already in milk, with 180 days remaining; no breeding. Hens use finite scratching, shared leftover portions and grain. Cow/goat fodder fills pasture shortfalls. Yield allowances remain 8/2 lb milk and 0.5 egg before limitations. Prices and feed quantities are estimates. Table food retains exact calories and expiry.",
   "milk_days": 1,
   "egg_days": 14,
   "care_hours_per_person": 0.5,
@@ -31,7 +31,8 @@
       "lactation_days": 180,
       "meat_lb": 250,
       "meat_kcal_per_lb": 900,
-      "stock": 2
+      "stock": 2,
+      "daily_feed_lb": 25.0
     },
     "goats": {
       "label": "Milk goat",
@@ -43,7 +44,8 @@
       "lactation_days": 180,
       "meat_lb": 25,
       "meat_kcal_per_lb": 490,
-      "stock": 3
+      "stock": 3,
+      "daily_feed_lb": 3.0
     },
     "hens": {
       "label": "Laying hen",
@@ -55,8 +57,97 @@
       "lactation_days": 0,
       "meat_lb": 2,
       "meat_kcal_per_lb": 750,
-      "stock": 6
+      "stock": 6,
+      "daily_feed_lb": 0.25
     }
   },
-  "ferry_head_cents": 10
+  "ferry_head_cents": 10,
+  "supplies": {
+    "poultry_feed": {
+      "label": "Poultry grain (quarter lb)",
+      "unit_lb": 0.25,
+      "price_cents": 1,
+      "maximum": 4000,
+      "stock": 400
+    },
+    "livestock_fodder": {
+      "label": "Dairy fodder (lb)",
+      "unit_lb": 1.0,
+      "price_cents": 2,
+      "maximum": 2500,
+      "stock": 500
+    }
+  },
+  "feeding": {
+    "note": "Nominal dry-ration and habitat allowances are calibration estimates. Scraps consume actual leftover portions and protect the current human ration. Grain alone maintains energy but is not modeled as a complete laying ration. No dedicated mineral or body-size simulation.",
+    "maintenance_fraction": 0.7,
+    "full_production_fraction": 0.95,
+    "moving_feed_time": 0.95,
+    "grueling_feed_time": 0.85,
+    "scratch_lb": 0.5,
+    "moving_scratch_time": 0.55,
+    "scrap_lb_per_person": 0.05,
+    "feed_kcal_per_lb": 1500.0,
+    "grain_only_laying_cap": 0.75,
+    "mixed_diet_fraction": 0.25,
+    "condition_curve": [
+      [
+        0,
+        0.0
+      ],
+      [
+        20,
+        0.4
+      ],
+      [
+        50,
+        1.0
+      ],
+      [
+        100,
+        1.0
+      ]
+    ],
+    "laying_months": [
+      0.5,
+      0.6,
+      0.8,
+      0.95,
+      1.0,
+      1.0,
+      1.0,
+      0.95,
+      0.85,
+      0.7,
+      0.55,
+      0.5
+    ],
+    "habitats": {
+      "woodland": {
+        "dairy_cows": 1.0,
+        "goats": 1.0,
+        "scratch": 1.0
+      },
+      "plains": {
+        "dairy_cows": 1.0,
+        "goats": 1.0,
+        "scratch": 1.0
+      },
+      "highcountry": {
+        "dairy_cows": 0.75,
+        "goats": 0.7,
+        "scratch": 0.5
+      },
+      "sagebrush": {
+        "dairy_cows": 0.6,
+        "goats": 0.85,
+        "scratch": 0.45
+      },
+      "forest": {
+        "dairy_cows": 0.8,
+        "goats": 1.0,
+        "scratch": 0.8
+      }
+    }
+  }
 }
