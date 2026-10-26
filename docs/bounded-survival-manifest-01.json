@@ -1,0 +1,78 @@
+{
+  "gameplay": "7b5a29ddb28b023b9573b013b37d630315f44e1f",
+  "seed_start": 545000,
+  "seeds": 4,
+  "months": [
+    4,
+    5,
+    7
+  ],
+  "accuracy": 0.65,
+  "journeys": 96,
+  "entries": [
+    {
+      "variant": "baseline",
+      "mastery": "baseline",
+      "outfit": "standard",
+      "arm": "none",
+      "label": "bounded-survival-baseline-standard-none-01",
+      "filename": "hunting-bounded-survival-baseline-standard-none-01.json"
+    },
+    {
+      "variant": "baseline",
+      "mastery": "baseline",
+      "outfit": "standard",
+      "arm": "goats",
+      "label": "bounded-survival-baseline-standard-goats-01",
+      "filename": "hunting-bounded-survival-baseline-standard-goats-01.json"
+    },
+    {
+      "variant": "baseline",
+      "mastery": "baseline",
+      "outfit": "lean",
+      "arm": "none",
+      "label": "bounded-survival-baseline-lean-none-01",
+      "filename": "hunting-bounded-survival-baseline-lean-none-01.json"
+    },
+    {
+      "variant": "baseline",
+      "mastery": "baseline",
+      "outfit": "lean",
+      "arm": "goats",
+      "label": "bounded-survival-baseline-lean-goats-01",
+      "filename": "hunting-bounded-survival-baseline-lean-goats-01.json"
+    },
+    {
+      "variant": "planning65",
+      "mastery": "skilled",
+      "outfit": "standard",
+      "arm": "none",
+      "label": "bounded-survival-planning65-standard-none-01",
+      "filename": "hunting-bounded-survival-planning65-standard-none-01.json"
+    },
+    {
+      "variant": "planning65",
+      "mastery": "skilled",
+      "outfit": "standard",
+      "arm": "goats",
+      "label": "bounded-survival-planning65-standard-goats-01",
+      "filename": "hunting-bounded-survival-planning65-standard-goats-01.json"
+    },
+    {
+      "variant": "planning65",
+      "mastery": "skilled",
+      "outfit": "lean",
+      "arm": "none",
+      "label": "bounded-survival-planning65-lean-none-01",
+      "filename": "hunting-bounded-survival-planning65-lean-none-01.json"
+    },
+    {
+      "variant": "planning65",
+      "mastery": "skilled",
+      "outfit": "lean",
+      "arm": "goats",
+      "label": "bounded-survival-planning65-lean-goats-01",
+      "filename": "hunting-bounded-survival-planning65-lean-goats-01.json"
+    }
+  ]
+}
