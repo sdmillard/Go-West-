@@ -63,6 +63,11 @@ func _init(game):
   equipment.add_child(words(str(item).capitalize()))
   equipment.add_child(words(str(amount)))
   equipment.add_child(words("%.1f" % (amount*float(game.provisions.data.weights_lb[item]))))
+ for kind in game.livestock.data.supplies:
+  var feed_lb: float=game.livestock.Feeding.available(game,kind)
+  if feed_lb>0:
+   equipment.add_child(words(str(game.livestock.data.supplies[kind].label)))
+   equipment.add_child(words("%.2f lb" % feed_lb));equipment.add_child(words("%.2f" % feed_lb))
  var loose: Dictionary=game.Mounts.loose_tack(game.provisions.data.mounts,game.state)
  for key in loose:
   if int(loose[key])>0:

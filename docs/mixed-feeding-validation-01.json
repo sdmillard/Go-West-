@@ -1,0 +1,82 @@
+{
+  "date": "2026-10-26",
+  "runtime_commit": "c66a403ef67f43045201647d63ce2a3370791678",
+  "godot_suites": 80,
+  "focused_feeding_checks": 465,
+  "table_meal_checks": 102,
+  "livestock_checks": 185,
+  "observer_checks": 120,
+  "journeys": 36,
+  "rules_signature": "8ddb4a79ea96dd25ad746cf5c15f1fa2c5a15c8e7c2597ca03a3558b8ea842c9",
+  "cohorts": [
+    {
+      "label": "mixed-plain-01",
+      "runs": 12,
+      "arm": "mixed",
+      "initial_fodder_lb": 0,
+      "outfit": "standard",
+      "seed_start": 350101,
+      "seeds": 2,
+      "months": [
+        5,
+        7
+      ],
+      "professions": [
+        "farmer",
+        "carpenter",
+        "banker"
+      ],
+      "errors": [],
+      "all_source_hashes_verified": true
+    },
+    {
+      "label": "mixed-fodder-02",
+      "runs": 12,
+      "arm": "mixed",
+      "initial_fodder_lb": 200,
+      "outfit": "lean",
+      "seed_start": 350101,
+      "seeds": 2,
+      "months": [
+        5,
+        7
+      ],
+      "professions": [
+        "farmer",
+        "carpenter",
+        "banker"
+      ],
+      "errors": [],
+      "all_source_hashes_verified": true
+    },
+    {
+      "label": "hens-01",
+      "runs": 12,
+      "arm": "hens",
+      "initial_fodder_lb": 0,
+      "outfit": "standard",
+      "seed_start": 350101,
+      "seeds": 2,
+      "months": [
+        5,
+        7
+      ],
+      "professions": [
+        "farmer",
+        "carpenter",
+        "banker"
+      ],
+      "errors": [],
+      "all_source_hashes_verified": true
+    }
+  ],
+  "limitations": "Integration smoke, not a matched survival balance experiment. Two underlying seeds repeated over professions, months and differing outfits/stock are not 36 independent worlds. No animal yields, calories or starting capital were tuned to outcomes.",
+  "excluded": "feeding-mixed-fodder-01 attempted 200 lb fodder on the standard outfit and correctly failed departure cargo validation (0 journeys, 12 setup rejections). Retained separately; its replacement uses the declared lean outfit. Earlier preflight tests are excluded.",
+  "archives_sha256": {
+    ".tools\\mixed-feed-publication-tests.log": "41f644feba64fc024a869246d61d3238f7876f124d237d47e1ba8dcf737233d0",
+    "tests\\fixtures\\pre-mixed-feeding.json": "de1945cc633f996fac7a9e68dee7714a2ad8f573e69ba954620a6cbe8bbbb048",
+    ".tools\\hunting-feeding-mixed-plain-01.json": "5b3de0874be2a569b9d153494943564ef789b85916d08d706515cdc383eacfa0",
+    ".tools\\hunting-feeding-mixed-fodder-02.json": "6547d1d1a7472dc610ffc7391323276cf4dc8ec577dd933406c91bfb3e79b61e",
+    ".tools\\hunting-feeding-hens-01.json": "ca82c8ffbb170e5bee167fc870a370b7acef1543a0ad1b8596bc3ebbd6be7916"
+  }
+}

@@ -5,7 +5,7 @@ static func build(game,trip: Dictionary,random):
  child.depart("banker",["One","Two","Three","Four","Five"],5,{"wagon":0,"food":0})
  child.state=game.state.duplicate(true)
  # An outrider takes only the explicit expedition outfit, never a copy of the wagon herd or grain.
- for field in game.livestock.GOODS+["livestock_products_lb","working_oxen"]:child.state.erase(field)
+ for field in game.livestock.GOODS+game.livestock.FEED_REMAINDERS+["livestock_products_lb","working_oxen"]:child.state.erase(field)
  child.party_health.members.assign(game.party_health.members.duplicate(true))
  for person in child.party_health.members:person["guarding"]=true;person.erase("away")
  var actual: Dictionary=trip.camp.guards[0].duplicate(true)

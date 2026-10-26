@@ -1,10 +1,12 @@
 extends RefCounted
 ## Led milk animals, cooped hens and short-lived table products. No global random draws.
+const Feeding=preload("res://simulation/livestock_feeding.gd")
 const ANIMALS=["dairy_cows","goats","hens"]
-const GOODS=["dairy_cows","goats","hens","poultry_feed"]
+const FEED_REMAINDERS=["poultry_feed_remainder_lb","livestock_fodder_remainder_lb"]
+const GOODS=["dairy_cows","goats","hens","poultry_feed","livestock_fodder"]
 var data: Dictionary={}
 var error: String=""
-var record: Dictionary={"animals":[],"products":[],"next_id":0,"care":true}
+var record: Dictionary={"animals":[],"products":[],"next_id":0,"care":true,"share_scraps":true}
 var last: Dictionary={}
 var last_meal: Dictionary={}
 # Reference to the current hunt's split serving; packing updates the retained fraction.
@@ -30,8 +32,9 @@ func load_data(v: Variant) -> bool:
   for key in ["price_cents","maximum","meat_lb","stock"]:
    if not whole(a.get(key),1,100000):return false
   if not whole(a.get("lactation_days"),0,366):return false
-  for key in ["daily_lb","kcal_per_lb","care_hours","meat_kcal_per_lb"]:
+  for key in ["daily_lb","kcal_per_lb","care_hours","meat_kcal_per_lb","daily_feed_lb"]:
    if not number(a.get(key)) or a[key]<=0 or a[key]>10000:return false
+ if not Feeding.valid(v):return false
  data=v.duplicate(true);error="";return true
 static func count(s: Dictionary,kind: String) -> int:return int(s.get(kind,0))
 static func cargo(s: Dictionary) -> float:
@@ -68,7 +71,9 @@ func outlook(game,resting: bool=false) -> Dictionary:
  var budget: float=minf(float(data.resting_care_hours if resting else data.moving_care_hours),workers(game)*float(data.care_hours_per_person)) if record.care else 0.0
  var season: float=data.months[int(game.calendar().month)-1]
  var waterless: bool=game.current_edge().get("hazard","")=="waterless"
- return {"hours":hours,"budget":budget,"care_factor":minf(1.0,budget/hours) if hours>0 else 1.0,"season":season,"waterless":waterless,"feed_needed":count(game.state,"hens"),"feed_held":count(game.state,"poultry_feed")}
+ var result: Dictionary={"hours":hours,"budget":budget,"care_factor":minf(1.0,budget/hours) if hours>0 else 1.0,"season":season,"waterless":waterless,"feed_needed":count(game.state,"hens"),"feed_held":count(game.state,"poultry_feed")}
+ result["feeding"]=Feeding.plan(game,result,resting,not resting)
+ return result
 func tick(game,resting: bool,working: bool) -> void:
  sync(game)
  last={}
@@ -78,8 +83,6 @@ func tick(game,resting: bool,working: bool) -> void:
  var eggs:=0
  var milk:=0.0
  var milk_kcal:=0.0
- var feed: int=mini(int(o.feed_needed),count(game.state,"poultry_feed"))
- if feed>0:game.state.poultry_feed-=feed
  var expired_lb:=0.0
  var expired_kcal:=0.0
  for p in record.products:
@@ -89,22 +92,23 @@ func tick(game,resting: bool,working: bool) -> void:
   game.supply_history.append({"day":day,"event":"table_food_spoilage","changes":{},"lb":expired_lb,"kcal":expired_kcal})
   game.journal.append("Day %d · Spoiled table food: %.2f lb (%.2f food units)." % [day,expired_lb,expired_kcal/float(game.provisions.data.food_energy.unit_kcal)])
  var deaths: Array=[]
- var hen_factor: float=float(feed)/int(o.feed_needed) if int(o.feed_needed)>0 else 1.0
- var order:=0
+ var feeding: Dictionary=Feeding.plan(game,o,resting,working,true)
+ var feed: int=feeding.grain_quarters
  for a in record.animals:
   var rule: Dictionary=data.animals[a.kind]
-  var strain: int=(6 if o.waterless else (2 if o.season<0.5 else 0))+(2 if o.care_factor<0.5 else 0)
-  if a.kind=="hens" and order>=feed:strain+=5
-  if a.kind=="hens":order+=1
-  if working and int(game.state.pace)==2:strain+=1
-  if game.survival.weather.get("id","") in ["blizzard","heat"]:strain+=2
-  a.condition=clampi(int(a.condition)-strain+(3 if resting and strain==0 else 0),0,100)
+  var nutrition: Dictionary=feeding.animals[a.kind]
+  var settled: Dictionary=Feeding.settle(data,int(a.condition),float(a.get("strain_carry",0)),float(nutrition.intake),bool(o.waterless),str(game.survival.weather.get("id","")),resting,working,int(game.state.pace))
+  a.condition=int(settled.condition)
+  if float(settled.strain_carry)>0:a["strain_carry"]=settled.strain_carry
+  else:a.erase("strain_carry")
   if a.condition==0:
    deaths.append(a);continue
-  var factor: float=float(a.condition)/100.0*float(o.care_factor)*float(o.season)*(0.85 if working else 1.0)
-  if o.waterless:factor*=0.1
+  # Food, water, body condition and collection are constraints, not stacked percentages.
+  var factor: float=minf(float(nutrition.production),minf(Feeding.capacity(data,int(a.condition)),float(o.care_factor)))
+  factor=minf(factor,0.1 if o.waterless else 1.0)
+  if a.kind=="hens":factor=minf(factor,float(nutrition.quality))
   if a.kind=="hens":
-   a.egg_progress+=0.5*factor*hen_factor
+   a.egg_progress+=0.5*factor*float(data.feeding.laying_months[int(game.calendar().month)-1])
    if a.egg_progress>=1:
     var n:=floori(a.egg_progress);a.egg_progress-=n;eggs+=n
     record.products.append({"kind":"egg","lb":float(rule.daily_lb)*n,"kcal":float(rule.daily_lb)*float(rule.kcal_per_lb)*n,"expires":day+int(data.egg_days)})
@@ -122,14 +126,14 @@ func tick(game,resting: bool,working: bool) -> void:
  var food: float=(milk_kcal+eggs*float(data.animals.hens.daily_lb)*float(data.animals.hens.kcal_per_lb))/float(game.provisions.data.food_energy.unit_kcal)
  var left:=0.0
  if o.hours>0 and o.budget>0:game.state.fatigue=mini(100,int(game.state.fatigue)+ceili(minf(float(o.hours),float(o.budget))))
- last={"day":day,"milk_lb":snappedf(milk,0.01),"eggs":eggs,"feed_quarters":feed,"food":food,"left_lb":snappedf(left,0.01),"care_factor":o.care_factor}
- if milk>0 or eggs>0 or feed>0 or not deaths.is_empty():
-  game.supply_history.append({"day":day,"event":"livestock","changes":{"food":0,"poultry_feed":-feed},"products":last.duplicate()})
-  game.journal.append("Day %d · Livestock: %.2f lb milk, %d eggs; %.2f food units produced. Grain used %.2f lb. Care %d%%." % [day,milk,eggs,food,feed*0.25,roundi(float(o.care_factor)*100)])
+ last={"day":day,"milk_lb":snappedf(milk,0.01),"eggs":eggs,"feed_quarters":feed,"food":food,"left_lb":snappedf(left,0.01),"care_factor":o.care_factor,"feeding":feeding}
+ if milk>0 or eggs>0 or feed>0 or feeding.fodder_lb>0 or feeding.scraps_kcal>0 or not deaths.is_empty():
+  game.supply_history.append({"day":day,"event":"livestock","changes":{"food":0,"poultry_feed":-feed,"livestock_fodder":-int(feeding.fodder_units)},"products":last.duplicate()})
+  game.journal.append("Day %d · Livestock: %.2f lb milk, %d eggs; %.2f food units produced. Grain %.2f lb; fodder %.2f lb; scratching %.2f lb feed-equivalent; shared portions %.2f lb. Care %d%%." % [day,milk,eggs,food,feeding.grain_lb,feeding.fodder_lb,feeding.scratch_lb,feeding.scraps_lb,roundi(float(o.care_factor)*100)])
 func rows(game,key: String) -> Array:
  var result: Array=[]
  for item in GOODS:
-  var rule: Dictionary=data.animals.get(item,{"label":"Poultry grain (quarter lb)","price_cents":1,"stock":400})
+  var rule: Dictionary=data.animals.get(item,data.supplies.get(item,{}))
   var buy_key: String=key+"|buy_"+item
   var sell_key: String=key+"|sell_"+item
   var held:=count(game.state,item)
@@ -138,15 +142,22 @@ func rows(game,key: String) -> Array:
   result.append({"item":item,"label":rule.label,"amount":1,"buy_cents":cents,"sell_cents":floori(cents*float(data.sell_factor)),"can_buy":mini(limit-held,maxi(0,int(rule.stock)-int(game.context.record.spent.get(buy_key+"|units",0)))),"can_sell":mini(held,maxi(0,int(rule.stock)-int(game.context.record.spent.get(sell_key+"|units",0)))),"held":held,"buy_key":buy_key,"sell_key":sell_key,"sells":true,"buys":true})
  return result
 func valid(v: Variant,s: Dictionary) -> bool:
- if not v is Dictionary or v.size()!=4 or not v.get("animals") is Array or not v.get("products") is Array or not whole(v.get("next_id"),0,1000000) or not v.get("care") is bool:return false
+ if not v is Dictionary or v.size() not in [4,5] or not v.get("animals") is Array or not v.get("products") is Array or not whole(v.get("next_id"),0,1000000) or not v.get("care") is bool:return false
+ if v.has("share_scraps") and not v.share_scraps is bool:return false
+ if v.size()==5 and not v.has("share_scraps"):return false
  if v.animals.size()>36 or v.products.size()>1000:return false
  var ids: Array=[]
  for a in v.animals:
-  if not a is Dictionary or a.size()!=5 or a.get("kind") not in ANIMALS:return false
+  if not a is Dictionary or a.size() not in [5,6] or a.get("kind") not in ANIMALS:return false
   if not whole(a.get("id"),0,int(v.next_id)-1) or a.id in ids or not whole(a.get("condition"),1,100) or not whole(a.get("remaining"),0,int(data.animals[a.kind].lactation_days)) or not number(a.get("egg_progress")) or a.egg_progress<0 or a.egg_progress>=1:return false
+  if a.size()==6 and not a.has("strain_carry"):return false
+  if a.has("strain_carry") and (not number(a.strain_carry) or a.strain_carry<0 or a.strain_carry>=1):return false
   ids.append(a.id)
+ for kind in data.supplies:
+  var remainder: Variant=s.get(kind+"_remainder_lb",0)
+  if not number(remainder) or remainder<0 or remainder>=float(data.supplies[kind].unit_lb):return false
  for kind in GOODS:
-  if not whole(s.get(kind,0),0,int(data.animals.get(kind,{}).get("maximum",4000))):return false
+  if not whole(s.get(kind,0),0,int(data.animals.get(kind,data.supplies.get(kind,{})).get("maximum",4000))):return false
   if kind in ANIMALS and v.animals.filter(func(a):return a.kind==kind).size()!=count(s,kind):return false
  var product_mass:=0.0
  for p in v.products:
@@ -197,11 +208,19 @@ func cross(game,result: Dictionary) -> void:
  result["livestock_lost"]=lost
  if not lost.is_empty():game.journal.append("Day %d · Crossing livestock losses: %s." % [game.state.day,str(lost)])
 
-func drop_grain(game,amount: int) -> bool:
- if not game.can_service() or amount<1 or amount>count(game.state,"poultry_feed"):return false
- game.state.poultry_feed-=amount
- game.supply_history.append({"day":game.state.day,"event":"discard_poultry_feed","changes":{"poultry_feed":-amount}})
- game.journal.append("Day %d · Discarded %.2f lb poultry grain." % [game.state.day,amount*0.25]);return true
+func drop_grain(game,amount: int) -> bool:return drop_feed(game,"poultry_feed",amount)
+func drop_feed(game,kind: String,amount: int) -> bool:
+ if kind not in data.supplies or not game.can_service() or amount<1 or amount>count(game.state,kind):return false
+ game.state[kind]-=amount
+ game.supply_history.append({"day":game.state.day,"event":"discard_"+kind,"changes":{kind:-amount}})
+ game.journal.append("Day %d · Discarded %.2f lb %s." % [game.state.day,amount*float(data.supplies[kind].unit_lb),data.supplies[kind].label.to_lower()]);return true
+func discard_feed_remainders(game) -> bool:
+ if not game.can_service():return false
+ for key in FEED_REMAINDERS:game.state.erase(key)
+ game.journal.append("Day %d · Discarded partial grain and fodder servings." % game.state.day);return true
+func set_scraps(game,on: bool) -> bool:
+ if not game.can_service():return false
+ record["share_scraps"]=on;return true
 func discard_products(game) -> bool:
  if not game.can_service() or record.products.is_empty():return false
  record.products.clear();game.state.livestock_products_lb=0.0

@@ -83,7 +83,7 @@ func cargo(inventory: Dictionary) -> float:
 	var pounds: float = float(data.walking.personal_gear_lb_per_person)*int(inventory.get("party_size",5)) if inventory.get("vehicle","")=="foot" else household_mass(inventory)
 	pounds+=Mounts.spare_tack(data.mounts,inventory,Mounts.plan(data.mounts,inventory))
 	# Bodies carried with the party weigh what they weigh, on foot or in the wagon.
-	pounds+=preload("res://simulation/livestock.gd").cargo(inventory)+float(inventory.get("livestock_products_lb",0))+int(inventory.get("poultry_feed",0))*0.25
+	pounds+=preload("res://simulation/livestock.gd").cargo(inventory)+float(inventory.get("livestock_products_lb",0))+int(inventory.get("poultry_feed",0))*0.25+int(inventory.get("livestock_fodder",0))+float(inventory.get("poultry_feed_remainder_lb",0))+float(inventory.get("livestock_fodder_remainder_lb",0))
 	pounds+=float(inventory.get("remains_lb",0))+float(inventory.get("camp_greens_lb",0))
 	for key in data.weights_lb:
 		pounds += maxf(0, float(inventory.get(key, 0))) * float(data.weights_lb[key])

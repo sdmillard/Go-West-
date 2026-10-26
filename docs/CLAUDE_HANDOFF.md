@@ -1,6 +1,6 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 25, 2026. Latest checkpoint: exact table meals and actual daily care (final section below; see [implementation](TABLE_FOOD_AND_CARE.md)). Earlier sections are chronological records.
+Last updated October 25, 2026. Latest checkpoint: mixed livestock feeding and condition (final section below; see [implementation](MIXED_LIVESTOCK_FEEDING.md)). Earlier sections are chronological records.
 
 ## Resume here
 
@@ -728,3 +728,14 @@ Publication verification: all **77 Godot suites** passed on runtime **27a4b01**,
 - Archived realism runner now refuses changed rules; reproduce it at commit 1921a8b. Do not overwrite `docs/livestock-realism-audit-01.json` with current behavior. New validation is recorded in TABLE_FOOD_AND_CARE.md and ignored `.tools/table-meals-*` logs/reports.
 
 - Publication runtime 9ed0a35042455aca4f201db24ab1ed35330c4fa9 passes all 79 suites and 12 mixed-livestock smoke journeys, zero selected state/save/policy errors. Source hashes verified. Compact record `docs/table-food-validation-01.json`; raw `.tools/hunting-table-meals-smoke-02.json`, log `.tools/table-meals-publication-tests.log`. Preflight smoke-01 is excluded. The final integration correction counts split hunt portions as packed food rather than claiming they were eaten.
+
+
+## October 26, 2026: mixed feeding and livestock condition
+
+- New `simulation/livestock_feeding.gd` and data-driven feeding rules. Hens share finite scratching and may eat actual leftover partial portions, protected by the current human ration and a ban on using vitamin-bearing fruit portions. Sharing is optional; it consumes actual calories/mass, not synthetic meal waste. Grain fills remaining ration gaps. Cow pasture and goat browse differ by region; dairy fodder is available in outfitting and bulk post stores at an explicitly estimated $0.02/lb (500 lb stock, suggested zero).
+- Fair/Good condition 50–100 retains full capacity. Lower capacity changes smoothly; overlapping food/condition/care/water/quality limits use minimums. Natural-feed availability also uses the limiting season/habitat/time cap. Fractional deficits accumulate in optional per-animal `strain_carry` instead of a minimum one-point loss per day. Cold months reduce feed/daylight rather than directly killing adequately fed animals; serious weather, thirst and grueling work still cause losses. Production maxima, calories, animal prices, start cash unchanged.
+- Full/partial grain and fodder have actual cargo mass and consumption; optional `_remainder_lb` fields remain below one purchase unit. Fodder follows the household livestock/grain convention, not mount/draft feeding or field allocations. Outing actors strip all feed/remainders. Sharing setting and fractional wear validate against both old/new records.
+- Genuine pre-change fixture `tests/fixtures/pre-mixed-feeding.json`, prior fingerprint ebbe3e71835760dcfcf370a51c7399baff3bc9d800d9afd73e0e596231572cd6 now allowlisted. No free fodder or healing on migration. Source/evidence/limitations in MIXED_LIVESTOCK_FEEDING.md. Resource caps, dietary thresholds and feed price are authored estimates, not measured 1848 physiology.
+- New focused suite covers actual fair/good yields, all condition points, tiny chronic deficits, controlled fifty-day winter feeding, finite natural sources, human/vitamin protections, exact feed accounting, preview purity, real post purchases/discards and genuine old saves. Included in test.ps1. The produce-counter test now asserts its two produce rows without hard-coding the unrelated total number of goods.
+
+- Publication runtime c66a403ef67f43045201647d63ce2a3370791678: all 80 suites pass (465 feeding, 102 table-food, 185 livestock, 120 observer checks), plus 36 selected smoke journeys with zero state/save/policy errors and verified source hashes. Cohorts: mixed standard/no fodder, mixed lean/200 lb fodder, hens standard; two seeds repeated across May/July and three professions. These are not matched balance evidence. The rejected overweight standard/200 lb attempt is retained/excluded. See `docs/mixed-feeding-validation-01.json`; raw `.tools/hunting-feeding-{mixed-plain-01,mixed-fodder-02,hens-01}.json`, log `.tools/mixed-feed-publication-tests.log`. Next: fresh matched survival comparisons after deciding the outfit/ration/forage/hunt/stock strategy; do not retune yields to wins or pool earlier rules.
