@@ -20,7 +20,10 @@ func refresh() -> void:
  note("GRAIN %.2f LB · DAIRY FODDER %.2f LB\nCARE %.1f / %.1f HOURS AVAILABLE" % [game.livestock.Feeding.available(game,"poultry_feed"),game.livestock.Feeding.available(game,"livestock_fodder"),o.hours,o.budget])
  note("TRAVEL FEED ESTIMATE: scratch %.2f lb equiv. · shared portions %.2f lb · grain %.2f lb · fodder %.2f lb" % [o.feeding.scratch_lb,o.feeding.scraps_lb,o.feeding.grain_lb,o.feeding.fodder_lb])
  for kind in game.livestock.ANIMALS:
-  if game.livestock.count(game.state,kind)>0:note("%s FEED COVERAGE: %d%%" % [game.livestock.data.animals[kind].label.to_upper(),roundi(float(o.feeding.animals[kind].intake)*100)])
+  if game.livestock.count(game.state,kind)>0:
+   var feeding: Dictionary=o.feeding.animals[kind]
+   if kind=="hens":note("HEN FEED COVERAGE: %d%%" % roundi(float(feeding.intake)*100))
+   else:note("%s: upkeep %d%% · milk potential %d%%" % [game.livestock.data.animals[kind].label.to_upper(),roundi(float(feeding.maintenance_coverage)*100),roundi(float(feeding.production)*100)])
  if o.waterless:note("WATERLESS ROAD: adequate feed does not prevent thirst.")
  note("GRAZING SEASON %d%% · LAYING DAYLIGHT %d%%" % [roundi(float(o.season)*100),roundi(float(game.livestock.data.feeding.laying_months[int(game.calendar().month)-1])*100)])
  var sharing:=CheckBox.new();sharing.text="Feed edible food portions to hens";sharing.button_pressed=game.livestock.record.get("share_scraps",true);sharing.disabled=not game.can_service()
