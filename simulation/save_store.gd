@@ -328,6 +328,7 @@ func restore(value: Variant):
 		alive += 1 if game.party_health.is_active(member) else 0
 		health += int(member.health) if game.party_health.is_active(member) else 0
 		for condition in member.conditions:
+			if not game.party_health.valid_treatment(condition):return null
 			if not condition is Dictionary or not game.party_health.conditions.has(condition.get("id")) or not integer(condition.get("started_day"),0,int(s.day)) or not integer(condition.get("elapsed"),0,100000) or not integer(condition.get("severity"),1,3):
 				return null
 		if member.has("immune"):

@@ -1,6 +1,6 @@
 # Why scurvy can linger
 
-October 26, 2026. This is a diagnostic replay, not a new survival comparison or a change to health rules.
+October 26, 2026. This is a diagnostic replay of the rules at c324b68, not a new survival comparison. [The subsequent partial-treatment change](PARTIAL_SCURVY_TREATMENT.md) addresses the recovery cutoff described below.
 
 ## What the game currently does
 

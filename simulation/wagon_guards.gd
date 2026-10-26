@@ -160,7 +160,7 @@ static func _day(game,cache: Dictionary,random) -> void:
   var cold: bool=month in [11,12,1,2] or (month in [3,10] and cache.habitat in ["forest","highcountry"])
   if cold:model.affect(member,-(1 if int(cache.inventory.clothing)>=count else 4),day,"winter exposure")
  model.rng.state=random.state
- model.tick(day,not hunted,0.6 if fed else 2.0,ration if fed else 0,int(game.calendar().year),int(game.calendar().month),cache.habitat,int(cache.camp_deficiency))
+ model.tick(day,not hunted,0.6 if fed else 2.0,ration if fed else 0,int(game.calendar().year),int(game.calendar().month),cache.habitat,int(cache.camp_deficiency),{},clampf(vitamin/(count*float(food.data.foraging.vitamin_c_lb_per_person)),0.0,1.0))
  random.state=model.rng.state
  for line in model.notices:cache.camp_log.append(line)
  for member in cache.guards:
@@ -229,6 +229,7 @@ static func valid(cache: Dictionary,game,day: int,party: Array=[]) -> bool:
   for line in member.history:
    if not line is String:return false
   for condition in member.conditions:
+   if not game.party_health.valid_treatment(condition):return false
    if not condition is Dictionary or not game.party_health.conditions.has(condition.get("id")) or not game.crime.whole(condition.get("started_day"),0,day) or not game.crime.whole(condition.get("elapsed"),0,100000) or not game.crime.whole(condition.get("severity"),1,3):return false
   if member.has("immune"):
    if not member.immune is Array:return false
