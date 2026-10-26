@@ -634,7 +634,7 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 	# Those chosen to eat human meat are fed from it first; nobody else is ever served it.
 	if state.extended_route:needed-=Remains.serve(self)
 	var fed: bool = state.food >= needed
-	var eaten := mini(int(state.food), needed)
+	var eaten: float = mini(int(state.food), needed)
 	if state.extended_route:
 		# Count vitamin-C produce actually consumed, never merely carried or fresh meat.
 		var field_before: int=provisions.fresh.filter(func(b):return b.get("_hunt_meal",false)).reduce(func(n,b):return n+int(b.pounds),0)
@@ -643,12 +643,14 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 		if state.has("camp_greens_lb"):
 			state.camp_greens_lb=0
 			state.camp_greens_expires=0
-		var produce_eaten: float = provisions.eat(eaten,int(state.party_size),int(state.food),float(loose))
+		var meal: Dictionary=livestock.meal(self,needed,float(loose))
+		eaten=float(meal.eaten);fed=eaten>=needed-0.000000001
+		var produce_eaten: float=float(meal.vitamin)
 		if not hunt.is_empty():hunt["_meal_food"]=field_before-provisions.fresh.filter(func(b):return b.get("_hunt_meal",false)).reduce(func(n,b):return n+int(b.pounds),0)
 		party_health.days_without_fresh = 0 if produce_eaten >= state.party_size * float(provisions.data.foraging.vitamin_c_lb_per_person) else party_health.days_without_fresh + 1
 		for member in party_health.members:
 			if party_health.is_active(member) and member.has("vitamin_days"):member.vitamin_days=0 if party_health.days_without_fresh==0 else int(member.vitamin_days)+1
-	state.food = maxi(0, state.food - needed)
+	if not state.extended_route:state.food = maxi(0, state.food - needed)
 	if state.extended_route:livestock.pack(self)
 	var recovered_food: bool=provisions.Shortfall.tick(self,eaten,needed) if state.extended_route else true
 	if not fed:

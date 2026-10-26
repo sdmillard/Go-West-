@@ -5,6 +5,8 @@ var data: Dictionary = {}
 var error := ""
 var fresh: Array[Dictionary] = []
 var carriers: Array[Dictionary] = []
+# Source of the last whole serving, for retaining an uneaten fractional portion.
+var last_serving: Dictionary={}
 const WagonTrade=preload("res://simulation/wagon_trade.gd")
 const Produce=preload("res://simulation/produce_trade.gd")
 const Carrying=preload("res://simulation/carrying.gd")
@@ -252,6 +254,7 @@ func valid_nutrients(batch: Dictionary) -> bool:
 ## Discarding/selling still uses remove(), without crediting dietary vitamins.
 func eat(amount: int,party_size: int,total: int,vitamin_offset: float=0.0) -> float:
 	var remaining:=amount
+	last_serving={"lb":float(data.weights_lb.food),"expires":1000100,"vitamin_c_lb":0.0}
 	var vitamin:=vitamin_offset
 	var target: float=party_size*float(data.foraging.vitamin_c_lb_per_person)
 	var produce_total:=0
@@ -264,6 +267,7 @@ func eat(amount: int,party_size: int,total: int,vitamin_offset: float=0.0) -> fl
 		if not batch.get("vitamin_c",false):continue
 		var per_unit: float=float(batch.get("vitamin_c_per_unit",mass_ratio(batch)))
 		var used: int=mini(mini(remaining,int(batch.pounds)),ceili((target-vitamin)/per_unit))
+		if used>0:last_serving={"lb":mass_ratio(batch),"expires":int(batch.expires),"vitamin_c_lb":per_unit}
 		batch.pounds-=used
 		remaining-=used
 		vitamin+=used*per_unit
@@ -272,13 +276,16 @@ func eat(amount: int,party_size: int,total: int,vitamin_offset: float=0.0) -> fl
 	for batch in fresh:
 		if batch.get("vitamin_c",false):continue
 		var used: int=mini(other,int(batch.pounds))
+		if used>0:last_serving={"lb":mass_ratio(batch),"expires":int(batch.expires),"vitamin_c_lb":0.0}
 		batch.pounds-=used
 		other-=used
+	if other>0:last_serving={"lb":float(data.weights_lb.food),"expires":1000100,"vitamin_c_lb":0.0}
 	# Any remainder of 'other' was untracked staples. Food totals are committed by the engine.
 	for batch in fresh:
 		if remaining<=0:break
 		if not batch.get("vitamin_c",false):continue
 		var used: int=mini(remaining,int(batch.pounds))
+		if used>0:last_serving={"lb":mass_ratio(batch),"expires":int(batch.expires),"vitamin_c_lb":float(batch.get("vitamin_c_per_unit",mass_ratio(batch)))}
 		batch.pounds-=used
 		remaining-=used
 		vitamin+=used*float(batch.get("vitamin_c_per_unit",mass_ratio(batch)))

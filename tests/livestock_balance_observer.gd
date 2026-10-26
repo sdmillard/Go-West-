@@ -4,7 +4,7 @@ var purchases: Array=[]
 var first_short: Dictionary={}
 var deaths: Array=[]
 var needed_units:=0
-var short_units:=0
+var short_units:=0.0
 func _init(seed_value: int=1848,mode: String="classic",setup: bool=false,end_at: String=""):
  super(seed_value,mode,setup,end_at)
  livestock=preload("res://tests/livestock_balance_model.gd").new()
@@ -14,7 +14,7 @@ func _tick_day(resting: bool,team_working: bool=false,camp_action: String="") ->
  var eaten: int=provisions.eaten_units
  var alive: Array=party_health.members.filter(func(m):return m.alive).map(func(m):return int(m.id))
  super._tick_day(resting,team_working,camp_action)
- var short: int=maxi(0,required-(int(provisions.eaten_units)-eaten))
+ var short: float=maxf(0,required-float(livestock.last_meal.get("eaten",int(provisions.eaten_units)-eaten)))
  needed_units+=required;short_units+=short
  if short>0 and first_short.is_empty():first_short={"day":int(state.day),"miles":int(state.miles),"food":int(state.food),"cash":state.money,"health":int(state.health),"short":short,"required":required}
  for m in party_health.members:

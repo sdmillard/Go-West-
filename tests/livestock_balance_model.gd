@@ -13,7 +13,7 @@ func tick(game,resting: bool,working: bool) -> void:
  super.tick(game,resting,working)
  for kind in ANIMALS:audit.condition_losses[kind]=int(audit.condition_losses.get(kind,0))+maxi(0,int(before[kind])-count(game.state,kind))
  if not last.is_empty():
-  audit.feed_quarters+=int(last.feed_quarters);audit.milk_lb+=float(last.milk_lb);audit.eggs+=int(last.eggs);audit.food_generated+=int(last.food)
+  audit.feed_quarters+=int(last.feed_quarters);audit.milk_lb+=float(last.milk_lb);audit.eggs+=int(last.eggs);audit.food_generated+=float(last.food)
 func pack(game) -> void:
  var food: int=game.state.food
  super.pack(game)
@@ -27,3 +27,8 @@ func butcher(game,kind: String,by_hand: bool=false) -> bool:
  var okay: bool=super.butcher(game,kind,by_hand)
  if okay:audit.butchered[kind]=int(audit.butchered.get(kind,0))+1
  return okay
+
+func meal(game,needed: int,vitamin_offset: float=0.0) -> Dictionary:
+ var result: Dictionary=super.meal(game,needed,vitamin_offset)
+ game.provisions.dairy_eaten+=float(result.dairy_eaten)
+ return result

@@ -27,7 +27,7 @@ Keep the current milk/egg calorie densities. Spencer approved modern non-industr
 
 The [machine-readable report](livestock-realism-audit-01.json) records 13 fixtures against unchanged gameplay at master `e09150ffa5a0a65620d1e05b49a0e72fab5389fa`. It includes normalized source hashes and the save-rule fingerprint. The [diagnostic runner](../tests/livestock_realism_audit.gd) calls the actual livestock module with healthy people and clear weather, holding human meals, routes, health deterioration and random streams fixed. January is injected after a legal May departure. This is a module experiment, not a complete playable January journey.
 
-Run from the project directory:
+To reproduce the archived report, use its original commit `1921a8b4b118ee4ec0d1e1254b458937e1c2e1ab`, then run from that project directory. The current runner rejects changed rules so it cannot overwrite the baseline with incomparable results. [Exact table food corrections](TABLE_FOOD_AND_CARE.md) describe the newer behavior.
 
 ```powershell
 & ./.tools/godot/Godot_v4.5.1-stable_win64_console.exe --headless --path . --script tests/livestock_realism_audit.gd

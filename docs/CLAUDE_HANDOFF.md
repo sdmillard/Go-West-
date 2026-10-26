@@ -1,6 +1,6 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 25, 2026. Latest checkpoint: livestock realism audit (final section below; see [audit](LIVESTOCK_REALISM_AUDIT.md)). Earlier sections are chronological records.
+Last updated October 25, 2026. Latest checkpoint: exact table meals and actual daily care (final section below; see [implementation](TABLE_FOOD_AND_CARE.md)). Earlier sections are chronological records.
 
 ## Resume here
 
@@ -716,3 +716,13 @@ Publication verification: all **77 Godot suites** passed on runtime **27a4b01**,
 - Reproduced integer conversion bias (one goat 626 kcal becomes 1000; two goats 1252 become 1000), sub-unit milk expiring without ever becoming meal food, grain-only hens, fully fed winter hens dying on day 50, cow/goat same calendar-driven winter death, and care excluded by non-executing standing camp jobs on travel days.
 - Implementation order: calorie/mass-conserving product consumption and expiry with genuine save compatibility; actual daily care availability; finite hen scraps/scratching/supplementation; separate cow grazing/goat browsing and maintenance versus production; then matched survival comparisons with fresh confirmation seeds. Audit has detailed acceptance criteria. No gameplay, data or save rules changed in this checkpoint.
 - Spencer highlighted the prior walker failure: avoid a stack of linear penalties making fair animals useless. Use a broad normal-condition range, shortfalls affecting surplus production first, prolonged deficits affecting reserves, and severe debility only when warranted. Test adjacent threshold values and prevent double-counting one feed deficit. This does not authorize free output without adequate nutrients.
+
+
+## October 25, 2026: exact table meals and actual daily care
+
+- First corrections from the livestock audit: milk/eggs retain actual edible mass, calories and separate expiry in `livestock.record.products`. `simulation/table_meals.gd` serves produce first, then table products and ordinary provisions; the fractional remainder of the final ordinary unit becomes a physical `portion` with source weight/expiry/vitamin value. No free calorie credit and no global fractional `state.food` migration. Hunger accepts exact fractional meals.
+- Products/portions count toward cargo, are eaten before packing, and expire independently. Overflow/spoilage is journaled. Partial portions follow the party with the existing table ledger and can be discarded through Livestock; they are not individually traded, dried or assigned to outings. Main food display, inventory and low-food forecast include table food; forecast promises only already-carried supplies.
+- Care labor now follows actual `camp_tasks.day_plan` jobs, not dormant standing orders on travel days. Active nurses/patients and the leader's care action are excluded. No yield, feeding, season, care-minute or condition-penalty tuning in this patch. Mixed hen feeding, grazing/browsing and avoidance of stacked linear condition collapse remain next.
+- Genuine prior-rule fixtures captured before editing: `tests/fixtures/pre-exact-table-meals.json` (dairy and raw egg cases), old fingerprint `96f62de645481bd6421bce320de1afcfcd7e2d3dec70483a49ab31dbdd33c4c5`, now in migration allowlist. Existing rounded food remains unchanged; future output uses exact servings. Stable JSON mass precision 12 decimals / energy 9 decimals.
+- New focused suite `tests/test_table_meals.gd`: 96 checks covering conservation across repeated meals, nutrient-bearing portions, partial shortages, expiry, packing, forecast purity, care allocation and old saves. Included in test.ps1. Livestock 185 and observer/parity 120 checks also pass. Historical campaign JSON is retained unchanged; observer code now counts exact dairy meals/shortfalls for future reports.
+- Archived realism runner now refuses changed rules; reproduce it at commit 1921a8b. Do not overwrite `docs/livestock-realism-audit-01.json` with current behavior. New validation is recorded in TABLE_FOOD_AND_CARE.md and ignored `.tools/table-meals-*` logs/reports.

@@ -63,7 +63,7 @@ func specialist(game,index: int,background: String) -> bool:
 func begin(game,action: String,leader_patient: int=-1) -> void:
  if not enabled() or not day_plan.is_empty():return
  var leader: int=leader_id(game)
- day_plan={"rest":{},"jobs":[],"action":action,"leader":leader}
+ day_plan={"rest":{},"jobs":[],"action":action,"leader":leader,"leader_patient":leader_patient}
  for member in game.party_health.members:
   if game.party_health.is_active(member):day_plan.rest[int(member.id)]=int(member.id)!=leader or action=="rest"
  var patients: Array=[]

@@ -42,6 +42,9 @@ func sample(label: String,cart: Dictionary,days: int=1,month: int=5,working: boo
  for p in g.livestock.record.products:pending_kcal+=float(p.kcal)
  return {"case":label,"cart":cart,"month":month,"working":working,"standing_forage_jobs":jobs,"isolated_days":rows.size(),"food_units_generated":units,"represented_kcal":units*1000,"source_kcal_from_reported_mass":source_kcal,"unconverted_kcal":pending_kcal,"unconverted_expired_kcal":expired_kcal,"rounding_difference_kcal":units*1000+pending_kcal+expired_kcal-source_kcal,"remaining_animals":g.livestock.record.animals.size(),"rows":rows}
 func run():
+ if Save.new().fingerprint()!="96f62de645481bd6421bce320de1afcfcd7e2d3dec70483a49ab31dbdd33c4c5":
+  printerr("Archived diagnostic: reproduce on commit 1921a8b4b118ee4ec0d1e1254b458937e1c2e1ab. Use test_table_meals.gd for current accounting; the frozen report was not overwritten.")
+  quit(1);return
  var cases: Array=[]
  cases.append(sample("cow-rest",{"dairy_cows":1}))
  cases.append(sample("goat-rest",{"goats":1}))

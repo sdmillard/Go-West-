@@ -1,5 +1,5 @@
 extends "res://tests/hunt_balance_food.gd"
-var dairy_eaten:=0
+var dairy_eaten:=0.0
 var dairy_spoiled:=0
 var dairy_removed:=0
 func table_units() -> int:return fresh.filter(func(b):return b.get("table_product",false)).reduce(func(n,b):return n+int(b.pounds),0)

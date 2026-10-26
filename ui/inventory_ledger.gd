@@ -12,6 +12,8 @@ static func food_rows(game) -> Array:
  rows[2].mass+=float(game.state.get("camp_greens_lb",0))
  rows[0].units=left
  rows[0].mass=float(left)
+ if not game.livestock.record.products.is_empty():
+  rows.append({"name":"Milk / eggs / partial portions","units":game.livestock.available_kcal()/float(game.provisions.data.food_energy.unit_kcal),"mass":float(game.state.get("livestock_products_lb",0))})
  return rows
 func words(text: String) -> Label:
  var result:=Label.new()
@@ -40,15 +42,15 @@ func _init(game):
  size_flags_horizontal=Control.SIZE_EXPAND_FILL
  var food:=page("Food")
  var table:=grid(food,["FOOD","FOOD UNITS","WEIGHT LB"])
- var units:=0
+ var units:=0.0
  var mass:=0.0
  for row in food_rows(game):
   table.add_child(words(row.name))
-  table.add_child(words(str(row.units)))
+  table.add_child(words("%.2f" % float(row.units)))
   table.add_child(words("%.1f" % row.mass))
-  units+=int(row.units)
+  units+=float(row.units)
   mass+=float(row.mass)
- table.add_child(words("TOTAL"));table.add_child(words(str(units)));table.add_child(words("%.1f" % mass))
+ table.add_child(words("TOTAL"));table.add_child(words("%.2f" % units));table.add_child(words("%.1f" % mass))
  var per_day: int=game.state.party_size*int(game.provisions.data.rations_lb[game.state.rations])
  food.add_child(words("%d travelers · %d units/day · up to %d days before spoilage" % [game.state.party_size,per_day,game.provisions.expected_days(game.state.food,game.state.party_size,game.state.rations)]))
  food.add_child(words("Preserve meat in Camp. Eaten greens / berries supply vitamin C."))
