@@ -12,6 +12,9 @@ const Guards=preload("res://simulation/wagon_guards.gd")
 const CacheSupport=preload("res://simulation/wagon_cache.gd")
 const Remains=preload("res://simulation/remains.gd")
 const Mounts=preload("res://simulation/mounts.gd")
+const Pasture=preload("res://simulation/pasture.gd")
+## Scoped to the synchronous grazing activity, never a saved ongoing bonus.
+var grazing_activity: bool=false
 var field_outings=preload("res://simulation/field_outings.gd").new()
 var camp_repair=preload("res://simulation/camp_repair.gd").new()
 var camp_tasks=preload("res://simulation/camp_tasks.gd").new()
@@ -335,11 +338,13 @@ func _choose_landmark(index: int) -> bool:
 	if choice.action == "activity":
 		context.record.activities.append(choice.activity)
 		if context.data.activities[choice.activity].kind=="prepare":context.record.prepared.append(choice.activity)
+		grazing_activity=context.data.activities[choice.activity].kind=="graze"
 		_apply(choice.effects,"injuries",choice.get("rest",false))
+		grazing_activity=false
 		journal.append("Day %d · %s" % [state.day,choice.result])
 		if state.status=="traveling":
 			_update_river_stage()
-			pending.text+="\n\n"+choice.result+(" Crossing preparation is complete; water still poses a risk." if context.data.activities[choice.activity].kind=="prepare" else " The team benefits from better grazing.")
+			pending.text+="\n\n"+choice.result+(" Crossing preparation is complete; water still poses a risk." if context.data.activities[choice.activity].kind=="prepare" else " The animals spent a day at the grazing camp.")
 		return true
 	if choice.action == "rest":
 		_tick_day(true,false,"rest")
@@ -612,16 +617,13 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 		state.fatigue = clampi(int(state.fatigue) + ((1 + int(state.pace) if riding else 2 + int(state.pace) * 2) if team_working else (-14 if resting else -6)), 0, 100)
 		# Standing watch over the stock costs sleep every night.
 		if not camp_tasks.enabled() and state.get("night_guard",false) and Mounts.animals(state)>0:state.fatigue=mini(100,int(state.fatigue)+int(provisions.data.mounts.guard_fatigue))
-		if not team_working and current_edge().get("hazard","")!="waterless":
-			state.ox_health = mini(100, int(state.ox_health) + (int(seasonal_pressure().rest_ox_recovery) if resting else mini(2,int(seasonal_pressure().rest_ox_recovery))))
+		var pasture: Dictionary=pasture_assessment()
+		if not team_working and not pasture.waterless:
+			state.ox_health=mini(100,int(state.ox_health)+(int(pasture.ox_rest_recovery) if resting else mini(2,int(pasture.ox_rest_recovery))))
 		elif state.vehicle!="foot":
-			var strain: int=int(context.region(self).strain)+int(seasonal_pressure().working_strain)
-			if context.region_id(self) in ["plains","sagebrush"] and int(calendar().month) in [7,8,9]:strain+=1
-			strain+=int(survival.weather.get("ox_strain",0))
-			if current_edge().get("hazard","")=="waterless":strain+=int(WATERLESS.ox_strain)
-			state.ox_health=maxi(0,int(state.ox_health)-strain)
+			state.ox_health=maxi(0,int(state.ox_health)-int(pasture.ox_work_strain))
 		_tick_mounts(resting,team_working)
-		team_conditions.settle(self,false,team_working and state.vehicle!="foot",(int(seasonal_pressure().rest_ox_recovery) if resting else mini(2,int(seasonal_pressure().rest_ox_recovery))) if not team_working and current_edge().get("hazard","")!="waterless" else -1)
+		team_conditions.settle(self,false,team_working and state.vehicle!="foot",(int(pasture.ox_rest_recovery) if resting else mini(2,int(pasture.ox_rest_recovery))) if not team_working and not pasture.waterless else -1)
 	if state.extended_route:
 		var spoiled := provisions.spoil(int(state.day), int(state.food))
 		if spoiled > 0:
@@ -701,13 +703,13 @@ func _tick_mounts(resting: bool,team_working: bool) -> void:
 	if Mounts.animals(state)==0:return
 	var rules: Dictionary=provisions.data.mounts
 	var plan: Dictionary=mount_plan()
-	var waterless: bool=current_edge().get("hazard","")=="waterless"
+	var pasture: Dictionary=pasture_assessment()
+	var waterless: bool=pasture.waterless
 	if team_working and not Mounts.mounted(plan) and plan.mode!="packing":return
 	if not team_working:
-		if not waterless:state["horse_health"]=mini(100,Mounts.condition(state)+(mini(int(rules.rest_recovery),int(seasonal_pressure().rest_ox_recovery)) if resting else 1))
+		if not waterless:state["horse_health"]=mini(100,Mounts.condition(state)+(mini(int(rules.rest_recovery),int(pasture.ox_rest_recovery)) if resting else 1))
 		return
-	var base: int=int(context.region(self).strain)+int(seasonal_pressure().working_strain)+int(survival.weather.get("ox_strain",0))
-	if waterless:base+=int(WATERLESS.ox_strain)
+	var base: int=pasture.base_work_strain
 	var load_ratio: float=provisions.load_profile(state).ratio
 	var strain: int=Mounts.wear(rules,plan,context.region_id(self),base,int(state.pace),load_ratio)
 	state["horse_health"]=maxi(0,Mounts.condition(state)-strain)
@@ -1859,6 +1861,8 @@ func _refresh_toll_offer() -> void:
 			choice["requires"] = {"money":toll}
 			choice["effects"] = {"money":-toll}
 
+
+func pasture_assessment() -> Dictionary:return Pasture.assess(self)
 
 func seasonal_pressure() -> Dictionary:
 	return survival.seasonal(int(calendar().month),str(state.terrain),context.region(self))

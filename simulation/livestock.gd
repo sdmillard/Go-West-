@@ -69,9 +69,11 @@ func outlook(game,resting: bool=false) -> Dictionary:
  var hours:=0.0
  for kind in ANIMALS:hours+=count(game.state,kind)*float(data.animals[kind].care_hours)
  var budget: float=minf(float(data.resting_care_hours if resting else data.moving_care_hours),workers(game)*float(data.care_hours_per_person)) if record.care else 0.0
- var season: float=data.months[int(game.calendar().month)-1]
- var waterless: bool=game.current_edge().get("hazard","")=="waterless"
+ var pasture: Dictionary=game.pasture_assessment()
+ var season: float=pasture.season
+ var waterless: bool=pasture.waterless
  var result: Dictionary={"hours":hours,"budget":budget,"care_factor":minf(1.0,budget/hours) if hours>0 else 1.0,"season":season,"waterless":waterless,"feed_needed":count(game.state,"hens"),"feed_held":count(game.state,"poultry_feed")}
+ result["pasture"]=pasture
  result["feeding"]=Feeding.plan(game,result,resting,not resting)
  return result
 func tick(game,resting: bool,working: bool) -> void:
