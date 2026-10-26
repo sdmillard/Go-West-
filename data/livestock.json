@@ -1,5 +1,5 @@
 {
-  "note": "Authored trail husbandry estimates informed by smallholding references, not measured 1848 yields. Adult milk animals are already in milk, with 180 days remaining; no breeding. Hens use finite scratching, shared leftover portions and grain. Cow/goat fodder fills pasture shortfalls. Yield allowances remain 8/2 lb milk and 0.5 egg before limitations. Prices and feed quantities are estimates. Table food retains exact calories and expiry.",
+  "note": "Authored trail husbandry estimates informed by smallholding references, not measured 1848 yields. Adult milk animals are already in milk, with 180 days remaining; no breeding. Hens use finite scratching, shared leftover portions and grain. Cow/goat fodder fills pasture shortfalls. Yield allowances remain 8/2 lb milk and 0.5 egg before limitations. Prices and feed quantities are estimates. Table food retains exact calories and expiry. Egg progress is canonicalized before laying for stable save boundaries.",
   "milk_days": 1,
   "egg_days": 14,
   "care_hours_per_person": 0.5,

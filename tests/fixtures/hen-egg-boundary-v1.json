@@ -1,0 +1,5705 @@
+{
+  "camp_repair": {
+
+  },
+  "camp_tasks": {
+    "1": {
+      "job": "rest",
+      "patient": -1
+    },
+    "2": {
+      "job": "hunt_help",
+      "patient": -1
+    },
+    "3": {
+      "job": "forage",
+      "patient": -1
+    },
+    "4": {
+      "job": "forage",
+      "patient": -1
+    }
+  },
+  "characters": [
+    {
+      "appearance": {
+        "clothing": "Plum",
+        "hair": "Blond",
+        "heritage": "French Canadian",
+        "outfit": 1,
+        "skin": "Deep"
+      },
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": []
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 0,
+      "memories": [],
+      "relationship": "self",
+      "skill": "Leadership",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [],
+      "trust": 50
+    },
+    {
+      "appearance": {
+        "clothing": "Green",
+        "hair": "Gray",
+        "heritage": "Not specified",
+        "outfit": 1,
+        "skin": "Light"
+      },
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": [
+          "murder"
+        ]
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 1,
+      "memories": [
+        {
+          "day": 39,
+          "delta": 2,
+          "kind": "care",
+          "text": "You arranged care for B."
+        }
+      ],
+      "relationship": "fellow_traveler",
+      "skill": "Carpentry",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [
+        "Cautious",
+        "Pragmatic"
+      ],
+      "trust": 52
+    },
+    {
+      "appearance": {
+        "clothing": "Charcoal",
+        "hair": "Black",
+        "heritage": "German American",
+        "outfit": 1,
+        "skin": "Tan"
+      },
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": [
+          "robbery",
+          "murder",
+          "cannibalism"
+        ]
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 2,
+      "memories": [
+        {
+          "day": 25,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        },
+        {
+          "day": 27,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        },
+        {
+          "day": 31,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        },
+        {
+          "day": 33,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        },
+        {
+          "day": 35,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        },
+        {
+          "day": 37,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        },
+        {
+          "day": 38,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        },
+        {
+          "day": 39,
+          "delta": 2,
+          "kind": "care",
+          "text": "You arranged care for B."
+        },
+        {
+          "day": 40,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        },
+        {
+          "day": 41,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        },
+        {
+          "day": 43,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        },
+        {
+          "day": 74,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        }
+      ],
+      "relationship": "fellow_traveler",
+      "skill": "Caregiving",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [
+        "Bold",
+        "Compassionate"
+      ],
+      "trust": 72
+    },
+    {
+      "appearance": {
+        "clothing": "Red",
+        "hair": "Brown",
+        "heritage": "Scottish American",
+        "outfit": 0,
+        "skin": "Brown"
+      },
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": [
+          "robbery",
+          "murder",
+          "cannibalism"
+        ]
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 3,
+      "memories": [
+        {
+          "day": 25,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        },
+        {
+          "day": 27,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        },
+        {
+          "day": 31,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        },
+        {
+          "day": 33,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        },
+        {
+          "day": 35,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        },
+        {
+          "day": 37,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        },
+        {
+          "day": 38,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        },
+        {
+          "day": 39,
+          "delta": 2,
+          "kind": "care",
+          "text": "You arranged care for B."
+        },
+        {
+          "day": 40,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        },
+        {
+          "day": 41,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        },
+        {
+          "day": 43,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        },
+        {
+          "day": 74,
+          "delta": 1,
+          "kind": "rest_sick",
+          "text": "You stopped to rest while someone was ill or injured."
+        }
+      ],
+      "relationship": "fellow_traveler",
+      "skill": "Trading",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [
+        "Bold",
+        "Compassionate"
+      ],
+      "trust": 72
+    },
+    {
+      "appearance": {
+        "clothing": "Plum",
+        "hair": "Blond",
+        "heritage": "Irish American",
+        "outfit": 1,
+        "skin": "Fair"
+      },
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": [
+          "murder"
+        ]
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 4,
+      "memories": [
+        {
+          "day": 8,
+          "delta": 2,
+          "kind": "care",
+          "text": "You arranged care for E."
+        },
+        {
+          "day": 11,
+          "delta": 2,
+          "kind": "care",
+          "text": "You arranged care for E."
+        }
+      ],
+      "relationship": "fellow_traveler",
+      "skill": "Hunting",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [
+        "Bold",
+        "Pragmatic"
+      ],
+      "trust": 54
+    }
+  ],
+  "characters_version": 5,
+  "combat_history": [],
+  "context": {
+    "activities": [],
+    "prepared": [],
+    "spent": {
+      "emigrants:plains:9|buy_produce|units": 1,
+      "passing:plains:3|buy_clothing": 1,
+      "passing:plains:3|buy_clothing|units": 1,
+      "passing:plains:3|visit": 1,
+      "passing:plains:4|buy_medicine": 1,
+      "passing:plains:4|buy_medicine|units": 1,
+      "passing:plains:4|visit": 1,
+      "passing:plains:7|buy_medicine": 1,
+      "passing:plains:7|buy_medicine|units": 1,
+      "passing:plains:7|visit": 1,
+      "passing:woodland:1|buy_clothing": 1,
+      "passing:woodland:1|buy_clothing|units": 1,
+      "passing:woodland:1|visit": 1,
+      "post:fort_laramie|buy_poultry_feed|units": 50,
+      "post:fort_laramie|visit": 1
+    }
+  },
+  "crime": {
+    "random": "7741137515122156531",
+    "record": {
+      "active": {
+
+      },
+      "actors": {
+        "clerk:fort_laramie": {
+          "health": 100,
+          "place": "fort_laramie",
+          "role": "clerk",
+          "uid": "clerk:fort_laramie"
+        },
+        "corporal:fort_kearny": {
+          "health": 100,
+          "place": "fort_kearny",
+          "role": "corporal of the guard",
+          "uid": "corporal:fort_kearny"
+        },
+        "hand:fort_boise": {
+          "health": 100,
+          "place": "fort_boise",
+          "role": "hired hand",
+          "uid": "hand:fort_boise"
+        },
+        "hand:fort_bridger": {
+          "health": 100,
+          "place": "fort_bridger",
+          "role": "hired hand",
+          "uid": "hand:fort_bridger"
+        },
+        "hand:fort_hall": {
+          "health": 100,
+          "place": "fort_hall",
+          "role": "hired hand",
+          "uid": "hand:fort_hall"
+        },
+        "hand:fort_laramie": {
+          "health": 100,
+          "place": "fort_laramie",
+          "role": "hired hand",
+          "uid": "hand:fort_laramie"
+        },
+        "hand:fort_walla_walla": {
+          "health": 100,
+          "place": "fort_walla_walla",
+          "role": "hired hand",
+          "uid": "hand:fort_walla_walla"
+        },
+        "hand:independence": {
+          "health": 100,
+          "place": "independence",
+          "role": "hired hand",
+          "uid": "hand:independence"
+        },
+        "hand:kansas_river": {
+          "health": 100,
+          "place": "kansas_river",
+          "role": "ferry hand",
+          "uid": "hand:kansas_river"
+        },
+        "keeper:barlow_pass": {
+          "health": 100,
+          "place": "barlow_pass",
+          "role": "gatekeeper",
+          "uid": "keeper:barlow_pass"
+        },
+        "keeper:fort_boise": {
+          "health": 100,
+          "place": "fort_boise",
+          "role": "keeper",
+          "uid": "keeper:fort_boise"
+        },
+        "keeper:fort_bridger": {
+          "health": 100,
+          "place": "fort_bridger",
+          "role": "keeper",
+          "uid": "keeper:fort_bridger"
+        },
+        "keeper:fort_hall": {
+          "health": 100,
+          "place": "fort_hall",
+          "role": "keeper",
+          "uid": "keeper:fort_hall"
+        },
+        "keeper:fort_kearny": {
+          "health": 100,
+          "place": "fort_kearny",
+          "role": "commissary sergeant",
+          "uid": "keeper:fort_kearny"
+        },
+        "keeper:fort_laramie": {
+          "health": 100,
+          "place": "fort_laramie",
+          "role": "keeper",
+          "uid": "keeper:fort_laramie"
+        },
+        "keeper:fort_walla_walla": {
+          "health": 100,
+          "place": "fort_walla_walla",
+          "role": "keeper",
+          "uid": "keeper:fort_walla_walla"
+        },
+        "keeper:independence": {
+          "health": 100,
+          "place": "independence",
+          "role": "keeper",
+          "uid": "keeper:independence"
+        },
+        "keeper:kansas_river": {
+          "health": 100,
+          "place": "kansas_river",
+          "role": "ferryman",
+          "uid": "keeper:kansas_river"
+        },
+        "private:fort_kearny": {
+          "health": 100,
+          "place": "fort_kearny",
+          "role": "private",
+          "uid": "private:fort_kearny"
+        },
+        "sentry:fort_kearny": {
+          "health": 100,
+          "place": "fort_kearny",
+          "role": "sentry",
+          "uid": "sentry:fort_kearny"
+        }
+      },
+      "attacks": [],
+      "betrayals": [],
+      "bonds": [
+        {
+          "a": 2,
+          "b": 4,
+          "kind": "friend"
+        },
+        {
+          "a": 3,
+          "b": 4,
+          "kind": "friend"
+        },
+        {
+          "a": 1,
+          "b": 4,
+          "kind": "partner"
+        }
+      ],
+      "bounties": [],
+      "human_food": [],
+      "incidents": [],
+      "meals": {
+
+      },
+      "people": {
+        "party:365000:original:0": {
+          "name": "A",
+          "slot": 0
+        },
+        "party:365000:original:1": {
+          "name": "B",
+          "slot": 1
+        },
+        "party:365000:original:2": {
+          "name": "C",
+          "slot": 2
+        },
+        "party:365000:original:3": {
+          "name": "D",
+          "slot": 3
+        },
+        "party:365000:original:4": {
+          "name": "E",
+          "slot": 4
+        }
+      },
+      "remains": [],
+      "reports": [],
+      "services": {
+        "barlow_pass": {
+          "alarmed": false,
+          "cash_cents": 4000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:barlow_pass",
+          "staff": [
+            "keeper:barlow_pass"
+          ]
+        },
+        "fort_boise": {
+          "alarmed": false,
+          "cash_cents": 3000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:fort_boise",
+          "staff": [
+            "keeper:fort_boise",
+            "hand:fort_boise"
+          ]
+        },
+        "fort_bridger": {
+          "alarmed": false,
+          "cash_cents": 5000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:fort_bridger",
+          "staff": [
+            "keeper:fort_bridger",
+            "hand:fort_bridger"
+          ]
+        },
+        "fort_hall": {
+          "alarmed": false,
+          "cash_cents": 4000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:fort_hall",
+          "staff": [
+            "keeper:fort_hall",
+            "hand:fort_hall"
+          ]
+        },
+        "fort_kearny": {
+          "alarmed": false,
+          "cash_cents": 2500,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:fort_kearny",
+          "staff": [
+            "keeper:fort_kearny",
+            "sentry:fort_kearny",
+            "corporal:fort_kearny",
+            "private:fort_kearny"
+          ]
+        },
+        "fort_laramie": {
+          "alarmed": false,
+          "cash_cents": 6000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:fort_laramie",
+          "staff": [
+            "keeper:fort_laramie",
+            "clerk:fort_laramie",
+            "hand:fort_laramie"
+          ]
+        },
+        "fort_walla_walla": {
+          "alarmed": false,
+          "cash_cents": 4000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:fort_walla_walla",
+          "staff": [
+            "keeper:fort_walla_walla",
+            "hand:fort_walla_walla"
+          ]
+        },
+        "independence": {
+          "alarmed": false,
+          "cash_cents": 5000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:independence",
+          "staff": [
+            "keeper:independence",
+            "hand:independence"
+          ]
+        },
+        "kansas_river": {
+          "alarmed": false,
+          "cash_cents": 1500,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:kansas_river",
+          "staff": [
+            "keeper:kansas_river",
+            "hand:kansas_river"
+          ]
+        }
+      },
+      "version": 9
+    }
+  },
+  "crossing_history": [
+    {
+      "clothing_lost": 1,
+      "day": 7,
+      "food_lost": 30,
+      "health_lost": 15,
+      "landmark": "wakarusa",
+      "livestock_lost": {
+        "hens": 1
+      },
+      "lost": false,
+      "method": "float",
+      "mishap": true,
+      "place": "Wakarusa Creek",
+      "stage": "high",
+      "summary": "Wakarusa Creek · floating. Crossing mishap! Cargo washes away. Lost 30 lb food and 1 clothing set(s); the party suffered injuries. The party reached the far bank."
+    },
+    {
+      "clothing_lost": 0,
+      "day": 16,
+      "food_lost": 0,
+      "health_lost": 0,
+      "landmark": "kansas_river",
+      "lost": false,
+      "method": "ferry",
+      "mishap": false,
+      "place": "Kansas River",
+      "stage": "low",
+      "summary": "Kansas River · ferry. No cargo lost. The party reached the far bank."
+    },
+    {
+      "clothing_lost": 1,
+      "day": 24,
+      "food_lost": 30,
+      "health_lost": 15,
+      "landmark": "big_blue",
+      "livestock_lost": {
+        "hens": 1
+      },
+      "lost": false,
+      "method": "float",
+      "mishap": true,
+      "place": "Big Blue River",
+      "stage": "high",
+      "summary": "Big Blue River · floating. Crossing mishap! Cargo washes away. Lost 30 lb food and 1 clothing set(s); the party suffered injuries. The party reached the far bank."
+    },
+    {
+      "clothing_lost": 0,
+      "day": 58,
+      "food_lost": 0,
+      "health_lost": 0,
+      "landmark": "south_platte",
+      "lost": false,
+      "method": "ford",
+      "mishap": false,
+      "place": "South Platte crossing",
+      "stage": "low",
+      "summary": "South Platte crossing · fording. No cargo lost. The party reached the far bank."
+    }
+  ],
+  "days_without_fresh": 11,
+  "field_outings": {
+    "next_id": 1,
+    "preferences": {
+
+    },
+    "trips": []
+  },
+  "format": "westward-probably",
+  "fresh": [],
+  "health_events": [],
+  "health_random": "-5107750604363313856",
+  "journal": [
+    "Independence, 1848. Outfit your wagon.",
+    "Departed 7 1, 1848 as a farmer. Party: A, B, C, D, E.",
+    "Supplies cost $521.60. Cash remaining: $153.40.",
+    "Day 1 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 1.23 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.00 lb. Care 100%.",
+    "Day 1 · Clear. Team condition good; working.",
+    "Day 1 · Traveled to mile 22. Food remaining: 1710 units.",
+    "Day 2 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 1.23 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.00 lb. Care 100%.",
+    "Day 2 · Rain. Team condition good; working.",
+    "Day 2 · Traveled to mile 33. Food remaining: 1700 units.",
+    "Day 2 · Reached Elm Grove. Guide mileage: 33.",
+    "Leaving Elm Grove.",
+    "Encounter · The prairie holds on",
+    "Day 2 · Supplies: Wheels -1. Daily rations counted separately.",
+    "The replacement wheel holds. The wagon is ready.",
+    "Day 3 · Livestock: 0.00 lb milk, 6 eggs; 0.43 food units produced. Grain 1.23 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.00 lb. Care 100%.",
+    "Day 3 · Rain. Team condition good; working.",
+    "Day 3 · Traveled to mile 50. Food remaining: 1690 units.",
+    "Day 3 · Supplies: Horses -1. Daily rations counted separately.",
+    "Day 3 · Horse thieves in the night. At first light the picket ropes are cut and a horse gone. The tracks lead off into the broken country. Horses were what thieves and raiders on the road wanted most.",
+    "Day 3 · Supplies: Horses +1. Daily rations counted separately.",
+    "Day 4 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.91 lb; fodder 0.00 lb; scratching 0.42 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 4 · Clear. Team condition good; resting.",
+    "Day 5 · Livestock: 0.00 lb milk, 6 eggs; 0.43 food units produced. Grain 0.96 lb; fodder 0.00 lb; scratching 0.42 lb feed-equivalent; shared portions 0.18 lb. Care 100%.",
+    "Day 5 · Clear. Team condition good; resting.",
+    "You run the thieves down and drive the stock back to camp.",
+    "The thieves fire back when you come up on them. A traveler is hit.",
+    "Day 5 · E has wound.",
+    "The party takes stock before continuing.",
+    "Day 6 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 1.06 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 6 · Clear. Team condition good; working.",
+    "Day 6 · Traveled to mile 53. Food remaining: 1655 units.",
+    "Day 6 · Reached Wakarusa Creek. Guide mileage: 53.",
+    "Day 7 · Livestock: 0.00 lb milk, 6 eggs; 0.43 food units produced. Grain 0.96 lb; fodder 0.00 lb; scratching 0.42 lb feed-equivalent; shared portions 0.18 lb. Care 100%.",
+    "Day 7 · Thick fog. Team condition good; resting.",
+    "Day 7 · Supplies: Food (lb) -30; Clothing -1. Daily rations counted separately.",
+    "Day 7 · Crossing livestock losses: { \"hens\": 1 }.",
+    "Day 7 · Wakarusa Creek · floating. Crossing mishap! Cargo washes away. Lost 30 lb food and 1 clothing set(s); the party suffered injuries. The party reached the far bank.",
+    "Crossed Wakarusa Creek by float.",
+    "Leaving Wakarusa Creek.",
+    "Day 7 · Traded with passing traders: bought 1 clothing set.",
+    "Day 7 · Supplies: Cash ($) -21.38; Clothing +1. Daily rations counted separately.",
+    "Day 8 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.66 lb; fodder 0.00 lb; scratching 0.42 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 8 · Clear. Team condition good; resting.",
+    "Day 8 · C: You arranged care for E. (trust +2.0).",
+    "Day 8 · D: You arranged care for E. (trust +2.0).",
+    "Day 8 · E: You arranged care for E. (trust +2.0).",
+    "Day 8 · Supplies: Care kits -1. Daily rations counted separately.",
+    "Day 9 · Livestock: 0.00 lb milk, 5 eggs; 0.36 food units produced. Grain 0.71 lb; fodder 0.00 lb; scratching 0.42 lb feed-equivalent; shared portions 0.18 lb. Care 100%.",
+    "Day 9 · Foraged 4 lb of greens and berries (1 food units).",
+    "Day 9 · C: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 9 · D: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 9 · Clear. Team condition good; resting.",
+    "Day 9 · Used care supplies for E.",
+    "The party takes stock before continuing.",
+    "Day 10 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.66 lb; fodder 0.00 lb; scratching 0.42 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 10 · Foraged 4 lb of greens and berries (1 food units).",
+    "Day 10 · C: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 10 · D: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 10 · Heavy rain. Team condition good; resting.",
+    "Day 10 · Rested in camp. Food remaining: 1567 units.",
+    "Day 10 · C has exhaustion.",
+    "Day 10 · Illness in the party. C is exhausted and unwell. Check their personal condition and make time to rest.",
+    "Day 11 · Livestock: 0.00 lb milk, 5 eggs; 0.36 food units produced. Grain 0.75 lb; fodder 0.00 lb; scratching 0.42 lb feed-equivalent; shared portions 0.11 lb. Care 100%.",
+    "Day 11 · C: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 11 · D: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 11 · Scorching heat. Team condition good; resting.",
+    "You stop to let the party recover.",
+    "Day 11 · C: You arranged care for E. (trust +2.0).",
+    "Day 11 · D: You arranged care for E. (trust +2.0).",
+    "Day 11 · E: You arranged care for E. (trust +2.0).",
+    "Day 11 · Supplies: Care kits -1. Daily rations counted separately.",
+    "Day 12 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.66 lb; fodder 0.00 lb; scratching 0.42 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 12 · E recovered from wound.",
+    "Day 12 · Foraged 4 lb of greens and berries (1 food units).",
+    "Day 12 · C: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 12 · D: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 12 · Clear. Team condition good; resting.",
+    "Day 12 · Used care supplies for E.",
+    "The party takes stock before continuing.",
+    "Day 13 · Livestock: 0.00 lb milk, 5 eggs; 0.36 food units produced. Grain 0.90 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.11 lb. Care 100%.",
+    "Day 13 · Rain. Team condition good; working.",
+    "Day 13 · Traveled to mile 74. Food remaining: 1523 units.",
+    "Day 13 · An ox is lame. An ox injures its leg. Your team will pull more slowly until its condition improves.",
+    "Day 14 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.66 lb; fodder 0.00 lb; scratching 0.42 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 14 · C recovered from exhaustion.",
+    "Day 14 · C: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 14 · D: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 14 · Thick fog. Team condition good; resting.",
+    "You give the team time to recover.",
+    "The party takes stock before continuing.",
+    "Day 15 · Livestock: 0.00 lb milk, 5 eggs; 0.36 food units produced. Grain 0.90 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.11 lb. Care 100%.",
+    "Day 15 · Rain. Team condition good; working.",
+    "Day 15 · Traveled to mile 81. Food remaining: 1493 units.",
+    "Day 15 · Reached Kansas River. Guide mileage: 81.",
+    "Day 15 · Supplies: Cash ($) -1.00. Daily rations counted separately.",
+    "Day 16 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.66 lb; fodder 0.00 lb; scratching 0.42 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 16 · Scorching heat. Team condition good; resting.",
+    "Day 16 · Kansas River · ferry. No cargo lost. The party reached the far bank.",
+    "Crossed Kansas River by ferry.",
+    "Leaving Kansas River.",
+    "Day 17 · Livestock: 0.00 lb milk, 5 eggs; 0.36 food units produced. Grain 0.90 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.11 lb. Care 100%.",
+    "Day 17 · Clear. Team condition good; working.",
+    "Day 17 · Traveled to mile 102. Food remaining: 1463 units.",
+    "Day 18 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.81 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 18 · Heavy rain. Team condition good; working.",
+    "Day 18 · Traveled to mile 118. Food remaining: 1448 units.",
+    "Day 19 · Livestock: 0.00 lb milk, 5 eggs; 0.36 food units produced. Grain 0.90 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.11 lb. Care 100%.",
+    "Day 19 · Heavy rain. Team condition good; working.",
+    "Day 19 · Traveled to mile 132. Food remaining: 1433 units.",
+    "Day 20 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.81 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 20 · Heavy rain. Team condition good; working.",
+    "Day 20 · Traveled to mile 145. Food remaining: 1418 units.",
+    "Day 20 · Supplies: Food (lb) -10; Bullets -20. Daily rations counted separately.",
+    "Day 20 · Supplies soaked by rain. Heavy rain gets into the load: 10 lb food, 20 bullets and 1 care kit are damaged, up to what you carried.",
+    "Day 21 · Livestock: 0.00 lb milk, 5 eggs; 0.36 food units produced. Grain 0.75 lb; fodder 0.00 lb; scratching 0.42 lb feed-equivalent; shared portions 0.11 lb. Care 100%.",
+    "Day 21 · Clear. Team condition good; resting.",
+    "You stop to dry and repack the remaining supplies.",
+    "Day 22 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.81 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 22 · E has typhoid fever.",
+    "Day 22 · Thick fog. Team condition good; working.",
+    "Day 22 · Traveled to mile 156. Food remaining: 1378 units.",
+    "The party takes stock before continuing.",
+    "Day 23 · Livestock: 0.00 lb milk, 5 eggs; 0.36 food units produced. Grain 0.90 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.11 lb. Care 100%.",
+    "Day 23 · Clear. Team condition good; working.",
+    "Day 23 · Traveled to mile 174. Food remaining: 1363 units.",
+    "Day 23 · Reached Big Blue River. Guide mileage: 174.",
+    "Day 24 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.66 lb; fodder 0.00 lb; scratching 0.42 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 24 · Clear. Team condition good; resting.",
+    "Day 24 · Supplies: Food (lb) -30; Clothing -1. Daily rations counted separately.",
+    "Day 24 · Crossing livestock losses: { \"hens\": 1 }.",
+    "Day 24 · Big Blue River · floating. Crossing mishap! Cargo washes away. Lost 30 lb food and 1 clothing set(s); the party suffered injuries. The party reached the far bank.",
+    "Crossed Big Blue River by float.",
+    "Leaving Big Blue River.",
+    "Day 25 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.50 lb; fodder 0.00 lb; scratching 0.42 lb feed-equivalent; shared portions 0.11 lb. Care 100%.",
+    "Day 25 · Gathered 3 lb greens for vitamin-C meals (less than one food unit).",
+    "Day 25 · C: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 25 · D: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 25 · Clear. Team condition good; resting.",
+    "Day 25 · Rested in camp. Food remaining: 1303 units.",
+    "Day 26 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.56 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 26 · Heavy rain. Team condition good; working.",
+    "Day 26 · Traveled to mile 189. Food remaining: 1288 units.",
+    "Day 27 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.55 lb; fodder 0.00 lb; scratching 0.42 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 27 · Gathered 2 lb greens for vitamin-C meals (less than one food unit).",
+    "Day 27 · C: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 27 · D: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 27 · Thick fog. Team condition good; resting.",
+    "Day 27 · Rested in camp. Food remaining: 1273 units.",
+    "Day 27 · A robbery on the road. Armed thieves block the trail. Their demand: 281 food units + 11 bullets + 1 axle. Fighting can cause serious or fatal injury.",
+    "Day 27 · Supplies: Food (lb) -281; Bullets -11; Axles -1. Daily rations counted separately.",
+    "The thieves leave with 281 food units + 11 bullets + 1 axle.",
+    "Day 28 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.56 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 28 · Thick fog. Team condition good; working.",
+    "Day 28 · Traveled to mile 203. Food remaining: 977 units.",
+    "Day 28 · Supplies: Oxen -1. Daily rations counted separately.",
+    "Day 28 · An ox wanders off. One animal is missing when you count the team.",
+    "Day 28 · Supplies: Oxen +1. Daily rations counted separately.",
+    "Day 29 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.55 lb; fodder 0.00 lb; scratching 0.42 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 29 · D has dysentery.",
+    "Day 29 · Clear. Team condition good; resting.",
+    "You find the wandering ox.",
+    "The party takes stock before continuing.",
+    "Day 29 · Traded with passing traders: bought 1 clothing set.",
+    "Day 29 · Supplies: Cash ($) -17.10; Clothing +1. Daily rations counted separately.",
+    "Day 30 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.41 lb; fodder 0.00 lb; scratching 0.42 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 30 · Clear. Team condition good; resting.",
+    "Day 31 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.60 lb; fodder 0.00 lb; scratching 0.38 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 31 · E recovered from typhoid fever.",
+    "Day 31 · Gathered 3 lb greens for vitamin-C meals (less than one food unit).",
+    "Day 31 · C: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 31 · D: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 31 · Rain. Team condition good; resting.",
+    "Day 31 · Rested in camp. Food remaining: 932 units.",
+    "The party takes stock before continuing.",
+    "Day 32 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.56 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 32 · Rain. Team condition good; working.",
+    "Day 32 · Traveled to mile 227. Food remaining: 917 units.",
+    "Day 33 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.60 lb; fodder 0.00 lb; scratching 0.38 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 33 · Gathered 2 lb greens for vitamin-C meals (less than one food unit).",
+    "Day 33 · C: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 33 · D: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 33 · Clear. Team condition good; resting.",
+    "Day 33 · Rested in camp. Food remaining: 902 units.",
+    "Day 34 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.56 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 34 · C caught dysentery from D.",
+    "Day 34 · Thick fog. Team condition good; working.",
+    "Day 34 · Traveled to mile 241. Food remaining: 887 units.",
+    "The party takes stock before continuing.",
+    "Day 35 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.60 lb; fodder 0.00 lb; scratching 0.38 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 35 · D recovered from dysentery.",
+    "Day 35 · B caught dysentery from C.",
+    "Day 35 · Gathered 1 lb greens for vitamin-C meals (less than one food unit).",
+    "Day 35 · C: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 35 · D: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 35 · Scorching heat. Team condition good; resting.",
+    "Day 35 · Rested in camp. Food remaining: 872 units.",
+    "The party takes stock before continuing.",
+    "Day 36 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.56 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 36 · Heavy rain. Team condition good; working.",
+    "Day 36 · Traveled to mile 259. Food remaining: 857 units.",
+    "Day 36 · D has exhaustion.",
+    "Day 36 · Illness in the party. D is exhausted and unwell. Check their personal condition and make time to rest.",
+    "Day 37 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.60 lb; fodder 0.00 lb; scratching 0.38 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 37 · A has dysentery.",
+    "Day 37 · C: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 37 · D: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 37 · Thick fog. Team condition good; resting.",
+    "You stop to let the party recover.",
+    "The party takes stock before continuing.",
+    "Day 38 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.46 lb; fodder 0.00 lb; scratching 0.38 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 38 · Gathered 2 lb greens for vitamin-C meals (less than one food unit).",
+    "Day 38 · C: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 38 · D: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 38 · Rain. Team condition good; resting.",
+    "Day 38 · Rested in camp. Food remaining: 827 units.",
+    "Day 38 · Traded with passing traders: bought 1 care kit.",
+    "Day 38 · Supplies: Cash ($) -7.27; Care kits +1. Daily rations counted separately.",
+    "Day 39 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.60 lb; fodder 0.00 lb; scratching 0.38 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 39 · D recovered from exhaustion.",
+    "Day 39 · Thick fog. Team condition good; resting.",
+    "Day 39 · B: You arranged care for B. (trust +2.0).",
+    "Day 39 · C: You arranged care for B. (trust +2.0).",
+    "Day 39 · D: You arranged care for B. (trust +2.0).",
+    "Day 39 · Supplies: Care kits -1. Daily rations counted separately.",
+    "Day 40 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.46 lb; fodder 0.00 lb; scratching 0.38 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 40 · B recovered from dysentery.",
+    "Day 40 · Gathered 1 lb greens for vitamin-C meals (less than one food unit).",
+    "Day 40 · C: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 40 · D: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 40 · Clear. Team condition good; resting.",
+    "Day 40 · Used care supplies for B.",
+    "The party takes stock before continuing.",
+    "Day 41 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.60 lb; fodder 0.00 lb; scratching 0.38 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 41 · C recovered from dysentery.",
+    "Day 41 · Gathered 2 lb greens for vitamin-C meals (less than one food unit).",
+    "Day 41 · C: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 41 · D: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 41 · Rain. Team condition good; resting.",
+    "Day 41 · Rested in camp. Food remaining: 782 units.",
+    "The party takes stock before continuing.",
+    "Day 42 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.56 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 42 · Scorching heat. Team condition good; working.",
+    "Day 42 · Traveled to mile 280. Food remaining: 767 units.",
+    "Day 43 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.60 lb; fodder 0.00 lb; scratching 0.38 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 43 · A recovered from dysentery.",
+    "Day 43 · Gathered 3 lb greens for vitamin-C meals (less than one food unit).",
+    "Day 43 · C: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 43 · D: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 43 · Thick fog. Team condition good; resting.",
+    "Day 43 · Rested in camp. Food remaining: 752 units.",
+    "The party takes stock before continuing.",
+    "Day 44 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.56 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 44 · Clear. Team condition good; working.",
+    "Day 44 · Traveled to mile 306. Food remaining: 737 units.",
+    "Day 45 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.70 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 45 · Clear. Team condition good; working.",
+    "Day 45 · Traveled to mile 317. Food remaining: 722 units.",
+    "Day 45 · Reached Platte River corridor. Guide mileage: 317.",
+    "Leaving Platte River corridor.",
+    "Day 46 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.56 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 46 · Heavy rain. Team condition good; working.",
+    "Day 46 · Traveled to mile 327. Food remaining: 707 units.",
+    "Day 46 · Reached Fort Kearny site. Guide mileage: 327.",
+    "Leaving Fort Kearny site.",
+    "Day 47 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.70 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 47 · Clear. Team condition good; working.",
+    "Day 47 · Traveled to mile 354. Food remaining: 692 units.",
+    "Day 48 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.72 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.00 lb. Care 100%.",
+    "Day 48 · Heavy rain. Team condition good; working.",
+    "Day 48 · Traveled to mile 372. Food remaining: 677 units.",
+    "Day 48 · Supplies: Horses -1. Daily rations counted separately.",
+    "Day 48 · Horse thieves in the night. At first light the picket ropes are cut and a horse gone. The tracks lead off into the broken country. Horses were what thieves and raiders on the road wanted most.",
+    "Day 48 · Supplies: Horses +1. Daily rations counted separately.",
+    "Day 49 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.46 lb; fodder 0.00 lb; scratching 0.38 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 49 · Clear. Team condition good; resting.",
+    "Day 50 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.60 lb; fodder 0.00 lb; scratching 0.38 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 50 · Clear. Team condition good; resting.",
+    "You run the thieves down and drive the stock back to camp.",
+    "Day 51 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.56 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 51 · Clear. Team condition good; working.",
+    "Day 51 · Traveled to mile 399. Food remaining: 632 units.",
+    "Day 52 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.70 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 52 · Clear. Team condition good; working.",
+    "Day 52 · Traveled to mile 423. Food remaining: 617 units.",
+    "Day 53 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.56 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 53 · Rain. Team condition good; working.",
+    "Day 53 · Traveled to mile 443. Food remaining: 602 units.",
+    "Day 54 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.70 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 54 · Thick fog. Team condition good; working.",
+    "Day 54 · Traveled to mile 457. Food remaining: 587 units.",
+    "Day 55 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.56 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 55 · Clear. Team condition good; working.",
+    "Day 55 · Traveled to mile 479. Food remaining: 572 units.",
+    "Day 55 · Unsafe water. The water here looks foul. A cleaner spring will take time to find.",
+    "Day 56 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.60 lb; fodder 0.00 lb; scratching 0.38 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 56 · Rain. Team condition good; resting.",
+    "The party fills its containers at a spring.",
+    "Day 57 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.56 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 57 · Rain. Team condition good; working.",
+    "Day 57 · Traveled to mile 482. Food remaining: 542 units.",
+    "Day 57 · Reached South Platte crossing. Guide mileage: 482.",
+    "Day 58 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.60 lb; fodder 0.00 lb; scratching 0.38 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 58 · Rain. Team condition good; resting.",
+    "Day 58 · South Platte crossing · fording. No cargo lost. The party reached the far bank.",
+    "Crossed South Platte crossing by ford.",
+    "Leaving South Platte crossing.",
+    "Day 59 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.56 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 59 · Thick fog. Team condition good; working.",
+    "Day 59 · Traveled to mile 496. Food remaining: 512 units.",
+    "Day 60 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.70 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 60 · Thick fog. Team condition good; working.",
+    "Day 60 · Traveled to mile 502. Food remaining: 497 units.",
+    "Day 60 · Reached Ash Hollow. Guide mileage: 502.",
+    "Leaving Ash Hollow.",
+    "Day 61 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.56 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 61 · Clear. Team condition good; working.",
+    "Day 61 · Traveled to mile 523. Food remaining: 482 units.",
+    "Day 62 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.63 lb; fodder 0.00 lb; scratching 0.35 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 62 · Gathered 2 lb greens for vitamin-C meals (less than one food unit).",
+    "Day 62 · Clear. Team condition good; resting.",
+    "Day 62 · Rested in camp. Food remaining: 467 units.",
+    "Day 63 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.56 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 63 · Blizzard. Team condition good; working.",
+    "Day 63 · Traveled to mile 530. Food remaining: 452 units.",
+    "Day 64 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.70 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 64 · Clear. Team condition good; working.",
+    "Day 64 · Traveled to mile 544. Food remaining: 437 units.",
+    "Day 64 · Reached Courthouse and Jail Rocks. Guide mileage: 544.",
+    "Day 64 · Traded with an emigrant family: bought 1 produce.",
+    "Day 64 · Supplies: Cash ($) -0.45. Daily rations counted separately.",
+    "Leaving Courthouse and Jail Rocks.",
+    "Day 65 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.72 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.00 lb. Care 100%.",
+    "Day 65 · Rain. Team condition good; working.",
+    "Day 65 · Traveled to mile 560. Food remaining: 423 units.",
+    "Day 65 · Reached Chimney Rock. Guide mileage: 560.",
+    "Leaving Chimney Rock.",
+    "Day 66 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.48 lb; fodder 0.00 lb; scratching 0.35 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 66 · Gathered 1 lb greens for vitamin-C meals (less than one food unit).",
+    "Day 66 · Clear. Team condition good; resting.",
+    "Day 66 · Rested in camp. Food remaining: 408 units.",
+    "Day 67 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.70 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 67 · Clear. Team condition good; working.",
+    "Day 67 · Traveled to mile 582. Food remaining: 393 units.",
+    "Day 68 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.56 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 68 · Clear. Team condition good; working.",
+    "Day 68 · Traveled to mile 585. Food remaining: 378 units.",
+    "Day 68 · Reached Scotts Bluff / Robidoux route. Guide mileage: 585.",
+    "Day 68 · Traded with passing traders: bought 1 care kit.",
+    "Day 68 · Supplies: Cash ($) -7.27; Care kits +1. Daily rations counted separately.",
+    "Day 69 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.63 lb; fodder 0.00 lb; scratching 0.35 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 69 · Rain. Team condition good; resting.",
+    "Leaving Scotts Bluff / Robidoux route.",
+    "Day 70 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.56 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 70 · B and E have fallen in love on the trail.",
+    "Day 70 · C and D have set aside their rivalry.",
+    "Day 70 · Clear. Team condition good; working.",
+    "Day 70 · Traveled to mile 606. Food remaining: 348 units.",
+    "The party takes stock before continuing.",
+    "Day 71 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.70 lb; fodder 0.00 lb; scratching 0.28 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 71 · Clear. Team condition good; working.",
+    "Day 71 · Traveled to mile 621. Food remaining: 333 units.",
+    "Day 71 · Reached Fort John / Laramie. Guide mileage: 621.",
+    "Day 71 · At Fort John / Laramie: bought 50 poultry_feed.",
+    "Day 71 · Supplies: Cash ($) -0.50; Poultry Feed +50. Daily rations counted separately.",
+    "Day 72 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.75 lb; fodder 0.00 lb; scratching 0.25 lb feed-equivalent; shared portions 0.00 lb. Care 100%.",
+    "Day 72 · C has dysentery.",
+    "Day 72 · Rain. Team condition good; resting.",
+    "Leaving Fort John / Laramie.",
+    "The party takes stock before continuing.",
+    "Day 73 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.58 lb; fodder 0.00 lb; scratching 0.25 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 73 · Rain. Team condition good; working.",
+    "Day 73 · Traveled to mile 638. Food remaining: 303 units.",
+    "Day 74 · Livestock: 0.00 lb milk, 4 eggs; 0.29 food units produced. Grain 0.73 lb; fodder 0.00 lb; scratching 0.25 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 74 · Gathered 1 lb greens for vitamin-C meals (less than one food unit).",
+    "Day 74 · C: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 74 · D: You stopped to rest while someone was ill or injured. (trust +1.0).",
+    "Day 74 · Clear. Team condition good; resting.",
+    "Day 74 · Rested in camp. Food remaining: 288 units.",
+    "Day 75 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.58 lb; fodder 0.00 lb; scratching 0.25 lb feed-equivalent; shared portions 0.25 lb. Care 100%.",
+    "Day 75 · Clear. Team condition good; working.",
+    "Day 75 · Traveled to mile 662. Food remaining: 273 units.",
+    "Day 75 · Supplies: Food (lb) +14. Daily rations counted separately.",
+    "Day 75 · Help along the trail. Other travelers share provisions and point you toward the next good stopping place.",
+    "You thank the travelers for 14 lb of food.",
+    "Day 76 · Livestock: 0.00 lb milk, 0 eggs; 0.00 food units produced. Grain 0.73 lb; fodder 0.00 lb; scratching 0.25 lb feed-equivalent; shared portions 0.04 lb. Care 100%.",
+    "Day 76 · Hail. Team condition good; working.",
+    "Day 76 · Traveled to mile 676. Food remaining: 272 units."
+  ],
+  "last_crossing": {
+
+  },
+  "last_events": {
+    "assistance": 75,
+    "bandits": 27,
+    "horse_thieves": 48,
+    "illness": 36,
+    "ox_injury": 13,
+    "rain_damage": 20,
+    "unsafe_water": 55,
+    "wandering_ox": 28
+  },
+  "livestock": {
+    "animals": [
+      {
+        "condition": 100,
+        "egg_progress": 1.0,
+        "id": 0,
+        "kind": "hens",
+        "remaining": 0
+      },
+      {
+        "condition": 100,
+        "egg_progress": 1.0,
+        "id": 1,
+        "kind": "hens",
+        "remaining": 0
+      },
+      {
+        "condition": 100,
+        "egg_progress": 1.0,
+        "id": 2,
+        "kind": "hens",
+        "remaining": 0
+      },
+      {
+        "condition": 100,
+        "egg_progress": 1.0,
+        "id": 3,
+        "kind": "hens",
+        "remaining": 0
+      }
+    ],
+    "care": true,
+    "next_id": 6,
+    "products": [],
+    "share_scraps": true
+  },
+  "outings": 0,
+  "party": [
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 99,
+      "history": [
+        "Day 7 · Suffered injuries during a river crossing.",
+        "Day 24 · Suffered injuries during a river crossing.",
+        "Day 37 · A has dysentery.",
+        "Day 43 · A recovered from dysentery."
+      ],
+      "id": 0,
+      "name": "A"
+    },
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 68,
+      "history": [
+        "Day 7 · Suffered injuries during a river crossing.",
+        "Day 24 · Suffered injuries during a river crossing.",
+        "Day 35 · B caught dysentery from C.",
+        "Day 39 · Received care.",
+        "Day 40 · B recovered from dysentery."
+      ],
+      "id": 1,
+      "name": "B"
+    },
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [
+        {
+          "elapsed": 5,
+          "id": "dysentery",
+          "severity": 1,
+          "started_day": 72
+        }
+      ],
+      "death_day": -1,
+      "health": 56,
+      "history": [
+        "Day 7 · Suffered injuries during a river crossing.",
+        "Day 10 · C has exhaustion.",
+        "Day 14 · C recovered from exhaustion.",
+        "Day 24 · Suffered injuries during a river crossing.",
+        "Day 34 · C caught dysentery from D.",
+        "Day 41 · C recovered from dysentery.",
+        "Day 72 · C has dysentery."
+      ],
+      "id": 2,
+      "name": "C"
+    },
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 75,
+      "history": [
+        "Day 7 · Suffered injuries during a river crossing.",
+        "Day 24 · Suffered injuries during a river crossing.",
+        "Day 29 · D has dysentery.",
+        "Day 35 · D recovered from dysentery.",
+        "Day 36 · D has exhaustion.",
+        "Day 39 · D recovered from exhaustion."
+      ],
+      "id": 3,
+      "name": "D"
+    },
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 72,
+      "history": [
+        "Day 5 · Hit during an armed confrontation.",
+        "Day 5 · E has wound.",
+        "Day 7 · Suffered injuries during a river crossing.",
+        "Day 8 · Received care.",
+        "Day 11 · Received care.",
+        "Day 12 · E recovered from wound.",
+        "Day 22 · E has typhoid fever.",
+        "Day 24 · Suffered injuries during a river crossing.",
+        "Day 31 · E recovered from typhoid fever."
+      ],
+      "id": 4,
+      "name": "E"
+    }
+  ],
+  "pending": {
+
+  },
+  "random": "1437558049950734611",
+  "recruitment": {
+    "searches": {
+
+    },
+    "slots": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "route_end": "oregon_city",
+  "route_path": [
+    "independence",
+    "elm_grove",
+    "wakarusa",
+    "kansas_river",
+    "big_blue",
+    "platte",
+    "fort_kearny",
+    "south_platte",
+    "ash_hollow",
+    "courthouse_rock",
+    "chimney_rock",
+    "scotts_bluff",
+    "fort_laramie"
+  ],
+  "rules": "8ddb4a79ea96dd25ad746cf5c15f1fa2c5a15c8e7c2597ca03a3558b8ea842c9",
+  "seen": [
+    "muddy_trail"
+  ],
+  "service_return": {
+
+  },
+  "social": {
+    "last_day": 70,
+    "pairs": [
+      {
+        "a": 1,
+        "affinity": 3,
+        "b": 2,
+        "history": [
+          {
+            "day": 21,
+            "text": "B and C: camp conversations (+1 closeness)."
+          },
+          {
+            "day": 28,
+            "text": "B and C: camp conversations (+0 closeness)."
+          },
+          {
+            "day": 35,
+            "text": "B and C: camp conversations; support during illness (+0 closeness)."
+          },
+          {
+            "day": 42,
+            "text": "B and C: camp conversations (-2 closeness)."
+          },
+          {
+            "day": 49,
+            "text": "B and C: camp conversations (+2 closeness)."
+          },
+          {
+            "day": 56,
+            "text": "B and C: camp conversations (+0 closeness)."
+          },
+          {
+            "day": 63,
+            "text": "B and C: camp conversations (+1 closeness)."
+          },
+          {
+            "day": 70,
+            "text": "B and C: camp conversations (+2 closeness)."
+          }
+        ]
+      },
+      {
+        "a": 1,
+        "affinity": -3,
+        "b": 3,
+        "history": [
+          {
+            "day": 21,
+            "text": "B and D: camp conversations (-2 closeness)."
+          },
+          {
+            "day": 28,
+            "text": "B and D: camp conversations (+1 closeness)."
+          },
+          {
+            "day": 35,
+            "text": "B and D: camp conversations; support during illness (+1 closeness)."
+          },
+          {
+            "day": 42,
+            "text": "B and D: camp conversations (-2 closeness)."
+          },
+          {
+            "day": 49,
+            "text": "B and D: camp conversations (+0 closeness)."
+          },
+          {
+            "day": 56,
+            "text": "B and D: camp conversations (+1 closeness)."
+          },
+          {
+            "day": 63,
+            "text": "B and D: camp conversations (-2 closeness)."
+          },
+          {
+            "day": 70,
+            "text": "B and D: camp conversations (+2 closeness)."
+          }
+        ]
+      },
+      {
+        "a": 1,
+        "affinity": 80,
+        "b": 4,
+        "history": [
+          {
+            "day": 28,
+            "text": "B and E: camp conversations (+3 closeness)."
+          },
+          {
+            "day": 35,
+            "text": "B and E: camp conversations; support during illness (+6 closeness)."
+          },
+          {
+            "day": 42,
+            "text": "B and E: camp conversations (+2 closeness)."
+          },
+          {
+            "day": 49,
+            "text": "B and E: camp conversations (+2 closeness)."
+          },
+          {
+            "day": 56,
+            "text": "B and E: camp conversations (+5 closeness)."
+          },
+          {
+            "day": 63,
+            "text": "B and E: camp conversations (+3 closeness)."
+          },
+          {
+            "day": 70,
+            "text": "B and E: camp conversations (+4 closeness)."
+          },
+          {
+            "day": 70,
+            "text": "B and E have fallen in love on the trail."
+          }
+        ]
+      },
+      {
+        "a": 2,
+        "affinity": -6,
+        "b": 3,
+        "history": [
+          {
+            "day": 28,
+            "text": "C and D: camp conversations (+6 closeness)."
+          },
+          {
+            "day": 35,
+            "text": "C and D: camp conversations; support during illness (+4 closeness)."
+          },
+          {
+            "day": 42,
+            "text": "C and D: camp conversations (+2 closeness)."
+          },
+          {
+            "day": 49,
+            "text": "C and D: camp conversations (+3 closeness)."
+          },
+          {
+            "day": 56,
+            "text": "C and D: camp conversations (+3 closeness)."
+          },
+          {
+            "day": 63,
+            "text": "C and D: camp conversations (+4 closeness)."
+          },
+          {
+            "day": 70,
+            "text": "C and D: camp conversations (+5 closeness)."
+          },
+          {
+            "day": 70,
+            "text": "C and D have set aside their rivalry."
+          }
+        ]
+      },
+      {
+        "a": 2,
+        "affinity": 40,
+        "b": 4,
+        "history": [
+          {
+            "day": 21,
+            "text": "C and E: camp conversations (+1 closeness)."
+          },
+          {
+            "day": 28,
+            "text": "C and E: camp conversations (-1 closeness)."
+          },
+          {
+            "day": 35,
+            "text": "C and E: camp conversations; support during illness (+1 closeness)."
+          },
+          {
+            "day": 42,
+            "text": "C and E: camp conversations (+0 closeness)."
+          },
+          {
+            "day": 49,
+            "text": "C and E: camp conversations (+0 closeness)."
+          },
+          {
+            "day": 56,
+            "text": "C and E: camp conversations (-2 closeness)."
+          },
+          {
+            "day": 63,
+            "text": "C and E: camp conversations (+1 closeness)."
+          },
+          {
+            "day": 70,
+            "text": "C and E: camp conversations (-2 closeness)."
+          }
+        ]
+      },
+      {
+        "a": 3,
+        "affinity": 54,
+        "b": 4,
+        "history": [
+          {
+            "day": 21,
+            "text": "D and E: camp conversations (+1 closeness)."
+          },
+          {
+            "day": 28,
+            "text": "D and E: camp conversations (+2 closeness)."
+          },
+          {
+            "day": 35,
+            "text": "D and E: camp conversations; support during illness (+3 closeness)."
+          },
+          {
+            "day": 42,
+            "text": "D and E: camp conversations (+2 closeness)."
+          },
+          {
+            "day": 49,
+            "text": "D and E: camp conversations (-1 closeness)."
+          },
+          {
+            "day": 56,
+            "text": "D and E: camp conversations (+1 closeness)."
+          },
+          {
+            "day": 63,
+            "text": "D and E: camp conversations (+0 closeness)."
+          },
+          {
+            "day": 70,
+            "text": "D and E: camp conversations (+1 closeness)."
+          }
+        ]
+      }
+    ],
+    "romance": true
+  },
+  "state": {
+    "axles": 0,
+    "bullets": 169,
+    "camp_greens_expires": 0,
+    "camp_greens_lb": 0,
+    "clothing": 5,
+    "day": 76,
+    "departure_month": 7,
+    "extended_route": true,
+    "fatigue": 52,
+    "food": 272,
+    "fuel": 0,
+    "health": 74,
+    "hens": 4,
+    "horse_health": 100,
+    "horses": 1,
+    "items": [],
+    "landmark": "fort_laramie",
+    "leg_length": 126,
+    "leg_miles": 55,
+    "livestock_products_lb": 0,
+    "loss_reason": "",
+    "medicine": 1,
+    "miles": 676,
+    "mode": "classic",
+    "money": 98.43,
+    "next_landmark": "north_platte",
+    "ox_health": 98,
+    "oxen": 6,
+    "pace": 1,
+    "parts": 1,
+    "party": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ],
+    "party_size": 5,
+    "poultry_feed": 43,
+    "poultry_feed_remainder_lb": 0.04066666668,
+    "profession": "farmer",
+    "rations": 2,
+    "river_stage": "",
+    "saddlebags": 1,
+    "saddles": 1,
+    "salt": 10,
+    "seed": 365000,
+    "status": "traveling",
+    "terrain": "plains",
+    "tongues": 1,
+    "vehicle": "wagon",
+    "weather": "Hail",
+    "wheels": 0
+  },
+  "supply_history": [
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -5
+      },
+      "day": 1,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 1,
+        "eggs": 0,
+        "feed_quarters": 5,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.275,
+              "production": 1,
+              "quality": 0.933333333333333,
+              "ration_lb": 1.5
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 1.225,
+          "grain_quarters": 5,
+          "region": "woodland",
+          "scraps_kcal": 0,
+          "scraps_lb": 0,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -5
+      },
+      "day": 2,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 2,
+        "eggs": 0,
+        "feed_quarters": 5,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.275,
+              "production": 1,
+              "quality": 0.933333333333333,
+              "ration_lb": 1.5
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 1.225,
+          "grain_quarters": 5,
+          "region": "woodland",
+          "scraps_kcal": 0,
+          "scraps_lb": 0,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "wheels": -1
+      },
+      "day": 2,
+      "event": "muddy_trail"
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -5
+      },
+      "day": 3,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 3,
+        "eggs": 6,
+        "feed_quarters": 5,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.275,
+              "production": 1,
+              "quality": 0.933333333333333,
+              "ration_lb": 1.5
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 1.225,
+          "grain_quarters": 5,
+          "region": "woodland",
+          "scraps_kcal": 0,
+          "scraps_lb": 0,
+          "scratch_lb": 0.275
+        },
+        "food": 0.429,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "horses": -1
+      },
+      "day": 3,
+      "event": "horse_thieves"
+    },
+    {
+      "changes": {
+        "horses": 1
+      },
+      "day": 3,
+      "event": "horse_thieves"
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -4
+      },
+      "day": 4,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 4,
+        "eggs": 0,
+        "feed_quarters": 4,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.591666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1.5
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.908333333333333,
+          "grain_quarters": 4,
+          "region": "woodland",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.425
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -4
+      },
+      "day": 5,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 5,
+        "eggs": 6,
+        "feed_quarters": 4,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.544333333333333,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1.5
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.955666666666667,
+          "grain_quarters": 4,
+          "region": "woodland",
+          "scraps_kcal": 179,
+          "scraps_lb": 0.179,
+          "scratch_lb": 0.425
+        },
+        "food": 0.429,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -4
+      },
+      "day": 6,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 6,
+        "eggs": 0,
+        "feed_quarters": 4,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.441666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1.5
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 1.05833333333333,
+          "grain_quarters": 4,
+          "region": "woodland",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -4
+      },
+      "day": 7,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 7,
+        "eggs": 6,
+        "feed_quarters": 4,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.544333333333333,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1.5
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.955666666666667,
+          "grain_quarters": 4,
+          "region": "woodland",
+          "scraps_kcal": 179,
+          "scraps_lb": 0.179,
+          "scratch_lb": 0.425
+        },
+        "food": 0.429,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "clothing": -1,
+        "food": -30
+      },
+      "day": 7,
+      "event": "stop_wakarusa"
+    },
+    {
+      "changes": {
+        "clothing": 1,
+        "money": -21.38
+      },
+      "day": 7,
+      "event": "trail"
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 8,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 8,
+        "eggs": 0,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.591666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1.25
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.658333333333333,
+          "grain_quarters": 2,
+          "region": "woodland",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.425
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "medicine": -1
+      },
+      "day": 8,
+      "event": "trail_service"
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 9,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 9,
+        "eggs": 5,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.544333333333333,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1.25
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.705666666666667,
+          "grain_quarters": 3,
+          "region": "woodland",
+          "scraps_kcal": 179,
+          "scraps_lb": 0.179,
+          "scratch_lb": 0.425
+        },
+        "food": 0.3575,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 10,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 10,
+        "eggs": 0,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.591666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1.25
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.658333333333333,
+          "grain_quarters": 3,
+          "region": "woodland",
+          "scraps_kcal": 250.0,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.425
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 11,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 11,
+        "eggs": 5,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.496666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1.25
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.753333333333333,
+          "grain_quarters": 3,
+          "region": "woodland",
+          "scraps_kcal": 107.5,
+          "scraps_lb": 0.1075,
+          "scratch_lb": 0.425
+        },
+        "food": 0.3575,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "medicine": -1
+      },
+      "day": 11,
+      "event": "trail_service"
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 12,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 12,
+        "eggs": 0,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.591666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1.25
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.658333333333333,
+          "grain_quarters": 2,
+          "region": "woodland",
+          "scraps_kcal": 250.0,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.425
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -4
+      },
+      "day": 13,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 13,
+        "eggs": 5,
+        "feed_quarters": 4,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.346666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1.25
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.903333333333333,
+          "grain_quarters": 4,
+          "region": "woodland",
+          "scraps_kcal": 107.5,
+          "scraps_lb": 0.1075,
+          "scratch_lb": 0.275
+        },
+        "food": 0.3575,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 14,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 14,
+        "eggs": 0,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.591666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1.25
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.658333333333333,
+          "grain_quarters": 3,
+          "region": "woodland",
+          "scraps_kcal": 250.0,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.425
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 15,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 15,
+        "eggs": 5,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.346666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1.25
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.903333333333333,
+          "grain_quarters": 3,
+          "region": "woodland",
+          "scraps_kcal": 107.5,
+          "scraps_lb": 0.1075,
+          "scratch_lb": 0.275
+        },
+        "food": 0.3575,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "money": -1
+      },
+      "day": 15,
+      "event": "stop_kansas_river"
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 16,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 16,
+        "eggs": 0,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.591666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1.25
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.658333333333333,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 250.0,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.425
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -4
+      },
+      "day": 17,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 17,
+        "eggs": 5,
+        "feed_quarters": 4,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.346666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1.25
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.903333333333333,
+          "grain_quarters": 4,
+          "region": "plains",
+          "scraps_kcal": 107.5,
+          "scraps_lb": 0.1075,
+          "scratch_lb": 0.275
+        },
+        "food": 0.3575,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 18,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 18,
+        "eggs": 0,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.441666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1.25
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.808333333333333,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 250.0,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 19,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 19,
+        "eggs": 5,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.346666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1.25
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.903333333333333,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 107.5,
+          "scraps_lb": 0.1075,
+          "scratch_lb": 0.275
+        },
+        "food": 0.3575,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -4
+      },
+      "day": 20,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 20,
+        "eggs": 0,
+        "feed_quarters": 4,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.441666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1.25
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.808333333333333,
+          "grain_quarters": 4,
+          "region": "plains",
+          "scraps_kcal": 250.0,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "bullets": -20,
+        "food": -10
+      },
+      "day": 20,
+      "event": "rain_damage"
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 21,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 21,
+        "eggs": 5,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.496666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1.25
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.753333333333333,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 107.5,
+          "scraps_lb": 0.1075,
+          "scratch_lb": 0.425
+        },
+        "food": 0.3575,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 22,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 22,
+        "eggs": 0,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.441666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1.25
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.808333333333333,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 250.0,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 23,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 23,
+        "eggs": 5,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.346666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1.25
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.903333333333333,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 107.5,
+          "scraps_lb": 0.1075,
+          "scratch_lb": 0.275
+        },
+        "food": 0.3575,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 24,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 24,
+        "eggs": 0,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.591666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1.25
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.658333333333333,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 250.0,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.425
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "clothing": -1,
+        "food": -30
+      },
+      "day": 24,
+      "event": "stop_big_blue"
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 25,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 25,
+        "eggs": 4,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.496666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.503333333333333,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 107.5,
+          "scraps_lb": 0.1075,
+          "scratch_lb": 0.425
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 26,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 26,
+        "eggs": 0,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.441666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.558333333333333,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 27,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 27,
+        "eggs": 4,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.449,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.551,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.425
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "axles": -1,
+        "bullets": -11,
+        "food": -281
+      },
+      "day": 27,
+      "event": "bandits"
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 28,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 28,
+        "eggs": 0,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.441666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.558333333333333,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "oxen": -1
+      },
+      "day": 28,
+      "event": "wandering_ox"
+    },
+    {
+      "changes": {
+        "oxen": 1
+      },
+      "day": 28,
+      "event": "wandering_ox"
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 29,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 29,
+        "eggs": 4,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.449,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.551,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.425
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "clothing": 1,
+        "money": -17.1
+      },
+      "day": 29,
+      "event": "trail"
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 30,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 30,
+        "eggs": 0,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.85,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.591666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.408333333333333,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.425
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 31,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 31,
+        "eggs": 4,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.399,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.601,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.375
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 32,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 32,
+        "eggs": 0,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.441666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.558333333333333,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 33,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 33,
+        "eggs": 4,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.399,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.601,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.375
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 34,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 34,
+        "eggs": 0,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.441666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.558333333333333,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 35,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 35,
+        "eggs": 4,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.399,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.601,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.375
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 36,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 36,
+        "eggs": 0,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.441666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.558333333333333,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 37,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 37,
+        "eggs": 4,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.399,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.601,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.375
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 38,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 38,
+        "eggs": 0,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.541666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.458333333333333,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.375
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "medicine": 1,
+        "money": -7.27
+      },
+      "day": 38,
+      "event": "trail"
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 39,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 39,
+        "eggs": 4,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.399,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.601,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.375
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "medicine": -1
+      },
+      "day": 39,
+      "event": "trail_service"
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 40,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 40,
+        "eggs": 0,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.541666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.458333333333333,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.375
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 41,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 41,
+        "eggs": 4,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.399,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.601,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.375
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 42,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 42,
+        "eggs": 0,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.441666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.558333333333333,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 43,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 43,
+        "eggs": 4,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.399,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.601,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.375
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 44,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 44,
+        "eggs": 0,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.441666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.558333333333333,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 45,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 45,
+        "eggs": 4,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.299,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.701,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.275
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 46,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 46,
+        "eggs": 0,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.441666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.558333333333333,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 47,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 47,
+        "eggs": 0,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.299,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.701,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 48,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 48,
+        "eggs": 4,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.275,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.725,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 0,
+          "scraps_lb": 0,
+          "scratch_lb": 0.275
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "horses": -1
+      },
+      "day": 48,
+      "event": "horse_thieves"
+    },
+    {
+      "changes": {
+        "horses": 1
+      },
+      "day": 48,
+      "event": "horse_thieves"
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 49,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 49,
+        "eggs": 0,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.541666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.458333333333333,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.375
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 50,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 50,
+        "eggs": 4,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.399,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.601,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.375
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 51,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 51,
+        "eggs": 0,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.441666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.558333333333333,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 52,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 52,
+        "eggs": 4,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.299,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.701,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.275
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 53,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 53,
+        "eggs": 0,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.441666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.558333333333333,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 54,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 54,
+        "eggs": 4,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.299,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.701,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.275
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 55,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 55,
+        "eggs": 0,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.441666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.558333333333333,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 56,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 56,
+        "eggs": 4,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.399,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.601,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.375
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 57,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 57,
+        "eggs": 0,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.441666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.558333333333333,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 58,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 58,
+        "eggs": 4,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.399,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.601,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.375
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 59,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 59,
+        "eggs": 0,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.441666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.558333333333333,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 60,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 60,
+        "eggs": 4,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.299,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.701,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.275
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 61,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 61,
+        "eggs": 0,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.75,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.441666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.558333333333333,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 62,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 62,
+        "eggs": 4,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.374,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.626,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.35
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 63,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 63,
+        "eggs": 0,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.441666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.558333333333333,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 64,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 64,
+        "eggs": 0,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.299,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.701,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "money": -0.45
+      },
+      "day": 64,
+      "event": "stop_courthouse_rock"
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 65,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 65,
+        "eggs": 4,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.275,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.725,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 0,
+          "scraps_lb": 0,
+          "scratch_lb": 0.275
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 66,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 66,
+        "eggs": 0,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.516666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.483333333333333,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.35
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 67,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 67,
+        "eggs": 4,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.299,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.701,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.275
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 68,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 68,
+        "eggs": 0,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.441666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.558333333333333,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "medicine": 1,
+        "money": -7.27
+      },
+      "day": 68,
+      "event": "stop_scotts_bluff"
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 69,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 69,
+        "eggs": 4,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.374,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.626,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.35
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 70,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 70,
+        "eggs": 0,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.441666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.558333333333333,
+          "grain_quarters": 2,
+          "region": "plains",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 71,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 71,
+        "eggs": 0,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.299,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.701,
+          "grain_quarters": 3,
+          "region": "plains",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.275
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "money": -0.5,
+        "poultry_feed": 50
+      },
+      "day": 71,
+      "event": "stop_fort_laramie"
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 72,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 72,
+        "eggs": 4,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.25,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.75,
+          "grain_quarters": 3,
+          "region": "highcountry",
+          "scraps_kcal": 0,
+          "scraps_lb": 0,
+          "scratch_lb": 0.25
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 73,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 73,
+        "eggs": 0,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.416666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.583333333333333,
+          "grain_quarters": 2,
+          "region": "highcountry",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.25
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 74,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 74,
+        "eggs": 4,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.274,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.726,
+          "grain_quarters": 3,
+          "region": "highcountry",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.25
+        },
+        "food": 0.286,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -2
+      },
+      "day": 75,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 75,
+        "eggs": 0,
+        "feed_quarters": 2,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.416666666666667,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.583333333333333,
+          "grain_quarters": 2,
+          "region": "highcountry",
+          "scraps_kcal": 250,
+          "scraps_lb": 0.25,
+          "scratch_lb": 0.25
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    },
+    {
+      "changes": {
+        "food": 14
+      },
+      "day": 75,
+      "event": "assistance"
+    },
+    {
+      "changes": {
+        "food": 0,
+        "livestock_fodder": 0,
+        "poultry_feed": -3
+      },
+      "day": 76,
+      "event": "livestock",
+      "products": {
+        "care_factor": 1,
+        "day": 76,
+        "eggs": 0,
+        "feed_quarters": 3,
+        "feeding": {
+          "animals": {
+            "dairy_cows": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "goats": {
+              "intake": 1,
+              "natural": 0.7,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 0
+            },
+            "hens": {
+              "intake": 1,
+              "natural": 0.274,
+              "production": 1,
+              "quality": 1,
+              "ration_lb": 1
+            }
+          },
+          "fodder_lb": 0,
+          "fodder_units": 0,
+          "grain_lb": 0.726,
+          "grain_quarters": 3,
+          "region": "highcountry",
+          "scraps_kcal": 36,
+          "scraps_lb": 0.036,
+          "scratch_lb": 0.25
+        },
+        "food": 0,
+        "left_lb": 0,
+        "milk_lb": 0
+      }
+    }
+  ],
+  "survival_random": "-2678197150130114921",
+  "team_conditions": {
+    "custom": false,
+    "horses": [
+      100
+    ],
+    "mules": [],
+    "oxen": [
+      98,
+      98,
+      98,
+      98,
+      98,
+      98
+    ],
+    "working": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "version": 1,
+  "wagon_cache": {
+
+  },
+  "weather": {
+    "exposure": 2,
+    "id": "hail",
+    "label": "Hail",
+    "speed": 0.7,
+    "weight": 5,
+    "wet": 1
+  },
+  "wet_ground": 0
+}

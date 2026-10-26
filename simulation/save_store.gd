@@ -216,10 +216,13 @@ func restore(value: Variant):
 		return null
 	var migrated := false
 	var economy_migrated := false
+	var egg_boundary_migrated := false
+	var egg_boundary_repaired := false
 	if value.get("rules") != fingerprint():
 		var migrations: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://data/save_migrations.json"))
 		migrated = migrations is Dictionary and value.get("rules") in migrations.get("opening_route_v1",[])
 		economy_migrated = migrations is Dictionary and value.get("rules") in migrations.get("economy_v1",[])
+		egg_boundary_migrated = migrations is Dictionary and value.get("rules") in migrations.get("egg_boundary_v1",[])
 	if value.get("rules") != fingerprint() and not migrated and not economy_migrated:
 		error = "This record uses different game rules. Keep it for the matching game version."
 		return null
@@ -237,6 +240,14 @@ func restore(value: Variant):
 		return null
 	if not (migrated or economy_migrated) and (not value.has("livestock") or not value.has("team_conditions")):return null
 	var stock: Variant=value.get("livestock",{"animals":[],"products":[],"next_id":0,"care":true})
+	if egg_boundary_migrated and stock is Dictionary and stock.get("animals") is Array:
+		stock=stock.duplicate(true)
+		for animal in stock.animals:
+			if animal is Dictionary and animal.get("kind")=="hens" and (animal.get("egg_progress") is int or animal.get("egg_progress") is float) and animal.egg_progress==1:
+				# Older JSON serialization rounded a nearly complete cycle up to 1.0.
+				# Retain the earned pending cycle without creating an egg or changing supplies.
+				animal.egg_progress=0.999999999999
+				egg_boundary_repaired=true
 	if not game.livestock.valid(stock,s):return null
 	game.livestock.record=normalize(stock)
 	for key in game.state:
@@ -495,6 +506,8 @@ func restore(value: Variant):
 	elif economy_migrated:
 		load_note = "Updated compatible survival rules. Your existing cash, supplies and pending offers are unchanged."
 		game.journal.append(load_note)
+	if egg_boundary_repaired:
+		load_note += " A pending hen egg cycle was restored; existing supplies are unchanged."
 	if value.pending.get("outing_warning",false):
 		var warning: Dictionary=normalize(value.pending)
 		warning.resume=game.pending.duplicate(true)
