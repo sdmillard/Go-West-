@@ -167,10 +167,10 @@ func activity_choices(game) -> Array:
 	if not data.activities.has(id):return []
 	var activity: Dictionary=data.activities[id]
 	var choices: Array=[{"label":"Talk with travelers about this stop","action":"notes","text":activity.talk}]
-	if activity.has("kind") and (activity.kind!="graze" or game.state.oxen>0):
+	if activity.has("kind") and (activity.kind!="graze" or game.Pasture.grazers(game)>0):
 		var choice: Dictionary={"label":activity.label+" · 1 day, meals consumed","action":"activity","activity":id,"effects":{"days":1},"result":"Took time to "+activity.label.to_lower()+"."}
 		if activity.kind=="graze":
-			choice.effects["ox_health"]=8
+			if game.state.oxen>0:choice.effects["ox_health"]=8
 			choice["rest"]=true
 		else:
 			choice["requires"]={"medicine":1}

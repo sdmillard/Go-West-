@@ -35,7 +35,7 @@ func settle(game,single_ox: bool=false,working_day: bool=false,recovery: int=-1)
  else:
   for i in range(record.oxen.size()):
    if not working_day or i in record.working:record.oxen[i]=clampi(int(record.oxen[i])+ox_delta,0,100)
-   elif game.current_edge().get("hazard","")!="waterless" and int(game.seasonal_pressure().rest_ox_recovery)>0:record.oxen[i]=mini(100,int(record.oxen[i])+1)
+   elif int(game.pasture_assessment().ox_rest_recovery)>0:record.oxen[i]=mini(100,int(record.oxen[i])+1)
  for kind in ["horses","mules"]:
   for i in range(record[kind].size()):record[kind][i]=clampi(int(record[kind][i])+horse_delta,0,100)
  sync(game)

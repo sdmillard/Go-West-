@@ -76,14 +76,14 @@ static func use(game,kind: String,pounds: float) -> int:
 static func plan(game,o: Dictionary,resting: bool,working: bool,commit: bool=false) -> Dictionary:
  var data: Dictionary=game.livestock.data;var f: Dictionary=data.feeding
  var region: String=game.context.region_id(game)
- var habitat: Dictionary=f.habitats.get(region,f.habitats.plains)
+ var pasture: Dictionary=o.get("pasture",game.pasture_assessment())
  var feed_time: float=float(f.grueling_feed_time if int(game.state.pace)==2 else f.moving_feed_time) if working else 1.0
  var result: Dictionary={"region":region,"grain_quarters":0,"fodder_lb":0.0,"fodder_units":0,"grain_lb":0.0,"scratch_lb":0.0,"scraps_lb":0.0,"scraps_kcal":0.0,"animals":{}}
  var budgets: Dictionary={}
  var shortfall:=0.0
  for kind in ["dairy_cows","goats"]:
   var heads: int=game.livestock.count(game.state,kind)
-  var natural: float=0.0 if o.waterless else minf(float(o.season),minf(float(habitat[kind]),feed_time))
+  var natural: float=game.Pasture.intake(pasture,kind,feed_time,float(o.season))
   var potential:=0.0;var recorded:=0
   for animal in game.livestock.record.animals:
    if animal.kind==kind:
@@ -104,7 +104,7 @@ static func plan(game,o: Dictionary,resting: bool,working: bool,commit: bool=fal
   a.merge(Ruminants.supplied(budget,share,float(f.maintenance_fraction)),true)
   a["fodder_lb"]=share
  var ration: float=game.livestock.count(game.state,"hens")*float(data.animals.hens.daily_feed_lb)
- var scratch: float=minf(ration,float(f.scratch_lb)*minf(float(o.season),minf(float(habitat.scratch),float(f.moving_scratch_time) if working else 1.0))) if game.livestock.record.care and not o.waterless else 0.0
+ var scratch: float=minf(ration,float(f.scratch_lb)*minf(float(o.season),minf(float(pasture.scratch_habitat),float(f.moving_scratch_time) if working else 1.0))) if game.livestock.record.care and not o.waterless else 0.0
  var shared: Dictionary=scraps(game,maxf(0,ration-scratch)*float(f.feed_kcal_per_lb),commit) if ration>0 else {"kcal":0.0,"lb":0.0}
  var equivalent: float=float(shared.kcal)/float(f.feed_kcal_per_lb)
  var grain: float=minf(available(game,"poultry_feed"),maxf(0,ration-scratch-equivalent))
