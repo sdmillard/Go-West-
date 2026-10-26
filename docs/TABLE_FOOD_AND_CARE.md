@@ -23,3 +23,10 @@ Migration retains existing whole food, cash, rounded batches, raw products, anim
 The new `tests/test_table_meals.gd` covers tiny/large servings, repeated meals, shortages, produce priority, partial meat and dried fruit, separate expiry, cargo overflow, forecast purity, real versus idle work, nurse/patient exclusion, corrupt calorie rejection and genuine old saves. Existing livestock and read-only study observers were updated for fractional product production/consumption; historical campaign archives remain unchanged.
 
 The prior [13-case report](livestock-realism-audit-01.json) remains a frozen description of old rules, not current behavior. Its original diagnostic must be run at its recorded source snapshot to reproduce those totals. The new regression suite verifies corrections rather than preserving those defects. New survival comparisons should use fresh, source-stamped reports.
+
+
+## Frozen publication results
+
+Runtime `9ed0a35042455aca4f201db24ab1ed35330c4fa9` passed all **79 Godot suites**, including **102 exact-meal checks**, 185 livestock checks and 120 observer/parity checks. Twelve mixed-livestock journeys (two seeds, May/July, farmer/carpenter/banker, shared horse, mobile travel, stock-aware decisions) completed with zero selected state, save or policy errors. Their source hashes were checked against the frozen files. These are integration checks, not evidence that farmer balance is solved.
+
+[Validation record](table-food-validation-01.json) contains rules, source revision and SHA-256 hashes for the complete local log, raw journey archive and authentic prior-rule fixtures. Earlier preflight runs remain excluded. Hunting recovery now includes partial catch portions in packed food and keeps them separate from meat actually eaten.
