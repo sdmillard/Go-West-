@@ -34,11 +34,11 @@ func run():
  var calories: float=g.provisions.food_calories(1)
  check(calories==1000,"Food unit remains 1000 calories")
  g=game({"hens":1,"poultry_feed":100})
- var egg_units:=0
+ var egg_units:=0.0
  for day in range(15):
-  g.pending={};g._tick_day(true);egg_units+=int(g.livestock.last.get("food",0))
+  g.pending={};g._tick_day(true);egg_units+=float(g.livestock.last.get("food",0))
   check(g.livestock.valid(g.livestock.record,g.state),"Fractional eggs and products remain save-valid")
- check(egg_units==1,"Single hen's small eggs aggregate before food rounding")
+ check(is_equal_approx(egg_units,0.5005),"Seven eggs retain their exact food value without rounding gifts")
  g=game({"hens":6})
  g._tick_day(true)
  check(g.livestock.last.food==0 and g.livestock.last.feed_quarters==0,"No grain means no free egg production")

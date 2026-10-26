@@ -25,15 +25,16 @@ func refresh() -> void:
   game.livestock.drop_grain(game,int(amount.value));refresh();changed.emit())
  grain_row.add_child(discard)
  if not game.livestock.record.products.is_empty():
-  var drop_food:=Button.new();drop_food.text="DISCARD UNCONVERTED MILK / EGGS";drop_food.disabled=not game.can_service()
+  var drop_food:=Button.new();drop_food.text="DISCARD TABLE FOOD / PARTIAL PORTIONS";drop_food.disabled=not game.can_service()
   drop_food.pressed.connect(func():game.livestock.discard_products(game);refresh();changed.emit());rows.add_child(drop_food)
+ note("TABLE FOOD: %.2f UNITS · %.2f LB (includes partial portions)" % [game.livestock.available_kcal()/1000.0,float(game.state.get("livestock_products_lb",0))])
  var care:=CheckBox.new();care.text="Daily milking / feeding chores";care.button_pressed=game.livestock.record.care;care.disabled=not game.can_service()
- care.tooltip_text="Uses available healthy household members and adds fatigue. Nursing patients and companions on assigned work cannot also tend stock. Hens still consume their grain."
+ care.tooltip_text="Uses available healthy household members and adds fatigue. Nursing patients and companions doing other work today cannot also tend stock. Idle travel-day camp orders do not reserve workers. Hens still consume their grain."
  care.toggled.connect(func(on):game.livestock.set_care(game,on);refresh();changed.emit());rows.add_child(care)
  if not game.livestock.last.is_empty():
   var last: Dictionary=game.livestock.last
-  note("LAST DAY: %.2f LB MILK · %d EGGS · %d FOOD UNITS" % [last.milk_lb,last.eggs,last.food])
- note("Milk and eggs spoil. Small egg lots accumulate before rounding to food units. These foods do not replace fruit and greens.")
+  note("LAST DAY: %.2f LB MILK · %d EGGS · %.2f FOOD UNITS" % [last.milk_lb,last.eggs,last.food])
+ note("Milk and eggs keep their actual food value, including small servings. Partial portions keep their weight and expiry. Milk and eggs do not replace fruit and greens.")
  for kind in game.livestock.ANIMALS:
   var group:=HBoxContainer.new();rows.add_child(group)
   var icon:=TextureRect.new();icon.texture=load("res://art/pixels/livestock_icons.png");icon.texture=AtlasTexture.new();icon.texture.atlas=load("res://art/pixels/livestock_icons.png");icon.texture.region=Rect2(game.livestock.ANIMALS.find(kind)*16,0,16,16);icon.custom_minimum_size=Vector2(24,24);group.add_child(icon)

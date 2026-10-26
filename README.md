@@ -6,6 +6,8 @@ A growing Oregon Trail-inspired game in **Godot 4 / GDScript**. Lead five travel
 
 [Wagon sales, custom robbery demands and resizing](docs/WAGON_SALES_ROBBERY_AND_DISPLAY.md) add reviewed keep/sell/leave decisions, value-sensitive intimidation and configurable window scaling.
 
+[Exact table food and daily care](docs/TABLE_FOOD_AND_CARE.md) preserves milk/egg calories, physical partial portions and expiry, and stops idle travel-day camp orders withholding caretakers.
+
 [The livestock realism audit](docs/LIVESTOCK_REALISM_AUDIT.md) separates supported calorie values from provisional yields and reproduces feeding, winter, care and rounding problems in 13 controlled fixtures. Gameplay is unchanged.
 
 [The farmer livestock comparison](docs/FARMER_LIVESTOCK_BALANCE.md) measures 432 matched scenarios. Milk adds usable food; better care improves output, while farmer completion remains inconsistent. Game rules are unchanged.

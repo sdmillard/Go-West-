@@ -6,6 +6,9 @@ var data: Dictionary={}
 var error: String=""
 var record: Dictionary={"animals":[],"products":[],"next_id":0,"care":true}
 var last: Dictionary={}
+var last_meal: Dictionary={}
+# Reference to the current hunt's split serving; packing updates the retained fraction.
+var hunt_portion: Dictionary={}
 func _init():
  load_data(JSON.parse_string(FileAccess.get_file_as_string("res://data/livestock.json")))
 static func number(v: Variant) -> bool:return (v is int or v is float) and is_finite(v)
@@ -47,10 +50,17 @@ func workers(game) -> int:
  var busy: Array=game.hunt.get("field",{}).get("members",[]).duplicate()
  if not game.camp_tasks.day_plan.is_empty() and game.camp_tasks.day_plan.get("action","") not in ["","rest"]:busy.append(int(game.camp_tasks.day_plan.leader))
  var patients: Array=[]
- for entry in game.camp_tasks.assignments.values():
-  if entry.job=="nurse":patients.append(int(entry.patient))
+ # Only actual camp work reserves care labor. Standing orders do not execute while traveling.
+ var plan: Dictionary=game.camp_tasks.day_plan
+ for entry in plan.get("jobs",[]):
+  if not plan.get("rest",{}).get(int(entry.member),false) and entry.get("ready",true):
+   if entry.job!="guard":busy.append(int(entry.member))
+   if entry.job=="nurse":patients.append(int(entry.patient))
+ if plan.get("action","")=="care":
+  # Main-action patients also rest; this marker is assigned by the care action.
+  if int(plan.get("leader_patient",-1))>=0:patients.append(int(plan.leader_patient))
  for m in game.party_health.members:
-  if game.party_health.is_active(m) and m.health>=50 and int(m.id) not in patients and int(m.id) not in busy and not game.camp_tasks.job(int(m.id)).job in ["nurse","hunt_help","fish","forage","dry","salt_dry","repair_patch","repair_wood"]:result+=1
+  if game.party_health.is_active(m) and m.health>=50 and int(m.id) not in patients and int(m.id) not in busy:result+=1
  return result
 func outlook(game,resting: bool=false) -> Dictionary:
  var hours:=0.0
@@ -67,9 +77,17 @@ func tick(game,resting: bool,working: bool) -> void:
  var o:=outlook(game,resting)
  var eggs:=0
  var milk:=0.0
+ var milk_kcal:=0.0
  var feed: int=mini(int(o.feed_needed),count(game.state,"poultry_feed"))
  if feed>0:game.state.poultry_feed-=feed
+ var expired_lb:=0.0
+ var expired_kcal:=0.0
+ for p in record.products:
+  if int(p.expires)<=day:expired_lb+=float(p.lb);expired_kcal+=float(p.kcal)
  record.products=record.products.filter(func(p):return int(p.expires)>day)
+ if expired_kcal>0:
+  game.supply_history.append({"day":day,"event":"table_food_spoilage","changes":{},"lb":expired_lb,"kcal":expired_kcal})
+  game.journal.append("Day %d · Spoiled table food: %.2f lb (%.2f food units)." % [day,expired_lb,expired_kcal/float(game.provisions.data.food_energy.unit_kcal)])
  var deaths: Array=[]
  var hen_factor: float=float(feed)/int(o.feed_needed) if int(o.feed_needed)>0 else 1.0
  var order:=0
@@ -94,28 +112,20 @@ func tick(game,resting: bool,working: bool) -> void:
    var mass: float=float(rule.daily_lb)*factor*clampf(float(a.remaining)/60.0,0,1)
    a.remaining-=1
    if mass>0:
-    milk+=mass
+    milk+=mass;milk_kcal+=mass*float(rule.kcal_per_lb)
     record.products.append({"kind":"milk","lb":mass,"kcal":mass*float(rule.kcal_per_lb),"expires":day+int(data.milk_days)})
  for a in deaths:
   record.animals.erase(a);game.state[a.kind]=count(game.state,a.kind)-1
   game.journal.append("Day %d · Lost a %s to poor condition." % [day,data.animals[a.kind].label.to_lower()])
- # Form a batch only once the aggregate reaches half a food unit. Tiny eggs accumulate as actual perishable products.
- var kcal:=0.0
- var mass:=0.0
- var expires:=day+int(data.egg_days)
- for p in record.products:
-  kcal+=float(p.kcal);mass+=float(p.lb);expires=mini(expires,int(p.expires))
- game.state["livestock_products_lb"]=mass
- var food: int=roundi(kcal/float(game.provisions.data.food_energy.unit_kcal))
+ # Products keep their own calories, edible mass and expiry until an actual meal.
+ product_mass(game)
+ var food: float=(milk_kcal+eggs*float(data.animals.hens.daily_lb)*float(data.animals.hens.kcal_per_lb))/float(game.provisions.data.food_energy.unit_kcal)
  var left:=0.0
- if food>0:
-  game.provisions.fresh.append({"pounds":food,"expires":expires,"mass_ratio":float("%.12f" % (mass/food)),"table_product":true,"livestock_day":day})
-  game.state.food+=food;record.products.clear();game.state.livestock_products_lb=0.0
  if o.hours>0 and o.budget>0:game.state.fatigue=mini(100,int(game.state.fatigue)+ceili(minf(float(o.hours),float(o.budget))))
  last={"day":day,"milk_lb":snappedf(milk,0.01),"eggs":eggs,"feed_quarters":feed,"food":food,"left_lb":snappedf(left,0.01),"care_factor":o.care_factor}
  if milk>0 or eggs>0 or feed>0 or not deaths.is_empty():
-  game.supply_history.append({"day":day,"event":"livestock","changes":{"food":food,"poultry_feed":-feed},"products":last.duplicate()})
-  game.journal.append("Day %d · Livestock: %.2f lb milk, %d eggs; %d food units produced. Grain used %.2f lb. Care %d%%." % [day,milk,eggs,food,feed*0.25,roundi(float(o.care_factor)*100)])
+  game.supply_history.append({"day":day,"event":"livestock","changes":{"food":0,"poultry_feed":-feed},"products":last.duplicate()})
+  game.journal.append("Day %d · Livestock: %.2f lb milk, %d eggs; %.2f food units produced. Grain used %.2f lb. Care %d%%." % [day,milk,eggs,food,feed*0.25,roundi(float(o.care_factor)*100)])
 func rows(game,key: String) -> Array:
  var result: Array=[]
  for item in GOODS:
@@ -140,10 +150,13 @@ func valid(v: Variant,s: Dictionary) -> bool:
   if kind in ANIMALS and v.animals.filter(func(a):return a.kind==kind).size()!=count(s,kind):return false
  var product_mass:=0.0
  for p in v.products:
-  if not p is Dictionary or p.size()!=4 or p.get("kind") not in ["milk","egg"]:return false
-  if not number(p.get("lb")) or not number(p.get("kcal")) or p.lb<=0 or p.lb>100 or p.kcal<=0 or p.kcal>100000 or not whole(p.get("expires"),int(s.day)+1,int(s.day)+int(data.egg_days)):return false
-  var low: float=277.0 if p.kind=="milk" else float(data.animals.hens.kcal_per_lb)
-  var high: float=313.0 if p.kind=="milk" else low
+  if not p is Dictionary or p.size() not in [4,5] or p.get("kind") not in ["milk","egg","portion"]:return false
+  if p.size()==5 and (p.kind!="portion" or not number(p.get("vitamin_c_lb")) or p.vitamin_c_lb<0 or p.vitamin_c_lb>100):return false
+  if not number(p.get("lb")) or not number(p.get("kcal")) or p.lb<=0 or p.lb>100 or p.kcal<=0 or p.kcal>100000:return false
+  if not whole(p.get("expires"),int(s.day)+1,1000100 if p.kind=="portion" else int(s.day)+int(data.egg_days)):return false
+  var low: float=277.0 if p.kind=="milk" else (float(data.animals.hens.kcal_per_lb) if p.kind=="egg" else 0.01)
+  var high: float=313.0 if p.kind=="milk" else (low if p.kind=="egg" else 100000)
+  if p.kind=="portion" and p.kcal>=float(1000)+0.000001:return false
   if float(p.kcal)/float(p.lb)<low-0.001 or float(p.kcal)/float(p.lb)>high+0.001:return false
   product_mass+=float(p.lb)
  if not number(s.get("livestock_products_lb",0)) or absf(float(s.get("livestock_products_lb",0))-product_mass)>0.000001:return false
@@ -194,17 +207,34 @@ func discard_products(game) -> bool:
  record.products.clear();game.state.livestock_products_lb=0.0
  game.journal.append("Day %d · Discarded the unconverted milk and eggs." % game.state.day);return true
 
+func product_mass(game) -> float:
+ var mass:=0.0
+ for p in record.products:
+  p.lb=float("%.12f" % float(p.lb));p.kcal=float("%.9f" % float(p.kcal))
+  if p.has("vitamin_c_lb"):p.vitamin_c_lb=float("%.12f" % float(p.vitamin_c_lb))
+  mass+=float(p.lb)
+ mass=float("%.12f" % mass)
+ game.state["livestock_products_lb"]=mass
+ return mass
+func available_kcal() -> float:
+ return record.products.reduce(func(n,p):return n+float(p.kcal),0.0)
+func meal(game,needed: int,vitamin_offset: float=0.0) -> Dictionary:
+ return preload("res://simulation/table_meals.gd").serve(game,needed,vitamin_offset)
 func pack(game) -> void:
- # Today's milk/eggs may feed camp even when packs were full; only uneaten food needs storage.
- for batch in game.provisions.fresh:
-  if int(batch.get("livestock_day",-1))!=int(game.state.day):continue
-  var mass: float=int(batch.pounds)*game.provisions.mass_ratio(batch)
-  var room: float=maxf(0,game.provisions.storage_capacity(game.state)-game.provisions.cargo(game.state)+mass)
-  var keep: int=mini(int(batch.pounds),floori((room+0.000001)/game.provisions.mass_ratio(batch)))
-  var lost: int=int(batch.pounds)-keep
-  if lost>0:
-   batch.pounds=keep;game.state.food-=lost
-   last["left_lb"]=float(last.get("left_lb",0))+lost*game.provisions.mass_ratio(batch)
-   game.supply_history.append({"day":game.state.day,"event":"livestock_packing","changes":{"food":-lost},"left_lb":last.left_lb})
-   game.journal.append("Day %d · Left %.2f lb milk/eggs after meals: no cargo room." % [game.state.day,last.left_lb])
- game.provisions.fresh=game.provisions.fresh.filter(func(b):return int(b.pounds)>0)
+ # Today's table food can be eaten before packing. Every retained fraction has real mass.
+ var mass:=product_mass(game)
+ var room: float=maxf(0,game.provisions.storage_capacity(game.state)-game.provisions.cargo(game.state)+mass)
+ var left:=0.0
+ record.products.sort_custom(func(a,b):return a.expires>b.expires)
+ for p in record.products:
+  var keep: float=minf(float(p.lb),room)
+  var fraction: float=keep/float(p.lb)
+  left+=float(p.lb)-keep;room=maxf(0,room-keep)
+  p.lb=keep;p.kcal*=fraction
+  if p.has("vitamin_c_lb"):p.vitamin_c_lb*=fraction
+ record.products=record.products.filter(func(p):return float(p.lb)>0.000000001 and float(p.kcal)>0.000000001)
+ product_mass(game)
+ if left>0.000001:
+  last["left_lb"]=float(last.get("left_lb",0))+left
+  game.supply_history.append({"day":game.state.day,"event":"livestock_packing","changes":{},"left_lb":left})
+  game.journal.append("Day %d · Left %.2f lb table food after meals: no cargo room." % [game.state.day,left])

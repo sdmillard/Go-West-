@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-25",
+  "runtime_commit": "9ed0a35042455aca4f201db24ab1ed35330c4fa9",
+  "scope": "First accounting/care correction. No yield, feed ecology, season or condition tuning. The 12 journeys are integration smoke checks, not a livestock balance experiment. Two seeds repeated over profession/month settings are not 12 independent worlds.",
+  "godot_suites": 79,
+  "focused_table_meal_checks": 102,
+  "livestock_checks": 185,
+  "observer_checks": 120,
+  "journeys": 12,
+  "journey_errors": [],
+  "seed_start": 340101,
+  "seeds": 2,
+  "months": [
+    5,
+    7
+  ],
+  "professions": [
+    "farmer",
+    "carpenter",
+    "banker"
+  ],
+  "livestock_arm": "mixed",
+  "stock_policy": "aware",
+  "rules_signature": "ebbe3e71835760dcfcf370a51c7399baff3bc9d800d9afd73e0e596231572cd6",
+  "all_campaign_source_hashes_verified": true,
+  "archives": {
+    ".tools\\hunting-table-meals-smoke-02.json": "ae4631d205263a2c67b2c6b838c58837b2d075fcd7a7e8331720f4e4964307e8",
+    ".tools\\table-meals-publication-tests.log": "0567c0ff782cc230920e96a084cc3ffc469699830110b6f2f307492e7cccdec6",
+    "tests\\fixtures\\pre-exact-table-meals.json": "6bb9b300b5c939fbb27786114cf0dde38cfc3d2825ab5c1acd2387f1fc66ebd9"
+  },
+  "excluded": "Earlier preflight test logs and table-meals-smoke-01 ran before the final hunting-report integration correction. They are retained separately and not pooled."
+}

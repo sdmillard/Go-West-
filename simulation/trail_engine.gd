@@ -634,7 +634,7 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 	# Those chosen to eat human meat are fed from it first; nobody else is ever served it.
 	if state.extended_route:needed-=Remains.serve(self)
 	var fed: bool = state.food >= needed
-	var eaten := mini(int(state.food), needed)
+	var eaten: float = mini(int(state.food), needed)
 	if state.extended_route:
 		# Count vitamin-C produce actually consumed, never merely carried or fresh meat.
 		var field_before: int=provisions.fresh.filter(func(b):return b.get("_hunt_meal",false)).reduce(func(n,b):return n+int(b.pounds),0)
@@ -643,12 +643,14 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 		if state.has("camp_greens_lb"):
 			state.camp_greens_lb=0
 			state.camp_greens_expires=0
-		var produce_eaten: float = provisions.eat(eaten,int(state.party_size),int(state.food),float(loose))
-		if not hunt.is_empty():hunt["_meal_food"]=field_before-provisions.fresh.filter(func(b):return b.get("_hunt_meal",false)).reduce(func(n,b):return n+int(b.pounds),0)
+		var meal: Dictionary=livestock.meal(self,needed,float(loose))
+		eaten=float(meal.eaten);fed=eaten>=needed-0.000000001
+		var produce_eaten: float=float(meal.vitamin)
+		if not hunt.is_empty():hunt["_meal_food"]=field_before-provisions.fresh.filter(func(b):return b.get("_hunt_meal",false)).reduce(func(n,b):return n+int(b.pounds),0)-float(meal.get("hunt_fraction",0))
 		party_health.days_without_fresh = 0 if produce_eaten >= state.party_size * float(provisions.data.foraging.vitamin_c_lb_per_person) else party_health.days_without_fresh + 1
 		for member in party_health.members:
 			if party_health.is_active(member) and member.has("vitamin_days"):member.vitamin_days=0 if party_health.days_without_fresh==0 else int(member.vitamin_days)+1
-	state.food = maxi(0, state.food - needed)
+	if not state.extended_route:state.food = maxi(0, state.food - needed)
 	if state.extended_route:livestock.pack(self)
 	var recovered_food: bool=provisions.Shortfall.tick(self,eaten,needed) if state.extended_route else true
 	if not fed:
@@ -1675,8 +1677,10 @@ func finish_hunt() -> bool:
 	var batch: Dictionary={}
 	for piece in provisions.fresh:
 		if piece.get("_hunt_meal",false):remaining+=int(piece.pounds);batch=piece.duplicate(true)
-	var eaten: int=int(hunt.get("_meal_food",0))
-	var other_loss: int=maxi(0,units-remaining-eaten)
+	var eaten: float=float(hunt.get("_meal_food",0))
+	var partial_mass: float=float(livestock.hunt_portion.get("lb",0))
+	var partial_food: float=float(livestock.hunt_portion.get("kcal",0))/float(provisions.data.food_energy.unit_kcal)
+	var other_loss: float=maxf(0,units-remaining-eaten-partial_food)
 	# Remove the temporary catch to measure the actual space left after meals/illness.
 	provisions.fresh=provisions.fresh.filter(func(piece):return not piece.get("_hunt_meal",false))
 	state.food-=remaining
@@ -1687,8 +1691,8 @@ func finish_hunt() -> bool:
 		batch.pounds=keep
 		provisions.fresh.append(batch)
 		state.food+=keep
-	last_hunt_recovery={"mass":keep*ratio,"food":keep,"generated_food":units,"eaten_mass":eaten*ratio,"eaten_food":eaten,"retrieved":retrieved,"retrieved_kcal":provisions.meat_calories(retrieved,density),"kcal_per_lb":density,"other_loss":other_loss*ratio,"left":maxf(0,float(outing.meat)-(eaten+keep+other_loss)*ratio)}
-	journal.append((("Day %d · Fishing: %d casts, %.2f lb edible fish obtained;" if outing.get("activity","")=="fish" else "Day %d · Hunting: %d shots, %d lb obtained;")+" %.1f lb eaten at camp, %.1f lb packed (%d food units); %.1f lb left behind.") % [state.day,outing.shots,outing.meat,last_hunt_recovery.eaten_mass,last_hunt_recovery.mass,keep,last_hunt_recovery.left])
+	last_hunt_recovery={"mass":keep*ratio+partial_mass,"food":keep+partial_food,"generated_food":units,"eaten_mass":eaten*ratio,"eaten_food":eaten,"retrieved":retrieved,"retrieved_kcal":provisions.meat_calories(retrieved,density),"kcal_per_lb":density,"other_loss":other_loss*ratio,"left":maxf(0,float(outing.meat)-(eaten+keep+partial_food+other_loss)*ratio)}
+	journal.append((("Day %d · Fishing: %d casts, %.2f lb edible fish obtained;" if outing.get("activity","")=="fish" else "Day %d · Hunting: %d shots, %d lb obtained;")+" %.1f lb eaten at camp, %.1f lb packed (%.2f food units); %.1f lb left behind.") % [state.day,outing.shots,outing.meat,last_hunt_recovery.eaten_mass,last_hunt_recovery.mass,last_hunt_recovery.food,last_hunt_recovery.left])
 	if is_fish and not outing.get("catch_log",[]).is_empty():journal.append("Fish caught: "+", ".join(outing.catch_log.map(func(f):return "%s %.2f lb whole" % [f.label,f.whole_lb])))
 	hunt={}
 	_schedule_event(false)

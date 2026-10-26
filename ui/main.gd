@@ -1565,8 +1565,8 @@ func _pause_travel() -> void:
 
 func _warn_food() -> bool:
 	if not game.state.extended_route or game.state.status!="traveling":return false
-	var fed_days: int=game.provisions.forecast_days(game.state.food,game.state.party_size,game.state.rations,game.state.day)
-	var level:=2 if game.state.food==0 else (1 if fed_days<3 else 0)
+	var fed_days: int=preload("res://simulation/table_meals.gd").forecast(game)
+	var level:=2 if game.state.food==0 and game.livestock.available_kcal()<=0 else (1 if fed_days<3 else 0)
 	if level<last_food_alert:last_food_alert=level
 	if level==0 or level<=last_food_alert:return false
 	last_food_alert=level
@@ -1714,7 +1714,7 @@ func _refresh() -> void:
 	if s.status == "outfitting":
 		date_label.text = "INDEPENDENCE, 1848   |   PREPARING FOR DEPARTURE   |   CLASSIC"
 	ledger_title.text="* PACKS & LIVESTOCK *" if s.vehicle=="foot" else "* WAGON LEDGER *"
-	stats.text = "FOOD    %4d UNITS\nHEALTH    %s\nCASH      $%.2f\nOXEN %d   CLOTHES %d\nBULLETS   %d\nSPARES W%d A%d T%d" % [s.food, game.party_condition(), s.money, s.oxen, s.clothing, s.bullets, s.wheels, s.axles, s.tongues]
+	stats.text = "FOOD    %s UNITS\nHEALTH    %s\nCASH      $%.2f\nOXEN %d   CLOTHES %d\nBULLETS   %d\nSPARES W%d A%d T%d" % [str(snappedf(float(s.food)+game.livestock.available_kcal()/1000.0,0.1)), game.party_condition(), s.money, s.oxen, s.clothing, s.bullets, s.wheels, s.axles, s.tongues]
 	stats.tooltip_text="Food: %d units (about %d kcal).\nOne unit is about %d kcal. Party target: %d units/day.\nFood units are approximate; supply weight is separate." % [s.food,game.provisions.food_calories(s.food),game.provisions.data.food_energy.unit_kcal,int(game.provisions.data.rations_lb[s.rations])*int(s.party_size)]
 	var plan: Dictionary=game.mount_plan()
 	stats.text += "\nCARE %d CARGO %.0f/%.0f\n%s\n%s" % [s.medicine, game.provisions.cargo(s),game.provisions.capacity(s), s.weather.to_upper(),game.Mounts.label(plan) if s.vehicle=="foot" else "TEAM %s / %s" % [game.PartyHealth.condition_label(s.ox_health), "TIRED" if s.fatigue >= 50 else "FRESH"]]

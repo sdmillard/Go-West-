@@ -1,5 +1,5 @@
 {
-  "note": "Authored conservative trail production and condition estimates, not measured 1848 yields. Adult milk animals are purchased already in milk, with 180 days of remaining lactation; no breeding. Hens need grain, not human food. Prices for goats, hens and feed are estimates.",
+  "note": "Authored conservative trail production and condition estimates, not measured 1848 yields. Adult milk animals are purchased already in milk, with 180 days of remaining lactation; no breeding. Hens need grain, not human food. Prices for goats, hens and feed are estimates. Milk and eggs retain exact calories and separate expiry until served; fractional portions remain physical food.",
   "milk_days": 1,
   "egg_days": 14,
   "care_hours_per_person": 0.5,
