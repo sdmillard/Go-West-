@@ -19,7 +19,7 @@ func extra_settings() -> Dictionary:
  return settings
 func extra_row(game,count: Dictionary) -> Dictionary:
  var row: Dictionary=super.extra_row(game,count)
- row.livestock={"audit":game.livestock.audit.duplicate(true),"food_eaten":game.provisions.dairy_eaten,"food_spoiled":game.provisions.dairy_spoiled,"food_removed":game.provisions.dairy_removed,"needed_units":game.needed_units,"short_units":game.short_units,"first_short":game.first_short.duplicate(),"deaths":game.deaths.duplicate(true),"days":game.livestock_days.duplicate(true),"purchases":game.purchases.duplicate(true),"remaining":game.livestock.record.animals.duplicate(true)}
+ row.livestock={"audit":game.livestock.audit.duplicate(true),"food_eaten":game.provisions.dairy_eaten,"food_spoiled":game.provisions.dairy_spoiled,"food_removed":game.provisions.dairy_removed,"needed_units":game.needed_units,"short_units":game.short_units,"first_short":game.first_short.duplicate(),"deaths":game.deaths.duplicate(true),"days":game.livestock_days.duplicate(true),"purchases":game.purchases.duplicate(true),"remaining":game.livestock.record.animals.duplicate(true),"slaughter":game.supply_history.filter(func(e):return e.event=="livestock_slaughter").duplicate(true)}
  return row
 func plan_jobs(game) -> Dictionary:
  var plan: Dictionary=super.plan_jobs(game)
