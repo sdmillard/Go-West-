@@ -40,6 +40,14 @@ func run():
  h.members[0].vitamin_debt_milli=60000;h.members[0].vitamin_days=60;h.members[1].vitamin_debt_milli=0;h.members[1].vitamin_days=0
  h.scurvy.base_chance=1.0;h.scurvy.max_chance=1.0;h._deficiency(61,2,0)
  check(h.members[0].conditions.size()==1 and h.members[1].conditions.is_empty(),"Onset uses individual reserves even when the aggregate fallback is zero")
+ h=model();h.scurvy.base_chance=1.0;h.scurvy.max_chance=1.0
+ for member in h.members:member["vitamin_debt_milli"]=60000;member["vitamin_days"]=60
+ h._deficiency(61,2,60,1.0)
+ check(h.members.all(func(m):return m.conditions.is_empty()),"Full current intake prevents a fresh case while depleted reserves rebuild")
+ h._deficiency(62,2,60,0.125)
+ check(h.members.all(func(m):return m.conditions.is_empty()),"A maintenance meal also prevents a fresh deficiency case")
+ h._deficiency(63,2,60,0.0)
+ check(h.members.all(func(m):return m.conditions.size()==1),"Depleted reserves still expose travelers when insufficient intake resumes")
  var g=Sim.new(137,"classic",true)
  check(g.depart("banker",["A","B","C","D","E"],5,{"oxen":4,"food":300,"clothing":5,"dried_produce":2}),"Actual shared-meal fixture departs")
  g.pending={};g.party_health.daily_onset_chance=0;g.survival.forced_weather="clear";g.party_health.days_without_fresh=20

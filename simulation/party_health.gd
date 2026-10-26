@@ -235,7 +235,9 @@ static func valid_reserve(member: Dictionary) -> bool:
 	var value: Variant=member.vitamin_debt_milli
 	return (value is int or value is float) and is_finite(value) and value==floor(value) and value>=0 and value<=100000000
 
-func _deficiency(day: int, rations: int, days_without_fresh: int) -> void:
+func _deficiency(day: int, rations: int, days_without_fresh: int, vitamin_coverage: float=-1.0) -> void:
+	# A sufficient current meal prevents a new deficiency case while reserves rebuild.
+	if vitamin_coverage>=1.0/VITAMIN_REPLENISHMENT_RATIO:return
 	for member in members:
 		var chance := scurvy_chance(floori(int(member.vitamin_debt_milli)/1000.0) if member.has("vitamin_debt_milli") else int(member.get("vitamin_days",days_without_fresh)))
 		if is_active(member) and member.conditions.is_empty() and chance>0 and rng.randf() < chance:
@@ -288,7 +290,7 @@ func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 
 						member.immune = []
 					member.immune.append(active.id)
 	_spread(day, rations)
-	_deficiency(day, rations, days_without_fresh)
+	_deficiency(day, rations, days_without_fresh,vitamin_coverage)
 	# One provisional party-level onset roll per day; a separate seeded stream
 	# keeps watching the party and opening dialogs from changing any outcomes.
 	if living_count() == 0 or rng.randf() >= clampf(daily_onset_chance * risk_multiplier, 0, 1):
