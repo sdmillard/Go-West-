@@ -1,12 +1,12 @@
-param([Parameter(Mandatory=$true)][ValidateSet('old','new','fodder')][string]$Worker)
+param([Parameter(Mandatory=$true)][ValidateSet('old','new','fodder')][string]$Worker, [string]$Manifest = '.tools/feeding-comparison-manifest-02.json')
 $ErrorActionPreference = 'Stop'
 $studyRoot = Split-Path -Parent $PSScriptRoot
-$manifestPath = Join-Path $studyRoot '.tools/feeding-comparison-manifest-01.json'
+$manifestPath = Join-Path $studyRoot $Manifest
 $manifest = Get-Content -Raw -LiteralPath $manifestPath | ConvertFrom-Json
 $godotPath = Join-Path $studyRoot '.tools/godot/Godot_v4.5.1-stable_win64_console.exe'
 $env:APPDATA = Join-Path $studyRoot ('.tools/feeding-compare-' + $Worker + '-userdata')
 foreach ($entry in @($manifest.entries | Where-Object worker -EQ $Worker)) {
-    $checkout = Join-Path $studyRoot ('.tools/feeding-comparison-' + $entry.runtime)
+    $checkout = Join-Path $studyRoot $manifest.trees.PSObject.Properties[$entry.runtime].Value
     $origin = Join-Path $checkout ('.tools/' + $entry.filename)
     $copy = Join-Path $studyRoot ('.tools/' + $entry.filename)
     $log = Join-Path $studyRoot ('.tools/' + $entry.label + '.log')
