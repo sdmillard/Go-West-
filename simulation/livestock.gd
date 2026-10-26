@@ -6,7 +6,7 @@ const FEED_REMAINDERS=["poultry_feed_remainder_lb","livestock_fodder_remainder_l
 const GOODS=["dairy_cows","goats","hens","poultry_feed","livestock_fodder"]
 var data: Dictionary={}
 var error: String=""
-var record: Dictionary={"animals":[],"products":[],"next_id":0,"care":true,"share_scraps":true}
+var record: Dictionary={"animals":[],"products":[],"next_id":0,"care":true,"share_scraps":false}
 var last: Dictionary={}
 var last_meal: Dictionary={}
 # Reference to the current hunt's split serving; packing updates the retained fraction.

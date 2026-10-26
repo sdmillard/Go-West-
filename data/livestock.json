@@ -79,7 +79,7 @@
     }
   },
   "feeding": {
-    "note": "Nominal dry-ration and habitat allowances are calibration estimates. Scraps consume actual leftover portions and protect the current human ration. Grain alone maintains energy but is not modeled as a complete laying ration. No dedicated mineral or body-size simulation.",
+    "note": "Nominal dry-ration and habitat allowances are calibration estimates. Sharing edible portions is off for new journeys; existing saved choices persist. When enabled it consumes actual portions before grain and protects the current human ration. Grain alone maintains energy but is not modeled as a complete laying ration. No dedicated mineral or body-size simulation.",
     "maintenance_fraction": 0.7,
     "full_production_fraction": 0.95,
     "moving_feed_time": 0.95,
