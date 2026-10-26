@@ -637,6 +637,7 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 	if state.extended_route:needed-=Remains.serve(self)
 	var fed: bool = state.food >= needed
 	var eaten: float = mini(int(state.food), needed)
+	var vitamin_coverage: float=-1.0
 	if state.extended_route:
 		# Count vitamin-C produce actually consumed, never merely carried or fresh meat.
 		var field_before: int=provisions.fresh.filter(func(b):return b.get("_hunt_meal",false)).reduce(func(n,b):return n+int(b.pounds),0)
@@ -648,6 +649,7 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 		var meal: Dictionary=livestock.meal(self,needed,float(loose))
 		eaten=float(meal.eaten);fed=eaten>=needed-0.000000001
 		var produce_eaten: float=float(meal.vitamin)
+		vitamin_coverage=clampf(produce_eaten/maxf(0.000001,state.party_size*float(provisions.data.foraging.vitamin_c_lb_per_person)),0.0,1.0)
 		if not hunt.is_empty():hunt["_meal_food"]=field_before-provisions.fresh.filter(func(b):return b.get("_hunt_meal",false)).reduce(func(n,b):return n+int(b.pounds),0)-float(meal.get("hunt_fraction",0))
 		party_health.days_without_fresh = 0 if produce_eaten >= state.party_size * float(provisions.data.foraging.vitamin_c_lb_per_person) else party_health.days_without_fresh + 1
 		for member in party_health.members:
@@ -682,7 +684,7 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 					exposed += 1
 		var nutrition: int = state.rations if fed else 0
 		var risk_multiplier: float = [2.0, 1.3, 0.7][nutrition] * (0.6 if resting else 1.0) * (1.4 if unprotected and survival.weather.exposure else 1.0) * float(survival.weather.get("illness_risk",1.0))
-		party_health.tick(state.day, resting, risk_multiplier, nutrition, int(calendar().year), int(calendar().month) if state.extended_route else 0, context.region_id(self) if state.extended_route else "", party_health.days_without_fresh,camp_tasks.day_plan.get("rest",{}))
+		party_health.tick(state.day, resting, risk_multiplier, nutrition, int(calendar().year), int(calendar().month) if state.extended_route else 0, context.region_id(self) if state.extended_route else "", party_health.days_without_fresh,camp_tasks.day_plan.get("rest",{}),vitamin_coverage)
 		_collect_health_events()
 		state.health = party_health.average_health()
 		state.party_size = party_health.living_count()

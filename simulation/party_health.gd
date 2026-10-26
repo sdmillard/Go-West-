@@ -234,20 +234,32 @@ func _spread(day: int, rations: int) -> void:
 			if is_active(member) and member.conditions.is_empty() and source[1] not in member.get("immune", []) and rng.randf() < chance:
 				begin_condition(int(member.id), source[1], day, roll_severity(rations), source[0])
 
-func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 2, year: int = 1848, month: int = 0, region: String = "", days_without_fresh: int = 0, rest_by_member: Dictionary = {}) -> void:
+func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 2, year: int = 1848, month: int = 0, region: String = "", days_without_fresh: int = 0, rest_by_member: Dictionary = {}, vitamin_coverage: float = -1.0) -> void:
 	for member in members:
 		if not is_active(member):
 			continue
 		for active in member.conditions.duplicate():
 			var definition: Dictionary = conditions[active.id]
 			var nourished: bool=int(member.get("vitamin_days",days_without_fresh))==0
+			var rate: int=2 if rest_by_member.get(int(member.id),resting) else 1
 			var damage: int=int(definition.get("fed_daily_damage",definition.daily_damage)) if nourished else int(definition.daily_damage)
-			affect(member,-damage*int(active.get("severity",1)),day,definition.name.to_lower())
+			if definition.get("needs_fresh_food",false):
+				# Shared actual intake earns proportional treatment, retaining sub-step
+				# progress and damage so repeated small servings are never rounded away.
+				var coverage: int=clampi(roundi(vitamin_coverage*1000.0),0,1000) if vitamin_coverage>=0.0 else (1000 if nourished else 0)
+				var progress: int=int(active.get("nutrition_progress_milli",0))+rate*coverage
+				var harm: int=int(active.get("nutrition_damage_milli",0))+int(active.get("severity",1))*(int(definition.daily_damage)*(1000-coverage)+int(definition.get("fed_daily_damage",definition.daily_damage))*coverage)
+				active.elapsed+=floori(progress/1000.0)
+				active["nutrition_progress_milli"]=progress%1000
+				active["nutrition_damage_milli"]=harm%1000
+				active["treatment_coverage_milli"]=coverage
+				damage=floori(harm/1000.0)
+			else:
+				damage*=int(active.get("severity",1))
+			affect(member,-damage,day,definition.name.to_lower())
 			if not is_active(member):
 				break
-			# Deficiency recovery still needs sustained vitamin-C meals; feeding stops its deterioration first.
-			if int(member.get("vitamin_days",days_without_fresh)) == 0 or not definition.get("needs_fresh_food", false):
-				active.elapsed += 2 if rest_by_member.get(int(member.id),resting) else 1
+			if not definition.get("needs_fresh_food",false):active.elapsed+=rate
 			if active.elapsed >= definition.recovery_days:
 				member.conditions.erase(active)
 				_record(member, day, "%s recovered from %s." % [member.name, definition.name.to_lower()])
@@ -287,7 +299,20 @@ func description(member_id: int) -> String:
 			lines.append("No current illness or injury.")
 		for active in member.conditions:
 			lines.append("%s · %s · since day %d%s" % [conditions[active.id].name, ["Mild", "Bad", "Serious"][int(active.get("severity", 1)) - 1], active.started_day, " · mends only with vitamin-C foods" if conditions[active.id].get("needs_fresh_food", false) else ""])
+			if conditions[active.id].get("needs_fresh_food",false):
+				var progress: float=int(active.elapsed)+int(active.get("nutrition_progress_milli",0))/1000.0
+				lines.append("Treatment progress: %.1f / %d. Fruit and greens support recovery; rest helps." % [progress,int(conditions[active.id].recovery_days)])
+				if active.has("treatment_coverage_milli"):lines.append("Last meal's vitamin-C coverage: %d%%. Partial servings still help." % roundi(int(active.treatment_coverage_milli)/10.0))
 	lines.append("PERSONAL HISTORY")
 	lines.append("\n".join(member.history) if not member.history.is_empty() else "No health events recorded.")
 	return "\n\n".join(lines)
 
+
+# Optional fixed-point state preserves existing saves and exact JSON round trips.
+static func valid_treatment(condition: Variant) -> bool:
+	if not condition is Dictionary:return false
+	for key in ["nutrition_progress_milli","nutrition_damage_milli","treatment_coverage_milli"]:
+		if not condition.has(key):continue
+		var value: Variant=condition[key]
+		if condition.get("id")!="scurvy" or not (value is int or value is float) or not is_finite(value) or value!=floor(value) or value<0 or value>(1000 if key=="treatment_coverage_milli" else 999):return false
+	return true
