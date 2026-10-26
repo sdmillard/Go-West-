@@ -1,6 +1,6 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 25, 2026. Latest checkpoint: livestock, individual animal condition and selectable working oxen (final section below; see [livestock](LIVESTOCK.md)). Earlier sections are chronological records of prior checkpoints.
+Last updated October 25, 2026. Latest checkpoint: farmer livestock balance study (final section below; see [results](FARMER_LIVESTOCK_BALANCE.md)). Earlier sections are chronological records.
 
 ## Resume here
 
@@ -696,3 +696,13 @@ Spencer supplied an updated fishing-art-drafts.zip containing eight river backgr
 - Farmer arrivals stayed 0/4 in each small pilot arm; do not claim balance solved or tune to these two seeds. Dairy arm produces about 202-203 gross units, not net retained surplus, and this bot does not restock feed. Historical sources support presence and broad milk-cow cost; production, goat/hen/feed prices, labor and condition rates are explicitly authored estimates. Dogs/pets, butter/cheese, pelts/trade valuables/heirlooms and broad survival balancing remain possible follow-ups.
 
 Publication verification: all **77 Godot suites** passed on runtime **27a4b01**, including **185 livestock/individual-team checks**. Full log `.tools/livestock-publication-tests.log`; its hash and all final journey/source evidence are in `docs/livestock-validation-01.json`. Only documentation and generated script UID metadata follow that tested runtime.
+
+
+## Latest checkpoint: farmer livestock balance study (October 25, 2026)
+
+- No simulation/data changes. Frozen study affaad9 compares shipped f685292 gameplay across 432 scenarios: 216 development and 216 fresh confirmation, seeds 311000-311005 / 321000-321005. Farmer $675; standard/lean; May/July; shared horse; 65% aiming; mobile hunts, camp jobs, fishing. Five stock arms; existing vs stock-aware decisions (one shared no-stock baseline). See FARMER_LIVESTOCK_BALANCE_PROTOCOL.md and FARMER_LIVESTOCK_BALANCE.md.
+- All 78 suites pass, including 120 read-only observer/parity checks. Full log .tools/farmer-stock-final-tests.log. All 36 campaign reports have zero source/state/save/policy errors, copied to parent .tools and hash verified against originals. Sources/rules, complete cohorts, same initial budgets and exact cart additions checked. Compact evidence farmer-livestock-balance-summary-01.json; raw reports .tools/hunting-farmer-stock-*-01.json. Do not pool excluded smoke seed 310901 or older pilot runs.
+- Confirmation arrivals: no stock 1/24; goats existing 1/24 / aware 4/24; cows 0/24 both; hens 0/24 both; mixed existing 1/24 / aware 0/24. Development no stock 2/24, goats aware 0/24. Goat confirmation gains all occurred in May/standard. No five-person intact confirmation arrivals. Farmer balance is not solved; six seeds repeated over four settings per phase are not 24 independent seeds.
+- Actual confirmation milk/egg units eaten with aware care: goats 121.42, cow 198.62, hens 6.54, mixed 233.67. Gross emergency meat is separate (18.38 / 185.46 / 0 / 167.62). Mixed care shortfalls fall from 83.04% to 0.57% of herd days, improving food without reliable arrivals. Supplemental food and higher initial outlay compete with other needs.
+- Poultry grain lasts about 33 days for six hens; no restock succeeded in this matrix and most hens died before useful bulk-post resupply. Kearny is not a bulk post; grain rows currently appear at bulk posts. Initial feed quantity/provisioning, sales/culling and researched scratch forage remain open rather than simply buffing egg calories.
+- Observed failures still feature food shortages, scurvy and long stationary exposure. Baseline confirmation had 48 lack-of-food and 24 scurvy deaths; 21/24 first deaths followed a shortage. Policy limitations matter: Filling if any active person is <80 health/ill, $20 normal / $10 emergency cash reserves before future tolls, no livestock sales, no optimized farmer ration/start outfit search. The next policy audit should examine those decisions and produce coverage before changing game rules. Confirmation outcomes were not used to tune this study.
