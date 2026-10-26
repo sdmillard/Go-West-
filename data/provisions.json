@@ -190,7 +190,7 @@
     "note": "Calorie anchor for abstract food units, not a claim that every physical pound has equal energy. Existing purchased provisions remain an abstract mixed bundle at their existing weight/price. Generic lean meat uses a conservative rounded estimate; named game uses species values. Whole-unit rounding is a gameplay approximation."
   },
   "pelts": {
-    "note": "Authored rough air-dried trade skins, not fully tanned buffalo robes. Recovery and scraping/drying cost one additional camp day and meals per batch; raw weights, one-day batch limit and prices are estimates. Historical robe prices are context, not direct prices for these goods.",
+    "note": "Rough air-dried trade skins, not tanned robes. Deer offer is a game estimate at the midpoint of Wilkes 1845, vol. V p.158 California elk/deer export valuations ($0.50-$1); condition and market differ. Bison/rabbit prices, all wet/dry weights, demand and one-day/60 lb preparation batch remain authored estimates. See docs/PELT_CALIBRATION.md; robe resale prices are not rough-hide purchase prices.",
     "raw_batch_lb": 60,
     "goods": {
       "bison_hide": {
@@ -209,7 +209,7 @@
         "short_label": "DEER HIDE",
         "raw_lb": 10,
         "weight_lb": 3,
-        "sell_cents": 60,
+        "sell_cents": 75,
         "post_demand": 16,
         "trader_demand": 3
       },

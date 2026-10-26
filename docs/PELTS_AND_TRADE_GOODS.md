@@ -1,5 +1,7 @@
 # Pelts and trade goods: first playable slice
 
+Prices were subsequently audited in [Pelt calibration](PELT_CALIBRATION.md). Deer now pays 75 cents at posts / 56 cents on the road; the other prices and all masses remain provisional. The validation below records the original feature release.
+
 Hunted bison, deer and rabbits can now provide rough trade skins as well as food. Recovery is an explicit choice on the **player-led hunting screen**, including group and wagon hunts. The normal meat-only return remains available.
 
 ![Optional skin recovery](pelt-recovery.png)
@@ -17,7 +19,7 @@ Sell them through open post stores and passing traders, alongside the existing s
 | Rough prepared good | Raw retrieval weight | Carried weight | Base post offer | Passing trader offer | Post / trader demand |
 |---|---:|---:|---:|---:|---:|
 | Bison hide | 50lb | 12lb | $1.50 | $1.12 | 6 / 1 |
-| Deer hide | 10lb | 3lb | $0.60 | $0.45 | 16 / 3 |
+| Deer hide | 10lb | 3lb | $0.75 | $0.56 | 16 / 3 |
 | Rabbit pelt | 0.5lb | 0.2lb | $0.05 | $0.03 | 40 / 8 |
 
 These are supplementary opportunities, not guaranteed profitable actions. An extra day's meals, displaced meat, transport weight and an actual trading visit can outweigh a small sale. There is no increase to starting money, meat calories or existing food prices.
@@ -28,7 +30,7 @@ NPS describes roughly$3 as contextual average buffalo-robe value at Bent's Fort 
 
 NPS also distinguishes the fully processed robes of the earlier trade from raw hides. Its account of1846-47 Cheyenne robe preparation describes repeated work over several days. This slice therefore does **not** award finished robe value for a fresh kill. [NPS: Hunting and Processing Bison Robes](https://www.nps.gov/articles/000/beol_business-of-bison.htm).
 
-The game's output is a roughly scraped/air-dried trade skin. All quoted skin prices, wet/dry weights, buyer demand,60lb work batch and the single additional preparation day are **authored estimates**. The buffalo-robe reference supplies context, not a measured conversion to our$1.50 rough hide. Deer/rabbit prices are provisional, without verified local1848 tariffs. Drying weather, individual hide quality/season, full tanning and gradual deterioration are not simulated here. Rough preparation and storage durability are simplified for this first slice.
+The game's output is a roughly scraped/air-dried trade skin. Wet/dry weights, bison/rabbit prices, buyer demand,60lb work batch and the single additional preparation day are **authored estimates**. Deer price is now a period-anchored estimate; see the calibration audit. The buffalo-robe reference supplies context, not a measured conversion to our$1.50 rough hide. No verified local1848 tariff has been established for these offers. Drying weather, individual hide quality/season, full tanning and gradual deterioration are not simulated here. Rough preparation and storage durability are simplified for this first slice.
 
 ## Scope and compatibility
 
