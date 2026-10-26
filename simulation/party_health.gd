@@ -1,5 +1,6 @@
 extends RefCounted
 ## Per-person state, independent of UI. All numbers are provisional gameplay tuning.
+const VITAMIN_REPLENISHMENT_RATIO=8
 var members: Array[Dictionary] = []
 var conditions: Dictionary = {}
 var daily_onset_chance := 0.0
@@ -216,9 +217,10 @@ func scurvy_chance(days_without_fresh: int) -> float:
 	return minf(float(scurvy.max_chance), float(scurvy.base_chance) + steps * float(scurvy.chance_per_15_days))
 
 # Fixed-point deficiency debt: zero is full reserve; onset_days is depleted.
-# The existing full serving is a replenishing portion; half maintains reserve.
+# The existing serving is a replenishing portion. Maintenance is one eighth
+# (authored approximation of deficiency prevention versus recommended intake).
 func feed_vitamins(coverage: float) -> void:
-	var change: int=1000-2*clampi(roundi(coverage*1000.0),0,1000)
+	var change: int=1000-VITAMIN_REPLENISHMENT_RATIO*clampi(roundi(coverage*1000.0),0,1000)
 	var worst:=0
 	for member in members:
 		if not is_active(member):continue
