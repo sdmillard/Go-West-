@@ -5,7 +5,7 @@ const FORMAT := "westward-probably"
 const VERSION := 1
 const DEFAULT_PATH := "user://journey.json"
 const MAX_BYTES := 2097152
-const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes", "social_rules", "appearance", "recruitment", "robbery_demands", "camp_tasks", "field_outings", "fishing", "livestock"]
+const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes", "social_rules", "appearance", "recruitment", "robbery_demands", "camp_tasks", "field_outings", "fishing", "livestock", "trail_income"]
 var error := ""
 var rules_signature := ""
 var load_note := ""
@@ -27,7 +27,7 @@ func capture(game) -> Dictionary:
 		"team_conditions":game.team_conditions.snapshot(game),"livestock":game.livestock.record.duplicate(true),"recruitment":game.recruitment.snapshot(),"social":game.social.snapshot(),"crime":game.crime.snapshot(),
 		"camp_repair":game.camp_repair.work.duplicate(true),"field_outings":game.field_outings.snapshot(),"characters_version":5,"camp_tasks":game.camp_tasks.snapshot(),"characters":game.characters.profiles.duplicate(true),
 		"combat_history":game.combat.history.duplicate(true),"context":game.context.record.duplicate(true),"route_end":game.route.end_id,"wagon_cache":game.wagon_cache.duplicate(true), "state":game.state.duplicate(true), "pending":game.pending.duplicate(true),
-		"seen":game.seen.duplicate(), "journal":Array(game.journal),
+		"income":game.income.record.duplicate(true), "seen":game.seen.duplicate(), "journal":Array(game.journal),
 		"last_crossing":game.last_crossing.duplicate(true), "crossing_history":game.crossing_history.duplicate(true),
 		"supply_history":game.supply_history.duplicate(true), "service_return":game.service_return.duplicate(true),
 		"party":game.party_health.members.duplicate(true), "health_events":Array(game.health_events),
@@ -440,6 +440,9 @@ func restore(value: Variant):
 		if not game.recruitment.valid(value.recruitment,game):return null
 		game.recruitment.restore(normalize(value.recruitment))
 	elif value.party.size()!=5:return null
+	var income: Variant=normalize(value.get("income",{"keepsakes":{},"work":{}}))
+	if not game.income.valid(income,game):return null
+	game.income.record=income
 	if game.pending.get("id","") in ["ox_injury","wandering_ox"]:game.adapt_travel_event(game.pending)
 	if game.pending.get("recruit_menu",false) or game.pending.get("dismiss_menu",false):
 		if not game.recruitment.valid_open_menu(game):return null

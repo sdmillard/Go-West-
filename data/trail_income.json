@@ -1,0 +1,56 @@
+{
+  "note": "Nominal-dollar estimates: 1848 wage circular summarized in 1850 Census supports 75-150 cents/day for mechanics, not exact post tariffs. General 100, care/laundry 75 and skilled carpentry 150 cents/day are authored offers without board. Job quotas, keepsake 200-cent resale/0.25 lb and 100 arrival points are game assumptions; see docs/TRAIL_INCOME.md.",
+  "keepsake": {
+    "weight_lb": 0.25,
+    "sell_cents": 200,
+    "arrival_points": 100,
+    "consent_trust": 50
+  },
+  "jobs": {
+    "labor": {
+      "label": "Load freight / general labor",
+      "cents": 100,
+      "background": ""
+    },
+    "carpentry": {
+      "label": "Carpentry and repairs",
+      "cents": 150,
+      "background": "Carpentry"
+    },
+    "care": {
+      "label": "Laundry and household help",
+      "cents": 75,
+      "background": "Caregiving"
+    }
+  },
+  "sites": {
+    "independence": {
+      "days": 6,
+      "first_month": 1
+    },
+    "fort_kearny": {
+      "days": 4,
+      "first_month": 6
+    },
+    "fort_laramie": {
+      "days": 4,
+      "first_month": 1
+    },
+    "fort_bridger": {
+      "days": 3,
+      "first_month": 1
+    },
+    "fort_hall": {
+      "days": 3,
+      "first_month": 1
+    },
+    "fort_boise": {
+      "days": 2,
+      "first_month": 1
+    },
+    "the_dalles": {
+      "days": 3,
+      "first_month": 1
+    }
+  }
+}

@@ -4,6 +4,10 @@ Last updated October 25, 2026. Latest checkpoint: mixed livestock feeding and co
 
 ## Resume here
 
+- **Trail income:** `docs/TRAIL_INCOME.md`, `simulation/trail_income.gd`, `data/trail_income.json`. Visible creation defaults to one optional 0.25 lb/$2 small keepsake per starting traveler; owner IDs persist through inventory/cache/trip validation. Consent requires present owner/trust >=50; deceased estate goods sell without permission. Retained items give 100 keepsake points at Oregon, separately from survival. Old/scripted journeys receive no invented goods. Normal departing companions take their own carried keepsake. This is one abstract memento class, not a watch/Bible/quilt catalogue.
+- **Finite local work:** FIND WORK below the scene at selected actual stops; one worker/day, $1 general / $1.50 carpentry / $0.75 household, shared nonrefreshing site limits. Normal meals/weather/wages and wanted checks; chosen worker skips their standing camp task, others continue. Nursing patients cannot work; worker's order stays for later. Earned cash funds that day's auto-pay. Census 1848 inquiry supports mechanics' wage scale only; exact post jobs/rates, quotas and keepsake values remain estimates. No broad survival tuning included. Next: matched joint income journeys, not another isolated pelt balance loop. Autonomous skin preparation remains explicitly unimplemented.
+
+
 - **Pelt calibration:** see `docs/PELT_CALIBRATION.md`. Deer post offer is 75 cents (road 56), inferred from Wilkes 1845 California elk/deer export valuations of 50 cents-$1. No verified 1848 local tariff. Bison/rabbit prices and all masses remain provisional; do not describe finished robe prices/weights as measurements of our rough skins. Genuine previous-pelt-rule save is tested with owned goods/cash/RNG preserved. Original feature validation remains frozen at its recorded runtime. Full validation for this change is recorded in the calibration document. Continue subsequent trade mechanics only after this audit; no broad survival retune is included.
 
 

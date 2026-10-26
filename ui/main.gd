@@ -40,6 +40,7 @@ var party_button: Button
 var party_rows: VBoxContainer
 var member_details: RichTextLabel
 var selected_member := 0
+var income_window=preload("res://ui/income_view.gd").new()
 var wages_button: Button
 var auto_pay_wages: CheckBox
 var stop_window: AcceptDialog
@@ -589,6 +590,8 @@ Northern shortcuts and Columbia rafting are not yet playable. Weather, medical e
 	add_child(supplies_window)
 	var supplies_scroll := ScrollContainer.new()
 	supplies_scroll.custom_minimum_size = Vector2(580,250)
+	add_child(income_window)
+	income_window.visibility_changed.connect(func():if not income_window.visible:_refresh())
 	supplies_window.add_child(supplies_scroll)
 	drop_window=preload("res://ui/drop_supplies.gd").new()
 	add_child(drop_window)
@@ -1800,7 +1803,7 @@ func _refresh() -> void:
 			choices.add_child(option)
 	elif s.status == "arrived":
 		event_title.text = game.route.nodes[s.landmark].name if s.extended_route else "The far bank. A beginning."
-		event_text.text = (game.journey_summary() + "\n\n" + game.route.nodes[s.landmark].text) if s.extended_route else "The first test leg is complete."
+		event_text.text = (game.journey_summary() + "\nKEEPSAKE POINTS: %d" % game.income.points(game) + "\n\n" + game.route.nodes[s.landmark].text) if s.extended_route else "The first test leg is complete."
 	elif s.status == "returned_east":
 		event_title.text="Back east."
 		event_text.text="Your character decided to go back east."
@@ -1857,6 +1860,8 @@ func _show_supplies() -> void:
 	drop.name="DropSupplies"
 	actions.add_child(button("LIVESTOCK >",func():supplies_window.hide();livestock_window.open(game)))
 	actions.add_child(drop)
+	var keepsakes:=button("KEEPSAKES >",func():supplies_window.hide();income_window.open(game,"keepsakes"))
+	supplies_rows.add_child(keepsakes)
 	if game.CacheSupport.can_pack(game,false):
 		var abandon:=button("ABANDON WAGON / CHOOSE PACKS",func():_show_packing(false))
 		abandon.name="AbandonWagon"
@@ -2213,6 +2218,7 @@ func _refresh_place_actions() -> void:
 	if not game.can_service() or not landscape.crossing.is_empty() or _reviewing_crossing():return
 	var entries: Array=[]
 	var market: Dictionary=game.context.market(game)
+	if not game.income.offers(game).is_empty():entries.append(["FIND WORK",func():_pause_travel();income_window.open(game,"work")])
 	if market.available:entries.append(["STORE" if market.post else "TALK TO TRADERS",_open_trade])
 	if not game.crime.camp(game).is_empty():entries.append(["VISIT EMIGRANT CAMP",_open_camp])
 	if not game.recruitment.site(game).is_empty() and game.current_party_slots().has(-1) and game.party_health.members.size()<game.MAX_TRAVELERS:entries.append(["FIND COMPANIONS",_open_companions])

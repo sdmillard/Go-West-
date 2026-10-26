@@ -131,12 +131,13 @@ func open(where: String = "") -> void:
 	for i in range(store.rows.size()):
 		var row: Dictionary = store.rows[i]
 		var y := 40 + i * 17
-		var goods: String = game.provisions.data.pelts.goods.get(row.item,{}).get("short_label",GOODS.get(row.item, row.item.to_upper()))
+		var goods: String = game.income.label_for(game,row.item).to_upper() if game.income.is_keepsake(row.item) else game.provisions.data.pelts.goods.get(row.item,{}).get("short_label",GOODS.get(row.item, row.item.to_upper()))
 		var unit: String = "lb" if row.item in ["food", "salt"] else "each"
 		var tip := "Buy at $%.3f or sell at $%.3f %s. You hold %d. The post can sell %d more and buy %d." % [row.buy_cents / 100.0 / row.amount, row.sell_cents / 100.0 / row.amount, "a pound" if unit == "lb" else "each", row.held, row.can_buy, row.can_sell]
 		if row.item=="wagon":tip="Empty covered wagon: no oxen, food or new household outfit. Your current belongings are loaded. One per store; team and supplies are bought separately."
 		if row.item in game.Produce.ITEMS:tip="One basket = one food unit from 4 lb fresh produce. "+("Dried: lighter, up to 90 days, less vitamin C." if row.item=="dried_produce" else "Fresh: 4 lb, spoils in 3 days, more vitamin C.")+" Only eating it helps; prices are per basket."
 		if row.item in game.provisions.data.pelts.goods:tip="Rough prepared trade skin, not a finished robe. Weight %.1f lb each. This buyer pays $%.2f each and will buy %d more; resale only." % [float(game.provisions.data.pelts.goods[row.item].weight_lb),row.sell_cents/100.0,row.can_sell]
+		if game.income.is_keepsake(row.item):tip="Personal property, %.2f lb; consent from a present trusting owner is required before sale. Manage permission through Supplies > Keepsakes. Deceased owners leave estate goods. Retaining this item until Oregon earns 100 keepsake points." % float(game.income.data.keepsake.weight_lb)
 		# Goods move by the unit (a pound, a bullet, an ox). Counts follow the basket, so goods cross over as you choose them.
 		# A passing party prices only what it carries and what it wants; the rest shows a dash.
 		var stock := line(POST_X, y, goods, row.buy_cents / float(row.amount) if row.get("sells", true) else -1.0, tip)
