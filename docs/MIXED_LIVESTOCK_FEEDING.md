@@ -45,3 +45,12 @@ The existing [source ledger](LIVESTOCK_REALISM_AUDIT.md) remains the evidence ba
 An authentic pre-change save was generated before edits using ordinary outfitting and a camp day. `tests/fixtures/pre-mixed-feeding.json` retains old fingerprint `ebbe3e71835760dcfcf370a51c7399baff3bc9d800d9afd73e0e596231572cd6`. Migration preserves existing supplies, animals, exact food portions and random streams, and grants no fodder, grain or condition. Optional sharing/fractional-wear and feed-remainder records are saved and validated; old records without them remain valid.
 
 `tests/test_livestock_feeding.gd` covers actual Fair-versus-Good production, every condition point and neighboring thresholds, fractional chronic strain, clear-winter feeding over fifty days, limited scratching across flock sizes, real scrap calorie/mass consumption, human/vitamin protection, exact feed remainders, pure previews, habitat differences, actual store/drop pathways, corrupt saves and genuine migration. It is included in test.ps1. Journey checks are integration smoke tests; a new matched survival balance experiment remains separate.
+
+
+## Frozen publication results
+
+Runtime `c66a403ef67f43045201647d63ce2a3370791678` passed all **80 Godot suites**, including **465 feeding checks**, 102 exact-meal checks, 185 livestock checks and 120 observer/parity checks. **36 selected journeys** completed with no selected state, save or policy errors: 12 mixed-herd standard outfits, 12 mixed-herd lean outfits with 200 lb fodder, and 12 standard hen outfits. Each cohort repeats two seeds across May/July and farmer/carpenter/banker; these are integration scenarios, not independent balance samples or a causal comparison of fodder.
+
+The initial attempt to add 200 lb fodder to the standard mixed outfit correctly failed the 2,500 lb departure limit. It produced zero journeys and twelve setup rejections; it is retained separately and excluded from the successful 36. The replacement explicitly uses the lighter outfit. No capacity, starting cash or food allowance was changed to make it fit.
+
+[Validation record](mixed-feeding-validation-01.json) identifies the frozen revision, exact cohort settings and SHA-256 hashes of the complete local reports/log and prior-rule fixture. Campaign source hashes were checked against current frozen files. A fresh matched survival study is still required before drawing conclusions about farmer completion.
