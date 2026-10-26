@@ -2,6 +2,8 @@
 
 A growing Oregon Trail-inspired game in **Godot 4 / GDScript**. Lead five travelers from Independence to Oregon City, managing supplies, crossings and the Barlow Road. Historical evidence now takes priority when it differs from the classic games. The continuous overland itinerary connects 36 stops over 1,938 reported guide miles. See [route evidence and game comparison](docs/ROUTE_EXPANSION.md).
 
+[Gradual vitamin reserves](docs/VITAMIN_RESERVES.md) make small regular servings useful for prevention, preserve individual nutrition histories across trips and saves, and remove the single-meal deficiency reset.
+
 [Partial scurvy treatment](docs/PARTIAL_SCURVY_TREATMENT.md) lets small produce servings contribute to recovery and shows treatment progress in individual health details. Saved fractions prevent daily rounding losses.
 
 [Scurvy treatment audit](docs/SCURVY_TREATMENT_AUDIT.md): exact daily replays identify sparse treatment and a binary shared-produce cutoff; the recovery timer is advancing when sufficiently fed. Health rules remain unchanged.
