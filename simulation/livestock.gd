@@ -104,9 +104,9 @@ func tick(game,resting: bool,working: bool) -> void:
   var factor: float=float(a.condition)/100.0*float(o.care_factor)*float(o.season)*(0.85 if working else 1.0)
   if o.waterless:factor*=0.1
   if a.kind=="hens":
-   a.egg_progress+=0.5*factor*hen_factor
+   a.egg_progress=float("%.12f" % (float(a.egg_progress)+0.5*factor*hen_factor))
    if a.egg_progress>=1:
-    var n:=floori(a.egg_progress);a.egg_progress-=n;eggs+=n
+    var n:=floori(a.egg_progress);a.egg_progress=float("%.12f" % (float(a.egg_progress)-n));eggs+=n
     record.products.append({"kind":"egg","lb":float(rule.daily_lb)*n,"kcal":float(rule.daily_lb)*float(rule.kcal_per_lb)*n,"expires":day+int(data.egg_days)})
   elif int(a.remaining)>0:
    var mass: float=float(rule.daily_lb)*factor*clampf(float(a.remaining)/60.0,0,1)
