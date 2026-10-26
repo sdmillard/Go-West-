@@ -84,6 +84,11 @@ func run():
  check(g.state.ox_health<=90,"Working ox team does not get idle-day recovery")
  check(g.state.medicine==medicine and g.camp_tasks.assignments==jobs,"Suspended chores spend no kit and standing orders remain")
  check(not g.finish_hunt(),"Wagon return cannot duplicate supplies")
+ g=party();g.state.goats=2;g.livestock.sync(g)
+ check(g.start_hunt({"members":[0,1,2,3,4],"kit":"wagon","bullets":5}),"Dairy wagon hunt starts")
+ check(g.camp_tasks.day_plan.leader==0 and g.livestock.workers(g)==0,"Complete wagon roster reserves every hunter from dairy care")
+ check(g.finish_hunt() and g.livestock.last.care_factor==0,"Dairy wagon hunt settles without phantom caregivers")
+ check(g.camp_tasks.day_plan.is_empty(),"Wagon roster clears after settlement")
  g=party()
  for id in [2,3,4]:g.party_health.members[id].alive=false
  g.state.party_size=2

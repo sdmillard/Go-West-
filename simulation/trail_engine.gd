@@ -1532,7 +1532,7 @@ func start_hunt(outfit: Dictionary={}) -> bool:
 			if not camp_tasks.day_plan.is_empty():camp_tasks.day_plan.rest[int(id)]=false
 		if field.kit=="wagon":
 			hunt["_camp_helpers"]=field.crew.filter(func(id):return int(id)!=camp_tasks.leader_id(self))
-			camp_tasks.day_plan={"rest":{},"jobs":[],"action":"hunt"}
+			camp_tasks.day_plan={"rest":{},"jobs":[],"action":"hunt","leader":camp_tasks.leader_id(self),"leader_patient":-1}
 			for person in party_health.members:
 				if party_health.is_active(person):camp_tasks.day_plan.rest[int(person.id)]=false
 		field_outings.Outfit.reserve(self,field)
