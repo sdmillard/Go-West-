@@ -651,9 +651,7 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 		var produce_eaten: float=float(meal.vitamin)
 		vitamin_coverage=clampf(produce_eaten/maxf(0.000001,state.party_size*float(provisions.data.foraging.vitamin_c_lb_per_person)),0.0,1.0)
 		if not hunt.is_empty():hunt["_meal_food"]=field_before-provisions.fresh.filter(func(b):return b.get("_hunt_meal",false)).reduce(func(n,b):return n+int(b.pounds),0)-float(meal.get("hunt_fraction",0))
-		party_health.days_without_fresh = 0 if produce_eaten >= state.party_size * float(provisions.data.foraging.vitamin_c_lb_per_person) else party_health.days_without_fresh + 1
-		for member in party_health.members:
-			if party_health.is_active(member) and member.has("vitamin_days"):member.vitamin_days=0 if party_health.days_without_fresh==0 else int(member.vitamin_days)+1
+		party_health.feed_vitamins(vitamin_coverage)
 	if not state.extended_route:state.food = maxi(0, state.food - needed)
 	if state.extended_route:livestock.pack(self)
 	var recovered_food: bool=provisions.Shortfall.tick(self,eaten,needed) if state.extended_route else true

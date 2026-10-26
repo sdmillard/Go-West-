@@ -148,19 +148,20 @@ static func _day(game,cache: Dictionary,random) -> void:
  var eaten:=mini(needed,int(cache.inventory.food))
  var vitamin: float=food.eat(eaten,count,int(cache.inventory.food))
  cache.inventory.food-=eaten
- var sufficient: bool=vitamin>=count*float(food.data.foraging.vitamin_c_lb_per_person)
- cache.camp_deficiency=0 if sufficient else int(cache.camp_deficiency)+1
+ var coverage: float=clampf(vitamin/(count*float(food.data.foraging.vitamin_c_lb_per_person)),0.0,1.0)
+ model.days_without_fresh=int(cache.camp_deficiency)
+ model.feed_vitamins(coverage)
+ cache.camp_deficiency=model.days_without_fresh
  var fed: bool=eaten>=needed
  var shortage: Dictionary=food.Shortfall.step(food.data.shortfall,cache,eaten,needed,ration)
  for member in model.members:
   if not model.is_active(member):continue
-  member["vitamin_days"]=0 if sufficient else int(member.get("vitamin_days",cache.camp_deficiency-1))+1
   model.affect(member,-int(shortage.damage) if not fed else (int(game.survival.data.rest_recovery[ration]) if not hunted and shortage.can_recover else 0),day,"lack of food" if not fed else "ill health")
   var month: int=game.calendar().month
   var cold: bool=month in [11,12,1,2] or (month in [3,10] and cache.habitat in ["forest","highcountry"])
   if cold:model.affect(member,-(1 if int(cache.inventory.clothing)>=count else 4),day,"winter exposure")
  model.rng.state=random.state
- model.tick(day,not hunted,0.6 if fed else 2.0,ration if fed else 0,int(game.calendar().year),int(game.calendar().month),cache.habitat,int(cache.camp_deficiency),{},clampf(vitamin/(count*float(food.data.foraging.vitamin_c_lb_per_person)),0.0,1.0))
+ model.tick(day,not hunted,0.6 if fed else 2.0,ration if fed else 0,int(game.calendar().year),int(game.calendar().month),cache.habitat,int(cache.camp_deficiency),{},coverage)
  random.state=model.rng.state
  for line in model.notices:cache.camp_log.append(line)
  for member in cache.guards:
@@ -224,6 +225,7 @@ static func valid(cache: Dictionary,game,day: int,party: Array=[]) -> bool:
  var ids: Array=[]
  for member in cache.guards:
   if not member is Dictionary or not game.crime.whole(member.get("id"),1,game.MAX_TRAVELERS-1) or int(member.id) in ids or not member.get("name") is String or not member.get("alive") is bool or not game.crime.whole(member.get("health"),0,100) or member.alive!=(member.health>0) or not member.get("conditions") is Array or not member.get("history") is Array or not member.get("cause") is String or not game.crime.whole(member.get("death_day"),-1,day) or not game.crime.whole(member.get("vitamin_days"),0,100000):return false
+  if not game.party_health.valid_reserve(member):return false
   if member.has("guarding") or (member.has("departed") and member.departed!=true):return false
   ids.append(int(member.id))
   for line in member.history:

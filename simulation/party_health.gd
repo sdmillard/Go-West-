@@ -215,9 +215,27 @@ func scurvy_chance(days_without_fresh: int) -> float:
 	var steps := floori(float(days_without_fresh - int(scurvy.onset_days)) / 15.0)
 	return minf(float(scurvy.max_chance), float(scurvy.base_chance) + steps * float(scurvy.chance_per_15_days))
 
+# Fixed-point deficiency debt: zero is full reserve; onset_days is depleted.
+# The existing full serving is a replenishing portion; half maintains reserve.
+func feed_vitamins(coverage: float) -> void:
+	var change: int=1000-2*clampi(roundi(coverage*1000.0),0,1000)
+	var worst:=0
+	for member in members:
+		if not is_active(member):continue
+		var debt: int=int(member.get("vitamin_debt_milli",int(member.get("vitamin_days",days_without_fresh))*1000))
+		member["vitamin_debt_milli"]=clampi(debt+change,0,100000000)
+		member["vitamin_days"]=ceili(int(member.vitamin_debt_milli)/1000.0)
+		worst=maxi(worst,int(member.vitamin_days))
+	days_without_fresh=worst
+
+static func valid_reserve(member: Dictionary) -> bool:
+	if not member.has("vitamin_debt_milli"):return true
+	var value: Variant=member.vitamin_debt_milli
+	return (value is int or value is float) and is_finite(value) and value==floor(value) and value>=0 and value<=100000000
+
 func _deficiency(day: int, rations: int, days_without_fresh: int) -> void:
 	for member in members:
-		var chance := scurvy_chance(int(member.get("vitamin_days",days_without_fresh)))
+		var chance := scurvy_chance(floori(int(member.vitamin_debt_milli)/1000.0) if member.has("vitamin_debt_milli") else int(member.get("vitamin_days",days_without_fresh)))
 		if is_active(member) and member.conditions.is_empty() and chance>0 and rng.randf() < chance:
 			begin_condition(int(member.id), scurvy.condition, day, roll_severity(rations))
 
@@ -295,6 +313,9 @@ func description(member_id: int) -> String:
 		lines.append("DIED · DAY %d\nCause: %s" % [member.death_day, member.cause])
 	else:
 		lines.append("Condition: " + condition_label(member.health))
+		var debt: float=int(member.get("vitamin_debt_milli",int(member.get("vitamin_days",days_without_fresh))*1000))/1000.0
+		var capacity: float=float(scurvy.get("onset_days",45))
+		lines.append("Vitamin reserve: %s. Regular fruit and greens help maintain it." % ("DEPLETED" if debt>=capacity else ("LOW" if debt>=capacity*0.75 else ("ADEQUATE" if debt>capacity*0.25 else "WELL SUPPLIED"))))
 		if member.conditions.is_empty():
 			lines.append("No current illness or injury.")
 		for active in member.conditions:

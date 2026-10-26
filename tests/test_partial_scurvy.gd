@@ -36,7 +36,7 @@ func run():
  check(g.rest_in_camp(),"Partial actual shared meal settles")
  var c: Dictionary=g.party_health.members[0].conditions[0]
  check(c.treatment_coverage_milli==800 and c.elapsed==1 and c.nutrition_progress_milli==600,"Two dried baskets for five people earn eighty percent treatment")
- check(g.party_health.days_without_fresh>0,"This focused change does not silently change prevention onset rules")
+ check(g.party_health.members[0].vitamin_debt_milli==0,"An eighty-percent portion also maintains an initially full prevention reserve")
  var detail: String=g.party_health.description(0)
  check(detail.contains("Treatment progress: 1.6 / 14") and detail.contains("80%"),"Health details show fractional progress and actual meal coverage")
  var store=Save.new();var snapshot: Dictionary=store.capture(g);var copy=store.restore(JSON.parse_string(JSON.stringify(snapshot)))
