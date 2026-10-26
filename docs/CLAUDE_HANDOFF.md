@@ -1,6 +1,6 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 25, 2026. Latest checkpoint: farmer livestock balance study (final section below; see [results](FARMER_LIVESTOCK_BALANCE.md)). Earlier sections are chronological records.
+Last updated October 25, 2026. Latest checkpoint: livestock realism audit (final section below; see [audit](LIVESTOCK_REALISM_AUDIT.md)). Earlier sections are chronological records.
 
 ## Resume here
 
@@ -706,3 +706,13 @@ Publication verification: all **77 Godot suites** passed on runtime **27a4b01**,
 - Actual confirmation milk/egg units eaten with aware care: goats 121.42, cow 198.62, hens 6.54, mixed 233.67. Gross emergency meat is separate (18.38 / 185.46 / 0 / 167.62). Mixed care shortfalls fall from 83.04% to 0.57% of herd days, improving food without reliable arrivals. Supplemental food and higher initial outlay compete with other needs.
 - Poultry grain lasts about 33 days for six hens; no restock succeeded in this matrix and most hens died before useful bulk-post resupply. Kearny is not a bulk post; grain rows currently appear at bulk posts. Initial feed quantity/provisioning, sales/culling and researched scratch forage remain open rather than simply buffing egg calories.
 - Observed failures still feature food shortages, scurvy and long stationary exposure. Baseline confirmation had 48 lack-of-food and 24 scurvy deaths; 21/24 first deaths followed a shortage. Policy limitations matter: Filling if any active person is <80 health/ill, $20 normal / $10 emergency cash reserves before future tolls, no livestock sales, no optimized farmer ration/start outfit search. The next policy audit should examine those decisions and produce coverage before changing game rules. Confirmation outcomes were not used to tune this study.
+
+
+## October 25, 2026: livestock realism audit
+
+- Spencer requires realistic production, independent of farmer win rates. He explicitly accepts modern non-industrial/smallholding yields as practical historical proxies. Do not wait for an exact 1848 daily-yield dataset. Match breed/body size, diet, lactation, milking frequency and offspring share; ownership alone does not establish unchanged genetics.
+- [Audit](LIVESTOCK_REALISM_AUDIT.md) includes primary heritage-keeper comparisons: Devon 0.5–2+ gallons **per milking** in an account describing once-daily milking; heritage goats 2–4 lb/day with two milkings; Dorking references ~150 and potential 170–190 eggs/year. Current 8 lb cow / 2 lb goat / 0.5 egg potential are plausible starting allowances. No production rates were changed.
+- Added `tests/livestock_realism_audit.gd` and source-stamped `docs/livestock-realism-audit-01.json`: 13 controlled livestock-only fixtures, no setup or record-validation errors. These expose defects rather than asserting them as desired behavior. They do not simulate full journeys or actual food eaten. All 78 existing Godot suites passed; log `.tools/livestock-realism-tests.log`.
+- Reproduced integer conversion bias (one goat 626 kcal becomes 1000; two goats 1252 become 1000), sub-unit milk expiring without ever becoming meal food, grain-only hens, fully fed winter hens dying on day 50, cow/goat same calendar-driven winter death, and care excluded by non-executing standing camp jobs on travel days.
+- Implementation order: calorie/mass-conserving product consumption and expiry with genuine save compatibility; actual daily care availability; finite hen scraps/scratching/supplementation; separate cow grazing/goat browsing and maintenance versus production; then matched survival comparisons with fresh confirmation seeds. Audit has detailed acceptance criteria. No gameplay, data or save rules changed in this checkpoint.
+- Spencer highlighted the prior walker failure: avoid a stack of linear penalties making fair animals useless. Use a broad normal-condition range, shortfalls affecting surplus production first, prolonged deficits affecting reserves, and severe debility only when warranted. Test adjacent threshold values and prevent double-counting one feed deficit. This does not authorize free output without adequate nutrients.

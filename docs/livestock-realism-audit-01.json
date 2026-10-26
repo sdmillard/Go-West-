@@ -1,0 +1,3077 @@
+{
+  "baseline_commit": "e09150ffa5a0a65620d1e05b49a0e72fab5389fa",
+  "cases": [
+    {
+      "cart": {
+        "dairy_cows": 1
+      },
+      "case": "cow-rest",
+      "food_units_generated": 2,
+      "isolated_days": 1,
+      "month": 5,
+      "remaining_animals": 1,
+      "represented_kcal": 2000,
+      "rounding_difference_kcal": -216.0,
+      "rows": [
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100
+          ],
+          "day": 1,
+          "eggs": 0,
+          "food_units": 2,
+          "grain_lb": 0.0,
+          "milk_lb": 8.0
+        }
+      ],
+      "source_kcal_from_reported_mass": 2216.0,
+      "standing_forage_jobs": false,
+      "unconverted_expired_kcal": 0.0,
+      "unconverted_kcal": 0.0,
+      "working": false
+    },
+    {
+      "cart": {
+        "goats": 1
+      },
+      "case": "goat-rest",
+      "food_units_generated": 1,
+      "isolated_days": 1,
+      "month": 5,
+      "remaining_animals": 1,
+      "represented_kcal": 1000,
+      "rounding_difference_kcal": 374.0,
+      "rows": [
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100
+          ],
+          "day": 1,
+          "eggs": 0,
+          "food_units": 1,
+          "grain_lb": 0.0,
+          "milk_lb": 2.0
+        }
+      ],
+      "source_kcal_from_reported_mass": 626.0,
+      "standing_forage_jobs": false,
+      "unconverted_expired_kcal": 0.0,
+      "unconverted_kcal": 0.0,
+      "working": false
+    },
+    {
+      "cart": {
+        "goats": 2
+      },
+      "case": "two-goats-rest",
+      "food_units_generated": 1,
+      "isolated_days": 1,
+      "month": 5,
+      "remaining_animals": 2,
+      "represented_kcal": 1000,
+      "rounding_difference_kcal": -252.0,
+      "rows": [
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100
+          ],
+          "day": 1,
+          "eggs": 0,
+          "food_units": 1,
+          "grain_lb": 0.0,
+          "milk_lb": 4.0
+        }
+      ],
+      "source_kcal_from_reported_mass": 1252.0,
+      "standing_forage_jobs": false,
+      "unconverted_expired_kcal": 0.0,
+      "unconverted_kcal": 0.0,
+      "working": false
+    },
+    {
+      "cart": {
+        "dairy_cows": 1,
+        "goats": 1
+      },
+      "case": "cow-and-goat-rest",
+      "food_units_generated": 3,
+      "isolated_days": 1,
+      "month": 5,
+      "remaining_animals": 2,
+      "represented_kcal": 3000,
+      "rounding_difference_kcal": 158.0,
+      "rows": [
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100
+          ],
+          "day": 1,
+          "eggs": 0,
+          "food_units": 3,
+          "grain_lb": 0.0,
+          "milk_lb": 10.0
+        }
+      ],
+      "source_kcal_from_reported_mass": 2842.0,
+      "standing_forage_jobs": false,
+      "unconverted_expired_kcal": 0.0,
+      "unconverted_kcal": 0.0,
+      "working": false
+    },
+    {
+      "cart": {
+        "dairy_cows": 1
+      },
+      "case": "cow-travel",
+      "food_units_generated": 2,
+      "isolated_days": 1,
+      "month": 5,
+      "remaining_animals": 1,
+      "represented_kcal": 2000,
+      "rounding_difference_kcal": 116.4,
+      "rows": [
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100
+          ],
+          "day": 1,
+          "eggs": 0,
+          "food_units": 2,
+          "grain_lb": 0.0,
+          "milk_lb": 6.8
+        }
+      ],
+      "source_kcal_from_reported_mass": 1883.6,
+      "standing_forage_jobs": false,
+      "unconverted_expired_kcal": 0.0,
+      "unconverted_kcal": 0.0,
+      "working": true
+    },
+    {
+      "cart": {
+        "dairy_cows": 1
+      },
+      "case": "cow-travel-standing-forage",
+      "food_units_generated": 2,
+      "isolated_days": 1,
+      "month": 5,
+      "remaining_animals": 1,
+      "represented_kcal": 2000,
+      "rounding_difference_kcal": 116.4,
+      "rows": [
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100
+          ],
+          "day": 1,
+          "eggs": 0,
+          "food_units": 2,
+          "grain_lb": 0.0,
+          "milk_lb": 6.8
+        }
+      ],
+      "source_kcal_from_reported_mass": 1883.6,
+      "standing_forage_jobs": true,
+      "unconverted_expired_kcal": 0.0,
+      "unconverted_kcal": 0.0,
+      "working": true
+    },
+    {
+      "cart": {
+        "dairy_cows": 1,
+        "goats": 1
+      },
+      "case": "mixed-travel",
+      "food_units_generated": 2,
+      "isolated_days": 1,
+      "month": 5,
+      "remaining_animals": 2,
+      "represented_kcal": 2000,
+      "rounding_difference_kcal": -415.7,
+      "rows": [
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100
+          ],
+          "day": 1,
+          "eggs": 0,
+          "food_units": 2,
+          "grain_lb": 0.0,
+          "milk_lb": 8.5
+        }
+      ],
+      "source_kcal_from_reported_mass": 2415.7,
+      "standing_forage_jobs": false,
+      "unconverted_expired_kcal": 0.0,
+      "unconverted_kcal": 0.0,
+      "working": true
+    },
+    {
+      "cart": {
+        "dairy_cows": 1,
+        "goats": 1
+      },
+      "case": "mixed-travel-standing-forage",
+      "food_units_generated": 2,
+      "isolated_days": 1,
+      "month": 5,
+      "remaining_animals": 2,
+      "represented_kcal": 2000,
+      "rounding_difference_kcal": -12.136,
+      "rows": [
+        {
+          "care_factor": 0.833333333333333,
+          "conditions": [
+            100,
+            100
+          ],
+          "day": 1,
+          "eggs": 0,
+          "food_units": 2,
+          "grain_lb": 0.0,
+          "milk_lb": 7.08
+        }
+      ],
+      "source_kcal_from_reported_mass": 2012.136,
+      "standing_forage_jobs": true,
+      "unconverted_expired_kcal": 0.0,
+      "unconverted_kcal": 0.0,
+      "working": true
+    },
+    {
+      "cart": {
+        "hens": 6,
+        "poultry_feed": 400
+      },
+      "case": "six-hens-fed",
+      "food_units_generated": 7,
+      "isolated_days": 30,
+      "month": 5,
+      "remaining_animals": 6,
+      "represented_kcal": 7000,
+      "rounding_difference_kcal": 994.0,
+      "rows": [
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 1,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 98.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 2,
+          "eggs": 6,
+          "food_units": 0,
+          "grain_lb": 97.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 3,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 95.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 4,
+          "eggs": 6,
+          "food_units": 1,
+          "grain_lb": 94.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 5,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 92.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 6,
+          "eggs": 6,
+          "food_units": 0,
+          "grain_lb": 91.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 7,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 89.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 8,
+          "eggs": 6,
+          "food_units": 1,
+          "grain_lb": 88.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 9,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 86.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 10,
+          "eggs": 6,
+          "food_units": 0,
+          "grain_lb": 85.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 11,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 83.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 12,
+          "eggs": 6,
+          "food_units": 1,
+          "grain_lb": 82.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 13,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 80.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 14,
+          "eggs": 6,
+          "food_units": 0,
+          "grain_lb": 79.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 15,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 77.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 16,
+          "eggs": 6,
+          "food_units": 1,
+          "grain_lb": 76.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 17,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 74.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 18,
+          "eggs": 6,
+          "food_units": 0,
+          "grain_lb": 73.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 19,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 71.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 20,
+          "eggs": 6,
+          "food_units": 1,
+          "grain_lb": 70.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 21,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 68.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 22,
+          "eggs": 6,
+          "food_units": 0,
+          "grain_lb": 67.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 23,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 65.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 24,
+          "eggs": 6,
+          "food_units": 1,
+          "grain_lb": 64.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 25,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 62.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 26,
+          "eggs": 6,
+          "food_units": 0,
+          "grain_lb": 61.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 27,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 59.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 28,
+          "eggs": 6,
+          "food_units": 1,
+          "grain_lb": 58.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 29,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 56.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "day": 30,
+          "eggs": 6,
+          "food_units": 0,
+          "grain_lb": 55.0,
+          "milk_lb": 0.0
+        }
+      ],
+      "source_kcal_from_reported_mass": 6435.0,
+      "standing_forage_jobs": false,
+      "unconverted_expired_kcal": 0.0,
+      "unconverted_kcal": 429.0,
+      "working": false
+    },
+    {
+      "cart": {
+        "hens": 6
+      },
+      "case": "six-hens-no-grain",
+      "food_units_generated": 0,
+      "isolated_days": 20,
+      "month": 5,
+      "remaining_animals": 0,
+      "represented_kcal": 0,
+      "rounding_difference_kcal": 0.0,
+      "rows": [
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            95,
+            95,
+            95,
+            95,
+            95,
+            95
+          ],
+          "day": 1,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            90,
+            90,
+            90,
+            90,
+            90,
+            90
+          ],
+          "day": 2,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            85,
+            85,
+            85,
+            85,
+            85,
+            85
+          ],
+          "day": 3,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            80,
+            80,
+            80,
+            80,
+            80,
+            80
+          ],
+          "day": 4,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            75,
+            75,
+            75,
+            75,
+            75,
+            75
+          ],
+          "day": 5,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            70,
+            70,
+            70,
+            70,
+            70,
+            70
+          ],
+          "day": 6,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            65,
+            65,
+            65,
+            65,
+            65,
+            65
+          ],
+          "day": 7,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
+          ],
+          "day": 8,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            55,
+            55,
+            55,
+            55,
+            55,
+            55
+          ],
+          "day": 9,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            50,
+            50,
+            50,
+            50,
+            50,
+            50
+          ],
+          "day": 10,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            45,
+            45,
+            45,
+            45,
+            45,
+            45
+          ],
+          "day": 11,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            40,
+            40,
+            40,
+            40,
+            40,
+            40
+          ],
+          "day": 12,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            35,
+            35,
+            35,
+            35,
+            35,
+            35
+          ],
+          "day": 13,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            30,
+            30,
+            30,
+            30,
+            30,
+            30
+          ],
+          "day": 14,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            25,
+            25,
+            25,
+            25,
+            25,
+            25
+          ],
+          "day": 15,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            20,
+            20,
+            20,
+            20,
+            20,
+            20
+          ],
+          "day": 16,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            15,
+            15,
+            15,
+            15,
+            15,
+            15
+          ],
+          "day": 17,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            10,
+            10,
+            10,
+            10,
+            10,
+            10
+          ],
+          "day": 18,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            5,
+            5,
+            5,
+            5,
+            5,
+            5
+          ],
+          "day": 19,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [],
+          "day": 20,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        }
+      ],
+      "source_kcal_from_reported_mass": 0.0,
+      "standing_forage_jobs": false,
+      "unconverted_expired_kcal": 0.0,
+      "unconverted_kcal": 0.0,
+      "working": false
+    },
+    {
+      "cart": {
+        "dairy_cows": 1
+      },
+      "case": "cow-winter-rest",
+      "food_units_generated": 4,
+      "isolated_days": 50,
+      "month": 1,
+      "remaining_animals": 0,
+      "represented_kcal": 4000,
+      "rounding_difference_kcal": 1894.8,
+      "rows": [
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            98
+          ],
+          "day": 1,
+          "eggs": 0,
+          "food_units": 1,
+          "grain_lb": 0.0,
+          "milk_lb": 1.96
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            96
+          ],
+          "day": 2,
+          "eggs": 0,
+          "food_units": 1,
+          "grain_lb": 0.0,
+          "milk_lb": 1.92
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            94
+          ],
+          "day": 3,
+          "eggs": 0,
+          "food_units": 1,
+          "grain_lb": 0.0,
+          "milk_lb": 1.88
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            92
+          ],
+          "day": 4,
+          "eggs": 0,
+          "food_units": 1,
+          "grain_lb": 0.0,
+          "milk_lb": 1.84
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            90
+          ],
+          "day": 5,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 1.8
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            88
+          ],
+          "day": 6,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 1.76
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            86
+          ],
+          "day": 7,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 1.72
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            84
+          ],
+          "day": 8,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 1.68
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            82
+          ],
+          "day": 9,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 1.64
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            80
+          ],
+          "day": 10,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 1.6
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            78
+          ],
+          "day": 11,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 1.56
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            76
+          ],
+          "day": 12,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 1.52
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            74
+          ],
+          "day": 13,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 1.48
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            72
+          ],
+          "day": 14,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 1.44
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            70
+          ],
+          "day": 15,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 1.4
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            68
+          ],
+          "day": 16,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 1.36
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            66
+          ],
+          "day": 17,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 1.32
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            64
+          ],
+          "day": 18,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 1.28
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            62
+          ],
+          "day": 19,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 1.24
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            60
+          ],
+          "day": 20,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 1.2
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            58
+          ],
+          "day": 21,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 1.16
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            56
+          ],
+          "day": 22,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 1.12
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            54
+          ],
+          "day": 23,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 1.08
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            52
+          ],
+          "day": 24,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 1.04
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            50
+          ],
+          "day": 25,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 1.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            48
+          ],
+          "day": 26,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.96
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            46
+          ],
+          "day": 27,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.92
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            44
+          ],
+          "day": 28,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.88
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            42
+          ],
+          "day": 29,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.84
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            40
+          ],
+          "day": 30,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.8
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            38
+          ],
+          "day": 31,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.91
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            36
+          ],
+          "day": 32,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.86
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            34
+          ],
+          "day": 33,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.82
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            32
+          ],
+          "day": 34,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.77
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            30
+          ],
+          "day": 35,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.72
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            28
+          ],
+          "day": 36,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.67
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            26
+          ],
+          "day": 37,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.62
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            24
+          ],
+          "day": 38,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.58
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            22
+          ],
+          "day": 39,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.53
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            20
+          ],
+          "day": 40,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.48
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            18
+          ],
+          "day": 41,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.43
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            16
+          ],
+          "day": 42,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.38
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            14
+          ],
+          "day": 43,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.34
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            12
+          ],
+          "day": 44,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.29
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            10
+          ],
+          "day": 45,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.24
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            8
+          ],
+          "day": 46,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.19
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            6
+          ],
+          "day": 47,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.14
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            4
+          ],
+          "day": 48,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.1
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            2
+          ],
+          "day": 49,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.05
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [],
+          "day": 50,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        }
+      ],
+      "source_kcal_from_reported_mass": 13994.04,
+      "standing_forage_jobs": false,
+      "unconverted_expired_kcal": 11888.84,
+      "unconverted_kcal": 0.0,
+      "working": false
+    },
+    {
+      "cart": {
+        "goats": 1
+      },
+      "case": "goat-winter-rest",
+      "food_units_generated": 0,
+      "isolated_days": 50,
+      "month": 1,
+      "remaining_animals": 0,
+      "represented_kcal": 0,
+      "rounding_difference_kcal": -0.000000000000454747350886464,
+      "rows": [
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            98
+          ],
+          "day": 1,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.49
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            96
+          ],
+          "day": 2,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.48
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            94
+          ],
+          "day": 3,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.47
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            92
+          ],
+          "day": 4,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.46
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            90
+          ],
+          "day": 5,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.45
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            88
+          ],
+          "day": 6,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.44
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            86
+          ],
+          "day": 7,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.43
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            84
+          ],
+          "day": 8,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.42
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            82
+          ],
+          "day": 9,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.41
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            80
+          ],
+          "day": 10,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.4
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            78
+          ],
+          "day": 11,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.39
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            76
+          ],
+          "day": 12,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.38
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            74
+          ],
+          "day": 13,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.37
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            72
+          ],
+          "day": 14,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.36
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            70
+          ],
+          "day": 15,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.35
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            68
+          ],
+          "day": 16,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.34
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            66
+          ],
+          "day": 17,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.33
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            64
+          ],
+          "day": 18,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.32
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            62
+          ],
+          "day": 19,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.31
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            60
+          ],
+          "day": 20,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.3
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            58
+          ],
+          "day": 21,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.29
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            56
+          ],
+          "day": 22,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.28
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            54
+          ],
+          "day": 23,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.27
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            52
+          ],
+          "day": 24,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.26
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            50
+          ],
+          "day": 25,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.25
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            48
+          ],
+          "day": 26,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.24
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            46
+          ],
+          "day": 27,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.23
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            44
+          ],
+          "day": 28,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.22
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            42
+          ],
+          "day": 29,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.21
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            40
+          ],
+          "day": 30,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.2
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            38
+          ],
+          "day": 31,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.23
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            36
+          ],
+          "day": 32,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.22
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            34
+          ],
+          "day": 33,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.2
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            32
+          ],
+          "day": 34,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.19
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            30
+          ],
+          "day": 35,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.18
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            28
+          ],
+          "day": 36,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.17
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            26
+          ],
+          "day": 37,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.16
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            24
+          ],
+          "day": 38,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.14
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            22
+          ],
+          "day": 39,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.13
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            20
+          ],
+          "day": 40,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.12
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            18
+          ],
+          "day": 41,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.11
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            16
+          ],
+          "day": 42,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.1
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            14
+          ],
+          "day": 43,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.08
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            12
+          ],
+          "day": 44,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.07
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            10
+          ],
+          "day": 45,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.06
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            8
+          ],
+          "day": 46,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.05
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            6
+          ],
+          "day": 47,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.04
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            4
+          ],
+          "day": 48,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.02
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            2
+          ],
+          "day": 49,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.01
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [],
+          "day": 50,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 0.0,
+          "milk_lb": 0.0
+        }
+      ],
+      "source_kcal_from_reported_mass": 3953.19,
+      "standing_forage_jobs": false,
+      "unconverted_expired_kcal": 3953.19,
+      "unconverted_kcal": 0.0,
+      "working": false
+    },
+    {
+      "cart": {
+        "hens": 6,
+        "poultry_feed": 1200
+      },
+      "case": "hens-winter-fed-rest",
+      "food_units_generated": 1,
+      "isolated_days": 54,
+      "month": 1,
+      "remaining_animals": 0,
+      "represented_kcal": 1000,
+      "rounding_difference_kcal": 142.0,
+      "rows": [
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            98,
+            98,
+            98,
+            98,
+            98,
+            98
+          ],
+          "day": 1,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 298.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            96,
+            96,
+            96,
+            96,
+            96,
+            96
+          ],
+          "day": 2,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 297.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            94,
+            94,
+            94,
+            94,
+            94,
+            94
+          ],
+          "day": 3,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 295.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            92,
+            92,
+            92,
+            92,
+            92,
+            92
+          ],
+          "day": 4,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 294.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            90,
+            90,
+            90,
+            90,
+            90,
+            90
+          ],
+          "day": 5,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 292.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            88,
+            88,
+            88,
+            88,
+            88,
+            88
+          ],
+          "day": 6,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 291.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            86,
+            86,
+            86,
+            86,
+            86,
+            86
+          ],
+          "day": 7,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 289.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            84,
+            84,
+            84,
+            84,
+            84,
+            84
+          ],
+          "day": 8,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 288.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            82,
+            82,
+            82,
+            82,
+            82,
+            82
+          ],
+          "day": 9,
+          "eggs": 6,
+          "food_units": 0,
+          "grain_lb": 286.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            80,
+            80,
+            80,
+            80,
+            80,
+            80
+          ],
+          "day": 10,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 285.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            78,
+            78,
+            78,
+            78,
+            78,
+            78
+          ],
+          "day": 11,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 283.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            76,
+            76,
+            76,
+            76,
+            76,
+            76
+          ],
+          "day": 12,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 282.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            74,
+            74,
+            74,
+            74,
+            74,
+            74
+          ],
+          "day": 13,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 280.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            72,
+            72,
+            72,
+            72,
+            72,
+            72
+          ],
+          "day": 14,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 279.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            70,
+            70,
+            70,
+            70,
+            70,
+            70
+          ],
+          "day": 15,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 277.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            68,
+            68,
+            68,
+            68,
+            68,
+            68
+          ],
+          "day": 16,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 276.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            66,
+            66,
+            66,
+            66,
+            66,
+            66
+          ],
+          "day": 17,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 274.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            64,
+            64,
+            64,
+            64,
+            64,
+            64
+          ],
+          "day": 18,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 273.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            62,
+            62,
+            62,
+            62,
+            62,
+            62
+          ],
+          "day": 19,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 271.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            60,
+            60,
+            60,
+            60,
+            60,
+            60
+          ],
+          "day": 20,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 270.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            58,
+            58,
+            58,
+            58,
+            58,
+            58
+          ],
+          "day": 21,
+          "eggs": 6,
+          "food_units": 1,
+          "grain_lb": 268.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            56,
+            56,
+            56,
+            56,
+            56,
+            56
+          ],
+          "day": 22,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 267.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            54,
+            54,
+            54,
+            54,
+            54,
+            54
+          ],
+          "day": 23,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 265.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            52,
+            52,
+            52,
+            52,
+            52,
+            52
+          ],
+          "day": 24,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 264.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            50,
+            50,
+            50,
+            50,
+            50,
+            50
+          ],
+          "day": 25,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 262.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            48,
+            48,
+            48,
+            48,
+            48,
+            48
+          ],
+          "day": 26,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 261.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            46,
+            46,
+            46,
+            46,
+            46,
+            46
+          ],
+          "day": 27,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 259.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            44,
+            44,
+            44,
+            44,
+            44,
+            44
+          ],
+          "day": 28,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 258.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            42,
+            42,
+            42,
+            42,
+            42,
+            42
+          ],
+          "day": 29,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 256.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            40,
+            40,
+            40,
+            40,
+            40,
+            40
+          ],
+          "day": 30,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 255.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            38,
+            38,
+            38,
+            38,
+            38,
+            38
+          ],
+          "day": 31,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 253.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            36,
+            36,
+            36,
+            36,
+            36,
+            36
+          ],
+          "day": 32,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 252.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            34,
+            34,
+            34,
+            34,
+            34,
+            34
+          ],
+          "day": 33,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 250.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            32,
+            32,
+            32,
+            32,
+            32,
+            32
+          ],
+          "day": 34,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 249.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            30,
+            30,
+            30,
+            30,
+            30,
+            30
+          ],
+          "day": 35,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 247.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            28,
+            28,
+            28,
+            28,
+            28,
+            28
+          ],
+          "day": 36,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 246.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            26,
+            26,
+            26,
+            26,
+            26,
+            26
+          ],
+          "day": 37,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 244.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            24,
+            24,
+            24,
+            24,
+            24,
+            24
+          ],
+          "day": 38,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 243.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            22,
+            22,
+            22,
+            22,
+            22,
+            22
+          ],
+          "day": 39,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 241.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            20,
+            20,
+            20,
+            20,
+            20,
+            20
+          ],
+          "day": 40,
+          "eggs": 6,
+          "food_units": 0,
+          "grain_lb": 240.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            18,
+            18,
+            18,
+            18,
+            18,
+            18
+          ],
+          "day": 41,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 238.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            16,
+            16,
+            16,
+            16,
+            16,
+            16
+          ],
+          "day": 42,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 237.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            14,
+            14,
+            14,
+            14,
+            14,
+            14
+          ],
+          "day": 43,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 235.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            12,
+            12,
+            12,
+            12,
+            12,
+            12
+          ],
+          "day": 44,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 234.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            10,
+            10,
+            10,
+            10,
+            10,
+            10
+          ],
+          "day": 45,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 232.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            8,
+            8,
+            8,
+            8,
+            8,
+            8
+          ],
+          "day": 46,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 231.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            6,
+            6,
+            6,
+            6,
+            6,
+            6
+          ],
+          "day": 47,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 229.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "day": 48,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 228.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "day": 49,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 226.5,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [],
+          "day": 50,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 225.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [],
+          "day": 51,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 225.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [],
+          "day": 52,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 225.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [],
+          "day": 53,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 225.0,
+          "milk_lb": 0.0
+        },
+        {
+          "care_factor": 1.0,
+          "conditions": [],
+          "day": 54,
+          "eggs": 0,
+          "food_units": 0,
+          "grain_lb": 225.0,
+          "milk_lb": 0.0
+        }
+      ],
+      "source_kcal_from_reported_mass": 1287.0,
+      "standing_forage_jobs": false,
+      "unconverted_expired_kcal": 429.0,
+      "unconverted_kcal": 0.0,
+      "working": false
+    }
+  ],
+  "date": "2026-10-25",
+  "errors": [],
+  "rules_fingerprint": "96f62de645481bd6421bce320de1afcfcd7e2d3dec70483a49ab31dbdd33c4c5",
+  "scope": "13 controlled livestock-only fixtures; no meals, packing, human deterioration, weather changes, travel or survival outcomes. Dairy source calories use milk reported at .01 lb precision. Conversion totals are gross, not food eaten. Existing fresh batches deliberately retained for output measurement.",
+  "source_hashes_lf": {
+    "data/livestock.json": "b60d1e0f3cdce8e9bfc3e0f98929cd85d843e7bf1c2a36c5b4d59d097ff40243",
+    "simulation/livestock.gd": "4b2100d63f83195b983ff1f3537842107472345d6c46e34bf6fdcc4a16afff9d",
+    "simulation/trail_engine.gd": "89f1195778b90d8ab60e9c60deb831993531028a62fbf090adbf38a24436d690",
+    "tests/livestock_realism_audit.gd": "ee8454ec5ece88f76bbf1c637e1d6a169b3e11a41b2fb5192f15d0f5f3a7aea4"
+  }
+}
