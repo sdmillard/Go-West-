@@ -2,6 +2,8 @@
 
 A growing Oregon Trail-inspired game in **Godot 4 / GDScript**. Lead five travelers from Independence to Oregon City, managing supplies, crossings and the Barlow Road. Historical evidence now takes priority when it differs from the classic games. The continuous overland itinerary connects 36 stops over 1,938 reported guide miles. See [route evidence and game comparison](docs/ROUTE_EXPANSION.md).
 
+[Mixed-feeding survival comparison](docs/FEEDING_SURVIVAL_COMPARISON.md): 624 matched journeys, an egg-save repair, and remaining forage/sharing bottlenecks. Farmer balance remains open.
+
 ![The playable travel screen](docs/preview.png)
 
 [Wagon sales, custom robbery demands and resizing](docs/WAGON_SALES_ROBBERY_AND_DISPLAY.md) add reviewed keep/sell/leave decisions, value-sensitive intimidation and configurable window scaling.
