@@ -609,7 +609,7 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 	state.erase("camp_watch_day")
 	state.erase("camp_watch_member")
 	var wagon_hunt: bool=camp_action=="hunt" and hunt.get("field",{}).get("kit","")=="wagon"
-	if not (camp_action=="settlement_work" and income.worker!=camp_tasks.leader_id(self)) and not wagon_hunt and (not resting or (not camp_action.is_empty() and camp_action!="rest")):camp_tasks.end_leader_nursing(self)
+	if not (camp_action=="settlement_work" and not income.is_working(camp_tasks.leader_id(self))) and not wagon_hunt and (not resting or (not camp_action.is_empty() and camp_action!="rest")):camp_tasks.end_leader_nursing(self)
 	if state.extended_route and not camp_action.is_empty():camp_tasks.begin(self,camp_action)
 	var sick_before: bool=characters.has_sick(self)
 	state.day += 1

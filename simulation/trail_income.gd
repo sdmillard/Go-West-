@@ -3,7 +3,9 @@ extends RefCounted
 const MAX_OWNERS=32
 var data: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/trail_income.json"))
 var record: Dictionary={"keepsakes":{},"work":{}}
-var worker: int=-1 # Only during one synchronous paid day; never saved.
+var worker: int=-1 # First worker, retained for single-worker observers. Never saved.
+var workers: Array=[] # Entire crew during a single synchronous day.
+func is_working(index: int) -> bool:return index in workers
 static func all_keys() -> Array:
  var result: Array=[]
  for index in range(MAX_OWNERS):result.append(key(index))
@@ -20,13 +22,15 @@ static func valid_rules(value: Variant) -> bool:
  if value.keepsake.consent_trust>100:return false
  var weight: Variant=value.keepsake.get("weight_lb")
  if not (weight is int or weight is float) or not is_finite(weight) or weight<=0 or weight>5:return false
- if value.jobs.keys().size()!=3:return false
- for id in ["labor","carpentry","care"]:
+ if value.jobs.keys().size()!=4:return false
+ for id in ["labor","carpentry","care","leatherwork"]:
   var job: Variant=value.jobs.get(id)
-  if not job is Dictionary or not job.get("label") is String or not preload("res://simulation/pelts.gd").whole(job.get("cents"),1,10000) or job.get("background") not in ["","Carpentry","Caregiving"]:return false
+  if not job is Dictionary or not job.get("label") is String or not preload("res://simulation/pelts.gd").whole(job.get("cents"),1,10000) or job.get("background") not in ["","Carpentry","Caregiving","Leatherworking"]:return false
+  if not preload("res://simulation/pelts.gd").whole(job.get("openings"),1,5):return false
  for site in value.sites:
   var row: Variant=value.sites[site]
   if not site is String or not row is Dictionary or not preload("res://simulation/pelts.gd").whole(row.get("days"),1,30) or not preload("res://simulation/pelts.gd").whole(row.get("first_month"),1,12):return false
+  if not preload("res://simulation/pelts.gd").whole(row.get("workers_per_day"),1,5):return false
  return true
 static func configure(model) -> bool:
  var rules: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/trail_income.json"))
@@ -79,7 +83,7 @@ func offers(game) -> Array:
  var left: int=maxi(0,int(data.sites[site].days)-int(record.work.get(site,0)))
  for id in data.jobs:
   var job: Dictionary=data.jobs[id]
-  result.append({"id":id,"label":job.label,"cents":int(job.cents),"background":job.background,"left":left})
+  result.append({"id":id,"label":job.label,"cents":int(job.cents),"background":job.background,"left":left,"openings":mini(left,int(job.openings))})
  return result
 func quote(game,index: int,job_id: String) -> Dictionary:
  var result: Dictionary={"valid":false,"message":"No suitable local work available.","cents":0,"days":1,"meals":int(game.provisions.data.rations_lb[game.state.rations])*int(game.state.party_size)}
@@ -91,22 +95,50 @@ func quote(game,index: int,job_id: String) -> Dictionary:
  if game.camp_tasks.patient_nurses(game).has(index):result.message="This traveler is being nursed and must rest.";return result
  if not offer.background.is_empty() and not game.camp_tasks.specialist(game,index,offer.background) and not (index==0 and game.state.profession=="carpenter" and offer.background=="Carpentry"):
   result.message="This job needs a suitable background.";return result
- result.valid=true;result.cents=offer.cents
- result.message="%s earns $%.2f. ONE DAY; party meals: %d food units, plus normal wages/weather. No employer board. Other companions follow their camp orders. %d local work day(s) remain." % [person.name,offer.cents/100.0,result.meals,offer.left]
+ result.valid=true;result.market_cents=int(game.characters.wage_quote(game.characters.profiles[index]).daily_cents)
+ result.cents=maxi(int(offer.cents),int(result.market_cents))
+ result.message="%s earns $%.2f. ONE DAY; party meals: %d food units, plus normal wages/weather. No employer board. Other companions follow their camp orders. %d local work day(s) remain." % [person.name,result.cents/100.0,result.meals,offer.left]
+ var contract: Dictionary=game.characters.profiles[index].contract
+ result.contract_daily_cents=ceili(float(contract.wage_cents)/int(contract.interval_days)) if not contract.is_empty() else 0
+ result.covers_contract=result.cents>=result.contract_daily_cents
+ result.message+=" Market quote $%.2f/day." % (result.market_cents/100.0)
+ if not contract.is_empty():result.message+=" Contract accrual $%.2f/day: %s." % [result.contract_daily_cents/100.0,"covered by this offer" if result.covers_contract else "above this offer"]
  return result
-func work(game,index: int,job_id: String) -> bool:
- var q: Dictionary=quote(game,index,job_id)
+func crew_quote(game,assignments: Dictionary) -> Dictionary:
+ var result: Dictionary={"valid":false,"message":"Choose workers and jobs.","cents":0,"days":1,"meals":int(game.provisions.data.rations_lb[game.state.rations])*int(game.state.party_size),"workers":[]}
+ if assignments.is_empty() or not game.can_service():return result
+ var offers_here: Array=offers(game)
+ if offers_here.is_empty():result.message="No local employment here.";return result
+ var site: Dictionary=data.sites[str(game.state.landmark)]
+ if assignments.size()>int(site.workers_per_day) or assignments.size()>int(offers_here[0].left):result.message="Not enough daily openings or remaining worker-days for this crew.";return result
+ var used: Dictionary={}
+ for id in assignments:
+  if not id is String or not id.is_valid_int() or str(int(id))!=id or not assignments[id] is String:result.message="Choose each traveler once.";return result
+  var q: Dictionary=quote(game,int(id),assignments[id])
+  if not q.valid:result.message=q.message;return result
+  var job: String=assignments[id]
+  used[job]=int(used.get(job,0))+1
+  if used[job]>int(data.jobs[job].openings):result.message="Not enough openings for %s." % data.jobs[job].label;return result
+  result.cents+=int(q.cents)
+  result.workers.append({"id":int(id),"job":job,"cents":int(q.cents),"market_cents":int(q.market_cents)})
+ result.workers.sort_custom(func(a,b):return a.id<b.id)
+ result.valid=true
+ result.message="%d workers earn $%.2f in ONE DAY. Party food: %d units, once; normal wages, weather and spoilage. Selected workers skip camp chores; everyone else follows camp orders." % [assignments.size(),result.cents/100.0,result.meals]
+ return result
+func work(game,index: int,job_id: String) -> bool:return work_crew(game,{str(index):job_id})
+func work_crew(game,assignments: Dictionary) -> bool:
+ var q: Dictionary=crew_quote(game,assignments)
  if not q.valid:return false
  var site: String=str(game.state.landmark)
- record.work[site]=int(record.work.get(site,0))+1
- worker=index
- # Make the earned wage available for this day's existing automatic contract payments.
+ record.work[site]=int(record.work.get(site,0))+q.workers.size()
+ workers=q.workers.map(func(entry):return int(entry.id));worker=int(workers[0])
+ # The day's full earnings can fund normal automatic companion payments.
  game.state.money=snappedf(float(game.state.money)+q.cents/100.0,0.01)
  game._tick_day(false,false,"settlement_work")
- worker=-1
- # Payment is for the day begun; normal health hazards still occur during it.
- game.supply_history.append({"day":game.state.day,"event":"settlement_wages","worker":index,"changes":{"money":q.cents/100.0}})
- game.journal.append("Day %d · %s earned $%.2f doing %s at %s." % [game.state.day,game.party_health.members[index].name,q.cents/100.0,data.jobs[job_id].label,game.route.nodes[site].name])
+ workers=[];worker=-1
+ for entry in q.workers:
+  game.supply_history.append({"day":game.state.day,"event":"settlement_wages","worker":entry.id,"job":entry.job,"changes":{"money":entry.cents/100.0}})
+  game.journal.append("Day %d · %s earned $%.2f doing %s at %s." % [game.state.day,game.party_health.members[entry.id].name,entry.cents/100.0,data.jobs[entry.job].label,game.route.nodes[site].name])
  game.refresh_stop_offers()
  if game.state.status=="traveling" and not game.crime.check_pursuit(game):game.crime.check_wanted(game)
  return true

@@ -1,5 +1,5 @@
 {
-  "note": "Nominal-dollar estimates: 1848 wage circular summarized in 1850 Census supports 75-150 cents/day for mechanics, not exact post tariffs. General 100, care/laundry 75 and skilled carpentry 150 cents/day are authored offers without board. Job quotas, keepsake 200-cent resale/0.25 lb and 100 arrival points are game assumptions; see docs/TRAIL_INCOME.md.",
+  "note": "Nominal-dollar estimates: 1848 wage circular summarized in 1850 Census supports 75-150 cents/day for mechanics, not exact post tariffs. General 100, care/laundry 75 and skilled carpentry 150 cents/day are authored offers without board. Job quotas, keepsake 200-cent resale/0.25 lb and 100 arrival points are game assumptions; see docs/TRAIL_INCOME.md. Crew employment shares one calendar day. Existing days limits now explicitly count worker-days; per-role and site daily openings are authored. Pay=max(existing job rate, mercenary market wage_quote), independent of a privately inflated contract. Leather repairs require the Leatherworker specialty; employer supplies materials.",
   "keepsake": {
     "weight_lb": 0.25,
     "sell_cents": 200,
@@ -10,47 +10,63 @@
     "labor": {
       "label": "Load freight / general labor",
       "cents": 100,
-      "background": ""
+      "background": "",
+      "openings": 2
     },
     "carpentry": {
       "label": "Carpentry and repairs",
       "cents": 150,
-      "background": "Carpentry"
+      "background": "Carpentry",
+      "openings": 1
     },
     "care": {
       "label": "Laundry and household help",
       "cents": 75,
-      "background": "Caregiving"
+      "background": "Caregiving",
+      "openings": 1
+    },
+    "leatherwork": {
+      "label": "Leather and harness repairs",
+      "cents": 100,
+      "background": "Leatherworking",
+      "openings": 1
     }
   },
   "sites": {
     "independence": {
       "days": 6,
-      "first_month": 1
+      "first_month": 1,
+      "workers_per_day": 5
     },
     "fort_kearny": {
       "days": 4,
-      "first_month": 6
+      "first_month": 6,
+      "workers_per_day": 4
     },
     "fort_laramie": {
       "days": 4,
-      "first_month": 1
+      "first_month": 1,
+      "workers_per_day": 3
     },
     "fort_bridger": {
       "days": 3,
-      "first_month": 1
+      "first_month": 1,
+      "workers_per_day": 2
     },
     "fort_hall": {
       "days": 3,
-      "first_month": 1
+      "first_month": 1,
+      "workers_per_day": 2
     },
     "fort_boise": {
       "days": 2,
-      "first_month": 1
+      "first_month": 1,
+      "workers_per_day": 2
     },
     "the_dalles": {
       "days": 3,
-      "first_month": 1
+      "first_month": 1,
+      "workers_per_day": 4
     }
   }
 }

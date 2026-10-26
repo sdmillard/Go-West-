@@ -25,7 +25,7 @@ func load_data(value: Variant) -> bool:
 						if action not in ACTIONS or action in seen:return false
 						seen.append(action)
 				elif key=="assists":
-					if amount not in ["Hunting","Carpentry","Caregiving","Trading"]:return false
+					if amount not in ["Hunting","Carpentry","Caregiving","Trading","Leatherworking"]:return false
 				else:
 					if not (amount is int or amount is float) or not is_finite(amount):return false
 					if key in HEALTH_KEYS+["trust_loss","trust_gain","hardship_trust_loss"]:
