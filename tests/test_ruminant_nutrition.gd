@@ -67,6 +67,15 @@ func run():
   tiny.livestock.tick(tiny,true,false)
   check(Save.new().restore(JSON.parse_string(JSON.stringify(Save.new().capture(tiny))))!=null,"Near-maintenance milk keeps JSON mass and energy consistent")
   check(tiny.livestock.record.products.all(func(p):return p.lb>0 and is_equal_approx(float(p.kcal)/float(p.lb),277)),"No zero-mass or distorted tiny milk product")
+ var hard=Sim.new(425904,"classic",true)
+ check(hard.depart("banker",["A","B","C","D","E"],5,{"oxen":4,"food":100,"clothing":5,"dairy_cows":1,"livestock_fodder":100}),"Hard-travel feed fixture departs")
+ hard.pending={};hard.state.pace=2
+ hard.survival.weather=hard.survival.data.weather.filter(func(w):return w.id=="clear")[0].duplicate(true)
+ hard.livestock.tick(hard,false,true)
+ check(hard.livestock.record.animals[0].condition==100,"Adequate feed covers grueling maintenance without a second automatic work penalty")
+ var exact: Dictionary=Save.new().capture(hard)
+ var reloaded=Save.new().restore(JSON.parse_string(JSON.stringify(exact)))
+ check(reloaded!=null and Save.new().capture(reloaded)==exact,"Recurring energy/feed history survives JSON without binary drift")
  var fixtures: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-ruminant-energy.json"))
  for name in fixtures:
   var old: Dictionary=fixtures[name];var store=Save.new();var restored=store.restore(old)

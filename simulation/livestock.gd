@@ -97,7 +97,9 @@ func tick(game,resting: bool,working: bool) -> void:
  for a in record.animals:
   var rule: Dictionary=data.animals[a.kind]
   var nutrition: Dictionary=feeding.animals[a.kind]
-  var settled: Dictionary=Feeding.settle(data,int(a.condition),float(a.get("strain_carry",0)),float(nutrition.get("condition_intake",nutrition.intake)),bool(o.waterless),str(game.survival.weather.get("id","")),resting,working,int(game.state.pace))
+  # Dairy travel energy is already charged in its maintenance budget.
+  var direct_work: bool=working and a.kind=="hens"
+  var settled: Dictionary=Feeding.settle(data,int(a.condition),float(a.get("strain_carry",0)),float(nutrition.get("condition_intake",nutrition.intake)),bool(o.waterless),str(game.survival.weather.get("id","")),resting,direct_work,int(game.state.pace))
   a.condition=int(settled.condition)
   if float(settled.strain_carry)>0:a["strain_carry"]=settled.strain_carry
   else:a.erase("strain_carry")

@@ -36,7 +36,7 @@ func run():
  var hashes: Dictionary={}
  for path in ["simulation/livestock.gd","simulation/livestock_feeding.gd","simulation/ruminant_nutrition.gd","data/livestock.json","tests/ruminant_sensitivity.gd"]:hashes[path]=FileAccess.get_sha256("res://"+path)
  var result: Dictionary={"purpose":"1728 isolated real ticks across authored body/feed assumptions. No journey win rates or historical measurements.","source_hashes":hashes,"rules_signature":Save.new().fingerprint(),"failures":failures,"rows":rows}
- var path: String="res://.tools/ruminant-sensitivity-02.json"
+ var path: String="res://.tools/ruminant-sensitivity-03.json"
  if FileAccess.file_exists(path):printerr("Refusing to overwrite sensitivity report");quit(1);return
  var f=FileAccess.open(path,FileAccess.WRITE);f.store_string(JSON.stringify(result,"  "));f.close()
  print("Ruminant sensitivity: %d real ticks, %d failures" % [rows.size(),failures.size()]);quit(1 if not failures.is_empty() else 0)
