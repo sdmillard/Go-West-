@@ -139,7 +139,7 @@ static func reserve(game,offer: Dictionary) -> void:
  if not selected.is_empty():offer["condition"]=game.team_conditions.mean(selected)
  offer["condition_base"]=int(offer.get("condition",100))
  game.provisions.remove(int(offer.inventory.food))
- for key in offer.inventory:game.state[key]-=int(offer.inventory[key])
+ for key in offer.inventory:game.state[key]=int(game.state.get(key,0))-int(offer.inventory[key])
  for key in offer.stock:game.state[key]=int(game.state.get(key,0))-int(offer.stock[key])
  game.team_conditions.sync(game)
 static func restore_stock(game,animals: Dictionary,condition: int,original: Dictionary={},base: int=100) -> void:

@@ -4,7 +4,7 @@ const Provisions=preload("res://simulation/provisions.gd")
 static func available(game,from_cache: bool=false) -> Dictionary:
 	var result: Dictionary={}
 	for key in game.provisions.data.weights_lb:
-		result[key]=int(game.state[key])+(int(game.wagon_cache.inventory[key]) if from_cache and not game.wagon_cache.is_empty() else 0)
+		result[key]=int(game.state.get(key,0))+(int(game.wagon_cache.inventory.get(key,0)) if from_cache and not game.wagon_cache.is_empty() else 0)
 	if from_cache:
 		for batch in game.wagon_cache.fresh:
 			if batch.expires<=game.state.day:result.food-=int(batch.pounds)
@@ -157,7 +157,7 @@ static func _recover_here(game) -> bool:
 	if game.state.oxen<1 and game.state.vehicle=="foot":
 		game.journal.append("Day %d · Found the wagon, but no ox can pull it. Repack what you can carry, or trade for an animal." % game.state.day)
 		return true
-	for key in game.wagon_cache.inventory:game.state[key]+=int(game.wagon_cache.inventory[key])
+	for key in game.wagon_cache.inventory:game.state[key]=int(game.state.get(key,0))+int(game.wagon_cache.inventory[key])
 	game.provisions.fresh.append_array(game.wagon_cache.fresh.duplicate(true))
 	game.state.parts=game.state.wheels+game.state.axles+game.state.tongues
 	game.state["household_gear_lb"]=game.provisions.household_mass(game.state)+float(game.wagon_cache.get("household_gear_lb",maxf(0.0,float(game.provisions.data.household_gear_lb)-float(game.provisions.data.walking.personal_gear_lb_per_person)*int(game.state.party_size))))
@@ -194,9 +194,9 @@ static func valid(value: Variant,game,day: int) -> bool:
 		if mileage+int(at.offset)!=int(value.mile):return false
 	if not game.camp_repair.valid(value.get("camp_repair",{}),game):return false
 	if not game.Guards.valid(value,game,day):return false
-	if value.inventory.size()!=game.provisions.data.weights_lb.size():return false
+	if not game.Pelts.valid_inventory(value.inventory,game.provisions.data.weights_lb,game.provisions.data.pelts.goods):return false
 	for key in game.provisions.data.weights_lb:
-		var count=value.inventory.get(key)
+		var count=value.inventory.get(key,0)
 		if (not count is int and not count is float) or not is_finite(float(count)) or count!=floor(count) or count<0 or count>1000000:return false
 	var pounds:=0
 	for batch in value.fresh:

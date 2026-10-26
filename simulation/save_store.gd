@@ -229,7 +229,9 @@ func restore(value: Variant):
 	if not migrated and not economy_migrated and (not value.has("context") or not value.has("combat_history")):return null
 	if not value.get("state") is Dictionary:
 		return null
+	if migrated or economy_migrated:value=value.duplicate(true)
 	var s: Dictionary = value.state.duplicate(true)
+	if s.has("_raw_hides_lb"):return null
 	if (migrated or economy_migrated) and not s.has("salt"):s["salt"]=0
 	# Saddle and pack animal keys are optional; records from before horses carry none.
 	if not Simulation.Mounts.valid_state(s):return null
@@ -252,6 +254,7 @@ func restore(value: Variant):
 	game.livestock.record=normalize(stock)
 	for key in game.state:
 		if not s.has(key):
+			if game.provisions.data.pelts.goods.has(key):continue
 			return null
 		var expected = game.state[key]
 		if expected is int and key != "money":
