@@ -26,7 +26,7 @@ func dispatch_proactive(game,count: Dictionary) -> bool:
  return false
 func act(game,p: Dictionary,aim: RandomNumberGenerator,count: Dictionary) -> bool:
  if motion_policy=="serial" or not game.can_service():return super.act(game,p,aim,count)
- var ration: int=2 if game.party_health.members.any(func(m):return game.party_health.is_active(m) and (int(m.health)<80 or not m.conditions.is_empty())) else int(p.rations)
+ var ration: int=2 if p.get("adaptive_rations",true) and game.party_health.members.any(func(m):return game.party_health.is_active(m) and (int(m.health)<80 or not m.conditions.is_empty())) else int(p.rations)
  game.configure(int(p.pace),ration)
  var plan: Dictionary=plan_jobs(game)
  var meal: int=int(game.state.party_size)*int(game.provisions.data.rations_lb[game.state.rations])
@@ -34,7 +34,7 @@ func act(game,p: Dictionary,aim: RandomNumberGenerator,count: Dictionary) -> boo
   if dispatch_proactive(game,count):return true
  var current: Dictionary=p.duplicate(true)
  var away: bool=not game.field_outings.record.trips.is_empty()
- if motion_policy=="mobile" and away and int(game.state.food)>=meal:
+ if motion_policy=="mobile" and away and not p.get("hunt_while_away",false) and int(game.state.food)>=meal:
   current.hunt=false;current.slaughter=false
  var hunt_due: bool=bool(current.hunt) and int(game.state.food)<meal*reserve_meals and game.state.bullets>0
  var worst: int=100
