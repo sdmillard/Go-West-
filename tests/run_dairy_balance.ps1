@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][ValidateSet('old','new','fodder')][string]$Worker, [string]$ManifestFile = '.tools/dairy-balance-manifest-01.json')
+param([Parameter(Mandatory=$true)][ValidateSet('old','new','fodder')][string]$Worker, [string]$ManifestFile = '.tools/dairy-balance-manifest-02.json')
 $ErrorActionPreference = 'Stop'
 $studyRoot = Split-Path -Parent $PSScriptRoot
 $manifestPath = Join-Path $studyRoot $ManifestFile
@@ -7,7 +7,9 @@ $godotPath = Join-Path $studyRoot '.tools/godot/Godot_v4.5.1-stable_win64_consol
 $env:APPDATA = Join-Path $studyRoot ('.tools/dairy-balance-' + $Worker + '-userdata')
 foreach ($entry in @($manifest.entries | Where-Object worker -EQ $Worker)) {
     $checkout = Join-Path $studyRoot ($manifest.trees.PSObject.Properties[$entry.runtime].Value)
-    $origin = Join-Path $checkout ('.tools/' + $entry.filename)
+    $outputDirectory = Join-Path $checkout '.tools'
+    New-Item -ItemType Directory -Force -Path $outputDirectory | Out-Null
+    $origin = Join-Path $outputDirectory $entry.filename
     $copy = Join-Path $studyRoot ('.tools/' + $entry.filename)
     $log = Join-Path $studyRoot ('.tools/' + $entry.label + '.log')
     $receipt = Join-Path $studyRoot ('.tools/receipt-' + $entry.label + '.json')

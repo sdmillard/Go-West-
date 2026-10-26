@@ -27,3 +27,10 @@ Main-camp meals exclude detached actors and are not the entire expedition's calo
 Plain/observed snapshots and real feed checkouts must match on both runtimes. No-stock controls must have identical ordinary outcomes, timing, actions and economic records. Initial carts/costs must match old/new and current fixed/hay policies. Verify all source/rule fingerprints, seeds/settings, state/save/policy checks, complete cohort counts and original/parent report copies with hashes. Stop on any error. Preserve failed diagnostics; amend and restart affected cohorts with fresh seeds before claiming confirmation if correction is required. Raw archives/receipts remain local ignored `.tools/`; publish compact cells, provenance, limitations and bottlenecks. Run current `test.ps1` before handback.
 
 Only after interpreting this frozen pass should separate fresh-seed policy experiments examine rations, dispatch, produce coverage and spending reserves. This protocol makes no gameplay changes and sets no target arrival rate.
+
+
+## Infrastructure amendment 02: restart before any report archive
+
+The first three development batches (prior/current no-stock and current goat/hay, 12 journeys each) reached completion but could not write their JSON because the isolated checkouts lacked `.tools` output directories. The Godot logs expose the failed writes; no report or accepted archive was produced. These attempts are excluded, including all printed journey outcomes. No confirmation was run and no settings were tuned.
+
+The launcher now creates each isolated output directory before running. The complete 624-journey matrix restarts with **development seeds 475000–475005** and **confirmation 485000–485005**, suffix `-02`, manifest-02. Sizes, decisions, gameplay snapshots and common observer sources remain unchanged. Manifest-01 and failed batch logs are retained locally. The earlier seed numbers above describe the excluded declaration only; amendment 02 controls the accepted study.
