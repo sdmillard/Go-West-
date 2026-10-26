@@ -1,0 +1,2395 @@
+{
+  "legacy_absent": {
+    "camp_repair": {
+
+    },
+    "camp_tasks": {
+
+    },
+    "characters": [
+      {
+        "appearance": {
+          "clothing": "Ochre",
+          "hair": "Blond",
+          "heritage": "French Canadian",
+          "outfit": 0,
+          "skin": "Deep"
+        },
+        "boundaries": {
+          "approved": [],
+          "disapproved": [],
+          "forbidden": []
+        },
+        "can_betray": false,
+        "contract": {
+
+        },
+        "exit_warning": {
+
+        },
+        "id": 0,
+        "memories": [],
+        "relationship": "self",
+        "skill": "Leadership",
+        "specials": [],
+        "thresholds": {
+          "betrayal": 10,
+          "breaking": 20,
+          "loyalty": 80
+        },
+        "traits": [],
+        "trust": 50
+      },
+      {
+        "appearance": {
+          "clothing": "Charcoal",
+          "hair": "Blond",
+          "heritage": "Scottish American",
+          "outfit": 1,
+          "skin": "Brown"
+        },
+        "boundaries": {
+          "approved": [],
+          "disapproved": [],
+          "forbidden": [
+            "robbery",
+            "murder",
+            "cannibalism"
+          ]
+        },
+        "can_betray": false,
+        "contract": {
+
+        },
+        "exit_warning": {
+
+        },
+        "id": 1,
+        "memories": [],
+        "relationship": "fellow_traveler",
+        "skill": "Trading",
+        "specials": [],
+        "thresholds": {
+          "betrayal": 10,
+          "breaking": 20,
+          "loyalty": 80
+        },
+        "traits": [
+          "Cautious",
+          "Compassionate"
+        ],
+        "trust": 50
+      },
+      {
+        "appearance": {
+          "clothing": "Blue",
+          "hair": "Chestnut",
+          "heritage": "African American",
+          "outfit": 1,
+          "skin": "Fair"
+        },
+        "boundaries": {
+          "approved": [],
+          "disapproved": [],
+          "forbidden": [
+            "robbery",
+            "murder",
+            "cannibalism"
+          ]
+        },
+        "can_betray": false,
+        "contract": {
+
+        },
+        "exit_warning": {
+
+        },
+        "id": 2,
+        "memories": [],
+        "relationship": "fellow_traveler",
+        "skill": "Caregiving",
+        "specials": [],
+        "thresholds": {
+          "betrayal": 10,
+          "breaking": 20,
+          "loyalty": 80
+        },
+        "traits": [
+          "Bold",
+          "Compassionate"
+        ],
+        "trust": 50
+      },
+      {
+        "appearance": {
+          "clothing": "Blue",
+          "hair": "Black",
+          "heritage": "English American",
+          "outfit": 1,
+          "skin": "Fair"
+        },
+        "boundaries": {
+          "approved": [],
+          "disapproved": [],
+          "forbidden": [
+            "robbery",
+            "murder",
+            "cannibalism"
+          ]
+        },
+        "can_betray": false,
+        "contract": {
+
+        },
+        "exit_warning": {
+
+        },
+        "id": 3,
+        "memories": [],
+        "relationship": "fellow_traveler",
+        "skill": "Hunting",
+        "specials": [],
+        "thresholds": {
+          "betrayal": 10,
+          "breaking": 20,
+          "loyalty": 80
+        },
+        "traits": [
+          "Bold",
+          "Compassionate"
+        ],
+        "trust": 50
+      },
+      {
+        "appearance": {
+          "clothing": "Blue",
+          "hair": "Brown",
+          "heritage": "German American",
+          "outfit": 1,
+          "skin": "Tan"
+        },
+        "boundaries": {
+          "approved": [],
+          "disapproved": [],
+          "forbidden": [
+            "murder"
+          ]
+        },
+        "can_betray": false,
+        "contract": {
+
+        },
+        "exit_warning": {
+
+        },
+        "id": 4,
+        "memories": [],
+        "relationship": "fellow_traveler",
+        "skill": "Carpentry",
+        "specials": [],
+        "thresholds": {
+          "betrayal": 10,
+          "breaking": 20,
+          "loyalty": 80
+        },
+        "traits": [
+          "Cautious",
+          "Pragmatic"
+        ],
+        "trust": 50
+      }
+    ],
+    "characters_version": 5,
+    "combat_history": [],
+    "context": {
+      "activities": [],
+      "prepared": [],
+      "spent": {
+
+      }
+    },
+    "crime": {
+      "random": "-5036862169862919390",
+      "record": {
+        "active": {
+
+        },
+        "actors": {
+          "clerk:fort_laramie": {
+            "health": 100,
+            "place": "fort_laramie",
+            "role": "clerk",
+            "uid": "clerk:fort_laramie"
+          },
+          "corporal:fort_kearny": {
+            "health": 100,
+            "place": "fort_kearny",
+            "role": "corporal of the guard",
+            "uid": "corporal:fort_kearny"
+          },
+          "hand:fort_boise": {
+            "health": 100,
+            "place": "fort_boise",
+            "role": "hired hand",
+            "uid": "hand:fort_boise"
+          },
+          "hand:fort_bridger": {
+            "health": 100,
+            "place": "fort_bridger",
+            "role": "hired hand",
+            "uid": "hand:fort_bridger"
+          },
+          "hand:fort_hall": {
+            "health": 100,
+            "place": "fort_hall",
+            "role": "hired hand",
+            "uid": "hand:fort_hall"
+          },
+          "hand:fort_laramie": {
+            "health": 100,
+            "place": "fort_laramie",
+            "role": "hired hand",
+            "uid": "hand:fort_laramie"
+          },
+          "hand:fort_walla_walla": {
+            "health": 100,
+            "place": "fort_walla_walla",
+            "role": "hired hand",
+            "uid": "hand:fort_walla_walla"
+          },
+          "hand:independence": {
+            "health": 100,
+            "place": "independence",
+            "role": "hired hand",
+            "uid": "hand:independence"
+          },
+          "hand:kansas_river": {
+            "health": 100,
+            "place": "kansas_river",
+            "role": "ferry hand",
+            "uid": "hand:kansas_river"
+          },
+          "keeper:barlow_pass": {
+            "health": 100,
+            "place": "barlow_pass",
+            "role": "gatekeeper",
+            "uid": "keeper:barlow_pass"
+          },
+          "keeper:fort_boise": {
+            "health": 100,
+            "place": "fort_boise",
+            "role": "keeper",
+            "uid": "keeper:fort_boise"
+          },
+          "keeper:fort_bridger": {
+            "health": 100,
+            "place": "fort_bridger",
+            "role": "keeper",
+            "uid": "keeper:fort_bridger"
+          },
+          "keeper:fort_hall": {
+            "health": 100,
+            "place": "fort_hall",
+            "role": "keeper",
+            "uid": "keeper:fort_hall"
+          },
+          "keeper:fort_kearny": {
+            "health": 100,
+            "place": "fort_kearny",
+            "role": "commissary sergeant",
+            "uid": "keeper:fort_kearny"
+          },
+          "keeper:fort_laramie": {
+            "health": 100,
+            "place": "fort_laramie",
+            "role": "keeper",
+            "uid": "keeper:fort_laramie"
+          },
+          "keeper:fort_walla_walla": {
+            "health": 100,
+            "place": "fort_walla_walla",
+            "role": "keeper",
+            "uid": "keeper:fort_walla_walla"
+          },
+          "keeper:independence": {
+            "health": 100,
+            "place": "independence",
+            "role": "keeper",
+            "uid": "keeper:independence"
+          },
+          "keeper:kansas_river": {
+            "health": 100,
+            "place": "kansas_river",
+            "role": "ferryman",
+            "uid": "keeper:kansas_river"
+          },
+          "private:fort_kearny": {
+            "health": 100,
+            "place": "fort_kearny",
+            "role": "private",
+            "uid": "private:fort_kearny"
+          },
+          "sentry:fort_kearny": {
+            "health": 100,
+            "place": "fort_kearny",
+            "role": "sentry",
+            "uid": "sentry:fort_kearny"
+          }
+        },
+        "attacks": [],
+        "betrayals": [],
+        "bonds": [
+          {
+            "a": 1,
+            "b": 2,
+            "kind": "friend"
+          },
+          {
+            "a": 1,
+            "b": 3,
+            "kind": "rival"
+          },
+          {
+            "a": 3,
+            "b": 4,
+            "kind": "friend"
+          }
+        ],
+        "bounties": [],
+        "human_food": [],
+        "incidents": [],
+        "meals": {
+
+        },
+        "people": {
+          "party:415901:original:0": {
+            "name": "Ada",
+            "slot": 0
+          },
+          "party:415901:original:1": {
+            "name": "Sam",
+            "slot": 1
+          },
+          "party:415901:original:2": {
+            "name": "Jo",
+            "slot": 2
+          },
+          "party:415901:original:3": {
+            "name": "Lou",
+            "slot": 3
+          },
+          "party:415901:original:4": {
+            "name": "Pat",
+            "slot": 4
+          }
+        },
+        "remains": [],
+        "reports": [],
+        "services": {
+          "barlow_pass": {
+            "alarmed": false,
+            "cash_cents": 4000,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:barlow_pass",
+            "staff": [
+              "keeper:barlow_pass"
+            ]
+          },
+          "fort_boise": {
+            "alarmed": false,
+            "cash_cents": 3000,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:fort_boise",
+            "staff": [
+              "keeper:fort_boise",
+              "hand:fort_boise"
+            ]
+          },
+          "fort_bridger": {
+            "alarmed": false,
+            "cash_cents": 5000,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:fort_bridger",
+            "staff": [
+              "keeper:fort_bridger",
+              "hand:fort_bridger"
+            ]
+          },
+          "fort_hall": {
+            "alarmed": false,
+            "cash_cents": 4000,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:fort_hall",
+            "staff": [
+              "keeper:fort_hall",
+              "hand:fort_hall"
+            ]
+          },
+          "fort_kearny": {
+            "alarmed": false,
+            "cash_cents": 2500,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:fort_kearny",
+            "staff": [
+              "keeper:fort_kearny",
+              "sentry:fort_kearny",
+              "corporal:fort_kearny",
+              "private:fort_kearny"
+            ]
+          },
+          "fort_laramie": {
+            "alarmed": false,
+            "cash_cents": 6000,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:fort_laramie",
+            "staff": [
+              "keeper:fort_laramie",
+              "clerk:fort_laramie",
+              "hand:fort_laramie"
+            ]
+          },
+          "fort_walla_walla": {
+            "alarmed": false,
+            "cash_cents": 4000,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:fort_walla_walla",
+            "staff": [
+              "keeper:fort_walla_walla",
+              "hand:fort_walla_walla"
+            ]
+          },
+          "independence": {
+            "alarmed": false,
+            "cash_cents": 5000,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:independence",
+            "staff": [
+              "keeper:independence",
+              "hand:independence"
+            ]
+          },
+          "kansas_river": {
+            "alarmed": false,
+            "cash_cents": 1500,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:kansas_river",
+            "staff": [
+              "keeper:kansas_river",
+              "hand:kansas_river"
+            ]
+          }
+        },
+        "version": 9
+      }
+    },
+    "crossing_history": [],
+    "days_without_fresh": 0,
+    "field_outings": {
+      "next_id": 1,
+      "preferences": {
+
+      },
+      "trips": []
+    },
+    "format": "westward-probably",
+    "fresh": [],
+    "health_events": [],
+    "health_random": "-520937529770379801",
+    "journal": [
+      "Independence, 1848. Outfit your wagon.",
+      "Departed 5 1, 1848 as a banker. Party: Ada, Sam, Jo, Lou, Pat.",
+      "Supplies cost $350.20. Cash remaining: $1124.80."
+    ],
+    "last_crossing": {
+
+    },
+    "last_events": {
+
+    },
+    "livestock": {
+      "animals": [
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 0,
+          "kind": "dairy_cows",
+          "remaining": 180
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 1,
+          "kind": "goats",
+          "remaining": 180
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 2,
+          "kind": "goats",
+          "remaining": 180
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 3,
+          "kind": "hens",
+          "remaining": 0
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 4,
+          "kind": "hens",
+          "remaining": 0
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 5,
+          "kind": "hens",
+          "remaining": 0
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 6,
+          "kind": "hens",
+          "remaining": 0
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 7,
+          "kind": "hens",
+          "remaining": 0
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 8,
+          "kind": "hens",
+          "remaining": 0
+        }
+      ],
+      "care": true,
+      "next_id": 9,
+      "products": [
+        {
+          "expires": 10,
+          "kcal": 626,
+          "kind": "portion",
+          "lb": 0.626
+        }
+      ]
+    },
+    "outings": 0,
+    "party": [
+      {
+        "alive": true,
+        "cause": "",
+        "conditions": [],
+        "death_day": -1,
+        "health": 85,
+        "history": [],
+        "id": 0,
+        "name": "Ada"
+      },
+      {
+        "alive": true,
+        "cause": "",
+        "conditions": [],
+        "death_day": -1,
+        "health": 85,
+        "history": [],
+        "id": 1,
+        "name": "Sam"
+      },
+      {
+        "alive": true,
+        "cause": "",
+        "conditions": [],
+        "death_day": -1,
+        "health": 85,
+        "history": [],
+        "id": 2,
+        "name": "Jo"
+      },
+      {
+        "alive": true,
+        "cause": "",
+        "conditions": [],
+        "death_day": -1,
+        "health": 85,
+        "history": [],
+        "id": 3,
+        "name": "Lou"
+      },
+      {
+        "alive": true,
+        "cause": "",
+        "conditions": [],
+        "death_day": -1,
+        "health": 85,
+        "history": [],
+        "id": 4,
+        "name": "Pat"
+      }
+    ],
+    "pending": {
+
+    },
+    "random": "-7231112025911406549",
+    "recruitment": {
+      "searches": {
+
+      },
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "route_end": "oregon_city",
+    "route_path": [
+      "independence"
+    ],
+    "rules": "7f82b97839c8d10929e9e90d7dcea47ec50694cffaae1e263686fd6f457bb2bb",
+    "seen": [],
+    "service_return": {
+
+    },
+    "social": {
+      "last_day": 0,
+      "pairs": [
+        {
+          "a": 1,
+          "affinity": 45,
+          "b": 2,
+          "history": []
+        },
+        {
+          "a": 1,
+          "affinity": -45,
+          "b": 3,
+          "history": []
+        },
+        {
+          "a": 1,
+          "affinity": 0,
+          "b": 4,
+          "history": []
+        },
+        {
+          "a": 2,
+          "affinity": 0,
+          "b": 3,
+          "history": []
+        },
+        {
+          "a": 2,
+          "affinity": 0,
+          "b": 4,
+          "history": []
+        },
+        {
+          "a": 3,
+          "affinity": 45,
+          "b": 4,
+          "history": []
+        }
+      ],
+      "romance": true
+    },
+    "state": {
+      "axles": 0,
+      "bullets": 0,
+      "clothing": 5,
+      "dairy_cows": 1,
+      "day": 0,
+      "departure_month": 5,
+      "extended_route": true,
+      "fatigue": 0,
+      "food": 100,
+      "fuel": 0,
+      "goats": 2,
+      "health": 85,
+      "hens": 6,
+      "items": [],
+      "landmark": "independence",
+      "leg_length": 33,
+      "leg_miles": 0,
+      "livestock_fodder": 100,
+      "livestock_products_lb": 0.626,
+      "loss_reason": "",
+      "medicine": 0,
+      "miles": 0,
+      "mode": "classic",
+      "money": 1124.8,
+      "next_landmark": "elm_grove",
+      "ox_health": 100,
+      "oxen": 4,
+      "pace": 0,
+      "parts": 0,
+      "party": [
+        "Ada",
+        "Sam",
+        "Jo",
+        "Lou",
+        "Pat"
+      ],
+      "party_size": 5,
+      "poultry_feed": 20,
+      "profession": "banker",
+      "rations": 2,
+      "river_stage": "",
+      "salt": 0,
+      "seed": 415901,
+      "status": "traveling",
+      "terrain": "plains",
+      "tongues": 0,
+      "vehicle": "wagon",
+      "weather": "Clear",
+      "wheels": 0
+    },
+    "supply_history": [],
+    "survival_random": "-5973847786187714602",
+    "team_conditions": {
+      "custom": false,
+      "horses": [],
+      "mules": [],
+      "oxen": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "working": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "version": 1,
+    "wagon_cache": {
+
+    },
+    "weather": {
+      "exposure": 0,
+      "id": "clear",
+      "label": "Clear",
+      "speed": 1,
+      "weight": 50,
+      "wet": 0
+    },
+    "wet_ground": 0
+  },
+  "sharing_off": {
+    "camp_repair": {
+
+    },
+    "camp_tasks": {
+
+    },
+    "characters": [
+      {
+        "appearance": {
+          "clothing": "Ochre",
+          "hair": "Blond",
+          "heritage": "French Canadian",
+          "outfit": 0,
+          "skin": "Deep"
+        },
+        "boundaries": {
+          "approved": [],
+          "disapproved": [],
+          "forbidden": []
+        },
+        "can_betray": false,
+        "contract": {
+
+        },
+        "exit_warning": {
+
+        },
+        "id": 0,
+        "memories": [],
+        "relationship": "self",
+        "skill": "Leadership",
+        "specials": [],
+        "thresholds": {
+          "betrayal": 10,
+          "breaking": 20,
+          "loyalty": 80
+        },
+        "traits": [],
+        "trust": 50
+      },
+      {
+        "appearance": {
+          "clothing": "Charcoal",
+          "hair": "Blond",
+          "heritage": "Scottish American",
+          "outfit": 1,
+          "skin": "Brown"
+        },
+        "boundaries": {
+          "approved": [],
+          "disapproved": [],
+          "forbidden": [
+            "robbery",
+            "murder",
+            "cannibalism"
+          ]
+        },
+        "can_betray": false,
+        "contract": {
+
+        },
+        "exit_warning": {
+
+        },
+        "id": 1,
+        "memories": [],
+        "relationship": "fellow_traveler",
+        "skill": "Trading",
+        "specials": [],
+        "thresholds": {
+          "betrayal": 10,
+          "breaking": 20,
+          "loyalty": 80
+        },
+        "traits": [
+          "Cautious",
+          "Compassionate"
+        ],
+        "trust": 50
+      },
+      {
+        "appearance": {
+          "clothing": "Blue",
+          "hair": "Chestnut",
+          "heritage": "African American",
+          "outfit": 1,
+          "skin": "Fair"
+        },
+        "boundaries": {
+          "approved": [],
+          "disapproved": [],
+          "forbidden": [
+            "robbery",
+            "murder",
+            "cannibalism"
+          ]
+        },
+        "can_betray": false,
+        "contract": {
+
+        },
+        "exit_warning": {
+
+        },
+        "id": 2,
+        "memories": [],
+        "relationship": "fellow_traveler",
+        "skill": "Caregiving",
+        "specials": [],
+        "thresholds": {
+          "betrayal": 10,
+          "breaking": 20,
+          "loyalty": 80
+        },
+        "traits": [
+          "Bold",
+          "Compassionate"
+        ],
+        "trust": 50
+      },
+      {
+        "appearance": {
+          "clothing": "Blue",
+          "hair": "Black",
+          "heritage": "English American",
+          "outfit": 1,
+          "skin": "Fair"
+        },
+        "boundaries": {
+          "approved": [],
+          "disapproved": [],
+          "forbidden": [
+            "robbery",
+            "murder",
+            "cannibalism"
+          ]
+        },
+        "can_betray": false,
+        "contract": {
+
+        },
+        "exit_warning": {
+
+        },
+        "id": 3,
+        "memories": [],
+        "relationship": "fellow_traveler",
+        "skill": "Hunting",
+        "specials": [],
+        "thresholds": {
+          "betrayal": 10,
+          "breaking": 20,
+          "loyalty": 80
+        },
+        "traits": [
+          "Bold",
+          "Compassionate"
+        ],
+        "trust": 50
+      },
+      {
+        "appearance": {
+          "clothing": "Blue",
+          "hair": "Brown",
+          "heritage": "German American",
+          "outfit": 1,
+          "skin": "Tan"
+        },
+        "boundaries": {
+          "approved": [],
+          "disapproved": [],
+          "forbidden": [
+            "murder"
+          ]
+        },
+        "can_betray": false,
+        "contract": {
+
+        },
+        "exit_warning": {
+
+        },
+        "id": 4,
+        "memories": [],
+        "relationship": "fellow_traveler",
+        "skill": "Carpentry",
+        "specials": [],
+        "thresholds": {
+          "betrayal": 10,
+          "breaking": 20,
+          "loyalty": 80
+        },
+        "traits": [
+          "Cautious",
+          "Pragmatic"
+        ],
+        "trust": 50
+      }
+    ],
+    "characters_version": 5,
+    "combat_history": [],
+    "context": {
+      "activities": [],
+      "prepared": [],
+      "spent": {
+
+      }
+    },
+    "crime": {
+      "random": "-5036862169862919390",
+      "record": {
+        "active": {
+
+        },
+        "actors": {
+          "clerk:fort_laramie": {
+            "health": 100,
+            "place": "fort_laramie",
+            "role": "clerk",
+            "uid": "clerk:fort_laramie"
+          },
+          "corporal:fort_kearny": {
+            "health": 100,
+            "place": "fort_kearny",
+            "role": "corporal of the guard",
+            "uid": "corporal:fort_kearny"
+          },
+          "hand:fort_boise": {
+            "health": 100,
+            "place": "fort_boise",
+            "role": "hired hand",
+            "uid": "hand:fort_boise"
+          },
+          "hand:fort_bridger": {
+            "health": 100,
+            "place": "fort_bridger",
+            "role": "hired hand",
+            "uid": "hand:fort_bridger"
+          },
+          "hand:fort_hall": {
+            "health": 100,
+            "place": "fort_hall",
+            "role": "hired hand",
+            "uid": "hand:fort_hall"
+          },
+          "hand:fort_laramie": {
+            "health": 100,
+            "place": "fort_laramie",
+            "role": "hired hand",
+            "uid": "hand:fort_laramie"
+          },
+          "hand:fort_walla_walla": {
+            "health": 100,
+            "place": "fort_walla_walla",
+            "role": "hired hand",
+            "uid": "hand:fort_walla_walla"
+          },
+          "hand:independence": {
+            "health": 100,
+            "place": "independence",
+            "role": "hired hand",
+            "uid": "hand:independence"
+          },
+          "hand:kansas_river": {
+            "health": 100,
+            "place": "kansas_river",
+            "role": "ferry hand",
+            "uid": "hand:kansas_river"
+          },
+          "keeper:barlow_pass": {
+            "health": 100,
+            "place": "barlow_pass",
+            "role": "gatekeeper",
+            "uid": "keeper:barlow_pass"
+          },
+          "keeper:fort_boise": {
+            "health": 100,
+            "place": "fort_boise",
+            "role": "keeper",
+            "uid": "keeper:fort_boise"
+          },
+          "keeper:fort_bridger": {
+            "health": 100,
+            "place": "fort_bridger",
+            "role": "keeper",
+            "uid": "keeper:fort_bridger"
+          },
+          "keeper:fort_hall": {
+            "health": 100,
+            "place": "fort_hall",
+            "role": "keeper",
+            "uid": "keeper:fort_hall"
+          },
+          "keeper:fort_kearny": {
+            "health": 100,
+            "place": "fort_kearny",
+            "role": "commissary sergeant",
+            "uid": "keeper:fort_kearny"
+          },
+          "keeper:fort_laramie": {
+            "health": 100,
+            "place": "fort_laramie",
+            "role": "keeper",
+            "uid": "keeper:fort_laramie"
+          },
+          "keeper:fort_walla_walla": {
+            "health": 100,
+            "place": "fort_walla_walla",
+            "role": "keeper",
+            "uid": "keeper:fort_walla_walla"
+          },
+          "keeper:independence": {
+            "health": 100,
+            "place": "independence",
+            "role": "keeper",
+            "uid": "keeper:independence"
+          },
+          "keeper:kansas_river": {
+            "health": 100,
+            "place": "kansas_river",
+            "role": "ferryman",
+            "uid": "keeper:kansas_river"
+          },
+          "private:fort_kearny": {
+            "health": 100,
+            "place": "fort_kearny",
+            "role": "private",
+            "uid": "private:fort_kearny"
+          },
+          "sentry:fort_kearny": {
+            "health": 100,
+            "place": "fort_kearny",
+            "role": "sentry",
+            "uid": "sentry:fort_kearny"
+          }
+        },
+        "attacks": [],
+        "betrayals": [],
+        "bonds": [
+          {
+            "a": 1,
+            "b": 2,
+            "kind": "friend"
+          },
+          {
+            "a": 1,
+            "b": 3,
+            "kind": "rival"
+          },
+          {
+            "a": 3,
+            "b": 4,
+            "kind": "friend"
+          }
+        ],
+        "bounties": [],
+        "human_food": [],
+        "incidents": [],
+        "meals": {
+
+        },
+        "people": {
+          "party:415901:original:0": {
+            "name": "Ada",
+            "slot": 0
+          },
+          "party:415901:original:1": {
+            "name": "Sam",
+            "slot": 1
+          },
+          "party:415901:original:2": {
+            "name": "Jo",
+            "slot": 2
+          },
+          "party:415901:original:3": {
+            "name": "Lou",
+            "slot": 3
+          },
+          "party:415901:original:4": {
+            "name": "Pat",
+            "slot": 4
+          }
+        },
+        "remains": [],
+        "reports": [],
+        "services": {
+          "barlow_pass": {
+            "alarmed": false,
+            "cash_cents": 4000,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:barlow_pass",
+            "staff": [
+              "keeper:barlow_pass"
+            ]
+          },
+          "fort_boise": {
+            "alarmed": false,
+            "cash_cents": 3000,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:fort_boise",
+            "staff": [
+              "keeper:fort_boise",
+              "hand:fort_boise"
+            ]
+          },
+          "fort_bridger": {
+            "alarmed": false,
+            "cash_cents": 5000,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:fort_bridger",
+            "staff": [
+              "keeper:fort_bridger",
+              "hand:fort_bridger"
+            ]
+          },
+          "fort_hall": {
+            "alarmed": false,
+            "cash_cents": 4000,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:fort_hall",
+            "staff": [
+              "keeper:fort_hall",
+              "hand:fort_hall"
+            ]
+          },
+          "fort_kearny": {
+            "alarmed": false,
+            "cash_cents": 2500,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:fort_kearny",
+            "staff": [
+              "keeper:fort_kearny",
+              "sentry:fort_kearny",
+              "corporal:fort_kearny",
+              "private:fort_kearny"
+            ]
+          },
+          "fort_laramie": {
+            "alarmed": false,
+            "cash_cents": 6000,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:fort_laramie",
+            "staff": [
+              "keeper:fort_laramie",
+              "clerk:fort_laramie",
+              "hand:fort_laramie"
+            ]
+          },
+          "fort_walla_walla": {
+            "alarmed": false,
+            "cash_cents": 4000,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:fort_walla_walla",
+            "staff": [
+              "keeper:fort_walla_walla",
+              "hand:fort_walla_walla"
+            ]
+          },
+          "independence": {
+            "alarmed": false,
+            "cash_cents": 5000,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:independence",
+            "staff": [
+              "keeper:independence",
+              "hand:independence"
+            ]
+          },
+          "kansas_river": {
+            "alarmed": false,
+            "cash_cents": 1500,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:kansas_river",
+            "staff": [
+              "keeper:kansas_river",
+              "hand:kansas_river"
+            ]
+          }
+        },
+        "version": 9
+      }
+    },
+    "crossing_history": [],
+    "days_without_fresh": 0,
+    "field_outings": {
+      "next_id": 1,
+      "preferences": {
+
+      },
+      "trips": []
+    },
+    "format": "westward-probably",
+    "fresh": [],
+    "health_events": [],
+    "health_random": "-520937529770379801",
+    "journal": [
+      "Independence, 1848. Outfit your wagon.",
+      "Departed 5 1, 1848 as a banker. Party: Ada, Sam, Jo, Lou, Pat.",
+      "Supplies cost $350.20. Cash remaining: $1124.80."
+    ],
+    "last_crossing": {
+
+    },
+    "last_events": {
+
+    },
+    "livestock": {
+      "animals": [
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 0,
+          "kind": "dairy_cows",
+          "remaining": 180
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 1,
+          "kind": "goats",
+          "remaining": 180
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 2,
+          "kind": "goats",
+          "remaining": 180
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 3,
+          "kind": "hens",
+          "remaining": 0
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 4,
+          "kind": "hens",
+          "remaining": 0
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 5,
+          "kind": "hens",
+          "remaining": 0
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 6,
+          "kind": "hens",
+          "remaining": 0
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 7,
+          "kind": "hens",
+          "remaining": 0
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 8,
+          "kind": "hens",
+          "remaining": 0
+        }
+      ],
+      "care": true,
+      "next_id": 9,
+      "products": [
+        {
+          "expires": 10,
+          "kcal": 626,
+          "kind": "portion",
+          "lb": 0.626
+        }
+      ],
+      "share_scraps": false
+    },
+    "outings": 0,
+    "party": [
+      {
+        "alive": true,
+        "cause": "",
+        "conditions": [],
+        "death_day": -1,
+        "health": 85,
+        "history": [],
+        "id": 0,
+        "name": "Ada"
+      },
+      {
+        "alive": true,
+        "cause": "",
+        "conditions": [],
+        "death_day": -1,
+        "health": 85,
+        "history": [],
+        "id": 1,
+        "name": "Sam"
+      },
+      {
+        "alive": true,
+        "cause": "",
+        "conditions": [],
+        "death_day": -1,
+        "health": 85,
+        "history": [],
+        "id": 2,
+        "name": "Jo"
+      },
+      {
+        "alive": true,
+        "cause": "",
+        "conditions": [],
+        "death_day": -1,
+        "health": 85,
+        "history": [],
+        "id": 3,
+        "name": "Lou"
+      },
+      {
+        "alive": true,
+        "cause": "",
+        "conditions": [],
+        "death_day": -1,
+        "health": 85,
+        "history": [],
+        "id": 4,
+        "name": "Pat"
+      }
+    ],
+    "pending": {
+
+    },
+    "random": "-7231112025911406549",
+    "recruitment": {
+      "searches": {
+
+      },
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "route_end": "oregon_city",
+    "route_path": [
+      "independence"
+    ],
+    "rules": "7f82b97839c8d10929e9e90d7dcea47ec50694cffaae1e263686fd6f457bb2bb",
+    "seen": [],
+    "service_return": {
+
+    },
+    "social": {
+      "last_day": 0,
+      "pairs": [
+        {
+          "a": 1,
+          "affinity": 45,
+          "b": 2,
+          "history": []
+        },
+        {
+          "a": 1,
+          "affinity": -45,
+          "b": 3,
+          "history": []
+        },
+        {
+          "a": 1,
+          "affinity": 0,
+          "b": 4,
+          "history": []
+        },
+        {
+          "a": 2,
+          "affinity": 0,
+          "b": 3,
+          "history": []
+        },
+        {
+          "a": 2,
+          "affinity": 0,
+          "b": 4,
+          "history": []
+        },
+        {
+          "a": 3,
+          "affinity": 45,
+          "b": 4,
+          "history": []
+        }
+      ],
+      "romance": true
+    },
+    "state": {
+      "axles": 0,
+      "bullets": 0,
+      "clothing": 5,
+      "dairy_cows": 1,
+      "day": 0,
+      "departure_month": 5,
+      "extended_route": true,
+      "fatigue": 0,
+      "food": 100,
+      "fuel": 0,
+      "goats": 2,
+      "health": 85,
+      "hens": 6,
+      "items": [],
+      "landmark": "independence",
+      "leg_length": 33,
+      "leg_miles": 0,
+      "livestock_fodder": 100,
+      "livestock_products_lb": 0.626,
+      "loss_reason": "",
+      "medicine": 0,
+      "miles": 0,
+      "mode": "classic",
+      "money": 1124.8,
+      "next_landmark": "elm_grove",
+      "ox_health": 100,
+      "oxen": 4,
+      "pace": 0,
+      "parts": 0,
+      "party": [
+        "Ada",
+        "Sam",
+        "Jo",
+        "Lou",
+        "Pat"
+      ],
+      "party_size": 5,
+      "poultry_feed": 20,
+      "profession": "banker",
+      "rations": 2,
+      "river_stage": "",
+      "salt": 0,
+      "seed": 415901,
+      "status": "traveling",
+      "terrain": "plains",
+      "tongues": 0,
+      "vehicle": "wagon",
+      "weather": "Clear",
+      "wheels": 0
+    },
+    "supply_history": [],
+    "survival_random": "-5973847786187714602",
+    "team_conditions": {
+      "custom": false,
+      "horses": [],
+      "mules": [],
+      "oxen": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "working": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "version": 1,
+    "wagon_cache": {
+
+    },
+    "weather": {
+      "exposure": 0,
+      "id": "clear",
+      "label": "Clear",
+      "speed": 1,
+      "weight": 50,
+      "wet": 0
+    },
+    "wet_ground": 0
+  },
+  "sharing_on": {
+    "camp_repair": {
+
+    },
+    "camp_tasks": {
+
+    },
+    "characters": [
+      {
+        "appearance": {
+          "clothing": "Ochre",
+          "hair": "Blond",
+          "heritage": "French Canadian",
+          "outfit": 0,
+          "skin": "Deep"
+        },
+        "boundaries": {
+          "approved": [],
+          "disapproved": [],
+          "forbidden": []
+        },
+        "can_betray": false,
+        "contract": {
+
+        },
+        "exit_warning": {
+
+        },
+        "id": 0,
+        "memories": [],
+        "relationship": "self",
+        "skill": "Leadership",
+        "specials": [],
+        "thresholds": {
+          "betrayal": 10,
+          "breaking": 20,
+          "loyalty": 80
+        },
+        "traits": [],
+        "trust": 50
+      },
+      {
+        "appearance": {
+          "clothing": "Charcoal",
+          "hair": "Blond",
+          "heritage": "Scottish American",
+          "outfit": 1,
+          "skin": "Brown"
+        },
+        "boundaries": {
+          "approved": [],
+          "disapproved": [],
+          "forbidden": [
+            "robbery",
+            "murder",
+            "cannibalism"
+          ]
+        },
+        "can_betray": false,
+        "contract": {
+
+        },
+        "exit_warning": {
+
+        },
+        "id": 1,
+        "memories": [],
+        "relationship": "fellow_traveler",
+        "skill": "Trading",
+        "specials": [],
+        "thresholds": {
+          "betrayal": 10,
+          "breaking": 20,
+          "loyalty": 80
+        },
+        "traits": [
+          "Cautious",
+          "Compassionate"
+        ],
+        "trust": 50
+      },
+      {
+        "appearance": {
+          "clothing": "Blue",
+          "hair": "Chestnut",
+          "heritage": "African American",
+          "outfit": 1,
+          "skin": "Fair"
+        },
+        "boundaries": {
+          "approved": [],
+          "disapproved": [],
+          "forbidden": [
+            "robbery",
+            "murder",
+            "cannibalism"
+          ]
+        },
+        "can_betray": false,
+        "contract": {
+
+        },
+        "exit_warning": {
+
+        },
+        "id": 2,
+        "memories": [],
+        "relationship": "fellow_traveler",
+        "skill": "Caregiving",
+        "specials": [],
+        "thresholds": {
+          "betrayal": 10,
+          "breaking": 20,
+          "loyalty": 80
+        },
+        "traits": [
+          "Bold",
+          "Compassionate"
+        ],
+        "trust": 50
+      },
+      {
+        "appearance": {
+          "clothing": "Blue",
+          "hair": "Black",
+          "heritage": "English American",
+          "outfit": 1,
+          "skin": "Fair"
+        },
+        "boundaries": {
+          "approved": [],
+          "disapproved": [],
+          "forbidden": [
+            "robbery",
+            "murder",
+            "cannibalism"
+          ]
+        },
+        "can_betray": false,
+        "contract": {
+
+        },
+        "exit_warning": {
+
+        },
+        "id": 3,
+        "memories": [],
+        "relationship": "fellow_traveler",
+        "skill": "Hunting",
+        "specials": [],
+        "thresholds": {
+          "betrayal": 10,
+          "breaking": 20,
+          "loyalty": 80
+        },
+        "traits": [
+          "Bold",
+          "Compassionate"
+        ],
+        "trust": 50
+      },
+      {
+        "appearance": {
+          "clothing": "Blue",
+          "hair": "Brown",
+          "heritage": "German American",
+          "outfit": 1,
+          "skin": "Tan"
+        },
+        "boundaries": {
+          "approved": [],
+          "disapproved": [],
+          "forbidden": [
+            "murder"
+          ]
+        },
+        "can_betray": false,
+        "contract": {
+
+        },
+        "exit_warning": {
+
+        },
+        "id": 4,
+        "memories": [],
+        "relationship": "fellow_traveler",
+        "skill": "Carpentry",
+        "specials": [],
+        "thresholds": {
+          "betrayal": 10,
+          "breaking": 20,
+          "loyalty": 80
+        },
+        "traits": [
+          "Cautious",
+          "Pragmatic"
+        ],
+        "trust": 50
+      }
+    ],
+    "characters_version": 5,
+    "combat_history": [],
+    "context": {
+      "activities": [],
+      "prepared": [],
+      "spent": {
+
+      }
+    },
+    "crime": {
+      "random": "-5036862169862919390",
+      "record": {
+        "active": {
+
+        },
+        "actors": {
+          "clerk:fort_laramie": {
+            "health": 100,
+            "place": "fort_laramie",
+            "role": "clerk",
+            "uid": "clerk:fort_laramie"
+          },
+          "corporal:fort_kearny": {
+            "health": 100,
+            "place": "fort_kearny",
+            "role": "corporal of the guard",
+            "uid": "corporal:fort_kearny"
+          },
+          "hand:fort_boise": {
+            "health": 100,
+            "place": "fort_boise",
+            "role": "hired hand",
+            "uid": "hand:fort_boise"
+          },
+          "hand:fort_bridger": {
+            "health": 100,
+            "place": "fort_bridger",
+            "role": "hired hand",
+            "uid": "hand:fort_bridger"
+          },
+          "hand:fort_hall": {
+            "health": 100,
+            "place": "fort_hall",
+            "role": "hired hand",
+            "uid": "hand:fort_hall"
+          },
+          "hand:fort_laramie": {
+            "health": 100,
+            "place": "fort_laramie",
+            "role": "hired hand",
+            "uid": "hand:fort_laramie"
+          },
+          "hand:fort_walla_walla": {
+            "health": 100,
+            "place": "fort_walla_walla",
+            "role": "hired hand",
+            "uid": "hand:fort_walla_walla"
+          },
+          "hand:independence": {
+            "health": 100,
+            "place": "independence",
+            "role": "hired hand",
+            "uid": "hand:independence"
+          },
+          "hand:kansas_river": {
+            "health": 100,
+            "place": "kansas_river",
+            "role": "ferry hand",
+            "uid": "hand:kansas_river"
+          },
+          "keeper:barlow_pass": {
+            "health": 100,
+            "place": "barlow_pass",
+            "role": "gatekeeper",
+            "uid": "keeper:barlow_pass"
+          },
+          "keeper:fort_boise": {
+            "health": 100,
+            "place": "fort_boise",
+            "role": "keeper",
+            "uid": "keeper:fort_boise"
+          },
+          "keeper:fort_bridger": {
+            "health": 100,
+            "place": "fort_bridger",
+            "role": "keeper",
+            "uid": "keeper:fort_bridger"
+          },
+          "keeper:fort_hall": {
+            "health": 100,
+            "place": "fort_hall",
+            "role": "keeper",
+            "uid": "keeper:fort_hall"
+          },
+          "keeper:fort_kearny": {
+            "health": 100,
+            "place": "fort_kearny",
+            "role": "commissary sergeant",
+            "uid": "keeper:fort_kearny"
+          },
+          "keeper:fort_laramie": {
+            "health": 100,
+            "place": "fort_laramie",
+            "role": "keeper",
+            "uid": "keeper:fort_laramie"
+          },
+          "keeper:fort_walla_walla": {
+            "health": 100,
+            "place": "fort_walla_walla",
+            "role": "keeper",
+            "uid": "keeper:fort_walla_walla"
+          },
+          "keeper:independence": {
+            "health": 100,
+            "place": "independence",
+            "role": "keeper",
+            "uid": "keeper:independence"
+          },
+          "keeper:kansas_river": {
+            "health": 100,
+            "place": "kansas_river",
+            "role": "ferryman",
+            "uid": "keeper:kansas_river"
+          },
+          "private:fort_kearny": {
+            "health": 100,
+            "place": "fort_kearny",
+            "role": "private",
+            "uid": "private:fort_kearny"
+          },
+          "sentry:fort_kearny": {
+            "health": 100,
+            "place": "fort_kearny",
+            "role": "sentry",
+            "uid": "sentry:fort_kearny"
+          }
+        },
+        "attacks": [],
+        "betrayals": [],
+        "bonds": [
+          {
+            "a": 1,
+            "b": 2,
+            "kind": "friend"
+          },
+          {
+            "a": 1,
+            "b": 3,
+            "kind": "rival"
+          },
+          {
+            "a": 3,
+            "b": 4,
+            "kind": "friend"
+          }
+        ],
+        "bounties": [],
+        "human_food": [],
+        "incidents": [],
+        "meals": {
+
+        },
+        "people": {
+          "party:415901:original:0": {
+            "name": "Ada",
+            "slot": 0
+          },
+          "party:415901:original:1": {
+            "name": "Sam",
+            "slot": 1
+          },
+          "party:415901:original:2": {
+            "name": "Jo",
+            "slot": 2
+          },
+          "party:415901:original:3": {
+            "name": "Lou",
+            "slot": 3
+          },
+          "party:415901:original:4": {
+            "name": "Pat",
+            "slot": 4
+          }
+        },
+        "remains": [],
+        "reports": [],
+        "services": {
+          "barlow_pass": {
+            "alarmed": false,
+            "cash_cents": 4000,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:barlow_pass",
+            "staff": [
+              "keeper:barlow_pass"
+            ]
+          },
+          "fort_boise": {
+            "alarmed": false,
+            "cash_cents": 3000,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:fort_boise",
+            "staff": [
+              "keeper:fort_boise",
+              "hand:fort_boise"
+            ]
+          },
+          "fort_bridger": {
+            "alarmed": false,
+            "cash_cents": 5000,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:fort_bridger",
+            "staff": [
+              "keeper:fort_bridger",
+              "hand:fort_bridger"
+            ]
+          },
+          "fort_hall": {
+            "alarmed": false,
+            "cash_cents": 4000,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:fort_hall",
+            "staff": [
+              "keeper:fort_hall",
+              "hand:fort_hall"
+            ]
+          },
+          "fort_kearny": {
+            "alarmed": false,
+            "cash_cents": 2500,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:fort_kearny",
+            "staff": [
+              "keeper:fort_kearny",
+              "sentry:fort_kearny",
+              "corporal:fort_kearny",
+              "private:fort_kearny"
+            ]
+          },
+          "fort_laramie": {
+            "alarmed": false,
+            "cash_cents": 6000,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:fort_laramie",
+            "staff": [
+              "keeper:fort_laramie",
+              "clerk:fort_laramie",
+              "hand:fort_laramie"
+            ]
+          },
+          "fort_walla_walla": {
+            "alarmed": false,
+            "cash_cents": 4000,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:fort_walla_walla",
+            "staff": [
+              "keeper:fort_walla_walla",
+              "hand:fort_walla_walla"
+            ]
+          },
+          "independence": {
+            "alarmed": false,
+            "cash_cents": 5000,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:independence",
+            "staff": [
+              "keeper:independence",
+              "hand:independence"
+            ]
+          },
+          "kansas_river": {
+            "alarmed": false,
+            "cash_cents": 1500,
+            "food_sold": 0,
+            "food_taken": 0,
+            "owner": "keeper:kansas_river",
+            "staff": [
+              "keeper:kansas_river",
+              "hand:kansas_river"
+            ]
+          }
+        },
+        "version": 9
+      }
+    },
+    "crossing_history": [],
+    "days_without_fresh": 0,
+    "field_outings": {
+      "next_id": 1,
+      "preferences": {
+
+      },
+      "trips": []
+    },
+    "format": "westward-probably",
+    "fresh": [],
+    "health_events": [],
+    "health_random": "-520937529770379801",
+    "journal": [
+      "Independence, 1848. Outfit your wagon.",
+      "Departed 5 1, 1848 as a banker. Party: Ada, Sam, Jo, Lou, Pat.",
+      "Supplies cost $350.20. Cash remaining: $1124.80."
+    ],
+    "last_crossing": {
+
+    },
+    "last_events": {
+
+    },
+    "livestock": {
+      "animals": [
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 0,
+          "kind": "dairy_cows",
+          "remaining": 180
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 1,
+          "kind": "goats",
+          "remaining": 180
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 2,
+          "kind": "goats",
+          "remaining": 180
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 3,
+          "kind": "hens",
+          "remaining": 0
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 4,
+          "kind": "hens",
+          "remaining": 0
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 5,
+          "kind": "hens",
+          "remaining": 0
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 6,
+          "kind": "hens",
+          "remaining": 0
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 7,
+          "kind": "hens",
+          "remaining": 0
+        },
+        {
+          "condition": 100,
+          "egg_progress": 0,
+          "id": 8,
+          "kind": "hens",
+          "remaining": 0
+        }
+      ],
+      "care": true,
+      "next_id": 9,
+      "products": [
+        {
+          "expires": 10,
+          "kcal": 626,
+          "kind": "portion",
+          "lb": 0.626
+        }
+      ],
+      "share_scraps": true
+    },
+    "outings": 0,
+    "party": [
+      {
+        "alive": true,
+        "cause": "",
+        "conditions": [],
+        "death_day": -1,
+        "health": 85,
+        "history": [],
+        "id": 0,
+        "name": "Ada"
+      },
+      {
+        "alive": true,
+        "cause": "",
+        "conditions": [],
+        "death_day": -1,
+        "health": 85,
+        "history": [],
+        "id": 1,
+        "name": "Sam"
+      },
+      {
+        "alive": true,
+        "cause": "",
+        "conditions": [],
+        "death_day": -1,
+        "health": 85,
+        "history": [],
+        "id": 2,
+        "name": "Jo"
+      },
+      {
+        "alive": true,
+        "cause": "",
+        "conditions": [],
+        "death_day": -1,
+        "health": 85,
+        "history": [],
+        "id": 3,
+        "name": "Lou"
+      },
+      {
+        "alive": true,
+        "cause": "",
+        "conditions": [],
+        "death_day": -1,
+        "health": 85,
+        "history": [],
+        "id": 4,
+        "name": "Pat"
+      }
+    ],
+    "pending": {
+
+    },
+    "random": "-7231112025911406549",
+    "recruitment": {
+      "searches": {
+
+      },
+      "slots": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "route_end": "oregon_city",
+    "route_path": [
+      "independence"
+    ],
+    "rules": "7f82b97839c8d10929e9e90d7dcea47ec50694cffaae1e263686fd6f457bb2bb",
+    "seen": [],
+    "service_return": {
+
+    },
+    "social": {
+      "last_day": 0,
+      "pairs": [
+        {
+          "a": 1,
+          "affinity": 45,
+          "b": 2,
+          "history": []
+        },
+        {
+          "a": 1,
+          "affinity": -45,
+          "b": 3,
+          "history": []
+        },
+        {
+          "a": 1,
+          "affinity": 0,
+          "b": 4,
+          "history": []
+        },
+        {
+          "a": 2,
+          "affinity": 0,
+          "b": 3,
+          "history": []
+        },
+        {
+          "a": 2,
+          "affinity": 0,
+          "b": 4,
+          "history": []
+        },
+        {
+          "a": 3,
+          "affinity": 45,
+          "b": 4,
+          "history": []
+        }
+      ],
+      "romance": true
+    },
+    "state": {
+      "axles": 0,
+      "bullets": 0,
+      "clothing": 5,
+      "dairy_cows": 1,
+      "day": 0,
+      "departure_month": 5,
+      "extended_route": true,
+      "fatigue": 0,
+      "food": 100,
+      "fuel": 0,
+      "goats": 2,
+      "health": 85,
+      "hens": 6,
+      "items": [],
+      "landmark": "independence",
+      "leg_length": 33,
+      "leg_miles": 0,
+      "livestock_fodder": 100,
+      "livestock_products_lb": 0.626,
+      "loss_reason": "",
+      "medicine": 0,
+      "miles": 0,
+      "mode": "classic",
+      "money": 1124.8,
+      "next_landmark": "elm_grove",
+      "ox_health": 100,
+      "oxen": 4,
+      "pace": 0,
+      "parts": 0,
+      "party": [
+        "Ada",
+        "Sam",
+        "Jo",
+        "Lou",
+        "Pat"
+      ],
+      "party_size": 5,
+      "poultry_feed": 20,
+      "profession": "banker",
+      "rations": 2,
+      "river_stage": "",
+      "salt": 0,
+      "seed": 415901,
+      "status": "traveling",
+      "terrain": "plains",
+      "tongues": 0,
+      "vehicle": "wagon",
+      "weather": "Clear",
+      "wheels": 0
+    },
+    "supply_history": [],
+    "survival_random": "-5973847786187714602",
+    "team_conditions": {
+      "custom": false,
+      "horses": [],
+      "mules": [],
+      "oxen": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "working": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "version": 1,
+    "wagon_cache": {
+
+    },
+    "weather": {
+      "exposure": 0,
+      "id": "clear",
+      "label": "Clear",
+      "speed": 1,
+      "weight": 50,
+      "wet": 0
+    },
+    "wet_ground": 0
+  }
+}

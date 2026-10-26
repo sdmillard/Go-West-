@@ -1,9 +1,11 @@
 extends RefCounted
 ## Finite feed resources and limiting-factor production. No RNG or new clock.
+const Ruminants=preload("res://simulation/ruminant_nutrition.gd")
 static func number(v: Variant) -> bool:return (v is int or v is float) and is_finite(v)
 static func valid(data: Dictionary) -> bool:
  var f: Variant=data.get("feeding")
  if not f is Dictionary or not f.get("note") is String or not f.get("habitats") is Dictionary:return false
+ if not Ruminants.valid(f.get("ruminants")):return false
  for key in ["maintenance_fraction","full_production_fraction","moving_feed_time","grueling_feed_time","moving_scratch_time","grain_only_laying_cap","mixed_diet_fraction"]:
   if not number(f.get(key)) or f[key]<=0 or f[key]>1:return false
  if f.maintenance_fraction>=f.full_production_fraction:return false
@@ -77,19 +79,30 @@ static func plan(game,o: Dictionary,resting: bool,working: bool,commit: bool=fal
  var habitat: Dictionary=f.habitats.get(region,f.habitats.plains)
  var feed_time: float=float(f.grueling_feed_time if int(game.state.pace)==2 else f.moving_feed_time) if working else 1.0
  var result: Dictionary={"region":region,"grain_quarters":0,"fodder_lb":0.0,"fodder_units":0,"grain_lb":0.0,"scratch_lb":0.0,"scraps_lb":0.0,"scraps_kcal":0.0,"animals":{}}
+ var budgets: Dictionary={}
  var shortfall:=0.0
  for kind in ["dairy_cows","goats"]:
-  var ration: float=game.livestock.count(game.state,kind)*float(data.animals[kind].daily_feed_lb)
+  var heads: int=game.livestock.count(game.state,kind)
   var natural: float=0.0 if o.waterless else minf(float(o.season),minf(float(habitat[kind]),feed_time))
-  result.animals[kind]={"ration_lb":ration,"natural":natural,"intake":natural,"production":surplus(data,natural),"quality":1.0}
-  shortfall+=ration*maxf(0,1.0-natural)
+  var potential:=0.0;var recorded:=0
+  for animal in game.livestock.record.animals:
+   if animal.kind==kind:
+    recorded+=1;potential+=float(data.animals[kind].daily_lb)*clampf(float(animal.remaining)/60.0,0,1)
+  # Newly purchased headcounts can be previewed before sync creates their records.
+  potential+=maxi(0,heads-recorded)*float(data.animals[kind].daily_lb)
+  var budget: Dictionary=Ruminants.budget(f.ruminants,kind,heads,potential,natural,working,int(game.state.pace))
+  budgets[kind]=budget;shortfall+=float(budget.fodder_needed_lb)
+  var natural_tdn: float=float(budget.natural_dm_lb)*float(budget.natural_tdn_fraction)
+  var full: float=budget.target_tdn_lb
+  var ration: float=full/(float(f.ruminants.hay_dry_matter)*float(f.ruminants.hay_tdn))
+  result.animals[kind]={"ration_lb":ration,"natural":minf(1.0,natural_tdn/full) if full>0 else 1.0,"intake":1.0,"production":1.0,"quality":1.0,"fodder_needed_lb":float(budget.fodder_needed_lb),"budget":budget}
  var hay: float=minf(available(game,"livestock_fodder"),maxf(0,shortfall))
  result.fodder_lb=hay
  for kind in ["dairy_cows","goats"]:
-  var a: Dictionary=result.animals[kind]
-  var share: float=hay*(float(a.ration_lb)*maxf(0,1.0-float(a.natural))/shortfall) if shortfall>0 else 0.0
-  a.intake=minf(1.0,float(a.natural)+share/float(a.ration_lb)) if a.ration_lb>0 else 1.0
-  a.production=surplus(data,a.intake)
+  var a: Dictionary=result.animals[kind];var budget: Dictionary=budgets[kind]
+  var share: float=hay*float(budget.fodder_needed_lb)/shortfall if shortfall>0 else 0.0
+  a.merge(Ruminants.supplied(budget,share,float(f.maintenance_fraction)),true)
+  a["fodder_lb"]=share
  var ration: float=game.livestock.count(game.state,"hens")*float(data.animals.hens.daily_feed_lb)
  var scratch: float=minf(ration,float(f.scratch_lb)*minf(float(o.season),minf(float(habitat.scratch),float(f.moving_scratch_time) if working else 1.0))) if game.livestock.record.care and not o.waterless else 0.0
  var shared: Dictionary=scraps(game,maxf(0,ration-scratch)*float(f.feed_kcal_per_lb),commit) if ration>0 else {"kcal":0.0,"lb":0.0}
@@ -99,9 +112,10 @@ static func plan(game,o: Dictionary,resting: bool,working: bool,commit: bool=fal
  var diversity: float=minf(1.0,(scratch+equivalent)/(ration*float(f.mixed_diet_fraction))) if ration>0 else 1.0
  result.grain_quarters=ceili(maxf(0,grain-float(game.state.get("poultry_feed_remainder_lb",0))-0.000000001)/float(data.supplies.poultry_feed.unit_lb));result.grain_lb=grain;result.scratch_lb=scratch;result.scraps_lb=shared.lb;result.scraps_kcal=shared.kcal
  result.animals.hens={"ration_lb":ration,"natural":scratch+equivalent,"intake":intake,"production":surplus(data,intake),"quality":float(f.grain_only_laying_cap)+(1.0-float(f.grain_only_laying_cap))*diversity}
+ result=Ruminants.stable(result)
  if commit:
-  result.fodder_units=use(game,"livestock_fodder",hay)
-  result.grain_quarters=use(game,"poultry_feed",grain)
+  result.fodder_units=use(game,"livestock_fodder",float(result.fodder_lb))
+  result.grain_quarters=use(game,"poultry_feed",float(result.grain_lb))
  return result
 static func settle(data: Dictionary,current: int,carry: float,intake: float,waterless: bool,weather: String,resting: bool,working: bool,pace: int) -> Dictionary:
  var maintenance: float=data.feeding.maintenance_fraction

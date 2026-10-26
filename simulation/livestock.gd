@@ -97,7 +97,9 @@ func tick(game,resting: bool,working: bool) -> void:
  for a in record.animals:
   var rule: Dictionary=data.animals[a.kind]
   var nutrition: Dictionary=feeding.animals[a.kind]
-  var settled: Dictionary=Feeding.settle(data,int(a.condition),float(a.get("strain_carry",0)),float(nutrition.intake),bool(o.waterless),str(game.survival.weather.get("id","")),resting,working,int(game.state.pace))
+  # Dairy travel energy is already charged in its maintenance budget.
+  var direct_work: bool=working and a.kind=="hens"
+  var settled: Dictionary=Feeding.settle(data,int(a.condition),float(a.get("strain_carry",0)),float(nutrition.get("condition_intake",nutrition.intake)),bool(o.waterless),str(game.survival.weather.get("id","")),resting,direct_work,int(game.state.pace))
   a.condition=int(settled.condition)
   if float(settled.strain_carry)>0:a["strain_carry"]=settled.strain_carry
   else:a.erase("strain_carry")
@@ -113,7 +115,7 @@ func tick(game,resting: bool,working: bool) -> void:
     var n:=floori(a.egg_progress);a.egg_progress=float("%.12f" % (float(a.egg_progress)-n));eggs+=n
     record.products.append({"kind":"egg","lb":float(rule.daily_lb)*n,"kcal":float(rule.daily_lb)*float(rule.kcal_per_lb)*n,"expires":day+int(data.egg_days)})
   elif int(a.remaining)>0:
-   var mass: float=float(rule.daily_lb)*factor*clampf(float(a.remaining)/60.0,0,1)
+   var mass: float=float("%.9f" % (float(rule.daily_lb)*factor*clampf(float(a.remaining)/60.0,0,1)))
    a.remaining-=1
    if mass>0:
     milk+=mass;milk_kcal+=mass*float(rule.kcal_per_lb)

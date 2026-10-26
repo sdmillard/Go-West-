@@ -97,7 +97,7 @@ func run():
  check(o.feeding.animals.goats.natural>o.feeding.animals.dairy_cows.natural,"Snake country offers a different browse/grazing balance")
  o.season=0.85
  var limited: Dictionary=Feed.plan(g,o,true,false)
- check(is_equal_approx(limited.animals.goats.natural,0.85),"Season and habitat cap the same forage opportunity without multiplying it down twice")
+ check(is_equal_approx(limited.animals.goats.budget.natural_dm_lb/limited.animals.goats.budget.capacity_dm_lb,0.85),"Season and habitat cap the same forage opportunity without multiplying it down twice")
  check(Feed.condition(g.livestock.data,80,0.0,true,"heat",false,true,2)==74,"One severe deprivation is not added repeatedly as food, water, weather and work damage")
  # Actual fitting/store/drop pathways support fodder without imaginary capacity.
  g=game({"livestock_fodder":25})

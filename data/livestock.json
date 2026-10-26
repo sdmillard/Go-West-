@@ -79,7 +79,7 @@
     }
   },
   "feeding": {
-    "note": "Nominal dry-ration and habitat allowances are calibration estimates. Sharing edible portions is off for new journeys; existing saved choices persist. When enabled it consumes actual portions before grain and protects the current human ration. Grain alone maintains energy but is not modeled as a complete laying ration. No dedicated mineral or body-size simulation.",
+    "note": "Nominal dry-ration and habitat allowances are calibration estimates. Sharing edible portions is off for new journeys; existing saved choices persist. When enabled it consumes actual portions before grain and protects the current human ration. Grain alone maintains energy but is not modeled as a complete laying ration. No dedicated mineral or body-size simulation. Dairy animals use explicit maintenance-plus-milk TDN budgets, dry-matter capacity and physical hay supplementation; the fractional surplus curve now applies only to hens. Cow/goat daily_feed_lb fields are legacy nominal allowances, not current requirements.",
     "maintenance_fraction": 0.7,
     "full_production_fraction": 0.95,
     "moving_feed_time": 0.95,
@@ -147,6 +147,31 @@
         "dairy_cows": 0.8,
         "goats": 1.0,
         "scratch": 0.8
+      }
+    },
+    "ruminants": {
+      "note": "Representative sizes and TDN energy budgets informed by extension examples, not measured trail diets. Cow maintenance proxy includes mid-pregnancy in its source; goat coefficients are approximations between different examples. Protein/minerals and feed spoilage are not simulated. Habitat/season are quantity caps, not nutrient percentages. Fodder is physical hay with explicit dry matter and TDN. Milk ceilings are unchanged.",
+      "hay_dry_matter": 0.9,
+      "hay_tdn": 0.55,
+      "travel_maintenance_bonus": 0.05,
+      "grueling_maintenance_bonus": 0.15,
+      "animals": {
+        "dairy_cows": {
+          "body_lb": 1000.0,
+          "dm_body_fraction": 0.022,
+          "maintenance_tdn_lb": 8.8,
+          "milk_tdn_per_lb": 0.27,
+          "natural_tdn": 0.6,
+          "reference_body_lb": 1000.0
+        },
+        "goats": {
+          "body_lb": 100.0,
+          "dm_body_fraction": 0.035,
+          "maintenance_tdn_lb": 1.24,
+          "milk_tdn_per_lb": 0.33,
+          "natural_tdn": 0.65,
+          "reference_body_lb": 100.0
+        }
       }
     }
   }

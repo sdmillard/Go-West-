@@ -8,6 +8,8 @@ A growing Oregon Trail-inspired game in **Godot 4 / GDScript**. Lead five travel
 
 [Wagon sales, custom robbery demands and resizing](docs/WAGON_SALES_ROBBERY_AND_DISPLAY.md) add reviewed keep/sell/leave decisions, value-sensitive intimidation and configurable window scaling.
 
+[Dairy energy calibration](docs/DAIRY_ENERGY_CALIBRATION.md) separates maintenance from milk demand, dry matter from hauled hay, and feed quality from quantity. Milk ceilings stay unchanged.
+
 [Forage evidence and food sharing](docs/FORAGE_EVIDENCE_AND_SHARING.md) keeps edible portions for people by default on new journeys, preserves saved choices, and identifies the feed-quality assumptions still needing calibration.
 
 [Mixed feeding and condition](docs/MIXED_LIVESTOCK_FEEDING.md) adds finite hen scratching, optional shared leftovers and carried dairy fodder. Fair animals keep full capacity, and small feed deficits accumulate without daily rounding cliffs.

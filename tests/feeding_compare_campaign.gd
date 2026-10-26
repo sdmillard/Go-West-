@@ -17,7 +17,8 @@ func buy_fodder(game,count: Dictionary) -> bool:
  var gap:=0.0
  for kind in ["dairy_cows","goats"]:
   var n: Dictionary=o.feeding.animals[kind]
-  if float(n.natural)<float(game.livestock.data.feeding.full_production_fraction)-0.000000001:gap+=float(n.ration_lb)*maxf(0,1.0-float(n.natural))
+  if n.has("fodder_needed_lb"):gap+=float(n.fodder_needed_lb)
+  elif float(n.natural)<float(game.livestock.data.feeding.full_production_fraction)-0.000000001:gap+=float(n.ration_lb)*maxf(0,1.0-float(n.natural))
  if gap<=0:return false
  var held: float=game.livestock.Feeding.available(game,"livestock_fodder")
  if held>=gap*3:return false
