@@ -46,6 +46,7 @@ static func scraps(game,wanted_kcal: float,commit: bool) -> Dictionary:
  var surplus_kcal: float=maxf(0,int(game.state.food)*float(game.provisions.data.food_energy.unit_kcal)+game.livestock.available_kcal()-needed)
  var left: float=minf(wanted_kcal,surplus_kcal)
  var eaten:=0.0;var mass:=0.0
+ # Missing setting belongs to older saves, whose effective choice was sharing on.
  if not game.livestock.record.get("share_scraps",true) or not game.livestock.record.care:return {"kcal":0.0,"lb":0.0}
  for p in game.livestock.record.products:
   if p.kind!="portion" or float(p.get("vitamin_c_lb",0))>0 or int(p.expires)<=int(game.state.day) or left<=0 or mass_left<=0:continue

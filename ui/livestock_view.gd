@@ -23,8 +23,8 @@ func refresh() -> void:
   if game.livestock.count(game.state,kind)>0:note("%s FEED COVERAGE: %d%%" % [game.livestock.data.animals[kind].label.to_upper(),roundi(float(o.feeding.animals[kind].intake)*100)])
  if o.waterless:note("WATERLESS ROAD: adequate feed does not prevent thirst.")
  note("GRAZING SEASON %d%% · LAYING DAYLIGHT %d%%" % [roundi(float(o.season)*100),roundi(float(game.livestock.data.feeding.laying_months[int(game.calendar().month)-1])*100)])
- var sharing:=CheckBox.new();sharing.text="Share leftover portions with hens";sharing.button_pressed=game.livestock.record.get("share_scraps",true);sharing.disabled=not game.can_service()
- sharing.tooltip_text="Uses actual partial food servings, capped per person. The party's current daily ration and vitamin-bearing fruit portions are protected. This consumes food; it is not a free by-product."
+ var sharing:=CheckBox.new();sharing.text="Feed edible food portions to hens";sharing.button_pressed=game.livestock.record.get("share_scraps",true);sharing.disabled=not game.can_service()
+ sharing.tooltip_text="Optional: gives hens food people could eat, before using poultry grain. Starts off on new journeys. The current human ration and vitamin-bearing fruit portions are protected. Scratching and grain feeding continue while this is off."
  sharing.toggled.connect(func(on):game.livestock.set_scraps(game,on);refresh();changed.emit());rows.add_child(sharing)
  var grain_row:=HBoxContainer.new();rows.add_child(grain_row)
  var amount:=SpinBox.new();amount.min_value=0;amount.max_value=game.livestock.count(game.state,"poultry_feed");amount.step=1;amount.value=mini(4,int(amount.max_value));grain_row.add_child(amount)
