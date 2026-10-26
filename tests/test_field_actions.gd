@@ -39,13 +39,13 @@ func run():
 	game.party_health.days_without_fresh=60
 	game.provisions.fresh.assign([{"pounds":100,"expires":2,"preserved":true},{"pounds":2,"expires":5,"mass_ratio":4.0,"vitamin_c":true}])
 	game._tick_day(true)
-	check(game.party_health.days_without_fresh==0 and game.provisions.fresh.back().pounds==1,"Meals share a produce serving alongside older dried meat")
+	check(game.party_health.days_without_fresh==53 and game.provisions.fresh.back().pounds==1,"Meals share produce alongside dried meat and gradually restore depleted reserves")
 	game=party()
 	game.provisions.add_produce(8,0)
 	game.state.food+=2
 	game.party_health.days_without_fresh=60
 	game._tick_day(true)
-	check(game.party_health.days_without_fresh==0,"Actually eaten produce resets the vitamin-C gap")
+	check(game.party_health.days_without_fresh==53,"Actually eaten produce reduces deficiency without erasing its history")
 	game=party()
 	game.provisions.add_produce(8,0)
 	check(game.provisions.processable()==0,"Meat drying does not process greens")

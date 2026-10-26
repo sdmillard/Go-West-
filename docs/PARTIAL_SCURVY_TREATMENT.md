@@ -1,6 +1,6 @@
 # Partial scurvy treatment and visible progress
 
-October 26, 2026. Small servings of fruit and greens now help an existing scurvy patient, instead of receiving zero recovery credit below the shared threshold.
+October 26, 2026. This records treatment runtimea27064d; [subsequent gradual reserves](VITAMIN_RESERVES.md) also update prevention. Small servings of fruit and greens now help an existing scurvy patient, instead of receiving zero recovery credit below the shared threshold.
 
 Actual shared meal vitamin value is compared with the existing party target and capped at full coverage. Recovery and scurvy damage interpolate between the existing unfed and fully fed endpoints. At 50% coverage, a working day earns half a recovery step and half the untreated scurvy damage; a resting day earns one recovery step. Four quarter-covered working meals add up to a full step. Tiny progress and damage fractions accumulate rather than disappearing through daily rounding. No-produce days preserve prior recovery progress but do not advance it. Full coverage still stops scurvy's own damage and retains the existing 14-step recovery period.
 

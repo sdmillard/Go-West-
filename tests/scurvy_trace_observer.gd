@@ -4,7 +4,7 @@ var nutrition_trace: Array=[]
 func people() -> Array:
  var result: Array=[]
  for m in party_health.members:
-  result.append({"id":int(m.id),"active":party_health.is_active(m),"health":int(m.health),"gap":int(m.get("vitamin_days",party_health.days_without_fresh)),"scurvy":m.conditions.filter(func(c):return c.id=="scurvy").duplicate(true),"cause":str(m.get("cause",""))})
+  result.append({"id":int(m.id),"active":party_health.is_active(m),"health":int(m.health),"reserve_debt_milli":int(m.get("vitamin_debt_milli",int(m.get("vitamin_days",party_health.days_without_fresh))*1000)),"gap":int(m.get("vitamin_days",party_health.days_without_fresh)),"scurvy":m.conditions.filter(func(c):return c.id=="scurvy").duplicate(true),"cause":str(m.get("cause",""))})
  return result
 func produce() -> Dictionary:
  var result: Dictionary={"units":0,"vitamin_equivalent_lb":0.0}
