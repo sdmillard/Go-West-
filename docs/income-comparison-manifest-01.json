@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "gameplay": "b54cbb04cf14f92409993f5105e3dc708b0c1081",
+  "seed_start": 567000,
+  "seeds": 4,
+  "months": [
+    4,
+    5
+  ],
+  "accuracy": 0.65,
+  "journeys": 32,
+  "entries": [
+    {
+      "arm": "off",
+      "stock": "none",
+      "label": "income-confirmation-off-none-01",
+      "filename": "hunting-income-confirmation-off-none-01.json"
+    },
+    {
+      "arm": "off",
+      "stock": "goats",
+      "label": "income-confirmation-off-goats-01",
+      "filename": "hunting-income-confirmation-off-goats-01.json"
+    },
+    {
+      "arm": "combined",
+      "stock": "none",
+      "label": "income-confirmation-combined-none-01",
+      "filename": "hunting-income-confirmation-combined-none-01.json"
+    },
+    {
+      "arm": "combined",
+      "stock": "goats",
+      "label": "income-confirmation-combined-goats-01",
+      "filename": "hunting-income-confirmation-combined-goats-01.json"
+    }
+  ]
+}
