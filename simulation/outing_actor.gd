@@ -17,6 +17,7 @@ static func build(game,trip: Dictionary,random):
  child.state.household_gear_lb=float(trip.camp.household_gear_lb);child.state.miles=int(trip.mile)
  for field in ["hunger_days","camp_greens_lb","camp_greens_expires","remains_lb","east_arrival","_raw_hides_lb"]:child.state.erase(field)
  if trip.camp.has("hunger_days"):child.state.hunger_days=trip.camp.hunger_days
+ for good in game.provisions.data.weights_lb:child.state[good]=0
  for good in trip.camp.inventory:child.state[good]=int(trip.camp.inventory[good])
  for good in trip.stock:child.state[good]=int(trip.stock[good])
  child.state.horse_health=int(trip.condition);child.state.rations=int(trip.camp.camp_rations);child.state.pace=0

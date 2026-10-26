@@ -90,6 +90,10 @@ func run():
   for trip in old_trip.field_outings.trips:trip.camp.inventory.erase(key)
  restored=Save.new().restore(old_trip)
  check(restored!=null and restored.field_outings.record.trips[0].camp.inventory.get("deer_hide",0)==0,"Derived pre-skin detached inventory migrates with empty trade-goods slots")
+ if restored!=null:
+  restored.state.deer_hide=2
+  var old_pack_actor=load("res://simulation/outing_actor.gd").build(restored,restored.field_outings.record.trips[0],trip_random)
+  check(old_pack_actor.state.get("deer_hide",0)==0,"A legacy detached pack cannot inherit the wagon's newly acquired trade goods")
  var screen=load("res://ui/main.gd").new();root.add_child(screen);await process_frame
  screen.game=party();shoot(screen.game);screen._open_hunt_window();await process_frame
  screen.pelt_recovery.quantities.deer_hide.value=1;screen._update_hunt_report()
