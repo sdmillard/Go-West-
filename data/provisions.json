@@ -10,7 +10,10 @@
     "axles": 60,
     "tongues": 50,
     "medicine": 2,
-    "salt": 1
+    "salt": 1,
+    "bison_hide": 12,
+    "deer_hide": 3,
+    "rabbit_pelt": 0.2
   },
   "rations_lb": [
     1,
@@ -185,5 +188,41 @@
     "unit_kcal": 1000,
     "generic_meat_kcal_per_lb": 500,
     "note": "Calorie anchor for abstract food units, not a claim that every physical pound has equal energy. Existing purchased provisions remain an abstract mixed bundle at their existing weight/price. Generic lean meat uses a conservative rounded estimate; named game uses species values. Whole-unit rounding is a gameplay approximation."
+  },
+  "pelts": {
+    "note": "Authored rough air-dried trade skins, not fully tanned buffalo robes. Recovery and scraping/drying cost one additional camp day and meals per batch; raw weights, one-day batch limit and prices are estimates. Historical robe prices are context, not direct prices for these goods.",
+    "raw_batch_lb": 60,
+    "goods": {
+      "bison_hide": {
+        "species": "bison",
+        "label": "Bison hide",
+        "short_label": "BIS HIDE",
+        "raw_lb": 50,
+        "weight_lb": 12,
+        "sell_cents": 150,
+        "post_demand": 6,
+        "trader_demand": 1
+      },
+      "deer_hide": {
+        "species": "deer",
+        "label": "Deer hide",
+        "short_label": "DEER HIDE",
+        "raw_lb": 10,
+        "weight_lb": 3,
+        "sell_cents": 60,
+        "post_demand": 16,
+        "trader_demand": 3
+      },
+      "rabbit_pelt": {
+        "species": "rabbit",
+        "label": "Rabbit pelt",
+        "short_label": "RAB PELT",
+        "raw_lb": 0.5,
+        "weight_lb": 0.2,
+        "sell_cents": 5,
+        "post_demand": 40,
+        "trader_demand": 8
+      }
+    }
   }
 }

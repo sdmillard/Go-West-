@@ -5,6 +5,7 @@ const Outfitting = preload("res://simulation/outfitting.gd")
 const Route = preload("res://simulation/route_catalog.gd")
 const PartyHealth = preload("res://simulation/party_health.gd")
 const Survival = preload("res://simulation/survival_rules.gd")
+const Pelts=preload("res://simulation/pelts.gd")
 const Produce=preload("res://simulation/produce_trade.gd")
 const Direction=preload("res://simulation/travel_direction.gd")
 const RobberyDemand=preload("res://simulation/robbery_demand.gd")
@@ -88,6 +89,7 @@ func _init(seed_value: int = 1848, mode: String = "classic", setup: bool = false
 		"bullets": 0, "wheels": 2, "axles": 0, "tongues": 0,
 		"extended_route": setup, "landmark": "independence", "leg_miles": 0, "leg_length": 0, "next_landmark": "", "river_stage": ""})
 	state.merge({"medicine": 0, "salt":0, "ox_health": 100, "fatigue": 0, "weather": "Clear", "terrain": "plains", "loss_reason": ""})
+	for item in provisions.data.pelts.goods:state[item]=0
 	if setup and not end_at.is_empty() and not route.truncate_at(end_at):
 		error = "Unknown route endpoint."
 		state.status = "error"
@@ -761,7 +763,7 @@ func _apply(effects: Dictionary, health_cause: String = "injuries", resting: boo
 	if state.extended_route:
 		var changes: Dictionary = {}
 		var lines: Array[String] = []
-		for key in ["food", "money", "bullets", "medicine", "clothing", "oxen", "wheels", "axles", "tongues", "salt"]+Mounts.KEYS+livestock.GOODS:
+		for key in ["food", "money", "bullets", "medicine", "clothing", "oxen", "wheels", "axles", "tongues", "salt"]+Mounts.KEYS+livestock.GOODS+provisions.data.pelts.goods.keys():
 			var delta := float(state.get(key,0)) - float(before.get(key,0))
 			if key=="money":delta=roundi(delta*100)/100.0
 			if not is_zero_approx(delta):
@@ -1070,6 +1072,7 @@ func post_store() -> Dictionary:
 		rows.append(_counter_row(lot,int(lot.buy_cents),int(lot.sell_cents),can_buy,can_sell,buy.market_key,sell.market_key,true,true))
 	var name: String=str(route.nodes[state.landmark].get("name",state.landmark))
 	rows.append_array(Produce.rows(self,str(offer.key),"post"))
+	rows.append_array(Pelts.rows(self,str(offer.key),"post"))
 	rows.append_array(livestock.rows(self,str(offer.key)))
 	var wagon_row: Dictionary=provisions.WagonTrade.row(self,str(offer.key))
 	if state.vehicle=="foot":rows.push_front(wagon_row)
@@ -1102,6 +1105,7 @@ func trade_counter(venue: String="") -> Dictionary:
 		var can_sell: int=int(goods.wants.get(item,0))-_units_used(sell.market_key,amount) if crime.can_trade(self,sell) else 0
 		rows.append(_counter_row(lot,maxi(1,buy_cents),roundi(float(lot.sell_cents)*float(goods.sell)),can_buy,can_sell,buy.market_key,sell.market_key,goods.stock.has(item),goods.wants.has(item)))
 	rows.append_array(Produce.rows(self,str(offer.key),"traders"))
+	rows.append_array(Pelts.rows(self,str(offer.key),"traders"))
 	return {"name":"Passing traders","kind":"traders","key":str(offer.key),"mood":goods.mood,"late_food":late,"rows":rows,"days":context.trade_days(offer),"money_cents":roundi(float(state.money)*100.0),"purse_cents":_purse_left(str(offer.key),int(goods.purse_cents)),"rumor":"","discount":characters.available(self,"Trading")}
 
 ## How freely the people at a counter talk: a passing party's mood, a family's reluctance to part with things; a post's clerk is fair.
@@ -1248,7 +1252,7 @@ func counter_checkout(cart: Dictionary,venue: String="") -> bool:
 		# The unit ledger keeps exact amounts; the lot count rounds up so the lot menu never sells stock the counter took.
 		var used: int=_units_used(key,int(row.amount))+absi(n)
 		context.record.spent[key+"|units"]=used
-		if row.item not in Produce.ITEMS and row.item not in livestock.GOODS and row.item!="wagon":context.record.spent[key]=ceili(float(used)/int(row.amount))
+		if row.item not in Produce.ITEMS and row.item not in livestock.GOODS and row.item!="wagon" and row.item not in provisions.data.pelts.goods:context.record.spent[key]=ceili(float(used)/int(row.amount))
 		crime.consume_trade({"market_key":key,"effects":{row.item:n}})
 		lines.append(("bought %d %s" if n>0 else "sold %d %s") % [absi(n),_unit_name(row.item,absi(n))])
 	if quote.net_cents>0 and store.purse_cents>=0:
@@ -1268,7 +1272,7 @@ func counter_checkout(cart: Dictionary,venue: String="") -> bool:
 
 ## How a counter quantity reads in the journal and on the store screen.
 static func _unit_name(item: String,n: int) -> String:
-	var names: Dictionary={"food":["lb of food","lb of food"],"salt":["lb of salt","lb of salt"],"bullets":["bullet","bullets"],"medicine":["care kit","care kits"],"clothing":["clothing set","clothing sets"],"oxen":["ox","oxen"],"wheels":["wheel","wheels"],"axles":["axle","axles"],"tongues":["tongue","tongues"],"horses":["horse","horses"],"mules":["mule","mules"],"saddles":["saddle","saddles"],"pack_saddles":["pack saddle","pack saddles"],"saddlebags":["pair of saddlebags","pairs of saddlebags"]}
+	var names: Dictionary={"bison_hide":["bison hide","bison hides"],"deer_hide":["deer hide","deer hides"],"rabbit_pelt":["rabbit pelt","rabbit pelts"],"food":["lb of food","lb of food"],"salt":["lb of salt","lb of salt"],"bullets":["bullet","bullets"],"medicine":["care kit","care kits"],"clothing":["clothing set","clothing sets"],"oxen":["ox","oxen"],"wheels":["wheel","wheels"],"axles":["axle","axles"],"tongues":["tongue","tongues"],"horses":["horse","horses"],"mules":["mule","mules"],"saddles":["saddle","saddles"],"pack_saddles":["pack saddle","pack saddles"],"saddlebags":["pair of saddlebags","pairs of saddlebags"]}
 	return names.get(item,[item,item])[0 if n==1 else 1]
 
 ## The crime preview for this stop's target, or (place) one chosen from crime.local_places, as VILLAINY > STEAL lists them.
@@ -1645,16 +1649,23 @@ func hunt_calorie_density() -> float:
 		var density: float=float(animal.get("kcal_per_lb",provisions.data.food_energy.generic_meat_kcal_per_lb))
 		mass+=weight;energy+=weight*density
 	return energy/mass if mass>0 else float(provisions.data.food_energy.generic_meat_kcal_per_lb)
-func finish_hunt() -> bool:
+func pelt_quote(cart: Dictionary) -> Dictionary:return Pelts.quote(self,cart)
+func finish_hunt(pelt_cart: Dictionary={}) -> bool:
 	if hunt.is_empty():return false
+	var skins: Dictionary={"selected":0,"raw_lb":0.0,"days":0}
+	if not pelt_cart.is_empty():
+		skins=pelt_quote(pelt_cart)
+		if not skins.valid:return false
 	var outing: Dictionary=hunt.duplicate(true)
 	if hunt.has("field"):
-		for key in hunt.field.inventory:state[key]+=int(hunt.field.inventory[key])
+		for key in hunt.field.inventory:state[key]=int(state.get(key,0))+int(hunt.field.inventory[key])
 		provisions.fresh.append_array(hunt.field.fresh.duplicate(true))
 	# Retrieval work remains limited by health and willing helpers, but eating at camp
 	# does not require the meat to fit into tomorrow's walking packs first.
 	var is_fish: bool=hunt.get("activity","")=="fish"
 	var retrieved: float=minf(float(hunting_capacity()),float(hunt.meat)) if is_fish else float(mini(hunting_capacity(),int(hunt.meat)))
+	retrieved=minf(retrieved,maxf(0,hunting_capacity()-float(skins.raw_lb)))
+	if skins.selected>0:state["_raw_hides_lb"]=float(skins.raw_lb)
 	var density: float=hunt_calorie_density()
 	var units: int=provisions.add_meat(retrieved,int(state.day)+1,density,not is_fish)
 	if units>0:provisions.fresh.back()["_hunt_meal"]=true
@@ -1663,7 +1674,7 @@ func finish_hunt() -> bool:
 	if hunt.has("field") and hunt.field.kit!="wagon":
 		var field: Dictionary=hunt.field
 		var return_mode: String=str(field.get("return_mode","ride"))
-		var load: float=field_outings.Outfit.mass(self,field.members,field.kit,field.inventory,field.fresh,field.stock,return_mode)+retrieved
+		var load: float=field_outings.Outfit.mass(self,field.members,field.kit,field.inventory,field.fresh,field.stock,return_mode)+retrieved+float(skins.raw_lb)
 		var profile: Dictionary=field_outings.Outfit.load_profile(self,field.members,field.kit,load,field.stock,return_mode)
 		var wear: int=field_outings.Outfit.wear(self,field.kit,field.members.size(),context.region_id(self),profile.ratio,field.stock,return_mode)
 		var condition: int=maxi(0,int(field.condition)-wear)
@@ -1687,7 +1698,7 @@ func finish_hunt() -> bool:
 	provisions.fresh=provisions.fresh.filter(func(piece):return not piece.get("_hunt_meal",false))
 	state.food-=remaining
 	var room: float=maxf(0,provisions.storage_capacity(state)-provisions.cargo(state))
-	var keep: int=mini(remaining,maxi(0,floori(minf(room,hunting_capacity())/ratio)))
+	var keep: int=mini(remaining,maxi(0,floori(minf(room,maxf(0,hunting_capacity()-(0.0 if hunt.get("field",{}).get("kit","")=="wagon" else float(skins.raw_lb))))/ratio)))
 	if keep>0:
 		batch.erase("_hunt_meal")
 		batch.pounds=keep
@@ -1697,6 +1708,20 @@ func finish_hunt() -> bool:
 	journal.append((("Day %d · Fishing: %d casts, %.2f lb edible fish obtained;" if outing.get("activity","")=="fish" else "Day %d · Hunting: %d shots, %d lb obtained;")+" %.1f lb eaten at camp, %.1f lb packed (%.2f food units); %.1f lb left behind.") % [state.day,outing.shots,outing.meat,last_hunt_recovery.eaten_mass,last_hunt_recovery.mass,last_hunt_recovery.food,last_hunt_recovery.left])
 	if is_fish and not outing.get("catch_log",[]).is_empty():journal.append("Fish caught: "+", ".join(outing.catch_log.map(func(f):return "%s %.2f lb whole" % [f.label,f.whole_lb])))
 	hunt={}
+	if skins.selected>0:
+		var preparation_start: int=state.day
+		if state.status=="traveling":_tick_day(false,false,"skins")
+		state.erase("_raw_hides_lb")
+		var packed: Dictionary={};var left: Dictionary={}
+		for item in pelt_cart:
+			var mass: float=provisions.data.pelts.goods[item].weight_lb
+			var room_for_skins: float=maxf(0,provisions.storage_capacity(state)-provisions.cargo(state))
+			var n: int=mini(int(pelt_cart[item]),floori(room_for_skins/mass)) if state.status=="traveling" else 0
+			state[item]=int(state.get(item,0))+n;packed[item]=n;left[item]=int(pelt_cart[item])-n
+		last_hunt_recovery["pelts"]=packed;last_hunt_recovery["pelts_left"]=left;last_hunt_recovery["preparation_days"]=int(state.day)-preparation_start
+		last_hunt_recovery["preparation_food_units"]=float(livestock.last_meal.get("eaten",0)) if state.day>preparation_start else 0.0
+		journal.append("Day %d - Prepared rough trade skins: %s. Preparation costs a camp day and meals; skins exceeding the surviving party's cargo space were left behind." % [state.day,str(packed)])
+		supply_history.append({"day":state.day,"event":"prepared_pelts","changes":packed.duplicate(true),"left":left})
 	_schedule_event(false)
 	return true
 

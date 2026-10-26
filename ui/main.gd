@@ -62,6 +62,7 @@ var outing_window=preload("res://ui/outing_outfit_view.gd").new()
 var hunt_window: AcceptDialog
 var hunt_view: Control
 var hunt_report: Label
+var pelt_recovery=preload("res://ui/pelt_recovery.gd").new()
 var supplies_window: AcceptDialog
 var supplies_rows: VBoxContainer
 var drop_window: ConfirmationDialog
@@ -563,12 +564,12 @@ Northern shortcuts and Columbia rafting are not yet playable. Weather, medical e
 		else:notice("FISHING",game.fishing_quote(kit).get("message","Cannot set out now.")))
 	fishing_window.returned.connect(_finish_fishing)
 	hunt_window.title = "HUNTING ON THE PRAIRIE"
-	hunt_window.get_ok_button().text = "RETURN TO CAMP"
+	hunt_window.get_ok_button().text = "RETURN WITH SELECTED LOAD"
 	hunt_window.confirmed.connect(_finish_hunt)
-	hunt_window.canceled.connect(_finish_hunt)
+	hunt_window.canceled.connect(func():pelt_recovery.clear();_finish_hunt())
 	add_child(hunt_window)
 	var hunt_content := Control.new()
-	hunt_content.custom_minimum_size = Vector2(432, 212)
+	hunt_content.custom_minimum_size = Vector2(432, 273)
 	hunt_window.add_child(hunt_content)
 	hunt_view = HuntView.new()
 	place(hunt_view, Rect2(0, 0, 432, 150), hunt_content)
@@ -581,7 +582,8 @@ Northern shortcuts and Columbia rafting are not yet playable. Weather, medical e
 		_update_hunt_report())
 	hunt_report = label("")
 	hunt_report.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	place(hunt_report, Rect2(0, 154, 432, 57), hunt_content)
+	place(hunt_report, Rect2(0, 154, 432, 42), hunt_content)
+	place(pelt_recovery,Rect2(0,198,432,75),hunt_content)
 	supplies_window = AcceptDialog.new()
 	supplies_window.title = "PROVISIONS AND WAGON CARGO"
 	add_child(supplies_window)
@@ -1328,16 +1330,23 @@ func _open_hunt_window() -> void:
 		hunt_view.traveler_profile=game.characters.profiles[int(shooter.id)]
 		hunt_view.encounter = game.hunt
 		hunt_view.active = true
+		pelt_recovery.reset(game)
 		_update_hunt_report()
 		hunt_window.popup_centered()
 	_refresh()
 
 func _update_hunt_report() -> void:
 	if not game.hunt.is_empty():
+		pelt_recovery.refresh()
+		hunt_window.get_ok_button().disabled=not game.pelt_quote(pelt_recovery.cart()).valid
 		hunt_report.text = "%s · %ds · %s · SHOTS %d/5 · AMMO %d\nLEFT: FIRE · RIGHT: WALK · MEAT %d LB / HAUL LIMIT %d LB\n%s" % [game.hunt.region_label.to_upper(), ceili(30 - game.hunt.elapsed), "RELOAD" if game.hunt.reload > 0 else "READY", game.hunt.shots, game.hunt_ammo(), game.hunt.meat, game.hunting_capacity(), game.hunt.message]
 
 
 func _finish_hunt() -> void:
+	var skin_cart: Dictionary=pelt_recovery.cart()
+	if not game.hunt.is_empty() and not game.pelt_quote(skin_cart).valid:
+		hunt_window.popup_centered();return
+	var began: int=game.state.day
 	hunt_window.hide()
 	livestock_window.hide()
 	fishing_window.hide()
@@ -1346,9 +1355,12 @@ func _finish_hunt() -> void:
 	if game.hunt.is_empty():
 		return
 	var outing: Dictionary = game.hunt.duplicate(true)
-	if game.finish_hunt():
+	if game.finish_hunt(skin_cart):
 		var recovered: Dictionary=game.last_hunt_recovery
-		var report: String="%d shots · %d lb meat obtained\n%.1f lb eaten at camp · %.1f lb left behind\nPACKED %.1f LB · %d FOOD UNITS\nPacked meat fits the current cargo and hauling limits.\nEat within two trail days or use Camp > Preserve meat.\nOne day passed; meals came from provisions and the catch." % [outing.shots,outing.meat,recovered.eaten_mass,recovered.left,recovered.mass,recovered.food]
+		var report: String="%d shots · %d lb meat obtained\n%.1f lb eaten at camp · %.1f lb left behind\nPACKED %.1f LB · %d FOOD UNITS\nPacked meat fits the current cargo and hauling limits.\nEat within two trail days or use Camp > Preserve meat.\n%d day(s) passed; meals came from provisions and the catch." % [outing.shots,outing.meat,recovered.eaten_mass,recovered.left,recovered.mass,recovered.food,game.state.day-began]
+		if recovered.has("pelts"):
+			report+="\nPreparation day: %.2f food units eaten from camp supplies." % float(recovered.preparation_food_units)
+			for item in recovered.pelts:report+="\n%s: %d prepared, %d left behind." % [game.provisions.data.pelts.goods[item].label,int(recovered.pelts[item]),int(recovered.pelts_left[item])]
 		if recovered.other_loss>0:report+="\n%.1f lb lost to other camp events; see the journal." % recovered.other_loss
 		notice("HUNTING REPORT",report)
 	camping = true
@@ -2223,7 +2235,7 @@ func _normalize_dialog_tree(node) -> void:
 
 func _normalize_dialog_buttons(dialog: AcceptDialog) -> void:
 	# Only real committing actions remain below; X/Escape is the one exit convention.
-	var commits: Array=["REST","SLAUGHTER","REPACK","SELL WAGON","LEAVE WAGON","LEAVE THIS STONE"]
+	var commits: Array=["REST","SLAUGHTER","REPACK","SELL WAGON","LEAVE WAGON","LEAVE THIS STONE","RETURN WITH SELECTED LOAD"]
 	dialog.get_ok_button().visible=dialog is ConfirmationDialog or dialog.get_ok_button().text in commits
 	if dialog is ConfirmationDialog:dialog.get_cancel_button().hide()
 

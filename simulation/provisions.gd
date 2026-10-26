@@ -7,6 +7,7 @@ var fresh: Array[Dictionary] = []
 var carriers: Array[Dictionary] = []
 # Source of the last whole serving, for retaining an uneaten fractional portion.
 var last_serving: Dictionary={}
+const Pelts=preload("res://simulation/pelts.gd")
 const WagonTrade=preload("res://simulation/wagon_trade.gd")
 const Produce=preload("res://simulation/produce_trade.gd")
 const Carrying=preload("res://simulation/carrying.gd")
@@ -46,6 +47,7 @@ func load_data(value: Variant) -> bool:
 	for key in ["food", "clothing", "bullets", "wheels", "axles", "tongues", "medicine", "salt"]:
 		if not number(value.weights_lb.get(key)) or value.weights_lb[key] <= 0:
 			return false
+	if not Pelts.valid(value.get("pelts"),value.weights_lb):return false
 	var energy: Variant=value.get("food_energy")
 	if not energy is Dictionary or not energy.get("note") is String:return false
 	for key in ["unit_kcal","generic_meat_kcal_per_lb"]:
@@ -84,6 +86,7 @@ func cargo(inventory: Dictionary) -> float:
 	pounds+=Mounts.spare_tack(data.mounts,inventory,Mounts.plan(data.mounts,inventory))
 	# Bodies carried with the party weigh what they weigh, on foot or in the wagon.
 	pounds+=preload("res://simulation/livestock.gd").cargo(inventory)+float(inventory.get("livestock_products_lb",0))+int(inventory.get("poultry_feed",0))*0.25+int(inventory.get("livestock_fodder",0))+float(inventory.get("poultry_feed_remainder_lb",0))+float(inventory.get("livestock_fodder_remainder_lb",0))
+	pounds+=float(inventory.get("_raw_hides_lb",0))
 	pounds+=float(inventory.get("remains_lb",0))+float(inventory.get("camp_greens_lb",0))
 	for key in data.weights_lb:
 		pounds += maxf(0, float(inventory.get(key, 0))) * float(data.weights_lb[key])

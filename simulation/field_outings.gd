@@ -227,7 +227,7 @@ func _return(game,trip: Dictionary) -> void:
  # Restore personal supplies and real tack before calculating room for the catch.
  var catches: Array=[]
  for key in trip.camp.inventory:
-  if key!="food":game.state[key]+=int(trip.camp.inventory[key])
+  if key!="food":game.state[key]=int(game.state.get(key,0))+int(trip.camp.inventory[key])
  var all_food: int=int(trip.camp.inventory.food)
  for batch in trip.camp.fresh:
   if batch.get("_outing_catch",false):catches.append(batch)
@@ -314,9 +314,9 @@ func valid(value: Variant,game,party: Array,day: int) -> bool:
    for key in game.Mounts.TACK:
     if not game.crime.whole(camp.cached_tack.get(key),0,int(Outfit.stock(trip.kit)[key])-int(trip.stock[key])):return false
   if not Follow.valid(camp,game) or not Encounters.valid(camp,game):return false
-  if not camp.get("field_working") is bool or not camp.get("inventory") is Dictionary or camp.inventory.size()!=game.provisions.data.weights_lb.size() or not camp.get("fresh") is Array or camp.fresh.size()>1000:return false
+  if not camp.get("field_working") is bool or not camp.get("inventory") is Dictionary or not game.Pelts.valid_inventory(camp.inventory,game.provisions.data.weights_lb,game.provisions.data.pelts.goods) or not camp.get("fresh") is Array or camp.fresh.size()>1000:return false
   for key in game.provisions.data.weights_lb:
-   if not game.crime.whole(camp.inventory.get(key),0,1000000):return false
+   if not game.crime.whole(camp.inventory.get(key,0),0,1000000):return false
   var total:=0
   for batch in camp.fresh:
    if not batch is Dictionary or not game.provisions.valid_nutrients(batch) or not game.provisions.valid_mass_ratio(batch) or not game.crime.whole(batch.get("pounds"),1,1000000) or not game.crime.whole(batch.get("expires"),day+1,1000100):return false

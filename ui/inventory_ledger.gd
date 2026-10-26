@@ -60,7 +60,8 @@ func _init(game):
  for item in game.provisions.data.weights_lb:
   if item=="food":continue
   var amount: int=int(game.state.get(item,0))
-  equipment.add_child(words(str(item).capitalize()))
+  if item in game.provisions.data.pelts.goods and amount==0:continue
+  equipment.add_child(words(game.provisions.data.pelts.goods.get(item,{}).get("label",str(item).capitalize())))
   equipment.add_child(words(str(amount)))
   equipment.add_child(words("%.1f" % (amount*float(game.provisions.data.weights_lb[item]))))
  for kind in game.livestock.data.supplies:
