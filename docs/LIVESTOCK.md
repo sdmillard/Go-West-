@@ -1,5 +1,7 @@
 # Livestock and individual animal condition
 
+The [realism audit](LIVESTOCK_REALISM_AUDIT.md) documents current feeding, calorie-rounding, winter-condition and care-accounting limitations. Production rates remain provisional; passing the tests does not establish historical accuracy.
+
 ## Using it
 
 Buy milk cows, milk goats, laying hens and poultry grain during initial outfitting or at an open post counter. Suggested outfits still include none. Open **Supplies > Livestock** or **Camp > Livestock / Working Team** for condition, remaining lactation, daily-care settings, feed, butchery and working ox selection. The separate grain drop control uses quarter-pound units. Animals can be sold at open posts; they are not assumed available at every passing trader.
