@@ -24,6 +24,8 @@ func load_data(value: Variant) -> bool:
 					for action in amount:
 						if action not in ACTIONS or action in seen:return false
 						seen.append(action)
+				elif key=="legacy_only":
+					if category!="specials" or not amount is bool:return false
 				elif key=="assists":
 					if amount not in ["Hunting","Carpentry","Caregiving","Trading","Leatherworking"]:return false
 				else:

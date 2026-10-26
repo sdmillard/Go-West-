@@ -1,0 +1,68 @@
+{
+  "note": "Authored hand-dressing model, not an exact 1848 recipe, measured hide yield or tariff. Three worker-days dress one rough deer hide; two more make four pairs of gloves. Hand tools and dressing supplies are assumed in the household kit. No industrial bark tanning or instantaneous conversion. Tabitha Brown glove-making is historical context; mass, labour and prices are estimates.",
+  "goods": {
+    "hide_scraped": {
+      "label": "Hide, scraped",
+      "weight_lb": 3
+    },
+    "hide_softened": {
+      "label": "Hide, softened",
+      "weight_lb": 3
+    },
+    "buckskin": {
+      "label": "Dressed buckskin",
+      "weight_lb": 2,
+      "sell_cents": 125,
+      "post_demand": 8,
+      "trader_demand": 2
+    },
+    "glove_pieces": {
+      "label": "Cut glove pieces",
+      "weight_lb": 2
+    },
+    "buckskin_gloves": {
+      "label": "Buckskin gloves (pair)",
+      "weight_lb": 0.25,
+      "sell_cents": 75,
+      "post_demand": 20,
+      "trader_demand": 6
+    }
+  },
+  "recipes": {
+    "tan_leather": {
+      "label": "Dress a deer hide",
+      "steps": [
+        {
+          "input": "hide_softened",
+          "output": "buckskin",
+          "amount": 1
+        },
+        {
+          "input": "hide_scraped",
+          "output": "hide_softened",
+          "amount": 1
+        },
+        {
+          "input": "deer_hide",
+          "output": "hide_scraped",
+          "amount": 1
+        }
+      ]
+    },
+    "make_gloves": {
+      "label": "Make buckskin gloves",
+      "steps": [
+        {
+          "input": "glove_pieces",
+          "output": "buckskin_gloves",
+          "amount": 4
+        },
+        {
+          "input": "buckskin",
+          "output": "glove_pieces",
+          "amount": 1
+        }
+      ]
+    }
+  }
+}

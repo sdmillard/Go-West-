@@ -26,11 +26,11 @@ static func stock(game) -> Array:
  var titles: Dictionary={"food":"Food units","clothing":"Clothing sets","bullets":"Bullets","wheels":"Spare wheels","axles":"Spare axles","tongues":"Spare tongues","medicine":"Care kits","salt":"Salt (lb)"}
  for item in game.provisions.data.weights_lb:
   var amount: int=int(game.state.get(item,0))
-  if (item in game.provisions.data.pelts.goods or game.income.is_keepsake(item)) and amount==0:continue
+  if (item in game.provisions.data.pelts.goods or game.income.is_keepsake(item) or game.leathercraft.is_good(item)) and amount==0:continue
   var mass: float=amount*float(game.provisions.data.weights_lb[item])
   if item=="food":mass+=game.provisions.tracked_mass(amount)-game.provisions.tracked_food(amount)
   var personal: String=game.income.label_for(game,item) if game.income.is_keepsake(item) else ""
-  rows.append({"id":item,"label":personal if not personal.is_empty() else game.provisions.data.pelts.goods.get(item,{}).get("label",titles.get(item,str(item))),"amount":amount,"mass_lb":snappedf(mass,0.1),"unit_lb":mass/amount if amount>0 else float(game.provisions.data.weights_lb[item]),"average":item=="food" and not game.provisions.fresh.is_empty()})
+  rows.append({"id":item,"label":game.leathercraft.label_for(item) if game.leathercraft.is_good(item) else personal if not personal.is_empty() else game.provisions.data.pelts.goods.get(item,{}).get("label",titles.get(item,str(item))),"amount":amount,"mass_lb":snappedf(mass,0.1),"unit_lb":mass/amount if amount>0 else float(game.provisions.data.weights_lb[item]),"average":item=="food" and not game.provisions.fresh.is_empty()})
  var loose: Dictionary=game.Mounts.loose_tack(game.provisions.data.mounts,game.state)
  for key in loose:
   var unit: float=float(game.provisions.data.mounts[{"saddles":"riding_tack_lb","pack_saddles":"pack_tack_lb","saddlebags":"loose_bags_lb"}[key]])

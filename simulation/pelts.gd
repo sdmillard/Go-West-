@@ -49,6 +49,6 @@ static func valid_inventory(value: Variant,weights: Dictionary,optional: Diction
  for key in value:
   if not weights.has(key):return false
  for key in weights:
-  if not value.has(key) and (optional.has(key) or preload("res://simulation/trail_income.gd").is_keepsake(key)):continue
+  if not value.has(key) and (optional.has(key) or preload("res://simulation/leathercraft.gd").is_good(key) or preload("res://simulation/trail_income.gd").is_keepsake(key)):continue
   if not whole(value.get(key),0,1 if preload("res://simulation/trail_income.gd").is_keepsake(key) else 1000000):return false
  return true

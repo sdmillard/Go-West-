@@ -40,6 +40,7 @@ var party_button: Button
 var party_rows: VBoxContainer
 var member_details: RichTextLabel
 var selected_member := 0
+var leathercraft_window=preload("res://ui/leathercraft_view.gd").new()
 var income_window=preload("res://ui/income_view.gd").new()
 var wages_button: Button
 var auto_pay_wages: CheckBox
@@ -590,6 +591,8 @@ Northern shortcuts and Columbia rafting are not yet playable. Weather, medical e
 	add_child(supplies_window)
 	var supplies_scroll := ScrollContainer.new()
 	supplies_scroll.custom_minimum_size = Vector2(580,250)
+	add_child(leathercraft_window)
+	leathercraft_window.visibility_changed.connect(func():if not leathercraft_window.visible:_refresh())
 	add_child(income_window)
 	income_window.visibility_changed.connect(func():if not income_window.visible:_refresh())
 	supplies_window.add_child(supplies_scroll)
@@ -736,7 +739,7 @@ func _show_section(section: String) -> void:
 			var note:=label("Opening camp spends no time or supplies.\nChoose an activity; rest is optional.")
 			note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 			section_rows.add_child(note)
-			entries=[["LIVESTOCK / WORKING TEAM >",func():section_window.hide();livestock_window.open(game)],["COMPANION TASKS >",_show_section.bind("Companion tasks")],["FIELD TRIPS / RETURNING HUNTERS >",_show_section.bind("Field trips")],["REST · CHOOSE DAYS",_rest],["PRESERVE MEAT >",_show_section.bind("Preserve meat")],["DRY FRUIT / GREENS >",_show_section.bind("Dry produce")],["CARE / MEDICAL ATTENTION",_open_care]]
+			entries=[["LIVESTOCK / WORKING TEAM >",func():section_window.hide();livestock_window.open(game)],["LEATHERWORK >",func():section_window.hide();leathercraft_window.open(game)],["COMPANION TASKS >",_show_section.bind("Companion tasks")],["FIELD TRIPS / RETURNING HUNTERS >",_show_section.bind("Field trips")],["REST · CHOOSE DAYS",_rest],["PRESERVE MEAT >",_show_section.bind("Preserve meat")],["DRY FRUIT / GREENS >",_show_section.bind("Dry produce")],["CARE / MEDICAL ATTENTION",_open_care]]
 		"Field trips":
 			for trip in game.field_outings.record.trips:
 				var info:=label("%s · %s · EXPECTED DAY %d\nSEARCH AREA: MILE %d · %s" % [game.party_health.members[trip.member].name,game.field_outings.public_status(trip),game.field_outings.expected_day(trip),trip.mile,outing_window.KIT_LABELS[game.field_outings.Outfit.KITS.find(game.field_outings.public_kit(trip))]])
@@ -958,6 +961,8 @@ func _camp_task_menu(id: int,task: Dictionary) -> MenuButton:
 	repairs.id_pressed.connect(_assign_camp_task.bind(id))
 	menu.add_child(repairs)
 	menu.add_submenu_item("Repair wagon","RepairOptions",20)
+	menu.add_item("Dress deer hides",game.camp_tasks.JOBS.find("tan_leather"))
+	menu.add_item("Make buckskin gloves",game.camp_tasks.JOBS.find("make_gloves"))
 	menu.add_item("Guard stock",game.camp_tasks.JOBS.find("guard"))
 	menu.set_item_tooltip(menu.item_count-1,"Watch horses and mules at night. In camp this costs the worker's rest; on travel nights the existing watch sleep cost applies. Protection never stacks.")
 	menu.add_item("Send hunting trip / outrider...",30)

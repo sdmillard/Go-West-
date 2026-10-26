@@ -5,7 +5,7 @@ const FORMAT := "westward-probably"
 const VERSION := 1
 const DEFAULT_PATH := "user://journey.json"
 const MAX_BYTES := 2097152
-const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes", "social_rules", "appearance", "recruitment", "robbery_demands", "camp_tasks", "field_outings", "fishing", "livestock", "trail_income"]
+const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes", "social_rules", "appearance", "recruitment", "robbery_demands", "camp_tasks", "field_outings", "fishing", "livestock", "trail_income", "leathercraft"]
 var error := ""
 var rules_signature := ""
 var load_note := ""
@@ -443,6 +443,7 @@ func restore(value: Variant):
 	var income: Variant=normalize(value.get("income",{"keepsakes":{},"work":{}}))
 	if not game.income.valid(income,game):return null
 	game.income.record=income
+	if not game.leathercraft.valid_inventory(game.state):return null
 	if game.pending.get("id","") in ["ox_injury","wandering_ox"]:game.adapt_travel_event(game.pending)
 	if game.pending.get("recruit_menu",false) or game.pending.get("dismiss_menu",false):
 		if not game.recruitment.valid_open_menu(game):return null

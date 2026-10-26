@@ -1,5 +1,7 @@
 # Paid crews and the Leatherworker specialty
 
+Leatherworking has since been corrected to a primary background and expanded to [physical hide-to-goods crafting](LEATHERCRAFT.md). The special described below is now legacy-only compatibility, not a new creation choice.
+
 Several travelers can now take local jobs during **one paid day**. Individual rates are unchanged as minimum offers; a traveler's existing mercenary market quote supplies a pay floor. This gives hired companions a way to earn their own cash wage while work is available, without inflating pay through a private contract.
 
 ## Use it
