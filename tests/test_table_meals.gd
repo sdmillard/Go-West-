@@ -76,6 +76,14 @@ func run():
   milk(g,626)
   result=g.livestock.meal(g,3)
   check(is_equal_approx(initial+(day+1)*626-energy(g),(day+1)*3000),"Recurring small servings conserve calories over repeated meals")
+ # Hunting's report must distinguish a split catch portion from meat actually eaten.
+ g=game();g.state.food=0;milk(g,626,3)
+ check(g.start_hunt(),"Start real hunt with table food in camp")
+ g.hunt.meat=40;g.hunt.targets=[]
+ check(g.finish_hunt(),"Settle hunt with a fractional meal from milk")
+ check(is_equal_approx(g.last_hunt_recovery.eaten_food,14.374),"Hunt report does not call the uneaten fraction consumed meat")
+ check(is_equal_approx(g.last_hunt_recovery.eaten_mass+g.last_hunt_recovery.mass+g.last_hunt_recovery.left+g.last_hunt_recovery.other_loss,40),"Hunt outcome conserves recovered catch mass including its split portion")
+ check(copy(g)!=null,"Split catch portion saves after the real hunt closes")
  # Real work, not standing assignments, controls care availability.
  g=game();g.state.dairy_cows=1;g.state.goats=1;g.livestock.sync(g)
  for id in range(1,5):check(g.camp_tasks.assign(g,id,"forage"),"Assign standing camp chore")

@@ -276,7 +276,7 @@ func eat(amount: int,party_size: int,total: int,vitamin_offset: float=0.0) -> fl
 	for batch in fresh:
 		if batch.get("vitamin_c",false):continue
 		var used: int=mini(other,int(batch.pounds))
-		if used>0:last_serving={"lb":mass_ratio(batch),"expires":int(batch.expires),"vitamin_c_lb":0.0}
+		if used>0:last_serving={"lb":mass_ratio(batch),"expires":int(batch.expires),"vitamin_c_lb":0.0,"hunt":bool(batch.get("_hunt_meal",false))}
 		batch.pounds-=used
 		other-=used
 	if other>0:last_serving={"lb":float(data.weights_lb.food),"expires":1000100,"vitamin_c_lb":0.0}

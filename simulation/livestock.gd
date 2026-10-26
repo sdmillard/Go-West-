@@ -7,6 +7,8 @@ var error: String=""
 var record: Dictionary={"animals":[],"products":[],"next_id":0,"care":true}
 var last: Dictionary={}
 var last_meal: Dictionary={}
+# Reference to the current hunt's split serving; packing updates the retained fraction.
+var hunt_portion: Dictionary={}
 func _init():
  load_data(JSON.parse_string(FileAccess.get_file_as_string("res://data/livestock.json")))
 static func number(v: Variant) -> bool:return (v is int or v is float) and is_finite(v)

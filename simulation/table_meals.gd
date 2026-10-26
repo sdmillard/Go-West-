@@ -9,6 +9,8 @@ static func serve(game,needed: int,vitamin_offset: float=0.0) -> Dictionary:
  var vitamin:=vitamin_offset
  var ordinary:=0
  var dairy:=0.0
+ var hunt_fraction:=0.0
+ stock.hunt_portion={}
  # Keep the established shared produce serving ahead of milk/meat.
  var target: float=int(game.state.party_size)*float(provisions.data.foraging.vitamin_c_lb_per_person)
  var vegetables:=0
@@ -44,10 +46,12 @@ static func serve(game,needed: int,vitamin_offset: float=0.0) -> Dictionary:
    var source: Dictionary=provisions.last_serving
    var fraction: float=excess/unit
    var nutrient: float=float(source.vitamin_c_lb)*fraction
-   stock.record.products.append({"kind":"portion","lb":float(source.lb)*fraction,"kcal":excess,"expires":int(source.expires),"vitamin_c_lb":nutrient})
+   var portion: Dictionary={"kind":"portion","lb":float(source.lb)*fraction,"kcal":excess,"expires":int(source.expires),"vitamin_c_lb":nutrient}
+   stock.record.products.append(portion)
+   if source.get("hunt",false):stock.hunt_portion=portion;hunt_fraction=fraction
    vitamin-=nutrient
  stock.product_mass(game)
- stock.last_meal={"eaten":needed-remaining/unit,"needed":needed,"vitamin":vitamin,"ordinary_removed":ordinary,"dairy_eaten":dairy/unit}
+ stock.last_meal={"eaten":needed-remaining/unit,"needed":needed,"vitamin":vitamin,"ordinary_removed":ordinary,"dairy_eaten":dairy/unit,"hunt_fraction":hunt_fraction}
  return stock.last_meal
 
 static func forecast(game,horizon: int=3) -> int:
