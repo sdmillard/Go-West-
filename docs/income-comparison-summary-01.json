@@ -98,6 +98,10 @@
       "arrived_four_originals": 7,
       "income": {
         "cases_earning": 14,
+        "cases_selling_keepsakes": 14,
+        "cases_selling_pelts": 0,
+        "cases_skinning": 0,
+        "cases_working": 0,
         "goods_sold": {
           "keepsake_0": 14,
           "keepsake_1": 13,
@@ -210,6 +214,10 @@
       "arrived_four_originals": 6,
       "income": {
         "cases_earning": 0,
+        "cases_selling_keepsakes": 0,
+        "cases_selling_pelts": 0,
+        "cases_skinning": 0,
+        "cases_working": 0,
         "goods_sold": {},
         "gross_cents": 0,
         "keepsakes_cents": 0,
@@ -252,6 +260,10 @@
       "arrived_four_originals": 0,
       "income": {
         "cases_earning": 4,
+        "cases_selling_keepsakes": 4,
+        "cases_selling_pelts": 0,
+        "cases_skinning": 0,
+        "cases_working": 0,
         "goods_sold": {
           "keepsake_0": 4,
           "keepsake_1": 3,
@@ -308,6 +320,10 @@
       "arrived_four_originals": 1,
       "income": {
         "cases_earning": 4,
+        "cases_selling_keepsakes": 4,
+        "cases_selling_pelts": 0,
+        "cases_skinning": 0,
+        "cases_working": 0,
         "goods_sold": {
           "keepsake_0": 4,
           "keepsake_1": 4,
@@ -382,6 +398,10 @@
       "arrived_four_originals": 3,
       "income": {
         "cases_earning": 3,
+        "cases_selling_keepsakes": 3,
+        "cases_selling_pelts": 0,
+        "cases_skinning": 0,
+        "cases_working": 0,
         "goods_sold": {
           "keepsake_0": 3,
           "keepsake_1": 3,
@@ -457,6 +477,10 @@
       "arrived_four_originals": 3,
       "income": {
         "cases_earning": 3,
+        "cases_selling_keepsakes": 3,
+        "cases_selling_pelts": 0,
+        "cases_skinning": 0,
+        "cases_working": 0,
         "goods_sold": {
           "keepsake_0": 3,
           "keepsake_1": 3,
@@ -515,6 +539,10 @@
       "arrived_four_originals": 0,
       "income": {
         "cases_earning": 0,
+        "cases_selling_keepsakes": 0,
+        "cases_selling_pelts": 0,
+        "cases_skinning": 0,
+        "cases_working": 0,
         "goods_sold": {},
         "gross_cents": 0,
         "keepsakes_cents": 0,
@@ -564,6 +592,10 @@
       "arrived_four_originals": 1,
       "income": {
         "cases_earning": 0,
+        "cases_selling_keepsakes": 0,
+        "cases_selling_pelts": 0,
+        "cases_skinning": 0,
+        "cases_working": 0,
         "goods_sold": {},
         "gross_cents": 0,
         "keepsakes_cents": 0,
@@ -631,6 +663,10 @@
       "arrived_four_originals": 3,
       "income": {
         "cases_earning": 0,
+        "cases_selling_keepsakes": 0,
+        "cases_selling_pelts": 0,
+        "cases_skinning": 0,
+        "cases_working": 0,
         "goods_sold": {},
         "gross_cents": 0,
         "keepsakes_cents": 0,
@@ -689,6 +725,10 @@
       "arrived_four_originals": 2,
       "income": {
         "cases_earning": 0,
+        "cases_selling_keepsakes": 0,
+        "cases_selling_pelts": 0,
+        "cases_skinning": 0,
+        "cases_working": 0,
         "goods_sold": {},
         "gross_cents": 0,
         "keepsakes_cents": 0,
@@ -1923,6 +1963,21 @@
       "stock": "goats"
     }
   ],
+  "paired_summary": {
+    "arrival_days_differences": [
+      0,
+      1,
+      3,
+      2,
+      0,
+      0
+    ],
+    "both_arrived": 6,
+    "both_lost": 8,
+    "gained_arrivals": 1,
+    "lost_arrivals": 1,
+    "median_arrival_days_difference": 0.5
+  },
   "pairs": 16,
   "rules_signature": "4cedbfefc2e9f0d5371c4b7100eba71b4045d8db453e2afdd74b3bd0bed95413",
   "source_hashes": {
