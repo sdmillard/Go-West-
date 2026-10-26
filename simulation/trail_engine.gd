@@ -24,6 +24,7 @@ const MAX_TRAVELERS := 32
 const PARTY_CAPACITY := 5
 var recruitment=preload("res://simulation/party_recruitment.gd").new()
 var social=preload("res://simulation/party_social.gd").new()
+var leathercraft=preload("res://simulation/leathercraft.gd").new()
 var income=preload("res://simulation/trail_income.gd").new()
 var context=preload("res://simulation/trail_context.gd").new()
 var combat=preload("res://simulation/combat.gd").new()
@@ -609,7 +610,7 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 	state.erase("camp_watch_day")
 	state.erase("camp_watch_member")
 	var wagon_hunt: bool=camp_action=="hunt" and hunt.get("field",{}).get("kit","")=="wagon"
-	if not (camp_action=="settlement_work" and not income.is_working(camp_tasks.leader_id(self))) and not wagon_hunt and (not resting or (not camp_action.is_empty() and camp_action!="rest")):camp_tasks.end_leader_nursing(self)
+	if not (camp_action=="leathercraft" and leathercraft.worker!=camp_tasks.leader_id(self)) and not (camp_action=="settlement_work" and not income.is_working(camp_tasks.leader_id(self))) and not wagon_hunt and (not resting or (not camp_action.is_empty() and camp_action!="rest")):camp_tasks.end_leader_nursing(self)
 	if state.extended_route and not camp_action.is_empty():camp_tasks.begin(self,camp_action)
 	var sick_before: bool=characters.has_sick(self)
 	state.day += 1
@@ -768,7 +769,7 @@ func _apply(effects: Dictionary, health_cause: String = "injuries", resting: boo
 	if state.extended_route:
 		var changes: Dictionary = {}
 		var lines: Array[String] = []
-		for key in ["food", "money", "bullets", "medicine", "clothing", "oxen", "wheels", "axles", "tongues", "salt"]+Mounts.KEYS+livestock.GOODS+provisions.data.pelts.goods.keys()+income.all_keys():
+		for key in ["food", "money", "bullets", "medicine", "clothing", "oxen", "wheels", "axles", "tongues", "salt"]+Mounts.KEYS+livestock.GOODS+provisions.data.pelts.goods.keys()+income.all_keys()+leathercraft.items():
 			var delta := float(state.get(key,0)) - float(before.get(key,0))
 			if key=="money":delta=roundi(delta*100)/100.0
 			if not is_zero_approx(delta):
@@ -1079,6 +1080,7 @@ func post_store() -> Dictionary:
 	rows.append_array(Produce.rows(self,str(offer.key),"post"))
 	rows.append_array(Pelts.rows(self,str(offer.key),"post"))
 	rows.append_array(income.rows(self,str(offer.key),"post"))
+	rows.append_array(leathercraft.rows(self,str(offer.key),"post"))
 	rows.append_array(livestock.rows(self,str(offer.key)))
 	var wagon_row: Dictionary=provisions.WagonTrade.row(self,str(offer.key))
 	if state.vehicle=="foot":rows.push_front(wagon_row)
@@ -1113,6 +1115,7 @@ func trade_counter(venue: String="") -> Dictionary:
 	rows.append_array(Produce.rows(self,str(offer.key),"traders"))
 	rows.append_array(Pelts.rows(self,str(offer.key),"traders"))
 	rows.append_array(income.rows(self,str(offer.key),"traders"))
+	rows.append_array(leathercraft.rows(self,str(offer.key),"traders"))
 	return {"name":"Passing traders","kind":"traders","key":str(offer.key),"mood":goods.mood,"late_food":late,"rows":rows,"days":context.trade_days(offer),"money_cents":roundi(float(state.money)*100.0),"purse_cents":_purse_left(str(offer.key),int(goods.purse_cents)),"rumor":"","discount":characters.available(self,"Trading")}
 
 ## How freely the people at a counter talk: a passing party's mood, a family's reluctance to part with things; a post's clerk is fair.
@@ -1259,7 +1262,7 @@ func counter_checkout(cart: Dictionary,venue: String="") -> bool:
 		# The unit ledger keeps exact amounts; the lot count rounds up so the lot menu never sells stock the counter took.
 		var used: int=_units_used(key,int(row.amount))+absi(n)
 		context.record.spent[key+"|units"]=used
-		if row.item not in Produce.ITEMS and row.item not in livestock.GOODS and row.item!="wagon" and row.item not in provisions.data.pelts.goods:context.record.spent[key]=ceili(float(used)/int(row.amount))
+		if row.item not in Produce.ITEMS and row.item not in livestock.GOODS and row.item!="wagon" and row.item not in provisions.data.pelts.goods and not leathercraft.is_good(row.item):context.record.spent[key]=ceili(float(used)/int(row.amount))
 		crime.consume_trade({"market_key":key,"effects":{row.item:n}})
 		lines.append(("bought %d %s" if n>0 else "sold %d %s") % [absi(n),_unit_name(row.item,absi(n))])
 	if quote.net_cents>0 and store.purse_cents>=0:
@@ -1280,7 +1283,7 @@ func counter_checkout(cart: Dictionary,venue: String="") -> bool:
 ## How a counter quantity reads in the journal and on the store screen.
 static func _unit_name(item: String,n: int) -> String:
 	if preload("res://simulation/trail_income.gd").is_keepsake(item):return "personal keepsake"
-	var names: Dictionary={"bison_hide":["bison hide","bison hides"],"deer_hide":["deer hide","deer hides"],"rabbit_pelt":["rabbit pelt","rabbit pelts"],"food":["lb of food","lb of food"],"salt":["lb of salt","lb of salt"],"bullets":["bullet","bullets"],"medicine":["care kit","care kits"],"clothing":["clothing set","clothing sets"],"oxen":["ox","oxen"],"wheels":["wheel","wheels"],"axles":["axle","axles"],"tongues":["tongue","tongues"],"horses":["horse","horses"],"mules":["mule","mules"],"saddles":["saddle","saddles"],"pack_saddles":["pack saddle","pack saddles"],"saddlebags":["pair of saddlebags","pairs of saddlebags"]}
+	var names: Dictionary={"buckskin":["dressed buckskin","dressed buckskins"],"buckskin_gloves":["pair of buckskin gloves","pairs of buckskin gloves"],"bison_hide":["bison hide","bison hides"],"deer_hide":["deer hide","deer hides"],"rabbit_pelt":["rabbit pelt","rabbit pelts"],"food":["lb of food","lb of food"],"salt":["lb of salt","lb of salt"],"bullets":["bullet","bullets"],"medicine":["care kit","care kits"],"clothing":["clothing set","clothing sets"],"oxen":["ox","oxen"],"wheels":["wheel","wheels"],"axles":["axle","axles"],"tongues":["tongue","tongues"],"horses":["horse","horses"],"mules":["mule","mules"],"saddles":["saddle","saddles"],"pack_saddles":["pack saddle","pack saddles"],"saddlebags":["pair of saddlebags","pairs of saddlebags"]}
 	return names.get(item,[item,item])[0 if n==1 else 1]
 
 ## The crime preview for this stop's target, or (place) one chosen from crime.local_places, as VILLAINY > STEAL lists them.

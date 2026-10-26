@@ -188,9 +188,10 @@
       "wage_cents": 10
     },
     "Leatherworker": {
-      "description": "Trained in leather and harness repairs. Unlocks specialty leatherwork jobs; +15 cents/day to the mercenary market quote. Employers provide repair materials.",
+      "description": "Legacy cross-training retained for saved travelers. New characters select the Leatherworking background instead. Unlocks leatherwork; +15 cents/day to market wage quote.",
       "assists": "Leatherworking",
-      "wage_cents": 15
+      "wage_cents": 15,
+      "legacy_only": true
     }
   },
   "flaws": {

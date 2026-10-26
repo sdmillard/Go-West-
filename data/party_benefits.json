@@ -9,6 +9,6 @@
   "care_recovery_bonus": 1,
   "trade_buy_factor": 0.95,
   "veteran_risk_reduction": 0.03,
-  "wage_bases": {"Hunting": 40, "Carpentry": 90, "Caregiving": 50, "Trading": 60},
+  "wage_bases": {"Hunting": 40, "Carpentry": 90, "Caregiving": 50, "Trading": 60, "Leatherworking": 75},
   "wage_modifiers": {"Compassionate": -5, "Pragmatic": 5, "Loyal": 10, "Veteran": 20}
 }

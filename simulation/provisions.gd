@@ -76,6 +76,7 @@ func load_data(value: Variant) -> bool:
 		if not number(guards.get(key)) or guards[key]<0 or guards[key]>1:return false
 	data = value.duplicate(true)
 	if not preload("res://simulation/trail_income.gd").configure(self):return false
+	if not preload("res://simulation/leathercraft.gd").configure(self):return false
 	error = ""
 	return true
 func number(value: Variant) -> bool:

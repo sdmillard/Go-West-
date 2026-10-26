@@ -74,6 +74,6 @@ func run():
  check(not screen.income_window.commit_button.disabled and screen.income_window.crew.size()==3,"Visible roster can select three different workers and roles")
  day=screen.game.state.day;screen.income_window.commit_button.pressed.emit()
  check(screen.game.state.day==day+1 and screen.game.income.record.work.independence==3,"Single visible commit settles all three workers in one day")
- check(screen.game.characters.catalog.data.specials.has("Leatherworker") and screen.departure_view.special_checks.has("Leatherworker"),"Leatherworker specialty is selectable during character creation")
+ check(screen.game.characters.SKILLS.has("Leatherworking") and not screen.departure_view.special_checks.has("Leatherworker"),"Leatherworking background replaces the selectable special")
  screen.income_window.hide();screen.queue_free();await process_frame
  print("Work crews: %d checks, %d failures" % [checks,failures]);quit(1 if failures else 0)

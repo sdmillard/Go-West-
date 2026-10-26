@@ -1,7 +1,7 @@
 extends RefCounted
 ## Companion backgrounds, trust, participation and warned settlement departures.
 const Appearance=preload("res://simulation/traveler_appearance.gd")
-const SKILLS=["Hunting", "Carpentry", "Caregiving", "Trading"]
+const SKILLS=["Hunting", "Carpentry", "Caregiving", "Trading", "Leatherworking"]
 const KINDS=["rest_sick", "push_sick", "care", "defend", "hunter_left"]
 const ACTIONS=["robbery", "murder", "cannibalism", "miss_wages", "hunt", "repair", "care", "trade", "defend"]
 var RELATIONSHIPS: Dictionary={"self":50}
@@ -65,8 +65,9 @@ func benefit_description(index: int) -> String:
 		if special not in ["Loyal","Mercenary","Veteran","Cannibal"]:description+=" "+special+": "+catalog.data.specials[special].description
 	return description+" Benefits require a living, willing companion with at least %d health and no serious condition; duplicates do not stack." % benefits.minimum_health
 
+func creation_specials() -> Array:return SPECIALS.filter(func(name):return not catalog.data.specials[name].get("legacy_only",false))
 func background_benefit(background: String) -> String:
-	return {"Hunting":"Reload time reduced by %d%%." % roundi((1-benefits.hunter_reload_factor)*100),"Carpentry":"%d fewer day(s) for patch/wooden wagon repairs (minimum one day)." % benefits.carpentry_days_saved,"Caregiving":"Care restores %d extra health and advances recovery %d extra day(s)." % [benefits.care_health_bonus,benefits.care_recovery_bonus],"Trading":"%d%% off cash purchases; selling prices unchanged." % roundi((1-benefits.trade_buy_factor)*100)}.get(background,"")
+	return {"Leatherworking":"Prepare hides into buckskin, make leather goods and take skilled leatherwork jobs.","Hunting":"Reload time reduced by %d%%." % roundi((1-benefits.hunter_reload_factor)*100),"Carpentry":"%d fewer day(s) for patch/wooden wagon repairs (minimum one day)." % benefits.carpentry_days_saved,"Caregiving":"Care restores %d extra health and advances recovery %d extra day(s)." % [benefits.care_health_bonus,benefits.care_recovery_bonus],"Trading":"%d%% off cash purchases; selling prices unchanged." % roundi((1-benefits.trade_buy_factor)*100)}.get(background,"")
 
 func concern(game, decision: String) -> String:
 	var names: Array[String]=[]
@@ -242,7 +243,7 @@ func generate_candidate(seed_value: int, candidate_index: int, relationship: Str
 	var profile: Dictionary={"id":1,"traits":[temperament,values],"skill":SKILLS[random.randi_range(0,SKILLS.size()-1)],"trust":RELATIONSHIPS[relationship],"memories":[],"specials":[],"relationship":relationship,"boundaries":catalog.boundaries(values),"thresholds":{"loyalty":80,"breaking":20,"betrayal":10},"can_betray":values in ["Ruthless","Opportunistic"],"contract":{},"exit_warning":{}}
 	profile["appearance"]=Appearance.generate(seed_value,candidate_index)
 	if random.randi_range(0,2)==0:profile.flaws=[FLAWS.keys()[random.randi_range(0,FLAWS.size()-1)]]
-	var pool: Array=SPECIALS.duplicate()
+	var pool: Array=creation_specials()
 	for index in range(pool.size()-1,0,-1):
 		var other:=random.randi_range(0,index)
 		var swap: Variant=pool[index]

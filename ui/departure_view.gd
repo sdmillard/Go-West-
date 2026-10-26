@@ -313,7 +313,7 @@ func _build_companions() -> void:
 	describe_items(background_choice,draft.SKILLS.map(func(skill):return draft.background_benefit(skill)))
 	describe_items(relationship,draft.catalog.data.relationships.keys().map(func(key):return draft.catalog.data.relationships[key].description))
 	describe_items(flaw_choice,["No flaw: two special slots."]+draft.FLAWS.values())
-	for special in draft.SPECIALS:
+	for special in draft.creation_specials():
 		var check:=CheckBox.new()
 		check.text=special
 		check.tooltip_text=draft.catalog.data.specials[special].description

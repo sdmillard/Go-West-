@@ -46,7 +46,7 @@ func run():
 		check(game.characters.valid_setup(choices),"Generated recruits obey creation budgets, boundaries, relations and wage minima")
 		for name in offer.profile.specials:seen_specials[name]=true
 		for name in offer.profile.get("flaws",[]):seen_flaws[name]=true
-	check(seen_specials.size()==17 and seen_flaws.size()==12,"Seeded sample includes every special and flaw")
+	check(seen_specials.size()==16 and not seen_specials.has("Leatherworker") and seen_flaws.size()==12,"Seeded sample includes every special and flaw")
 	check(store.capture(game)==before,"Generating offers never changes an active journey, supplies or any random stream")
 	check(game.characters.generate_candidate(1,-1).is_empty() and game.characters.generate_candidate(1,0,"self").is_empty(),"Invalid candidate requests reject")
 	for relation in catalog.data.relationships:
@@ -105,7 +105,7 @@ func run():
 	root.add_child(screen)
 	await process_frame
 	var setup=screen.departure_view
-	check(setup.personality.item_count==8 and setup.values.item_count==8 and setup.relationship.item_count==13 and setup.flaw_choice.item_count==13 and setup.special_checks.size()==17,"Actual editor exposes the full catalog")
+	check(setup.personality.item_count==8 and setup.values.item_count==8 and setup.relationship.item_count==13 and setup.flaw_choice.item_count==13 and setup.special_checks.size()==16 and setup.background_choice.item_count==5,"Actual editor exposes the full catalog")
 	var initial_state: Dictionary=screen.game.state.duplicate(true)
 	var initial_rng: int=screen.game.rng.state
 	setup.generate_button.pressed.emit()
