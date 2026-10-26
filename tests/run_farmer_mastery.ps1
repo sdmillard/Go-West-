@@ -1,7 +1,7 @@
 param([Parameter(Mandatory=$true)][ValidateSet('controls','planning65','skilled85')][string]$Worker)
 $ErrorActionPreference='Stop'
 $root=Split-Path -Parent $PSScriptRoot
-$manifest=Get-Content -LiteralPath (Join-Path $root '.tools/farmer-mastery-manifest-02.json') -Raw | ConvertFrom-Json
+$manifest=Get-Content -LiteralPath (Join-Path $root 'docs/farmer-mastery-manifest-02.json') -Raw | ConvertFrom-Json
 $godot=Join-Path $root '.tools/godot/Godot_v4.5.1-stable_win64_console.exe'
 $env:APPDATA=Join-Path $root ('.tools/farmer-mastery-'+$Worker+'-userdata')
 $archive=Join-Path $root '.tools/farmer-mastery-archives'

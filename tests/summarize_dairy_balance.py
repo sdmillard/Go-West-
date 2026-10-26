@@ -23,6 +23,8 @@ def summarize(rows):
  hunts=sum(r['counts']['hunts'] for r in rows)
  s['mean_spoilage_food_units']=average([r['spoilage_food_units'] for r in rows])
  s['mean_preservations']=average([r['counts'].get('preservations',0) for r in rows])
+ s['mean_companion_drying_batches']=average([r['camp_work']['drying_batches'] for r in rows])
+ s['mean_companion_food_retained']=average([r['camp_work']['food_retained'] for r in rows])
  s['mean_proactive_dispatches']=average([r['counts'].get('proactive_dispatches',0) for r in rows])
  s['empty_hunt_pct']=round(100*sum(r['counts'].get('empty_hunts',0) for r in rows)/hunts,3) if hunts else None
  s['legacy_hunt_packed_units_per_attempt']=round(sum(r['counts'].get('meat_food_units',0) for r in rows)/hunts,3) if hunts else None
