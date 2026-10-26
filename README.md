@@ -2,6 +2,8 @@
 
 A growing Oregon Trail-inspired game in **Godot 4 / GDScript**. Lead five travelers from Independence to Oregon City, managing supplies, crossings and the Barlow Road. Historical evidence now takes priority when it differs from the classic games. The continuous overland itinerary connects 36 stops over 1,938 reported guide miles. See [route evidence and game comparison](docs/ROUTE_EXPANSION.md).
 
+[Keepsakes and settlement work](docs/TRAIL_INCOME.md) add owner-controlled personal valuables, Oregon retention points and finite paid days at selected stops. Meals, wages and calendar time still apply.
+
 [Pelt price calibration](docs/PELT_CALIBRATION.md) sets the deer offer at 75 cents using a contemporary valuation range; other skin prices and weights remain explicit estimates.
 
 [Pelts and trade goods](docs/PELTS_AND_TRADE_GOODS.md) lets player-led hunts recover rough skins at a real hauling, preparation-day and meal cost, then sell to limited buyers at existing counters.

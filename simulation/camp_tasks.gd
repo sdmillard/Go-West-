@@ -61,11 +61,14 @@ func specialist(game,index: int,background: String) -> bool:
  var profile: Dictionary=game.characters.profiles[index]
  return profile.skill==background or profile.specials.any(func(s):return game.characters.catalog.data.specials[s].get("assists","")==background)
 func begin(game,action: String,leader_patient: int=-1) -> void:
- if not enabled() or not day_plan.is_empty():return
+ if (not enabled() and action!="settlement_work") or not day_plan.is_empty():return
  var leader: int=leader_id(game)
  day_plan={"rest":{},"jobs":[],"action":action,"leader":leader,"leader_patient":leader_patient}
  for member in game.party_health.members:
   if game.party_health.is_active(member):day_plan.rest[int(member.id)]=int(member.id)!=leader or action=="rest"
+ if action=="settlement_work":
+  day_plan.rest[leader]=game.income.worker!=leader
+  day_plan.rest[game.income.worker]=false
  var patients: Array=[]
  if leader_patient>=0:
   patients.append(leader_patient)
@@ -74,14 +77,14 @@ func begin(game,action: String,leader_patient: int=-1) -> void:
  # Nurses reserve patients first: a patient cannot also do another day's work.
  for index in range(1,game.party_health.members.size()):
   var task: Dictionary=job(index)
-  if index==leader or task.job!="nurse" or index in patients:continue
+  if index==game.income.worker or index==leader or task.job!="nurse" or index in patients:continue
   var why: String=reason(game,index,task.job,int(task.patient))
   if not why.is_empty() or kits==0 or int(task.patient) in patients:
    report(game,"%s: %s Resting instead." % [game.party_health.members[index].name,why if not why.is_empty() else "Patient or care kit already reserved."])
    continue
   # Never use a person already nursing as a patient of another worker.
   if day_plan.jobs.any(func(j):return j.member==int(task.patient)):continue
-  if int(task.patient)==leader and action!="rest":continue
+  if int(task.patient)==game.income.worker or (int(task.patient)==leader and not day_plan.rest.get(leader,false)):continue
   patients.append(int(task.patient));kits-=1
   day_plan.rest[int(task.patient)]=true
   day_plan.rest[index]=false
@@ -91,7 +94,7 @@ func begin(game,action: String,leader_patient: int=-1) -> void:
  var guard_claimed:=false
  for member in game.party_health.members:
   var index: int=int(member.id)
-  if index==leader or not game.party_health.is_active(member):continue
+  if index==game.income.worker or index==leader or not game.party_health.is_active(member):continue
   var task: Dictionary=job(index)
   if task.job in ["rest","nurse"]:continue
   var why: String=reason(game,index,task.job,int(task.patient))

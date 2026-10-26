@@ -24,6 +24,7 @@ const MAX_TRAVELERS := 32
 const PARTY_CAPACITY := 5
 var recruitment=preload("res://simulation/party_recruitment.gd").new()
 var social=preload("res://simulation/party_social.gd").new()
+var income=preload("res://simulation/trail_income.gd").new()
 var context=preload("res://simulation/trail_context.gd").new()
 var combat=preload("res://simulation/combat.gd").new()
 var crime=preload("res://simulation/crime_system.gd").new()
@@ -170,10 +171,14 @@ func depart(profession: String, names: Array, month: int, cart: Dictionary, cust
 	if not customization.is_empty() and not characters.valid_setup(customization):
 		departure_error="Check companion details and mercenary wage agreements."
 		return false
+	if customization.has("keepsakes") and not income.valid_setup(customization.keepsakes,cleaned.size()):
+		departure_error="Check personal keepsakes."
+		return false
 	state.party = cleaned
 	party_health.start(cleaned, int(state.seed))
 	characters.start(int(state.seed),cleaned.size())
 	if not customization.is_empty():characters.profiles.assign(customization.profiles.duplicate(true))
+	income.start(self,customization.get("keepsakes",[]))
 	crime.bind_party(self)
 	crime.make_bonds(self)
 	if customization.has("bonds"):crime.record.bonds=customization.bonds.duplicate(true)
@@ -604,7 +609,7 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 	state.erase("camp_watch_day")
 	state.erase("camp_watch_member")
 	var wagon_hunt: bool=camp_action=="hunt" and hunt.get("field",{}).get("kit","")=="wagon"
-	if not wagon_hunt and (not resting or (not camp_action.is_empty() and camp_action!="rest")):camp_tasks.end_leader_nursing(self)
+	if not (camp_action=="settlement_work" and income.worker!=camp_tasks.leader_id(self)) and not wagon_hunt and (not resting or (not camp_action.is_empty() and camp_action!="rest")):camp_tasks.end_leader_nursing(self)
 	if state.extended_route and not camp_action.is_empty():camp_tasks.begin(self,camp_action)
 	var sick_before: bool=characters.has_sick(self)
 	state.day += 1
@@ -763,7 +768,7 @@ func _apply(effects: Dictionary, health_cause: String = "injuries", resting: boo
 	if state.extended_route:
 		var changes: Dictionary = {}
 		var lines: Array[String] = []
-		for key in ["food", "money", "bullets", "medicine", "clothing", "oxen", "wheels", "axles", "tongues", "salt"]+Mounts.KEYS+livestock.GOODS+provisions.data.pelts.goods.keys():
+		for key in ["food", "money", "bullets", "medicine", "clothing", "oxen", "wheels", "axles", "tongues", "salt"]+Mounts.KEYS+livestock.GOODS+provisions.data.pelts.goods.keys()+income.all_keys():
 			var delta := float(state.get(key,0)) - float(before.get(key,0))
 			if key=="money":delta=roundi(delta*100)/100.0
 			if not is_zero_approx(delta):
@@ -1073,6 +1078,7 @@ func post_store() -> Dictionary:
 	var name: String=str(route.nodes[state.landmark].get("name",state.landmark))
 	rows.append_array(Produce.rows(self,str(offer.key),"post"))
 	rows.append_array(Pelts.rows(self,str(offer.key),"post"))
+	rows.append_array(income.rows(self,str(offer.key),"post"))
 	rows.append_array(livestock.rows(self,str(offer.key)))
 	var wagon_row: Dictionary=provisions.WagonTrade.row(self,str(offer.key))
 	if state.vehicle=="foot":rows.push_front(wagon_row)
@@ -1106,6 +1112,7 @@ func trade_counter(venue: String="") -> Dictionary:
 		rows.append(_counter_row(lot,maxi(1,buy_cents),roundi(float(lot.sell_cents)*float(goods.sell)),can_buy,can_sell,buy.market_key,sell.market_key,goods.stock.has(item),goods.wants.has(item)))
 	rows.append_array(Produce.rows(self,str(offer.key),"traders"))
 	rows.append_array(Pelts.rows(self,str(offer.key),"traders"))
+	rows.append_array(income.rows(self,str(offer.key),"traders"))
 	return {"name":"Passing traders","kind":"traders","key":str(offer.key),"mood":goods.mood,"late_food":late,"rows":rows,"days":context.trade_days(offer),"money_cents":roundi(float(state.money)*100.0),"purse_cents":_purse_left(str(offer.key),int(goods.purse_cents)),"rumor":"","discount":characters.available(self,"Trading")}
 
 ## How freely the people at a counter talk: a passing party's mood, a family's reluctance to part with things; a post's clerk is fair.
@@ -1272,6 +1279,7 @@ func counter_checkout(cart: Dictionary,venue: String="") -> bool:
 
 ## How a counter quantity reads in the journal and on the store screen.
 static func _unit_name(item: String,n: int) -> String:
+	if preload("res://simulation/trail_income.gd").is_keepsake(item):return "personal keepsake"
 	var names: Dictionary={"bison_hide":["bison hide","bison hides"],"deer_hide":["deer hide","deer hides"],"rabbit_pelt":["rabbit pelt","rabbit pelts"],"food":["lb of food","lb of food"],"salt":["lb of salt","lb of salt"],"bullets":["bullet","bullets"],"medicine":["care kit","care kits"],"clothing":["clothing set","clothing sets"],"oxen":["ox","oxen"],"wheels":["wheel","wheels"],"axles":["axle","axles"],"tongues":["tongue","tongues"],"horses":["horse","horses"],"mules":["mule","mules"],"saddles":["saddle","saddles"],"pack_saddles":["pack saddle","pack saddles"],"saddlebags":["pair of saddlebags","pairs of saddlebags"]}
 	return names.get(item,[item,item])[0 if n==1 else 1]
 
@@ -1425,6 +1433,10 @@ func _depart(plan: Array,fled_reason: String) -> void:
 		state.clothing-=transfer.clothing
 		state["departed_gear_lb"]=int(state.get("departed_gear_lb",0))+transfer.gear_lb
 		if state.has("household_gear_lb"):state.household_gear_lb=maxi(0,int(state.household_gear_lb)-int(transfer.gear_lb))
+		var keepsake: String=income.key(int(member.id))
+		if int(state.get(keepsake,0))>0:
+			state[keepsake]=0
+			journal.append("%s took their personal keepsake." % member.name)
 		member["departed"]=true
 		member["departure_day"]=int(state.day)
 		member["departure_place"]=state.landmark

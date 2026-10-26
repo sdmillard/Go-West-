@@ -34,6 +34,8 @@ var accepted_flaw: String=""
 var auto_pay: CheckBox
 var wage: SpinBox
 var interval: SpinBox
+var keepsake_check: CheckBox
+var keepsake_choices: Array=[true,true,true,true,true]
 var edited_member:=1
 var draft_terms: Dictionary={}
 var wage_quote_label: Label
@@ -131,6 +133,10 @@ func _ready() -> void:
 	generate_party_button.tooltip_text="Generate all four companions: names, appearance, personality, backgrounds, relationships, specials, flaws and wage offers. Your leader, profession, month and supply cart stay. Custom companion bonds reset."
 	generate_party_button.pressed.connect(_generate_party)
 	put(generate_party_button,Rect2(267,240,110,25),party_layer)
+	var leader_keepsake:=CheckBox.new();leader_keepsake.text="MY KEEPSAKE";leader_keepsake.button_pressed=true
+	leader_keepsake.tooltip_text="Bring your own 0.25 lb family keepsake. Companion choices are in EDIT."
+	leader_keepsake.toggled.connect(func(on):keepsake_choices[0]=on;_update_quote())
+	put(leader_keepsake,Rect2(382,240,110,25),party_layer)
 	next_button = Button.new()
 	next_button.text = "ENTER THE STORE >"
 	next_button.pressed.connect(show_store)
@@ -216,7 +222,7 @@ func _update_quote() -> void:
 	if depart_button == null:
 		return
 	var quote: Dictionary = game.outfitter.quote(game.outfitter.professions[profession.selected].id, _current_cart())
-	totals.text = "SUPPLIES $%.2f  CASH LEFT $%.2f\nCARGO %.0f · %s %.0f LB · FOOD %d DAYS" % [float(quote.total_cents) / 100.0, float(quote.remaining_cents) / 100.0, quote.get("cargo_lb", 0),"TEAM" if quote.get("wagon",true) else "CARRY",quote.get("team_capacity_lb",0), game.provisions.expected_days(int(_current_cart().get("food", 0)), 5, 2)]
+	totals.text = "SUPPLIES $%.2f  CASH LEFT $%.2f\nCARGO %.0f · %s %.0f LB · FOOD %d DAYS" % [float(quote.total_cents) / 100.0, float(quote.remaining_cents) / 100.0, float(quote.get("cargo_lb", 0))+keepsake_choices.count(true)*float(game.income.data.keepsake.weight_lb),"TEAM" if quote.get("wagon",true) else "CARRY",quote.get("team_capacity_lb",0), game.provisions.expected_days(int(_current_cart().get("food", 0)), 5, 2)]
 	if quote.get("wagon",true):feedback.text = quote.message + " Team pulling speed: %d%% (4 normal; 5 +5%%; 6+ +10%%)." % roundi(game.survival.team_factor(int(_current_cart().get("oxen",0)))*100)
 	else:feedback.text = quote.message + " One saddle per rider; pack saddles carry the loads."
 	var agreements: Dictionary={}
@@ -331,6 +337,10 @@ func _build_companions() -> void:
 	auto_pay.text="AUTO-PAY WAGES"
 	auto_pay.tooltip_text="Automatically pay this companion from available cash when wages are due. Unpaid wages still lose trust. Change this later in Party."
 	rows.add_child(auto_pay)
+	keepsake_check=CheckBox.new();keepsake_check.text="BRING A SMALL FAMILY KEEPSAKE"
+	keepsake_check.tooltip_text="A personal 0.25 lb keepsake. Resale estimate $2; retaining it to Oregon earns 100 keepsake points. Companions must consent to a sale."
+	rows.add_child(keepsake_check)
+	keepsake_check.toggled.connect(func(on):keepsake_choices[edited_member]=on;_update_quote())
 	interval.value_changed.connect(func(_days: float):_refresh_wage_quote())
 	special_checks.Mercenary.toggled.connect(func(on: bool):
 		wage.editable=on
@@ -461,6 +471,7 @@ func _store_companion() -> void:
 	if special_checks.Mercenary.button_pressed and auto_pay.button_pressed:draft_terms[str(edited_member)]["auto_pay"]=true
 
 func _load_companion() -> void:
+	keepsake_check.set_pressed_no_signal(keepsake_choices[edited_member])
 	loading_companion=true
 	var profile: Dictionary=draft.profiles[edited_member]
 	var flaws: Array=profile.get("flaws",[])
@@ -487,7 +498,7 @@ func customization() -> Dictionary:
 	var contracts: Dictionary={}
 	for profile in draft.profiles:
 		if "Mercenary" in profile.specials:contracts[str(profile.id)]=draft_terms.get(str(profile.id),{"wage_cents":700,"interval_days":7}).duplicate(true)
-	return {"profiles":draft.profiles.duplicate(true),"contracts":contracts,"bonds":selected_bonds(),"romance":romance_check.button_pressed}
+	return {"profiles":draft.profiles.duplicate(true),"contracts":contracts,"bonds":selected_bonds(),"romance":romance_check.button_pressed,"keepsakes":keepsake_choices.duplicate()}
 
 
 func _build_bonds() -> void:

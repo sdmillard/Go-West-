@@ -34,7 +34,7 @@ The game's output is a roughly scraped/air-dried trade skin. Wet/dry weights, bi
 
 ## Scope and compatibility
 
-The first release covers player-led hunts and physical skin trading. Autonomous hunters keep their existing meat routine; scheduling their skin preparation needs an explicit task/outfitting choice. Personal heirlooms, companion ownership, valuables kept for an Oregon score bonus and a broader goods catalogue remain subsequent work. No new art or proprietary assets were introduced; the preview uses the existing original game artwork.
+The first release covers player-led hunts and physical skin trading. Autonomous hunters keep their existing meat routine; scheduling their skin preparation needs an explicit task/outfitting choice. Personal keepsakes, companion ownership, Oregon retention points and settlement wages have since been added in [Trail income](TRAIL_INCOME.md). A broader named-goods catalogue remains subsequent work. No new art or proprietary assets were introduced; the preview uses the existing original game artwork.
 
 A genuine pre-pelt save was captured before editing the rules and is tested unchanged. Its existing state, resources and random streams are preserved. New goods are optional zero-quantity fields when absent, including older cached and detached inventories. Invalid counts and unknown inventory goods are rejected. A legacy outrider cannot inherit new trade goods or temporary raw load from the wagon.
 
