@@ -4,6 +4,9 @@ Last updated October 25, 2026. Latest checkpoint: mixed livestock feeding and co
 
 ## Resume here
 
+- **Pelt calibration:** see `docs/PELT_CALIBRATION.md`. Deer post offer is 75 cents (road 56), inferred from Wilkes 1845 California elk/deer export valuations of 50 cents-$1. No verified 1848 local tariff. Bison/rabbit prices and all masses remain provisional; do not describe finished robe prices/weights as measurements of our rough skins. Genuine previous-pelt-rule save is tested with owned goods/cash/RNG preserved. Original feature validation remains frozen at its recorded runtime. Full validation for this change is recorded in the calibration document. Continue subsequent trade mechanics only after this audit; no broad survival retune is included.
+
+
 - **Companion tasks approved; shared camp-day first stage built.** See docs/COMPANION_CAMP_WORK.md for scope and docs/COMPANION_TASKS_IMPLEMENTATION.md for the remaining stages. Open Camp > Companion tasks; selecting a job opts into per-person camp work. Repair/stock guard are now built (docs/CAMP_REPAIRS_AND_GUARDS.md); away hunts, mounted tasks and Soldier/Criminal remain pending. Existing group actions stay the default until assignments are chosen. Check the task documents before editing companion benefits, recovery or hunting.
 - Canonical local repository: `C:/Users/Spencer/Projects/Oregon Trail`. GitHub: https://github.com/sdmillard/Go-West- ; default branch `master`. The `Documents/ChatGPT/Oregon Trail` workspace is stale staging.
 - Survival/accounting work is pushed and merged: [PR #19](https://github.com/sdmillard/Go-West-/pull/19), merge commit `4b7839640949d593d251d695236f8908334bc64e`. Local master was synced while preserving every pending working file. No implementation change is waiting for publication.

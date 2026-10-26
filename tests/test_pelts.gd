@@ -54,17 +54,37 @@ func run():
  check(not g.pelt_quote({"bison_hide":2}).valid,"Raw-hide batch labor limit cannot be bypassed with a large wagon")
  g.hunt={};g.state.deer_hide=20;g.state.money=0;g.state.landmark="fort_laramie";g.state.next_landmark="fort_laramie";g._arrive_landmark(true,false)
  var counter: Dictionary=g.post_store();var row: Dictionary=counter.rows.filter(func(r):return r.item=="deer_hide")[0]
- check(not row.sells and row.buys and row.can_sell==16 and row.sell_cents==60,"Post buys a finite quantity of rough skins at the authored price")
+ check(not row.sells and row.buys and row.can_sell==16 and row.sell_cents==75,"Post buys a finite quantity of rough skins at the period-anchored estimate")
  check(not g.counter_quote({"deer_hide":1}).valid and not g.counter_quote({"deer_hide":-17}).valid,"Counter will not sell skins or buy beyond demand")
  var cash_quote: Dictionary=g.counter_quote({"deer_hide":-5,"food":10})
  check(cash_quote.valid and cash_quote.net_cents>=0,"Real skin proceeds can fund supplies in one basket")
  check(g.counter_checkout({"deer_hide":-16}),"Actual counter pays for real held skins")
- check(g.state.deer_hide==4 and g.state.money==9.6,"Sale removes the exact quantity and pays exact cents")
+ check(g.state.deer_hide==4 and g.state.money==12.0,"Sale removes the exact quantity and pays exact cents")
  check(not g.counter_quote({"deer_hide":-1}).valid,"Repeated visits do not refresh the post's buying demand")
  restored=Save.new().restore(JSON.parse_string(JSON.stringify(Save.new().capture(g))))
  check(restored!=null and not restored.counter_quote({"deer_hide":-1}).valid,"Used demand remains used after save/load")
  var road: Dictionary=g.Pelts.rows(g,"passing:test","traders")[0]
- check(road.can_sell==3 and road.sell_cents==45,"Passing trader has its own smaller demand and lower offer")
+ check(road.can_sell==3 and road.sell_cents==56,"Passing trader has its own smaller demand and lower offer")
+ # A real save captured on the released rules before changing the price.
+ var prior: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-pelt-calibration-save-v1.json"))
+ restored=Save.new().restore(prior)
+ check(restored!=null,"Actual previous-pelt-rules save loads under calibrated prices")
+ if restored!=null:
+  check(restored.state==Save.new().normalize(prior.state),"Price migration preserves owned skins, cash and the entire saved state")
+  check(restored.rng.state==int(prior.random),"Price migration does not advance the journey random stream")
+  restored.state.landmark="fort_laramie";restored.state.next_landmark="fort_laramie";restored._arrive_landmark(true,false)
+  var offers: Dictionary={}
+  for offer in restored.post_store().rows:
+   if offer.item in ["bison_hide","deer_hide","rabbit_pelt"]:offers[offer.item]=offer.sell_cents
+  check(offers=={"bison_hide":150,"deer_hide":75,"rabbit_pelt":5},"Migrated goods receive current offers without free goods or a cash adjustment")
+  var cash_before: float=restored.state.money
+  check(restored.counter_checkout({"bison_hide":-1,"deer_hide":-3,"rabbit_pelt":-4}),"Mixed held skins sell through the actual counter")
+  check(is_equal_approx(restored.state.money-cash_before,3.95),"Mixed sale pays exactly $3.95 at current prices")
+  check(restored.state.bison_hide==0 and restored.state.deer_hide==0 and restored.state.rabbit_pelt==0,"Mixed sale removes every sold skin")
+ g.state.bison_hide=1;g.state.rabbit_pelt=1
+ var road_offers: Dictionary={}
+ for offer in g.Pelts.rows(g,"passing:calibration","traders"):road_offers[offer.item]=offer.sell_cents
+ check(road_offers=={"bison_hide":112,"deer_hide":56,"rabbit_pelt":3},"All road offers floor 75 percent to whole cents")
  var legacy: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-pelts-save-v1.json"));var original: Dictionary=legacy.duplicate(true)
  restored=Save.new().restore(legacy)
  check(restored!=null and legacy==original,"Actual pre-pelt save migrates without modifying its input")
