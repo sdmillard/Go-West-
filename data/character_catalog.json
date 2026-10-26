@@ -186,6 +186,11 @@
       "description": "Provides the existing Trading purchase discount even with another background; does not stack. +10 cents/day if hired.",
       "assists": "Trading",
       "wage_cents": 10
+    },
+    "Leatherworker": {
+      "description": "Trained in leather and harness repairs. Unlocks specialty leatherwork jobs; +15 cents/day to the mercenary market quote. Employers provide repair materials.",
+      "assists": "Leatherworking",
+      "wage_cents": 15
     }
   },
   "flaws": {

@@ -2,6 +2,8 @@
 
 A growing Oregon Trail-inspired game in **Godot 4 / GDScript**. Lead five travelers from Independence to Oregon City, managing supplies, crossings and the Barlow Road. Historical evidence now takes priority when it differs from the classic games. The continuous overland itinerary connects 36 stops over 1,938 reported guide miles. See [route evidence and game comparison](docs/ROUTE_EXPANSION.md).
 
+[Paid work crews](docs/WORK_CREWS.md) let several travelers earn wages in one day within local openings. Leatherworker is a selectable specialty; market wage quotes supply the pay floor without rewarding inflated private contracts.
+
 [Combined income results](docs/INCOME_COMPARISON_RESULTS.md): a fresh matched farmer comparison earns money and reduces aggregate food deficits, but arrivals stay10/16 per arm and September completion remains unproven. Includes the first strategy audit and preserved cases.
 
 [Keepsakes and settlement work](docs/TRAIL_INCOME.md) add owner-controlled personal valuables, Oregon retention points and finite paid days at selected stops. Meals, wages and calendar time still apply.

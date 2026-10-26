@@ -1,5 +1,7 @@
 # Money along the trail: keepsakes and settlement work
 
+Employment has since expanded to [paid crews and Leatherworker specialty](WORK_CREWS.md). The single-worker rates/validation below describe the original implementation; crew pay now has a mercenary market-quote floor and demand is measured in worker-days.
+
 This adds two income choices alongside [hunted skins](PELTS_AND_TRADE_GOODS.md): selling personal keepsakes and taking finite paid work at selected stops. It does not increase profession funds or change food energy, hunting yields or pelt prices. A combined survival comparison remains the next balance step; these mechanics are not a claim that farmer survival is settled.
 
 ## Personal keepsakes

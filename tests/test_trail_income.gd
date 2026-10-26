@@ -124,13 +124,11 @@ func run():
  screen.game=party();stop(screen.game);screen.departure_view.hide();screen._refresh()
  check(screen.place_actions.get_children().any(func(b):return b.text=="FIND WORK"),"Work appears as a local action below the scene")
  screen.income_window.open(screen.game,"work");await process_frame
- var buttons: Array=[]
- for row in screen.income_window.body.get_children():
-  if row is HBoxContainer:
-   for child in row.get_children():
-    if child is Button and child.text=="WORK 1 DAY":buttons.append(child)
- check(buttons.size()==5,"Work window uses one compact roster row per traveler")
- day=screen.game.state.day;buttons[0].pressed.emit()
- check(screen.game.state.day==day+1,"Visible work button commits exactly one paid day")
+ check(screen.income_window.worker_choices.size()==5,"Work window uses one compact roster row per traveler")
+ check(screen.income_window.commit_button.disabled,"An empty crew cannot commit a paid day")
+ var selection=screen.income_window.worker_choices[0]
+ selection.select(1);selection.item_selected.emit(1)
+ day=screen.game.state.day;screen.income_window.commit_button.pressed.emit()
+ check(screen.game.state.day==day+1,"Visible crew button commits exactly one paid day")
  screen.income_window.hide();screen.queue_free();await process_frame
  print("Trail income: %d checks, %d failures" % [checks,failures]);quit(1 if failures else 0)
