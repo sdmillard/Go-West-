@@ -1,8 +1,13 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 27, 2026. Latest checkpoint: disease and wound expansion (docs/DISEASE_EXPANSION.md). Earlier sections are chronological records.
+Last updated October 27, 2026. Latest checkpoint: historical/modern disease audit (docs/DISEASE_EVIDENCE_AUDIT.md). Earlier sections are chronological records.
 
 ## Resume here
+
+- **Disease audit, no production fixes yet:** docs/DISEASE_EVIDENCE_AUDIT.md / disease-evidence-audit-01.json. User requested historical/modern audit after disease expansion. CDC/WHO/NHS/UKHSA/NPS sources support catalog but not the current care-compressed courses.36 actual-engine controlled courses (not journeys): smallpox18 travel/9 rest/5 nurse/4 caregiver days, pneumonia12/6/3/3, measles10/5/3/2 for mild supplied cases. Selected severities are not a population fatality sample.
+- **Three structural corrections recommended:** separate calendar illness/contagion timing from nursing/rest benefits and add exposure delay for party spread; replace conditions.is_empty disease eligibility with per-disease/immunity checks (a broken arm currently blocks smallpox); keep complication risk while wound remains open instead of exact day8 immunity (wound persists to12 progress steps). Documented, not implemented in this audit. Do not compensate longer illness by arbitrarily multiplying damage.
+- **Audit validation:** all99 regression suites pass;36 controlled courses/two behavior probes zero errors. tests/verify_disease_evidence.py checks raw trace/source hashes/published rows. Full log .tools/disease-evidence-full-tests-01.log. Passing old tests does not validate medical realism; fixes need new desired-behavior tests.
+- **Evidence scope:** source/rule hashes, raw archived .tools/disease-evidence-archives/raw-01.json from final probe02; earlier01 development query excluded. Diagnostic tests/disease_evidence_probe.gd; no new balance campaign, wages or prices changed. Rates/weights/care modifiers remain authored; modern treated mortality and surgical rates cannot be transplanted to1848. Vaccination/prior immunity history is missing, not historically nonexistent.
 
 - **Move on from income balancing:** user accepts supplementary income is a few useful dollars, not a run rescue. Leave historically informed wages/prices; no more broad income passes without a specific playtest problem. Latest authorized feature is disease/wound expansion.
 - **Disease expansion:** docs/DISEASE_EXPANSION.md; now14 conditions. Measles already existed. Smallpox weight0.25/spread0.06/immunizing, damage5/recovery18; pneumonia winter weighted, damage5/recovery12, no generic contagion. Existing global onset0.03 unchanged and cholera still1849+. Rates are authored, NPS trail-disease/period-care context linked in docs; not an asserted1848 outbreak model.

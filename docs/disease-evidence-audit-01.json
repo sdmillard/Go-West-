@@ -1,0 +1,438 @@
+{
+  "production_base": "3a9db2c6a4cdc00425ac265a212346b9b6918b71",
+  "rules": "481d85555235440051c7fcae5512478a1a6ef942499d096860b96be2723f1bf8",
+  "source_hashes": {
+    "data/camp_tasks.json": "d8fe9ae3998b646ee1b97cc25e452f951ab91189d8686f9ce3200588ff499372",
+    "data/health_conditions.json": "7a3cc2fd50067870e0cc5b056d27ef1c6613327df49c05649daa89af389e3d66",
+    "data/party_benefits.json": "10a7f8dd13d53efa5437032fcf1434766cad2567ab3505d491943cd35bba09d9",
+    "data/survival_rules.json": "f15b2570c913dd87265583619d09ea5e0419c89f6307fc3ee6619dbefb8b5473",
+    "simulation/camp_tasks.gd": "c0caa76b7db82fa940ce78deebe190e8ebf57b16a000f6f0f416f72f4da49d94",
+    "simulation/party_health.gd": "5e26baa17e5a4ad65b13df961fa7b49da9a5b82a5200977b67c85b0434586758",
+    "simulation/trail_engine.gd": "05e8dc18222afb0b3102bdcd37a639cb4a8d51d1d96063904a056271be1cfc6c",
+    "tests/disease_evidence_probe.gd": "db9af7b87503bd19ba65899de0111b08866a83769c53b80c3b0a5c22a400974a"
+  },
+  "fixture": "Five healthy85 travelers, day0 May1848, filling rations, steady pace, supplied care; no other illness, contagion or complications in course runs; actual daily engine/camp tasks, no journey miles.",
+  "injury_shield": {
+    "forced_spread": 1.0,
+    "healthy_caught": true,
+    "wounded_caught": false
+  },
+  "open_wound_risk": [
+    {
+      "day": 1,
+      "elapsed_before_tick": 0,
+      "risk": 0.0,
+      "wound_still_present": true
+    },
+    {
+      "day": 2,
+      "elapsed_before_tick": 1,
+      "risk": 0.035,
+      "wound_still_present": true
+    },
+    {
+      "day": 7,
+      "elapsed_before_tick": 6,
+      "risk": 0.035,
+      "wound_still_present": true
+    },
+    {
+      "day": 8,
+      "elapsed_before_tick": 7,
+      "risk": 0.0,
+      "wound_still_present": true
+    },
+    {
+      "day": 11,
+      "elapsed_before_tick": 10,
+      "risk": 0.0,
+      "wound_still_present": true
+    }
+  ],
+  "retrieved": "2026-10-27",
+  "raw_sha256": "5fcb9c1b5978ba532c391bb52d2890b25789920a714af1fefb7beb9c67e46288",
+  "raw_archive": ".tools/disease-evidence-archives/raw-01.json",
+  "sources": [
+    {
+      "title": "NPS trail diseases",
+      "url": "https://www.nps.gov/articles/000/death-on-trails.htm",
+      "supports": "Trail disease catalog and injuries; covers1841-1869, not precise1848 incidence."
+    },
+    {
+      "title": "NPS cholera epidemic",
+      "url": "https://www.nps.gov/articles/000/cholera-a-trail-epidemic.htm",
+      "supports": "Gold-rush-era trail epidemic and documented1849 death; not cholera first existing in1849."
+    },
+    {
+      "title": "CDC smallpox clinical course",
+      "url": "https://www.cdc.gov/smallpox/hcp/clinical-signs/index.html",
+      "supports": "Incubation, clinical stages, prolonged immunity; population fatality differs by form and vaccination."
+    },
+    {
+      "title": "CDC smallpox spread",
+      "url": "https://www.cdc.gov/smallpox/causes/index.html",
+      "supports": "Close contact, contagious until scabs fall, approximate60% unvaccinated household attack rate; not a per-day chance."
+    },
+    {
+      "title": "CDC measles clinical course",
+      "url": "https://www.cdc.gov/measles/hcp/communication-resources/clinical-diagnosis-fact-sheet.html",
+      "supports": "Typical11-12 days to symptoms, rash later, contagious around rash; not instant symptoms after exposure."
+    },
+    {
+      "title": "CDC pneumonia causes",
+      "url": "https://www.cdc.gov/pneumonia/about/",
+      "supports": "Multiple causal germs, heterogeneous risk; no single universal pneumonia contagion rule."
+    },
+    {
+      "title": "NHS pneumonia",
+      "url": "https://www.nhs.uk/conditions/pneumonia/",
+      "supports": "Modern usual improvement/recovery timeframe2-4 weeks under current care; not untreated1848 mortality."
+    },
+    {
+      "title": "UKHSA wound monitoring",
+      "url": "https://assets.publishing.service.gov.uk/media/68cab56405e625519a6c9ff1/UKHSA_Surgical_site_infection_leaflet_A4.pdf",
+      "supports": "Surgical infection may appear2-3 days after surgery until wound heals; modern surgical rates cannot calibrate frontier gunshot wounds."
+    },
+    {
+      "title": "WHO smallpox vaccination history",
+      "url": "https://www.who.int/news-room/spotlight/history-of-vaccination/history-of-smallpox-vaccination",
+      "supports": "Vaccination predates1848; coverage and availability for this fictional party are not established."
+    },
+    {
+      "title": "NPS period medicine context",
+      "url": "https://www.nps.gov/gett/learn/education/a-nation-at-war-traveling-trunk-table-5-the-medical-corps-at-war.htm",
+      "supports": "Later19th-century infection and lack of antibiotics; not a measured1848 dressing efficacy."
+    }
+  ],
+  "courses": [
+    {
+      "calendar_days": 18,
+      "condition": "smallpox",
+      "kits_spent": 0,
+      "outcome": "recovered",
+      "policy": "travel",
+      "severity": 1,
+      "terminal_health": 13
+    },
+    {
+      "calendar_days": 9,
+      "condition": "smallpox",
+      "kits_spent": 0,
+      "outcome": "recovered",
+      "policy": "rest",
+      "severity": 1,
+      "terminal_health": 95
+    },
+    {
+      "calendar_days": 5,
+      "condition": "smallpox",
+      "kits_spent": 5,
+      "outcome": "recovered",
+      "policy": "nurse",
+      "severity": 1,
+      "terminal_health": 95
+    },
+    {
+      "calendar_days": 4,
+      "condition": "smallpox",
+      "kits_spent": 4,
+      "outcome": "recovered",
+      "policy": "caregiver",
+      "severity": 1,
+      "terminal_health": 95
+    },
+    {
+      "calendar_days": 10,
+      "condition": "smallpox",
+      "kits_spent": 0,
+      "outcome": "dead",
+      "policy": "travel",
+      "severity": 2,
+      "terminal_health": 0
+    },
+    {
+      "calendar_days": 9,
+      "condition": "smallpox",
+      "kits_spent": 0,
+      "outcome": "recovered",
+      "policy": "rest",
+      "severity": 2,
+      "terminal_health": 58
+    },
+    {
+      "calendar_days": 5,
+      "condition": "smallpox",
+      "kits_spent": 5,
+      "outcome": "recovered",
+      "policy": "nurse",
+      "severity": 2,
+      "terminal_health": 95
+    },
+    {
+      "calendar_days": 4,
+      "condition": "smallpox",
+      "kits_spent": 4,
+      "outcome": "recovered",
+      "policy": "caregiver",
+      "severity": 2,
+      "terminal_health": 95
+    },
+    {
+      "calendar_days": 7,
+      "condition": "smallpox",
+      "kits_spent": 0,
+      "outcome": "dead",
+      "policy": "travel",
+      "severity": 3,
+      "terminal_health": 0
+    },
+    {
+      "calendar_days": 9,
+      "condition": "smallpox",
+      "kits_spent": 0,
+      "outcome": "recovered",
+      "policy": "rest",
+      "severity": 3,
+      "terminal_health": 13
+    },
+    {
+      "calendar_days": 5,
+      "condition": "smallpox",
+      "kits_spent": 5,
+      "outcome": "recovered",
+      "policy": "nurse",
+      "severity": 3,
+      "terminal_health": 95
+    },
+    {
+      "calendar_days": 4,
+      "condition": "smallpox",
+      "kits_spent": 4,
+      "outcome": "recovered",
+      "policy": "caregiver",
+      "severity": 3,
+      "terminal_health": 95
+    },
+    {
+      "calendar_days": 12,
+      "condition": "pneumonia",
+      "kits_spent": 0,
+      "outcome": "recovered",
+      "policy": "travel",
+      "severity": 1,
+      "terminal_health": 37
+    },
+    {
+      "calendar_days": 6,
+      "condition": "pneumonia",
+      "kits_spent": 0,
+      "outcome": "recovered",
+      "policy": "rest",
+      "severity": 1,
+      "terminal_health": 95
+    },
+    {
+      "calendar_days": 3,
+      "condition": "pneumonia",
+      "kits_spent": 3,
+      "outcome": "recovered",
+      "policy": "nurse",
+      "severity": 1,
+      "terminal_health": 95
+    },
+    {
+      "calendar_days": 3,
+      "condition": "pneumonia",
+      "kits_spent": 3,
+      "outcome": "recovered",
+      "policy": "caregiver",
+      "severity": 1,
+      "terminal_health": 95
+    },
+    {
+      "calendar_days": 10,
+      "condition": "pneumonia",
+      "kits_spent": 0,
+      "outcome": "dead",
+      "policy": "travel",
+      "severity": 2,
+      "terminal_health": 0
+    },
+    {
+      "calendar_days": 6,
+      "condition": "pneumonia",
+      "kits_spent": 0,
+      "outcome": "recovered",
+      "policy": "rest",
+      "severity": 2,
+      "terminal_health": 67
+    },
+    {
+      "calendar_days": 3,
+      "condition": "pneumonia",
+      "kits_spent": 3,
+      "outcome": "recovered",
+      "policy": "nurse",
+      "severity": 2,
+      "terminal_health": 95
+    },
+    {
+      "calendar_days": 3,
+      "condition": "pneumonia",
+      "kits_spent": 3,
+      "outcome": "recovered",
+      "policy": "caregiver",
+      "severity": 2,
+      "terminal_health": 95
+    },
+    {
+      "calendar_days": 7,
+      "condition": "pneumonia",
+      "kits_spent": 0,
+      "outcome": "dead",
+      "policy": "travel",
+      "severity": 3,
+      "terminal_health": 0
+    },
+    {
+      "calendar_days": 6,
+      "condition": "pneumonia",
+      "kits_spent": 0,
+      "outcome": "recovered",
+      "policy": "rest",
+      "severity": 3,
+      "terminal_health": 37
+    },
+    {
+      "calendar_days": 3,
+      "condition": "pneumonia",
+      "kits_spent": 3,
+      "outcome": "recovered",
+      "policy": "nurse",
+      "severity": 3,
+      "terminal_health": 95
+    },
+    {
+      "calendar_days": 3,
+      "condition": "pneumonia",
+      "kits_spent": 3,
+      "outcome": "recovered",
+      "policy": "caregiver",
+      "severity": 3,
+      "terminal_health": 95
+    },
+    {
+      "calendar_days": 10,
+      "condition": "measles",
+      "kits_spent": 0,
+      "outcome": "recovered",
+      "policy": "travel",
+      "severity": 1,
+      "terminal_health": 55
+    },
+    {
+      "calendar_days": 5,
+      "condition": "measles",
+      "kits_spent": 0,
+      "outcome": "recovered",
+      "policy": "rest",
+      "severity": 1,
+      "terminal_health": 96
+    },
+    {
+      "calendar_days": 3,
+      "condition": "measles",
+      "kits_spent": 3,
+      "outcome": "recovered",
+      "policy": "nurse",
+      "severity": 1,
+      "terminal_health": 96
+    },
+    {
+      "calendar_days": 2,
+      "condition": "measles",
+      "kits_spent": 2,
+      "outcome": "recovered",
+      "policy": "caregiver",
+      "severity": 1,
+      "terminal_health": 96
+    },
+    {
+      "calendar_days": 10,
+      "condition": "measles",
+      "kits_spent": 0,
+      "outcome": "recovered",
+      "policy": "travel",
+      "severity": 2,
+      "terminal_health": 15
+    },
+    {
+      "calendar_days": 5,
+      "condition": "measles",
+      "kits_spent": 0,
+      "outcome": "recovered",
+      "policy": "rest",
+      "severity": 2,
+      "terminal_health": 80
+    },
+    {
+      "calendar_days": 3,
+      "condition": "measles",
+      "kits_spent": 3,
+      "outcome": "recovered",
+      "policy": "nurse",
+      "severity": 2,
+      "terminal_health": 96
+    },
+    {
+      "calendar_days": 2,
+      "condition": "measles",
+      "kits_spent": 2,
+      "outcome": "recovered",
+      "policy": "caregiver",
+      "severity": 2,
+      "terminal_health": 96
+    },
+    {
+      "calendar_days": 8,
+      "condition": "measles",
+      "kits_spent": 0,
+      "outcome": "dead",
+      "policy": "travel",
+      "severity": 3,
+      "terminal_health": 0
+    },
+    {
+      "calendar_days": 5,
+      "condition": "measles",
+      "kits_spent": 0,
+      "outcome": "recovered",
+      "policy": "rest",
+      "severity": 3,
+      "terminal_health": 60
+    },
+    {
+      "calendar_days": 3,
+      "condition": "measles",
+      "kits_spent": 3,
+      "outcome": "recovered",
+      "policy": "nurse",
+      "severity": 3,
+      "terminal_health": 96
+    },
+    {
+      "calendar_days": 2,
+      "condition": "measles",
+      "kits_spent": 2,
+      "outcome": "recovered",
+      "policy": "caregiver",
+      "severity": 3,
+      "terminal_health": 96
+    }
+  ],
+  "risk_arithmetic": {
+    "six_independent_untreated_rolls": 0.19246030391798452,
+    "four_independent_rest_rolls": 0.06818384371093733,
+    "note": "Conditional mathematical illustrations only. Actual healing/care can remove the wound sooner, so these are not observed frontier incidence."
+  }
+}
