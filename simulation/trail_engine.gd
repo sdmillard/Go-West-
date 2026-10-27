@@ -1369,6 +1369,7 @@ func _choose_service(index: int) -> bool:
 		camp_tasks.begin(self,"care",int(choice.member_id))
 	if choice.has("care"):
 		var member: Dictionary = party_health.members[int(choice.member_id)]
+		party_health.dress_wound(int(choice.member_id),int(state.day)+1)
 		party_health.affect(member, int(choice.care)+int(choice.get("care_bonus",0)), state.day, "care")
 		for active in member.conditions:
 			active.elapsed += 2+int(choice.get("recovery_bonus",0))

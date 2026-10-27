@@ -25,7 +25,7 @@ func outfit(seed_value: int = 1848):
 
 func run() -> void:
 	var health = Health.new()
-	check(health.error.is_empty() and health.conditions.size() == 11, "Health JSON loads illnesses and injuries")
+	check(health.error.is_empty() and health.conditions.size() == 14, "Health JSON loads illnesses and injuries")
 	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/health_conditions.json"))
 	for field in ["daily_damage", "recovery_days"]:
 		var invalid := data.duplicate(true)

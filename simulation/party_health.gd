@@ -5,6 +5,7 @@ var members: Array[Dictionary] = []
 var conditions: Dictionary = {}
 var daily_onset_chance := 0.0
 var scurvy: Dictionary = {}
+var wound_infection: Dictionary = {}
 # Consecutive days without sufficient vitamin-C produce eaten; legacy save field name.
 var days_without_fresh := 0
 var notices: Array[String] = []
@@ -46,9 +47,43 @@ func load_data(data: Variant) -> bool:
 	var deficiency: Variant = data.get("scurvy", {})
 	if not deficiency is Dictionary or (not deficiency.is_empty() and not _valid_deficiency(deficiency)):
 		return _fail("Invalid scurvy rules")
+	var infection: Variant=data.get("wound_infection",{})
+	if not infection is Dictionary or (not infection.is_empty() and not _valid_infection(infection)):
+		return _fail("Invalid wound infection rules")
+	wound_infection=infection.duplicate(true)
 	daily_onset_chance = float(chance)
 	scurvy = deficiency.duplicate(true)
 	return true
+
+func _valid_infection(rules: Dictionary) -> bool:
+	if rules.get("source")!="wound" or rules.get("condition")!="wound_infection" or not conditions.has(rules.source) or conditions[rules.source].kind!="injury" or not conditions.has(rules.condition) or conditions[rules.condition].kind!="illness" or not conditions[rules.condition].get("complication",false):return false
+	for key in ["min_days","max_days"]:
+		if not _number(rules.get(key)) or rules[key]!=floor(rules[key]) or rules[key]<1 or rules[key]>365:return false
+	if rules.max_days<rules.min_days:return false
+	for key in ["daily_chance","rest_factor","dressed_factor"]:
+		if not _number(rules.get(key)) or rules[key]<0 or rules[key]>1:return false
+	return true
+
+func dress_wound(member_id: int,day: int) -> void:
+	if member_id<0 or member_id>=members.size() or not is_active(members[member_id]):return
+	for active in members[member_id].conditions:
+		if active.id==wound_infection.get("source",""):active["dressed_until_day"]=day
+
+func infection_chance(member_id: int,day: int,resting: bool=false) -> float:
+	if wound_infection.is_empty() or member_id<0 or member_id>=members.size():return 0
+	var member: Dictionary=members[member_id]
+	if not is_active(member) or member.conditions.any(func(c):return c.id==wound_infection.condition):return 0
+	for active in member.conditions:
+		var age: int=day-int(active.started_day)
+		if active.id==wound_infection.source and age>=wound_infection.min_days and age<=wound_infection.max_days:
+			return float(wound_infection.daily_chance)*(float(wound_infection.rest_factor) if resting else 1.0)*(float(wound_infection.dressed_factor) if int(active.get("dressed_until_day",-1))>=day else 1.0)
+	return 0
+
+func _wound_complications(day: int,rations: int,resting: bool,rest_by_member: Dictionary) -> void:
+	for member in members:
+		var chance: float=infection_chance(int(member.id),day,rest_by_member.get(int(member.id),resting))
+		if chance>0 and rng.randf()<chance:
+			begin_condition(int(member.id),wound_infection.condition,day,roll_severity(rations))
 
 func _valid_deficiency(rules: Dictionary) -> bool:
 	if not conditions.has(rules.get("condition")) or not conditions[rules.condition].get("deficiency", false):
@@ -66,7 +101,7 @@ func _valid_spread(entry: Dictionary) -> bool:
 			return false
 	if entry.has("spread_chance") and (not _number(entry.spread_chance) or entry.spread_chance < 0 or entry.spread_chance > 1):
 		return false
-	for key in ["immunizing", "deficiency", "needs_fresh_food"]:
+	for key in ["immunizing", "deficiency", "needs_fresh_food", "complication"]:
 		if entry.has(key) and not entry[key] is bool:
 			return false
 	if entry.has("months"):
@@ -90,6 +125,7 @@ func _fail(message: String) -> bool:
 	conditions.clear()
 	daily_onset_chance = 0.0
 	scurvy = {}
+	wound_infection = {}
 	error = message
 	return false
 
@@ -163,6 +199,7 @@ func begin_condition(member_id: int, condition_id: String, day: int, severity: i
 		if active.id == condition_id:
 			return false
 	var definition: Dictionary = conditions[condition_id]
+	if definition.get("complication",false) and (wound_infection.is_empty() or not member.conditions.any(func(c):return c.id==wound_infection.source)):return false
 	if condition_id in member.get("immune", []):
 		return false
 	member.conditions.append({"id": condition_id, "started_day": day, "elapsed": 0, "severity": clampi(severity, 1, 3)})
@@ -178,7 +215,7 @@ func roll_severity(rations: int) -> int:
 func automatic_conditions(year: int) -> Array[String]:
 	var candidates: Array[String] = []
 	for id in conditions:
-		if conditions[id].kind == "illness" and not conditions[id].get("deficiency", false) and year >= int(conditions[id].get("from_year", 0)):
+		if conditions[id].kind == "illness" and not conditions[id].get("deficiency", false) and not conditions[id].get("complication",false) and year >= int(conditions[id].get("from_year", 0)):
 			candidates.append(id)
 	return candidates
 
@@ -289,6 +326,7 @@ func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 
 					if not member.has("immune"):
 						member.immune = []
 					member.immune.append(active.id)
+	_wound_complications(day,rations,resting,rest_by_member)
 	_spread(day, rations)
 	_deficiency(day, rations, days_without_fresh,vitamin_coverage)
 	# One provisional party-level onset roll per day; a separate seeded stream
@@ -324,6 +362,11 @@ func description(member_id: int) -> String:
 			lines.append("No current illness or injury.")
 		for active in member.conditions:
 			lines.append("%s · %s · since day %d%s" % [conditions[active.id].name, ["Mild", "Bad", "Serious"][int(active.get("severity", 1)) - 1], active.started_day, " · mends only with vitamin-C foods" if conditions[active.id].get("needs_fresh_food", false) else ""])
+			if active.id==wound_infection.get("source",""):
+				lines.append("Open wound: infection is possible during early healing. Rest and care reduce the risk.")
+			if active.id==wound_infection.get("condition",""):
+				lines.append("An infected wound can worsen after the original injury heals. Care and rest help, but recovery is not guaranteed.")
+			if active.id=="smallpox":lines.append("Contagious within the party. Survivors become immune; nursing supports recovery.")
 			if conditions[active.id].get("needs_fresh_food",false):
 				var progress: float=int(active.elapsed)+int(active.get("nutrition_progress_milli",0))/1000.0
 				lines.append("Treatment progress: %.1f / %d. Fruit and greens support recovery; rest helps." % [progress,int(conditions[active.id].recovery_days)])
@@ -334,8 +377,12 @@ func description(member_id: int) -> String:
 
 
 # Optional fixed-point state preserves existing saves and exact JSON round trips.
-static func valid_treatment(condition: Variant) -> bool:
+static func valid_treatment(condition: Variant,day: int=-1) -> bool:
 	if not condition is Dictionary:return false
+	if condition.has("dressed_until_day"):
+		var value: Variant=condition.dressed_until_day
+		if condition.get("id")!="wound" or not (value is int or value is float) or not is_finite(value) or value!=floor(value) or value<0 or value>1000000:return false
+		if day>=0 and (value<int(condition.get("started_day",0)) or value>day+1):return false
 	for key in ["nutrition_progress_milli","nutrition_damage_milli","treatment_coverage_milli"]:
 		if not condition.has(key):continue
 		var value: Variant=condition[key]

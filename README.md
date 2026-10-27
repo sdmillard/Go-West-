@@ -1,6 +1,8 @@
 # Westward, Probably
 
 
+[Disease and wound expansion](docs/DISEASE_EXPANSION.md): smallpox, pneumonia and wound infection join the individual health system. Supplied care lowers wound complication risk; smallpox survivors gain immunity.
+
 [Same-hide crafting comparison](docs/FIXED_HIDE_RESULTS.md): 32 source journeys yield 13 identical-save pairs; arrivals stay3/13 in both arms, with a modest gross-income gain from existing hides. No new harvest or production tuning.
 
 [Integrated wage and leathercraft results](docs/CREW_CRAFT_RESULTS.md): 96 matched farmer journeys, 97 passing suites, actual crew payroll and hide-to-glove sales. Income helps some hired parties, while extra hide preparation can outweigh craft proceeds. No production tuning.
