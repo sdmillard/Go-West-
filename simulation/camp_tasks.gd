@@ -154,11 +154,11 @@ func prepare(game) -> void:
   var patient: Dictionary=game.party_health.members[entry.patient]
   if not game.party_health.is_active(patient):continue
   var expert: bool=specialist(game,int(entry.member),"Caregiving")
-  game.party_health.dress_wound(int(entry.patient),int(game.state.day))
+  if game.party_health.dress_wound(int(entry.patient),int(game.state.day)):
+   game.party_health._record(patient,int(game.state.day),"%s's wound was cleaned and bandaged." % patient.name)
   game.party_health.affect(patient,int(rules.nurse_health)+(int(game.characters.benefits.care_health_bonus) if expert else 0),game.state.day,"care")
   for condition in patient.conditions:
-   condition.elapsed+=int(rules.nurse_recovery)+(int(game.characters.benefits.care_recovery_bonus) if expert else 0)
-   condition.severity=maxi(1,int(condition.severity)-1)
+   game.party_health.support_condition(condition,int(rules.nurse_recovery)+(int(game.characters.benefits.care_recovery_bonus) if expert else 0))
   game.characters.care(game,int(entry.patient))
   game.supply_history.append({"day":game.state.day,"event":"camp_nursing","changes":{"medicine":-1},"worker":entry.member,"patient":entry.patient})
   report(game,"%s nursed %s with one care kit%s." % [game.party_health.members[entry.member].name,patient.name," (caregiver)" if expert else ""])

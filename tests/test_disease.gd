@@ -84,9 +84,9 @@ func run() -> void:
 	health.daily_onset_chance = 0.0
 	health.begin_condition(0, "dysentery", 0)
 	health.members[1].conditions.append({"id": "broken_arm", "started_day": 0, "elapsed": 0, "severity": 1})
-	for day in range(1, 8):
-		health.tick(day, false)
-	check(health.members[1].conditions.size() == 1, "Someone already ill or injured does not catch a second illness")
+	health.conditions.dysentery.spread_chance=1.0
+	health.tick(1,false)
+	check(health.members[1].conditions.size() == 2, "An unrelated injury does not prevent another illness")
 
 	# The engine passes the current region into the onset roll.
 	var west := 0

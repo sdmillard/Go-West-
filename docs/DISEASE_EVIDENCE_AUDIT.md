@@ -1,5 +1,7 @@
 # Historical and modern evidence audit: disease rules
 
+
+**Historical checkpoint:** the subsequent [disease-clock corrections and bandaging](DISEASE_CLOCK_CORRECTIONS.md) update supersedes the original timing, susceptibility and wound-risk rules below.
 Audited October27,2026 against production3a9db2c. **The disease catalog is broadly
 defensible; the shared recovery and susceptibility rules need correction.** This
 is an evidence/code audit with controlled diagnostics, not another journey balance

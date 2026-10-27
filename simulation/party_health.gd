@@ -57,17 +57,20 @@ func load_data(data: Variant) -> bool:
 
 func _valid_infection(rules: Dictionary) -> bool:
 	if rules.get("source")!="wound" or rules.get("condition")!="wound_infection" or not conditions.has(rules.source) or conditions[rules.source].kind!="injury" or not conditions.has(rules.condition) or conditions[rules.condition].kind!="illness" or not conditions[rules.condition].get("complication",false):return false
-	for key in ["min_days","max_days"]:
+	if not rules.get("until_healed") is bool or not rules.until_healed:return false
+	for key in ["min_days"]:
 		if not _number(rules.get(key)) or rules[key]!=floor(rules[key]) or rules[key]<1 or rules[key]>365:return false
-	if rules.max_days<rules.min_days:return false
 	for key in ["daily_chance","rest_factor","dressed_factor"]:
 		if not _number(rules.get(key)) or rules[key]<0 or rules[key]>1:return false
 	return true
 
-func dress_wound(member_id: int,day: int) -> void:
-	if member_id<0 or member_id>=members.size() or not is_active(members[member_id]):return
+func dress_wound(member_id: int,day: int) -> bool:
+	if member_id<0 or member_id>=members.size() or not is_active(members[member_id]):return false
 	for active in members[member_id].conditions:
-		if active.id==wound_infection.get("source",""):active["dressed_until_day"]=day
+		if active.id==wound_infection.get("source",""):
+			active["dressed_until_day"]=day
+			return true
+	return false
 
 func infection_chance(member_id: int,day: int,resting: bool=false) -> float:
 	if wound_infection.is_empty() or member_id<0 or member_id>=members.size():return 0
@@ -75,7 +78,7 @@ func infection_chance(member_id: int,day: int,resting: bool=false) -> float:
 	if not is_active(member) or member.conditions.any(func(c):return c.id==wound_infection.condition):return 0
 	for active in member.conditions:
 		var age: int=day-int(active.started_day)
-		if active.id==wound_infection.source and age>=wound_infection.min_days and age<=wound_infection.max_days:
+		if active.id==wound_infection.source and age>=wound_infection.min_days and int(active.elapsed)<int(conditions[active.id].recovery_days):
 			return float(wound_infection.daily_chance)*(float(wound_infection.rest_factor) if resting else 1.0)*(float(wound_infection.dressed_factor) if int(active.get("dressed_until_day",-1))>=day else 1.0)
 	return 0
 
@@ -101,9 +104,17 @@ func _valid_spread(entry: Dictionary) -> bool:
 			return false
 	if entry.has("spread_chance") and (not _number(entry.spread_chance) or entry.spread_chance < 0 or entry.spread_chance > 1):
 		return false
-	for key in ["immunizing", "deficiency", "needs_fresh_food", "complication"]:
+	for key in ["immunizing", "deficiency", "needs_fresh_food", "complication", "calendar_course"]:
 		if entry.has(key) and not entry[key] is bool:
 			return false
+	if entry.get("calendar_course",false) and (entry.kind!="illness" or entry.get("needs_fresh_food",false)):return false
+	if entry.has("incubation_days"):
+		var bounds: Variant=entry.incubation_days
+		if not bounds is Array or bounds.size()!=2 or entry.kind!="illness" or float(entry.get("spread_chance",0))<=0:return false
+		for days in bounds:
+			if not _number(days) or days!=floor(days) or days<1 or days>60:return false
+		if bounds[0]>bounds[1]:return false
+	if entry.has("contagious_after_days") and (not _number(entry.contagious_after_days) or entry.contagious_after_days!=floor(entry.contagious_after_days) or entry.contagious_after_days<0 or entry.contagious_after_days>=entry.recovery_days):return false
 	if entry.has("months"):
 		if not entry.months is Array or entry.months.size() != 12:
 			return false
@@ -202,8 +213,51 @@ func begin_condition(member_id: int, condition_id: String, day: int, severity: i
 	if definition.get("complication",false) and (wound_infection.is_empty() or not member.conditions.any(func(c):return c.id==wound_infection.source)):return false
 	if condition_id in member.get("immune", []):
 		return false
+	if member.has("exposures"):
+		member.exposures=member.exposures.filter(func(e):return e.id!=condition_id)
+		if member.exposures.is_empty():member.erase("exposures")
 	member.conditions.append({"id": condition_id, "started_day": day, "elapsed": 0, "severity": clampi(severity, 1, 3)})
 	_record(member, day, ("%s has %s." % [member.name, definition.name.to_lower()]) if source.is_empty() else ("%s caught %s from %s." % [member.name, definition.name.to_lower(), source]))
+	return true
+
+func susceptible(member: Dictionary,id: String) -> bool:
+	return is_active(member) and id not in member.get("immune",[]) and not member.conditions.any(func(c):return c.id==id) and not member.get("exposures",[]).any(func(e):return e.id==id)
+
+func support_condition(active: Dictionary,steps: int) -> void:
+	if not conditions[active.id].get("calendar_course",false):active.elapsed+=steps
+	active.severity=maxi(1,int(active.get("severity",1))-1)
+
+func expose(member_id: int,id: String,day: int,severity: int=1,source: String="") -> bool:
+	if member_id<0 or member_id>=members.size() or not conditions.has(id) or not susceptible(members[member_id],id):return false
+	var bounds: Array=conditions[id].get("incubation_days",[])
+	if bounds.is_empty():return begin_condition(member_id,id,day,severity,source)
+	var member: Dictionary=members[member_id]
+	if not member.has("exposures"):member.exposures=[]
+	member.exposures.append({"id":id,"exposed_day":day,"onset_day":day+rng.randi_range(int(bounds[0]),int(bounds[1])),"severity":clampi(severity,1,3),"source":source})
+	return true
+
+func _mature_exposures(day: int) -> void:
+	for member in members:
+		if not is_active(member):continue
+		for exposure in member.get("exposures",[]).duplicate():
+			if day>=int(exposure.onset_day):
+				member.exposures.erase(exposure)
+				if member.exposures.is_empty():member.erase("exposures")
+				begin_condition(int(member.id),exposure.id,day,int(exposure.severity),str(exposure.source))
+
+func valid_exposures(member: Dictionary,day: int) -> bool:
+	if not member.has("exposures"):return true
+	if not member.exposures is Array or member.exposures.size()>conditions.size():return false
+	if member.has("immune") and not member.immune is Array:return false
+	var seen: Array=[]
+	for e in member.exposures:
+		if not e is Dictionary or e.size()!=5 or not e.get("id") is String or not conditions.has(e.id) or not conditions[e.id].has("incubation_days") or e.id in seen:return false
+		if e.id in member.get("immune",[]) or member.conditions.any(func(c):return c is Dictionary and c.get("id")==e.id):return false
+		for key in ["exposed_day","onset_day","severity"]:
+			if not _number(e.get(key)) or e[key]!=floor(e[key]):return false
+		var bounds: Array=conditions[e.id].incubation_days
+		if e.exposed_day<0 or e.exposed_day>day or e.onset_day<e.exposed_day+bounds[0] or e.onset_day>e.exposed_day+bounds[1] or e.severity<1 or e.severity>3 or not e.get("source") is String or e.source.length()>120:return false
+		seen.append(e.id)
 	return true
 
 func roll_severity(rations: int) -> int:
@@ -243,8 +297,8 @@ func _pick_condition(available: Array[String], month: int, region: String) -> St
 			return id
 	return available[-1]
 
-# Contagious illness can pass to anyone in the party who is currently well and
-# not immune. People who fell ill today do not pass it on until tomorrow.
+# Susceptibility depends on this disease and immunity, not unrelated conditions.
+# Pending exposures are asymptomatic and cannot transmit.
 # Daily chance that each well traveler develops scurvy after a long run of
 # meals without vitamin-C foods. It rises every 15 days past onset_days.
 func scurvy_chance(days_without_fresh: int) -> float:
@@ -277,7 +331,7 @@ func _deficiency(day: int, rations: int, days_without_fresh: int, vitamin_covera
 	if vitamin_coverage>=1.0/VITAMIN_REPLENISHMENT_RATIO:return
 	for member in members:
 		var chance := scurvy_chance(floori(int(member.vitamin_debt_milli)/1000.0) if member.has("vitamin_debt_milli") else int(member.get("vitamin_days",days_without_fresh)))
-		if is_active(member) and member.conditions.is_empty() and chance>0 and rng.randf() < chance:
+		if chance>0 and susceptible(member,scurvy.condition) and rng.randf() < chance:
 			begin_condition(int(member.id), scurvy.condition, day, roll_severity(rations))
 
 func _spread(day: int, rations: int) -> void:
@@ -285,13 +339,13 @@ func _spread(day: int, rations: int) -> void:
 	for member in members:
 		if is_active(member):
 			for active in member.conditions:
-				if float(conditions[active.id].get("spread_chance", 0.0)) > 0.0:
+				if float(conditions[active.id].get("spread_chance", 0.0)) > 0.0 and day-int(active.started_day)>=int(conditions[active.id].get("contagious_after_days",0)):
 					sources.append([member.name, active.id])
 	for source in sources:
 		var chance := float(conditions[source[1]].spread_chance)
 		for member in members:
-			if is_active(member) and member.conditions.is_empty() and source[1] not in member.get("immune", []) and rng.randf() < chance:
-				begin_condition(int(member.id), source[1], day, roll_severity(rations), source[0])
+			if susceptible(member,source[1]) and rng.randf() < chance:
+				expose(int(member.id), source[1], day, roll_severity(rations), source[0])
 
 func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 2, year: int = 1848, month: int = 0, region: String = "", days_without_fresh: int = 0, rest_by_member: Dictionary = {}, vitamin_coverage: float = -1.0) -> void:
 	for member in members:
@@ -300,7 +354,7 @@ func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 
 		for active in member.conditions.duplicate():
 			var definition: Dictionary = conditions[active.id]
 			var nourished: bool=int(member.get("vitamin_days",days_without_fresh))==0
-			var rate: int=2 if rest_by_member.get(int(member.id),resting) else 1
+			var rate: int=2 if rest_by_member.get(int(member.id),resting) and not definition.get("calendar_course",false) else 1
 			var damage: int=int(definition.get("fed_daily_damage",definition.daily_damage)) if nourished else int(definition.daily_damage)
 			if definition.get("needs_fresh_food",false):
 				# Shared actual intake earns proportional treatment, retaining sub-step
@@ -326,6 +380,7 @@ func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 
 					if not member.has("immune"):
 						member.immune = []
 					member.immune.append(active.id)
+	_mature_exposures(day)
 	_wound_complications(day,rations,resting,rest_by_member)
 	_spread(day, rations)
 	_deficiency(day, rations, days_without_fresh,vitamin_coverage)
@@ -334,13 +389,15 @@ func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 
 	if living_count() == 0 or rng.randf() >= clampf(daily_onset_chance * risk_multiplier, 0, 1):
 		return
 	var candidates: Array[int] = []
+	var options: Dictionary={}
 	for member in members:
-		if is_active(member) and member.conditions.is_empty():
-			candidates.append(int(member.id))
-	var available: Array[String] = automatic_conditions(year)
-	if not candidates.is_empty() and not available.is_empty():
+		var eligible: Array[String]=[]
+		for id in automatic_conditions(year):
+			if susceptible(member,id) and onset_weight(id,month,region)>0:eligible.append(id)
+		if not eligible.is_empty():candidates.append(int(member.id));options[int(member.id)]=eligible
+	if not candidates.is_empty():
 		var person: int = candidates[rng.randi_range(0, candidates.size() - 1)]
-		var picked := _pick_condition(available, month, region)
+		var picked := _pick_condition(options[person], month, region)
 		if not picked.is_empty():
 			begin_condition(person, picked, day, roll_severity(rations))
 
@@ -363,10 +420,11 @@ func description(member_id: int) -> String:
 		for active in member.conditions:
 			lines.append("%s · %s · since day %d%s" % [conditions[active.id].name, ["Mild", "Bad", "Serious"][int(active.get("severity", 1)) - 1], active.started_day, " · mends only with vitamin-C foods" if conditions[active.id].get("needs_fresh_food", false) else ""])
 			if active.id==wound_infection.get("source",""):
-				lines.append("Open wound: infection is possible during early healing. Rest and care reduce the risk.")
+				lines.append("Open wound: infection remains possible until it heals. Nursing cleans and bandages wounds; rest and care reduce the risk.")
 			if active.id==wound_infection.get("condition",""):
 				lines.append("An infected wound can worsen after the original injury heals. Care and rest help, but recovery is not guaranteed.")
-			if active.id=="smallpox":lines.append("Contagious within the party. Survivors become immune; nursing supports recovery.")
+			if conditions[active.id].get("calendar_course",false):lines.append("Rest and nursing support health; this illness still runs its course.")
+			if active.id=="smallpox":lines.append("Close-contact spread is possible as the rash develops. Survivors become immune.")
 			if conditions[active.id].get("needs_fresh_food",false):
 				var progress: float=int(active.elapsed)+int(active.get("nutrition_progress_milli",0))/1000.0
 				lines.append("Treatment progress: %.1f / %d. Fruit and greens support recovery; rest helps." % [progress,int(conditions[active.id].recovery_days)])

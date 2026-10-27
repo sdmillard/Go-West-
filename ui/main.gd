@@ -950,7 +950,7 @@ func _camp_task_menu(id: int,task: Dictionary) -> MenuButton:
 	for person in game.party_health.members:
 		if int(person.id)==id or not game.party_health.is_active(person):continue
 		patients.add_item(person.name,int(person.id))
-		patients.set_item_tooltip(patients.item_count-1,game.PartyHealth.condition_label(person.health)+"; one care kit per day while needed.")
+		patients.set_item_tooltip(patients.item_count-1,game.PartyHealth.condition_label(person.health)+"; one care kit per day. Includes cleaning and bandaging open wounds to reduce infection risk.")
 	patients.id_pressed.connect(func(patient: int):_set_camp_task(id,"nurse",patient))
 	menu.add_child(patients)
 	menu.add_submenu_item("Nursing","NursingTargets",game.camp_tasks.JOBS.find("nurse"))

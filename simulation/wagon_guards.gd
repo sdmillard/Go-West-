@@ -225,7 +225,7 @@ static func valid(cache: Dictionary,game,day: int,party: Array=[]) -> bool:
  var ids: Array=[]
  for member in cache.guards:
   if not member is Dictionary or not game.crime.whole(member.get("id"),1,game.MAX_TRAVELERS-1) or int(member.id) in ids or not member.get("name") is String or not member.get("alive") is bool or not game.crime.whole(member.get("health"),0,100) or member.alive!=(member.health>0) or not member.get("conditions") is Array or not member.get("history") is Array or not member.get("cause") is String or not game.crime.whole(member.get("death_day"),-1,day) or not game.crime.whole(member.get("vitamin_days"),0,100000):return false
-  if not game.party_health.valid_reserve(member):return false
+  if not game.party_health.valid_reserve(member) or not game.party_health.valid_exposures(member,day):return false
   if member.has("guarding") or (member.has("departed") and member.departed!=true):return false
   ids.append(int(member.id))
   for line in member.history:
