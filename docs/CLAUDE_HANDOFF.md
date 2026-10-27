@@ -1,8 +1,13 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 26, 2026. Latest checkpoint: Leatherworking background and physical crafting (docs/LEATHERCRAFT.md). Earlier sections are chronological records.
+Last updated October 26, 2026. Latest checkpoint: integrated wage/leathercraft balance campaign (docs/CREW_CRAFT_RESULTS.md). Earlier sections are chronological records.
 
 ## Resume here
+
+- **Completed income/craft test:** docs/CREW_CRAFT_RESULTS.md and crew-craft-results-01.json. Protocol frozen58f38a1 before confirmation; production581fc4a unchanged. 96 journeys /32 matched triplets /four fresh worlds571000-3 repeated April/May, none/two goats, free/hired artisan, off/crew/craft. Do not pool with previous income studies or treat96 as independent worlds.
+- **Results:** arrivals13/32 off,15/32 crews,12/32 craft; >=4 originals7/7/5; food deaths29/18/29. Free12/16,11/16,10/16; hired1/16,4/16,2/16. All arrivals October or later. Specific hired Veteran/Loyal/Proud artisan costs$7-$7.70/week; no conclusions about every mercenary. Whole-party median employment$8.45-$9 versus artisan median paid$111.65: a daily wage floor cannot fund a season through scarce posts.
+- **Craft economics:** 216 glove pairs sold +six buckskins; $126.54 total finished goods,10 cases craft/9 sell. 293 worker-days already overlap necessary camp stops. More attractive potential glove value makes the policy recover more hides: preparation171->251 days, hauling displacement1102.5->2225.5 lb versus crews; more gross cash but three lost matched arrivals. Not an isolated crafting-button effect. Next test should hold hide collection fixed and inspect preparation/market-stop timing before tuning prices or wages.
+- **Validation/reproduction:** all97 suites pass, new21-check integrated fixture, 96 zero-error journeys and seven negative accounting checks. tests/run_crew_craft.ps1 / summarize_crew_craft.py (--check revalidates published evidence); frozen test-only campaign/observer. Raw archives and receipts .tools/crew-craft-archives, full log .tools/crew-craft-full-tests-01.log. No engine/data/UI changes.
 
 - **Craft validation:** all96 suites pass, final leathercraft48/catalog576/crews46 checks. `.tools/leathercraft-full-tests-01.log`; final focused logs and native panel800x360 inspected. Materials, full chain, twenty-pair sale, unfinished saves, nursing/paid-work conflicts and visible background/crafting controls covered.
 - **Leatherworking corrected to a background:** fifth SKILLS entry, 75-cent authored wage base. New creation and generated candidates use it like Carpentry; old Leatherworker special remains legacy_only cross-training for saved people/offers with existing skill and +15 premium preserved, but hidden from new selection/generation. Catalog remains17 definitions /16 selectable specials; no carpenter manufacturing exists.

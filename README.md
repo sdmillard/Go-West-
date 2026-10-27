@@ -1,5 +1,7 @@
 # Westward, Probably
 
+
+[Integrated wage and leathercraft results](docs/CREW_CRAFT_RESULTS.md): 96 matched farmer journeys, 97 passing suites, actual crew payroll and hide-to-glove sales. Income helps some hired parties, while extra hide preparation can outweigh craft proceeds. No production tuning.
 A growing Oregon Trail-inspired game in **Godot 4 / GDScript**. Lead five travelers from Independence to Oregon City, managing supplies, crossings and the Barlow Road. Historical evidence now takes priority when it differs from the classic games. The continuous overland itinerary connects 36 stops over 1,938 reported guide miles. See [route evidence and game comparison](docs/ROUTE_EXPANSION.md).
 
 [Leatherworking background and crafting](docs/LEATHERCRAFT.md) adds a primary background, staged hide dressing and glove making through camp work, with physical unfinished goods and normal shop sales.
