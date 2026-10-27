@@ -94,7 +94,13 @@
         "forest": 0.6
       },
       "spread_chance": 0.08,
-      "immunizing": true
+      "immunizing": true,
+      "calendar_course": true,
+      "incubation_days": [
+        11,
+        12
+      ],
+      "contagious_after_days": 0
     },
     {
       "id": "mountain_fever",
@@ -175,17 +181,23 @@
       "name": "Smallpox",
       "kind": "illness",
       "daily_damage": 5,
-      "recovery_days": 18,
+      "recovery_days": 21,
       "weight": 0.25,
       "spread_chance": 0.06,
-      "immunizing": true
+      "immunizing": true,
+      "calendar_course": true,
+      "incubation_days": [
+        10,
+        14
+      ],
+      "contagious_after_days": 4
     },
     {
       "id": "pneumonia",
       "name": "Pneumonia",
       "kind": "illness",
       "daily_damage": 5,
-      "recovery_days": 12,
+      "recovery_days": 14,
       "weight": 1,
       "months": [
         1.8,
@@ -200,7 +212,8 @@
         1.3,
         1.6,
         1.8
-      ]
+      ],
+      "calendar_course": true
     },
     {
       "id": "wound_infection",
@@ -209,7 +222,8 @@
       "daily_damage": 3,
       "recovery_days": 10,
       "weight": 0,
-      "complication": true
+      "complication": true,
+      "calendar_course": true
     }
   ],
   "scurvy": {
@@ -219,14 +233,14 @@
     "chance_per_15_days": 0.01,
     "max_chance": 0.08
   },
-  "note": "Onset weights, monthly and regional factors and spread chances are authored placeholders for the balance pass, not fitted epidemiology. Waterborne illness peaks in hot months on the Platte and in sagebrush country; measles spreads early on the trail and leaves survivors immune; mountain fever (the emigrants' name for a usually non-fatal fever met in the Rockies; its modern identity is uncertain) appears in high country in spring and summer and does not pass person to person. Cholera stays locked until the 1849 epidemic. Scurvy comes from a long run without enough vitamin-C produce actually eaten; fresh meat alone does not reset the counter. Amounts and recovery remain game abstractions. Adequate vitamin-C meals stop scurvy deterioration while its existing recovery period still requires sustained nutrition. This is authored game treatment, not a clinical dose model. Smallpox is an uncommon authored share of the existing onset roll, contagious and immunizing; pneumonia is a cold-season-weighted clinical syndrome with no generic person-to-person spread rule. These do not assert a specific 1848 outbreak. Wound infection is a separate noncontagious complication of an existing open wound, not of every closed fracture or spontaneous illness. Its day window and care/rest risk modifiers are authored abstractions; care kits are not antibiotics.",
+  "note": "Onset weights, monthly and regional factors and spread chances are authored placeholders for the balance pass, not fitted epidemiology. Waterborne illness peaks in hot months on the Platte and in sagebrush country; measles spreads early on the trail and leaves survivors immune; mountain fever (the emigrants' name for a usually non-fatal fever met in the Rockies; its modern identity is uncertain) appears in high country in spring and summer and does not pass person to person. Cholera stays locked until the 1849 epidemic. Scurvy comes from a long run without enough vitamin-C produce actually eaten; fresh meat alone does not reset the counter. Amounts and recovery remain game abstractions. Adequate vitamin-C meals stop scurvy deterioration while its existing recovery period still requires sustained nutrition. This is authored game treatment, not a clinical dose model. Smallpox is an uncommon authored share of the existing onset roll, contagious and immunizing; pneumonia is a cold-season-weighted clinical syndrome with no generic person-to-person spread rule. These do not assert a specific 1848 outbreak. Wound infection is a separate noncontagious complication of an existing open wound, not of every closed fracture or spontaneous illness. Its day window and care/rest risk modifiers are authored abstractions; care kits are not antibiotics. Calendar courses for smallpox21, measles10, pneumonia14 and wound infection10 days are coarse authored clinical courses: supportive care improves health/severity without accelerating those clocks. Party smallpox/measles contacts incubate before symptoms; ranges and smallpox four-day early fever phase are simplified typical courses, not full clinical variation. Wound complication risk continues until the open wound heals, after the existing two-day minimum.",
   "wound_infection": {
     "condition": "wound_infection",
     "source": "wound",
     "min_days": 2,
-    "max_days": 7,
     "daily_chance": 0.035,
     "rest_factor": 0.5,
-    "dressed_factor": 0.25
+    "dressed_factor": 0.25,
+    "until_healed": true
   }
 }

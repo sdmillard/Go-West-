@@ -1,7 +1,9 @@
 # Westward, Probably
 
 
-[Disease evidence audit](docs/DISEASE_EVIDENCE_AUDIT.md): historical/modern sources support the catalog but expose accelerated illness clocks, injury-based disease protection and the day7 wound-risk cutoff. Audit only; targeted corrections remain outstanding.
+[Disease clock corrections and bandaging](docs/DISEASE_CLOCK_CORRECTIONS.md): calendar illness courses, delayed smallpox/measles onset, per-disease susceptibility and wound risk until healing. Nursing visibly includes cleaning/bandaging with existing supplies.
+
+[Disease evidence audit](docs/DISEASE_EVIDENCE_AUDIT.md): historical/modern sources support the catalog but expose accelerated illness clocks, injury-based disease protection and the day7 wound-risk cutoff. The targeted findings are corrected in the disease-clock update.
 
 [Disease and wound expansion](docs/DISEASE_EXPANSION.md): smallpox, pneumonia and wound infection join the individual health system. Supplied care lowers wound complication risk; smallpox survivors gain immunity.
 

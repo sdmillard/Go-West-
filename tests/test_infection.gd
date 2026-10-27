@@ -24,7 +24,7 @@ func run():
  h.begin_condition(0,"broken_leg",0)
  check(h.infection_chance(0,3)==0,"Closed fracture alone does not imply an infected open wound")
  h.begin_condition(1,"wound",0)
- check(h.infection_chance(1,1)==0 and h.infection_chance(1,8)==0,"Complication risk is restricted to the early healing window")
+ check(h.infection_chance(1,1)==0 and h.infection_chance(1,8)>0,"Complication risk begins after the initial delay and persists while the wound is open")
  var chance: float=h.infection_chance(1,2)
  check(is_equal_approx(chance,.035) and is_equal_approx(h.infection_chance(1,2,true),chance*.5),"Rest reduces the actual chance")
  h.dress_wound(1,2)
@@ -38,12 +38,12 @@ func run():
  check(h.members[2].conditions.is_empty(),"Wound infection cannot spread to another traveler")
  h.members[1].health=1;h.tick(4,false)
  check(not h.members[1].alive and h.members[1].cause=="wound infection","Fatal infection records the actual death cause")
- h=healthy();h.conditions.smallpox.spread_chance=1;h.begin_condition(0,"smallpox",0);h.tick(1,false)
- check(h.members[1].conditions[0].id=="smallpox" and h.members[1].conditions[0].elapsed==0,"Smallpox spreads through existing contagion without same-day damage for new cases")
- h.members[0].conditions[0].elapsed=18;h.tick(2,true)
+ h=healthy();h.conditions.smallpox.spread_chance=1;h.conditions.smallpox.contagious_after_days=0;h.begin_condition(0,"smallpox",0);h.tick(1,false)
+ check(h.members[1].conditions.is_empty() and h.members[1].get("exposures",[]).size()==1,"Smallpox exposure incubates without immediate symptomatic damage")
+ h.members[0].conditions[0].elapsed=int(h.conditions.smallpox.recovery_days);h.tick(2,true)
  check("smallpox" in h.members[0].get("immune",[]) and not h.begin_condition(0,"smallpox",3),"Recovered smallpox leaves saved immunity")
  var data: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/health_conditions.json"))
- for change in [["source","broken_leg"],["min_days",-1],["max_days",1],["daily_chance",2],["dressed_factor","yes"]]:
+ for change in [["source","broken_leg"],["min_days",-1],["until_healed",false],["daily_chance",2],["dressed_factor","yes"]]:
   var bad: Dictionary=data.duplicate(true);bad.wound_infection[change[0]]=change[1]
   check(not h.load_data(bad) and h.conditions.is_empty() and h.wound_infection.is_empty(),"Malformed infection rule rejected: "+change[0])
  var g=fixture()
@@ -63,6 +63,7 @@ func run():
  check(Save.new().restore(bad)==null,"Dressing metadata is rejected on an unrelated condition")
  g=fixture();check(g.camp_tasks.assign(g,3,"nurse",1) and g.rest(),"Actual nursing consumes a day")
  check(g.party_health.members[1].conditions[0].dressed_until_day==g.state.day and g.state.medicine==9,"Only actual supplied nursing dresses a wound for that day's risk roll")
+ check(g.party_health.members[1].history.any(func(s):return "cleaned and bandaged" in s) and g.journal.any(func(s):return "cleaned and bandaged" in s),"Bandaging is visible in personal history and the journal")
  g=fixture();check(g.open_care(),"Existing care menu opens")
  var selected: int=-1
  for i in range(g.pending.choices.size()):

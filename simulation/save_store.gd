@@ -313,7 +313,7 @@ func restore(value: Variant):
 		if member.has("away") and (member.away!=true or index==0 or not member.alive or member.get("departed",false) or member.get("guarding",false) or int(value.get("characters_version",0))<5):return null
 		if member.has("guarding") and (member.guarding!=true or index==0 or not member.alive or member.get("departed",false)):return null
 		if member.has("vitamin_days") and not integer(member.vitamin_days,0,100000):return null
-		if not game.party_health.valid_reserve(member):return null
+		if not game.party_health.valid_reserve(member) or not game.party_health.valid_exposures(member,int(s.day)):return null
 		if index>=5 and not integer(member.get("joined_day"),0,int(s.day)):return null
 		if index<5 and member.has("joined_day"):return null
 		if member.alive != (member.health > 0):

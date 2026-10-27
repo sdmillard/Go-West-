@@ -1,5 +1,7 @@
 # Infectious disease and wound complications
 
+
+**Historical checkpoint:** the subsequent [disease-clock corrections and bandaging](DISEASE_CLOCK_CORRECTIONS.md) update supersedes the original timing, susceptibility and wound-risk rules below.
 This increment adds **smallpox, pneumonia and wound infection** to the existing
 individual health system. Measles was already implemented with contagion and
 survivor immunity. No new health bar or separate disease minigame is introduced.
