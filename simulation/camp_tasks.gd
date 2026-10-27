@@ -154,6 +154,7 @@ func prepare(game) -> void:
   var patient: Dictionary=game.party_health.members[entry.patient]
   if not game.party_health.is_active(patient):continue
   var expert: bool=specialist(game,int(entry.member),"Caregiving")
+  game.party_health.dress_wound(int(entry.patient),int(game.state.day))
   game.party_health.affect(patient,int(rules.nurse_health)+(int(game.characters.benefits.care_health_bonus) if expert else 0),game.state.day,"care")
   for condition in patient.conditions:
    condition.elapsed+=int(rules.nurse_recovery)+(int(game.characters.benefits.care_recovery_bonus) if expert else 0)

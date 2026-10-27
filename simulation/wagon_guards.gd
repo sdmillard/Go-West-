@@ -231,7 +231,7 @@ static func valid(cache: Dictionary,game,day: int,party: Array=[]) -> bool:
   for line in member.history:
    if not line is String:return false
   for condition in member.conditions:
-   if not game.party_health.valid_treatment(condition):return false
+   if not game.party_health.valid_treatment(condition,day):return false
    if not condition is Dictionary or not game.party_health.conditions.has(condition.get("id")) or not game.crime.whole(condition.get("started_day"),0,day) or not game.crime.whole(condition.get("elapsed"),0,100000) or not game.crime.whole(condition.get("severity"),1,3):return false
   if member.has("immune"):
    if not member.immune is Array:return false

@@ -1,8 +1,14 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 26, 2026. Latest checkpoint: controlled same-hide crafting comparison (docs/FIXED_HIDE_RESULTS.md). Earlier sections are chronological records.
+Last updated October 27, 2026. Latest checkpoint: disease and wound expansion (docs/DISEASE_EXPANSION.md). Earlier sections are chronological records.
 
 ## Resume here
+
+- **Move on from income balancing:** user accepts supplementary income is a few useful dollars, not a run rescue. Leave historically informed wages/prices; no more broad income passes without a specific playtest problem. Latest authorized feature is disease/wound expansion.
+- **Disease expansion:** docs/DISEASE_EXPANSION.md; now14 conditions. Measles already existed. Smallpox weight0.25/spread0.06/immunizing, damage5/recovery18; pneumonia winter weighted, damage5/recovery12, no generic contagion. Existing global onset0.03 unchanged and cholera still1849+. Rates are authored, NPS trail-disease/period-care context linked in docs; not an asserted1848 outbreak model.
+- **Wound complications:** new health JSON rules, open wound only, days2-7, chance0.035, rest factor0.5, actual dressing factor0.25. Infection damage3/recovery10, nonspreading, never spontaneous; can outlast wound or kill with its own cause/history. Direct care and funded nursing dress before the day's risk roll; no kit means no protection. Optional dressed_until_day on wound only, date-bounded for roster/cache/outing validation. Existing care health/recovery/severity effects retained.
+- **Validation:** all99 suites pass; final health30/saves149/guards60/infection41 checks pass. Full log .tools/disease-expansion-full-tests-01.log; final affected logs and native preview clean. No broad balance campaign.
+- **Compatibility:** actual pre-change wound+measles-immunity fixture fingerprint12857a4f70d605d9fdb8d5541696d5661359cb4c950646ba55bb433ae41281fe allowlisted, old state/profiles intact. UI inspected wound-infection.png/smallpox-party.png. Prior balance studies are archived prior-rule evidence, not evidence for the new disease rules. No new broad balance campaign.
 
 - **Same-hide comparison:** docs/FIXED_HIDE_RESULTS.md / fixed-hide-results-01.json. Frozen6362680; production58c54a0 unchanged. 32 fresh root journeys572000-3 repeated April/May, no stock/goats, free/hired.13 eligible exact-save forks (19 deer hides),26 continuations;19 no-opportunity roots (eight arrive/11 lost), reported separately. Not32 independent worlds and not pooled with prior96 cases.
 - **Controlled result:** arrivals3/13 per arm, >=4 originals1/13 per arm, no matched gains/losses. Craft5 cases/sells4,19 worker-days,12 glove pairs +one buckskin sold. Total gross$28.88->$31.73, median paired gain$0, unmet meals610->644.13 checkpoints late(day157-222,median194); eight never craft. Same supply does not show the earlier arrival penalty, but conditional selection/different worlds prevent causal claims about prior losses. Next useful investigation: earlier earning/material access, not automatic wage/price inflation.
