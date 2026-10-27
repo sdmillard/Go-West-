@@ -1,6 +1,8 @@
 # Westward, Probably
 
 
+[Disease evidence audit](docs/DISEASE_EVIDENCE_AUDIT.md): historical/modern sources support the catalog but expose accelerated illness clocks, injury-based disease protection and the day7 wound-risk cutoff. Audit only; targeted corrections remain outstanding.
+
 [Disease and wound expansion](docs/DISEASE_EXPANSION.md): smallpox, pneumonia and wound infection join the individual health system. Supplied care lowers wound complication risk; smallpox survivors gain immunity.
 
 [Same-hide crafting comparison](docs/FIXED_HIDE_RESULTS.md): 32 source journeys yield 13 identical-save pairs; arrivals stay3/13 in both arms, with a modest gross-income gain from existing hides. No new harvest or production tuning.
