@@ -1506,7 +1506,7 @@ func plan_for(candidates: Array) -> Array[Dictionary]:
 	return plan
 
 ## Settlement departures (no reason) or immediate flight from the road (with the reason).
-func _depart(plan: Array,fled_reason: String) -> void:
+func _depart(plan: Array,fled_reason: String,verb: String="fled ") -> void:
 	for transfer in plan:
 		var member: Dictionary=party_health.members[transfer.id]
 		provisions.remove(transfer.food)
@@ -1523,7 +1523,7 @@ func _depart(plan: Array,fled_reason: String) -> void:
 		member["departure_place"]=state.landmark
 		member["departure_supplies"]={"food":transfer.food,"clothing":transfer.clothing,"gear_lb":transfer.gear_lb}
 		if not fled_reason.is_empty():member["fled"]=true
-		var text: String="%s %s %s with %d ration-lb food, %d clothing set(s), and %d lb personal gear." % [member.name,"fled "+fled_reason+", near" if not fled_reason.is_empty() else "left at",route.nodes[state.landmark].name,transfer.food,transfer.clothing,transfer.gear_lb]
+		var text: String="%s %s %s with %d ration-lb food, %d clothing set(s), and %d lb personal gear." % [member.name,verb+fled_reason+", near" if not fled_reason.is_empty() else "left at",route.nodes[state.landmark].name,transfer.food,transfer.clothing,transfer.gear_lb]
 		member.history.append("Day %d · %s" % [state.day,text])
 		journal.append("Day %d · %s" % [state.day,text])
 		health_events.append(text)
@@ -1536,6 +1536,12 @@ func _depart(plan: Array,fled_reason: String) -> void:
 func flee(ids: Array,reason: String) -> void:
 	var active: Array=ids.filter(func(id):return party_health.is_active(party_health.members[id]))
 	if not active.is_empty():_depart(plan_for(active),reason)
+## Companions a court takes from the party go with the clothes they wear and nothing from the wagon.
+func imprison(ids: Array,where: String) -> void:
+	var plan: Array=[]
+	for id in ids:
+		if party_health.is_active(party_health.members[id]):plan.append({"id":id,"food":0,"clothing":0,"gear_lb":int(provisions.data.walking.personal_gear_lb_per_person)})
+	if not plan.is_empty():_depart(plan,where,"was sent ")
 func open_attack(target: int) -> bool:
 	if not crime.can_attack(self,target):return false
 	service_return=pending.duplicate(true)
