@@ -7,7 +7,7 @@ Built October 31, 2026, with Spencer's decision: "Period kit, revolvers rare". A
 - Every traveler sets out with their own rifle and belt knife (`home_kit`). `state.arms_home` records how many did, so the weight of those stays in personal gear.
 - The outfitter sells more: extra rifle $15, shotgun $12, single-shot pistol $6, Colt revolver $50 (only one), knife $1, hatchet $1.50. Bought arms add their weight to the load.
 - Arms are counted in `game.state` like other goods (`rifles`, `shotguns`, `pistols`, `revolvers`, `knives`, `hatchets`). `simulation/armory.gd` holds the rules.
-- Journeys saved before arms hold no arms keys. `Armory.count` reads them as one rifle and knife per traveler, so restoring leaves the saved state unchanged. Call `Armory.settle(state)` before changing any arms count (stealing, confiscating, buying at a post).
+- Journeys saved before arms get one rifle and knife per traveler on restore (`Armory.settle`). Tests that compare a migrated state use `SaveStore.upgraded_state()`.
 
 ## Shooting and hunting
 
@@ -29,10 +29,11 @@ Each traveler takes one firearm and one blade from the party's stock, in squad o
 - Reloading fills the gun as far as the pouch allows.
 - Melee uses the blade: a hatchet hits hardest and a knife strikes quickest (2 AP). Without a blade, a long gun is clubbed by the stock and anyone else uses their fists.
 
-## Not yet
+## Trading, theft and custody
 
-- Arms at post store counters.
-- Stealing arms.
-- Arms taken in custody, then jailbreak as a tactical fight.
+- Post store counters sell rifles (2 on hand), a shotgun (1), pistols (2), knives (4) and hatchets (3) at the region's prices, and buy them back for less. Only Independence sells the Colt. Passing traders and emigrant camps don't deal in arms yet.
+- A post's arms can be stolen or demanded in a robbery like its other goods.
+- Bandits can demand a Colt, shotgun, pistol or rifle among the goods. When they take the wagon, they take the spare arms in it but not each traveler's own rifle.
+- When the party is taken into custody, each accused gives up one firearm and one blade, the first in the loadout (`custody.arms`). They get them back when they walk free (discharged, bailed, fined, or sentenced without prison). This sets up jailbreak as a tactical fight.
 
 Tests: `tests/test_weapons.gd`.
