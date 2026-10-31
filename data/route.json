@@ -892,6 +892,16 @@
     {
       "id": "columbia_raft",
       "name": "Cascades of the Columbia",
+      "river_winter": {
+        "note": "Authored. Late parties took the river to avoid Barlow snow (NPS, Overlanders in the Columbia River Gorge, 1840-1870: the reach from The Dalles was usually windy). The lower Columbia froze in hard winters: at Vancouver on January 26, 1847 the ice held HMS Modeste (Clark County history). On winter river days the cold costs everyone chill_damage health and wind pins the raft ashore by windbound_chance; in a hard winter (hard_winter_chance per winter) no raft launches in frozen_months and a raft already afloat is pinned by running ice at ice_bound_chance. A wreck in icy water drowns wreck_drowning_factor times as often.",
+        "months": [11, 12, 1, 2],
+        "chill_damage": 2,
+        "windbound_chance": 0.3,
+        "hard_winter_chance": 0.25,
+        "frozen_months": [1, 2],
+        "ice_bound_chance": 0.6,
+        "wreck_drowning_factor": 2
+      },
       "kind": "camp",
       "text": "The river that carried your raft from The Dalles breaks white over the Cascades, about six miles of rapids. Parties unload and carry their goods around on a rough portage path, often with Chinookan or Hudson's Bay Company help, or gamble on running the water.",
       "terrain": "forest",

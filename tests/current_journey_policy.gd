@@ -173,6 +173,10 @@ func act(game,profile: Dictionary,aim: RandomNumberGenerator,count: Dictionary) 
    # If stranded at a toll, wait for an actual passing party rather than a no-time loop.
    for index in range(game.pending.choices.size()):
     if game.pending.choices[index].get("action","")=="rest" and game.can_choose(index):bump(count,"toll_waits");return game.choose(index)
+  # Every road out is shut for the season (a frozen Columbia with the Barlow road closed): wait it out.
+  if game.pending.has("landmark"):
+   for index in range(game.pending.choices.size()):
+    if game.pending.choices[index].get("action","")=="rest" and game.can_choose(index):bump(count,"season_waits");return game.choose(index)
   return false
  if game.state.vehicle!="foot" and game.state.oxen>0 and game.state.ox_health<=0:
   bump(count,"rests")
