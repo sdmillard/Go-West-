@@ -84,6 +84,62 @@
     "veteran_bonus": 1
   },
   "venues": {
+    "jail_county": {
+      "title": "Jackson County Jail",
+      "subtitle": "Rough-cut limestone walls, the strap-iron cell grate and the jailer's table at Independence.",
+      "base_tile": 0,
+      "floor_rect": [3, 1, 9, 5],
+      "floor_tile": 2,
+      "retreat_tiles": [[0, 7], [0, 8], [0, 9], [1, 9], [2, 9]],
+      "player_spawns": [[1, 8], [3, 8], [5, 8], [7, 8], [9, 8]],
+      "enemy_spawns": [[6, 2], [4, 2], [8, 2], [5, 4], [7, 4]],
+      "props": [
+        {"x": 3, "y": 1, "cover": 2, "prop": 6, "label": "Limestone Wall"},
+        {"x": 4, "y": 1, "cover": 2, "prop": 6, "label": "Limestone Wall"},
+        {"x": 5, "y": 1, "cover": 2, "prop": 7, "label": "Cell Grate"},
+        {"x": 6, "y": 1, "cover": 2, "prop": 7, "label": "Cell Grate"},
+        {"x": 7, "y": 1, "cover": 2, "prop": 7, "label": "Cell Grate"},
+        {"x": 8, "y": 1, "cover": 2, "prop": 6, "label": "Limestone Wall"},
+        {"x": 9, "y": 1, "cover": 2, "prop": 6, "label": "Limestone Wall"},
+        {"x": 4, "y": 3, "cover": 1, "prop": 11, "label": "Box Stove"},
+        {"x": 6, "y": 3, "cover": 1, "prop": 8, "label": "Jailer's Table"},
+        {"x": 8, "y": 3, "cover": 1, "prop": 10, "label": "Plank Bunk"},
+        {"x": 3, "y": 5, "cover": 2, "prop": 6, "label": "Limestone Wall"},
+        {"x": 4, "y": 5, "cover": 2, "prop": 6, "label": "Limestone Wall"},
+        {"x": 8, "y": 5, "cover": 2, "prop": 6, "label": "Limestone Wall"},
+        {"x": 9, "y": 5, "cover": 2, "prop": 6, "label": "Limestone Wall"},
+        {"x": 2, "y": 7, "cover": 1, "prop": 4, "label": "Hitching Rail"},
+        {"x": 6, "y": 7, "cover": 1, "prop": 2, "label": "Freight Crate"},
+        {"x": 10, "y": 7, "cover": 1, "prop": 1, "label": "Rain Barrels"}
+      ]
+    },
+    "jail_army": {
+      "title": "Fort Kearny Guardhouse",
+      "subtitle": "A sod guardhouse and the guard tents of the volunteer garrison. There is no stockade.",
+      "base_tile": 1,
+      "floor_rect": [4, 1, 9, 5],
+      "floor_tile": 0,
+      "retreat_tiles": [[0, 7], [0, 8], [0, 9], [1, 9], [2, 9]],
+      "player_spawns": [[1, 8], [3, 8], [5, 8], [7, 8], [9, 8]],
+      "enemy_spawns": [[6, 2], [5, 3], [8, 2], [6, 4], [7, 4]],
+      "props": [
+        {"x": 4, "y": 1, "cover": 2, "prop": 9, "label": "Sod Wall"},
+        {"x": 5, "y": 1, "cover": 2, "prop": 9, "label": "Sod Wall"},
+        {"x": 6, "y": 1, "cover": 2, "prop": 9, "label": "Sod Wall"},
+        {"x": 8, "y": 1, "cover": 2, "prop": 9, "label": "Sod Wall"},
+        {"x": 9, "y": 1, "cover": 2, "prop": 9, "label": "Sod Wall"},
+        {"x": 4, "y": 3, "cover": 1, "prop": 10, "label": "Guard Bunk"},
+        {"x": 7, "y": 3, "cover": 1, "prop": 11, "label": "Guardhouse Stove"},
+        {"x": 9, "y": 3, "cover": 2, "prop": 3, "label": "Guard Tent"},
+        {"x": 4, "y": 5, "cover": 2, "prop": 9, "label": "Sod Wall"},
+        {"x": 5, "y": 5, "cover": 2, "prop": 9, "label": "Sod Wall"},
+        {"x": 8, "y": 5, "cover": 2, "prop": 9, "label": "Sod Wall"},
+        {"x": 9, "y": 5, "cover": 2, "prop": 9, "label": "Sod Wall"},
+        {"x": 2, "y": 7, "cover": 2, "prop": 3, "label": "Guard Tent"},
+        {"x": 6, "y": 7, "cover": 1, "prop": 1, "label": "Powder Casks"},
+        {"x": 10, "y": 7, "cover": 1, "prop": 4, "label": "Hitching Rail"}
+      ]
+    },
     "store": {
       "title": "Trading Post Yard & Counter",
       "subtitle": "Timber counter, flour barrels, and freight crates between your party and the clerks.",

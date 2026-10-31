@@ -17,6 +17,9 @@ const ZOOM_STEP := 0.25
 var tiles_tex: Texture2D = load("res://art/pixels/tactical_tiles.png")
 var cover_tex: Texture2D = load("res://art/pixels/tactical_cover.png")
 var units_tex: Texture2D = load("res://art/pixels/tactical_units.png")
+## Traveler poses per weapon, two rows (NE, SW) for each entry of ARMS_ROWS.
+var arms_tex: Texture2D = load("res://art/pixels/tactical_arms.png")
+const ARMS_ROWS := ["rifles", "shotguns", "pistols", "revolvers", "knives", "hatchets", "fists"]
 var wagon_tex: Texture2D = load("res://art/pixels/cross_wagon.png")
 
 var combat = null
@@ -621,7 +624,11 @@ func _draw_prop(p: Dictionary) -> void:
 	var ph := maxi(1, int(p.get("h", 1)))
 	var is_full := int(p.get("cover", 1)) >= 2
 	var row := 1 if is_full else 0
-	var col := clampi(int(p.get("prop", 0)), 0, 5)
+	var col := clampi(int(p.get("prop", 0)), 0, 11)
+	# Props 6-11 are the jail row (stone wall, cell grate, jailer's table, sod wall, bunk, stove).
+	if col >= 6:
+		row = 2
+		col -= 6
 	var src := Rect2(col * CELL_PX, row * CELL_PX, CELL_PX, CELL_PX)
 
 	if pw > 1 or ph > 1:
@@ -644,22 +651,26 @@ func _draw_unit(u: Dictionary, sel_id: String, hover_unit: Dictionary) -> void:
 	var anim: Dictionary = _unit_anim_state(u)
 	var sc: Vector2 = Vector2(anim.get("screen_pos", Vector2.ZERO))
 	var tex: Texture2D = units_tex
+	var arms_row := 0
 	if not bool(u.get("soldier", false)):
-		tex = Palette.texture(units_tex, u.get("profile", {}))
+		if arms_tex != null:
+			tex = arms_tex
+			arms_row = ARMS_ROWS.find(_drawn_arm(u)) * 2
+		tex = Palette.texture(tex, u.get("profile", {}))
 
 	var row := 0
 	if bool(u.get("soldier", false)):
 		row = 2
 	elif String(anim.get("facing", "sw")) == "sw":
-		row = 1
+		row = arms_row + 1
 	else:
-		row = 0
+		row = arms_row
 
 	var pose := String(anim.get("pose", "ready"))
 	var col := 0
 	if int(u.get("health", 0)) <= 0 or pose == "down":
 		col = 5
-		row = 0 if String(u.get("team", "")) == "player" else 1
+		row = arms_row + (0 if String(u.get("team", "")) == "player" else 1)
 	elif pose == "aim":
 		col = 1
 	elif pose == "fire":
@@ -768,6 +779,15 @@ func _draw_unit(u: Dictionary, sel_id: String, hover_unit: Dictionary) -> void:
 		var tpos := bar_pos + Vector2(-4, -3)
 		draw_string(PIXEL_FONT, tpos + Vector2(1, 1), enemy_tag, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color.BLACK)
 		draw_string(PIXEL_FONT, tpos, enemy_tag, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, ecol)
+
+
+## The weapon a traveler is drawn holding: the gun, else the blade, else bare fists.
+func _drawn_arm(u: Dictionary) -> String:
+	var weapon := String(u.get("weapon", "rifles"))
+	if ARMS_ROWS.has(weapon) and weapon != "fists":
+		return weapon
+	var blade := String(u.get("blade", ""))
+	return blade if ARMS_ROWS.has(blade) else "fists"
 
 
 func _draw_fx(fx: Dictionary) -> void:

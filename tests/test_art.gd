@@ -46,7 +46,7 @@ func _initialize() -> void:
 		check(load("res://art/pixels/%s.png" % sheet[0]).get_size() == Vector2(sheet[1], sheet[2]), "Overlay sheet keeps its layout: " + sheet[0])
 	# Horse travel sheets (not wired yet) keep the frame grids the design names: 48x44 travel frames,
 	# 48x40 crossing frames, 16x16 store icons.
-	for sheet in [["horses", 384, 308], ["cross_horses", 384, 320], ["horse_icons", 80, 16]]:
+	for sheet in [["horses", 384, 308], ["cross_horses", 384, 320], ["horse_icons", 80, 16], ["weapon_icons", 96, 16]]:
 		check(load("res://art/pixels/%s.png" % sheet[0]).get_size() == Vector2(sheet[1], sheet[2]), "Horse sheet keeps its layout: " + sheet[0])
 	# Approved Cascades pack: exact runtime slicing and hard pixel edges.
 	for asset in [["rafting_obstacles",128,96,32,32],["rafting_foam",128,16,32,16],["rafting_raft",72,48,72,48]]:
@@ -66,7 +66,7 @@ func _initialize() -> void:
 				frames[cell.get_data().hex_encode()]=true
 			if asset[0]!="rafting_raft":check(frames.size()>=3,"Rafting water/debris frames visibly animate: %s/%d" % [asset[0],row])
 	# Isometric tactical combat Aseprite sheets: exact 32x32 cell layouts and binary alpha.
-	for asset in [["tactical_tiles",192,32,32,32],["tactical_cover",192,64,32,32],["tactical_units",192,96,32,32]]:
+	for asset in [["tactical_tiles",192,32,32,32],["tactical_cover",192,96,32,32],["tactical_units",192,96,32,32],["tactical_arms",192,448,32,32]]:
 		var image: Image=load("res://art/pixels/%s.png" % asset[0]).get_image()
 		check(image.get_size()==Vector2i(asset[1],asset[2]),"Tactical combat art keeps its cell layout: "+asset[0])
 		var crisp:=true
