@@ -4,11 +4,13 @@ Last updated October 31, 2026. Latest checkpoint: tactical combat finished and m
 
 ## Resume here
 
+- **Endings, cabin, visit and event art, PR #148 (October 31, Claude; Spencer approved):** all drawn with the Aseprite pipeline. `scenes/endings.lua` gives seven ending pictures, chosen by `_ending_scene()` in ui/main.gd: post, cabin, run off, east, lost, and homestead east or west. `scenes/cabin_overlay.lua` (with `K.log_cabin`) is a 5-stage x 3-size sheet. ui/trail_view.gd draws it at the `cabin` point in data/scene_ambience.json for all 21 timber stops. It follows `Cabins.progress`, is snowy in snow weather or Dec-Feb, and smokes when finished. `scenes/encounters.lua` covers all seven Native visits. `scenes/events.lua` has nine trail event pictures, picked by `_event_scene()` from pending events and wanted standoffs. Next: seasonal (winter/autumn) scene variants (Spencer asked), a cascades_portage picture when that stop exists, and scenes for new stops.
+
 - **Winter cabins, settling short and scores (October 31, Claude; Spencer's design answers):** see [CABINS_AND_ENDINGS.md](CABINS_AND_ENDINGS.md).
   - Cabins: CAMP > CABIN builds at timber stops (a hatchet, 15 worker-days, Carpentry x1.5). A finished cabin stops storms and cold exposure and cuts winter illness by 0.6; hunger, scurvy and animals go on.
   - Settling: allowed at any stop, any time. Open places and posts take the party. In Native country the people decide (30%, seed-hashed); staying anyway means `run_off`. The new status is `settled`.
   - Scores: every ending scores travelers, goods, cash and keepsakes, times the ending and the banker's purse over the player's.
-  - Not done yet: the play bots never build or settle (no measurement yet); cabin art; more stops (Spencer wants a separate PR).
+  - Not done yet: the play bots never build or settle (no measurement yet); more stops (Spencer wants a separate PR).
 
 - **The Columbia in winter (October 31, Claude; Spencer: harder, impossible if frozen):** [BALANCE_PASS_2026_10.md](BALANCE_PASS_2026_10.md#step-5-the-columbia-in-winter-october-31). The rules are `river_winter` on `columbia_raft` (route.json) and `river_winter()`, `hard_winter(year)` and `river_frozen()` in trail_engine. From November to February there is chill on the river, windbound days and doubled wreck drowning. A hard winter (25%, seed-hashed) freezes January and February: river legs and the rapids run are blocked, and running ice pins a raft already afloat. `test_full_trail` accepts arrival by the Columbia when the Barlow road is shut. Tests are in `tests/test_river_winter.gd`.
 
