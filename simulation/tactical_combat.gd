@@ -98,6 +98,7 @@ func start_session(config: Dictionary) -> Dictionary:
 			"retreated": false,
 			"yielded": false,
 			"profile": m.get("profile", {}).duplicate(true) if m.get("profile") is Dictionary else {},
+			"body_bonus": _body_bonus(m, int(config.get("combat_wins", 0))),
 		})
 
 	var enemy_spawns: Array = venue.get("enemy_spawns", [[8, 2], [6, 2], [9, 3], [5, 2], [8, 4]])
@@ -873,6 +874,9 @@ func _exec_attack(session: Dictionary, attacker_id: String, target_id: String, m
 			else:
 				status_note = " (open gunshot wound)"
 
+		var stunned_now := int(target.get("health", 0)) > 0 and not _stun_save(session, target)
+		if stunned_now:
+			status_note += " — knocked senseless"
 		if int(target.get("health", 0)) <= 0:
 			target["pose"] = "down"
 			_append_log(session, "%s hits %s in the %s for %d dmg%s — %s drops!" % [
@@ -954,7 +958,9 @@ func _exec_retreat_all(session: Dictionary) -> void:
 	var retiring: Array = []
 	var exposed: Array = []
 	for u in units:
-		if String(u.get("team", "")) == "player" and _unit_active(u):
+		# Companions drag senseless travelers back with them, exposed to the same parting fire.
+		var senseless := bool(u.get("stunned", false)) and int(u.get("health", 0)) > 0 and not bool(u.get("retreated", false))
+		if String(u.get("team", "")) == "player" and (_unit_active(u) or senseless):
 			retiring.append(u)
 			if not is_retreat_tile(session, int(u.get("x", 0)), int(u.get("y", 0))):
 				exposed.append(u)
@@ -1045,6 +1051,8 @@ func _advance_to_next_turn(session: Dictionary, is_opening: bool) -> void:
 		session["turn_index"] = next_idx
 		var uid := String(order[next_idx])
 		var u := get_unit(session, uid)
+		if not u.is_empty() and not _turn_start_saves(session, u):
+			continue
 		if u.is_empty() or not _unit_active(u):
 			continue
 		u["max_ap"] = max_ap_for_health(int(u.get("health", 100)))
@@ -1271,6 +1279,90 @@ func _check_resolution(session: Dictionary) -> void:
 			_append_log(session, session["outcome_summary"])
 
 
+## Wound band from current health: 0 light, 1 serious, 2 critical, 3+ mortal (one more per mortal step).
+func wound_penalty(unit: Dictionary) -> int:
+	var cfg: Dictionary = rules.get("saves", {})
+	var hp := int(unit.get("health", 100))
+	var start := int(unit.get("start_health", 100))
+	if hp >= start:
+		return 0
+	var mortal_below := int(cfg.get("mortal_below", 25))
+	if hp < mortal_below:
+		var step := maxi(1, int(cfg.get("mortal_step", 5)))
+		return 3 + (mortal_below - 1 - hp) / step
+	if hp < int(cfg.get("critical_below", 50)):
+		return 2
+	if hp < int(cfg.get("serious_below", 75)):
+		return 1
+	return 0
+
+
+func body_save(unit: Dictionary) -> int:
+	var cfg: Dictionary = rules.get("saves", {})
+	return int(unit.get("body", cfg.get("soldier_body", 7) if bool(unit.get("soldier", false)) else cfg.get("body", 6))) + int(unit.get("body_bonus", 0))
+
+
+## Combat experience steadies a traveler: the party's won fights by step, and a Veteran's own service.
+func _body_bonus(member: Dictionary, wins: int) -> int:
+	var cfg: Dictionary = rules.get("saves", {})
+	var bonus := 0
+	for step in cfg.get("experience_steps", []):
+		if wins >= int(step):
+			bonus += 1
+	var profile = member.get("profile", {})
+	if profile is Dictionary and "Veteran" in profile.get("specials", []):
+		bonus += int(cfg.get("veteran_bonus", 0))
+	return bonus
+
+
+func is_mortal(unit: Dictionary) -> bool:
+	return int(unit.get("health", 0)) > 0 and int(unit.get("health", 0)) < int(rules.get("saves", {}).get("mortal_below", 25))
+
+
+## Stun/shock save after a hit: d10 at or under Body minus the wound penalty keeps a fighter on their feet.
+func _stun_save(session: Dictionary, unit: Dictionary) -> bool:
+	var need := body_save(unit) - wound_penalty(unit)
+	var roll := rng.randi_range(1, 10)
+	if roll <= need:
+		return true
+	unit["stunned"] = true
+	unit["pose"] = "down"
+	unit["ap"] = 0
+	unit["times_stunned"] = int(unit.get("times_stunned", 0)) + 1
+	_append_log(session, "%s fails a stun save (rolled %d, needed %d or less) and goes down senseless!" % [String(unit.get("name", "Fighter")), roll, need])
+	return false
+
+
+## At the start of a fighter's turn: a mortal wound demands a death save, and a stunned fighter tries to come round.
+## Returns false when the fighter cannot act this turn.
+func _turn_start_saves(session: Dictionary, unit: Dictionary) -> bool:
+	if int(unit.get("health", 0)) <= 0 or bool(unit.get("retreated", false)) or bool(unit.get("yielded", false)) or bool(unit.get("surrendered", false)):
+		return true
+	if is_mortal(unit):
+		var mortal_level := wound_penalty(unit) - 3
+		var need := body_save(unit) - mortal_level
+		var roll := rng.randi_range(1, 10)
+		if roll > need:
+			unit["health"] = 0
+			unit["stunned"] = false
+			unit["pose"] = "down"
+			unit["died_of_wounds"] = true
+			_append_log(session, "%s fails a death save (rolled %d, needed %d or less) and dies of their wounds." % [String(unit.get("name", "Fighter")), roll, need])
+			return false
+		_append_log(session, "%s holds on through a mortal wound (death save %d, needed %d or less)." % [String(unit.get("name", "Fighter")), roll, need])
+	if bool(unit.get("stunned", false)):
+		var need := body_save(unit) - wound_penalty(unit)
+		var roll := rng.randi_range(1, 10)
+		if roll <= need:
+			unit["stunned"] = false
+			unit["pose"] = "crouch"
+			_append_log(session, "%s comes round (rolled %d) but spends the turn getting up." % [String(unit.get("name", "Fighter")), roll])
+		else:
+			_append_log(session, "%s is still senseless." % String(unit.get("name", "Fighter")))
+		return false
+	return true
+
+
 func _living_player_units(session: Dictionary) -> Array:
 	var out: Array = []
 	for u in session.get("units", []):
@@ -1290,7 +1382,7 @@ func _first_ready_player_id(units: Array) -> String:
 
 
 func _unit_active(u: Dictionary) -> bool:
-	return int(u.get("health", 0)) > 0 and not bool(u.get("retreated", false)) and not bool(u.get("yielded", false)) and not bool(u.get("surrendered", false))
+	return int(u.get("health", 0)) > 0 and not bool(u.get("stunned", false)) and not bool(u.get("retreated", false)) and not bool(u.get("yielded", false)) and not bool(u.get("surrendered", false))
 
 
 func _append_log(session: Dictionary, line: String) -> void:

@@ -1,4 +1,6 @@
 # Westward, Probably
+[Tactical combat](docs/TACTICAL_COMBAT.md): choosing to fight opens an isometric, turn-based rifle fight, for roadside attacks and villainy alike. Run `play-combat-prototype.cmd` to practice.
+
 [Frontier detention research](docs/FRONTIER_DETENTION_RESEARCH.md): evidence and a proposed custody/venue plan for1848. Research only; detention mechanics are not implemented.
 
 [Native community visits](docs/NATIVE_ENCOUNTERS.md): local provisions, Deschutes guides, Cascades portage crews and companion opportunities. The approved Wasco trading-landing artwork appears during its visit and companion search.

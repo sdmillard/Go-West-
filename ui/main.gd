@@ -1234,11 +1234,11 @@ func _show_service() -> void:
 	if game.pending.get("crime_menu", false) and not game.crime.incident().is_empty():
 		var inc: Dictionary = game.crime.incident()
 		var stg: String = String(inc.get("stage", ""))
-		if stg in ["escape", "standoff"] and int(game.state.bullets) > 0 and not game.crime.living_staff(String(inc.get("place", ""))).is_empty():
-			var cmd_kind := "breakout" if stg == "standoff" else "resisted"
+		# A standoff's own breakout choice already opens the fight; an escape adds fighting as a third way out.
+		if stg == "escape" and int(game.state.bullets) > 0 and not game.crime.living_staff(String(inc.get("place", ""))).is_empty():
 			var tac_btn := button("Fight out the skirmish · Isometric rifle combat", func():
 				service_window.hide()
-				_open_tactical_combat(cmd_kind)
+				_open_tactical_combat("resisted")
 			)
 			service_rows.add_child(tac_btn)
 	if not crime_back.is_empty():service_rows.add_child(button("< "+crime_back.to_upper(),_villainy_back))
@@ -1760,7 +1760,7 @@ func _choose(index: int) -> void:
 		elif not game.pending.get("service_menu", false) and not game.pending.has("landmark"):
 			var ch: Dictionary = game.pending.choices[index]
 			var ev_id := String(game.pending.get("id", ""))
-			if (ch.has("combat") or (ev_id == "horse_thieves" and ch.has("risk"))) and not bool(game.pending.get("friendly", false)) and int(game.state.bullets) > 0:
+			if (ch.has("combat") or (ev_id == "horse_thieves" and ch.has("risk"))) and not bool(game.pending.get("friendly", false)):
 				if _open_tactical_combat("trail:" + str(index)):
 					return
 	if game.can_choose(index) and (game.pending.choices[index].get("action","") in ["leave","cross"] or game.pending.choices[index].has("method")):camping=false

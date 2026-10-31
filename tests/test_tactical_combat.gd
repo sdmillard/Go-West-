@@ -24,6 +24,7 @@ func _initialize() -> void:
 	_test_roadside_and_wanted_encounters()
 	_test_bug_regressions()
 	_test_retreat_is_not_free()
+	_test_stun_and_death_saves()
 	await _test_ui_integration()
 	print("Tactical combat: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)
@@ -72,6 +73,10 @@ func _test_pure_tactical_model() -> void:
 	})
 	var p0 := tc.get_unit(session, "0")
 	var e0 := tc.get_unit(session, "keeper:fort_bridger")
+	# A keeper who never fails a stun save, so the turn-order checks below run on.
+	e0["body"] = 20
+	p0["body"] = 20
+	tc.get_unit(session, "1")["body"] = 20
 	check(not bool(session.get("started", true)), "Session starts in pre-combat deployment phase")
 	check(session.get("initiative_order", []).size() == 3, "Initiative order includes all combatants")
 	tc.step(session, {"type": "place", "unit_id": "0", "x": 3, "y": 7})
@@ -115,10 +120,11 @@ func _test_pure_tactical_model() -> void:
 		guard += 1
 		tc.step(session, {"type": "end_turn"})
 	check(int(session.get("round", 0)) >= 2, "Wrapping the initiative order advances to Round 2")
-	check(int(p0.get("ap", 0)) == 8, "Player AP refreshes when their turn comes back around in initiative")
+	var full_ap := tc.max_ap_for_health(int(p0.get("health", 100)))
+	check(int(p0.get("ap", 0)) == full_ap, "Player AP refreshes when their turn comes back around in initiative")
 	tc.step(session, {"type": "reload", "unit_id": "0"})
 	check(bool(p0.get("loaded", false)), "Reload action rams ball and seats cap")
-	check(int(p0.get("ap", 0)) == 3, "Reload costs 5 AP (leaving 3 AP)")
+	check(int(p0.get("ap", 0)) == full_ap - 5, "Reload costs 5 AP")
 	# Verify that reloading while adjacent to cover returns resting pose to 'crouch' (cover stance)
 	p0["x"] = 5
 	p0["y"] = 4
@@ -675,6 +681,17 @@ func _test_retreat_is_not_free() -> void:
 	check(is_equal_approx(float(game.state.ox_health), float(twin.state.ox_health)) and float(game.state.ox_health) < ox_before, "Retreating from bandits strains the team as much as fleeing (%s vs %s)" % [game.state.ox_health, twin.state.ox_health])
 	check(is_equal_approx(float(game.state.money), money_before), "Retreating from bandits pays no demand")
 
+	# Out of balls, a party that rides after horse thieves still fights, with clubbed rifles.
+	var dry := Simulation.new(184909, "classic", true)
+	dry.depart("carpenter", ["SPENCER", "SAM", "JO", "LOU", "PAT"], 5, {"oxen": 4, "food": 400, "clothing": 5, "bullet_boxes": 2, "medicine": 2})
+	dry.state["horses"] = 3
+	dry.state.bullets = 0
+	for ev in dry.trail_events.events:
+		if String(ev.get("id", "")) == "horse_thieves":
+			dry._present_trail_event(ev)
+	check(dry.start_tactical_combat("trail:0"), "Riding after horse thieves without balls still opens the fight")
+	check(dry.tactical_session.units.all(func(u): return String(u.team) != "player" or not bool(u.loaded)), "A party without balls starts the fight unloaded")
+
 	# Pulling back from a post shootout is an escape attempt with the post's usual capture odds.
 	var escaped := 0
 	var caught := 0
@@ -696,6 +713,93 @@ func _test_retreat_is_not_free() -> void:
 			caught += 1
 	check(escaped > 0, "Some parties get away after pulling back from a post shootout (%d)" % escaped)
 	check(caught > 0, "Some parties are caught after pulling back from a post shootout (%d)" % caught)
+
+
+func _make_duel(seed_val: int) -> Dictionary:
+	var tc := TacticalCombat.new()
+	var sess: Dictionary = tc.start_session({"seed": seed_val, "venue_kind": "traders", "mode_source": "trail_event", "bullets": 10,
+		"squad": [{"id": "0", "name": "A", "health": 100}, {"id": "1", "name": "B", "health": 100}],
+		"enemies": [{"uid": "e0", "id": "e0", "name": "E", "role": "outlaw", "health": 100}]})
+	return {"tc": tc, "s": sess}
+
+
+func _test_stun_and_death_saves() -> void:
+	var d := _make_duel(31)
+	var tc: TacticalCombat = d.tc
+	var s: Dictionary = d.s
+	var a := tc.get_unit(s, "0")
+	check(tc.body_save(a) == 6 and tc.wound_penalty(a) == 0, "An unhurt traveler saves against Body 6 with no wound penalty")
+	a["health"] = 60
+	check(tc.wound_penalty(a) == 1, "A serious wound costs 1 on saves")
+	a["health"] = 40
+	check(tc.wound_penalty(a) == 2, "A critical wound costs 2 on saves")
+	a["health"] = 24
+	check(tc.wound_penalty(a) == 3 and tc.is_mortal(a), "Below 25 health a traveler is mortally wounded")
+	a["health"] = 4
+	check(tc.wound_penalty(a) == 7, "Each further 5 health lost deepens the mortal wound")
+
+	# Experience steadies travelers: one won fight adds 1, three add 2, and a Veteran adds 1 more.
+	var tcx := TacticalCombat.new()
+	check(tcx._body_bonus({}, 0) == 0 and tcx._body_bonus({}, 1) == 1 and tcx._body_bonus({}, 3) == 2, "Won fights raise the Body save in steps")
+	check(tcx._body_bonus({"profile": {"specials": ["Veteran"]}}, 3) == 3, "A Veteran adds 1 on top of the party's experience")
+	var seasoned: Dictionary = tcx.start_session({"seed": 9, "venue_kind": "traders", "bullets": 4, "combat_wins": 3,
+		"squad": [{"id": "0", "name": "A", "health": 100}], "enemies": [{"uid": "e0", "id": "e0", "name": "E", "health": 100}]})
+	check(tcx.body_save(tcx.get_unit(seasoned, "0")) == 8 and tcx.body_save(tcx.get_unit(seasoned, "e0")) == 6, "A seasoned party saves on 8 while strangers still save on 6")
+
+	# Body 0 always fails: a hit knocks the traveler senseless, out of the fight but alive.
+	a["health"] = 80
+	a["body"] = 0
+	check(not tc._stun_save(s, a), "A failed stun save is reported")
+	check(bool(a.stunned) and int(a.health) == 80 and not tc._unit_active(a), "A stunned traveler is alive but cannot act")
+	a["body"] = 20
+	check(not tc._turn_start_saves(s, a) and not bool(a.stunned), "A stunned traveler comes round, spending that turn getting up")
+	check(tc._turn_start_saves(s, a), "A recovered traveler acts normally on the next turn")
+	a["body"] = 0
+	a["health"] = 20
+	check(not tc._turn_start_saves(s, a) and int(a.health) == 0 and bool(a.get("died_of_wounds", false)), "A failed death save kills a mortally wounded traveler")
+	var b := tc.get_unit(s, "1")
+	b["health"] = 20
+	b["body"] = 20
+	check(tc._turn_start_saves(s, b) and int(b.health) == 20, "A passed death save keeps a mortally wounded traveler fighting")
+
+	# Knocking the last attacker senseless wins the fight without killing him.
+	var e := tc.get_unit(s, "e0")
+	e["body"] = 0
+	e["health"] = 70
+	tc._stun_save(s, e)
+	tc._check_resolution(s)
+	check(String(s.get("outcome", "")) == "victory" and int(e.health) == 70, "A senseless last attacker ends the fight alive")
+
+	# Falling back drags senseless companions along.
+	var d2 := _make_duel(32)
+	var tc2: TacticalCombat = d2.tc
+	var s2: Dictionary = d2.s
+	var down := tc2.get_unit(s2, "1")
+	down["body"] = 0
+	tc2._stun_save(s2, down)
+	tc2.step(s2, {"type": "retreat_all"})
+	check(bool(down.get("retreated", false)) and String(s2.get("outcome", "")) == "retreated", "Falling back carries a senseless companion off the field")
+
+	# Stuns happen in real fights: across seeded skirmishes some hits knock fighters down.
+	var stuns := 0
+	for i in range(20):
+		var g := _make_duel(500 + i)
+		var gt: TacticalCombat = g.tc
+		var gs: Dictionary = g.s
+		gt.step(gs, {"type": "start_combat"})
+		for turn in range(30):
+			if bool(gs.get("resolved", false)):
+				break
+			var uid := String(gs.get("active_unit_id", ""))
+			var u := gt.get_unit(gs, uid)
+			if bool(u.get("loaded", false)):
+				gt.step(gs, {"type": "shoot", "unit_id": uid, "target_id": "e0", "mode": "snap"})
+			else:
+				gt.step(gs, {"type": "reload", "unit_id": uid})
+			gt.step(gs, {"type": "end_turn"})
+		for u in gs.units:
+			stuns += int(u.get("times_stunned", 0))
+	check(stuns > 0, "Stun saves fail in ordinary seeded skirmishes (%d stuns)" % stuns)
 
 
 func _test_ui_integration() -> void:
@@ -743,5 +847,6 @@ func _test_ui_integration() -> void:
 	check(bool(game.tactical_session.get("resolved", false)), "Fall Back All resolves the skirmish")
 	screen.tactical_window._on_finish_pressed()
 	check(not screen.tactical_window.visible, "Finishing closes TacticalView and returns to crime/trail flow")
+
 	screen.queue_free()
 	await process_frame

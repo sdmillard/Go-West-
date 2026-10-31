@@ -671,7 +671,9 @@ func _refresh_ui() -> void:
 		var load_tag := "LD" if bool(u.get("loaded", false)) else "--"
 		var state_tag := "%dHP %dAP %s" % [hp, ap, load_tag]
 		if hp <= 0:
-			state_tag = "DOWN"
+			state_tag = "DEAD"
+		elif bool(u.get("stunned", false)):
+			state_tag = "STUNNED %dHP" % hp
 		elif bool(u.get("retreated", false)):
 			state_tag = "OUT (%dHP)" % hp
 		var prefix := ">" if uid == sel_id else " "
@@ -680,7 +682,7 @@ func _refresh_ui() -> void:
 			uname = uname.substr(0, 8)
 		btn.text = "%s%s [%s]" % [prefix, uname, state_tag]
 		_apply_chip_style(btn, Color("243627") if uid == sel_id else Color("1d1813"), Color("6bc27c") if uid == sel_id else Color("54432e"), 1)
-		btn.disabled = resolved or hp <= 0 or bool(u.get("retreated", false))
+		btn.disabled = resolved or hp <= 0 or bool(u.get("retreated", false)) or bool(u.get("stunned", false))
 		btn.mouse_entered.connect(func():
 			scene.highlight_unit_id = uid
 			scene.queue_redraw()
@@ -792,10 +794,11 @@ func _update_inspector(focus_uid: String = "") -> void:
 		var cov_txt := String(cov.get("label", "Open ground")).to_upper() if not cov.is_empty() else "OPEN GROUND"
 		var load_txt := "LOADED" if bool(sel_unit.get("loaded", false)) else "UNLOADED"
 		var mode_header := "DEPLOYING" if not started else "NOW ACTING"
-		inspector_label.text = "%s: %s (INIT %d)\n%d HP - %d/%d AP - %s - %s" % [
+		inspector_label.text = "%s: %s (INIT %d - SAVE %d)\n%d HP - %d/%d AP - %s - %s" % [
 			mode_header,
 			String(sel_unit.get("name", "Traveler")).to_upper(),
 			int(sel_unit.get("initiative", 10)),
+			game.tactical.body_save(sel_unit) - game.tactical.wound_penalty(sel_unit),
 			int(sel_unit.get("health", 100)),
 			int(sel_unit.get("ap", 0)),
 			int(sel_unit.get("max_ap", 8)),

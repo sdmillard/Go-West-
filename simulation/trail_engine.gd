@@ -2148,6 +2148,7 @@ func start_tactical_combat(command: String = "") -> bool:
 		var trail_cfg := _build_trail_tactical_config(command)
 		if trail_cfg.is_empty():
 			return false
+		trail_cfg["combat_wins"] = combat.victories()
 		tactical_session = tactical.start_session(trail_cfg)
 		last_tactical = {}
 		return not tactical_session.is_empty()
@@ -2157,6 +2158,7 @@ func start_tactical_combat(command: String = "") -> bool:
 	var cfg: Dictionary = crime.build_tactical_config(self, command)
 	if cfg.is_empty():
 		return false
+	cfg["combat_wins"] = combat.victories()
 	tactical_session = tactical.start_session(cfg)
 	last_tactical = {}
 	return not tactical_session.is_empty()
@@ -2166,7 +2168,8 @@ func _build_trail_tactical_config(command: String) -> Dictionary:
 	var ev_id := String(pending.get("id", ""))
 	if ev_id not in ["bandits", "riders", "cayuse_riders", "horse_thieves"]:
 		return {}
-	if bool(pending.get("friendly", false)) or int(state.bullets) <= 0:
+	# Fighting always means the grid; a party out of balls chasing horse thieves fights with clubbed rifles.
+	if bool(pending.get("friendly", false)) or (int(state.bullets) <= 0 and ev_id != "horse_thieves"):
 		return {}
 	var choices: Array = pending.get("choices", [])
 	var choice_idx := -1
