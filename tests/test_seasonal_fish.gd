@@ -77,6 +77,6 @@ func run():
  var old=Store.new().restore(previous)
  check(old!=null,"Authentic pre-seasonal save loads")
  if old!=null:
-  check(old.state==Store.new().normalize(previous.state) and old.provisions.fresh==Store.new().normalize(previous.fresh) and old.field_outings.snapshot()==Store.new().normalize(previous.field_outings) and str(old.rng.state)==previous.random,"Old fish quantities, weight, away stock and random stream remain unchanged")
+  check(old.state==Store.new().upgraded_state(previous.state) and old.provisions.fresh==Store.new().normalize(previous.fresh) and old.field_outings.snapshot()==Store.new().normalize(previous.field_outings) and str(old.rng.state)==previous.random,"Old fish quantities, weight, away stock and random stream remain unchanged")
  print("Seasonal fish: %d checks, %d failures" % [checks,failures])
  quit(1 if failures else 0)

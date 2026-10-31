@@ -76,6 +76,6 @@ func run():
   var old: Dictionary=fixtures[name];var restored=Store.new().restore(old)
   check(restored!=null,"Prior livestock/team save loads: "+name)
   if restored!=null:
-   check(restored.state==Store.new().normalize(old.state) and restored.livestock.record==Store.new().normalize(old.livestock),"Migration changes no livestock, resources or choices")
+   check(restored.state==Store.new().upgraded_state(old.state) and restored.livestock.record==Store.new().normalize(old.livestock),"Migration changes no livestock, resources or choices")
    check(str(restored.rng.state)==old.random and not restored.grazing_activity,"Migration keeps RNG and grants no active grazing bonus")
  print("Shared pasture: %d checks, %d failures" % [checks,failures]);quit(1 if failures else 0)

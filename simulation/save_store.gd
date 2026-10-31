@@ -129,7 +129,7 @@ func valid_menu(menu: Dictionary, game, count: int=5) -> bool:
 	if menu.has("retreat_without_crossing") and (menu.retreat_without_crossing!=true or not menu.has("landmark")):return false
 	if menu.is_empty():
 		return true
-	if not menu.get("id") is String or not menu.get("title") is String or not menu.get("text") is String or not menu.get("choices") is Array or menu.choices.is_empty() or menu.choices.size() > maxi(40,count*3):
+	if not menu.get("id") is String or not menu.get("title") is String or not menu.get("text") is String or not menu.get("choices") is Array or menu.choices.is_empty() or menu.choices.size() > maxi(60,count*3):
 		return false
 	if menu.has("landmark") and not game.route.nodes.has(menu.landmark):
 		return false
@@ -202,7 +202,7 @@ func valid_effects(effects: Variant) -> bool:
 	if not effects is Dictionary:
 		return false
 	for key in effects:
-		if key not in ["food","health","money","fuel","wheels","axles","tongues","medicine","clothing","bullets","oxen","ox_health","horse_health","days","item","vehicle","salt","horses","mules","saddles","pack_saddles","saddlebags","dairy_cows","goats","hens","poultry_feed","livestock_fodder"]:
+		if key not in ["food","health","money","fuel","wheels","axles","tongues","medicine","clothing","bullets","oxen","ox_health","horse_health","days","item","vehicle","salt","horses","mules","saddles","pack_saddles","saddlebags","rifles","shotguns","pistols","revolvers","knives","hatchets","dairy_cows","goats","hens","poultry_feed","livestock_fodder"]:
 			return false
 		var value = effects[key]
 		if key in ["item","vehicle"]:
