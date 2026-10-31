@@ -19,6 +19,7 @@
   "accuracy": {
     "base_hit": 0.78,
     "soldier_bonus": 0.08,
+    "hunter_bonus": 0.04,
     "optimal_range": 4,
     "range_falloff": 0.055,
     "point_blank_bonus": 0.07,

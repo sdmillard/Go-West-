@@ -9,6 +9,19 @@
   "care_recovery_bonus": 1,
   "trade_buy_factor": 0.95,
   "veteran_risk_reduction": 0.03,
-  "wage_bases": {"Hunting": 40, "Carpentry": 90, "Caregiving": 50, "Trading": 60, "Leatherworking": 75},
-  "wage_modifiers": {"Compassionate": -5, "Pragmatic": 5, "Loyal": 10, "Veteran": 20}
+  "outlaw_experience": 1,
+  "soldier_guard_factor": 2,
+  "wage_bases": {"Hunting": 40, "Carpentry": 90, "Caregiving": 50, "Trading": 60, "Leatherworking": 75, "Soldiering": 60, "Outlawry": 35},
+  "wage_modifiers": {"Compassionate": -5, "Pragmatic": 5, "Loyal": 10, "Veteran": 20},
+  "profession_skills": {
+    "merchant": {"label": "Merchant", "background": "Trading", "description": "The leader bargains like a trading companion: 5% off cash purchases; selling prices unchanged."},
+    "doctor": {"label": "Doctor", "background": "Caregiving", "description": "The leader nurses like a caregiving companion: care restores extra health and speeds recovery."},
+    "saddler": {"label": "Saddler", "background": "Leatherworking", "description": "The leader works leather like a leatherworking companion: buckskin, leather goods and harness jobs."},
+    "hunter": {"label": "Hunter", "background": "Hunting", "description": "The leader shoots like a hunting companion: faster reloads on the hunt, skilled hunting outings, and a little better aim in fights."},
+    "soldier": {"label": "Soldier", "background": "Soldiering", "description": "Back from the Mexican War: the leader counts as a Veteran, with less injury risk in confrontations and a steadier death save and a soldier's aim in tactical fights; stock thieves give a soldier's watch a wider berth."},
+    "outlaw": {"label": "Outlaw", "background": "Outlawry", "description": "The leader has done this before: one prior job counts toward crime experience (still capped), so thefts and robberies go a little smoother. Who notices still depends on the scene."},
+    "carpenter": {"label": "Carpenter", "background": "Carpentry", "description": "The leader counts as a Carpentry specialist: faster and wooden wagon repairs, and skilled carpentry work where it is offered."},
+    "farmer": {"label": "Stockman", "ox_strain_less": 1, "ox_recovery_more": 1, "forage_worker_factor": 1.5, "butcher_meat_factor": 1.25, "dairy_factor": 1.25, "description": "Raised with stock and land: the team strains 1 less on hard working days and recovers 1 more on rest days with grass; the leader gathers half again as much when foraging; butchering yields a quarter more meat and never injures the leader; milk cows, goats and hens give a quarter more."}
+  },
+  "profession_skills_note": "Authored game terms. Most 1840s emigrants were farmers who drove their own stock; the edge is skill, not cash or gear. Every skill needs a leader with at least minimum_health and no serious condition."
 }

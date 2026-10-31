@@ -6,14 +6,44 @@
       "cash_cents": 147500
     },
     {
+      "id": "merchant",
+      "label": "MERCHANT",
+      "cash_cents": 125000
+    },
+    {
+      "id": "doctor",
+      "label": "DOCTOR",
+      "cash_cents": 110000
+    },
+    {
       "id": "carpenter",
       "label": "CARPENTER",
       "cash_cents": 97500
     },
     {
+      "id": "saddler",
+      "label": "SADDLER",
+      "cash_cents": 75000
+    },
+    {
+      "id": "hunter",
+      "label": "HUNTER",
+      "cash_cents": 70000
+    },
+    {
       "id": "farmer",
       "label": "FARMER",
       "cash_cents": 67500
+    },
+    {
+      "id": "soldier",
+      "label": "SOLDIER",
+      "cash_cents": 65000
+    },
+    {
+      "id": "outlaw",
+      "label": "OUTLAW",
+      "cash_cents": 60000
     }
   ],
   "goods": [

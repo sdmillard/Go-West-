@@ -2,6 +2,7 @@ extends RefCounted
 ## Prices are integer cents. Quotes are read-only; the engine commits departure once.
 var provisions = preload("res://simulation/provisions.gd").new()
 const Mounts=preload("res://simulation/mounts.gd")
+const PROFESSIONS: Array = ["banker", "merchant", "doctor", "carpenter", "saddler", "hunter", "farmer", "soldier", "outlaw"]
 var professions: Array = []
 var goods: Array = []
 var error := ""
@@ -25,7 +26,7 @@ func load_data(data: Variant) -> bool:
 		error = "Outfitting data could not be loaded."
 		return false
 	for section in ["professions", "goods"]:
-		var required: Array = ["banker", "carpenter", "farmer"] if section == "professions" else ["wagon", "oxen", "horses", "mules", "saddles", "pack_saddles", "saddlebags", "food", "clothing", "bullet_boxes", "rifles", "shotguns", "pistols", "revolvers", "knives", "hatchets", "wheels", "axles", "tongues", "medicine", "salt", "produce", "dried_produce", "dairy_cows", "goats", "hens", "poultry_feed", "livestock_fodder", "dog"]
+		var required: Array = PROFESSIONS if section == "professions" else ["wagon", "oxen", "horses", "mules", "saddles", "pack_saddles", "saddlebags", "food", "clothing", "bullet_boxes", "rifles", "shotguns", "pistols", "revolvers", "knives", "hatchets", "wheels", "axles", "tongues", "medicine", "salt", "produce", "dried_produce", "dairy_cows", "goats", "hens", "poultry_feed", "livestock_fodder", "dog"]
 		var seen: Array = []
 		for entry in data[section]:
 			if not entry is Dictionary or not entry.get("id") is String or entry.id not in required or entry.id in seen or not entry.get("label") is String or entry.label.is_empty():

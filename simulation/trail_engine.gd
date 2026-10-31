@@ -1,6 +1,7 @@
 extends RefCounted
 ## Pure simulation: no UI nodes, wall-clock time, input, or global RNG.
 const Catalog = preload("res://simulation/event_catalog.gd")
+const ProfessionSkill = preload("res://simulation/profession_skill.gd")
 const Outfitting = preload("res://simulation/outfitting.gd")
 const Route = preload("res://simulation/route_catalog.gd")
 const PartyHealth = preload("res://simulation/party_health.gd")
@@ -947,7 +948,8 @@ func _roll_trail_event() -> void:
 		# A night guard on the picket line keeps most horse thieves away.
 		if event.id=="horse_thieves" and camp_tasks.stock_guarded(self):
 			weighted=weighted.duplicate(true)
-			weighted.weight=maxi(1,int(weighted.weight)/int(provisions.data.mounts.guard_factor))
+			# Thieves give a soldier's watch a wider berth.
+			weighted.weight=maxi(1,int(weighted.weight)/(int(provisions.data.mounts.guard_factor)*(int(characters.benefits.soldier_guard_factor) if characters.available(self,"Soldiering") else 1)))
 		if event.id=="horse_thieves" and dogs.ready("watch"):
 			weighted=weighted.duplicate(true)
 			weighted.weight=maxi(1,int(float(weighted.weight)/float(dogs.data.theft_weight_factor)))
@@ -1036,7 +1038,7 @@ func forage_offer(companion: bool=false) -> Dictionary:
 	var workers := 0.0
 	for member in party_health.members:
 		if party_health.is_active(member) and not member.conditions.any(func(c): return c.id == "broken_leg") and (companion or not camp_tasks.enabled() or int(member.id)==camp_tasks.leader_id(self)):
-			workers += member.health / 100.0
+			workers += member.health / 100.0 * (float(ProfessionSkill.stockman(self).get("forage_worker_factor",1.0)) if int(member.id)==0 else 1.0)
 	var blocked: bool = current_edge().get("hazard", "") in ["river", "waterless"] or survival.weather.id in ["blizzard", "snow"]
 	return {"available": factor > 0 and workers > 0 and not blocked, "factor": factor, "workers": workers}
 
@@ -1081,7 +1083,7 @@ func open_trade() -> bool:
 	if not at_post:
 		var markup: int=roundi((float(context.data.passing_price_markup)-1.0)*100.0)
 		terms=("Their camp is off the road: the first trade costs a day and meals, and further trades while they are nearby take no extra time." if days>0 else "You are camped with them already; further trades take no extra time.")+" Their prices run %d%% above the posts." % markup
-	return _service_menu("Trading post" if at_post else "Passing traders", "Stock and buying demand are limited. Regional prices apply. "+terms+(" Your trading companion negotiated 5% off cash purchases." if characters.available(self,"Trading") else "")+(" "+rumor if not rumor.is_empty() else ""), options)
+	return _service_menu("Trading post" if at_post else "Passing traders", "Stock and buying demand are limited. Regional prices apply. "+terms+((" As a merchant you bargain 5% off cash purchases." if ProfessionSkill.background(self)=="Trading" else " Your trading companion negotiated 5% off cash purchases.") if characters.available(self,"Trading") else "")+(" "+rumor if not rumor.is_empty() else ""), options)
 
 ## A herd's few horses, each for clothing, ammunition, a footsore ox or coin. The first trade costs the visit's day.
 func open_horse_traders() -> bool:
@@ -1877,7 +1879,9 @@ func ox_slaughter_offer(by_hand: bool = false) -> Dictionary:
 	if not can_service() or state.oxen <= rules.minimum_team or (not by_hand and state.bullets < rules.bullets):return {}
 	# Team condition is a coarse proxy for the selected animal, not its live weight.
 	var factor := float(rules.minimum_yield_factor)+(1.0-float(rules.minimum_yield_factor))*float(state.ox_health)/100.0
-	return {"meat":floori(float(rules.usable_meat_lb)*factor),"remaining":int(state.oxen)-1,"bullets":0 if by_hand else int(rules.bullets),"by_hand":by_hand,"injury_chance":float(rules.hand_injury_chance) if by_hand else 0.0}
+	return {"meat":floori(float(rules.usable_meat_lb)*factor*_butcher_factor()),"remaining":int(state.oxen)-1,"bullets":0 if by_hand else int(rules.bullets),"by_hand":by_hand,"injury_chance":float(rules.hand_injury_chance) if by_hand and ProfessionSkill.stockman(self).is_empty() else 0.0}
+## A farmer leader butchers stock cleanly: more usable meat and no hand injury.
+func _butcher_factor() -> float:return float(ProfessionSkill.stockman(self).get("butcher_meat_factor",1.0))
 
 func _butcher_by_hand(offer: Dictionary,animal: String) -> void:
 	journal.append("Used the household hand tools instead of ammunition.")
@@ -1898,7 +1902,7 @@ func mount_slaughter_offer(kind: String,by_hand: bool = false) -> Dictionary:
 	if kind not in Mounts.ANIMALS or not can_service() or Mounts.count(state,kind)<1 or (not by_hand and state.bullets < rules.bullets):return {}
 	var meat_lb: float=float(provisions.data.mounts[{"horses":"horse","mules":"mule"}[kind]].meat_lb)
 	var factor := float(rules.minimum_yield_factor)+(1.0-float(rules.minimum_yield_factor))*float(Mounts.condition(state))/100.0
-	return {"kind":kind,"meat":floori(meat_lb*factor),"remaining":Mounts.count(state,kind)-1,"bullets":0 if by_hand else int(rules.bullets),"by_hand":by_hand,"injury_chance":float(rules.hand_injury_chance) if by_hand else 0.0}
+	return {"kind":kind,"meat":floori(meat_lb*factor*_butcher_factor()),"remaining":Mounts.count(state,kind)-1,"bullets":0 if by_hand else int(rules.bullets),"by_hand":by_hand,"injury_chance":float(rules.hand_injury_chance) if by_hand and ProfessionSkill.stockman(self).is_empty() else 0.0}
 
 func slaughter_mount(kind: String,by_hand: bool = false) -> bool:
 	var offer := mount_slaughter_offer(kind,by_hand)
@@ -2067,7 +2071,7 @@ func _offer_carcass(animal: String,full_lb: float,place: String) -> void:
 	if not pending.is_empty() or state.status!="traveling":
 		journal.append("With no time to spare, the %s was left where it fell." % animal)
 		return
-	var meat: int=floori(full_lb*float(provisions.data.ox_slaughter.minimum_yield_factor))
+	var meat: int=floori(full_lb*float(provisions.data.ox_slaughter.minimum_yield_factor)*_butcher_factor())
 	pending={"id":"snow_carcass","category":"historical","title":"A %s died in the snow" % animal,
 		"text":"The %s starved near %s. Its carcass is thin but still meat, and the cold will keep it." % [animal,route.nodes[place].name],
 		"choices":[
@@ -2261,6 +2265,8 @@ func start_tactical_combat(command: String = "") -> bool:
 		if trail_cfg.is_empty():
 			return false
 		trail_cfg["combat_wins"] = combat.victories()
+		trail_cfg["leader_veteran"] = ProfessionSkill.background(self) == "Soldiering"
+		trail_cfg["leader_background"] = ProfessionSkill.background(self)
 		Armory.equip(trail_cfg, state)
 		tactical_session = tactical.start_session(trail_cfg)
 		last_tactical = {}
@@ -2272,6 +2278,8 @@ func start_tactical_combat(command: String = "") -> bool:
 	if cfg.is_empty():
 		return false
 	cfg["combat_wins"] = combat.victories()
+	cfg["leader_veteran"] = ProfessionSkill.background(self) == "Soldiering"
+	cfg["leader_background"] = ProfessionSkill.background(self)
 	Armory.equip(cfg, state, crime.Detention.prisoners(crime, crime.incident()))
 	tactical_session = tactical.start_session(cfg)
 	last_tactical = {}

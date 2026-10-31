@@ -108,7 +108,8 @@ func start_session(config: Dictionary) -> Dictionary:
 			"retreated": false,
 			"yielded": false,
 			"profile": m.get("profile", {}).duplicate(true) if m.get("profile") is Dictionary else {},
-			"body_bonus": _body_bonus(m, int(config.get("combat_wins", 0))),
+			"body_bonus": _body_bonus(m, int(config.get("combat_wins", 0)), bool(config.get("leader_veteran", false))),
+			"trained_aim": _trained_aim(m, String(config.get("leader_background", ""))),
 		})
 
 	var enemy_spawns: Array = venue.get("enemy_spawns", [[8, 2], [6, 2], [9, 3], [5, 2], [8, 4]])
@@ -562,10 +563,15 @@ func shot_preview_at(session: Dictionary, attacker_id: String, ax: int, ay: int,
 	var base_val := float(acc_cfg.get("base_hit", 0.78)) + float(arm.get("hit_mod", 0.0))
 	var hit := base_val
 	var b_terms: Array[String] = ["BASE %d%%" % int(round(base_val * 100.0))]
-	if bool(attacker.get("soldier", false)):
+	var trained := String(attacker.get("trained_aim", ""))
+	if bool(attacker.get("soldier", false)) or trained == "soldier":
 		var sb := float(acc_cfg.get("soldier_bonus", 0.08))
 		hit += sb
 		b_terms.append("SOLDIER +%d%%" % int(round(sb * 100.0)))
+	elif trained == "hunter":
+		var hb := float(acc_cfg.get("hunter_bonus", 0.04))
+		hit += hb
+		b_terms.append("HUNTER +%d%%" % int(round(hb * 100.0)))
 	var opt_range := int(arm.get("optimal_range", acc_cfg.get("optimal_range", 4)))
 	if dist <= 2:
 		var pb := float(acc_cfg.get("point_blank_bonus", 0.07))
@@ -1353,16 +1359,29 @@ func body_save(unit: Dictionary) -> int:
 
 
 ## Combat experience steadies a traveler: the party's won fights by step, and a Veteran's own service.
-func _body_bonus(member: Dictionary, wins: int) -> int:
+func _body_bonus(member: Dictionary, wins: int, leader_veteran: bool = false) -> int:
 	var cfg: Dictionary = rules.get("saves", {})
 	var bonus := 0
 	for step in cfg.get("experience_steps", []):
 		if wins >= int(step):
 			bonus += 1
 	var profile = member.get("profile", {})
-	if profile is Dictionary and "Veteran" in profile.get("specials", []):
+	# A Soldier leader's service counts like a Veteran companion's (party slot 0 is the leader).
+	if (profile is Dictionary and ("Veteran" in profile.get("specials", []) or profile.get("skill", "") == "Soldiering")) or (leader_veteran and int(member.get("slot", -1)) == 0):
 		bonus += int(cfg.get("veteran_bonus", 0))
 	return bonus
+
+
+## Trained shots aim better: a Soldiering traveler like a soldier, a Hunting one (or a
+## Sharpshooter) about half as much. Slot 0 is the leader, whose profession gives the background.
+func _trained_aim(member: Dictionary, leader_background: String = "") -> String:
+	var profile = member.get("profile", {})
+	var skill := leader_background if int(member.get("slot", -1)) == 0 else (String(profile.get("skill", "")) if profile is Dictionary else "")
+	if skill == "Soldiering":
+		return "soldier"
+	if skill == "Hunting" or (profile is Dictionary and "Sharpshooter" in profile.get("specials", [])):
+		return "hunter"
+	return ""
 
 
 func is_mortal(unit: Dictionary) -> bool:

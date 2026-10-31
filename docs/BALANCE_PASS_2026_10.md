@@ -132,3 +132,37 @@ Same 360 journeys (seeds 90000-90011), before = step 1 rules:
 Lawful arrivals 129 → 119 of 180. Late parties: bankers still arrive (24 of 24), carpenters 17 → 13, farmers 8 → 1 of 24. Money buys a way through winter; a poor late party mostly does not. Tried and rejected: 45%/5 a day (late July 12 of 36, too harsh) and 30%/3 a day (late July 17 with no valley strain, too soft once the bot pushed on).
 
 Follow-ups (Spencer's ideas, not built): a winter cabin buildable anywhere if the party spends the days, with camp life rather than dead time, and possibly a "settled short of Oregon" ending.
+
+## Step 3: professions as skills (October 31)
+
+Farmers failed because the wagon is already full at Independence (2,500 lb cargo, 2,000 lb food cap), so every profession leaves with the same food; cash decides whether a party can restock at posts once that food runs low around day 150. Spencer did not want farmers made richer just to make the game easier: professions should give the leader abilities, like companion backgrounds, not extra gear.
+
+`simulation/profession_skill.gd` reads `profession_skills` in `data/party_benefits.json`. Every skill needs a fit leader (at least `minimum_health`, no serious condition). The leader then counts as a specialist in the matching companion background (`camp_tasks.specialist(game,0,...)` and `characters.available`).
+
+| Profession | Purse | Skill |
+|---|---|---|
+| Banker | $1,475 | none: the purse is the edge (Spencer) |
+| Merchant | $1,250 | Trading: 5% off cash purchases |
+| Doctor | $1,100 | Caregiving: better care |
+| Carpenter | $975 | Carpentry: faster and wooden repairs, carpentry work |
+| Saddler | $750 | Leatherworking: buckskin, leather goods, harness work |
+| Hunter | $700 | Hunting: faster reloads, hunter's aim (+4%) in tactical fights |
+| Farmer | $675 | Stockman: team strain -1 on hard days, +1 recovery on rest days with grass, half again as much foraging, butchering +25% meat and no hand injury, milk and eggs +25% |
+| Soldier | $650 | Soldiering: counts as a Veteran, soldier's aim (+8%), thieves avoid a soldier's watch |
+| Outlaw | $600 | Outlawry: one prior job of crime experience (still capped) |
+
+Soldiering and Outlawry are also new companion backgrounds (party editor); generated parties and recruits still deal the original five (`DEALT_SKILLS`) so existing seeds keep their companions. Hunting companions and Sharpshooters also get the hunter's aim. Spencer raised the hunter, soldier and outlaw purses from $600/$550/$450, where the money gap swamped any skill.
+
+Lawful arrivals of 60 (careful April/May, fighter, late June/July; same seeds):
+
+| Profession | Arrived |
+|---|---|
+| Banker | 59 |
+| Merchant | 56 |
+| Doctor | 51 |
+| Carpenter | 48 |
+| Saddler | 27 |
+| Farmer | 20 (13 before Stockman) |
+| Hunter | 13 |
+| Soldier | 12 |
+| Outlaw | 7 (its skill pays only in crime) |

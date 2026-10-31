@@ -14,6 +14,9 @@ func outfit(game,style: String) -> Dictionary:
  if style=="horses":return {"wagon":0,"oxen":0,"food":450,"clothing":5,"bullet_boxes":5,"medicine":1,"salt":5,"dried_produce":10,"horses":5,"mules":3,"saddles":5,"pack_saddles":3,"saddlebags":5}
  for good in game.outfitter.goods:cart[good.id]=int(good.suggested)
  cart.dried_produce=20
+ # Optional study override: --cart-food=N buys N lb of food at Independence instead of the suggestion.
+ for argument in OS.get_cmdline_user_args():
+  if argument.begins_with("--cart-food="):cart.food=int(argument.get_slice("=",1))
  return cart
 func profile_for(style: String) -> Dictionary:
  var p: Dictionary={"id":style,"pace":0,"rations":1,"rest":true,"hunt":true,"accuracy":0.65,"hunt_below":90,"rest_below":55,"care_below":55,"adaptive_rations":true,"produce":true,"forage_gap":20,"preserve":"salt","preserve_meals":3.3,"slaughter":true,"slaughter_team_floor":4,"opportunity":1,"cash_reserve":20,"post_food":600,"team_rest_below":65}
@@ -46,7 +49,7 @@ func run():
   if argument.begins_with("--seeds="):seeds=clampi(int(argument.get_slice("=",1)),1,60)
   if argument.begins_with("--styles="):styles=Array(argument.get_slice("=",1).split(","))
   if argument.begins_with("--professions="):professions=Array(argument.get_slice("=",1).split(","))
- if not styles.all(func(v):return v in STYLES) or not professions.all(func(v):return v in PROFESSIONS):
+ if not styles.all(func(v):return v in STYLES) or not professions.all(func(v):return v in preload("res://simulation/outfitting.gd").PROFESSIONS):
   printerr("Unknown style or profession");quit(1);return
  DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://.tools"))
  var store=Store.new()
@@ -58,6 +61,8 @@ func run():
    for seed_value in range(seed_start,seed_start+seeds):
     var game=Observed.new(seed_value,"classic",true)
     var cart: Dictionary=outfit(game,style)
+    # Poorer professions drop oxen until the suggested kit fits their purse (never below four).
+    while not game.outfitter.quote(profession,cart).get("valid",false) and int(cart.get("oxen",0))>4:cart.oxen=int(cart.oxen)-1
     var id: Array=[style,profession,seed_value]
     if not game.depart(profession,["A","B","C","D","E"],style_month(style),cart):
      errors.append({"run":id,"error":"Departure: "+game.departure_error});continue

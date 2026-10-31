@@ -110,6 +110,8 @@ func tick(game,resting: bool,working: bool) -> void:
   # Food, water, body condition and collection are constraints, not stacked percentages.
   var factor: float=minf(float(nutrition.production),minf(Feeding.capacity(data,int(a.condition)),float(o.care_factor)))
   factor=minf(factor,0.1 if o.waterless else 1.0)
+  # A farmer leader's dairy and poultry skill raises what the animals' condition allows.
+  factor*=float(preload("res://simulation/profession_skill.gd").stockman(game).get("dairy_factor",1.0))
   if a.kind=="hens":factor=minf(factor,float(nutrition.quality))
   if a.kind=="hens":
    a.egg_progress=float("%.12f" % (float(a.egg_progress)+0.5*factor*float(data.feeding.laying_months[int(game.calendar().month)-1])))
