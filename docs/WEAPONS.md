@@ -7,7 +7,7 @@ Built October 31, 2026, with Spencer's decision: "Period kit, revolvers rare". A
 - Every traveler sets out with their own rifle and belt knife (`home_kit`). `state.arms_home` records how many did, so the weight of those stays in personal gear.
 - The outfitter sells more: extra rifle $15, shotgun $12, single-shot pistol $6, Colt revolver $50 (only one), knife $1, hatchet $1.50. Bought arms add their weight to the load.
 - Arms are counted in `game.state` like other goods (`rifles`, `shotguns`, `pistols`, `revolvers`, `knives`, `hatchets`). `simulation/armory.gd` holds the rules.
-- Journeys saved before arms get one rifle and knife per traveler when loaded.
+- Journeys saved before arms hold no arms keys. `Armory.count` reads them as one rifle and knife per traveler, so restoring leaves the saved state unchanged. Call `Armory.settle(state)` before changing any arms count (stealing, confiscating, buying at a post).
 
 ## Shooting and hunting
 
