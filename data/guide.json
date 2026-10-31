@@ -1,0 +1,82 @@
+{
+  "title": "THE OVERLAND GUIDE",
+  "subtitle": "A Pocket Companion for Emigrants to Oregon, with Necessary Outfits, the Road, and Counsel for the Journey. Independence, 1848.",
+  "note": "Period voice is authored for the game, after the manner of Joel Palmer's 1847 Journal of Travels (Necessary Outfits for Emigrants, pp. 257-263 of the 1906 reprint) and other guides. Figures in the plain rules are the game's own.",
+  "chapters": [
+    {
+      "id": "preface",
+      "title": "To the Emigrant",
+      "period": "The road to Oregon is long, but it is not a mystery. Hundreds have gone before you, and those who arrived in good order were not the boldest, but the best prepared and the most patient.\n\nSet out from Independence when the grass is up, which is commonly the last of April or the first days of May. Start earlier and your cattle will starve on the bare prairie; start later and the snows of the mountains will meet you before the Cascades. A party that leaves in June must travel hard and waste no days; one that leaves in July had better know what it is about.\n\nGo with a sound wagon, a good team, and provisions for the whole road, and keep some money in your pocket, for the posts beyond the Missouri sell dear.",
+      "plain": "Name five travelers, pick a profession and a departure month, then buy your outfit at the Independence store. Nothing is bought for you: the store starts empty, and the next chapter gives a recommended outfit.\n\nCONTINUE advances the days; PAUSE stops the wagon. Landmarks and encounters stop travel on their own. MAP, GUIDE, HISTORY and PARTY take no time. Hover over any control for a short explanation.\n\nThe journey to Oregon City is about 1,938 guide miles by Palmer's table. A careful party takes most of a year; the trade-off between time and risk is the heart of the game."
+    },
+    {
+      "id": "outfit",
+      "title": "Of the Outfit",
+      "period": "Every grown person should be provided with two hundred pounds of flour, thirty of pilot bread, seventy-five of bacon, ten of rice and twenty-five of sugar, besides coffee, beans, dried fruit and ten pounds of salt.\n\nThe wagon should be light, strong and well seasoned, and should not be loaded above twenty-five hundred pounds. For a team, three yoke of good oxen will serve and a fourth is no waste: oxen are slower than mules, but cheaper, hardier, less apt to be stolen, and good beef at the last. Carry a spare wheel, axle and tongue; a broken one in the mountains may cost a week.\n\nEach man should have a good rifle with powder and lead, and every person stout clothing and boots for the cold. A few simples for sickness are worth their weight. Dried apples or peaches are no luxury: they keep off the scurvy.",
+      "plain": "Palmer's five weighed staples for five grown travelers come to 1,700 lb, the food in the outfit below. The game's cargo limit is 2,500 lb and Independence sells at most 2,000 lb of food, so the wagon fills before your money runs out. Every profession leaves with about the same food; what your purse buys is restocking at the posts once the wagon's food runs low, usually around the fifth month.\n\nOxen pull in a working team of up to six; extra oxen are spares. Food is counted in food units; a person eats more on fuller rations. Fresh produce spoils in three days; dried fruit keeps for months.",
+      "outfit": true
+    },
+    {
+      "id": "road",
+      "title": "Of the Road",
+      "period": "From Independence the road crosses the Kansas and the Big Blue to the Platte, and follows that broad, shallow river to Fort Laramie. Fort Kearny, newly built on the Platte, is the only army post on the whole road; Laramie and Bridger are trading houses, and Fort Hall, Boise and Walla Walla belong to the Hudson's Bay Company.\n\nAt every post the prices rise the farther west you go. Flour that cost two dollars a hundred in Missouri will cost twenty at Fort Hall. Trade at the posts for what you lack, but do not expect to be outfitted there.\n\nTake your time at good grass and water, and make your distance where the road is easy. A party that drives its cattle to death on the Platte will walk the Snake.",
+      "plain": "Each trading visit costs one day and meals, however many trades you make. Post counters have limited stock; passing traders (TALK TO TRADERS) sell fixed lots at higher prices. Sell prices follow the region and are always below what you would pay.\n\nPace and rations can be changed at any time. A faster pace covers more ground but strains the team and tires the travelers; short rations stretch food but raise illness. Rest in camp to recover people and animals."
+    },
+    {
+      "id": "rivers",
+      "title": "Of Rivers",
+      "period": "Never cross a river in a hurry. Low water may be forded with care; when the river is up, raise the wagon bed, float it, or pay the ferryman, and think the money well spent. Rain upstream will raise a river while you sit beside it.\n\nAt the Green River there is a ferry at the southern crossing. Below The Dalles you may go by the Columbia on rafts, a dangerous passage at the Cascades, or over the mountain by the Barlow road.",
+      "plain": "Fording is free and fastest but risks the wagon, the load and the animals; it is safest when the water is low. Ferries cost money and are free of risk. Walkers and riders wade, swim or let the horses carry them.\n\nAt the Cascades you portage around the rapids, often with Native help, or steer the raft through yourself."
+    },
+    {
+      "id": "sickness",
+      "title": "Of Sickness",
+      "period": "The Platte is the home of the cholera and the bloody flux. Drink from springs where you can, camp away from old camps, and keep the sick apart and warm.\n\nThe scurvy comes on slowly, after long weeks of salt meat and bread. The gums soften, old wounds open, and the strongest man grows weak. Greens, berries and dried fruit drive it off, and a man who has it will mend if he gets them. Fresh game helps a little, but will not cure it alone.",
+      "plain": "Each traveler has their own health and conditions; open PARTY to inspect them. Care kits treat illness and injury, and a Caregiving companion (or a doctor leader) makes care work better.\n\nVitamin C comes from fresh produce, foraged greens and berries, and dried fruit; freshly killed meat gives a little. Scurvy begins after about six weeks without it. Alone it weakens a traveler down to a floor and then wears them down very slowly; given produce, they recover. Dried fruit is only opened when the party actually needs it."
+    },
+    {
+      "id": "provisions",
+      "title": "Of Game and Stock",
+      "period": "Buffalo, antelope and deer will be found along the road, but do not trust your rifle to feed you. A good hunter will keep the camp in fresh meat in the buffalo country and go hungry in the sagebrush. Dry or salt what you cannot eat, for fresh meat will not keep three days in summer.\n\nYour oxen are your life. Graze them well, rest them when they fail, and never overdrive them in heat or on bad water. If one must be killed, it is still beef; and if one dies, do not leave it to the wolves.",
+      "plain": "Hunting takes a day and ammunition; you carry back only what the party can haul. Foraging takes a day and depends on the season, region and healthy gatherers. CAMP > PRESERVE MEAT dries fresh meat, with salt for better keeping.\n\nThe team loses condition on working days and recovers on rest days with grass. Worn-out animals slow the wagon. You can slaughter a spare ox at camp, and a starved animal can be butchered rather than wasted. Milk cows, goats and hens give food on the road if fed."
+    },
+    {
+      "id": "winter",
+      "title": "Of Winter",
+      "period": "The mountains are no place for a late party. Snow may close South Pass and the Blue Mountains from November, and the Barlow road over Mount Hood is shut to wagons from November until the spring. Barlow's own company was caught there in '45 and had to leave its wagons in the snow.\n\nIf winter finds you, do not stop on the climb. The valleys below the passes give some shelter, though little grass. Push over the pass while your cattle can still stand, or winter in a valley and go on in spring.",
+      "plain": "From November to March (April on the Barlow road) the high passes are snow country. On the climb, some days are snowbound with no progress, and animals lose condition every day, even in camp, because there is no grass; worn-out animals can die. Camped in a valley below a pass, there are no snowbound days, but the animals still weaken slowly.\n\nThe Barlow road is closed to wagons from November to April; the Columbia, resting, or going on foot remain open. The season notice warns you from September."
+    },
+    {
+      "id": "callings",
+      "title": "Of Callings",
+      "period": "It matters what a man was before he set out. The farmer knows his cattle, the carpenter his wagon, the hunter his rifle and the doctor his patients; the merchant drives a bargain, and the banker has money, which answers for a great deal. Choose your company with the same care: a willing hand is worth more than a strong one who will not work.",
+      "plain": "Your profession sets your starting purse and gives the leader a skill like a companion's background: merchant (Trading), doctor (Caregiving), carpenter (Carpentry), saddler (Leatherworking), hunter (Hunting, steadier aim), farmer (Stockman: easier on the team, better foraging, butchering and dairy), soldier (Soldiering: a Veteran's service and a soldier's aim) and outlaw (Outlawry: crime experience). The banker has no trade skill, only the largest purse. A leader's skill needs the leader fit to use it.\n\nCompanions have their own backgrounds, temperaments and trust. Hired companions expect wages; trust falls with hardship and hard choices, and companions who lose it may leave. If the leader dies, the journey ends."
+    },
+    {
+      "id": "law",
+      "title": "Of the Law",
+      "period": "Beyond the Missouri there is no court but the company you travel with, and the soldiers at Fort Kearny. That is no license. Word travels faster on this road than you would think, and a party that robs or kills will find the posts shut against it and men riding after it.",
+      "plain": "Crime is never free. Each act is a chance: witnesses, the venue and staff decide whether you are noticed, and experience makes the act itself go smoother. Known crimes raise notoriety: posts refuse you, and posses, regulators and bounty hunters can follow. Capture leads to custody, a hearing and a sentence; killing can hang the leader. Native households answer to their own councils."
+    },
+    {
+      "id": "fighting",
+      "title": "Of Fighting",
+      "period": "Avoid a fight if you honorably can. Most who meet you on the road want trade, a gift or a little of your flour, not blood, and a present made in good humor is cheaper than a funeral. If you must fight, take cover behind the wagons, keep your rifles loaded, and do not all fire at once; a party that empties every gun in the first volley is at the mercy of the second. Tend the wounded after, for a ball or a broken bone does not heal on the march.",
+      "plain": "Choosing to fight always opens the tactical fight. Cover blocks shots, reloading costs action points, and wounds and broken bones carry over afterward. Retreating costs what fleeing would. Soldiers and hunters aim better; veterans and won fights steady a traveler's death save."
+    }
+  ],
+  "outfit": {
+    "wagon": 1,
+    "oxen": 6,
+    "food": 1700,
+    "clothing": 5,
+    "bullet_boxes": 10,
+    "wheels": 1,
+    "axles": 1,
+    "tongues": 1,
+    "medicine": 2,
+    "salt": 10,
+    "dried_produce": 20
+  },
+  "outfit_note": "Palmer's five weighed staples for five adults (200 flour, 30 pilot bread, 75 bacon, 10 rice, 25 sugar each) total 1,700 lb. He advised four yoke; the game's working team is up to six oxen, so three yoke are listed."
+}

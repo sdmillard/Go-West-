@@ -2,6 +2,7 @@ extends Control
 const Simulation = preload("res://simulation/trail_engine.gd")
 const Landscape = preload("res://ui/trail_view.gd")
 const Departure = preload("res://ui/departure_view.gd")
+const GuideBook = preload("res://ui/guide_book.gd")
 const GraveStore = preload("res://simulation/grave_store.gd")
 const GraveView = preload("res://ui/grave_view.gd")
 const SaveStore = preload("res://simulation/save_store.gd")
@@ -37,7 +38,7 @@ var seed_input: SpinBox
 var travel_settings_label: Label
 var travel_button: Button
 var rest_button: Button
-var guide: AcceptDialog
+var guide: AcceptDialog # GuideBook
 var journal_window: AcceptDialog
 var party_window: AcceptDialog
 var party_button: Button
@@ -434,33 +435,9 @@ func _build_ui() -> void:
 	memorial_window.add_child(memorial_scroll)
 	memorial_rows = VBoxContainer.new()
 	memorial_scroll.add_child(memorial_rows)
-	guide = AcceptDialog.new()
-	guide.title = "THE OVERLAND GUIDE"
-	# The guide is longer than the screen is tall, so it scrolls inside a fixed frame.
-	var guide_scroll := ScrollContainer.new()
-	guide_scroll.custom_minimum_size = Vector2(500, 250)
-	guide_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	guide.add_child(guide_scroll)
-	var guide_text := label("""Name five travelers, choose a profession and month, then buy supplies. Care kits are optional; keep cash for the road.
-
-Continue advances days; Pause stops the wagon. Encounters and landmarks stop travel. Map, Guide, History, Party and the ribbon sections let you take stock without spending another day. The map shows where you are, with the road you have taken in red. Hover over a control for a short explanation.
-
-Entering Camp spends no time. Choose Rest inside camp to rest people and livestock, using food. Faster travel strains the team; low rations raise illness risk. Clothing protects people in rough weather. Inspect individual travelers.
-
-The right ribbon groups trail actions under Supplies and Hunt & forage, with local opportunities below the picture. Foraging costs one day and meals. Seasonal greens and berries supplement food and supply vitamin C when eaten; fresh meat alone does not prevent scurvy. Hunting costs a day and ammunition. Left-click fires; right-click walks. Cover blocks shots. Game flees; reload between shots. Carry back what your health and willing helpers allow (200 lb maximum). Broken legs prevent hauling.
-
-Each trading visit costs one day, however many trades you make. Trading posts keep a store counter with limited stock; passing traders offer fixed lots at higher prices. Care takes a day each; check costs first.
-
-Recent rain can raise a river while you wait. Low water favors fording; high water is dangerous. Watch team condition and supplies as well as the weather.
-
-This chapter follows Palmer's reported opening route from Independence to Oregon City: 1,938 reported guide miles. The southern road via Bridger and the Barlow Road is playable. The suggested staples provision most of the journey, with resupply. Plan bulk resupply at trading posts; allow for weather delays.
-
-Camp > Preserve meat lets you dry fresh meat, with optional salt. This takes a day. Food units and physical weight are separate: two pounds of new meat supply one food unit. Dried meat weighs less in cargo. Preserved meat also eventually spoils.
-
-Greenwood's Cutoff and the Columbia river route are playable. At the Cascades, portage around the rapids or choose the steering prototype. Weather, medical effects and other survival values remain simplified game rules, not reconstructed conditions for 1848.""")
-	guide_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	guide_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	guide_scroll.add_child(guide_text)
+	# The guide is a period survival book; its plain rules stay hidden unless the reader asks.
+	guide = GuideBook.new(game)
+	guide.plain_rules_toggled.connect(func(_shown):_change_preferences(false))
 	add_child(guide)
 	journal_window = AcceptDialog.new()
 	journal_window.title = "TRAIL JOURNAL"
@@ -1564,10 +1541,12 @@ func _show_map() -> void:
 	map_view.open()
 	_refresh()
 
-func _show_guide() -> void:
+func _show_guide(chapter: String="") -> void:
 	section_window.hide()
 	_pause_travel()
 	_refresh()
+	guide.set_game(game)
+	if not chapter.is_empty():guide.open_chapter(chapter)
 	guide.popup_centered()
 
 func _show_journal() -> void:
@@ -1619,6 +1598,7 @@ func _open_departure() -> void:
 	departure_view = Departure.new(game)
 	place(departure_view, Rect2(9, 55, 622, 273))
 	departure_view.departure_requested.connect(_depart)
+	departure_view.guide_requested.connect(_show_guide)
 
 func _depart(profession: String, names: Array, month: int, cart: Dictionary) -> void:
 	if game.depart(profession, names, month, cart,departure_view.customization()):
@@ -2292,6 +2272,8 @@ func _load_preferences() -> void:
 	window_scale.select(int(scale_value)-1 if scale_value is int and scale_value in [1,2] else 1)
 	travel_speed.select(int(speed_value) if speed_value is int and speed_value in [0,1,2] else 1)
 	fullscreen.set_pressed_no_signal(full_value if full_value is bool else false)
+	var plain_value: Variant=file.get_value("guide","plain_rules",false)
+	if is_instance_valid(guide):guide.set_plain_rules(plain_value if plain_value is bool else false)
 	_apply_preferences()
 
 func _apply_preferences(resize_window: bool=true) -> void:
@@ -2316,6 +2298,7 @@ func _change_preferences(resize_window: bool=true) -> void:
 	file.set_value("display","scale",window_scale.selected+1)
 	file.set_value("display","fullscreen",fullscreen.button_pressed)
 	file.set_value("travel","speed",travel_speed.selected)
+	if is_instance_valid(guide):file.set_value("guide","plain_rules",guide.plain_toggle.button_pressed)
 	if file.save(preferences_path)!=OK:notice("GAME OPTIONS","These preferences could not be saved for next time.")
 
 

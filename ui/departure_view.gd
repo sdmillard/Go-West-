@@ -1,6 +1,8 @@
 extends Panel
 ## Party preparation and the illustrated store share one pending purchase transaction.
 signal departure_requested(profession: String, names: Array, month: int, cart: Dictionary)
+## The store starts empty; the guide book carries the recommended outfit.
+signal guide_requested(chapter: String)
 var game
 var profession: OptionButton
 var month: OptionButton
@@ -11,6 +13,8 @@ var feedback: Label
 var depart_button: Button
 var next_button: Button
 var back_button: Button
+var guide_button: Button
+var party_guide_button: Button
 var party_layer: Control
 var shop_layer: Control
 var background: TextureRect
@@ -165,7 +169,7 @@ func _ready() -> void:
 		quantity.min_value = 0
 		quantity.max_value = good.maximum
 		quantity.step = good.step
-		quantity.value = good.suggested
+		quantity.value = 0
 		quantity.get_line_edit().add_theme_constant_override("minimum_character_width", 1)
 		quantity.value_changed.connect(func(_value): _update_quote())
 		put(quantity, Rect2(236, i * 18, 78, 18), stock_rows)
@@ -181,9 +185,28 @@ func _ready() -> void:
 	depart_button.text = "DEPART >"
 	depart_button.pressed.connect(_request_departure)
 	put(depart_button, Rect2(478, 242, 130, 25), shop_layer)
-	for node in [next_button, back_button, depart_button]:
+	guide_button = Button.new()
+	guide_button.text = "GUIDE: OUTFIT"
+	guide_button.tooltip_text = "Open the overland guide at its chapter on the necessary outfit."
+	guide_button.pressed.connect(func(): guide_requested.emit("outfit"))
+	put(guide_button, Rect2(129, 242, 111, 25), shop_layer)
+	party_guide_button = Button.new()
+	party_guide_button.text = "GUIDE"
+	party_guide_button.tooltip_text = "Open the overland guide."
+	party_guide_button.pressed.connect(func(): guide_requested.emit("preface"))
+	put(party_guide_button, Rect2(415, 240, 74, 25), party_layer)
+	for node in [next_button, back_button, depart_button, guide_button, party_guide_button]:
 		node.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	show_party()
+	_update_quote()
+
+## For tests and studies only: fill the cart with the outfitter's suggested quantities.
+## Players start with an empty store and read the guide's outfit chapter instead.
+func fill_suggested() -> void:
+	for good in game.outfitter.goods:
+		quantities[good.id].value = good.suggested
+		# cart() applies the typed text, so the line edit must show the new amount too.
+		quantities[good.id].get_line_edit().text = str(int(good.suggested))
 	_update_quote()
 
 func show_store() -> void:

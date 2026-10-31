@@ -31,6 +31,10 @@ func run() -> void:
 	check(setup.scene_id == "town_setup" and setup.quantities.food.value == 650 and screen.game.state == before_store, "Going back preserves unpurchased cart without charging supplies")
 	setup.next_button.pressed.emit()
 	setup.profession.selected = screen.game.outfitter.professions.map(func(p): return p.id).find("farmer")
+	check(setup.quantities.values().all(func(q): return int(q.value) == int(q.value) and (q == setup.quantities.food or int(q.value) == 0)), "The store starts empty; nothing is bought for the player")
+	# Buy the outfit the guide recommends (the store no longer pre-fills it).
+	for good in screen.game.outfitter.goods:
+		if good.id != "food":setup.quantities[good.id].value = good.suggested
 	setup.quantities.food.value = 2000
 	check(setup.depart_button.disabled, "An overloaded suggested cart blocks departure")
 	setup.quantities.food.value = 600
