@@ -33,7 +33,7 @@ func run():
   check(restored!=null,"Actual old save loads: "+name)
   if restored==null:continue
   check(restored.livestock.record==store.normalize(old.livestock),"Migration preserves stored choice and actual food: "+name)
-  check(restored.state==store.normalize(old.state) and str(restored.rng.state)==old.random,"Migration preserves resources and random stream: "+name)
+  check(restored.state==store.upgraded_state(old.state) and str(restored.rng.state)==old.random,"Migration preserves resources and random stream: "+name)
   var expected: bool=name!="sharing_off"
   check(restored.livestock.outlook(restored,true).feeding.scraps_kcal>0 if expected else restored.livestock.outlook(restored,true).feeding.scraps_kcal==0,"Old effective sharing choice survives: "+name)
   var round_trip=Save.new().restore(JSON.parse_string(JSON.stringify(store.capture(restored))))

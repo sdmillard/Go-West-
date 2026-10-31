@@ -2,6 +2,7 @@ extends RefCounted
 ## Authored regional pressures and deterministic trading opportunities.
 ## Saddle and pack animals and their tack, traded alongside the staples.
 const MOUNT_GOODS=["horses","mules","saddles","pack_saddles","saddlebags"]
+const ARMS=preload("res://simulation/armory.gd").KEYS
 var data: Dictionary={}
 var error: String=""
 var record: Dictionary={"spent":{},"activities":[],"prepared":[]}
@@ -140,7 +141,7 @@ func decorate(game,options: Array,offer: Dictionary) -> void:
 	for choice in options:
 		var effects: Dictionary=choice.effects
 		var side: String="sell" if effects.get("money",0)>0 else "buy"
-		for item in game.provisions.data.weights_lb.keys()+["oxen"]+MOUNT_GOODS:
+		for item in game.provisions.data.weights_lb.keys()+["oxen"]+MOUNT_GOODS+ARMS:
 			if (side=="buy" and effects.get(item,0)>0) or (side=="sell" and effects.get(item,0)<0):
 				choice["market_key"]=offer.key+"|"+side+"_"+item
 				# A post keeps only a few horses and saddles on hand.

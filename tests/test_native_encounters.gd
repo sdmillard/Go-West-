@@ -145,7 +145,7 @@ func run():
   view.game=visit_copy;view._refresh()
   check(view.landscape.scene_id=="encounter_the_dalles","Restored recruitment reselects its encounter picture")
  view.game.choose(view.game.pending.choices.size()-1);view.service_window.hide();view._refresh()
- check(view.landscape.scene_id=="the_dalles" and view.game.state==Save.new().normalize(visual_state.state),"Closing the visit restores the landmark without changing the simulation")
+ check(view.landscape.scene_id=="the_dalles" and view.game.state==Save.new().upgraded_state(visual_state.state),"Closing the visit restores the landmark without changing the simulation")
  stop(view.game,"platte");view._open_native_contacts()
  check(view.landscape.scene_id=="platte","A visit without approved dedicated art retains its landmark")
  view.queue_free();await process_frame

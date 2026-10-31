@@ -38,7 +38,7 @@ func run():
  var copy=Save.new().restore(old)
  check(copy!=null,"Authentic prior-rule meat and active-outing save loads")
  if copy!=null:
-  check(copy.state==Save.new().normalize(old.state) and copy.provisions.fresh==Save.new().normalize(old.fresh) and copy.field_outings.snapshot()==Save.new().normalize(old.field_outings),"Old supplies, physical batches and reserved trips remain unchanged")
+  check(copy.state==Save.new().upgraded_state(old.state) and copy.provisions.fresh==Save.new().normalize(old.fresh) and copy.field_outings.snapshot()==Save.new().normalize(old.field_outings),"Old supplies, physical batches and reserved trips remain unchanged")
   check(str(copy.rng.state)==old.random,"Migration does not reroll the main random stream")
  print("Calorie food model: %d checks, %d failures" % [checks,failures])
  quit(1 if failures else 0)

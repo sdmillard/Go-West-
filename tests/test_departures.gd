@@ -51,7 +51,7 @@ func run():
 	game=angry()
 	check(game.characters.departure_candidates(game)==[1],"Prior warning and notice period make settlement departure eligible")
 	var before: Dictionary=store.capture(game)
-	check(game.choose(0) and game.pending.choices[0].get("departure_review",false) and store.normalize(game.state)==before.state,"Continue opens explicit belongings review without spending a day")
+	check(game.choose(0) and game.pending.choices[0].get("departure_review",false) and store.upgraded_state(game.state)==before.state,"Continue opens explicit belongings review without spending a day")
 	var quote: Dictionary=store.capture(game)
 	var restored=store.restore(JSON.parse_string(JSON.stringify(quote)))
 	check(restored!=null and store.capture(restored)==quote,"Pending departure review round-trips")
@@ -165,7 +165,7 @@ func run():
 	check(game.wagon_cache==cache and store.restore(JSON.parse_string(JSON.stringify(quote)))!=null,"Departure preserves cached possessions and saves reduced walking party")
 	var previous: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-companion-departures-save-v1.json"))
 	restored=store.restore(previous)
-	check(restored!=null and restored.state==store.normalize(previous.state) and restored.characters.profiles.all(func(p):return p.exit_warning.is_empty()),"Prior schema upgrades without invented departure warnings or state changes")
+	check(restored!=null and restored.state==store.upgraded_state(previous.state) and restored.characters.profiles.all(func(p):return p.exit_warning.is_empty()),"Prior schema upgrades without invented departure warnings or state changes")
 	var daily=outfit()
 	var weekly=outfit()
 	for journey in [daily,weekly]:journey.characters.profiles[1].specials=["Mercenary"]

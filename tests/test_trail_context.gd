@@ -186,7 +186,7 @@ func run():
     check(wet_counts.forest>wet_counts.sagebrush,"Regional weights produce a wetter forest sample than sage country with matched seeds")
     var previous: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-regional-save-v1.json"))
     copy=store.restore(previous)
-    check(copy!=null and copy.state==store.normalize(previous.state) and copy.context.record=={"spent":{},"activities":[],"prepared":[]},"Real pre-regional save migrates without altering animals, time, cash or supplies")
+    check(copy!=null and copy.state==store.upgraded_state(previous.state) and copy.context.record=={"spent":{},"activities":[],"prepared":[]},"Real pre-regional save migrates without altering animals, time, cash or supplies")
     var screen=Main.instantiate()
     root.add_child(screen)
     await process_frame

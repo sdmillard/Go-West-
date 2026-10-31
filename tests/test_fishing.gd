@@ -109,7 +109,7 @@ func run():
  var restored=Save.new().restore(previous)
  check(restored!=null,"Authentic previous-version save loads")
  if restored!=null:
-  check(restored.state==Save.new().normalize(previous.state) and restored.field_outings.snapshot()==Save.new().normalize(previous.field_outings) and str(restored.rng.state)==previous.random,"Previous stock, away horse, trip and RNG are preserved")
+  check(restored.state==Save.new().upgraded_state(previous.state) and restored.field_outings.snapshot()==Save.new().normalize(previous.field_outings) and str(restored.rng.state)==previous.random,"Previous stock, away horse, trip and RNG are preserved")
   check(restored.state.horses==0,"Old reserved horse remains unavailable for fishing")
  # Artwork contracts and presentation must not alter fishing outcomes.
  for item in [["fishing_riverbank",Vector2(432,150)],["fishing_angler",Vector2(128,128)],["fishing_bobber",Vector2(32,24)],["fishing_splash",Vector2(64,16)],["fishing_catch",Vector2(32,8)]]:

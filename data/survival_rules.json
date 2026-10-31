@@ -1,74 +1,108 @@
 {
   "seasonal": {
-  "travel": [
-    0.7,
-    0.75,
-    0.9,
-    0.97,
-    1,
-    1,
-    1,
-    1,
-    0.97,
-    0.9,
-    0.8,
-    0.7
-  ],
-  "rest_ox_recovery": [
-    2,
-    2,
-    3,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    3,
-    2,
-    2
-  ],
-  "working_strain": [
-    1,
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    1
-  ],
-  "winter_months": [
-    11,
-    12,
-    1,
-    2
-  ],
-  "snow_months": [
-    1,
-    2,
-    3,
-    4,
-    9,
-    10,
-    11,
-    12
-  ],
-  "upland_severity": 1.5,
-  "winter_snow_chance": 0.3,
-  "autumn_snow_chance": 0.08,
-  "clothed_blizzard_damage": 1,
-  "river_high_chance": {
-    "rain": [0.3, 0.3, 0.45, 0.55, 0.6, 0.55, 0.4, 0.3, 0.3, 0.35, 0.35, 0.3],
-    "snowmelt": [0.15, 0.15, 0.2, 0.35, 0.6, 0.8, 0.6, 0.3, 0.15, 0.15, 0.15, 0.15]
+    "travel": [
+      0.7,
+      0.75,
+      0.9,
+      0.97,
+      1,
+      1,
+      1,
+      1,
+      0.97,
+      0.9,
+      0.8,
+      0.7
+    ],
+    "rest_ox_recovery": [
+      2,
+      2,
+      3,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      3,
+      2,
+      2
+    ],
+    "working_strain": [
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1
+    ],
+    "winter_months": [
+      11,
+      12,
+      1,
+      2
+    ],
+    "snow_months": [
+      1,
+      2,
+      3,
+      4,
+      9,
+      10,
+      11,
+      12
+    ],
+    "upland_severity": 1.5,
+    "winter_snow_chance": 0.3,
+    "autumn_snow_chance": 0.08,
+    "clothed_blizzard_damage": 1,
+    "river_high_chance": {
+      "rain": [
+        0.3,
+        0.3,
+        0.45,
+        0.55,
+        0.6,
+        0.55,
+        0.4,
+        0.3,
+        0.3,
+        0.35,
+        0.35,
+        0.3
+      ],
+      "snowmelt": [
+        0.15,
+        0.15,
+        0.2,
+        0.35,
+        0.6,
+        0.8,
+        0.6,
+        0.3,
+        0.15,
+        0.15,
+        0.15,
+        0.15
+      ]
+    },
+    "note": "Authored seasonal ground, forage and storm pressure, not reconstructed1848 climate. Winter is costly but has no automatic loss date."
   },
-  "note": "Authored seasonal ground, forage and storm pressure, not reconstructed1848 climate. Winter is costly but has no automatic loss date."
-},
-  "team_speed_factors": [0, 0.25, 0.5, 0.75, 1.0, 1.05, 1.1],
+  "team_speed_factors": [
+    0,
+    0.25,
+    0.5,
+    0.75,
+    1.0,
+    1.05,
+    1.1
+  ],
   "pace_miles": [
     22,
     26,
@@ -151,8 +185,20 @@
       "speed": 0.6,
       "exposure": 1,
       "wet": 3,
-      "months": [4, 5, 6, 7, 8],
-      "regions": {"plains": 2.0, "woodland": 1.5, "highcountry": 0.6, "sagebrush": 0.5, "forest": 0.3}
+      "months": [
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "regions": {
+        "plains": 2.0,
+        "woodland": 1.5,
+        "highcountry": 0.6,
+        "sagebrush": 0.5,
+        "forest": 0.3
+      }
     },
     {
       "id": "heat",
@@ -161,8 +207,18 @@
       "speed": 0.85,
       "exposure": 0,
       "wet": 0,
-      "months": [6, 7, 8],
-      "regions": {"sagebrush": 2.0, "plains": 1.3, "woodland": 0.8, "highcountry": 0.3, "forest": 0.3},
+      "months": [
+        6,
+        7,
+        8
+      ],
+      "regions": {
+        "sagebrush": 2.0,
+        "plains": 1.3,
+        "woodland": 0.8,
+        "highcountry": 0.3,
+        "forest": 0.3
+      },
       "ox_strain": 1,
       "illness_risk": 1.25
     },
@@ -278,6 +334,46 @@
       "buy_cents": 300,
       "sell_cents": 100,
       "post_lots": 6
+    },
+    {
+      "item": "rifles",
+      "label": "1 rifle",
+      "amount": 1,
+      "buy_cents": 1500,
+      "sell_cents": 500,
+      "post_lots": 2
+    },
+    {
+      "item": "shotguns",
+      "label": "1 shotgun",
+      "amount": 1,
+      "buy_cents": 1200,
+      "sell_cents": 400,
+      "post_lots": 1
+    },
+    {
+      "item": "pistols",
+      "label": "1 pistol",
+      "amount": 1,
+      "buy_cents": 600,
+      "sell_cents": 200,
+      "post_lots": 2
+    },
+    {
+      "item": "knives",
+      "label": "1 knife",
+      "amount": 1,
+      "buy_cents": 100,
+      "sell_cents": 30,
+      "post_lots": 4
+    },
+    {
+      "item": "hatchets",
+      "label": "1 hatchet",
+      "amount": 1,
+      "buy_cents": 150,
+      "sell_cents": 50,
+      "post_lots": 3
     }
   ]
 }

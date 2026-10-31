@@ -1,7 +1,8 @@
 extends RefCounted
 ## Pure demand preview; actual goods transfer stays inside the witnessed crime incident.
 static var data: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/robbery_demands.json"))
-const GOODS=["food","bullets","clothing","oxen","wheels","axles","tongues","medicine","salt","wagon","horses","mules","saddles","pack_saddles","saddlebags"]
+const GOODS=["food","bullets","clothing","oxen","wheels","axles","tongues","medicine","salt","wagon","horses","mules","saddles","pack_saddles","saddlebags","rifles","shotguns","pistols","revolvers","knives","hatchets"]
+const Armory=preload("res://simulation/armory.gd")
 const ANIMALS=["horses","mules"]
 ## Places with goods to pick from; a gate or ferry is robbed of its cash box and passage instead.
 const STOCKED=["store","fort","traders","emigrants","household"]
@@ -90,6 +91,7 @@ static func quote(game,basket: Dictionary,place: String="",action: String="robbe
  var loot_mass:=0.0
  for item in selected:
   if game.provisions.data.weights_lb.has(item):loot_mass+=int(selected[item])*float(game.provisions.data.weights_lb[item])
+  elif Armory.data.weights_lb.has(item):loot_mass+=int(selected[item])*float(Armory.data.weights_lb[item])
  # Theft is carried off quietly by hand; a holdup can load alongside the wagon where the place allows it.
  var alongside: bool=not theft and after.vehicle=="wagon" and game.crime.rules(place).wagon_access
  var haul_limit: float=game.hauling_capacity("robbery")
@@ -153,6 +155,7 @@ static func describe(basket: Dictionary) -> String:
  for item in ordered:
   if int(basket[item])<=0:continue
   if item=="cash_cents":lines.append("$%.2f" % (int(basket[item])/100.0))
+  elif item in Armory.NAMES:lines.append("%d %s" % [basket[item],Armory.NAMES[item][0 if int(basket[item])==1 else 1]])
   else:lines.append("%d %s" % [basket[item],{"medicine":"care kits","clothing":"clothing sets","food":"food units","pack_saddles":"pack saddles"}.get(item,item)])
  return ", ".join(lines) if not lines.is_empty() else "nothing"
 static func valid(game,current: Dictionary) -> bool:

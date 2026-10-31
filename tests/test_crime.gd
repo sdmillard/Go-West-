@@ -123,7 +123,7 @@ func run():
 	check(store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))!=null,"Exact purchase/barter depletion round-trips")
 	var previous: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-crime-save-v1.json"))
 	var restored=store.restore(previous)
-	check(restored!=null and restored.state==store.normalize(previous.state) and restored.characters.profiles==store.normalize(previous.characters),"Authentic old save keeps people, contract and inventory without invented incidents")
+	check(restored!=null and restored.state==store.upgraded_state(previous.state) and restored.characters.profiles==store.normalize(previous.characters),"Authentic old save keeps people, contract and inventory without invented incidents")
 	game=outfit()
 	game.open_crime()
 	choose(game,"shoot")
@@ -195,14 +195,14 @@ func run():
 		var migrated: Dictionary=restored.crime.incident()
 		check(restored.crime.record.version==restored.crime.VERSION and migrated.stage=="escape" and migrated.attempt=="resisted","Active incident survives migration at the same stage")
 		check(migrated.knowledge.get("keeper:fort_bridger",[])==["attempt"] and migrated.knowledge.get("hand:fort_bridger",[])==["attempt"] and not migrated.knowledge.has("staff:fort_bridger"),"Aggregate staff knowledge becomes each living staff member's knowledge")
-		check(restored.crime.service("fort_bridger").alarmed and restored.crime.service("fort_bridger").cash_cents==5000 and restored.state==store.normalize(previous.state),"Stock, cash, alarm and party state are unchanged by migration")
+		check(restored.crime.service("fort_bridger").alarmed and restored.crime.service("fort_bridger").cash_cents==5000 and restored.state==store.upgraded_state(previous.state),"Stock, cash, alarm and party state are unchanged by migration")
 		check(restored.crime.rng.state==int(previous.crime.random) and restored.pending==restored.crime.menu(restored),"Crime random stream and authoritative menu carry over")
 		check(store.restore(JSON.parse_string(JSON.stringify(store.capture(restored))))!=null,"Migrated record saves again in the new format")
 		check(choose(restored,"flee") and restored.crime.valid(restored.crime.snapshot(),restored),"Migrated encounter can be finished")
 	# Genuine save from the previous rules (named witnesses, fixed odds) after a resolved escape.
 	previous=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-report-save-v1.json"))
 	restored=store.restore(previous)
-	check(restored!=null and restored.state==store.normalize(previous.state) and restored.crime.record.incidents.size()==1,"Save from the previous crime rules restores unchanged")
+	check(restored!=null and restored.state==store.upgraded_state(previous.state) and restored.crime.record.incidents.size()==1,"Save from the previous crime rules restores unchanged")
 	if restored!=null:
 		var upgraded: Array=restored.crime.record.reports
 		check(restored.crime.record.version==restored.crime.VERSION and upgraded.size()==1 and upgraded[0].day==restored.crime.record.incidents[0].day and upgraded[0].identified and upgraded[0].senders==["keeper:fort_bridger","hand:fort_bridger"],"An earlier witnessed escape gains its report, dated to the incident day")
@@ -210,7 +210,7 @@ func run():
 	previous=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-venues-save-v1.json"))
 	check(previous.crime.record.services.size()==1 and previous.crime.record.reports.size()==1,"Fixture predates the other venues")
 	restored=store.restore(previous)
-	check(restored!=null and restored.state==store.normalize(previous.state) and restored.crime.record.reports==store.normalize(previous.crime.record.reports),"Save from before the other venues restores with its report unchanged")
+	check(restored!=null and restored.state==store.upgraded_state(previous.state) and restored.crime.record.reports==store.normalize(previous.crime.record.reports),"Save from before the other venues restores with its report unchanged")
 	if restored!=null:
 		check(restored.crime.record.services.size()==restored.crime.venues().size() and not restored.crime.closed("fort_hall") and restored.crime.service("barlow_pass").cash_cents==4000,"Earlier saves gain the new venues untouched")
 		check(store.restore(JSON.parse_string(JSON.stringify(store.capture(restored))))!=null,"The upgraded record saves again")

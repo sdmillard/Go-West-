@@ -117,7 +117,7 @@ func run():
     check(game.provisions.forecast_days(44,5,2,0)==2,"Food forecast catches the two-full-day threshold before starvation")
     var previous: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-care-combat-save-v1.json"))
     copy=store.restore(previous)
-    check(copy!=null and copy.state==store.normalize(previous.state) and copy.combat.history.is_empty(),"Actual pre-care/combat save migrates with state intact and no invented victories")
+    check(copy!=null and copy.state==store.upgraded_state(previous.state) and copy.combat.history.is_empty(),"Actual pre-care/combat save migrates with state intact and no invented victories")
     var screen=Main.instantiate()
     root.add_child(screen)
     await process_frame

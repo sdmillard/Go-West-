@@ -52,7 +52,7 @@ func run():
  var restored=store.restore(legacy)
  check(restored!=null,"A genuine immediately preceding packer save migrates")
  if restored!=null:
-  check(restored.state==store.normalize(legacy.state) and str(restored.rng.state)==legacy.random,"Migration preserves actual stock, supplies, time, condition and random stream")
+  check(restored.state==store.upgraded_state(legacy.state) and str(restored.rng.state)==legacy.random,"Migration preserves actual stock, supplies, time, condition and random stream")
   var clone=store.restore(JSON.parse_string(JSON.stringify(store.capture(restored))))
   restored._tick_mounts(false,true);clone._tick_mounts(false,true)
   check(store.capture(restored)==store.capture(clone),"Loaded animal work follows the same deterministic transition")

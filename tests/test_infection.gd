@@ -77,5 +77,5 @@ func run():
  check(Save.new().restore(bad)==null,"Cached guard cannot smuggle indefinite wound protection")
  var old: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-infection-save-v1.json"))
  restored=Save.new().restore(old)
- check(restored!=null and restored.state==Save.new().normalize(old.state) and restored.party_health.members==Save.new().normalize(old.party) and restored.characters.profiles==Save.new().normalize(old.characters),"Genuine earlier wound/immunity save preserves its state and profiles")
+ check(restored!=null and restored.state==Save.new().upgraded_state(old.state) and restored.party_health.members==Save.new().normalize(old.party) and restored.characters.profiles==Save.new().normalize(old.characters),"Genuine earlier wound/immunity save preserves its state and profiles")
  print("Infectious disease expansion: %d checks, %d failures" % [checks,failures]);quit(1 if failures else 0)

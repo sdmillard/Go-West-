@@ -64,7 +64,7 @@ func run():
  check(offer.cents==rate and not offer.covers_contract,"Inflating a private contract cannot inflate local pay")
  var old: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-work-crews-save-v1.json"))
  restored=Save.new().restore(old)
- check(restored!=null and restored.state==Save.new().normalize(old.state) and restored.income.record==Save.new().normalize(old.income),"Actual prior paid-work save preserves cash, people and consumed demand")
+ check(restored!=null and restored.state==Save.new().upgraded_state(old.state) and restored.income.record==Save.new().normalize(old.income),"Actual prior paid-work save preserves cash, people and consumed demand")
  var screen=load("res://ui/main.gd").new();root.add_child(screen);await process_frame
  screen.game=party();screen.departure_view.hide();screen.income_window.open(screen.game,"work");await process_frame
  for id in [0,1,2]:

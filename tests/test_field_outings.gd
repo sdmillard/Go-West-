@@ -141,7 +141,7 @@ func run():
  var old: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-field-outings-v4.json"))
  loaded=store.restore(old)
  check(loaded!=null and loaded.field_outings.record.trips.is_empty(),"Genuine prior schema-4 journey loads without invented trips")
- if loaded!=null:check(loaded.state==store.normalize(old.state) and str(loaded.rng.state)==old.random,"Migration preserves inventory and original RNG")
+ if loaded!=null:check(loaded.state==store.upgraded_state(old.state) and str(loaded.rng.state)==old.random,"Migration preserves inventory and original RNG")
  g.field_outings.start(g,1,"foot",1,5);saved=store.capture(g)
  for field in ["due","member","stock","origin"]:
   var invalid: Dictionary=saved.duplicate(true)
@@ -161,7 +161,7 @@ func run():
  var river_departure_snapshot: Dictionary=store.capture(g)
  var prior: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-carry-curve-v5.json"))
  var migrated=store.restore(prior)
- check(migrated!=null and migrated.state==store.normalize(prior.state) and str(migrated.rng.state)==prior.random and migrated.field_outings.snapshot()==store.normalize(prior.field_outings),"Genuine previous-curve outing preserves its reserved animals, packs, health, deadlines and random streams")
+ check(migrated!=null and migrated.state==store.upgraded_state(prior.state) and str(migrated.rng.state)==prior.random and migrated.field_outings.snapshot()==store.normalize(prior.field_outings),"Genuine previous-curve outing preserves its reserved animals, packs, health, deadlines and random streams")
  # River pursuit consumes its own day and resolves the actual crossing rules.
  var river_save: Dictionary=river_departure_snapshot
  var crossed_live:=false

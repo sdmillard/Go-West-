@@ -53,7 +53,7 @@ func run():
  var store=Store.new()
  var legacy: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-nutrition-pack-save-v1.json"))
  var restored=store.restore(legacy)
- check(restored!=null and restored.state==store.normalize(legacy.state) and str(restored.rng.state)==legacy.random,"A genuine prior save keeps supplies, health, day and random stream")
+ check(restored!=null and restored.state==store.upgraded_state(legacy.state) and str(restored.rng.state)==legacy.random,"A genuine prior save keeps supplies, health, day and random stream")
  if restored!=null:
   for member in restored.party_health.members:member.health=60
   restored.state.health=60
@@ -61,7 +61,7 @@ func run():
   check(clone!=null and is_equal_approx(clone.provisions.capacity(clone.state),200),"Adjusted capacity derives from live restored people")
  var horse_sync: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-recovery-horse-sync-save-v1.json"))
  var synced=store.restore(horse_sync)
- check(synced!=null and synced.state==store.normalize(horse_sync.state) and str(synced.rng.state)==horse_sync.random,"The concurrent horse-update save migrates without resetting a journey")
+ check(synced!=null and synced.state==store.upgraded_state(horse_sync.state) and str(synced.rng.state)==horse_sync.random,"The concurrent horse-update save migrates without resetting a journey")
  var pack_rules: Dictionary=game.provisions.data.duplicate(true)
  for invalid in [null,[],[[0,0],[20,0.5],[50,0.9],[80,1],[100,1]],[[0,0],[20,0.8],[50,0.5],[80,1],[100,1]],[[0,0],[20,-1],[50,0.75],[80,1],[100,1]],[[0,0],[20,"soft"],[50,0.75],[80,1],[100,1]]]:
   var bad: Dictionary=pack_rules.duplicate(true)

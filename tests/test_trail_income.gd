@@ -116,7 +116,7 @@ func run():
  check(Save.new().restore(bad)==null,"Invalid work ledger rejects")
  var old: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-income-save-v1.json"))
  restored=Save.new().restore(old)
- check(restored!=null and restored.state==Save.new().normalize(old.state) and restored.income.record.keepsakes.is_empty(),"Genuine previous save retains state and receives no invented valuables")
+ check(restored!=null and restored.state==Save.new().upgraded_state(old.state) and restored.income.record.keepsakes.is_empty(),"Genuine previous save retains state and receives no invented valuables")
  g=party();stop(g);g._depart(g.plan_for([1]),"")
  check(g.state.keepsake_1==0 and g.state.keepsake_0==1,"Departing companion takes only their own carried keepsake")
  var screen=load("res://ui/main.gd").new();root.add_child(screen);await process_frame

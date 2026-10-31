@@ -64,9 +64,24 @@ static func arrest(crime,game,current: Dictionary,surrendered: bool) -> void:
 	var known: Array=crime.Wanted.trial_charges(crime,game,current)
 	var who: String=authority(crime,game,current)
 	current["custody"]={"authority":who,"day":int(game.state.day),"hearing_day":int(game.state.day)+int(rules(crime).hearing_days[who]),"surrendered":surrendered,"accused":accused(crime,game,known),"vouched":-1,"abandoned":[]}
+	current.custody["arms"]=take_arms(game,current.custody.accused.size())
 	current.stage="custody"
 	var names: String=", ".join(current.custody.accused.map(func(id):return game.party_health.members[int(id)].name))
-	game.journal.append("Day %d · %s %s. Held: %s. Hearing on day %d." % [game.state.day,"Surrendered to" if surrendered else "Taken by",{"county":"the Jackson County sheriff","army":"the soldiers","company":"an emigrant company","council":"kin of the household"}[who],names,current.custody.hearing_day])
+	game.journal.append("Day %d · %s %s. Held: %s. Hearing on day %d.%s" % [game.state.day,"Surrendered to" if surrendered else "Taken by",{"county":"the Jackson County sheriff","army":"the soldiers","company":"an emigrant company","council":"kin of the household"}[who],names,current.custody.hearing_day,(" Their arms are held: %s." % arms_text(current.custody.arms)) if not current.custody.arms.is_empty() else ""])
+## The accused give up the arms they carry, the first in the party's loadout as the leader is held first.
+static func take_arms(game,held: int) -> Dictionary:
+	var arms: Dictionary={}
+	for kit in preload("res://simulation/armory.gd").loadout(game.state,held):
+		for key in [kit.weapon,kit.blade]:
+			if key!="":arms[key]=int(arms.get(key,0))+1
+	for key in arms:game.state[key]=int(game.state[key])-int(arms[key])
+	return arms
+## Arms held in custody come back to whoever walks free.
+static func return_arms(game,current: Dictionary) -> void:
+	var arms: Dictionary=current.get("custody",{}).get("arms",{})
+	for key in arms:game.state[key]=int(game.state.get(key,0))+int(arms[key])
+	if not arms.is_empty():game.journal.append("Day %d · The party's arms were handed back: %s." % [game.state.day,arms_text(arms)])
+static func arms_text(arms: Dictionary) -> String:return preload("res://simulation/armory.gd").describe(arms)
 static func charges_text(known: Array) -> String:
 	return ["theft","robbery","assault","a killing"][severity(known)-1]
 static func bail_cents(crime,known: Array) -> int:
@@ -184,10 +199,12 @@ static func held_day(crime,game,current: Dictionary) -> void:
 	game.flee(leaving,"while the leader sat in jail")
 static func abandon_chance(crime,profile: Dictionary) -> float:
 	return clampf(float(rules(crime).abandon_daily)*(100.0-float(profile.trust))/50.0,0.0,1.0)
+static func valid_arms(arms: Variant) -> bool:
+	return arms is Dictionary and arms.keys().all(func(key):return key in preload("res://simulation/armory.gd").KEYS and whole(arms[key],1,100))
 static func valid_custody(crime,r: Dictionary,current: Dictionary,game) -> bool:
 	if not current.has("custody"):return current.stage!="custody"
 	var c: Variant=current.custody
-	if not c is Dictionary or c.size()!=7 or not c.get("abandoned") is Array or c.get("authority") not in AUTHORITIES or not whole(c.get("day"),int(current.day),int(game.state.day)) or not c.get("surrendered") is bool:return false
+	if not c is Dictionary or c.size()!=(8 if c.has("arms") else 7) or (c.has("arms") and not valid_arms(c.arms)) or not c.get("abandoned") is Array or c.get("authority") not in AUTHORITIES or not whole(c.get("day"),int(current.day),int(game.state.day)) or not c.get("surrendered") is bool:return false
 	if c.hearing_day!=int(c.day)+int(rules(crime).hearing_days[c.authority]) or not c.get("accused") is Array or c.accused.is_empty():return false
 	for id in c.accused:
 		if not whole(id,0,game.party_health.members.size()-1) or c.accused.count(id)!=1:return false

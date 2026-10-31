@@ -74,7 +74,7 @@ func run():
   check(Save.new().restore(bad)==null,"Invalid crafted inventory count rejects")
  var old: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-leathercraft-save-v1.json"))
  loaded=Save.new().restore(old)
- check(loaded!=null and loaded.state==Save.new().normalize(old.state) and loaded.characters.profiles==Save.new().normalize(old.characters),"Actual old perk save preserves state and prior background")
+ check(loaded!=null and loaded.state==Save.new().upgraded_state(old.state) and loaded.characters.profiles==Save.new().normalize(old.characters),"Actual old perk save preserves state and prior background")
  if loaded!=null:check(loaded.leathercraft.qualified(loaded,1),"Old Leatherworker cross-training retains its ability")
  var screen=load("res://ui/main.gd").new();root.add_child(screen);await process_frame
  var view=screen.departure_view

@@ -377,6 +377,7 @@ func restore(value: Variant):
 	# where a companion had already taken over, keep going.
 	if s.has("leader_succession") and (s.leader_succession!=true or value.party[0].get("alive")!=false):return null
 	if s.status=="traveling" and value.party[0].get("alive")==false:s["leader_succession"]=true
+	Simulation.Armory.settle(s)
 	game.state = normalize(s)
 	if value.has("team_conditions"):
 		if not game.team_conditions.valid(value.team_conditions,s):return null
@@ -555,6 +556,12 @@ func restore(value: Variant):
 		game.pending=warning
 	error = ""
 	return game
+
+## A saved state as restore() leaves it: normalized, with the arms an older journey set out with.
+func upgraded_state(state: Dictionary) -> Dictionary:
+	var s: Dictionary=normalize(state)
+	Simulation.Armory.settle(s)
+	return s
 
 func normalize(value: Variant) -> Variant:
 	if value is Dictionary:

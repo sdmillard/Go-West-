@@ -70,7 +70,7 @@ func run():
  restored=Save.new().restore(prior)
  check(restored!=null,"Actual previous-pelt-rules save loads under calibrated prices")
  if restored!=null:
-  check(restored.state==Save.new().normalize(prior.state),"Price migration preserves owned skins, cash and the entire saved state")
+  check(restored.state==Save.new().upgraded_state(prior.state),"Price migration preserves owned skins, cash and the entire saved state")
   check(restored.rng.state==int(prior.random),"Price migration does not advance the journey random stream")
   restored.state.landmark="fort_laramie";restored.state.next_landmark="fort_laramie";restored._arrive_landmark(true,false)
   var offers: Dictionary={}
@@ -89,7 +89,7 @@ func run():
  restored=Save.new().restore(legacy)
  check(restored!=null and legacy==original,"Actual pre-pelt save migrates without modifying its input")
  if restored!=null:
-  check(restored.state==Save.new().normalize(original.state),"Legacy state dictionary remains exactly intact on load")
+  check(restored.state==Save.new().upgraded_state(original.state),"Legacy state dictionary remains exactly intact on load")
   for key in ["food","money","bullets","day","salt"]:check(restored.state[key]==original.state[key],"Migration preserves existing "+key)
   check(restored.state.get("bison_hide",0)==0 and restored.state.get("deer_hide",0)==0 and restored.state.get("rabbit_pelt",0)==0,"Migration invents no trade goods")
  g=party();g.state.deer_hide=2

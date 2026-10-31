@@ -71,7 +71,7 @@ func load_data(value: Variant) -> bool:
 			if not _number(chance) or chance<0 or chance>1:return _fail("Invalid river stage chances")
 	ids.clear()
 	for lot in value.trade_lots:
-		if not lot is Dictionary or lot.get("item") not in ["food", "bullets", "medicine", "clothing", "oxen", "wheels", "axles", "tongues", "salt", "horses", "mules", "saddles", "pack_saddles", "saddlebags"] or (lot.has("post_lots") and (not _integer(lot.post_lots, 1) or lot.post_lots > 8)) or lot.item in ids or not lot.get("label") is String or not _integer(lot.get("amount"), 1) or not _integer(lot.get("buy_cents"), 1) or not _integer(lot.get("sell_cents"), 1) or lot.sell_cents >= lot.buy_cents:
+		if not lot is Dictionary or lot.get("item") not in ["food", "bullets", "medicine", "clothing", "oxen", "wheels", "axles", "tongues", "salt", "horses", "mules", "saddles", "pack_saddles", "saddlebags", "rifles", "shotguns", "pistols", "knives", "hatchets"] or (lot.has("post_lots") and (not _integer(lot.post_lots, 1) or lot.post_lots > 8)) or lot.item in ids or not lot.get("label") is String or not _integer(lot.get("amount"), 1) or not _integer(lot.get("buy_cents"), 1) or not _integer(lot.get("sell_cents"), 1) or lot.sell_cents >= lot.buy_cents:
 			return _fail("Invalid trade lot")
 		ids.append(lot.item)
 	data = value.duplicate(true)

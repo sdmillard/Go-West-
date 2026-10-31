@@ -498,6 +498,7 @@ static func trial(crime,game,current: Dictionary,surrendered: bool,authority: St
 		"penitentiary":text="Sentenced to the state penitentiary at Jefferson City: %s. Taken in restitution: $%.2f%s." % [held,paid/100.0,(" and "+", ".join(goods.keys().map(func(id):return "%d %s" % [goods[id],id]))) if not goods.is_empty() else ""]
 		"sent_east":text="Sent east under escort to a civil court: %s." % held
 		_:text="Sentence: %s. Taken: $%.2f%s.%s%s%s" % [kind,paid/100.0,(" and "+", ".join(goods.keys().map(func(id):return "%d %s" % [goods[id],id]))) if not goods.is_empty() else ""," You surrendered; no flogging." if surrendered and severity>=2 else (" The leader was flogged and wounded." if severity>=2 else ""),(" Banished: "+", ".join(banished.map(func(id):return game.party_health.members[id].name))+".") if not banished.is_empty() else "",(" Seized: "+seizure+".") if not seizure.is_empty() else ""]
+	if kind not in ["hanged","life","penitentiary","sent_east"]:Detention.return_arms(game,current)
 	current["sentence"]={"kind":kind,"day":int(game.state.day),"surrendered":surrendered,"charges":known.map(func(item):return item.id),"cents":paid,"goods":goods,"banished":banished,"seizure":seizure,"text":text,"authority":authority,"verdict":verdict,"jail_days":jail_days,"imprisoned":imprisoned}
 	current.resolution="tried"
 	current.stage="report"

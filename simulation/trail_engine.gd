@@ -1125,7 +1125,7 @@ func _trade_options(offer: Dictionary,at_post: bool) -> Array:
 	var days: int=context.trade_days(offer)
 	var when: String=", 1 day" if days>0 else ""
 	for lot in lots:
-		if lot.item == "salt" or lot.item in Mounts.KEYS:continue # Preserve the existing barter offer order.
+		if lot.item == "salt" or lot.item in Mounts.KEYS or lot.item in Armory.KEYS:continue # Preserve the existing barter offer order.
 		var cost := float(lot.buy_cents) / 100.0
 		var payment := float(lot.sell_cents) / 100.0
 		options.append({"label": "Buy %s · $%.2f%s" % [lot.label, cost, when], "lot": lot, "requires": {"money": cost}, "effects": {"money": -cost, lot.item: lot.amount, "days": days}, "result": "Bought " + lot.label + "."})
@@ -1138,9 +1138,9 @@ func _trade_options(offer: Dictionary,at_post: bool) -> Array:
 		if lot.item != "salt":continue
 		options.append({"label":"Buy %s · $%.2f%s" % [lot.label,lot.buy_cents/100.0,when],"lot":lot,"requires":{"money":lot.buy_cents/100.0},"effects":{"money":-lot.buy_cents/100.0,"salt":lot.amount,"days":days},"result":"Bought salt for preserving meat."})
 		options.append({"label":"Sell %s · $%.2f%s" % [lot.label,lot.sell_cents/100.0,when],"lot":lot,"requires":{"salt":lot.amount},"effects":{"money":lot.sell_cents/100.0,"salt":-lot.amount,"days":days},"result":"Sold salt."})
-	# Horses, mules and tack come last, after every older offer.
+	# Horses, mules and tack, then arms, come last, after every older offer.
 	for lot in lots:
-		if lot.item not in Mounts.KEYS:continue
+		if lot.item not in Mounts.KEYS and lot.item not in Armory.KEYS:continue
 		options.append({"label":"Buy %s · $%.2f%s" % [lot.label,lot.buy_cents/100.0,when],"lot":lot,"requires":{"money":lot.buy_cents/100.0},"effects":{"money":-lot.buy_cents/100.0,lot.item:lot.amount,"days":days},"result":"Bought "+lot.label+"."})
 		options.append({"label":"Sell %s · $%.2f%s" % [lot.label,lot.sell_cents/100.0,when],"lot":lot,"requires":{lot.item:lot.amount},"effects":{"money":lot.sell_cents/100.0,lot.item:-lot.amount,"days":days},"result":"Sold "+lot.label+"."})
 	if days>0:
@@ -1376,6 +1376,7 @@ func counter_checkout(cart: Dictionary,venue: String="") -> bool:
 static func _unit_name(item: String,n: int) -> String:
 	if preload("res://simulation/trail_income.gd").is_keepsake(item):return "personal keepsake"
 	var names: Dictionary={"buckskin":["dressed buckskin","dressed buckskins"],"buckskin_gloves":["pair of buckskin gloves","pairs of buckskin gloves"],"bison_hide":["bison hide","bison hides"],"deer_hide":["deer hide","deer hides"],"rabbit_pelt":["rabbit pelt","rabbit pelts"],"food":["lb of food","lb of food"],"salt":["lb of salt","lb of salt"],"bullets":["bullet","bullets"],"medicine":["care kit","care kits"],"clothing":["clothing set","clothing sets"],"oxen":["ox","oxen"],"wheels":["wheel","wheels"],"axles":["axle","axles"],"tongues":["tongue","tongues"],"horses":["horse","horses"],"mules":["mule","mules"],"saddles":["saddle","saddles"],"pack_saddles":["pack saddle","pack saddles"],"saddlebags":["pair of saddlebags","pairs of saddlebags"]}
+	names.merge(Armory.NAMES)
 	return names.get(item,[item,item])[0 if n==1 else 1]
 
 ## The crime preview for this stop's target, or (place) one chosen from crime.local_places, as VILLAINY > STEAL lists them.

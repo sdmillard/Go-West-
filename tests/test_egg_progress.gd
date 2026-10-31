@@ -13,7 +13,7 @@ func run():
  var store=Save.new();var g=store.restore(original)
  check(g!=null,"Actual day-76 save loads after narrowly scoped cycle repair")
  if g==null:quit(1);return
- check(g.state==store.normalize(original.state) and g.provisions.fresh==store.normalize(original.fresh),"Repair does not alter supplies, cash, time, or existing fresh batches")
+ check(g.state==store.upgraded_state(original.state) and g.provisions.fresh==store.normalize(original.fresh),"Repair does not alter supplies, cash, time, or existing fresh batches")
  check(g.livestock.record.products==store.normalize(original.livestock.products),"Loading does not grant an egg or any other table food")
  check(str(g.rng.state)==original.random and str(g.party_health.rng.state)==original.health_random and str(g.survival.rng.state)==original.survival_random,"Repair preserves every saved random stream")
  check(g.livestock.record.animals.all(func(a):return a.egg_progress<1),"Repaired cycle remains below the laying threshold")
