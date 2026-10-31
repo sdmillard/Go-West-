@@ -47,7 +47,7 @@ func run():
  check(Store.new().capture(game)==snapshot,"Changing demand preview spends no time, goods or randomness")
  check(not game.demand_robbery({"cash_cents":9999999}) and Store.new().capture(game)==snapshot,"Impossible demands reject atomically")
  check(not game.demand_robbery({"wagon":2}),"Cannot tow multiple demanded frames")
- check(not game.demand_robbery({"wagon":1}) and Store.new().capture(game)==snapshot,"Cannot seize a second active wagon")
+ check(game.robbery_quote({"wagon":1}).valid and Store.new().capture(game)==snapshot,"A second wagon can be demanded when separate people and oxen are available")
  check(not game.demand_robbery({"cash_cents":-1}) and not game.demand_robbery({"free_money":1}),"Negative or unknown demand entries reject")
  var demand: Dictionary={"cash_cents":100,"wagon":1,"oxen":1,"food":5}
  var won=false

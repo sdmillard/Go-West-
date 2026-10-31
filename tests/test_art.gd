@@ -48,6 +48,55 @@ func _initialize() -> void:
 	# 48x40 crossing frames, 16x16 store icons.
 	for sheet in [["horses", 384, 308], ["cross_horses", 384, 320], ["horse_icons", 80, 16]]:
 		check(load("res://art/pixels/%s.png" % sheet[0]).get_size() == Vector2(sheet[1], sheet[2]), "Horse sheet keeps its layout: " + sheet[0])
+	# Approved Cascades pack: exact runtime slicing and hard pixel edges.
+	for asset in [["rafting_obstacles",128,96,32,32],["rafting_foam",128,16,32,16],["rafting_raft",72,48,72,48]]:
+		var image: Image=load("res://art/pixels/%s.png" % asset[0]).get_image()
+		check(image.get_size()==Vector2i(asset[1],asset[2]),"Rafting art keeps its cell layout: "+asset[0])
+		var crisp:=true
+		for y in range(image.get_height()):
+			for x in range(image.get_width()):
+				var alpha:=image.get_pixel(x,y).a
+				if alpha!=0 and alpha!=1:crisp=false
+		check(crisp,"Rafting art has binary alpha: "+asset[0])
+		for row in range(int(asset[2])/int(asset[4])):
+			var frames: Dictionary={}
+			for frame in range(int(asset[1])/int(asset[3])):
+				var cell:=image.get_region(Rect2i(frame*asset[3],row*asset[4],asset[3],asset[4]))
+				check(not cell.is_invisible(),"Rafting cell is populated: %s/%d/%d" % [asset[0],row,frame])
+				frames[cell.get_data().hex_encode()]=true
+			if asset[0]!="rafting_raft":check(frames.size()>=3,"Rafting water/debris frames visibly animate: %s/%d" % [asset[0],row])
+	# Isometric tactical combat Aseprite sheets: exact 32x32 cell layouts and binary alpha.
+	for asset in [["tactical_tiles",192,32,32,32],["tactical_cover",192,64,32,32],["tactical_units",192,96,32,32]]:
+		var image: Image=load("res://art/pixels/%s.png" % asset[0]).get_image()
+		check(image.get_size()==Vector2i(asset[1],asset[2]),"Tactical combat art keeps its cell layout: "+asset[0])
+		var crisp:=true
+		for y in range(image.get_height()):
+			for x in range(image.get_width()):
+				var alpha:=image.get_pixel(x,y).a
+				if alpha!=0 and alpha!=1:crisp=false
+		check(crisp,"Tactical combat art has binary alpha: "+asset[0])
+		for row in range(int(asset[2])/int(asset[4])):
+			for frame in range(int(asset[1])/int(asset[3])):
+				var cell:=image.get_region(Rect2i(frame*asset[3],row*asset[4],asset[3],asset[4]))
+				check(not cell.is_invisible(),"Tactical combat cell is populated: %s/%d/%d" % [asset[0],row,frame])
+	# Approved farm-shepherd asset: idle, walking and sitting, eight 48x44 cells each.
+	var dog: Image = load("res://art/pixels/dog.png").get_image()
+	check(dog.get_size() == Vector2i(384,132), "Dog keeps the three-row animation layout")
+	var dog_crisp := true
+	for y in range(dog.get_height()):
+		for x in range(dog.get_width()):
+			var alpha := dog.get_pixel(x,y).a
+			if alpha != 0.0 and alpha != 1.0: dog_crisp = false
+	check(dog_crisp,"Dog has binary alpha for nearest-neighbor drawing")
+	for row in range(3):
+		var distinct: Dictionary = {}
+		for frame in range(8):
+			var cell := dog.get_region(Rect2i(frame*48,row*44,48,44))
+			distinct[cell.get_data().hex_encode()] = true
+			check(not cell.is_invisible(),"Dog animation cell is populated")
+			var bounds := cell.get_used_rect()
+			check(bounds.position.x > 0 and bounds.end.x < 48 and bounds.position.y > 0 and bounds.end.y <= 40,"Dog stays inside its cell and ground baseline")
+		check(distinct.size() >= (6 if row == 1 else 2),"Dog poses animate with distinct frames")
 	var scenes = preload("res://ui/location_scenes.gd").new()
 	# Ambient effects sit inside the pictures they decorate.
 	var ambience: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/scene_ambience.json"))

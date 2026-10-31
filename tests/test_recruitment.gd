@@ -43,7 +43,7 @@ func run():
 	var game=party()
 	stop(game)
 	var before=Store.new().capture(game)
-	check(game.open_companions() and not command(game,"search"),"A full party cannot search or overfill")
+	check(game.open_companions() and game.pending.choices.any(func(c):return c.get("recruit_command","")=="search"),"Five starting travelers can look for additional companions")
 	check(command(game,"back") and Store.new().capture(game)==before,"Canceling recruitment is free and pure")
 	kill(game,1)
 	var grave: Dictionary=game.crime.record.remains.back().duplicate(true)

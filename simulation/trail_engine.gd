@@ -20,8 +20,10 @@ var field_outings=preload("res://simulation/field_outings.gd").new()
 var camp_repair=preload("res://simulation/camp_repair.gd").new()
 var camp_tasks=preload("res://simulation/camp_tasks.gd").new()
 var wagon_cache: Dictionary={}
-const MAX_TRAVELERS := 32
-const PARTY_CAPACITY := 5
+const MAX_TRAVELERS := 1000000 # File-size validation bounds records; there is no gameplay roster cap.
+const PARTY_CAPACITY := 5 # Starting party only.
+const Train=preload("res://simulation/wagon_train.gd")
+var native_encounters=preload("res://simulation/native_encounters.gd").new()
 var recruitment=preload("res://simulation/party_recruitment.gd").new()
 var social=preload("res://simulation/party_social.gd").new()
 var leathercraft=preload("res://simulation/leathercraft.gd").new()
@@ -51,8 +53,8 @@ const WATERLESS := {"ox_strain": 3, "thirst": 1}
 ## and these encounters three times as likely among them.
 const UNREST := {"chance_factor": 2.0, "weight_factor": 3, "events": ["riders", "bandits"]}
 ## Placeholder river travel: raft or boat miles per day before wind, and the
-## cost of a wreck when running the Cascades instead of portaging.
-const RIVER := {"miles": 15, "portage_days": 2, "portage_risk": 0.3, "wreck": {"food": -60, "clothing": -1, "health": -15}}
+## portage time. Interactive Cascades consequences live in data/rafting.json.
+const RIVER := {"miles":15,"portage_days":2}
 var route = Route.new()
 # Stops reached so far, in order, from the start; records which road was taken.
 var route_path: Array = []
@@ -65,6 +67,11 @@ var survival = Survival.new()
 var trail_events = Catalog.new()
 var service_return: Dictionary = {}
 var team_conditions=preload("res://simulation/team_conditions.gd").new()
+var rafting=preload("res://simulation/rafting.gd").new()
+var raft: Dictionary={}
+var rafting_history: Array[Dictionary]=[]
+var last_rafting: Dictionary={}
+var dogs=preload("res://simulation/working_dog.gd").new()
 var livestock=preload("res://simulation/livestock.gd").new()
 var fishing=preload("res://simulation/fishing.gd").new()
 var hunting = preload("res://simulation/hunting.gd").new()
@@ -73,6 +80,9 @@ var last_hunt_recovery: Dictionary = {}
 var hunt: Dictionary = {}
 var supply_history: Array[Dictionary] = []
 var provisions = preload("res://simulation/provisions.gd").new()
+var tactical = preload("res://simulation/tactical_combat.gd").new()
+var tactical_session: Dictionary = {}
+var last_tactical: Dictionary = {}
 
 ## setup=false retains the original pre-outfitted short-leg fixture for scripted simulations.
 ## The player interface always passes setup=true and must call depart before travel.
@@ -130,6 +140,16 @@ func _init(seed_value: int = 1848, mode: String = "classic", setup: bool = false
 	if not provisions.error.is_empty():
 		error = provisions.error
 		state.status = "error"
+	if not native_encounters.error.is_empty():
+		error=native_encounters.error;state.status="error"
+	for place in native_encounters.data.get("sites",{}):
+		if end_at.is_empty() and not route.nodes.has(place):error="Unknown Native encounter location.";state.status="error"
+	if not rafting.error.is_empty():
+		error=rafting.error
+		state.status="error"
+	if not dogs.error.is_empty():
+		error=dogs.error
+		state.status="error"
 	if not livestock.error.is_empty():
 		error=livestock.error
 		state.status="error"
@@ -193,6 +213,7 @@ func depart(profession: String, names: Array, month: int, cart: Dictionary, cust
 	for key in livestock.GOODS:
 		if int(cart.get(key,0))>0:state[key]=int(cart[key])
 	livestock.sync(self)
+	if int(cart.get("dog",0))>0:dogs.acquire(self,false)
 	for key in Mounts.KEYS:
 		if int(cart.get(key,0))>0:state[key]=int(cart[key])
 	team_conditions.start_legacy(self)
@@ -263,6 +284,7 @@ func _set_next_leg(edge_index: int = 0) -> void:
 	state.river_stage = ""
 
 func _arrive_landmark(revisit: bool=false,roll_stage: bool=true) -> void:
+	if state.landmark!="deschutes":native_encounters.Story.end_guide(native_encounters,self,"arrival at "+str(state.landmark))
 	var approach: String=str(pending.get("approach_direction",Direction.heading(self))) if revisit else Direction.heading(self)
 	route_path=travelled_path().duplicate()
 	if not revisit:
@@ -288,7 +310,7 @@ func _arrive_landmark(revisit: bool=false,roll_stage: bool=true) -> void:
 		description += river_conditions()
 		if node.has("ferry_dollars"):
 			# Ferrymen on the snow-fed rivers charged by the current: high water could double the fare.
-			var fare: float=(float(node.get("ferry_high_dollars",node.ferry_dollars)) if state.river_stage=="high" else float(node.ferry_dollars))+float(livestock.data.ferry_head_cents)/100.0*(livestock.count(state,"dairy_cows")+livestock.count(state,"goats"))
+			var fare: float=(float(node.get("ferry_high_dollars",node.ferry_dollars)) if state.river_stage=="high" else float(node.ferry_dollars))*maxi(1,Train.count(state))+float(livestock.data.ferry_head_cents)/100.0*(livestock.count(state,"dairy_cows")+livestock.count(state,"goats"))
 			options.append({"label": "Hire the ferry · $%.2f, 1 day" % fare,
 				"action": "cross", "method": "ferry", "requires": {"money": fare}, "effects": {"money": -fare, "days": 1}})
 		options.append({"label": "Attempt a ford · 1 day, risk to supplies", "action": "cross", "method": "ford", "effects": {"days": 1}, "risk": 0.65 if state.river_stage == "high" else 0.08})
@@ -311,10 +333,11 @@ func _arrive_landmark(revisit: bool=false,roll_stage: bool=true) -> void:
 		if state.vehicle=="foot":options[0]={"label":"Descend carefully on foot · 1 day","action":"leave","effects":{"days":1}}
 		else:options.insert(1,{"label":"Hurry the descent · 1 day, cargo/injury risk", "action":"leave", "effects":{"days":1}, "descent_risk":0.25})
 	if node.get("portage",false):
+		description="Six miles of rapids. Most parties portaged, often with Chinookan help. Running risks cargo, injuries and drowning."
 		options[0] = {"label":"Portage around the rapids · %d days" % int(RIVER.portage_days), "action":"leave", "effects":{"days":int(RIVER.portage_days)}}
-		options.insert(1,{"label":"Run the rapids · 1 day, risk of wreck", "action":"leave", "effects":{"days":1}, "portage_risk":float(RIVER.portage_risk)})
+		options.insert(1,{"label":"Run the rapids · steer the raft · 1 day", "action":"leave", "effects":{"days":1}, "rafting":true})
 	if node.has("toll_dollars"):
-		var toll := (0.0 if state.vehicle=="foot" else float(node.toll_dollars)) + float(node.get("toll_per_ox",0)) * (int(state.oxen)+livestock.count(state,"dairy_cows")+livestock.count(state,"goats"))
+		var toll := (0.0 if state.vehicle=="foot" else float(node.toll_dollars)*Train.count(state)) + float(node.get("toll_per_ox",0)) * (int(state.oxen)+livestock.count(state,"dairy_cows")+livestock.count(state,"goats"))
 		options[0].label = "Pay Barlow toll · $%.2f, then continue" % toll
 		if state.vehicle=="foot":options[0].label="Continue on foot · no wagon toll" if toll==0 else "Pay stock toll · $%.2f" % toll
 		options[0]["requires"] = {"money":toll}
@@ -324,6 +347,7 @@ func _arrive_landmark(revisit: bool=false,roll_stage: bool=true) -> void:
 		options.append({"label":"Read trail notes", "action":"notes"})
 	if node.id == "fort_kearny" and int(calendar().month) < 6 and int(calendar().year) == 1848:
 		description += "\nYou arrive before June; construction has not yet begun."
+	if node.id=="columbia_raft" and Direction.heading(self)=="west":options.append(native_encounters.portage_choice(self))
 	options.append_array(context.activity_choices(self))
 	if context.data.horse_traders.has(node.id):options.append({"label":"Trade for horses with the %s" % context.data.horse_traders[node.id].name,"action":"trade","horse_traders":true})
 	options.append({"label": "Rest here · 1 day, food consumed", "action": "rest"})
@@ -333,6 +357,7 @@ func _arrive_landmark(revisit: bool=false,roll_stage: bool=true) -> void:
 func _choose_landmark(index: int) -> bool:
 	refresh_stop_offers()
 	var choice: Dictionary = pending.choices[index]
+	var support_factor: float=crossing_support_factor()
 	if choice.action=="leave" and not characters.departure_candidates(self).is_empty():return open_departure_review()
 	if choice.action == "trade" and choice.get("horse_traders",false):
 		return open_horse_traders()
@@ -360,14 +385,14 @@ func _choose_landmark(index: int) -> bool:
 		journal.append("Day %d · Rested at %s." % [state.day, route.nodes[state.landmark].name])
 		if not crime.check_pursuit(self):crime.check_wanted(self)
 		return true
+	if choice.get("rafting",false) or choice.has("portage_risk"):
+		return start_rafting()
 	last_crossing = {}
 	if choice.action == "cross":
 		last_crossing = {"method": choice.method, "place": route.nodes[state.landmark].name, "mishap": false, "lost": false, "stage": state.river_stage}
+	if choice.get("native_portage",false):journal.append("Day %d · Hired Upper Chinookan crews for %d wagonload(s), $%.2f. Portage labor and time are paid; the rapids are bypassed." % [state.day,maxi(1,wagon_count()),-float(choice.effects.money)])
+	if choice.get("native_portage",false):native_encounters.Story.redeem_portage(native_encounters,self)
 	_apply(choice.get("effects", {}), "injuries", choice.get("rest", false))
-	if state.status == "traveling" and choice.has("portage_risk") and rng.randf() < float(choice.portage_risk):
-		var wreck_food: int = state.food
-		_apply(RIVER.wreck,"near drowning")
-		journal.append("Day %d · The raft breaks up in the Cascades. Lost %d lb food; the party is half drowned." % [state.day,wreck_food-int(state.food)])
 	if state.status == "traveling" and choice.has("descent_risk") and rng.randf() < choice.descent_risk:
 		var descent_food_before: int = state.food
 		var descent_wheels_before: int = state.wheels
@@ -377,7 +402,9 @@ func _choose_landmark(index: int) -> bool:
 	var food_before: int = state.food
 	var health_before: int = state.health
 	var clothing_before: int = state.clothing
-	if state.status == "traveling" and choice.has("risk") and rng.randf() < float(choice.risk)*context.crossing_factor(state.landmark):
+	if state.status=="traveling" and choice.has("risk") and Train.count(state)>1:
+		_train_crossing(choice,support_factor)
+	elif state.status == "traveling" and choice.has("risk") and rng.randf() < float(choice.risk)*support_factor:
 		_apply({"food": -30, "health": -15, "clothing": -1}, "crossing injuries")
 		last_crossing.mishap = true
 		# Swimming stock in high water: the current takes an animal.
@@ -388,6 +415,7 @@ func _choose_landmark(index: int) -> bool:
 			last_crossing["animal_lost"]=kind
 	if not last_crossing.is_empty():
 		livestock.cross(self,last_crossing)
+		dogs.cross(self,last_crossing)
 		last_crossing.merge({"day": state.day, "landmark": state.landmark,
 			"food_lost": food_before - int(state.food),
 			"clothing_lost": clothing_before - int(state.clothing),
@@ -410,6 +438,23 @@ func _choose_landmark(index: int) -> bool:
 	_schedule_event(false)
 	return true
 
+func crossing_support_factor() -> float:
+	return minf(context.crossing_factor(str(state.landmark)),native_encounters.guidance_factor(self))
+
+func _train_crossing(choice: Dictionary,support_factor: float=1.0) -> void:
+	last_crossing["wagons"]=[]
+	for wagon in state.wagon_train:
+		var mishap: bool=rng.randf()<float(choice.risk)*support_factor
+		last_crossing.wagons.append({"wagon":int(wagon.id),"driver":int(wagon.driver),"mishap":mishap})
+		if not mishap:continue
+		last_crossing.mishap=true
+		_apply({"food":-30,"clothing":-1},"crossing injuries")
+		var driver: Dictionary=party_health.members[int(wagon.driver)]
+		if party_health.is_active(driver):party_health.affect(driver,-15,int(state.day),"crossing injuries")
+	_collect_health_events()
+	state.health=party_health.average_health();state.party_size=party_health.living_count()
+	_check_health()
+
 func crossing_summary(result: Dictionary) -> String:
 	var method: String = {"ford": "fording", "float": "floating", "ferry": "ferry", "seized": "working the taken ferry","swim":"swimming with packs","wade":"wading with packs","horses":"swimming the horses" if result.get("stage","")=="high" else "fording with the horses"}.get(result.method,str(result.method))
 	var text := "%s · %s. " % [result.place, method]
@@ -418,6 +463,8 @@ func crossing_summary(result: Dictionary) -> String:
 		if result.has("animal_lost"):text += "A %s was swept downstream and drowned. " % ("mule" if result.animal_lost=="mules" else "horse")
 	else:
 		text += "No cargo lost. "
+	if result.has("wagons"):text += "%d of %d wagons had mishaps. " % [result.wagons.filter(func(w):return w.mishap).size(),result.wagons.size()]
+	if result.has("dog_lost"):text += "%s was lost in the river. " % result.dog_lost
 	text += "The journey ended during this crossing." if result.lost else "The party reached the far bank."
 	return text
 
@@ -446,6 +493,9 @@ func configure(pace: int, rations: int) -> void:
 		state.rations = clampi(rations, 0, 2)
 
 func travel() -> bool:
+	if _can_act() and not Train.ready(self).is_empty():
+		pending={"id":"train_unready","title":"Reorganize the wagon train","text":Train.ready(self),"choices":[{"label":"Return to camp","effects":{},"result":"The train remains stopped."}]}
+		return true
 	if camp_repair.blocked(self):return false
 	if _can_act() and field_outings.warn(self):return true
 	if not _can_act():
@@ -476,8 +526,12 @@ func travel() -> bool:
 		if state.status != "traveling":
 			return true
 		if walking_overloaded():return true
+		if not Train.ready(self).is_empty():
+			pending={"id":"train_unready","title":"Reorganize the wagon train","text":Train.ready(self),"choices":[{"label":"Return to camp","effects":{},"result":"The train remains stopped."}]}
+			return true
 		if on_river:distance=maxi(1,roundi((int(RIVER.miles)+rng.randi_range(-2,2))*float(survival.weather.speed)))
 		elif state.vehicle=="foot":distance=walking_distance()
+		elif Train.count(state)>1:distance=maxi(1,roundi(distance*Train.speed(self)))
 		else:distance = maxi(1, roundi(distance * survival.movement_factor(team_conditions.pulling(state), state.ox_health, state.fatigue, 0, state.terrain, int(calendar().month), context.region(self)) * provisions.movement_factor(provisions.cargo(state),team_conditions.pulling(state))))
 		var east: bool=Direction.heading(self)=="east"
 		distance=mini(distance,int(state.leg_miles) if east else int(state.leg_length)-int(state.leg_miles))
@@ -516,10 +570,12 @@ func rest_in_camp() -> bool:
 	return rest()
 
 func can_choose(index: int) -> bool:
-	if pending.is_empty() or index < 0 or index >= pending.choices.size() or state.status != "traveling":
+	if not raft.is_empty() or pending.is_empty() or index < 0 or index >= pending.choices.size() or state.status != "traveling":
 		return false
 	var choice: Dictionary = pending.choices[index]
 	if choice.has("bandit_payment") and (pending.id!="bandits" or not combat.BanditDemand.valid_choice(choice) or (choice.get("bandit_wagon",false) and state.vehicle!="wagon")):return false
+	if pending.get("native_menu",false):return native_encounters.can_choose(self,index)
+	if choice.has("native_portage") and not native_encounters.valid_portage(self,choice):return false
 	if pending.get("recruit_menu",false) or pending.get("dismiss_menu",false):return recruitment.can_choose(self,index)
 	if pending.get("crime_menu",false):return crime.can_choose(self,str(choice.get("crime_command","")))
 	if pending.get("riders_menu",false):return crime.Wanted.can_choose_rider(self,index)
@@ -528,6 +584,7 @@ func can_choose(index: int) -> bool:
 	if camp_repair.blocked(self) and choice.get("action","") in ["leave","cross"]:return false
 	if choice.has("camp_repair_part") and (state.vehicle!="wagon" or not camp_repair.work.is_empty()):return false
 	if choice.get("care",0)==12 and not context.local_care(self):return false
+	if choice.get("action","")=="cross" and not Train.ready(self).is_empty():return false
 	if choice.get("method","")=="ferry" and crime.ferry_refused(self,str(state.landmark)):return false
 	if not context.can_trade(choice) or not crime.can_trade(self,choice) or (choice.has("activity") and choice.activity in context.record.activities):return false
 	for key in choice.get("requires", {}):
@@ -536,6 +593,8 @@ func can_choose(index: int) -> bool:
 	return true
 
 func choose(index: int) -> bool:
+	if not tactical_session.is_empty():
+		tactical_session = {}
 	if pending.get("outing_warning",false):return field_outings.choose_warning(self,index)
 	if not can_choose(index):
 		return false
@@ -543,6 +602,7 @@ func choose(index: int) -> bool:
 	var flight: bool=outward.get("crime_command","") in ["flee","ride","breakout"]
 	var boundary: bool=outward.get("action","")=="cross" or (outward.get("action","")=="leave" and route.nodes[state.landmark].next.size()>1)
 	if (outward.get("action","") in ["leave","cross"] or flight) and field_outings.warn(self,flight,boundary):return true
+	if pending.get("native_menu",false):return native_encounters.choose(self,index)
 	if pending.get("recruit_menu",false) or pending.get("dismiss_menu",false):return recruitment.choose(self,index)
 	if pending.get("crime_menu",false):return crime.choose(self,str(pending.choices[index].crime_command))
 	if pending.get("riders_menu",false):return crime.Wanted.choose_rider(self,index)
@@ -602,8 +662,10 @@ func choose(index: int) -> bool:
 			_schedule_event(false)
 	return true
 
+func wagon_count() -> int:return Train.count(state)
+
 func _can_act() -> bool:
-	return pending.is_empty() and state.status == "traveling" and hunt.is_empty()
+	return pending.is_empty() and state.status == "traveling" and hunt.is_empty() and raft.is_empty()
 
 func _tick_day(resting: bool, team_working: bool = false, camp_action: String = "") -> void:
 	if not team_conditions.valid(team_conditions.record,state):team_conditions.start_legacy(self)
@@ -661,7 +723,9 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 		if not hunt.is_empty():hunt["_meal_food"]=field_before-provisions.fresh.filter(func(b):return b.get("_hunt_meal",false)).reduce(func(n,b):return n+int(b.pounds),0)-float(meal.get("hunt_fraction",0))
 		party_health.feed_vitamins(vitamin_coverage)
 	if not state.extended_route:state.food = maxi(0, state.food - needed)
-	if state.extended_route:livestock.pack(self)
+	if state.extended_route:
+		dogs.tick(self,resting,team_working,camp_action=="hunt" and hunt.has("dog"))
+		livestock.pack(self)
 	var recovered_food: bool=provisions.Shortfall.tick(self,eaten,needed) if state.extended_route else true
 	if not fed:
 		if not state.extended_route:_change_health(-18,"lack of food")
@@ -754,6 +818,7 @@ func _apply(effects: Dictionary, health_cause: String = "injuries", resting: boo
 				state.items.append(effects[key])
 		elif key == "vehicle":
 			state.vehicle = effects[key]
+			if state.vehicle=="foot" and state.has("wagon_train"):state.wagon_train=[];state.erase("repair_wagon_id")
 		elif key == "money":
 			state.money = maxf(0.0, snappedf(float(state.money) + float(effects[key]), 0.01))
 		elif key == "health":
@@ -859,6 +924,9 @@ func _roll_trail_event() -> void:
 		if event.id=="horse_thieves" and camp_tasks.stock_guarded(self):
 			weighted=weighted.duplicate(true)
 			weighted.weight=maxi(1,int(weighted.weight)/int(provisions.data.mounts.guard_factor))
+		if event.id=="horse_thieves" and dogs.ready("watch"):
+			weighted=weighted.duplicate(true)
+			weighted.weight=maxi(1,int(float(weighted.weight)/float(dogs.data.theft_weight_factor)))
 		candidates.append(weighted)
 		weight += int(weighted.weight)
 	if weight == 0:
@@ -887,6 +955,7 @@ func _present_trail_event(event: Dictionary) -> void:
 	if content.has("condition_choices"):
 		content.condition = content.condition_choices[survival.rng.randi_range(0, content.condition_choices.size() - 1)]
 		content.text = content.text.replace("{injury}", str(party_health.conditions[content.condition].name).to_lower())
+	dogs.warn(self,content)
 	combat.prepare(self,content)
 	if content.id == "riders" and survival.rng.randf() < 0.5:
 		# Intentions are a separate hidden draw, not an ethnic identity.
@@ -925,7 +994,7 @@ func _present_trail_event(event: Dictionary) -> void:
 	journal.append("Day %d · %s. %s" % [state.day, content.title, content.text])
 
 func can_service() -> bool:
-	return state.extended_route and state.status == "traveling" and hunt.is_empty() and (pending.is_empty() or pending.has("landmark"))
+	return state.extended_route and state.status == "traveling" and hunt.is_empty() and raft.is_empty() and (pending.is_empty() or pending.has("landmark"))
 
 func _service_menu(title: String, text: String, options: Array) -> bool:
 	if not can_service():
@@ -999,12 +1068,17 @@ func open_horse_traders() -> bool:
 	var left: int=int(herd.horses)-int(context.record.spent.get(key+"|buy_horses",0))
 	var options: Array=[]
 	for offer in herd.offers:
+		var agreed_label: String=offer.label
 		var effects: Dictionary={"horses":1,"days":days}
 		var requires: Dictionary={}
 		for item in offer.give:
-			requires[item]=offer.give[item]
-			effects[item]=-offer.give[item]
-		var choice: Dictionary={"label":"%s%s · %d left" % [offer.label," · 1 day" if days>0 else "",maxi(0,left)],"requires":requires,"effects":effects,"market_key":key+"|buy_horses","stock_limit":int(herd.horses),"result":offer.label.replace("Trade","Traded").replace("Pay","Paid")+"."}
+			var amount: float=float(offer.give[item])
+			if item=="money" and state.landmark=="grande_ronde" and native_encounters.Story.standing(native_encounters,"grande_ronde")>0:
+				amount=snappedf(amount*0.95,0.01)
+				agreed_label="Pay $%.2f in coin for a horse · agreed price" % amount
+			requires[item]=amount
+			effects[item]=-amount
+		var choice: Dictionary={"label":"%s%s · %d left" % [agreed_label," · 1 day" if days>0 else "",maxi(0,left)],"requires":requires,"effects":effects,"market_key":key+"|buy_horses","stock_limit":int(herd.horses),"result":agreed_label.replace("Trade","Traded").replace("Pay","Paid")+"."}
 		if days>0:choice["visit_key"]=key+"|visit"
 		options.append(choice)
 	return _service_menu(str(herd.name),str(herd.text)+("\nThe first trade costs a day and meals; more trades here take no extra time." if days>0 else ""),options)
@@ -1231,7 +1305,10 @@ func counter_quote(cart: Dictionary,venue: String="") -> Dictionary:
 	result.effects=effects
 	var after: Dictionary=Produce.model_after(self,effects)
 	if not after.valid:
-		result.message="That basket sells the same food twice."
+		result.message=after.get("message","That basket has invalid goods, drivers or draft teams.")
+		return result
+	if int(effects.get("wagon",0))<0 and camp_repair.blocked(self):
+		result.message="Repair the damaged wagon before selling frames from this train."
 		return result
 	if moved==0:
 		result.message="Choose goods to buy or sell."
@@ -1523,7 +1600,7 @@ func _update_river_stage() -> void:
 			option.risk = crime.seized_risk(self,str(state.landmark))
 
 func start_hunt(outfit: Dictionary={}) -> bool:
-	if not _can_act() or not state.extended_route or state.bullets < 1:
+	if not _can_act() or not state.extended_route or (state.bullets < 1 and not dogs.ready("hunt")):
 		return false
 	var field: Dictionary={}
 	if not outfit.is_empty():
@@ -1538,6 +1615,7 @@ func start_hunt(outfit: Dictionary={}) -> bool:
 	camp_tasks.begin(self,"hunt")
 	hunting_outings += 1
 	hunt = hunting.begin(int(state.seed), hunting_outings, int(state.miles), route.nodes[state.landmark].get("hunting_region","plains"),not field.is_empty() and field.kit=="wagon",float(field.get("search_factor",1.0)))
+	dogs.begin_hunt(self)
 	if camp_tasks.enabled():hunt["_camp_helpers"]=camp_tasks.day_plan.get("jobs",[]).filter(func(j):return j.job=="hunt_help").map(func(j):return int(j.member))
 	if not field.is_empty():
 		field["condition"]=Mounts.condition(state)
@@ -1626,6 +1704,7 @@ func hunt_shot(target: int) -> bool:
 func advance_hunt(delta: float) -> void:
 	if not hunt.is_empty() and hunt.get("activity","")!="fish" and is_finite(delta) and delta > 0:
 		hunting.tick(hunt, delta)
+		dogs.hunt_step(self)
 
 func hunt_fire_at(point: Vector2) -> bool:
 	if hunt.is_empty() or hunt.get("activity","")=="fish" or not point.is_finite():
@@ -1672,6 +1751,7 @@ func finish_hunt(pelt_cart: Dictionary={}) -> bool:
 	if not pelt_cart.is_empty():
 		skins=pelt_quote(pelt_cart)
 		if not skins.valid:return false
+	if hunt.get("activity","")!="fish":dogs.finish_hunt(self)
 	var outing: Dictionary=hunt.duplicate(true)
 	if hunt.has("field"):
 		for key in hunt.field.inventory:state[key]=int(state.get(key,0))+int(hunt.field.inventory[key])
@@ -1872,6 +1952,11 @@ func refresh_stop_offers() -> void:
 	if not pending.has("landmark") or pending.landmark!=state.landmark:
 		return
 	for choice in pending.choices:
+		if choice.get("method","")=="ferry" and route.nodes[state.landmark].has("ferry_dollars"):
+			var node: Dictionary=route.nodes[state.landmark]
+			var fare: float=(float(node.get("ferry_high_dollars",node.ferry_dollars)) if state.river_stage=="high" else float(node.ferry_dollars))*maxi(1,Train.count(state))+float(livestock.data.ferry_head_cents)/100.0*(livestock.count(state,"dairy_cows")+livestock.count(state,"goats"))
+			choice.requires={"money":fare};choice.effects.money=-fare
+			choice.label="Hire the ferry · $%.2f, 1 day" % fare
 		if choice.get("method","")=="ferry" and crime.ferry_refused(self,str(state.landmark)):
 			choice.label="The ferry crew will not carry your party"
 	if not crime.scenes.has(state.landmark):
@@ -1894,7 +1979,7 @@ func _refresh_toll_offer() -> void:
 				choice["requires"] = {}
 				choice["effects"] = {}
 		return
-	var toll := snappedf((0.0 if state.vehicle=="foot" else float(node.toll_dollars)) + float(node.get("toll_per_ox",0)) * (int(state.oxen)+livestock.count(state,"dairy_cows")+livestock.count(state,"goats")),0.01)
+	var toll := snappedf((0.0 if state.vehicle=="foot" else float(node.toll_dollars)*Train.count(state)) + float(node.get("toll_per_ox",0)) * (int(state.oxen)+livestock.count(state,"dairy_cows")+livestock.count(state,"goats")),0.01)
 	for choice in pending.choices:
 		if choice.get("action","") == "leave":
 			choice.label = "Pay Barlow toll · $%.2f, then continue" % toll
@@ -1920,6 +2005,8 @@ func season_notice(days_ahead: int=0) -> String:
 
 func current_party_slots() -> Array:
 	return recruitment.slots(self)
+
+func open_native_contacts() -> bool:return native_encounters.open(self)
 
 func open_companions() -> bool:
 	return recruitment.open(self)
@@ -1984,7 +2071,9 @@ func produce_drying_offer() -> Dictionary:return Produce.drying_offer(self)
 func dry_produce() -> bool:return Produce.dry(self)
 
 func turn_direction(to: String) -> bool:
-	return Direction.turn(self,to)
+	var changed: bool=Direction.turn(self,to)
+	if changed and to=="east":native_encounters.Story.end_guide(native_encounters,self,"the party turned east")
+	return changed
 
 func inspect_cached_wagon() -> bool:return CacheSupport.inspect(self)
 
@@ -1996,3 +2085,349 @@ func set_strenuous_load(on: bool) -> bool:
 	if not can_service() or state.vehicle!="foot" or Mounts.animals(state)==0:return false
 	state["strenuous_load"]=on
 	return true
+
+## Cascades prototype: launch is atomic; calendar time and consequences settle once on return.
+func start_rafting() -> bool:
+	if not can_service() or state.landmark!="columbia_raft" or not pending.has("landmark"):return false
+	var candidate: Dictionary=rafting.begin(int(state.seed),int(state.day))
+	if candidate.is_empty():return false
+	raft=candidate
+	pending={};last_rafting={}
+	journal.append("Day %d · Launched into the Cascades. Steering determines collisions; portage was available before launching." % state.day)
+	return true
+func advance_rafting(delta: float,target: float) -> void:
+	if not raft.is_empty():rafting.tick(raft,delta,target)
+func finish_rafting() -> bool:
+	if raft.is_empty() or not raft.ended:return false
+	var session: Dictionary=raft.duplicate(true)
+	var losses: Dictionary=rafting.losses(session)
+	_tick_day(false,false,"raft")
+	var impact_survivors: Array=party_health.members.filter(func(m):return party_health.is_active(m)).map(func(m):return int(m.id))
+	var before_food: int=state.food;var before_clothes: int=state.clothing
+	_apply({"food":-int(losses.food),"clothing":-int(losses.clothing)},"rafting injuries")
+	var injured: int=-1;var drowned: int=-1
+	if state.status=="traveling" and bool(losses.wrecked):_change_health(-int(rafting.data.wreck_health_loss),"near drowning")
+	var living: Array=party_health.members.filter(func(m):return party_health.is_active(m))
+	if not living.is_empty():
+		var victim: Dictionary=living[int(session.victim_roll)%living.size()]
+		if bool(losses.drowning):
+			drowned=int(victim.id);party_health.kill(victim,int(state.day),"drowning in the Cascades")
+		elif bool(losses.injury):
+			injured=int(victim.id)
+			party_health.affect(victim,-3*int(losses.hits),int(state.day),"rafting injuries")
+			if party_health.is_active(victim):party_health.begin_condition(injured,"broken_arm" if int(losses.hits)>=3 else "wound",int(state.day),1)
+	_change_health(0,"rafting injuries")
+	_check_health()
+	var deaths: Array=impact_survivors.filter(func(id):return not party_health.members[int(id)].alive)
+	last_rafting={"deaths":deaths,"place":"columbia_raft","day":int(state.day),"hits":int(session.hits),"wrecked":bool(session.wrecked),"food_lost":before_food-int(state.food),"clothing_lost":before_clothes-int(state.clothing),"elapsed_ticks":int(session.ticks),"integrity":int(session.integrity),"injured":injured,"drowned":drowned}
+	rafting_history.append(last_rafting.duplicate(true))
+	var text: String="Cascades: %d impact(s), %d%% hull remaining. Lost %d food units and %d clothing set(s)." % [last_rafting.hits,last_rafting.integrity,last_rafting.food_lost,last_rafting.clothing_lost]
+	if not deaths.is_empty():text+=" Lost: "+", ".join(deaths.map(func(id):return str(party_health.members[int(id)].name)))+"."
+	if drowned>=0:text+=" %s drowned." % party_health.members[drowned].name
+	elif injured>=0 and party_health.members[injured].alive:text+=" %s suffered rafting injuries." % party_health.members[injured].name
+	journal.append("Day %d · %s" % [state.day,text])
+	supply_history.append({"day":int(state.day),"event":"columbia_rapids","changes":{},"outcome":last_rafting.duplicate(true)})
+	raft={};pending={}
+	if state.status=="traveling":
+		if bool(losses.wrecked):journal.append("The survivors make shore, salvage the remaining cargo and lash together a replacement raft.")
+		journal.append("Leaving the Cascades for the lower Columbia and Willamette.")
+		_set_next_leg();_schedule_event(false)
+	return true
+func upgrade_rafting_choice(menu: Dictionary) -> void:
+	if menu.get("landmark","")!="columbia_raft":return
+	for choice in menu.get("choices",[]):
+		if choice.has("portage_risk"):
+			choice.erase("portage_risk");choice["rafting"]=true
+			choice.label="Run the rapids · steer the raft · 1 day"
+
+
+func start_tactical_combat(command: String = "") -> bool:
+	if state.status != "traveling":
+		return false
+	if command.begins_with("trail"):
+		var trail_cfg := _build_trail_tactical_config(command)
+		if trail_cfg.is_empty():
+			return false
+		tactical_session = tactical.start_session(trail_cfg)
+		last_tactical = {}
+		return not tactical_session.is_empty()
+	if command == "shoot" and crime.incident().is_empty():
+		if not crime.begin_tactical_shoot(self):
+			return false
+	var cfg: Dictionary = crime.build_tactical_config(self, command)
+	if cfg.is_empty():
+		return false
+	tactical_session = tactical.start_session(cfg)
+	last_tactical = {}
+	return not tactical_session.is_empty()
+
+
+func _build_trail_tactical_config(command: String) -> Dictionary:
+	var ev_id := String(pending.get("id", ""))
+	if ev_id not in ["bandits", "riders", "cayuse_riders", "horse_thieves"]:
+		return {}
+	if bool(pending.get("friendly", false)) or int(state.bullets) <= 0:
+		return {}
+	var choices: Array = pending.get("choices", [])
+	var choice_idx := -1
+	if command.begins_with("trail:"):
+		choice_idx = int(command.substr(6))
+	else:
+		for i in range(choices.size()):
+			var ch: Dictionary = choices[i]
+			if ch.has("combat") or (ev_id == "horse_thieves" and ch.has("risk")):
+				choice_idx = i
+				break
+	if choice_idx < 0 or choice_idx >= choices.size():
+		return {}
+	var choice: Dictionary = choices[choice_idx]
+	if not (choice.has("combat") or (ev_id == "horse_thieves" and choice.has("risk"))):
+		return {}
+	var tactic := String(choice.get("combat", "defend"))
+	var squad: Array = []
+	for member in party_health.members:
+		if not party_health.is_active(member):
+			continue
+		var mid := int(member.id)
+		if mid != 0 and not bool(characters.willing(mid, "defend")):
+			continue
+		var profile: Dictionary = characters.profiles[mid] if mid < characters.profiles.size() else {}
+		squad.append({
+			"id": str(mid),
+			"slot": mid,
+			"name": String(member.name),
+			"role": "leader" if mid == 0 else "companion",
+			"health": int(member.health),
+			"broken_leg": member.conditions.any(func(c): return c.id == "broken_leg"),
+			"broken_arm": member.conditions.any(func(c): return c.id == "broken_arm"),
+			"wound": member.conditions.any(func(c): return c.id == "wound"),
+			"profile": profile,
+		})
+	if squad.is_empty():
+		for member in party_health.members:
+			if party_health.is_active(member):
+				var mid := int(member.id)
+				squad.append({
+					"id": str(mid),
+					"slot": mid,
+					"name": String(member.name),
+					"role": "leader",
+					"health": int(member.health),
+					"broken_leg": member.conditions.any(func(c): return c.id == "broken_leg"),
+					"broken_arm": member.conditions.any(func(c): return c.id == "broken_arm"),
+					"wound": member.conditions.any(func(c): return c.id == "wound"),
+					"profile": characters.profiles[mid] if mid < characters.profiles.size() else {},
+				})
+				break
+	if squad.is_empty():
+		return {}
+
+	var seed_val: int = int(state.seed) ^ (int(state.day) * 2654435761) ^ int(ev_id.hash()) ^ (choice_idx * 40503)
+	var enemy_specs: Array = []
+	match ev_id:
+		"bandits":
+			enemy_specs = [
+				{"id": "bandit_0", "name": " Silas Pike", "role": "bandit_leader", "health": 100},
+				{"id": "bandit_1", "name": "Red Harned", "role": "highwayman", "health": 95},
+				{"id": "bandit_2", "name": "Crowley", "role": "outlaw", "health": 90},
+			]
+		"riders":
+			enemy_specs = [
+				{"id": "rider_0", "name": "Lead Rider", "role": "raider", "health": 100},
+				{"id": "rider_1", "name": "Flank Rider", "role": "raider", "health": 95},
+				{"id": "rider_2", "name": "Rear Rider", "role": "outlaw", "health": 90},
+			]
+		"cayuse_riders":
+			enemy_specs = [
+				{"id": "cayuse_0", "name": "Cayuse Scout", "role": "warrior", "health": 100},
+				{"id": "cayuse_1", "name": "Cayuse Rider", "role": "warrior", "health": 95},
+				{"id": "cayuse_2", "name": "Cayuse Marksman", "role": "scout", "health": 95},
+			]
+		"horse_thieves":
+			enemy_specs = [
+				{"id": "thief_0", "name": "Stock Rustler", "role": "rustler", "health": 95},
+				{"id": "thief_1", "name": "Picket Thief", "role": "thief", "health": 90},
+			]
+	var AppearanceGen = preload("res://simulation/traveler_appearance.gd")
+	var enemies: Array = []
+	for spec in enemy_specs:
+		var uid := String(spec.get("id", "enemy"))
+		var h := absi(int((ev_id + ":" + uid + ":" + str(state.day)).hash()))
+		enemies.append({
+			"uid": uid,
+			"id": uid,
+			"name": String(spec.get("name", "Outlaw")).strip_edges(),
+			"role": String(spec.get("role", "outlaw")),
+			"health": int(spec.get("health", 95)),
+			"soldier": false,
+			"profile": {"appearance": AppearanceGen.generate(int(state.seed), h)},
+		})
+
+	var venue_kind := "emigrants" if tactic == "circle" else "traders"
+	var place_name := "The Trail"
+	if route.nodes.has(state.landmark):
+		place_name = "Near " + String(route.nodes[state.landmark].get("name", "the Trail"))
+	var custom_title := String(pending.get("title", "Trail Skirmish"))
+	var custom_subtitle := "Wagon Circle Defense" if tactic == "circle" else "Roadside Skirmish"
+	return {
+		"seed": seed_val,
+		"venue_kind": venue_kind,
+		"place": ev_id,
+		"place_name": place_name,
+		"title": custom_title,
+		"subtitle": custom_subtitle,
+		"reason": ev_id,
+		"command": command,
+		"mode_source": "trail_event",
+		"event_id": ev_id,
+		"choice_index": choice_idx,
+		"tactic": tactic,
+		"bullets": int(state.bullets),
+		"squad": squad,
+		"enemies": enemies,
+	}
+
+
+func tactical_step(action: Dictionary) -> Dictionary:
+	if tactical_session.is_empty():
+		return {}
+	return tactical.step(tactical_session, action)
+
+
+func finish_tactical_combat() -> bool:
+	if tactical_session.is_empty() or not bool(tactical_session.get("resolved", false)):
+		return false
+	var session := tactical_session.duplicate(true)
+	tactical_session = {}
+	last_tactical = session
+	if String(session.get("mode_source", "")) == "trail_event":
+		_apply_trail_tactical_result(session)
+	else:
+		crime.apply_tactical_result(self, session)
+	return true
+
+
+func _apply_trail_tactical_result(session: Dictionary) -> void:
+	var choices: Array = pending.get("choices", [])
+	var idx := int(session.get("choice_index", 0))
+	if idx < 0 or idx >= choices.size():
+		pending = {}
+		return
+	var choice: Dictionary = choices[idx]
+	var fight_id := String(session.get("event_id", pending.get("id", "")))
+	var tactic := String(session.get("tactic", choice.get("combat", "defend")))
+	var outcome_raw := String(session.get("outcome", "victory"))
+
+	# 1. Deduct ammunition actually spent during the firefight.
+	var spent := maxi(0, int(state.bullets) - int(session.get("bullets_left", state.bullets)))
+	if spent > 0:
+		_apply({"bullets": -spent})
+
+	# 2. Apply non-bullet effects from the chosen option (days, and recovered horses on victory).
+	var fx: Dictionary = choice.get("effects", {}).duplicate(true)
+	fx.erase("bullets")
+	if fight_id == "horse_thieves" and outcome_raw != "victory":
+		fx.erase("horses")
+		fx.erase("mules")
+	if not fx.is_empty():
+		_apply(fx, "injuries", bool(choice.get("rest", false)))
+
+	# 3. Sync player unit HP losses and injuries back to party_health.
+	var hit := false
+	var fatal := false
+	var primary_victim: int = clampi(int(pending.get("member_id", 0)), 0, maxi(0, party_health.members.size() - 1))
+	var units: Array = session.get("units", [])
+	for u in units:
+		if String(u.get("team", "")) != "player":
+			continue
+		var slot := int(str(u.get("id", "-1")))
+		if slot < 0 or slot >= party_health.members.size():
+			continue
+		var m: Dictionary = party_health.members[slot]
+		if not party_health.is_active(m):
+			continue
+		var hp_after := clampi(int(u.get("health", m.health)), 0, 100)
+		var hp_before := int(m.health)
+		if hp_after <= 0:
+			hit = true
+			fatal = true
+			primary_victim = slot
+			m.history.append("Day %d · Killed during an armed confrontation." % state.day)
+			party_health.kill(m, int(state.day), "confrontation injuries")
+		elif hp_after < hp_before:
+			if not fatal:
+				primary_victim = slot
+			hit = true
+			m.history.append("Day %d · Hit during an armed confrontation." % state.day)
+			party_health.affect(m, hp_after - hp_before, int(state.day), "confrontation injuries")
+			if not m.alive:
+				fatal = true
+			else:
+				if int(u.get("wounds_taken", 0)) > 0 or (hp_before - hp_after) >= 12:
+					var sev := clampi(int(u.get("wound_severity", choice.get("risk", {}).get("severity", 2))), 1, 3)
+					if not party_health.begin_condition(slot, "wound", int(state.day), sev):
+						for active in m.conditions:
+							if active.id == "wound":
+								active.severity = maxi(int(active.severity), sev)
+				if bool(u.get("new_broken_leg", false)):
+					party_health.begin_condition(slot, "broken_leg", int(state.day), 2)
+				if bool(u.get("new_broken_arm", false)):
+					party_health.begin_condition(slot, "broken_arm", int(state.day), 2)
+	if hit:
+		_collect_health_events()
+		if not party_health.members.is_empty():
+			state.health = party_health.average_health()
+			state.party_size = party_health.living_count()
+
+	# 4. Handle outcome narrative & penalties on retreat/surrender/defeat.
+	if outcome_raw == "victory":
+		journal.append(String(choice.get("result", "The attackers are driven off.")))
+	elif outcome_raw == "retreated":
+		if int(state.oxen) > 0:
+			_apply({"ox_health": -10})
+		elif Mounts.animals(state) > 0:
+			_apply({"horse_health": -10})
+		if fight_id == "horse_thieves":
+			journal.append("You pull back under fire; the thieves drive off the stolen stock.")
+		else:
+			journal.append("You pull the party back from the skirmish under fire.")
+	else:
+		if fight_id == "bandits" and choices.size() > 0 and bool(choices[0].get("bandit_payment", false)):
+			_apply(choices[0].get("effects", {}))
+			combat.BanditDemand.finish(self, choices[0])
+			journal.append(String(choices[0].get("result", "The thieves take what they demanded.")))
+		elif fight_id == "horse_thieves":
+			journal.append("The thieves hold you off and escape with the stolen stock.")
+		else:
+			journal.append("You are forced to yield ground before the attackers move on.")
+
+	# 5. Record in combat.history for bandits/riders/cayuse_riders and trigger companion defense hook.
+	if choice.has("combat") and fight_id in ["bandits", "riders", "cayuse_riders"]:
+		var hist_outcome: String = ("fatal" if fatal else "injured") if hit else ("won" if (tactic == "defend" and outcome_raw == "victory") else "deterred")
+		var quoted_risk: float = clampf(float(choice.get("quoted_risk", choice.get("risk", {}).get("probability", 0.25))), 0.0, 1.0)
+		combat.history.append({
+			"day": int(state.day),
+			"event": fight_id,
+			"tactic": tactic if tactic in ["defend", "circle"] else "defend",
+			"outcome": hist_outcome,
+			"victim": primary_victim,
+			"risk": quoted_risk,
+		})
+		if tactic == "defend" and outcome_raw == "victory":
+			characters.defense(self)
+		var v_name: String = String(party_health.members[primary_victim].name) if primary_victim < party_health.members.size() else "A traveler"
+		journal.append("Day %d · Defense outcome: %s. %s" % [
+			state.day,
+			hist_outcome,
+			(v_name + (" died during this encounter." if hist_outcome == "fatal" else " was wounded; inspect their condition.")) if hit else "No traveler was injured in this confrontation."
+		])
+
+	pending = {}
+	_check_health()
+	if state.status == "traveling":
+		if bool(choice.get("complete", false)):
+			state.status = "arrived"
+		else:
+			_schedule_event(false)
+
+

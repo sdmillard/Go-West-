@@ -1,0 +1,170 @@
+{
+  "version": 3,
+  "raw_sha256": "6e7e60dabe4fb6aaf721683bf60db0964e96217923c646b75beda6325e2e1da2",
+  "rules": "630ab7bf58c07580b290ff8846ec5c923991665e21b9ddb55c5edc87791b108b",
+  "settings": {
+    "controlled_seed_start": 790000,
+    "extra_dog_only_rest_days": false,
+    "journey_cap_days": 360,
+    "journey_cap_steps": 2400,
+    "journey_seed_start": 791000,
+    "journey_wait_seconds": 0,
+    "pilot": false,
+    "version": 3
+  },
+  "sources": {
+    "simulation/trail_engine.gd": "236f409dd3c8a34683a66eb765454e963ea545b6b5a8c8470b43cd1c6742b196",
+    "simulation/working_dog.gd": "67f284acb6016827f4bdaed02413250fd1ca0e06ccec731eff322bb86d946714",
+    "tests/current_journey_policy.gd": "ced1bdc9eb8579a7433860ab30177394d179e597e54202667b54398403692cb7",
+    "tests/dog_usefulness_campaign.gd": "49329b1b284d42a8780bce83f53f947b59e3d66b281588b06a1d847aff5d892b",
+    "tests/dog_usefulness_observer.gd": "4a4df769598b5775b83d0f1467d2944bef2f59d766a335b85ecf0cc6c31a7635",
+    "tests/dog_usefulness_policy.gd": "fcce8a33d0ff9c72fbb19ac622042a1cef83523dd868d41d4f0c0a741eaf2773"
+  },
+  "controlled": {
+    "quick": {
+      "pairs": 200,
+      "net_remaining_food_delta_units": -64.0,
+      "mean_net_food_delta_units": -0.32,
+      "positive_pairs": 7,
+      "raw_meat_gain_lb": 463,
+      "rabbit_meat_lb": 27,
+      "empty_searches_helped": 18,
+      "dog_food_units": 320.0,
+      "note": "Net remaining inventory already charges dog meals; do not subtract dog_food_units again."
+    },
+    "wait8": {
+      "pairs": 200,
+      "net_remaining_food_delta_units": -187.0,
+      "mean_net_food_delta_units": -0.935,
+      "positive_pairs": 4,
+      "raw_meat_gain_lb": 240,
+      "rabbit_meat_lb": 27,
+      "empty_searches_helped": 18,
+      "dog_food_units": 320.0,
+      "note": "Net remaining inventory already charges dog meals; do not subtract dog_food_units again."
+    }
+  },
+  "journeys": {
+    "none": {
+      "n": 32,
+      "outcomes": {
+        "lost": 21,
+        "arrived": 5,
+        "traveling": 6
+      },
+      "totals": {
+        "day": 8513,
+        "dog_food_units": 0.0,
+        "dog_days": 0,
+        "rabbit_lb": 0,
+        "located_game": 0,
+        "warnings": 0,
+        "horse_thieves": 71,
+        "hunts": 1090,
+        "assisted_hunts": 0,
+        "fit_hunt_days": 0,
+        "fit_watch_days": 0,
+        "dog_crossing_losses": 0,
+        "dog_injuries": 0,
+        "mounts": 30,
+        "people": 32
+      },
+      "dogs_alive_at_end": 0,
+      "mean_dog_food_units": 0.0,
+      "theft_encounters_per_100_journey_days": 0.834019
+    },
+    "hunt": {
+      "n": 32,
+      "outcomes": {
+        "lost": 21,
+        "arrived": 4,
+        "traveling": 7
+      },
+      "totals": {
+        "day": 8707,
+        "dog_food_units": 10621.2,
+        "dog_days": 7820,
+        "rabbit_lb": 262,
+        "located_game": 84,
+        "warnings": 0,
+        "horse_thieves": 71,
+        "hunts": 1209,
+        "assisted_hunts": 1053,
+        "fit_hunt_days": 7519,
+        "fit_watch_days": 0,
+        "dog_crossing_losses": 4,
+        "dog_injuries": 16,
+        "mounts": 31,
+        "people": 26
+      },
+      "dogs_alive_at_end": 25,
+      "mean_dog_food_units": 331.9125,
+      "theft_encounters_per_100_journey_days": 0.815436
+    },
+    "watch": {
+      "n": 32,
+      "outcomes": {
+        "lost": 20,
+        "arrived": 6,
+        "traveling": 6
+      },
+      "totals": {
+        "day": 8217,
+        "dog_food_units": 10361.8,
+        "dog_days": 6881,
+        "rabbit_lb": 0,
+        "located_game": 0,
+        "warnings": 24,
+        "horse_thieves": 40,
+        "hunts": 1208,
+        "assisted_hunts": 0,
+        "fit_hunt_days": 0,
+        "fit_watch_days": 5034,
+        "dog_crossing_losses": 5,
+        "dog_injuries": 0,
+        "mounts": 31,
+        "people": 34
+      },
+      "dogs_alive_at_end": 21,
+      "mean_dog_food_units": 323.80625,
+      "theft_encounters_per_100_journey_days": 0.486796
+    }
+  },
+  "profession_arrivals": {
+    "farmer_none": {
+      "n": 16,
+      "arrived": 0
+    },
+    "banker_none": {
+      "n": 16,
+      "arrived": 5
+    },
+    "farmer_hunt": {
+      "n": 16,
+      "arrived": 0
+    },
+    "banker_hunt": {
+      "n": 16,
+      "arrived": 4
+    },
+    "farmer_watch": {
+      "n": 16,
+      "arrived": 0
+    },
+    "banker_watch": {
+      "n": 16,
+      "arrived": 6
+    }
+  },
+  "errors": [],
+  "limits": [
+    "One declared automated policy; not optimal play or a general survival verdict.",
+    "Same eight seed clusters reused across professions and months; 96 rows are not 96 independent trials.",
+    "Trips diverge in duration, mortality, supplies and event eligibility; pooled theft totals are descriptive.",
+    "Main journey hunts use immediate shots with 65% aim; no artificial dog wait.",
+    "No dog-specific extra rest days, replacement purchases, detached dog outings, skin sales or zero-ammunition dog-only hunting strategy.",
+    "Human travel/rest/resupply/care/foraging/preservation rules are unchanged; no balance tuning.",
+    "Controlled cells share the same forty seed clusters across five regions; report as matched cases, not independent mortality samples.",
+    "Archived versions01/02 and pilot are excluded from primary totals."
+  ]
+}

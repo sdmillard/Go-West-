@@ -1,0 +1,729 @@
+{
+  "note": "Original fictional encounters grounded in the cited community histories. These households do not represent all members of a nation. Prices use existing regional supply prices; stock, visit time and the portage quote are authored gameplay, not documented 1848 tariffs. No racial ability modifiers or global Indigenous reputation meter. Contact identities, personal agreements, seasonal work windows, wages and short guide contracts are authored situations, not recorded historical individuals or established 1848 tariffs.",
+  "portage_cents_per_load": 300,
+  "portage_days": 1,
+  "sites": {
+    "platte": {
+      "name": "Pawnee trading families",
+      "people": "Pawnee",
+      "intro": "Pawnee families are traveling through the Platte country. They have provisions to exchange, but must keep enough for their own journey.",
+      "notes": "Pawnee people farm in river valleys and make extended buffalo hunts along the Platte and Republican rivers. Keep your livestock away from occupied camps and stored food; ask where there is room to stop.",
+      "sources": [
+        "https://pawneenation.org/historical-marker-pawnee-marker-nebraska/"
+      ],
+      "offers": [
+        {
+          "key": "provisions",
+          "item": "food",
+          "amount": 40,
+          "lots": 2,
+          "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ]
+        }
+      ],
+      "recruit_heritages": [
+        "Pawnee"
+      ],
+      "contact": {
+        "id": "pawnee_provision_keeper",
+        "label": "The Pawnee provision keeper",
+        "initial": "new",
+        "stages": {
+          "new": {
+            "text": "A Pawnee household is sorting supplies for its own journey through the Platte country. The person keeping the parcels asks about the salt you carry. They will consider one exchange from the same provisions already offered here.",
+            "choices": [
+              {
+                "id": "ask",
+                "label": "Ask what the household wants to exchange",
+                "next": "offer",
+                "kind": "talk"
+              }
+            ],
+            "standing": 0,
+            "work_done": false
+          },
+          "offer": {
+            "text": "The household offers one 40-unit parcel of preserved provisions for 20 lb of salt. The exchange takes no extra day and uses one of their listed parcels. They keep the rest of their own travel food. You can decline without offending them.",
+            "choices": [
+              {
+                "id": "salt",
+                "label": "Exchange salt for one provision parcel",
+                "next": "exchanged",
+                "kind": "exchange",
+                "exchange_item": "salt",
+                "exchange_amount": 20,
+                "offer": "provisions"
+              },
+              {
+                "id": "decline",
+                "label": "Keep the salt and decline",
+                "next": "declined",
+                "kind": "talk"
+              }
+            ],
+            "standing": 0,
+            "work_done": false
+          },
+          "exchanged": {
+            "text": "The provision keeper remembers the completed exchange and offers five percent off this household's remaining listed food. The salt bargain was for one parcel only; a return visit will not refill their supplies.",
+            "choices": [],
+            "standing": 1,
+            "work_done": false
+          },
+          "declined": {
+            "text": "The provision keeper remembers that you kept your salt. The household's ordinary offers remain available, with no new bargain or hostility.",
+            "choices": [],
+            "standing": 0,
+            "work_done": false
+          }
+        }
+      }
+    },
+    "fort_hall": {
+      "name": "Shoshone and Bannock families",
+      "people": "Northern Shoshone and Bannock",
+      "intro": "Northern Shoshone and Bannock families gather near the trading post. Some have a little preserved food to sell. The post sits within their much larger homelands.",
+      "notes": "Fishing, plant gathering and buffalo hunting are parts of seasonal travel. These families are making their own preparations; a supply offer here is limited to what they can spare.",
+      "sources": [
+        "https://www.sbtribes.com/about/"
+      ],
+      "offers": [
+        {
+          "key": "provisions",
+          "item": "food",
+          "amount": 40,
+          "lots": 2,
+          "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ]
+        }
+      ],
+      "recruit_heritages": [
+        "Northern Shoshone",
+        "Bannock"
+      ],
+      "contact": {
+        "id": "hall_provision_trader",
+        "label": "The provision trader",
+        "initial": "new",
+        "stages": {
+          "new": {
+            "text": "A Northern Shoshone trader remembers the parcels your party has been examining. Their household is preparing supplies for its own travel. They ask whether you can help move the packed loads before discussing another exchange.",
+            "choices": [
+              {
+                "id": "ask",
+                "label": "Ask what help is needed",
+                "next": "offer",
+                "kind": "talk"
+              }
+            ],
+            "standing": 0,
+            "work_done": false
+          },
+          "offer": {
+            "text": "The trader offers one day of paid work moving parcels. You can instead propose a clothing-for-provisions exchange. Neither offer draws on the post store: this is the same household stock already listed in the visit.",
+            "choices": [
+              {
+                "id": "work",
+                "label": "Move the packed loads",
+                "next": "worked",
+                "kind": "work",
+                "wage_floor": 100
+              },
+              {
+                "id": "barter",
+                "label": "Exchange 1 clothing set for 1 provisions parcel",
+                "next": "bartered",
+                "kind": "barter"
+              },
+              {
+                "id": "decline",
+                "label": "Decline the extra arrangement",
+                "next": "declined",
+                "kind": "talk"
+              }
+            ],
+            "standing": 0,
+            "work_done": false
+          },
+          "worked": {
+            "text": "The loads are moved and the agreed wages paid. The trader has seen you keep an agreement. Before leaving, you can settle the terms for the remaining household provisions.",
+            "choices": [
+              {
+                "id": "settle",
+                "label": "Agree on the remaining provision prices",
+                "next": "complete",
+                "kind": "talk"
+              }
+            ],
+            "standing": 1,
+            "work_done": true
+          },
+          "complete": {
+            "text": "The trader recognizes your party and remembers the work you did. Remaining household parcels are offered at five percent below the earlier asking price. Their own supplies remain reserved; returning does not create more stock or work.",
+            "choices": [],
+            "standing": 1,
+            "work_done": true
+          },
+          "bartered": {
+            "text": "The trader has set your clothing aside and handed over the agreed parcel. You have completed this exchange; the household offers five percent off its remaining listed provisions.",
+            "choices": [],
+            "standing": 1,
+            "work_done": false
+          },
+          "declined": {
+            "text": "The trader remembers that you declined the extra arrangement. Ordinary household offers remain open, but the one-off work has been arranged another way.",
+            "choices": [],
+            "standing": 0,
+            "work_done": false
+          }
+        }
+      }
+    },
+    "grande_ronde": {
+      "name": "Nez Perce horse traders",
+      "people": "Nez Perce",
+      "intro": "Nez Perce families have horses to trade in the valley. Ask their terms before approaching the herd. Each owner decides which animals to sell.",
+      "notes": "Horses support travel, hunting and exchange. The war involving Cayuse people has disrupted the region; these traders are making their own decisions, not speaking for neighboring nations.",
+      "sources": [
+        "https://nezperce.org/wp-content/uploads/2022/04/Volume-4-Issue-8.pdf",
+        "https://ctuir.org/about/brief-history-of-ctuir/"
+      ],
+      "offers": [],
+      "horses": true,
+      "recruit_heritages": [
+        "Nez Perce"
+      ],
+      "contact": {
+        "id": "nez_perce_horse_owner",
+        "label": "The Nez Perce horse owner",
+        "initial": "new",
+        "stages": {
+          "new": {
+            "text": "One of the Nez Perce horse owners is preparing the same small herd already offered for trade. The animals are not all for sale. The owner asks whether you want the ordinary terms or can spend a day helping with the herd.",
+            "choices": [
+              {
+                "id": "ask",
+                "label": "Discuss the owner's terms",
+                "next": "offer",
+                "kind": "talk"
+              }
+            ],
+            "standing": 0,
+            "work_done": false
+          },
+          "offer": {
+            "text": "The owner offers five percent off the herd's coin asking price if your leader spends one day helping handle and move the horses. There is no cash wage. Clothing, ammunition and ox barter terms stay the same, and only the existing sale horses are available.",
+            "choices": [
+              {
+                "id": "help",
+                "label": "Help handle the sale herd",
+                "next": "agreed",
+                "kind": "work",
+                "wage_floor": 0
+              },
+              {
+                "id": "decline",
+                "label": "Use the ordinary horse-trading terms",
+                "next": "declined",
+                "kind": "talk"
+              }
+            ],
+            "standing": 0,
+            "work_done": false
+          },
+          "agreed": {
+            "text": "The owner remembers the day's help. The agreed coin price applies to the herd's remaining sale horses. Open the horse-trading terms under Other business. No horses or tack are given for free, and returning does not create another herd.",
+            "choices": [],
+            "standing": 1,
+            "work_done": true
+          },
+          "declined": {
+            "text": "The owner remembers that you chose the ordinary terms. The same sale herd and barter offers remain available. There is no penalty for declining the work.",
+            "choices": [],
+            "standing": 0,
+            "work_done": false
+          }
+        }
+      }
+    },
+    "umatilla": {
+      "name": "Umatilla trading families",
+      "people": "Umatilla",
+      "intro": "Families near the Umatilla River are tending their own food supplies and animals. Some will trade produce or preserved provisions. The surrounding country is home to Umatilla, Cayuse and Walla Walla people with their own communities and leaders.",
+      "notes": "River fishing, food gathering, livestock and trade connect this country to other regions. Fighting following the events at Waiilatpu has disrupted travel. These families describe the road ahead and ask you to keep livestock clear of their gardens.",
+      "sources": [
+        "https://ctuir.org/about/brief-history-of-ctuir/"
+      ],
+      "offers": [
+        {
+          "key": "provisions",
+          "item": "food",
+          "amount": 40,
+          "lots": 2,
+          "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ]
+        },
+        {
+          "key": "fresh",
+          "item": "produce",
+          "amount": 4,
+          "lots": 2,
+          "months": [
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        }
+      ],
+      "recruit_heritages": [
+        "Umatilla",
+        "Cayuse",
+        "Walla Walla"
+      ],
+      "contact": {
+        "id": "umatilla_garden_keeper",
+        "label": "The Umatilla garden keeper",
+        "initial": "new",
+        "stages": {
+          "new": {
+            "text": "An Umatilla household is tending food-growing ground near its river camp. The garden keeper asks you to keep stock off the planted ground and offers to explain a small seasonal work arrangement.",
+            "choices": [
+              {
+                "id": "ask",
+                "label": "Ask about the garden work",
+                "next": "offer",
+                "kind": "talk"
+              }
+            ],
+            "standing": 0,
+            "work_done": false
+          },
+          "offer": {
+            "text": "From June through October, your leader can work one day gathering and packing produce. Payment is four fresh-produce baskets from the household's listed stock, not cash. Your party eats its normal meals during the workday; the baskets are handed over afterward and spoil normally. Only one job is offered.",
+            "choices": [
+              {
+                "id": "harvest",
+                "label": "Work for fresh produce",
+                "next": "paid",
+                "kind": "work_goods",
+                "offer": "fresh"
+              },
+              {
+                "id": "decline",
+                "label": "Decline the garden work",
+                "next": "declined",
+                "kind": "talk"
+              }
+            ],
+            "standing": 0,
+            "work_done": false
+          },
+          "paid": {
+            "text": "The garden keeper remembers your help and has paid the agreed baskets. You can buy any remaining household parcels at five percent below the earlier asking price. The produce is still perishable, and no second harvest job or new stock appears when you return.",
+            "choices": [],
+            "standing": 1,
+            "work_done": true
+          },
+          "declined": {
+            "text": "The garden keeper remembers your decision and has arranged the work elsewhere. You can still trade normally; the household asks you to keep livestock clear of the planted ground.",
+            "choices": [],
+            "standing": 0,
+            "work_done": false
+          }
+        }
+      }
+    },
+    "deschutes": {
+      "name": "Sahaptin-speaking river families",
+      "people": "Sahaptin-speaking river communities",
+      "intro": "People who work and fish along the river know its channels. They explain the crossing and the need to keep animals clear of fishing places. Swift water and deep holes still matter.",
+      "notes": "Local pilots know where the channel hides deep holes, but high water remains dangerous. They can arrange assistance for your next crossing. You can also inspect the river and choose among the ordinary crossing methods.",
+      "sources": [
+        "https://warmsprings-nsn.gov/history/",
+        "https://home.nps.gov/articles/000/overlanders-in-the-columbia-river-gorge-1840-1870-a-narrative-history.htm"
+      ],
+      "offers": [],
+      "guidance": true,
+      "recruit_heritages": [
+        "Sahaptin-speaking river community"
+      ],
+      "contact": {
+        "id": "deschutes_pilot",
+        "label": "The river pilot",
+        "initial": "new",
+        "stages": {
+          "new": {
+            "text": "A local river pilot is organizing loads near an occupied fishing landing. They ask your party to use another holding place for its animals and baggage before arranging a longer agreement.",
+            "choices": [
+              {
+                "id": "listen",
+                "label": "Hear the landing arrangements",
+                "next": "offer",
+                "kind": "talk"
+              }
+            ],
+            "standing": 0,
+            "work_done": false
+          },
+          "offer": {
+            "text": "You can spend a day leading stock and carrying baggage to the agreed holding place, or pay $1 for help moving them. Refusing and insisting on this landing will cause this pilot to decline your business; other crossing methods remain available.",
+            "choices": [
+              {
+                "id": "clear",
+                "label": "Help clear the landing",
+                "next": "ready",
+                "kind": "work",
+                "wage_floor": 0
+              },
+              {
+                "id": "pay",
+                "label": "Pay $1 for help moving stock and baggage",
+                "next": "ready",
+                "kind": "pay",
+                "cost_cents": 100
+              },
+              {
+                "id": "refuse",
+                "label": "Refuse and insist on using this landing",
+                "next": "refused",
+                "kind": "talk"
+              }
+            ],
+            "standing": 0,
+            "work_done": false
+          },
+          "refused": {
+            "text": "The pilot declines your business after the disagreement. This is their decision, not a declaration from every family along the river. You can apologize and spend a day helping clear the landing. Paid assistance already arranged with this pilot is suspended meanwhile.",
+            "choices": [
+              {
+                "id": "apologize",
+                "label": "Apologize and help clear the landing",
+                "next": "reconciled",
+                "kind": "work",
+                "wage_floor": 0
+              }
+            ],
+            "standing": -1,
+            "work_done": false
+          },
+          "ready": {
+            "text": "The holding place is clear. The pilot offers a short agreement: crossing assistance and company as far as The Dalles, for at most three days. The fee includes the pilot's own provisions. The crossing risk is reduced, not removed; there is no extra travel-speed bonus.",
+            "choices": [
+              {
+                "id": "contract",
+                "label": "Hire the pilot as far as The Dalles",
+                "next": "contract",
+                "kind": "guide",
+                "cost_cents": 200,
+                "guide_days": 3
+              }
+            ],
+            "standing": 0,
+            "work_done": false
+          },
+          "reconciled": {
+            "text": "You helped clear the landing after the disagreement. The pilot is willing to make the same short agreement toward The Dalles; the earlier dispute remains part of your dealings.",
+            "choices": [
+              {
+                "id": "contract",
+                "label": "Hire the pilot as far as The Dalles",
+                "next": "contract_reconciled",
+                "kind": "guide",
+                "cost_cents": 200,
+                "guide_days": 3
+              }
+            ],
+            "standing": 0,
+            "work_done": true
+          },
+          "contract": {
+            "text": "The agreement is for the crossing and the short road toward The Dalles. It ends on arrival there, after three booked days, or if you turn east. Renewing requires another fee and arrangement day; the pilot is not a permanent party member.",
+            "choices": [
+              {
+                "id": "renew",
+                "label": "Arrange another three-day agreement",
+                "next": "contract",
+                "kind": "guide",
+                "cost_cents": 200,
+                "guide_days": 3
+              }
+            ],
+            "standing": 0,
+            "work_done": false
+          },
+          "contract_reconciled": {
+            "text": "The pilot accompanies you under the agreed terms after your reconciliation. The agreement ends at The Dalles, after three booked days, or if you turn east. No permanent party slot or free provisions are provided.",
+            "choices": [
+              {
+                "id": "renew",
+                "label": "Arrange another three-day agreement",
+                "next": "contract_reconciled",
+                "kind": "guide",
+                "cost_cents": 200,
+                "guide_days": 3
+              }
+            ],
+            "standing": 0,
+            "work_done": true
+          }
+        }
+      }
+    },
+    "the_dalles": {
+      "name": "Wasco trading families",
+      "people": "Wasco",
+      "intro": "Wasco families trade near the river. Prepared foods, fishing work and exchanges with other communities are part of life here; wagon parties are newcomers to an established trading place.",
+      "notes": "Wasco trade includes salmon meal and root bread, exchanged through networks reaching well beyond this river. A family has set aside a few parcels for travelers; other provisions are needed at home.",
+      "sources": [
+        "https://warmsprings-nsn.gov/history/"
+      ],
+      "offers": [
+        {
+          "key": "provisions",
+          "item": "food",
+          "amount": 40,
+          "lots": 2,
+          "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ]
+        },
+        {
+          "key": "berries",
+          "item": "dried_produce",
+          "amount": 4,
+          "lots": 2,
+          "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ]
+        }
+      ],
+      "recruit_heritages": [
+        "Wasco"
+      ],
+      "contact": {
+        "id": "wasco_provision_seller",
+        "label": "The Wasco provision seller",
+        "initial": "new",
+        "stages": {
+          "new": {
+            "text": "The same Wasco seller is sorting prepared foods and containers for exchanges with other families. They have work of their own to finish before they can spend longer talking with your party.",
+            "choices": [
+              {
+                "id": "ask",
+                "label": "Ask about the work at the landing",
+                "next": "offer",
+                "kind": "talk"
+              }
+            ],
+            "standing": 0,
+            "work_done": false
+          },
+          "offer": {
+            "text": "During the trading season the household can pay for one day packing preserved provisions, or for a carpenter to repair a storage rack. Only one job is offered. The wages do not include your party's meals. No fishing rights or access to stored food are included.",
+            "choices": [
+              {
+                "id": "pack",
+                "label": "Pack preserved provisions for trade",
+                "next": "worked",
+                "kind": "work",
+                "wage_floor": 100,
+                "months": [
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10
+                ]
+              },
+              {
+                "id": "repair",
+                "label": "Repair a storage rack · Carpentry",
+                "next": "worked",
+                "kind": "work",
+                "wage_floor": 100,
+                "background": "Carpentry",
+                "months": [
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10
+                ]
+              },
+              {
+                "id": "decline",
+                "label": "Decline the work",
+                "next": "declined",
+                "kind": "talk"
+              }
+            ],
+            "standing": 0,
+            "work_done": false
+          },
+          "worked": {
+            "text": "The work is finished and paid. The seller remembers your help and offers five percent off the household's remaining parcels. They also know a traveler who may be looking for company toward the Willamette Valley. An introduction does not guarantee that anyone will join.",
+            "choices": [
+              {
+                "id": "introduce",
+                "label": "Ask for an introduction to a traveler",
+                "next": "introduced",
+                "kind": "introduce"
+              }
+            ],
+            "standing": 1,
+            "work_done": true
+          },
+          "introduced": {
+            "text": "The seller has made the introduction. Any search, invitation or refusal uses the same local companion opportunity as before; returning cannot produce another traveler. The seller still remembers the work and honors the remaining household prices.",
+            "choices": [],
+            "standing": 1,
+            "work_done": true
+          },
+          "declined": {
+            "text": "You declined the day's work. The household has made other arrangements. Ordinary provisions and the normal chance to look for a companion remain available.",
+            "choices": [],
+            "standing": 0,
+            "work_done": false
+          }
+        }
+      }
+    },
+    "columbia_raft": {
+      "name": "Upper Chinookan portage crews",
+      "people": "Upper Chinookan communities at the Cascades",
+      "intro": "Local families work the portage around these rapids. They set their own terms for carrying loads. You may hire assistance, make the longer portage with your own party, or choose to run the rapids.",
+      "notes": "Several households work around the landing. The crew quotes for carrying your loads along the portage; fishing places and stored food are in use. Keep the stock on the agreed path.",
+      "sources": [
+        "https://home.nps.gov/articles/000/overlanders-in-the-columbia-river-gorge-1840-1870-a-narrative-history.htm"
+      ],
+      "offers": [],
+      "portage": true,
+      "recruit_heritages": [
+        "Upper Chinookan"
+      ],
+      "contact": {
+        "id": "cascades_load_organizer",
+        "label": "The Cascades load organizer",
+        "initial": "new",
+        "stages": {
+          "new": {
+            "text": "A member of an Upper Chinookan portage crew is organizing loads at the landing. They set out their carrying terms and explain how your party can contribute labor toward the bill.",
+            "choices": [
+              {
+                "id": "ask",
+                "label": "Hear the crew's carrying terms",
+                "next": "offer",
+                "kind": "talk"
+              }
+            ],
+            "standing": 0,
+            "work_done": false
+          },
+          "offer": {
+            "text": "Your leader can spend one unpaid day helping carry and organize loads. The crew will allow a single $1 credit toward your next paid portage. The credit is for the whole bill, not each wagon. Paid portage still takes its own day; self-portage and running the rapids remain alternatives.",
+            "choices": [
+              {
+                "id": "help",
+                "label": "Help the portage crew for a labor credit",
+                "next": "credit",
+                "kind": "work",
+                "wage_floor": 0
+              },
+              {
+                "id": "decline",
+                "label": "Use the ordinary portage options",
+                "next": "declined",
+                "kind": "talk"
+              }
+            ],
+            "standing": 0,
+            "work_done": false
+          },
+          "credit": {
+            "text": "The load organizer remembers the work and holds a $1 credit toward one paid portage. Other business shows the current bill for your actual wagonloads. Leaving the conversation or saving keeps the credit; committing to paid portage spends it.",
+            "choices": [],
+            "standing": 0,
+            "work_done": true
+          },
+          "redeemed": {
+            "text": "The load organizer remembers that the agreed labor credit was used. Any later paid portage uses the ordinary per-wagon terms. The same work cannot earn another credit.",
+            "choices": [],
+            "standing": 0,
+            "work_done": true
+          },
+          "declined": {
+            "text": "The load organizer remembers that you chose not to work for a credit. You can still hire the crew, carry your own loads or take the raft through the rapids under the ordinary terms.",
+            "choices": [],
+            "standing": 0,
+            "work_done": false
+          }
+        }
+      }
+    }
+  },
+  "guide_cents_per_load": 100
+}

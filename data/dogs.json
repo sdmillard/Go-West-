@@ -1,0 +1,13 @@
+{
+  "note": "One optional adult farm shepherd. Energy guidance is modern; price, performance, fatigue and accident probabilities are authored estimates, not measured 1848 rates. No breeding or automatic daily hunting. Each newly appearing rabbit gives one catch roll; no wait timer and no frame-by-frame rerolls.",
+  "price_cents": 500,
+  "body_kg": 20,
+  "rest_kcal": 1200,
+  "work_kcal": 1600,
+  "search_chance": 0.35,
+  "rabbit_chance": 0.18,
+  "hunt_injury_chance": 0.02,
+  "warning_chance": 0.65,
+  "theft_weight_factor": 2,
+  "river_loss_chance": 0.08
+}

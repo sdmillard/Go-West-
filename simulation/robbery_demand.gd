@@ -69,18 +69,15 @@ static func quote(game,basket: Dictionary,place: String="",action: String="robbe
   if not available.has(item) or not game.crime.whole(basket[item],0,int(available[item])):return result
   if int(basket[item])>0:selected[item]=int(basket[item])
  if selected.is_empty():return result
- if selected.get("wagon",0)>0 and game.state.vehicle!="foot":
-  result.message="You already have a wagon. This expedition cannot tow a second one."
-  return result
- if selected.get("wagon",0)>0 and int(game.state.oxen)+int(selected.get("oxen",0))<1:
-  result.message="A wagon needs oxen to pull it. Demand oxen with it, or bring your own."
-  return result
  var after: Dictionary=game.state.duplicate(true)
- if selected.get("wagon",0)>0:
-  after.vehicle="wagon"
-  after.household_gear_lb=float(game.provisions.data.walking.personal_gear_lb_per_person)*int(after.party_size)
  for item in selected:
   if item not in ["cash_cents","wagon"]:after[item]=int(after.get(item,0))+int(selected[item])
+ if selected.get("wagon",0)>0:
+  if not game.provisions.WagonTrade.apply_inventory(game,after,int(selected.wagon)):
+   result.message="Each seized wagon needs an available driver. Leave someone to manage it.";return result
+  game.Train.balance(after,game.Train.drivers(game),game.team_conditions.record.oxen)
+  if int(after.oxen)<game.Train.count(after):
+   result.message="Each wagon needs its own draft animal. Demand oxen with the wagon.";return result
  var cargo: float=game.provisions.cargo(after)
  var capacity: float=game.provisions.storage_capacity(after)
  var loot_mass:=0.0
@@ -125,8 +122,7 @@ static func take(game,current: Dictionary,goods: Dictionary) -> void:
   var amount: int=goods[item]
   if amount<=0:continue
   if item=="wagon":
-   game.state.vehicle="wagon"
-   game.state.household_gear_lb=float(game.provisions.data.walking.personal_gear_lb_per_person)*int(game.state.party_size)
+   game.provisions.WagonTrade.apply_inventory(game,game.state,amount)
   else:game.state[item]=int(game.state.get(item,0))+amount
   var key: String=prefix(game,str(current.place))+"|buy_"+item
   var lot_amount:=1
@@ -136,6 +132,9 @@ static func take(game,current: Dictionary,goods: Dictionary) -> void:
   game.context.record.spent[key+"|units"]=used
   if item!="wagon":game.context.record.spent[key]=ceili(float(used)/lot_amount)
   actual[item]=amount
+ if actual.get("wagon",0)>0:
+  game.Train.balance(game.state,game.Train.drivers(game),game.team_conditions.record.oxen)
+  game.team_conditions.sync(game)
  current["taken_goods"]=actual
  game.state.parts=int(game.state.wheels)+int(game.state.axles)+int(game.state.tongues)
  if current.action=="theft":game.journal.append("Day %d · Carried off unseen: %s." % [game.state.day,describe(actual)])

@@ -106,11 +106,12 @@ func human_capacity(inventory: Dictionary,plan: Dictionary) -> float:
 	var walkers: Array=Mounts.walking_members(carriers,int(plan.riding_people))
 	return Carrying.capacity(walkers,float(data.walking.carry_lb_per_person),data.walking.health_load_curve) if not carriers.is_empty() else float(data.walking.carry_lb_per_person)*maxi(0,int(inventory.party_size)-int(plan.riding_people))
 func capacity(inventory: Dictionary) -> float:
+	if inventory.get("vehicle","")!="foot" and inventory.has("wagon_train"):return preload("res://simulation/wagon_train.gd").capacity(inventory,float(data.working_load_per_ox_lb),float(data.cargo_guideline_lb))
 	if inventory.get("vehicle","")!="foot":return team_capacity(preload("res://simulation/team_conditions.gd").pulling(inventory))
 	var plan: Dictionary=Mounts.plan(data.mounts,inventory)
 	return snappedf(human_capacity(inventory,plan)+float(plan.animal_lb),0.1)
 func storage_capacity(inventory: Dictionary) -> float:
-	if inventory.get("vehicle","")!="foot":return float(data.cargo_guideline_lb)
+	if inventory.get("vehicle","")!="foot":return float(data.cargo_guideline_lb)*preload("res://simulation/wagon_train.gd").count(inventory)
 	var plan: Dictionary=Mounts.plan(data.mounts,inventory)
 	return snappedf(human_capacity(inventory,plan)+Mounts.freight_limit(plan),0.1)
 func load_profile(inventory: Dictionary) -> Dictionary:

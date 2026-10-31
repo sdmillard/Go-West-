@@ -1,0 +1,203 @@
+{
+  "grid": {
+    "width": 12,
+    "height": 10
+  },
+  "ap": {
+    "healthy": 8,
+    "worn": 6,
+    "critical": 5,
+    "move_cost": 1,
+    "move_cost_broken_leg": 2,
+    "snap_shot_cost": 4,
+    "called_shot_cost": 6,
+    "reload_cost": 5,
+    "reload_cost_broken_arm": 6,
+    "club_cost": 3,
+    "retreat_cost": 1
+  },
+  "accuracy": {
+    "base_hit": 0.78,
+    "soldier_bonus": 0.08,
+    "optimal_range": 4,
+    "range_falloff": 0.055,
+    "point_blank_bonus": 0.07,
+    "half_cover_penalty": 0.28,
+    "broken_arm_penalty": 0.22,
+    "wound_penalty": 0.07,
+    "min_hit": 0.08,
+    "max_hit": 0.95,
+    "max_range": 11
+  },
+  "called_shots": {
+    "torso": {
+      "label": "Torso",
+      "hit_mod": 0.08,
+      "snap_hit_mod": 0.0,
+      "damage_min": 36,
+      "damage_max": 48,
+      "condition": "wound",
+      "wound_severity": 2,
+      "summary": "Center mass. Solid odds, heavy lead ball trauma."
+    },
+    "legs": {
+      "label": "Legs",
+      "hit_mod": -0.16,
+      "damage_min": 24,
+      "damage_max": 34,
+      "condition": "broken_leg",
+      "wound_severity": 1,
+      "summary": "Shatters stride (+1 AP per step) and leaves a bleeding wound."
+    },
+    "arms": {
+      "label": "Arms",
+      "hit_mod": -0.20,
+      "damage_min": 22,
+      "damage_max": 32,
+      "condition": "broken_arm",
+      "wound_severity": 1,
+      "summary": "Ruins rifle aim (-22% hit) and slows ramrod reload (+1 AP)."
+    },
+    "head": {
+      "label": "Head",
+      "hit_mod": -0.34,
+      "damage_min": 85,
+      "damage_max": 100,
+      "condition": "wound",
+      "wound_severity": 3,
+      "summary": "Hard shot through black-powder smoke. Nearly always fatal."
+    }
+  },
+  "club": {
+    "hit_chance": 0.82,
+    "damage_min": 16,
+    "damage_max": 24
+  },
+  "venues": {
+    "store": {
+      "title": "Trading Post Yard & Counter",
+      "subtitle": "Timber counter, flour barrels, and freight crates between your party and the clerks.",
+      "base_tile": 1,
+      "floor_rect": [2, 1, 9, 5],
+      "floor_tile": 2,
+      "retreat_tiles": [[0, 7], [0, 8], [0, 9], [1, 9], [2, 9]],
+      "player_spawns": [[1, 8], [2, 7], [4, 7], [6, 8], [8, 7]],
+      "enemy_spawns": [[6, 2], [9, 3], [4, 2], [8, 2], [10, 4]],
+      "props": [
+        {"x": 3, "y": 1, "cover": 2, "prop": 0, "label": "Post Wall"},
+        {"x": 4, "y": 1, "cover": 2, "prop": 0, "label": "Post Wall"},
+        {"x": 7, "y": 1, "cover": 2, "prop": 0, "label": "Post Wall"},
+        {"x": 8, "y": 1, "cover": 2, "prop": 0, "label": "Post Wall"},
+        {"x": 5, "y": 3, "cover": 1, "prop": 0, "label": "Store Counter"},
+        {"x": 6, "y": 3, "cover": 1, "prop": 0, "label": "Store Counter"},
+        {"x": 7, "y": 3, "cover": 1, "prop": 0, "label": "Store Counter"},
+        {"x": 3, "y": 4, "cover": 1, "prop": 1, "label": "Flour Barrels"},
+        {"x": 9, "y": 4, "cover": 1, "prop": 2, "label": "Dry Goods Crates"},
+        {"x": 4, "y": 6, "cover": 1, "prop": 2, "label": "Freight Crate"},
+        {"x": 7, "y": 6, "cover": 1, "prop": 5, "label": "Spare Wagon Wheel"},
+        {"x": 1, "y": 5, "w": 2, "h": 1, "cover": 2, "prop": 2, "label": "Supply Wagon"}
+      ]
+    },
+    "fort": {
+      "title": "Fort Parade & Stockade Gate",
+      "subtitle": "U.S. Mounted Riflemen hold the timber stockade and freight stacks.",
+      "base_tile": 1,
+      "floor_rect": [3, 1, 10, 3],
+      "floor_tile": 0,
+      "retreat_tiles": [[0, 7], [0, 8], [0, 9], [1, 9], [2, 9]],
+      "player_spawns": [[1, 8], [2, 7], [4, 7], [6, 8], [8, 7]],
+      "enemy_spawns": [[6, 2], [9, 3], [4, 2], [8, 2], [7, 2]],
+      "props": [
+        {"x": 4, "y": 1, "cover": 2, "prop": 0, "label": "Stockade Wall"},
+        {"x": 5, "y": 1, "cover": 2, "prop": 0, "label": "Stockade Wall"},
+        {"x": 8, "y": 1, "cover": 2, "prop": 0, "label": "Stockade Wall"},
+        {"x": 9, "y": 1, "cover": 2, "prop": 0, "label": "Stockade Wall"},
+        {"x": 6, "y": 3, "cover": 1, "prop": 4, "label": "Breastwork Rail"},
+        {"x": 7, "y": 3, "cover": 1, "prop": 1, "label": "Powder Casks"},
+        {"x": 9, "y": 4, "cover": 2, "prop": 1, "label": "Quartermaster Stack"},
+        {"x": 3, "y": 4, "cover": 2, "prop": 3, "label": "Guard Tent"},
+        {"x": 4, "y": 6, "cover": 1, "prop": 2, "label": "Ordnance Crate"},
+        {"x": 7, "y": 6, "cover": 1, "prop": 4, "label": "Hitching Rail"},
+        {"x": 1, "y": 5, "w": 2, "h": 1, "cover": 2, "prop": 2, "label": "Freight Wagon"}
+      ]
+    },
+    "ferry": {
+      "title": "Ferry Landing & Mooring Apron",
+      "subtitle": "Snubbing posts, coiled hawser barrels, and river pilings along the plank apron.",
+      "base_tile": 0,
+      "floor_rect": [4, 1, 10, 5],
+      "floor_tile": 2,
+      "retreat_tiles": [[0, 7], [0, 8], [0, 9], [1, 9], [2, 9]],
+      "player_spawns": [[1, 8], [2, 7], [4, 7], [6, 8], [8, 7]],
+      "enemy_spawns": [[6, 2], [9, 3], [4, 2], [8, 2], [7, 4]],
+      "props": [
+        {"x": 5, "y": 1, "cover": 2, "prop": 4, "label": "Mooring Piling"},
+        {"x": 8, "y": 1, "cover": 2, "prop": 4, "label": "Mooring Piling"},
+        {"x": 5, "y": 3, "cover": 1, "prop": 1, "label": "Tar Barrels"},
+        {"x": 7, "y": 3, "cover": 1, "prop": 0, "label": "Toll Plank Bench"},
+        {"x": 9, "y": 4, "cover": 1, "prop": 2, "label": "Cordage Crate"},
+        {"x": 3, "y": 5, "cover": 1, "prop": 3, "label": "River Boulder"},
+        {"x": 6, "y": 6, "cover": 1, "prop": 4, "label": "Approach Rail"},
+        {"x": 1, "y": 5, "w": 2, "h": 1, "cover": 2, "prop": 2, "label": "Emigrant Wagon"}
+      ]
+    },
+    "toll": {
+      "title": "Mountain Tollgate & Cut",
+      "subtitle": "Split-rail gate, basalt boulders, and timber cribbing in the narrow pass.",
+      "base_tile": 0,
+      "floor_rect": [0, 0, 11, 9],
+      "floor_tile": 0,
+      "retreat_tiles": [[0, 7], [0, 8], [0, 9], [1, 9], [2, 9]],
+      "player_spawns": [[1, 8], [2, 7], [4, 7], [6, 8], [8, 7]],
+      "enemy_spawns": [[6, 2], [9, 3], [4, 2], [8, 2], [7, 4]],
+      "props": [
+        {"x": 3, "y": 2, "cover": 2, "prop": 5, "label": "Ponderosa Trunk"},
+        {"x": 9, "y": 2, "cover": 2, "prop": 5, "label": "Ponderosa Trunk"},
+        {"x": 5, "y": 3, "cover": 1, "prop": 4, "label": "Tollgate Rail"},
+        {"x": 6, "y": 3, "cover": 1, "prop": 4, "label": "Tollgate Rail"},
+        {"x": 8, "y": 3, "cover": 1, "prop": 3, "label": "Basalt Outcrop"},
+        {"x": 4, "y": 5, "cover": 1, "prop": 3, "label": "Stump & Rock"},
+        {"x": 7, "y": 6, "cover": 1, "prop": 1, "label": "Collector Casks"},
+        {"x": 1, "y": 5, "w": 2, "h": 1, "cover": 2, "prop": 2, "label": "Wagon Box"}
+      ]
+    },
+    "traders": {
+      "title": "Roadside Traders' Camp",
+      "subtitle": "Pack bales, canvas tents, and prairie sage along the ruts.",
+      "base_tile": 3,
+      "floor_rect": [2, 2, 9, 7],
+      "floor_tile": 0,
+      "retreat_tiles": [[0, 7], [0, 8], [0, 9], [1, 9], [2, 9]],
+      "player_spawns": [[1, 8], [2, 7], [4, 7], [6, 8], [8, 7]],
+      "enemy_spawns": [[6, 2], [9, 3], [4, 2], [8, 2], [7, 4]],
+      "props": [
+        {"x": 7, "y": 1, "cover": 2, "prop": 3, "label": "Trader Wedge Tent"},
+        {"x": 9, "y": 1, "w": 2, "h": 1, "cover": 2, "prop": 2, "label": "Trade Wagon"},
+        {"x": 5, "y": 3, "cover": 1, "prop": 1, "label": "Robe Bales"},
+        {"x": 7, "y": 3, "cover": 1, "prop": 2, "label": "Lead & Powder Chest"},
+        {"x": 3, "y": 4, "cover": 1, "prop": 3, "label": "Prairie Boulder"},
+        {"x": 4, "y": 6, "cover": 1, "prop": 5, "label": "Broken Wheel"},
+        {"x": 7, "y": 6, "cover": 1, "prop": 2, "label": "Harness Crate"}
+      ]
+    },
+    "emigrants": {
+      "title": "Overnight Emigrant Noon-Halt",
+      "subtitle": "Canvas wagon boxes, water casks, and sagebrush hummocks.",
+      "base_tile": 3,
+      "floor_rect": [2, 2, 9, 7],
+      "floor_tile": 0,
+      "retreat_tiles": [[0, 7], [0, 8], [0, 9], [1, 9], [2, 9]],
+      "player_spawns": [[1, 8], [2, 7], [4, 7], [6, 8], [8, 7]],
+      "enemy_spawns": [[6, 2], [9, 3], [4, 2], [8, 2], [7, 4]],
+      "props": [
+        {"x": 5, "y": 1, "w": 2, "h": 1, "cover": 2, "prop": 2, "label": "Hooped Wagon"},
+        {"x": 8, "y": 2, "cover": 2, "prop": 3, "label": "Family Tent"},
+        {"x": 5, "y": 3, "cover": 1, "prop": 1, "label": "Water Barrels"},
+        {"x": 7, "y": 4, "cover": 1, "prop": 2, "label": "Provision Chest"},
+        {"x": 3, "y": 5, "cover": 1, "prop": 5, "label": "Spare Wheel"},
+        {"x": 6, "y": 6, "cover": 1, "prop": 3, "label": "Limestone Ledge"},
+        {"x": 1, "y": 5, "w": 2, "h": 1, "cover": 2, "prop": 2, "label": "Lead Wagon"}
+      ]
+    }
+  }
+}

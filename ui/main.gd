@@ -14,6 +14,10 @@ const PIXEL_FONT = preload("res://art/pixels/trail_font.fnt")
 const LEDGER_ICONS = preload("res://art/pixels/ledger_icons.png")
 const TOOLTIP_WIDTH := 240.0
 const NOTICE_WIDTH := 460
+var wagon_train_window=preload("res://ui/wagon_train_view.gd").new()
+var rafting_window=preload("res://ui/rafting_view.gd").new()
+var tactical_window=preload("res://ui/tactical_view.gd").new()
+var dog_window=preload("res://ui/dog_view.gd").new()
 var livestock_window=preload("res://ui/livestock_view.gd").new()
 var fishing_window=preload("res://ui/fishing_view.gd").new()
 var game = Simulation.new(1848, "classic", true)
@@ -132,6 +136,7 @@ func _ready() -> void:
 	map_view.hide()
 	map_view.visibility_changed.connect(_update_animation_pause)
 	journal_window.visibility_changed.connect(_update_animation_pause)
+	wagon_train_window.visibility_changed.connect(_update_animation_pause)
 	party_window.visibility_changed.connect(_update_animation_pause)
 	options_window.visibility_changed.connect(_update_animation_pause)
 	section_window.visibility_changed.connect(_update_animation_pause)
@@ -452,7 +457,7 @@ This chapter follows Palmer's reported opening route from Independence to Oregon
 
 Camp > Preserve meat lets you dry fresh meat, with optional salt. This takes a day. Food units and physical weight are separate: two pounds of new meat supply one food unit. Dried meat weighs less in cargo. Preserved meat also eventually spoils.
 
-Northern shortcuts and Columbia rafting are not yet playable. Weather, medical effects and other survival values remain simplified game rules, not reconstructed conditions for 1848.""")
+Greenwood's Cutoff and the Columbia river route are playable. At the Cascades, portage around the rapids or choose the steering prototype. Weather, medical effects and other survival values remain simplified game rules, not reconstructed conditions for 1848.""")
 	guide_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	guide_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	guide_scroll.add_child(guide_text)
@@ -558,6 +563,14 @@ Northern shortcuts and Columbia rafting are not yet playable. Weather, medical e
 	stop_rows.add_theme_constant_override("separation",8)
 	stop_scroll.add_child(stop_rows)
 	hunt_window = AcceptDialog.new()
+	add_child(wagon_train_window)
+	wagon_train_window.changed.connect(_refresh)
+	add_child(rafting_window)
+	rafting_window.returned.connect(_rafting_returned)
+	add_child(tactical_window)
+	tactical_window.finished.connect(_finish_tactical_combat)
+	add_child(dog_window)
+	dog_window.changed.connect(_refresh)
 	add_child(livestock_window)
 	livestock_window.changed.connect(_refresh)
 	add_child(fishing_window)
@@ -627,6 +640,9 @@ Northern shortcuts and Columbia rafting are not yet playable. Weather, medical e
 	robbery_demand_view.committed.connect(func():
 		crime_category=""
 		_refresh()
+		if DisplayServer.get_name() != "headless" and game.crime.incident().get("attempt", "") == "resisted" and int(game.state.bullets) > 0:
+			if _open_tactical_combat("resisted"):
+				return
 		if game.pending.get("service_menu",false):_show_service())
 	robbery_demand_view.canceled.connect(func():
 		robbery_demand_view.hide()
@@ -739,7 +755,7 @@ func _show_section(section: String) -> void:
 			var note:=label("Opening camp spends no time or supplies.\nChoose an activity; rest is optional.")
 			note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 			section_rows.add_child(note)
-			entries=[["LIVESTOCK / WORKING TEAM >",func():section_window.hide();livestock_window.open(game)],["LEATHERWORK >",func():section_window.hide();leathercraft_window.open(game)],["COMPANION TASKS >",_show_section.bind("Companion tasks")],["FIELD TRIPS / RETURNING HUNTERS >",_show_section.bind("Field trips")],["REST · CHOOSE DAYS",_rest],["PRESERVE MEAT >",_show_section.bind("Preserve meat")],["DRY FRUIT / GREENS >",_show_section.bind("Dry produce")],["CARE / MEDICAL ATTENTION",_open_care]]
+			entries=[["DOG >",func():section_window.hide();dog_window.open(game)],["LIVESTOCK / WORKING TEAM >",func():section_window.hide();livestock_window.open(game)],["LEATHERWORK >",func():section_window.hide();leathercraft_window.open(game)],["COMPANION TASKS >",_show_section.bind("Companion tasks")],["FIELD TRIPS / RETURNING HUNTERS >",_show_section.bind("Field trips")],["REST · CHOOSE DAYS",_rest],["PRESERVE MEAT >",_show_section.bind("Preserve meat")],["DRY FRUIT / GREENS >",_show_section.bind("Dry produce")],["CARE / MEDICAL ATTENTION",_open_care]]
 		"Field trips":
 			for trip in game.field_outings.record.trips:
 				var info:=label("%s · %s · EXPECTED DAY %d\nSEARCH AREA: MILE %d · %s" % [game.party_health.members[trip.member].name,game.field_outings.public_status(trip),game.field_outings.expected_day(trip),trip.mile,outing_window.KIT_LABELS[game.field_outings.Outfit.KITS.find(game.field_outings.public_kit(trip))]])
@@ -892,7 +908,7 @@ func _show_section(section: String) -> void:
 	for item in entries:
 		var entry:=button(item[0],_section_action.bind(item[1]))
 		entry.custom_minimum_size.y=27
-		if item[1]==Callable(self,"_start_hunt"):entry.disabled=not game.pending.is_empty() or game.state.bullets==0
+		if item[1]==Callable(self,"_start_hunt"):entry.disabled=not game.pending.is_empty() or (game.state.bullets==0 and not game.dogs.ready("hunt"))
 		if item[1]==Callable(self,"_open_fishing"):entry.disabled=not game.can_service()
 		section_rows.add_child(entry)
 	if SECTION_PARENTS.has(section):section_rows.add_child(button("< "+str(SECTION_PARENTS[section]).to_upper(),_section_action.bind(_show_section.bind(SECTION_PARENTS[section]))))
@@ -1215,9 +1231,27 @@ func _show_service() -> void:
 		var option := button(game.pending.choices[index].label, _service_choice.bind(index))
 		option.disabled = not game.can_choose(index)
 		service_rows.add_child(option)
+	if game.pending.get("crime_menu", false) and not game.crime.incident().is_empty():
+		var inc: Dictionary = game.crime.incident()
+		var stg: String = String(inc.get("stage", ""))
+		if stg in ["escape", "standoff"] and int(game.state.bullets) > 0 and not game.crime.living_staff(String(inc.get("place", ""))).is_empty():
+			var cmd_kind := "breakout" if stg == "standoff" else "resisted"
+			var tac_btn := button("Fight out the skirmish · Isometric rifle combat", func():
+				service_window.hide()
+				_open_tactical_combat(cmd_kind)
+			)
+			service_rows.add_child(tac_btn)
 	if not crime_back.is_empty():service_rows.add_child(button("< "+crime_back.to_upper(),_villainy_back))
 	elif camp_menu and not crime_category.is_empty():service_rows.add_child(button("OTHER ACTIONS HERE <",_filter_crime.bind("")))
 	elif camp_menu:service_rows.add_child(button("LEAVE CAMP <",_cancel_service))
+	var panel_scroll: ScrollContainer=service_rows.get_parent()
+	if game.pending.get("native_menu",false):
+		service_window.min_size=Vector2i(580,0)
+		var lines: int=ceili(description.length()/88.0)+description.count("\n")
+		panel_scroll.custom_minimum_size.y=clampf(lines*12+(game.pending.choices.size()-1)*24+12,100,218)
+		service_window.reset_size()
+	else:
+		service_window.min_size=Vector2i(580,280);panel_scroll.custom_minimum_size.y=218
 	service_window.popup_centered()
 
 func _service_choice(index: int) -> void:
@@ -1226,6 +1260,14 @@ func _service_choice(index: int) -> void:
 		_pause_travel()
 		robbery_demand_view.open(game)
 		return
+	if DisplayServer.get_name() != "headless" and game.pending.get("crime_menu", false):
+		var ccmd := String(game.pending.choices[index].get("crime_command", ""))
+		if ccmd in ["shoot", "breakout"] and int(game.state.bullets) > 0:
+			crime_category = ""
+			service_window.hide()
+			_pause_travel()
+			if _open_tactical_combat(ccmd):
+				return
 	# A theft from a place with goods picks what to carry off first; a gate or ferry has only its passage.
 	if game.pending.get("crime_menu",false) and game.crime.incident().is_empty() and game.pending.choices[index].get("crime_command","")=="theft" and not game.RobberyDemand.theft_stock(game,game.crime.target(game)).is_empty():
 		service_window.hide()
@@ -1312,6 +1354,11 @@ func _finish_fishing() -> void:
 		_refresh()
 
 func _start_hunt() -> void:
+	if game.state.bullets==0 and game.dogs.ready("hunt"):
+		section_window.hide()
+		_pause_travel()
+		if game.start_hunt():_open_hunt_window()
+		return
 	_open_field_trip(-1)
 
 func _open_field_trip(member: int=-1) -> void:
@@ -1356,6 +1403,9 @@ func _finish_hunt() -> void:
 		hunt_window.popup_centered();return
 	var began: int=game.state.day
 	hunt_window.hide()
+	wagon_train_window.hide()
+	rafting_window.reset()
+	dog_window.hide()
 	livestock_window.hide()
 	fishing_window.hide()
 	fishing_window.active=false
@@ -1366,6 +1416,7 @@ func _finish_hunt() -> void:
 	if game.finish_hunt(skin_cart):
 		var recovered: Dictionary=game.last_hunt_recovery
 		var report: String="%d shots · %d lb meat obtained\n%.1f lb eaten at camp · %.1f lb left behind\nPACKED %.1f LB · %d FOOD UNITS\nPacked meat fits the current cargo and hauling limits.\nEat within two trail days or use Camp > Preserve meat.\n%d day(s) passed; meals came from provisions and the catch." % [outing.shots,outing.meat,recovered.eaten_mass,recovered.left,recovered.mass,recovered.food,game.state.day-began]
+		if outing.has("dog_rabbit_lb"):report+="\nRabbit meat caught by %s: %d lb, included above." % [outing.dog,int(outing.dog_rabbit_lb)]
 		if recovered.has("pelts"):
 			report+="\nPreparation day: %.2f food units eaten from camp supplies." % float(recovered.preparation_food_units)
 			for item in recovered.pelts:report+="\n%s: %d prepared, %d left behind." % [game.provisions.data.pelts.goods[item].label,int(recovered.pelts[item]),int(recovered.pelts_left[item])]
@@ -1389,7 +1440,12 @@ func _select_member(index: int) -> void:
 	selected_member = index
 	_refresh_party()
 
+func _party_brief() -> String:
+	var names: Array=game.party_health.members.filter(func(m):return game.party_health.is_active(m)).map(func(m):return m.name)
+	return ", ".join(names.slice(0,5))+(" + %d more" % (names.size()-5) if names.size()>5 else "")
+
 func _refresh_party() -> void:
+	party_window.title="YOUR TRAVELING PARTY · %d PRESENT" % game.state.party_size
 	auto_pay_wages.hide()
 	wages_button.hide()
 	dismiss_button.hide()
@@ -1409,6 +1465,9 @@ func _refresh_party() -> void:
 			vacancy.disabled=not game.can_service() or game.recruitment.site(game).is_empty()
 			party_rows.add_child(vacancy)
 		else:_add_party_row(game.party_health.members[int(id)])
+	var invite:=button("FIND ANOTHER COMPANION",_open_companions)
+	invite.disabled=not game.can_service() or game.recruitment.site(game).is_empty()
+	party_rows.add_child(invite)
 	var past: Array=game.party_health.members.filter(func(member):return not game.party_health.is_active(member) and not member.get("guarding",false) and not member.get("away",false))
 	if not past.is_empty():
 		var history:=button(("HIDE" if show_past_travelers else "SHOW")+" PAST TRAVELERS · %d" % past.size(),_toggle_party_history)
@@ -1522,6 +1581,9 @@ func _new_journey() -> void:
 	service_window.hide()
 	options_window.hide()
 	hunt_window.hide()
+	wagon_train_window.hide()
+	rafting_window.reset()
+	dog_window.hide()
 	livestock_window.hide()
 	fishing_window.hide()
 	fishing_window.active=false
@@ -1689,10 +1751,23 @@ func _choose(index: int) -> void:
 		_rest()
 		return
 	_pause_travel()
+	if DisplayServer.get_name() != "headless" and game.can_choose(index):
+		if game.pending.get("crime_menu", false):
+			var ccmd := String(game.pending.choices[index].get("crime_command", ""))
+			if ccmd in ["shoot", "breakout"] and int(game.state.bullets) > 0:
+				if _open_tactical_combat(ccmd):
+					return
+		elif not game.pending.get("service_menu", false) and not game.pending.has("landmark"):
+			var ch: Dictionary = game.pending.choices[index]
+			var ev_id := String(game.pending.get("id", ""))
+			if (ch.has("combat") or (ev_id == "horse_thieves" and ch.has("risk"))) and not bool(game.pending.get("friendly", false)) and int(game.state.bullets) > 0:
+				if _open_tactical_combat("trail:" + str(index)):
+					return
 	if game.can_choose(index) and (game.pending.choices[index].get("action","") in ["leave","cross"] or game.pending.choices[index].has("method")):camping=false
 	var is_crossing: bool = game.can_choose(index) and game.pending.has("landmark") and game.pending.choices[index].has("method")
 	var return_to_camp: bool=game.pending.get("id","") in ["packs_too_heavy","no_team"]
 	var accepted: bool = game.choose(index)
+	if accepted and not game.raft.is_empty():rafting_window.open(game)
 	if accepted and return_to_camp and game.can_service():_enter_camp()
 	if accepted and game.pending.get("service_menu",false):
 		_show_service()
@@ -1712,7 +1787,7 @@ func _acknowledge_crossing() -> void:
 	_refresh()
 
 func _update_animation_pause() -> void:
-	landscape.crossing_paused = map_view.visible or drop_window.visible or section_window.visible or guide.visible or journal_window.visible or party_window.visible or options_window.visible or service_window.visible or supplies_window.visible or grave_window.visible or memorial_window.visible or record_notice.visible
+	landscape.crossing_paused = map_view.visible or drop_window.visible or section_window.visible or guide.visible or journal_window.visible or party_window.visible or wagon_train_window.visible or options_window.visible or service_window.visible or supplies_window.visible or grave_window.visible or memorial_window.visible or record_notice.visible
 
 func _refresh() -> void:
 	var s: Dictionary = game.state
@@ -1720,10 +1795,10 @@ func _refresh() -> void:
 	pace.selected = int(s.pace)
 	rations.selected = int(s.rations)
 	travel_settings_label.text="PACE: %s\nRATIONS: %s\nHEADING: %s\nCHANGE: TRAVEL >" % [pace.get_item_text(pace.selected),rations.get_item_text(rations.selected),game.Direction.heading(game).to_upper()]
-	save_button.disabled = s.status not in ["traveling", "arrived", "lost", "returned_east"] or not game.hunt.is_empty() or not landscape.crossing.is_empty() or _reviewing_crossing()
-	load_button.disabled = not game.hunt.is_empty() or not landscape.crossing.is_empty() or _reviewing_crossing()
+	save_button.disabled = s.status not in ["traveling", "arrived", "lost", "returned_east"] or not game.hunt.is_empty() or not game.raft.is_empty() or not landscape.crossing.is_empty() or _reviewing_crossing()
+	load_button.disabled = not game.hunt.is_empty() or not game.raft.is_empty() or not landscape.crossing.is_empty() or _reviewing_crossing()
 	party_button.disabled = game.party_health.members.is_empty()
-	options_button.disabled = not game.hunt.is_empty() or not landscape.crossing.is_empty() or _reviewing_crossing()
+	options_button.disabled = not game.hunt.is_empty() or not game.raft.is_empty() or not landscape.crossing.is_empty() or _reviewing_crossing()
 	for key in ribbon_buttons:
 		if key not in ["MAP","GUIDE","PARTY","HISTORY"]:ribbon_buttons[key].disabled=not game.can_service() or not landscape.crossing.is_empty() or _reviewing_crossing()
 	if party_window.visible:
@@ -1733,7 +1808,7 @@ func _refresh() -> void:
 	date_label.text = "%s %d, %d   |   GUIDE MILES %d / %d   |   %s" % [months[date.month - 1], date.day, date.year, s.miles, game.destination(), s.mode.to_upper()]
 	if s.status == "outfitting":
 		date_label.text = "INDEPENDENCE, 1848   |   PREPARING FOR DEPARTURE   |   CLASSIC"
-	ledger_title.text="* PACKS & LIVESTOCK *" if s.vehicle=="foot" else "* WAGON LEDGER *"
+	ledger_title.text="* PACKS & LIVESTOCK *" if s.vehicle=="foot" else ("* %d-WAGON TRAIN *" % game.wagon_count() if game.wagon_count()>1 else "* WAGON LEDGER *")
 	stats.text = "FOOD    %s UNITS\nHEALTH    %s\nCASH      $%.2f\nOXEN %d   CLOTHES %d\nBULLETS   %d\nSPARES W%d A%d T%d" % [str(snappedf(float(s.food)+game.livestock.available_kcal()/1000.0,0.1)), game.party_condition(), s.money, s.oxen, s.clothing, s.bullets, s.wheels, s.axles, s.tongues]
 	stats.tooltip_text="Food: %d units (about %d kcal).\nOne unit is about %d kcal. Party target: %d units/day.\nFood units are approximate; supply weight is separate." % [s.food,game.provisions.food_calories(s.food),game.provisions.data.food_energy.unit_kcal,int(game.provisions.data.rations_lb[s.rations])*int(s.party_size)]
 	var plan: Dictionary=game.mount_plan()
@@ -1752,16 +1827,20 @@ func _refresh() -> void:
 	landscape.terrain = s.terrain
 	landscape.miles = s.miles
 	landscape.vehicle = s.vehicle
+	landscape.dog_present=game.dogs.alive()
 	landscape.livestock_counts={"dairy_cows":int(s.get("dairy_cows",0)),"goats":int(s.get("goats",0)),"hens":int(s.get("hens",0))}
 	landscape.herded_oxen=int(s.oxen) if s.vehicle=="foot" else 0
 	landscape.mount_plan=game.mount_plan() if s.vehicle=="foot" and game.Mounts.animals(s)>0 else {}
+	landscape.train_count=game.wagon_count()
 	landscape.walkers=int(s.party_size)
 	landscape.traveler_profiles=game.characters.profiles.filter(func(profile):return int(profile.id)<game.party_health.members.size() and game.party_health.is_active(game.party_health.members[int(profile.id)]))
 	landscape.encounter = game.pending.get("id", "")
 	landscape.weather_id = str(game.survival.weather.get("id", "clear")) if s.extended_route else "clear"
 	landscape.scene_id = ""
 	if s.extended_route:
-		if camping and s.status=="traveling":
+		if not game.raft.is_empty():
+			landscape.scene_id="columbia_raft"
+		elif camping and s.status=="traveling":
 			landscape.scene_id="camp"
 		elif game.pending.has("landmark") or s.status == "arrived":
 			landscape.scene_id = s.landmark
@@ -1773,6 +1852,12 @@ func _refresh() -> void:
 			landscape.scene_id = game.service_return.landmark
 		elif game.pending.get("service_menu", false):
 			landscape.scene_id = "camp"
+		# Visits use their own approved scene; absence of art retains the landmark.
+		if not _reviewing_crossing() and game.service_return.get("landmark","")==s.landmark:
+			var visiting: bool=game.pending.get("native_menu",false) and game.pending.get("native_site","")==s.landmark
+			var recruiting: bool=game.pending.get("recruit_menu",false) and game.pending.get("recruit_site","") in ["native:"+str(s.landmark),"post:"+str(s.landmark)]
+			var encounter_scene: String=landscape.scenes.encounter_for(str(s.landmark))
+			if (visiting or recruiting) and not encounter_scene.is_empty():landscape.scene_id=encounter_scene
 	if landscape.scene_id == "fort_kearny" and date.year == 1848 and date.month < 6:
 		landscape.scene_id = "fort_kearny_early"
 	landscape.river_scene = not s.extended_route and s.miles >= 90
@@ -1780,7 +1865,7 @@ func _refresh() -> void:
 		landscape.river_scene = game.route.nodes[s.next_landmark].kind == "river" and s.leg_length - s.leg_miles <= 12
 	var animating: bool = not landscape.crossing.is_empty()
 	landscape.scrolling = traveling and landscape.scene_id.is_empty() and not animating
-	var blocked: bool = animating or _reviewing_crossing() or not game.pending.is_empty() or s.status != "traveling" or game.camp_repair.blocked(game)
+	var blocked: bool = not game.raft.is_empty() or animating or _reviewing_crossing() or not game.pending.is_empty() or s.status != "traveling" or game.camp_repair.blocked(game)
 	travel_button.disabled = blocked
 	travel_button.text = "PAUSE" if traveling else "CONTINUE >"
 	rest_button.disabled = animating or _reviewing_crossing() or not (game.can_service() or game._can_act())
@@ -1789,7 +1874,10 @@ func _refresh() -> void:
 	for node in choices.get_children():
 		choices.remove_child(node)
 		node.queue_free()
-	if animating:
+	if not game.raft.is_empty():
+		event_title.text="Cascades rapids"
+		event_text.text="Steer the raft through the rapids. Finish the activity before continuing the journey or saving."
+	elif animating:
 		event_title.text = "Crossing " + crossing_result.place
 		event_text.text = {"ford": "The oxen pull the wagon through the water.", "float": "The unhitched wagon floats while the oxen cross separately.", "ferry": "The ferry carries the party and their packs." if s.vehicle=="foot" else "The ferry carries the wagon on its wooden platform.","swim":"The party swims across with their packs. The current threatens people and supplies.","horses":("The horses swim the current, riders and packs riding high." if crossing_result.get("stage","")=="high" else "The horses wade the shallow ford, packs riding dry.")}.get(crossing_result.method,"The party crosses the river.")
 		choices.add_child(button("SKIP ANIMATION", landscape.finish_crossing))
@@ -1831,9 +1919,9 @@ func _refresh() -> void:
 		var target: String = "Kansas River"
 		if s.extended_route:
 			target = "%s · %d guide miles %s" % [game.route.nodes[s.landmark if game.Direction.heading(game)=="east" else s.next_landmark].name, s.leg_miles if game.Direction.heading(game)=="east" else s.leg_length-s.leg_miles,game.Direction.heading(game)]
-		event_text.text = ("The wagon is rolling." if traveling else "The wagon is stopped. Continue or rest in camp.") + "\nNEXT: " + target + "\nPARTY: " + ", ".join(game.party_health.members.filter(func(member):return game.party_health.is_active(member)).map(func(member):return member.name))
+		event_text.text = (("The %d-wagon train is rolling." % game.wagon_count() if game.wagon_count()>1 else "The wagon is rolling.") if traveling else ("The %d-wagon train is stopped." % game.wagon_count() if game.wagon_count()>1 else "The wagon is stopped. Continue or rest in camp.")) + "\nNEXT: " + target + "\nPARTY: " + _party_brief()
 		event_text.text+="\n"+game.context.region(game).label+": "+game.context.region(game).note
-		if s.vehicle=="foot":event_text.text=(("The party is riding." if game.Mounts.mounted(game.mount_plan()) else "The party is walking.") if traveling else ("Mounted. Continue or rest; supplies are limited to what you and the animals carry." if game.Mounts.mounted(game.mount_plan()) else "On foot. Continue or rest; supplies are limited to your packs."))+"\nNEXT: "+target+"\nPARTY: "+", ".join(game.party_health.members.filter(func(member):return game.party_health.is_active(member)).map(func(member):return member.name))+"\n"+game.context.region(game).note
+		if s.vehicle=="foot":event_text.text=(("The party is riding." if game.Mounts.mounted(game.mount_plan()) else "The party is walking.") if traveling else ("Mounted. Continue or rest; supplies are limited to what you and the animals carry." if game.Mounts.mounted(game.mount_plan()) else "On foot. Continue or rest; supplies are limited to your packs."))+"\nNEXT: "+target+"\nPARTY: "+_party_brief()+"\n"+game.context.region(game).note
 	if s.status=="traveling":
 		var season: String=game.season_notice()
 		if not season.is_empty():event_text.text+="\n"+season
@@ -1865,10 +1953,11 @@ func _show_supplies() -> void:
 	drop.name="DropSupplies"
 	actions.add_child(button("LIVESTOCK >",func():supplies_window.hide();livestock_window.open(game)))
 	actions.add_child(drop)
+	supplies_rows.add_child(button("WAGONS & TEAMS >",func():supplies_window.hide();_pause_travel();wagon_train_window.open(game)))
 	var keepsakes:=button("KEEPSAKES >",func():supplies_window.hide();income_window.open(game,"keepsakes"))
 	supplies_rows.add_child(keepsakes)
 	if game.CacheSupport.can_pack(game,false):
-		var abandon:=button("ABANDON WAGON / CHOOSE PACKS",func():_show_packing(false))
+		var abandon:=button("ABANDON TRAIN / CHOOSE PACKS" if game.wagon_count()>1 else "ABANDON WAGON / CHOOSE PACKS",func():_show_packing(false))
 		abandon.name="AbandonWagon"
 		actions.add_child(abandon)
 	var load: float=game.provisions.cargo(game.state)
@@ -2079,7 +2168,7 @@ func _grave_window_closed() -> void:
 		_return_to_remains.call_deferred()
 
 func _return_to_remains() -> void:
-	var open: bool = [guide,journal_window,party_window,drop_window,section_window,options_window,service_window,supplies_window,grave_window,memorial_window,record_notice].any(func(window): return window.visible)
+	var open: bool = [wagon_train_window,guide,journal_window,party_window,drop_window,section_window,options_window,service_window,supplies_window,grave_window,memorial_window,record_notice].any(func(window): return window.visible)
 	if not open and game.state.status == "traveling" and game.pending.get("remains_menu",false):
 		_show_service()
 
@@ -2216,6 +2305,10 @@ func _change_preferences(resize_window: bool=true) -> void:
 	if file.save(preferences_path)!=OK:notice("GAME OPTIONS","These preferences could not be saved for next time.")
 
 
+func _open_native_contacts() -> void:
+	_pause_travel()
+	if game.open_native_contacts():_show_service();_refresh()
+
 func _refresh_place_actions() -> void:
 	for child in place_actions.get_children():
 		place_actions.remove_child(child)
@@ -2223,10 +2316,12 @@ func _refresh_place_actions() -> void:
 	if not game.can_service() or not landscape.crossing.is_empty() or _reviewing_crossing():return
 	var entries: Array=[]
 	var market: Dictionary=game.context.market(game)
+	var native_site: String=game.native_encounters.site_at(game)
+	if not native_site.is_empty():entries.append(["VISIT "+str(game.native_encounters.data.sites[native_site].people).to_upper(),_open_native_contacts])
 	if not game.income.offers(game).is_empty():entries.append(["FIND WORK",func():_pause_travel();income_window.open(game,"work")])
 	if market.available:entries.append(["STORE" if market.post else "TALK TO TRADERS",_open_trade])
 	if not game.crime.camp(game).is_empty():entries.append(["VISIT EMIGRANT CAMP",_open_camp])
-	if not game.recruitment.site(game).is_empty() and game.current_party_slots().has(-1) and game.party_health.members.size()<game.MAX_TRAVELERS:entries.append(["FIND COMPANIONS",_open_companions])
+	if not game.recruitment.site(game).is_empty() and game.party_health.members.size()<game.MAX_TRAVELERS:entries.append(["FIND COMPANIONS",_open_companions])
 	if game.pending.has("landmark"):entries.append(["LOCAL ACTIVITIES",_show_stop_activities])
 	for entry in entries:
 		var option:=button(entry[0],entry[1])
@@ -2264,3 +2359,33 @@ func _recover_wagon() -> void:
 	elif game.wagon_cache.found and game.state.oxen==0:message="Wagon located, but no ox can pull it. Repack here or trade for an animal."
 	else:message="Recovery is incomplete. Resolve the current notice before trying again."
 	notice("WAGON RECOVERY","%d day(s) passed. Now at mile %d.\n%s" % [game.state.day-day,game.state.miles,message])
+
+func _rafting_returned() -> void:
+	_refresh()
+	var result: Dictionary=game.last_rafting
+	var text: String="%d impact(s), %d%% hull remaining.\nCargo lost: %d food units, %d clothing set(s).\nOne trail day passed; meals are charged separately." % [result.hits,result.integrity,result.food_lost,result.clothing_lost]
+	if not result.deaths.is_empty():text+="\nLost in the rapids: "+", ".join(result.deaths.map(func(id):return str(game.party_health.members[int(id)].name)))+"."
+	if result.drowned>=0:text+="\n%s drowned." % game.party_health.members[int(result.drowned)].name
+	elif result.injured>=0 and game.party_health.members[int(result.injured)].alive:text+="\n%s suffered rafting injuries. See Party for details." % game.party_health.members[int(result.injured)].name
+	notice("CASCADES RAPIDS",text)
+
+
+func _open_tactical_combat(command: String = "") -> bool:
+	_pause_travel()
+	if not game.start_tactical_combat(command):
+		return false
+	service_window.hide()
+	tactical_window.open(game)
+	_refresh()
+	return true
+
+
+func _finish_tactical_combat() -> void:
+	tactical_window.hide()
+	if game.finish_tactical_combat():
+		_refresh()
+		if game.state.status == "traveling" and game.pending.get("service_menu", false):
+			_show_service()
+	else:
+		_refresh()
+

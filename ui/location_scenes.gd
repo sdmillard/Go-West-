@@ -2,6 +2,7 @@ extends RefCounted
 ## Presentation registry: adding artwork does not change simulation code or RNG.
 const FALLBACK = preload("res://art/pixels/prairie.png")
 var textures: Dictionary = {}
+var encounters: Dictionary = {}
 var error := ""
 
 func _init() -> void:
@@ -21,6 +22,20 @@ func _init() -> void:
 			textures.clear()
 			return
 		textures[id] = load(path)
+
+	var visits: Variant=data.get("encounters",{})
+	if not visits is Dictionary:
+		error="Invalid encounter scene registry."
+		return
+	for site in visits:
+		if not site is String or not visits[site] is String or not textures.has(visits[site]):
+			error="Invalid encounter image: "+str(site)
+			encounters.clear()
+			return
+	encounters=visits.duplicate()
+
+func encounter_for(site: String) -> String:
+	return encounters.get(site,"")
 
 func texture_for(id: String) -> Texture2D:
 	return textures.get(id, FALLBACK)

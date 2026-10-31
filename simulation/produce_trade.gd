@@ -77,6 +77,9 @@ static func model_after(game,effects: Dictionary) -> Dictionary:
 		var n: int=int(effects[item])
 		if item=="food" and n<0:model.remove(-n)
 		inventory[item]=int(inventory.get(item,0))+n
+	if effects.has("wagon"):
+		game.Train.balance(inventory,game.Train.drivers(game),game.team_conditions.record.oxen)
+		if game.Train.count(inventory)>1 and int(inventory.oxen)<game.Train.count(inventory):return {"valid":false,"message":"Each wagon needs at least one ox. Buy draft animals with the wagon or reduce the order."}
 	return {"valid":inventory.food>=0,"cargo":model.cargo(inventory),"inventory":inventory}
 static func commit(game,effects: Dictionary) -> void:
 	WagonTrade.commit(game,effects)

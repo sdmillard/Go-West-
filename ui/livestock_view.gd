@@ -65,8 +65,9 @@ func refresh() -> void:
     var pick:=Button.new();pick.text="BUTCHER %s · %s" % [game.livestock.data.animals[kind].label.to_upper(),"BY HAND" if hand else "1 BULLET"];pick.disabled=offer.is_empty()
     pick.pressed.connect(confirm_butcher.bind(kind,hand));rows.add_child(pick)
  var teams: Dictionary=game.team_conditions.snapshot(game)
+ if game.wagon_count()>1:note("Assign separate wagon teams through SUPPLIES > WAGONS & TEAMS.")
  note("WORKING OXEN: %d / %d · CHOOSE UP TO SIX\nSpare oxen are led and do not pull the wagon. Uncheck a tired ox, then check its replacement." % [teams.working.size(),teams.oxen.size()])
- var fittest:=Button.new();fittest.text="HITCH UP TO SIX FITTEST OXEN";fittest.disabled=not game.can_service()
+ var fittest:=Button.new();fittest.text="HITCH UP TO SIX FITTEST OXEN";fittest.disabled=not game.can_service() or game.wagon_count()>1
  fittest.pressed.connect(func():
   var selection: Array=range(game.team_conditions.record.oxen.size())
   selection.sort_custom(func(a,b):return int(game.team_conditions.record.oxen[a])>int(game.team_conditions.record.oxen[b]))
@@ -74,7 +75,7 @@ func refresh() -> void:
   game.team_conditions.select(game,selection);refresh();changed.emit())
  rows.add_child(fittest)
  for i in range(teams.oxen.size()):
-  var pick:=CheckBox.new();pick.text="OX %d · %s (%d)" % [i+1,game.PartyHealth.condition_label(int(teams.oxen[i])),teams.oxen[i]];pick.button_pressed=i in teams.working;pick.disabled=not game.can_service()
+  var pick:=CheckBox.new();pick.text="OX %d · %s (%d)" % [i+1,game.PartyHealth.condition_label(int(teams.oxen[i])),teams.oxen[i]];pick.button_pressed=i in teams.working;pick.disabled=not game.can_service() or game.wagon_count()>1
   pick.toggled.connect(func(on):
    var selection: Array=game.team_conditions.record.working.duplicate()
    if on:selection.append(i)

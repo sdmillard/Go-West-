@@ -231,7 +231,7 @@ static func post_bounties(crime,game) -> void:
 			var id: int=int(report.incident)
 			if not report.identified or id in posted or "incident:%d" % id in answered:continue
 			var item: Dictionary=crime.record.incidents[id-1]
-			if item.action in ["shoot","assault","pursuit"] or (item.action=="wanted" and int(item.shots)>0) or (item.action in ["robbery","raid"] and value_of(game,item)>=int(crime.wanted_data.robbery_reward_cents)):ids.append(id)
+			if item.action in ["shoot","assault","pursuit"] or (item.action=="wanted" and int(item.shots)>0) or item.attempt=="killed" or not item.get("kills",[]).is_empty() or (item.action in ["robbery","raid"] and value_of(game,item)>=int(crime.wanted_data.robbery_reward_cents)):ids.append(id)
 		if ids.is_empty():continue
 		var cents: int=clampi(roundi(notoriety(crime,game,post)*float(crime.wanted_data.bounty_step_cents)),int(crime.wanted_data.bounty_min_cents),int(crime.wanted_data.bounty_max_cents))
 		crime.record.bounties.append({"id":crime.record.bounties.size()+1,"day":int(game.state.day),"post":post,"cents":cents,"incidents":ids,"cleared_day":-1})
@@ -481,7 +481,7 @@ static func valid_bounties(crime,r: Dictionary,game) -> bool:
 			if not whole(id,1,r.incidents.size()) or id in posted:return false
 			posted.append(id)
 			var item: Dictionary=r.incidents[int(id)-1]
-			if not (item.action in ["shoot","assault","pursuit"] or (item.action=="wanted" and int(item.shots)>0) or (item.action in ["robbery","raid"] and value_of(game,item)>=int(crime.wanted_data.robbery_reward_cents))):return false
+			if not (item.action in ["shoot","assault","pursuit"] or (item.action=="wanted" and int(item.shots)>0) or item.attempt=="killed" or not item.get("kills",[]).is_empty() or (item.action in ["robbery","raid"] and value_of(game,item)>=int(crime.wanted_data.robbery_reward_cents))):return false
 			if not r.reports.any(func(report):return report.incident==id and report.identified and shadow.arrival(game,report,b.post)<=int(b.day)):return false
 		if int(b.cleared_day)>=0 and not r.incidents.any(func(item):return (item.action=="wanted" and int(item.get("bounty",0))==int(b.id) and item.resolution=="paid" and int(item.ended_day)==int(b.cleared_day)) or (item.has("sentence") and int(item.sentence.day)==int(b.cleared_day) and b.incidents.all(func(id):return "incident:%d" % int(id) in item.sentence.charges))):return false
 	return true

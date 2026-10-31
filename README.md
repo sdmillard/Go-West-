@@ -1,4 +1,21 @@
 # Westward, Probably
+[Frontier detention research](docs/FRONTIER_DETENTION_RESEARCH.md): evidence and a proposed custody/venue plan for1848. Research only; detention mechanics are not implemented.
+
+[Native community visits](docs/NATIVE_ENCOUNTERS.md): local provisions, Deschutes guides, Cascades portage crews and companion opportunities. The approved Wasco trading-landing artwork appears during its visit and companion search.
+
+[Recurring local contacts](docs/NATIVE_CONTACTS.md): all seven visits now have remembered agreements, with work, barter, produce wages, horse terms, guide contracts and a one-use portage credit.
+
+[Wagon trains and larger parties](docs/WAGON_TRAINS.md): start with five travelers, recruit more on the trail, buy extra wagons and assign a separate driver/ox team to each.
+
+[Approved rafting artwork](docs/RAFTING_ART.md): isometric timber raft, basalt rocks, drifting logs, animated foam and wreck debris; the collision circles are removed in the main game.
+
+[Rafting patterns](docs/RAFTING_PATTERNS.md): seeded slaloms, split passages, shore clusters, four logs drifting at different speeds and breathers, with a collision-free route check before launch.
+
+[Columbia rafting prototype](docs/COLUMBIA_RAFTING_PROTOTYPE.md): steer through the Cascades or portage. Run `play-rafting-prototype.cmd` to try an isolated practice party immediately.
+
+[Dog usefulness results](docs/DOG_USEFULNESS_RESULTS.md): 800 controlled hunts and 96 matched journeys; watch deters theft, while hunting help has limited food returns. Rabbit catches now roll once when each rabbit appears.
+
+[Working dogs](docs/WORKING_DOGS.md): one optional farm shepherd can watch camp or help the leader hunt, including occasional rabbit catches. Real meals, condition, fatigue and saved standing jobs apply.
 
 
 [Disease clock corrections and bandaging](docs/DISEASE_CLOCK_CORRECTIONS.md): calendar illness courses, delayed smallpox/measles onset, per-disease susceptibility and wound risk until healing. Nursing visibly includes cleaning/bandaging with existing supplies.

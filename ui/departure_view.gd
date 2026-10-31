@@ -158,6 +158,7 @@ func _ready() -> void:
 	for i in range(game.outfitter.goods.size()):
 		var good: Dictionary = game.outfitter.goods[i]
 		var caption=text(good.label, Rect2(0, 2 + i * 18, 230, 18), stock_rows)
+		if good.id=="dog":caption.tooltip_text="One optional farm shepherd. Eats 1.2-1.6 food units daily after people eat. Assign hunt, camp watch or rest through Camp > Dog. Does not occupy a traveler slot. $5 is an authored price estimate."
 		if good.id in ["produce","dried_produce"]:caption.tooltip_text="Each basket supplies 1 food unit from 4 lb fresh produce. "+("Fresh lasts 3 days." if good.id=="produce" else "Dried weighs 0.7 lb and lasts up to 90 days, with less vitamin C.")
 		var quantity := SpinBox.new()
 		quantity.min_value = 0
