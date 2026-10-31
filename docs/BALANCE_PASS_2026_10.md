@@ -71,3 +71,35 @@ Findings (full write-up shared with Spencer as a Claude Doc):
 - Walking: 0/36, mostly lack of food.
 
 Proposed tuning order: scurvy and disease mix; farmer money; winter danger for late starts (needs Spencer); crime refusals (needs Spencer); pace and rations; no change to fights.
+
+## Step 1: scurvy (October 31)
+
+Why scurvy was the top killer, checked against the code and against modern and historical numbers:
+
+- **Dried fruit did nothing.** Meals served the full shared vitamin portion every day, so a party's dried fruit was eaten in its first week while reserves were still full. Preserved fruit is now opened only as far as today's vitamin debt can use it (a full portion when someone has scurvy). Fresh produce, which spoils in days, is served as before.
+- **Fresh meat counted for nothing.** Raw muscle meat holds a few mg of vitamin C per 100 g and organs more; about 10 mg a day kept scurvy away in the Sheffield experiment. Freshly killed meat and fish now give 0.03 produce-pound equivalents per cooked pound (`provisions.foraging.fresh_meat_vitamin_ratio`, about 5 mg/lb against an 80 mg half-pound portion). Salted, dried and staple food give none. Milk is still counted as none.
+- **It killed far too fast and almost never healed.** A serious case did 6 damage a day; only 8 of 218 cases ever recovered. Historically scurvy disabled for weeks and killed over months (Fort Stevenson, winter 1867-68: 79 cases, 2 deaths). Scurvy now wears a traveler down to 25 health (`scurvy.health_floor`), then drains one point every four days without vitamin C (`floor_drain_days`), so it can still kill, over months. Treatment is unchanged: bleeding damage stops with vitamin C and the case clears after 14 adequate days.
+- Onset (45 days of reserve, then a rising daily chance) matches the 1-3 months to first signs in depletion studies and was not changed.
+
+Before and after, same seeds (90000-90011):
+
+| | Lawful arrivals (180) | Farmer | Carpenter | Banker | Scurvy cases | Scurvy deaths (all 360) |
+|---|---|---|---|---|---|---|
+| Baseline | 109 | 6/60 | 48/60 | 55/60 | not counted | 113 |
+| Floor only | 115 | 9/60 | 50/60 | 56/60 | 443 | 0 |
+| Floor, slow drain, fresh meat, dried-fruit fix | 129 | 20/60 | 51/60 | 58/60 | 122 | 9 |
+
+| Style | Arrived | Median days | Survivors at arrival | Leader died | Custody | Other loss | Out of time | Deaths/journey | Starving days | Cash at arrival |
+|---|---|---|---|---|---|---|---|---|---|---|
+| careful_apr | 26/36 | 211.0 | 4.92 | 8 | 0 | 0 | 2 | 0.69 | 0.0 | 194.55 |
+| careful_may | 26/36 | 236.5 | 4.65 | 9 | 0 | 0 | 1 | 0.81 | 0.0 | 145.28 |
+| criminal | 0/36 | 0 | 0 | 36 | 0 | 0 | 0 | 1.75 | 0.0 | 0 |
+| fighter | 29/36 | 211 | 4.79 | 4 | 0 | 0 | 3 | 0.64 | 0.0 | 221.95 |
+| horses | 14/36 | 185.5 | 4.64 | 22 | 0 | 0 | 0 | 1.86 | 5.0 | 221.28 |
+| late_jul | 21/36 | 287 | 4.67 | 13 | 0 | 0 | 2 | 0.94 | 0.0 | 93.37 |
+| late_jun | 27/36 | 292 | 4.81 | 9 | 0 | 0 | 0 | 0.72 | 0.0 | 59.33 |
+| on_foot | 0/36 | 0 | 0 | 28 | 0 | 0 | 8 | 2.39 | 57.5 | 0 |
+| petty | 23/36 | 212 | 4.83 | 10 | 0 | 0 | 3 | 0.75 | 0.0 | 157.77 |
+| reckless | 0/36 | 0 | 0 | 36 | 0 | 0 | 0 | 2.42 | 0.0 | 0 |
+
+Every remaining scurvy case starts past mile 1,200 (Snake River onward) at a median of day 211. Careful April parties spend about 137 days moving, 30 resting and 45 on stops and events, so they reach the dry far west in autumn. Journey length is the next question for Spencer. Late starts now do even better (June 27/36), which sharpens the "leaving late costs nothing" finding.

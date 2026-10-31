@@ -96,6 +96,10 @@ func _valid_deficiency(rules: Dictionary) -> bool:
 	for key in ["base_chance", "chance_per_15_days", "max_chance"]:
 		if not _number(rules.get(key)) or rules[key] < 0 or rules[key] > 1:
 			return false
+	if rules.has("floor_drain_days") and (not _number(rules.floor_drain_days) or rules.floor_drain_days < 1 or rules.floor_drain_days != floor(rules.floor_drain_days)):
+		return false
+	if rules.has("health_floor") and (not _number(rules.health_floor) or rules.health_floor < 0 or rules.health_floor > 99 or rules.health_floor != floor(rules.health_floor)):
+		return false
 	return true
 
 func _valid_spread(entry: Dictionary) -> bool:
@@ -367,6 +371,12 @@ func tick(day: int, resting: bool, risk_multiplier: float = 1.0, rations: int = 
 				active["nutrition_damage_milli"]=harm%1000
 				active["treatment_coverage_milli"]=coverage
 				damage=floori(harm/1000.0)
+				# Scurvy alone wears a traveler down slowly; it weakens rather than kills outright.
+				# Below the floor it keeps draining one point every few days, so it can still kill over months.
+				if active.id==str(scurvy.get("condition","")) and scurvy.has("health_floor") and int(member.health)-damage<int(scurvy.health_floor):
+					var slow: int=maxi(1,int(scurvy.get("floor_drain_days",4)))
+					var above: int=maxi(0,int(member.health)-int(scurvy.health_floor))
+					damage=above if above>0 else (1 if coverage<1000 and (day-int(active.started_day))%slow==0 else 0)
 			else:
 				damage*=int(active.get("severity",1))
 			affect(member,-damage,day,definition.name.to_lower())

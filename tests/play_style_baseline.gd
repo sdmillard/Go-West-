@@ -74,6 +74,8 @@ func run():
     var min_cash: float=start_cash
     var outcome: String="action_limit"
     var idle: int=0
+    var onset_miles: Array=[]
+    var sick_seen: int=0
     for step in range(3000):
      if game.state.status!="traveling":outcome=game.state.status;break
      if game.state.day>=365:outcome="year_limit";break
@@ -110,6 +112,10 @@ func run():
      if game.state.miles>mile:count.travel_days+=1
      if game.state.day>day and game.state.food==0:count.empty_food_days+=game.state.day-day
      min_food=mini(min_food,int(game.state.food))
+     var sick_now: int=game.party_health.members.reduce(func(n,m):return n+m.history.filter(func(h):return h.ends_with("has scurvy.")).size(),0)
+     if sick_now>sick_seen:
+      onset_miles.append([int(game.state.day),int(game.state.miles),str(game.state.landmark)])
+      sick_seen=sick_now
      min_cash=minf(min_cash,game.state.money)
      if game.state.food<0 or game.state.money<0 or game.state.party_size!=game.party_health.living_count() or not game.error.is_empty():
       outcome="invariant_failed";errors.append({"run":id,"error":outcome});break
@@ -124,7 +130,7 @@ func run():
      "days":int(game.state.day),"arrival_month":int(game.calendar().month),"miles":int(game.state.miles),"survivors":int(game.state.party_size),"leader_alive":bool(leader.alive),
      "deaths":deaths,"scurvy_onsets":game.party_health.members.reduce(func(n,m):return n+m.history.filter(func(h):return h.ends_with("has scurvy.")).size(),0),
      "scurvy_recoveries":game.party_health.members.reduce(func(n,m):return n+m.history.filter(func(h):return h.ends_with("recovered from scurvy.")).size(),0),
-     "scurvy_onset_miles":[],"departures":game.party_health.members.filter(func(m):return m.get("departed",false)).size(),
+     "scurvy_onset_miles":onset_miles,"produce_held":produce_held(game),"departures":game.party_health.members.filter(func(m):return m.get("departed",false)).size(),
      "start_cash":start_cash,"outfit_cents":outfit_cents,"end_cash":game.state.money,"min_cash":min_cash,"end_food":int(game.state.food),"min_food":min_food,
      "oxen":int(game.state.oxen),"bullets":int(game.state.bullets),"audit":game.audit.duplicate(),"counts":count.duplicate(),
      "events":events,"fights":game.combat.history.map(func(r):return {"event":r.get("event",""),"tactic":r.get("tactic",""),"outcome":r.get("outcome","")}),

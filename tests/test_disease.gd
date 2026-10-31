@@ -153,7 +153,8 @@ func run() -> void:
 	game.provisions.add_meat(40, game.state.day)
 	game.state.food += game.provisions.meat_units(40)
 	game._tick_day(true)
-	check(game.party_health.days_without_fresh == 2, "Fresh meat does not supply the produce needed to prevent scurvy")
+	# Freshly killed meat carries a little vitamin C (balance pass, October 31): it holds off the deficit but is no full produce portion.
+	check(game.party_health.days_without_fresh < 2 and float(game.livestock.last_meal.vitamin) < game.state.party_size*0.5, "Fresh meat slows the vitamin deficit without counting as a full produce portion")
 	game.party_health.days_without_fresh = 70
 	copy = store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))
 	check(copy != null and copy.party_health.days_without_fresh == 70, "Days without fresh meat persist through save and load")

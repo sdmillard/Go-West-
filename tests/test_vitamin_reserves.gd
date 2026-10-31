@@ -76,7 +76,8 @@ func run():
  g.state.food+=g.provisions.add_produce(4,int(g.state.day))
  check(g.rest_in_camp(),"Main party and detached camp each settle a real day")
  check(g.party_health.members[0].vitamin_debt_milli==7600,"Main party's produce replenishes its own reserve")
- check(trip.camp.guards[0].vitamin_debt_milli==15600,"Outrider's packed staple meal cannot borrow the main party's vitamins")
+ # The outrider may eat game it shot itself: fresh meat gives a little vitamin C of its own (12960 here), never the main party's produce.
+ check(trip.camp.guards[0].vitamin_debt_milli in [15600,12960],"Outrider's packed meal cannot borrow the main party's vitamins: %d" % trip.camp.guards[0].vitamin_debt_milli)
  var guarded: Dictionary=trip.camp.duplicate(true);guarded.guards[0].vitamin_debt_milli=-1
  check(not g.Guards.valid(guarded,g,int(g.state.day)),"Detached camp rejects a malformed personal reserve")
  print("Vitamin reserves: %d checks, %d failures" % [checks,failures]);quit(1 if failures else 0)

@@ -49,5 +49,14 @@ func run():
  for key in ["nutrition_progress_milli","nutrition_damage_milli","treatment_coverage_milli"]:old.party[0].conditions[0].erase(key)
  check(store.restore(old)!=null,"Existing saves without optional treatment fields still load")
  check(not Health.valid_treatment({"id":"dysentery","nutrition_progress_milli":100}),"Unrelated illness cannot carry scurvy treatment state")
+ h=patient();h.scurvy={"condition":"scurvy","onset_days":999,"base_chance":0,"chance_per_15_days":0,"max_chance":0,"health_floor":25,"floor_drain_days":4};h.members[0].health=40;h.members[0].conditions[0].severity=3
+ for day in range(1,21):h.tick(day,false,1,2,1848,5,"plains",80,{},0.0)
+ check(h.members[0].alive and h.members[0].health>=20 and h.members[0].health<25 and not h.members[0].conditions.is_empty(),"Untreated scurvy wears a traveler to the floor fast, then drains slowly")
+ var survived:=20
+ while h.members[0].alive and survived<400:
+  survived+=1;h.tick(survived,false,1,2,1848,5,"plains",80,{},0.0)
+ check(not h.members[0].alive and survived>=90,"Scurvy alone can still kill, but only over months: day %d" % survived)
+ var rules=Health.new();rules.start(["A"],1)
+ check(int(rules.scurvy.get("health_floor",-1))==25,"Live scurvy rules carry the health floor")
  print("Partial scurvy treatment: %d checks, %d failures" % [checks,failures]);quit(1 if failures else 0)
 

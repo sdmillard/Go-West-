@@ -6,6 +6,8 @@ extends RefCounted
 ## spoils in days, so it is eaten as before; dried fruit keeps for months, so the cook
 ## only opens what today's debt can absorb instead of feeding a full reserve.
 static func vitamin_need(game) -> float:
+ # Forecast copies carry no party; they keep planning the full portion.
+ if game is Dictionary:return 1.0
  var health=game.party_health
  var worst:=0
  for member in health.members:
