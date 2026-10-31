@@ -65,6 +65,7 @@ func load_data(value: Variant) -> bool:
 	for key in ["maximum_lb","fresh_days","mass_ratio","vitamin_c_lb_per_person"]:
 		if not number(forage.get(key)) or forage[key]<=0:return false
 	if forage.fresh_days!=floor(forage.fresh_days):return false
+	if forage.has("fresh_meat_vitamin_ratio") and (not number(forage.fresh_meat_vitamin_ratio) or forage.fresh_meat_vitamin_ratio<0 or forage.fresh_meat_vitamin_ratio>1):return false
 	for amount in forage.lb_per_worker:
 		if not number(amount) or amount<0 or amount!=floor(amount):return false
 	if forage.lb_per_worker[0]>forage.lb_per_worker[1]:return false
@@ -261,11 +262,12 @@ func valid_nutrients(batch: Dictionary) -> bool:
 
 ## Meals share a produce serving, then use other food; extra produce feeds shortages.
 ## Discarding/selling still uses remove(), without crediting dietary vitamins.
-func eat(amount: int,party_size: int,total: int,vitamin_offset: float=0.0) -> float:
+## vitamin_target < 0 serves the full shared vitamin-C portion; table meals pass a smaller planned one.
+func eat(amount: int,party_size: int,total: int,vitamin_offset: float=0.0,vitamin_target: float=-1.0) -> float:
 	var remaining:=amount
 	last_serving={"lb":float(data.weights_lb.food),"expires":1000100,"vitamin_c_lb":0.0}
 	var vitamin:=vitamin_offset
-	var target: float=party_size*float(data.foraging.vitamin_c_lb_per_person)
+	var target: float=party_size*float(data.foraging.vitamin_c_lb_per_person) if vitamin_target<0.0 else vitamin_target
 	var produce_total:=0
 	for batch in fresh:
 		if batch.get("vitamin_c",false):produce_total+=int(batch.pounds)
@@ -285,7 +287,10 @@ func eat(amount: int,party_size: int,total: int,vitamin_offset: float=0.0) -> fl
 	for batch in fresh:
 		if batch.get("vitamin_c",false):continue
 		var used: int=mini(other,int(batch.pounds))
-		if used>0:last_serving={"lb":mass_ratio(batch),"expires":int(batch.expires),"vitamin_c_lb":0.0,"hunt":bool(batch.get("_hunt_meal",false))}
+		# Freshly killed meat and fish carry a little vitamin C; salted or dried meat carries none.
+		var meat_c: float=0.0 if batch.get("preserved",false) or batch.get("table_product",false) else mass_ratio(batch)*float(data.foraging.get("fresh_meat_vitamin_ratio",0.0))
+		if used>0:last_serving={"lb":mass_ratio(batch),"expires":int(batch.expires),"vitamin_c_lb":meat_c,"hunt":bool(batch.get("_hunt_meal",false))}
+		vitamin+=used*meat_c
 		batch.pounds-=used
 		other-=used
 	if other>0:last_serving={"lb":float(data.weights_lb.food),"expires":1000100,"vitamin_c_lb":0.0}

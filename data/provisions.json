@@ -101,7 +101,9 @@
     "maximum_lb": 16,
     "fresh_days": 3,
     "mass_ratio": 4,
-    "vitamin_c_lb_per_person": 0.5
+    "vitamin_c_lb_per_person": 0.5,
+    "fresh_meat_vitamin_ratio": 0.03,
+    "fresh_meat_note": "Produce-pound equivalent of vitamin C per physical pound of freshly killed meat or fish as cooked in camp. Raw muscle meat holds a few mg per 100 g and organs more; cooking loses some. Taking a half-pound produce serving as roughly 80 mg (eight days of the ~10 mg/day that prevented scurvy in the Sheffield experiment), about 5 mg per cooked pound gives 0.03. Salted, dried and staple foods carry none."
   },
   "produce_trade": {
     "note": "Authored produce baskets, prices, drying and vitamin retention; not measured 1848 tariffs or nutrient assays. One basket represents four pounds of fresh produce, one food unit.",
