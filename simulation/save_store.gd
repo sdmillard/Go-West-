@@ -5,7 +5,7 @@ const FORMAT := "westward-probably"
 const VERSION := 1
 const DEFAULT_PATH := "user://journey.json"
 const MAX_BYTES := 2097152
-const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes", "social_rules", "appearance", "recruitment", "robbery_demands", "camp_tasks", "field_outings", "fishing", "livestock", "trail_income", "leathercraft", "dogs", "rafting", "native_encounters"]
+const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes", "social_rules", "appearance", "recruitment", "robbery_demands", "camp_tasks", "field_outings", "fishing", "livestock", "trail_income", "leathercraft", "dogs", "rafting", "native_encounters", "weapons"]
 var error := ""
 var rules_signature := ""
 var load_note := ""
@@ -240,6 +240,7 @@ func restore(value: Variant):
 	if (migrated or economy_migrated) and not s.has("salt"):s["salt"]=0
 	# Saddle and pack animal keys are optional; records from before horses carry none.
 	if not Simulation.Mounts.valid_state(s):return null
+	if not Simulation.Armory.valid_state(s):return null
 	if not integer(s.get("seed"), -2147483648, 2147483647) or s.get("extended_route") != true or s.get("status") not in ["traveling", "arrived", "lost", "returned_east"]:
 		return null
 	var game = Simulation.new(int(s.seed), str(s.get("mode", "classic")), s.extended_route, str(value.get("route_end","")))

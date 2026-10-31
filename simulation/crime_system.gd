@@ -450,13 +450,13 @@ func can_choose(game,command: String) -> bool:
 		var place:=target(game)
 		if game.pending.has("crime_target") and command not in ["shoot","assault"]:return false
 		var alive: bool=actor(place,attack_target(game,place)).health>0
-		return (command in ["theft","robbery","shoot","assault"] and alive and (command in ["theft","assault"] or game.state.bullets>0)) or (command=="raid" and not alive)
+		return (command in ["theft","robbery","shoot","assault"] and alive and (command in ["theft","assault"] or game.can_fire())) or (command=="raid" and not alive)
 	if current.stage=="report":return command=="finish"
 	if current.stage=="loot":
 		var quote:=loot_quote(game,current.place)
 		# Passage is itself the prize at a gate or ferry, even with an empty cash box.
 		return command=="flee" or (command=="take" and (quote.food>0 or quote.money>0 or not quote.get("goods",{}).is_empty() or rules(current.place).kind in ["toll","ferry"]))
-	if current.stage=="standoff":return command=="surrender" or (command=="flee" and current.action=="pursuit") or (command=="ride" and current.action=="pursuit" and Wanted.can_ride_off(game)) or (command=="breakout" and game.state.bullets>0)
+	if current.stage=="standoff":return command=="surrender" or (command=="flee" and current.action=="pursuit") or (command=="ride" and current.action=="pursuit" and Wanted.can_ride_off(game)) or (command=="breakout" and game.can_fire())
 	return current.stage=="escape" and (command in ["flee","surrender"] or (command=="ride" and Wanted.can_ride_off(game)))
 ## Local people who hold any knowledge of this incident; later reports can only come from them.
 func local_witnesses(current: Dictionary) -> Array:
@@ -790,13 +790,13 @@ func attack_menu(game,target: int) -> Dictionary:
 func choose_attack(game,index: int) -> bool:
 	var target: int=int(game.pending.choices[index].attack_target)
 	var unarmed: bool = game.pending.choices[index].get("unarmed",false)
-	if target>=0 and (not attack_ready(game,target) or (not unarmed and game.state.bullets<=0)):return false
+	if target>=0 and (not attack_ready(game,target) or (not unarmed and not game.can_fire())):return false
 	game.pending=game.service_return.duplicate(true)
 	game.service_return={}
 	if target>=0:attack(game,target,unarmed)
 	return true
 func attack(game,target: int, unarmed: bool = false) -> void:
-	if not attack_ready(game,target) or (not unarmed and game.state.bullets <= 0): return
+	if not attack_ready(game,target) or (not unarmed and not game.can_fire()): return
 	var members: Array=game.party_health.members
 	var leader: Dictionary=members[0]
 	var victim: Dictionary=members[target]
@@ -871,7 +871,7 @@ func betray(game,slot: int) -> void:
 	var day: int=int(game.state.day)
 	var profile: Dictionary=game.characters.profiles[slot]
 	var others: Array=members.filter(func(other):return int(other.id)>0 and int(other.id)!=slot and game.party_health.is_active(other)).map(func(other):return int(other.id))
-	var act: String="attack" if profile.traits[1]=="Ruthless" and game.characters.response(slot,"murder") not in ["forbidden","reluctant"] and game.party_health.is_active(leader) and game.state.bullets>0 else "theft"
+	var act: String="attack" if profile.traits[1]=="Ruthless" and game.characters.response(slot,"murder") not in ["forbidden","reluctant"] and game.party_health.is_active(leader) and game.can_fire() else "theft"
 	var attempt: String="stole"
 	var noticed: Array=[]
 	if act=="attack":

@@ -89,6 +89,7 @@ func cargo(inventory: Dictionary) -> float:
 	# Bodies carried with the party weigh what they weigh, on foot or in the wagon.
 	pounds+=preload("res://simulation/livestock.gd").cargo(inventory)+float(inventory.get("livestock_products_lb",0))+int(inventory.get("poultry_feed",0))*0.25+int(inventory.get("livestock_fodder",0))+float(inventory.get("poultry_feed_remainder_lb",0))+float(inventory.get("livestock_fodder_remainder_lb",0))
 	pounds+=float(inventory.get("_raw_hides_lb",0))
+	pounds+=preload("res://simulation/armory.gd").extra_weight(inventory)
 	pounds+=float(inventory.get("remains_lb",0))+float(inventory.get("camp_greens_lb",0))
 	for key in data.weights_lb:
 		pounds += maxf(0, float(inventory.get(key, 0))) * float(data.weights_lb[key])
@@ -99,6 +100,8 @@ func cargo(inventory: Dictionary) -> float:
 func cart_cargo(cart: Dictionary) -> float:
 	var inventory := cart.duplicate()
 	inventory.bullets = int(cart.get("bullet_boxes", 0)) * 20
+	# A cart holds only bought arms; the travelers' own are not in it.
+	inventory["arms_home"] = 0
 	return cargo(inventory)+int(cart.get("produce",0))*float(data.foraging.mass_ratio)+int(cart.get("dried_produce",0))*float(data.foraging.mass_ratio)*float(data.produce_trade.dry_weight)
 func team_capacity(oxen: int) -> float:
 	return minf(float(data.cargo_guideline_lb),maxi(0,oxen)*float(data.working_load_per_ox_lb))

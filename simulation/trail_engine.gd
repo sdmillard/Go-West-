@@ -13,6 +13,7 @@ const Guards=preload("res://simulation/wagon_guards.gd")
 const CacheSupport=preload("res://simulation/wagon_cache.gd")
 const Remains=preload("res://simulation/remains.gd")
 const Mounts=preload("res://simulation/mounts.gd")
+const Armory=preload("res://simulation/armory.gd")
 const Pasture=preload("res://simulation/pasture.gd")
 ## Scoped to the synchronous grazing activity, never a saved ongoing bonus.
 var grazing_activity: bool=false
@@ -142,6 +143,8 @@ func _init(seed_value: int = 1848, mode: String = "classic", setup: bool = false
 		state.status = "error"
 	if not native_encounters.error.is_empty():
 		error=native_encounters.error;state.status="error"
+	if not Armory.valid_rules(Armory.data):
+		error="Invalid weapon rules.";state.status="error"
 	for place in native_encounters.data.get("sites",{}):
 		if end_at.is_empty() and not route.nodes.has(place):error="Unknown Native encounter location.";state.status="error"
 	if not rafting.error.is_empty():
@@ -216,6 +219,9 @@ func depart(profession: String, names: Array, month: int, cart: Dictionary, cust
 	if int(cart.get("dog",0))>0:dogs.acquire(self,false)
 	for key in Mounts.KEYS:
 		if int(cart.get(key,0))>0:state[key]=int(cart[key])
+	# Everyone brings their own rifle and knife; bought arms come on top.
+	Armory.home_kit(state,cleaned.size())
+	for key in Armory.KEYS:state[key]=Armory.count(state,key)+int(cart.get(key,0))
 	team_conditions.start_legacy(self)
 	if not quote.wagon:
 		# Packers leave without a wagon: only personal gear travels with them, and no wheel can crack.
@@ -579,7 +585,7 @@ func can_choose(index: int) -> bool:
 	if pending.get("recruit_menu",false) or pending.get("dismiss_menu",false):return recruitment.can_choose(self,index)
 	if pending.get("crime_menu",false):return crime.can_choose(self,str(choice.get("crime_command","")))
 	if pending.get("riders_menu",false):return crime.Wanted.can_choose_rider(self,index)
-	if pending.get("attack_menu",false):return int(choice.get("attack_target",-1))<0 or (crime.attack_ready(self,int(choice.attack_target)) and (choice.get("unarmed",false) or state.bullets>0))
+	if pending.get("attack_menu",false):return int(choice.get("attack_target",-1))<0 or (crime.attack_ready(self,int(choice.attack_target)) and (choice.get("unarmed",false) or can_fire()))
 	if pending.get("remains_menu",false):return Remains.can_choose(self,str(choice.get("remains_command","")),int(choice.get("remains_id",0)),int(choice.get("member",-1)))
 	if camp_repair.blocked(self) and choice.get("action","") in ["leave","cross"]:return false
 	if choice.has("camp_repair_part") and (state.vehicle!="wagon" or not camp_repair.work.is_empty()):return false
@@ -1616,7 +1622,7 @@ func _update_river_stage() -> void:
 			option.risk = crime.seized_risk(self,str(state.landmark))
 
 func start_hunt(outfit: Dictionary={}) -> bool:
-	if not _can_act() or not state.extended_route or (state.bullets < 1 and not dogs.ready("hunt")):
+	if not _can_act() or not state.extended_route or (not can_hunt_with_gun() and not dogs.ready("hunt")):
 		return false
 	var field: Dictionary={}
 	if not outfit.is_empty():
@@ -1696,7 +1702,7 @@ func hunt_ammo() -> int:
 	return int(hunt.field.inventory.bullets) if hunt.has("field") and hunt.field.kit!="wagon" else int(state.bullets)
 
 func hunt_shot(target: int) -> bool:
-	if hunt.is_empty() or hunt.get("activity","")=="fish" or hunt.ended or hunt.reload > 0 or hunt_ammo() < 1 or hunt.shots >= hunting.data.shot_limit or target < -1 or target >= hunt.animals.size():
+	if hunt.is_empty() or hunt.get("activity","")=="fish" or hunt.ended or hunt.reload > 0 or hunt_ammo() < 1 or Armory.long_guns(state)==0 or hunt.shots >= hunting.data.shot_limit or target < -1 or target >= hunt.animals.size():
 		return false
 	if target in hunt.targets or (target >= 0 and hunt.animals[target].escaped):
 		return false
@@ -2157,6 +2163,10 @@ func upgrade_rafting_choice(menu: Dictionary) -> void:
 			choice.label="Run the rapids · steer the raft · 1 day"
 
 
+## A shot needs both a ball and a gun to fire it.
+func can_fire() -> bool:return int(state.bullets)>0 and Armory.firearms(state)>0
+## Hunting takes a rifle or shotgun; a pistol is no hunting arm.
+func can_hunt_with_gun() -> bool:return int(state.bullets)>0 and Armory.long_guns(state)>0
 func start_tactical_combat(command: String = "") -> bool:
 	if state.status != "traveling":
 		return false
@@ -2165,6 +2175,7 @@ func start_tactical_combat(command: String = "") -> bool:
 		if trail_cfg.is_empty():
 			return false
 		trail_cfg["combat_wins"] = combat.victories()
+		Armory.equip(trail_cfg, state)
 		tactical_session = tactical.start_session(trail_cfg)
 		last_tactical = {}
 		return not tactical_session.is_empty()
@@ -2175,6 +2186,7 @@ func start_tactical_combat(command: String = "") -> bool:
 	if cfg.is_empty():
 		return false
 	cfg["combat_wins"] = combat.victories()
+	Armory.equip(cfg, state)
 	tactical_session = tactical.start_session(cfg)
 	last_tactical = {}
 	return not tactical_session.is_empty()
@@ -2185,7 +2197,7 @@ func _build_trail_tactical_config(command: String) -> Dictionary:
 	if ev_id not in ["bandits", "riders", "cayuse_riders", "horse_thieves"]:
 		return {}
 	# Fighting always means the grid; a party out of balls chasing horse thieves fights with clubbed rifles.
-	if bool(pending.get("friendly", false)) or (int(state.bullets) <= 0 and ev_id != "horse_thieves"):
+	if bool(pending.get("friendly", false)) or (not can_fire() and ev_id != "horse_thieves"):
 		return {}
 	var choices: Array = pending.get("choices", [])
 	var choice_idx := -1

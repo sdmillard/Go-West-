@@ -98,6 +98,54 @@
       "suggested": 10
     },
     {
+      "id": "rifles",
+      "label": "EXTRA RIFLE  $15 EACH",
+      "price_cents": 1500,
+      "maximum": 10,
+      "step": 1,
+      "suggested": 0
+    },
+    {
+      "id": "shotguns",
+      "label": "SHOTGUN  $12 EACH",
+      "price_cents": 1200,
+      "maximum": 10,
+      "step": 1,
+      "suggested": 0
+    },
+    {
+      "id": "pistols",
+      "label": "PISTOL  $6 EACH",
+      "price_cents": 600,
+      "maximum": 10,
+      "step": 1,
+      "suggested": 0
+    },
+    {
+      "id": "revolvers",
+      "label": "COLT REVOLVER  $50 (ONLY 1)",
+      "price_cents": 5000,
+      "maximum": 1,
+      "step": 1,
+      "suggested": 0
+    },
+    {
+      "id": "knives",
+      "label": "EXTRA KNIFE  $1 EACH",
+      "price_cents": 100,
+      "maximum": 10,
+      "step": 1,
+      "suggested": 0
+    },
+    {
+      "id": "hatchets",
+      "label": "HATCHET  $1.50 EACH",
+      "price_cents": 150,
+      "maximum": 10,
+      "step": 1,
+      "suggested": 0
+    },
+    {
       "id": "wheels",
       "label": "WHEELS  $10 EACH",
       "price_cents": 1000,

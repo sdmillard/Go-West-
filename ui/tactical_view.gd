@@ -668,7 +668,7 @@ func _refresh_ui() -> void:
 		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		var hp := int(u.get("health", 0))
 		var ap := int(u.get("ap", 0))
-		var load_tag := "LD" if bool(u.get("loaded", false)) else "--"
+		var load_tag := _arms_tag(u)
 		var state_tag := "%dHP %dAP %s" % [hp, ap, load_tag]
 		if hp <= 0:
 			state_tag = "DEAD"
@@ -715,7 +715,7 @@ func _refresh_ui() -> void:
 	elif not sel_unit.is_empty():
 		var ap_now := int(sel_unit.get("ap", 0))
 		var ap_max := int(sel_unit.get("max_ap", 8))
-		var r_state := "CAPLOCK LOADED" if bool(sel_unit.get("loaded", false)) else "UNLOADED (RELOAD %dAP)" % game.tactical.reload_ap_cost(sel_unit)
+		var r_state := _arms_state(sel_unit)
 		weapon_label.text = "%s'S TURN - %d/%d AP - %s - HIT 'END TURN' FOR NEXT IN INITIATIVE" % [
 			String(sel_unit.get("name", "Traveler")).to_upper(),
 			ap_now,
@@ -724,9 +724,14 @@ func _refresh_ui() -> void:
 		]
 
 	start_combat_button.visible = (not started) and (not resolved)
-	snap_button.text = "[SNAP 4AP]" if mode == "snap" else "SNAP 4AP"
-	called_button.text = "[CALLED 6AP]" if mode == "called" else "CALLED 6AP"
-	club_button.text = "[CLUB 3AP]" if mode == "club" else "CLUB 3AP"
+	# Costs follow the selected traveler's own arms.
+	var snap_txt := "SNAP %dAP" % game.tactical.shot_ap_cost("snap", sel_unit)
+	var called_txt := "CALLED %dAP" % game.tactical.shot_ap_cost("called", sel_unit)
+	var melee_name := String(game.tactical.melee(sel_unit).get("label", "Club")).to_upper() if not sel_unit.is_empty() else "CLUB"
+	var club_txt := "%s %dAP" % [melee_name, game.tactical.shot_ap_cost("club", sel_unit)]
+	snap_button.text = "[%s]" % snap_txt if mode == "snap" else snap_txt
+	called_button.text = "[%s]" % called_txt if mode == "called" else called_txt
+	club_button.text = "[%s]" % club_txt if mode == "club" else club_txt
 	snap_button.visible = started and not resolved
 	called_button.visible = started and not resolved
 	club_button.visible = started and not resolved
@@ -739,7 +744,7 @@ func _refresh_ui() -> void:
 	var r_cost: int = game.tactical.reload_ap_cost(sel_unit) if not sel_unit.is_empty() else 5
 	reload_button.text = "RELOAD %dAP" % r_cost
 	reload_button.visible = started and not resolved
-	reload_button.disabled = (not started) or resolved or sel_unit.is_empty() or bool(sel_unit.get("loaded", false)) or int(sel_unit.get("ap", 0)) < r_cost or reserve <= 0
+	reload_button.disabled = (not started) or resolved or sel_unit.is_empty() or game.tactical.capacity(sel_unit) == 0 or int(sel_unit.get("rounds", 0)) >= game.tactical.capacity(sel_unit) or int(sel_unit.get("ap", 0)) < r_cost or reserve <= 0
 
 	var on_retreat: bool = not sel_unit.is_empty() and bool(game.tactical.is_retreat_tile(s, int(sel_unit.get("x", -1)), int(sel_unit.get("y", -1))))
 	retreat_unit_button.visible = started and not resolved
@@ -752,6 +757,25 @@ func _refresh_ui() -> void:
 	var lines: Array = s.get("log", [])
 	var tail: Array = lines.slice(maxi(0, lines.size() - 5), lines.size())
 	log_label.text = "\n".join(tail)
+
+
+## "RIFLE LD", "COLT 3/5", "KNIFE": what a traveler holds and how much is loaded.
+func _arms_tag(u: Dictionary) -> String:
+	var arm: Dictionary = game.tactical.gun(u)
+	if arm.is_empty():
+		return String(game.tactical.melee(u).get("label", "Fists")).to_upper()
+	if int(arm.capacity) > 1:
+		return "%s %d/%d" % [String(arm.label).to_upper(), int(u.get("rounds", 0)), int(arm.capacity)]
+	return "%s %s" % [String(arm.label).to_upper(), "LD" if bool(u.get("loaded", false)) else "--"]
+
+
+func _arms_state(u: Dictionary) -> String:
+	var arm: Dictionary = game.tactical.gun(u)
+	if arm.is_empty():
+		return "NO FIREARM - %s" % String(game.tactical.melee(u).get("label", "Fists")).to_upper()
+	if bool(u.get("loaded", false)):
+		return "%s LOADED%s" % [String(arm.label).to_upper(), " (%d/%d)" % [int(u.get("rounds", 0)), int(arm.capacity)] if int(arm.capacity) > 1 else ""]
+	return "%s UNLOADED (RELOAD %dAP)" % [String(arm.label).to_upper(), game.tactical.reload_ap_cost(u)]
 
 
 func _update_inspector(focus_uid: String = "") -> void:
@@ -792,7 +816,7 @@ func _update_inspector(focus_uid: String = "") -> void:
 	if not sel_unit.is_empty():
 		var cov: Dictionary = game.tactical.unit_adjacent_cover(s, sel_unit)
 		var cov_txt := String(cov.get("label", "Open ground")).to_upper() if not cov.is_empty() else "OPEN GROUND"
-		var load_txt := "LOADED" if bool(sel_unit.get("loaded", false)) else "UNLOADED"
+		var load_txt := _arms_state(sel_unit)
 		var mode_header := "DEPLOYING" if not started else "NOW ACTING"
 		inspector_label.text = "%s: %s (INIT %d - SAVE %d)\n%d HP - %d/%d AP - %s - %s" % [
 			mode_header,
