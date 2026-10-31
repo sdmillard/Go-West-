@@ -18,6 +18,7 @@ var scene_id := "town_setup"
 var scenes = preload("res://ui/location_scenes.gd").new()
 var draft=preload("res://simulation/party_character.gd").new()
 var edit_buttons: Array[Button] = []
+var leader_edit: Button
 var editor_layer: Control
 var editor_title: Label
 var editor_scroll: ScrollContainer
@@ -102,7 +103,7 @@ func _ready() -> void:
 		entry.text_changed.connect(func(_value):
 			_update_quote()
 			_title_editor())
-		# Companions get an EDIT button that opens their character sheet; the leader is defined by play.
+		# Each traveler gets an EDIT button; the leader's sheet holds only personal specials, a flaw and appearance.
 		put(entry, Rect2(95, 48 + i * 23, 108, 21), party_layer)
 		names.append(entry)
 		var edit := Button.new()
@@ -111,7 +112,8 @@ func _ready() -> void:
 		edit.tooltip_text = "Set your own specials, flaw and appearance. If you die, the journey ends." if i == 0 else "Set this companion's temperament, values, background, relationship, specials, flaw and wages."
 		edit.pressed.connect(open_editor.bind(i))
 		put(edit, Rect2(207, 48 + i * 23, 38, 21), party_layer)
-		edit_buttons.append(edit)
+		if i == 0:leader_edit = edit
+		else:edit_buttons.append(edit)
 	text("PROFESSION / TRAIL FUNDS", Rect2(12, 169, 235, 12), party_layer)
 	profession = OptionButton.new()
 	for entry in game.outfitter.professions:

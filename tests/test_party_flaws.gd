@@ -41,8 +41,8 @@ func run():
 	bad.profiles[1].specials.append("Cannibal")
 	check(not game.characters.valid_setup(bad),"One flaw cannot authorize all four specials")
 	bad=choices.duplicate(true)
-	bad.profiles[0].flaws=["Frail"]
-	check(not game.characters.valid_setup(bad),"Companion-only creation cannot assign leader flaws")
+	bad.profiles[0].flaws=["Restless"]
+	check(not game.characters.valid_setup(bad),"The leader cannot take a flaw about trust")
 	var before: Dictionary=game.state.duplicate(true)
 	check(not game.depart("banker",setup.party_names(),4,setup.cart(),bad) and game.state==before,"Invalid flaw setup cannot spend cash or start the journey")
 	setup.next_button.pressed.emit()
