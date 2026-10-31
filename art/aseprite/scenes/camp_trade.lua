@@ -1,4 +1,5 @@
 -- An emigrant family's noon camp beside the road, 1848 (622x273, the camp trading counter screen).
+-- no seasons: build.sh --seasons skips this script (indoors, a trading counter, or its own season).
 -- Families on the road were not traders: they swapped whatever they could spare, a sack of meal,
 -- a spare wheel, a few pounds of salt or lead, and paid dear for what they had run short of.
 -- ui/post_store_view.gd covers (244..622, 0..236) with the two goods panels and the bottom strip with

@@ -1,4 +1,5 @@
 -- General Store & Outfitter Interior, Independence, 1848 (622x273 setup scene).
+-- no seasons: build.sh --seasons skips this script (indoors, a trading counter, or its own season).
 -- Informed by the Asa Knight country store reference in art/LOCATION_REFERENCES.md.
 -- Note: ui/departure_view.gd places the shopping list panel over (267..622, 0..236)
 -- and the footer bar over (0..622, 236..273), leaving the left bay (0..267, 0..236)

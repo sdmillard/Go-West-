@@ -4,6 +4,12 @@
   "scenes": {
     "independence": {"smoke": [[254, 28], [18, 36], [402, 56]]},
     "elm_grove": {"smoke": [[214, 121]], "cabin": [[375, 118, 1]]},
+    "big_vermilion": {"cabin": [[70, 146, 1]]},
+    "little_blue": {"cabin": [[250, 148, 1]]},
+    "horseshoe_creek": {"cabin": [[90, 128, 1]]},
+    "deer_creek": {"cabin": [[120, 118, 0]]},
+    "bear_river": {"cabin": [[360, 148, 1]]},
+    "salt_lake": {"cabin": [[236, 148, 1]]},
     "camp": {"smoke": [[212, 116]], "sparks": [[212, 124]]},
     "fort_kearny_early": {"smoke": [[290, 137]]},
     "independence_rock": {"smoke": [[100, 108]]},

@@ -142,6 +142,16 @@ func _initialize() -> void:
 		check(scenes.textures.has(id) or id in scenes.awaiting, "Every route location has arrival art, or is listed as awaiting it: " + id)
 	check(scenes.error.is_empty() and scenes.awaiting.all(func(id):return route.nodes.has(id)), "Only real stops await arrival art")
 	check(scenes.texture_for("missing-scene") != null, "Unknown scene has a safe presentation fallback")
+	# Seasonal versions (art/aseprite/build.sh --seasons): every outdoor route stop has both.
+	for id in route.nodes:
+		if id == "independence":
+			continue
+		for season in ["winter", "autumn"]:
+			check(scenes.seasonal.has(id + ":" + season), "Route stop has a %s picture: %s" % [season, id])
+			var variant: Texture2D = scenes.texture_for(id, season)
+			check(variant.get_size() == scenes.texture_for(id).get_size() and variant != scenes.texture_for(id), "Seasonal picture matches its scene's size: %s %s" % [id, season])
+	check(scenes.texture_for("ending_lost", "winter") == scenes.texture_for("ending_lost"), "A scene without a seasonal version keeps its one picture")
+	check(scenes.texture_for("store", "winter") == scenes.texture_for("store"), "Indoor scenes are not given seasons")
 	var font: Font = load("res://art/pixels/trail_font.fnt")
 	check(font.has_char(65) and font.has_char(97) and font.has_char(183), "Bitmap font covers interface and encounter text")
 	check(ProjectSettings.get_setting("display/window/stretch/mode") == "viewport", "Whole scene renders on a fixed pixel grid")

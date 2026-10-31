@@ -6,9 +6,12 @@ set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$HERE/../.." && pwd)"
 INSTALL=0
+SEASONS=0
 SCENES=()
 for arg in "$@"; do
-  if [ "$arg" = "--install" ]; then INSTALL=1; else SCENES+=("$arg"); fi
+  if [ "$arg" = "--install" ]; then INSTALL=1
+  elif [ "$arg" = "--seasons" ]; then SEASONS=1
+  else SCENES+=("$arg"); fi
 done
 EXE="${ASEPRITE:-}"
 if [ -z "$EXE" ]; then
@@ -27,6 +30,14 @@ for scene in "${SCENES[@]}"; do
   LOG="$("$EXE" -b --script-param "kit=$HERE/lib.lua" --script-param "out=$OUT" --script "$HERE/scenes/$scene.lua" 2>&1)" || { echo "$LOG"; exit 1; }
   echo "$LOG"
   if echo "$LOG" | grep -q '\.lua:[0-9]*:'; then echo "Scene failed: $scene" >&2; exit 1; fi
+  # --seasons: location pictures also get winter and autumn versions (see K.season in lib.lua)
+  if [ "$SEASONS" = 1 ] && grep -q 'K.save("location_' "$HERE/scenes/$scene.lua" && ! grep -q 'no seasons' "$HERE/scenes/$scene.lua"; then
+    for season in winter autumn; do
+      LOG="$("$EXE" -b --script-param "kit=$HERE/lib.lua" --script-param "out=$OUT" --script-param "season=$season" --script-param "scene=$scene" --script "$HERE/scenes/$scene.lua" 2>&1)" || { echo "$LOG"; exit 1; }
+      echo "$LOG"
+      if echo "$LOG" | grep -q '\.lua:[0-9]*:'; then echo "Scene failed: $scene ($season)" >&2; exit 1; fi
+    done
+  fi
 done
 for png in "$OUT"/*.png; do
   name="$(basename "$png" .png)"

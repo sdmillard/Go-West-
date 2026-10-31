@@ -1,4 +1,5 @@
 -- Trade room of a fur-trade post, 1848 (622x273, the trading-post store screen).
+-- no seasons: build.sh --seasons skips this script (indoors, a trading counter, or its own season).
 -- Laramie, Hall and Boise were adobe forts, so the walls are mud plaster under round log vigas
 -- and a pole ceiling, the floor is packed earth and the light comes from one deep-set window.
 -- Stock is what the posts dealt in: flour by the barrel and sack, point blankets, bolts of

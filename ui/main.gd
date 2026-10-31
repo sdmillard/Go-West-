@@ -1880,6 +1880,7 @@ func _refresh() -> void:
 				landscape.scene_id = event_scene
 		if not _reviewing_crossing() and s.status in ["settled", "returned_east", "lost"]:
 			landscape.scene_id = _ending_scene(s)
+	landscape.season = _scene_season(landscape.scene_id, date)
 	landscape.cabin_frame = _cabin_frame(landscape.scene_id, date)
 	if landscape.scene_id == "fort_kearny" and date.year == 1848 and date.month < 6:
 		landscape.scene_id = "fort_kearny_early"
@@ -2195,8 +2196,24 @@ func _cabin_frame(stop: String, date: Dictionary) -> int:
 		return -1
 	if not game.Cabins.done(game, stop):
 		return mini(2, units * 3 / game.Cabins.units_needed())
-	var snowy: bool = landscape.weather_id in ["snow", "blizzard"] or int(date.month) in [12, 1, 2]
-	return 4 if snowy else 3
+	return 4 if _scene_season(stop, date) == "winter" else 3
+
+## Lower Columbia and Willamette places where winter is rain and green grass, not snow, unless
+## it is snowing: they keep the picture as drawn.
+const MILD_WINTER_SCENES := ["eagle_creek", "oregon_city"]
+
+## Which version of a place picture fits the day: winter in snow weather or from December to
+## February (on the mild lower river only when it snows), autumn in October and November.
+## Scenes without a seasonal version (endings, visits, events) keep the one picture.
+func _scene_season(stop: String, date: Dictionary) -> String:
+	if landscape.weather_id in ["snow", "blizzard"]:
+		return "winter"
+	var month := int(date.get("month", 6))
+	if month in [12, 1, 2]:
+		return "" if stop in MILD_WINTER_SCENES else "winter"
+	if month in [10, 11]:
+		return "autumn"
+	return ""
 
 ## The picture for a journey that has ended short of Oregon (docs/CABINS_AND_ENDINGS.md).
 func _ending_scene(s: Dictionary) -> String:

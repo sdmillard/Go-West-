@@ -57,7 +57,7 @@ The total journey length does not change.
 
 ## Art
 
-The 12 new stops are listed in `location_scenes.json` `awaiting_art` and show the open-trail picture until their scenes land. They were handed to the Aseprite art thread with the endings, cabin, Native visit and trail-event pictures. Remove a stop from `awaiting_art` when its scene is added.
+All 12 new stops have Aseprite arrival scenes (`art/aseprite/scenes/<stop>.lua`), with winter and autumn versions. The six timber stops have cabin spots. `awaiting_art` is empty; it stays available for stops added later.
 
 ## Balance, before and after
 

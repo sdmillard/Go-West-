@@ -17,8 +17,9 @@ end
 
 -- an oak or elm with a dark under-canopy and sunlit upper left
 local function tree(x, y, s, far)
-  local dk, md, lt = "pine", "leaf", "grass"
-  if far then dk, md, lt = "teal", "grass", "sage" end
+  if K.season == "winter" then return K.elm(x, y, s) end
+  local dk, md, lt = K.leaves("pine", "leaf", "grass")
+  if far and not K.season then dk, md, lt = "teal", "grass", "sage" end
   K.rect(x - 1, y - 12 * s, 2 + s, 12 * s, far and "wood" or "deep")
   K.px(x - 1, y - 8 * s, "wood")
   K.line(x, y - 9 * s, x - 5 * s, y - 14 * s, "deep"); K.line(x + 1, y - 10 * s, x + 6 * s, y - 15 * s, "deep")
@@ -42,11 +43,13 @@ K.layer("timber", function()
   -- a continuous mass of crowns, with a few taller trees standing out of it
   for x = -4, W + 4, 6 do
     local y = 74 + math.floor(3 * math.sin(x / 23) + K.rnd(3))
-    if not (x > 304 and x < 328) then K.ellipse(x, y, 8, 8, "pine"); K.ellipse(x - 1, y - 1, 6, 6, "leaf") end
+    local dk, md = K.leaves("pine", "leaf", "grass")
+    if not (x > 304 and x < 328) then K.ellipse(x, y, 8, 8, dk); K.ellipse(x - 1, y - 1, 6, 6, md) end
   end
   for x = -4, W + 4, 6 do
     local y = 72 + math.floor(3 * math.sin(x / 23) + K.rnd(3))
-    if not (x > 304 and x < 328) then K.ellipse(x - 2, y - 2, 4, 3, "grass"); K.px(x - 4, y - 4, "sage") end
+    local _, _, lt = K.leaves("pine", "leaf", "grass")
+    if not (x > 304 and x < 328) then K.ellipse(x - 2, y - 2, 4, 3, lt); K.px(x - 4, y - 4, K.season and lt or "sage") end
   end
   for _, t in ipairs({{40, 84}, {104, 86}, {176, 84}, {252, 88}, {370, 84}, {420, 86}}) do tree(t[1], t[2], 1, true) end
   K.rect(0, 82, W, 14, "grass")
