@@ -82,7 +82,7 @@ func _initialize() -> void:
 			game.choose(0)
 		else:
 			preload("res://tests/survival_policy.gd").step(game)
-	check(stops == ["elm_grove", "wakarusa", "kansas_river", "big_blue"], "Landmarks arrive in period-guide order")
+	check(stops == ["elm_grove", "wakarusa", "kansas_river", "big_vermilion", "big_blue"], "Landmarks arrive in period-guide order")
 	var replay_a = Simulation.new(1848, "classic", true, "platte")
 	var replay_b = Simulation.new(1848, "classic", true, "platte")
 	for replay in [replay_a, replay_b]:

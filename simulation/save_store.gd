@@ -133,6 +133,8 @@ func valid_menu(menu: Dictionary, game, count: int=5) -> bool:
 		return false
 	if menu.has("landmark") and not game.route.nodes.has(menu.landmark):
 		return false
+	if menu.has("day_miles_left") and (not menu.has("landmark") or not integer(menu.day_miles_left,1,60) or not integer(menu.get("arrived_day"),0,100000) or not game.route.nodes[menu.landmark].get("minor",false)):return false
+	if menu.has("arrived_day") and not menu.has("day_miles_left"):return false
 	for choice in menu.choices:
 		if not choice is Dictionary or not choice.get("label") is String:
 			return false
@@ -246,6 +248,8 @@ func restore(value: Variant):
 	var game = Simulation.new(int(s.seed), str(s.get("mode", "classic")), s.extended_route, str(value.get("route_end","")))
 	if not game.error.is_empty():
 		return null
+	# Records from before the 1848 road gained its new stops: walk them onto the split roads.
+	if migrated or economy_migrated:upgrade_split_roads(value,s,game.route)
 	if not (migrated or economy_migrated) and (not value.has("livestock") or not value.has("team_conditions")):return null
 	var stock: Variant=value.get("livestock",{"animals":[],"products":[],"next_id":0,"care":true})
 	if egg_boundary_migrated and stock is Dictionary and stock.get("animals") is Array:
@@ -562,7 +566,65 @@ func restore(value: Variant):
 func upgraded_state(state: Dictionary) -> Dictionary:
 	var s: Dictionary=normalize(state)
 	Simulation.Armory.settle(s)
+	upgrade_split_roads({},s,preload("res://simulation/route_catalog.gd").new())
 	return s
+
+## The stops added inside an older road (October 2026), or null when a and b were never one road apart.
+static func bridge(route,a: String,b: String,depth: int=4) -> Variant:
+	if not route.nodes.has(a) or not route.nodes.has(b):return null
+	for edge in route.nodes[a].next:
+		if edge.to==b:return []
+	if depth<=1:return null
+	for edge in route.nodes[a].next:
+		if route.nodes[edge.to].kind!="camp":continue
+		var rest: Variant=bridge(route,str(edge.to),b,depth-1)
+		if rest!=null:return [str(edge.to)]+rest
+	return null
+
+## An older record names roads that now run through new stops: fill the stops into its route, place a party
+## caught mid-road on the right piece of it, and spread its east-west trail history over the pieces.
+static func upgrade_split_roads(value: Dictionary,s: Dictionary,route) -> void:
+	var path: Variant=value.get("route_path")
+	if path is Array and not path.is_empty() and path.all(func(id):return id is String):
+		var upgraded: Array=[path[0]]
+		for index in range(1,path.size()):
+			var mids: Variant=bridge(route,str(upgraded[-1]),str(path[index]))
+			if mids is Array:upgraded.append_array(mids)
+			upgraded.append(path[index])
+		path=upgraded
+		value["route_path"]=path
+	var here: String=str(s.get("landmark",""))
+	var there: String=str(s.get("next_landmark",""))
+	if there!="" and there!=here and route.edge_between(here,there).is_empty():
+		var mids: Variant=bridge(route,here,there)
+		if mids is Array and not mids.is_empty() and (s.get("leg_miles") is int or s.get("leg_miles") is float):
+			var chain: Array=[here]+mids+[there]
+			var miles: int=int(s.leg_miles)
+			var at:=0
+			while at<chain.size()-2 and miles>int(route.edge_between(chain[at],chain[at+1]).miles):
+				miles-=int(route.edge_between(chain[at],chain[at+1]).miles)
+				at+=1
+				if path is Array and not path.is_empty() and path[-1]==chain[at-1]:path.append(chain[at])
+			s.landmark=chain[at]
+			s.next_landmark=chain[at+1]
+			s.leg_length=int(route.edge_between(chain[at],chain[at+1]).miles)
+			s.leg_miles=miles
+	if s.get("trail_history") is Dictionary:
+		var history: Dictionary={}
+		for key in s.trail_history:
+			var from: String=str(key).get_slice(">",0)
+			var to: String=str(key).get_slice(">",1)
+			var mids: Variant=bridge(route,from,to)
+			if not mids is Array or mids.is_empty() or not (s.trail_history[key] is int or s.trail_history[key] is float):
+				history[key]=s.trail_history[key]
+				continue
+			var chain: Array=[from]+mids+[to]
+			var left: int=int(s.trail_history[key])
+			for index in range(chain.size()-1):
+				var piece: int=mini(left,int(route.edge_between(chain[index],chain[index+1]).miles))
+				if piece>0:history["%s>%s" % [chain[index],chain[index+1]]]=piece
+				left-=piece
+		s.trail_history=history
 
 func normalize(value: Variant) -> Variant:
 	if value is Dictionary:

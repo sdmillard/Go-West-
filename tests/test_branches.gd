@@ -50,7 +50,7 @@ func drive_to(game, target: String, limit: int = 300) -> void:
 func run() -> void:
 	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/route.json"))
 	var route = Route.new()
-	check(route.error.is_empty() and route.total_miles == 1938 and route.longest_miles == 1958, "Main road stays 1938 guide miles; the Walla Walla detour is the only longer road")
+	check(route.error.is_empty() and route.total_miles == 1938 and route.longest_miles == 2070, "Main road stays 1938 guide miles; the Salt Lake road and the Walla Walla detour together make the longest way")
 	check(route.nodes.little_sandy.next.size() == 2 and route.nodes.little_sandy.next[0].to == "green_river", "The southern road stays the first (main) road at the Little Sandy")
 	check(route.remaining("greenwood_cutoff") == 1883 - 972, "Remaining miles follow the branch")
 	check(route.main_path_to("fort_bridger").has("green_river") and route.main_path_to("greenwood_cutoff").is_empty(), "Main path excludes branch stops")
@@ -126,7 +126,7 @@ func run() -> void:
 	check(game.state.landmark == "soda_springs" and game.route_path.has("greenwood_cutoff") and not game.route_path.has("fort_bridger"), "The cutoff reaches Soda Springs without passing Bridger")
 	check(game.state.miles == 1096 and game.destination() == 1883, "Guide miles follow the shorter road")
 	Cache.relocate(game, 1000)
-	check(game.state.landmark == "greenwood_cutoff" and game.state.next_landmark == "soda_springs" and game.state.leg_miles == 28 and game.route_path[-1] == "greenwood_cutoff", "Walking back retraces the road actually taken")
+	check(game.state.landmark == "greenwood_cutoff" and game.state.next_landmark == "bear_river" and game.state.leg_miles == 28 and game.route_path[-1] == "greenwood_cutoff", "Walking back retraces the road actually taken")
 
 	# The Columbia: raft from The Dalles, portage or run the Cascades.
 	game = outfit(7)

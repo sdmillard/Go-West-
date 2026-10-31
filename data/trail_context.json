@@ -74,6 +74,9 @@
     "fort_walla_walla": {
       "talk": "The traders here ransomed the Whitman mission captives last winter. They will sell what they can spare, but they advise you to keep moving and keep together until you reach the John Day."
     },
+    "salt_lake": {
+      "talk": "The settlers have had a hard year with crickets and frost, and they sell little food. They will trade for cloth, tools and cattle, and some will hire a hand for a few days."
+    },
     "fort_boise": {
       "talk": "Restock what you can carry. The road ahead still crosses dry stretches and mountains."
     },

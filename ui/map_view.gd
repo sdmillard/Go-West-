@@ -12,6 +12,7 @@ const JOURNEY := Color("c8302a")
 const JOURNEY_DARK := Color("7a1f1a")
 const LABEL := Color("45372f")
 const PAPER := Color("f6e7bc")
+const NATION := Color("7d5f8a")
 var game
 var data: Dictionary = {}
 var stops: Dictionary = {} # id -> Vector2, pixel position on the map picture
@@ -193,6 +194,40 @@ func text(at: Vector2, value: String, color: Color = LABEL) -> void:
 		map_canvas.draw_string(PIXEL_FONT, Vector2(x, y), line, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, color)
 		y += 9
 
+## Whose country a stop lies in, from the same list the settle rules use; "" for open ground and posts.
+func nation(id: String) -> String:
+	return str(game.Cabins.data.get("settle",{}).get("peoples",{}).get(id,""))
+
+## Native nations along the road: a light dashed tick across the road where the country changes, and each
+## nation's name near its stretch. Authored from the game's per-stop list, not surveyed 1848 borders.
+func draw_nations() -> void:
+	for id in game.route.nodes:
+		for edge in game.route.nodes[id].next:
+			var a: String=nation(id)
+			var b: String=nation(str(edge.to))
+			if a==b or a.is_empty() and b.is_empty():continue
+			var points: PackedVector2Array=road(id,str(edge.to))
+			var mid: PackedVector2Array=part_of(points,0.5)
+			var at: Vector2=mid[mid.size()-1]
+			var along: Vector2=(mid[mid.size()-1]-mid[mid.size()-2]).normalized() if mid.size()>1 else Vector2.RIGHT
+			var across:=Vector2(-along.y,along.x)
+			for step in [-5,-3,3,5]:
+				map_canvas.draw_rect(Rect2((at+across*step).round(),Vector2.ONE),NATION)
+			map_canvas.draw_rect(Rect2(at.round(),Vector2.ONE),NATION)
+	# Names stay a readable size at any zoom, so crowded country (the Columbia) opens up as the map is zoomed;
+	# a name that would overlap one already drawn waits for more zoom.
+	map_canvas.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	var taken: Array[Rect2]=[]
+	for name in data.get("nations",{}):
+		var value: String=str(name).to_upper()
+		var width: float=PIXEL_FONT.get_string_size(value,HORIZONTAL_ALIGNMENT_LEFT,-1,8).x
+		var at: Vector2=(pan+project(data.nations[name])*zoom).round()
+		var box:=Rect2(at-Vector2(roundf(width/2.0),8),Vector2(width,10))
+		if not Rect2(Vector2.ZERO,MAP_SIZE).encloses(box) or taken.any(func(other):return other.grow(2).intersects(box)):continue
+		taken.append(box)
+		map_canvas.draw_string(PIXEL_FONT,box.position+Vector2(0,8),value,HORIZONTAL_ALIGNMENT_LEFT,-1,8,NATION)
+	map_canvas.draw_set_transform(pan, 0.0, Vector2.ONE * zoom)
+
 ## A name on a small paper tag beside a map point (side: "above", "below" or "left"), kept inside the map.
 func tag(at: Vector2, value: String, side: String, ink: Color = INK) -> void:
 	var width := PIXEL_FONT.get_string_size(value, HORIZONTAL_ALIGNMENT_LEFT, -1, 8).x + 6
@@ -234,6 +269,7 @@ func _draw_map() -> void:
 	for id in game.route.nodes:
 		for edge in game.route.nodes[id].next:
 			trace(road(id, edge.to), ROAD, 1, 2)
+	draw_nations()
 	var j := journey()
 	var path: Array = j.path
 	for i in range(path.size() - 1):
@@ -310,6 +346,8 @@ func _get_tooltip(at: Vector2) -> String:
 	var notes := ""
 	if best in game.travelled_path():
 		notes = "\nYou passed here." if best != game.state.landmark else "\nYou are here."
+	var country: String=nation(best)
+	if not country.is_empty():notes="\n%s country."%country+notes
 	return node.name + notes
 
 

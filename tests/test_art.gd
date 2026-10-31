@@ -111,7 +111,9 @@ func _initialize() -> void:
 	var cabin_rules: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/cabins.json"))
 	var cabin_places: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/scene_ambience.json")).scenes
 	for stop in cabin_rules.timber:
-		check(cabin_places.get(stop, {}).has("cabin"), "Timber stop has a cabin spot: " + stop)
+		# A stop still awaiting its arrival picture gets its cabin spot with the picture.
+		var awaiting: Array = JSON.parse_string(FileAccess.get_file_as_string("res://data/location_scenes.json")).get("awaiting_art", [])
+		check(cabin_places.get(stop, {}).has("cabin") or stop in awaiting, "Timber stop has a cabin spot, or awaits its picture: " + stop)
 	# Ambient effects sit inside the pictures they decorate.
 	var ambience: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/scene_ambience.json"))
 	for id in ambience.scenes:
@@ -137,7 +139,8 @@ func _initialize() -> void:
 		check(not fingerprints.has(fingerprint), "Location art is distinct, not another name for the same image: " + id)
 		fingerprints[fingerprint] = true
 	for id in route.nodes:
-		check(scenes.textures.has(id), "Every route location has arrival art: " + id)
+		check(scenes.textures.has(id) or id in scenes.awaiting, "Every route location has arrival art, or is listed as awaiting it: " + id)
+	check(scenes.error.is_empty() and scenes.awaiting.all(func(id):return route.nodes.has(id)), "Only real stops await arrival art")
 	check(scenes.texture_for("missing-scene") != null, "Unknown scene has a safe presentation fallback")
 	var font: Font = load("res://art/pixels/trail_font.fnt")
 	check(font.has_char(65) and font.has_char(97) and font.has_char(183), "Bitmap font covers interface and encounter text")

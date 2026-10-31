@@ -58,6 +58,11 @@
       "first_month": 1,
       "workers_per_day": 2
     },
+    "salt_lake": {
+      "days": 3,
+      "first_month": 1,
+      "workers_per_day": 3
+    },
     "fort_boise": {
       "days": 2,
       "first_month": 1,
