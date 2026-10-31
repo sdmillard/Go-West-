@@ -213,7 +213,7 @@ func run():
  var legacy=store.restore(old)
  check(legacy!=null,"Genuine schema-3 save migrates")
  if legacy!=null:
-  check(not legacy.camp_tasks.enabled() and legacy.state==store.normalize(old.state),"Migration preserves supplies and group-action behavior")
+  check(not legacy.camp_tasks.enabled() and legacy.state==store.upgraded_state(old.state),"Migration preserves supplies and group-action behavior")
   check(str(legacy.rng.state)==old.random and str(legacy.party_health.rng.state)==old.health_random,"Migration does not consume randomness")
  g=party();g.camp_tasks.assign(g,1,"forage")
  saved=store.capture(g)

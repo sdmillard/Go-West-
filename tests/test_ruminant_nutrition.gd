@@ -81,7 +81,7 @@ func run():
   var old: Dictionary=fixtures[name];var store=Save.new();var restored=store.restore(old)
   check(restored!=null,"Prior actual livestock save loads: "+name)
   if restored!=null:
-   check(restored.state==store.normalize(old.state) and restored.livestock.record==store.normalize(old.livestock),"Migration preserves stock, feed, portions, condition, choices and cash")
+   check(restored.state==store.upgraded_state(old.state) and restored.livestock.record==store.normalize(old.livestock),"Migration preserves stock, feed, portions, condition, choices and cash")
    check(str(restored.rng.state)==old.random and Save.new().restore(JSON.parse_string(JSON.stringify(store.capture(restored))))!=null,"Migrated save preserves RNG and current JSON validity")
  for key in ["hay_dry_matter","hay_tdn","travel_maintenance_bonus"]:
   var bad: Dictionary=rules.duplicate(true);bad[key]=-1

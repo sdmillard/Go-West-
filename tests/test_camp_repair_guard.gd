@@ -146,7 +146,7 @@ func run():
  var old: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-repair-guard-v4.json"))
  loaded=store.restore(old)
  check(loaded!=null and loaded.camp_repair.work.is_empty() and loaded.camp_tasks.snapshot()==store.normalize(old.camp_tasks),"Genuine prior schema-4 tasks migrate without invented repairs")
- if loaded!=null:check(loaded.state==store.normalize(old.state) and str(loaded.rng.state)==old.random,"Migration preserves actual supplies and RNG")
+ if loaded!=null:check(loaded.state==store.upgraded_state(old.state) and str(loaded.rng.state)==old.random,"Migration preserves actual supplies and RNG")
  g=party();breakdown(g);saved=store.capture(g)
  for bad in [{"part":"horses","method":"","progress":0,"kit_spent":false},{"part":"wheels","method":"patch","progress":1,"kit_spent":false},{"part":"wheels","method":"wood","progress":3,"kit_spent":false}]:
   var invalid: Dictionary=saved.duplicate(true);invalid.camp_repair=bad

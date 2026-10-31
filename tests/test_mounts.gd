@@ -128,10 +128,10 @@ func run():
 	check(copy!=null and copy.state.horses==5 and copy.state.mules==3 and copy.state.horse_health==game.state.horse_health and not copy.state.has("double_up"),"Saved packers load with their animals and condition")
 	var old: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-horses-save-v1.json"))
 	var upgraded=store.restore(old)
-	check(upgraded!=null and upgraded.state==store.normalize(old.state) and upgraded.Mounts.animals(upgraded.state)==0 and str(upgraded.rng.state)==old.random,"A real save from before horses loads unchanged with no animals")
+	check(upgraded!=null and upgraded.state==store.upgraded_state(old.state) and upgraded.Mounts.animals(upgraded.state)==0 and str(upgraded.rng.state)==old.random,"A real save from before horses loads unchanged with no animals")
 	var balanced: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-horse-balance-save-v1.json"))
 	var rebalanced=store.restore(balanced)
-	check(rebalanced!=null and rebalanced.state==store.normalize(balanced.state),"A mounted save from before the horse balance pass loads")
+	check(rebalanced!=null and rebalanced.state==store.upgraded_state(balanced.state),"A mounted save from before the horse balance pass loads")
 	# Balance pass: mules shrug off poor forage, and animals carry a fair load without slowing.
 	var mount_rules: Dictionary=game.provisions.data.mounts
 	check(game.Mounts.wear(mount_rules,{"mode":"packing","saddled_horses":0,"pack_horses":0},"sagebrush",0,0,1.0)==1 and game.Mounts.wear(mount_rules,{"mode":"packing","saddled_horses":0,"pack_horses":2},"sagebrush",0,0,1.0)==1+int(mount_rules.forage_strain.sagebrush),"An all-mule string takes no forage strain; horses do")

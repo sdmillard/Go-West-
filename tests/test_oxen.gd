@@ -34,7 +34,7 @@ func run():
 	var old_save: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-team-bonus-save-v1.json"))
 	var old_store=Store.new()
 	var upgraded=old_store.restore(old_save)
-	check(upgraded!=null and upgraded.state==old_store.normalize(old_save.state) and str(upgraded.rng.state)==old_save.random,"Real pre-bonus save retains animals, cargo, money, time and random state")
+	check(upgraded!=null and upgraded.state==old_store.upgraded_state(old_save.state) and str(upgraded.rng.state)==old_save.random,"Real pre-bonus save retains animals, cargo, money, time and random state")
 	check(upgraded!=null and is_equal_approx(upgraded.survival.team_factor(6),1.1),"Existing six-ox team gains the updated future movement rule")
 	var other=outfit()
 	other.state.oxen=12
@@ -128,7 +128,7 @@ func run():
 	check(game.slaughter_ox() and game.pending.landmark=="fort_hall","Camp work preserves its unresolved landmark")
 	var previous: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-slaughter-save-v1.json"))
 	game=store.restore(previous)
-	check(game!=null and game.state==store.normalize(previous.state) and game.provisions.fresh==store.normalize(previous.fresh),"Actual previous-version preserved save migrates without changing supplies or batches")
+	check(game!=null and game.state==store.upgraded_state(previous.state) and game.provisions.fresh==store.normalize(previous.fresh),"Actual previous-version preserved save migrates without changing supplies or batches")
 	var screen=Main.instantiate()
 	root.add_child(screen)
 	await process_frame

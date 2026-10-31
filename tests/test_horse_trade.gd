@@ -160,7 +160,7 @@ func run():
 	# A save from before horses were traded loads unchanged.
 	var old: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-horse-trade-save-v1.json"))
 	var upgraded=store.restore(old)
-	check(upgraded!=null and upgraded.state==store.normalize(old.state) and str(upgraded.rng.state)==old.random,"A save from before horse trading loads")
+	check(upgraded!=null and upgraded.state==store.upgraded_state(old.state) and str(upgraded.rng.state)==old.random,"A save from before horse trading loads")
 	# The STEAL button opens the goods picker, as ROB does.
 	var screen=Main.instantiate()
 	root.add_child(screen)

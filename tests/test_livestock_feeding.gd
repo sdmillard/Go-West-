@@ -112,7 +112,7 @@ func run():
  var restored=Save.new().restore(old)
  check(restored!=null,"Authentic prior feeding save loads")
  if restored!=null:
-  check(restored.state==Save.new().normalize(old.state) and restored.livestock.record==Save.new().normalize(old.livestock),"Migration grants no fodder or grain and preserves actual animals/portions")
+  check(restored.state==Save.new().upgraded_state(old.state) and restored.livestock.record==Save.new().normalize(old.livestock),"Migration grants no fodder or grain and preserves actual animals/portions")
   check(str(restored.rng.state)==old.random and copy(restored)!=null,"Migration preserves RNG and re-saves with current rules")
  for bad_key in ["scratch_lb","maintenance_fraction"]:
   var bad: Dictionary=g.livestock.data.duplicate(true);bad.feeding[bad_key]=-1

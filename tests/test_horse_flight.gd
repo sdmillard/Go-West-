@@ -138,10 +138,10 @@ func run():
 	# A save from before horse flight loads.
 	var old: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-horse-flight-save-v1.json"))
 	var upgraded=store.restore(old)
-	check(upgraded!=null and upgraded.state==store.normalize(old.state),"A save from before horse flight loads")
+	check(upgraded!=null and upgraded.state==store.upgraded_state(old.state),"A save from before horse flight loads")
 	# A save from an escape before the riders picker loads, now offering the ride.
 	var older: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-riders-save-v1.json"))
 	var resumed=store.restore(older)
-	check(resumed!=null and resumed.state==store.normalize(older.state) and resumed.pending.choices.any(func(choice):return choice.get("crime_command","")=="ride"),"A save from an escape before choosing riders loads and now offers to ride")
+	check(resumed!=null and resumed.state==store.upgraded_state(older.state) and resumed.pending.choices.any(func(choice):return choice.get("crime_command","")=="ride"),"A save from an escape before choosing riders loads and now offers to ride")
 	print("Horse flight: %d checks, %d failures" % [checks,failures])
 	quit(1 if failures else 0)

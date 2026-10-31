@@ -138,7 +138,7 @@ func run():
 	# A save from before horse thieves loads unchanged.
 	var old: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-horse-thieves-save-v1.json"))
 	var upgraded=store.restore(old)
-	check(upgraded!=null and upgraded.state==store.normalize(old.state),"A save from before horse thieves loads")
+	check(upgraded!=null and upgraded.state==store.upgraded_state(old.state),"A save from before horse thieves loads")
 	# The Travel and Supplies screens offer the guard and the butchering.
 	var screen=Main.instantiate()
 	root.add_child(screen)

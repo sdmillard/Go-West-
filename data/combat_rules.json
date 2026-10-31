@@ -42,7 +42,11 @@
       "salt": 1,
       "wheels": 1,
       "axles": 1,
-      "tongues": 1
+      "tongues": 1,
+      "revolvers": 3,
+      "shotguns": 2,
+      "pistols": 2,
+      "rifles": 1
     }
   }
 }

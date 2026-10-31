@@ -47,7 +47,7 @@ func run():
  check(g.finish_hunt() and g.state.day==day+1 and g.last_hunt_recovery.eaten_food==15,"Reduced search still settles exactly one day and one actual party meal")
  var old: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-hunt-time-v5.json"))
  var copy=Save.new().restore(old)
- check(copy!=null and copy.state==Save.new().normalize(old.state) and str(copy.rng.state)==old.random,"Genuine previous-rule active outing restores stock, state and main RNG")
+ check(copy!=null and copy.state==Save.new().upgraded_state(old.state) and str(copy.rng.state)==old.random,"Genuine previous-rule active outing restores stock, state and main RNG")
  if copy!=null:check(copy.field_outings.snapshot()==Save.new().normalize(old.field_outings),"Migration preserves the actual trip and private random stream")
  var first_day_same:=true;var normal_opportunities:=0;var led_opportunities:=0
  for seed_value in range(600,700):

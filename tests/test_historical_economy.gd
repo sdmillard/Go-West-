@@ -50,13 +50,13 @@ func run():
 	check(restored!=null,"Authentic previous economy save migrates")
 	if restored!=null:
 		check(restored.characters.profiles[1].contract.wage_cents==1000 and restored.characters.profiles[1].contract==store.normalize(previous.characters[1].contract),"Existing higher wage agreement is honored without repricing")
-		check(store.normalize(restored.state)==store.normalize(previous.state) and str(restored.rng.state)==previous.random and restored.pending==store.normalize(previous.pending),"Migration preserves cash, supplies, time, RNG and pending choices")
+		check(store.upgraded_state(restored.state)==store.upgraded_state(previous.state) and str(restored.rng.state)==previous.random and restored.pending==store.normalize(previous.pending),"Migration preserves cash, supplies, time, RNG and pending choices")
 		check(store.restore(store.capture(restored))!=null,"Migrated save can be saved again")
 	var old_food: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-food-price-save-v1.json"))
 	var old_game=store.restore(old_food)
 	check(old_game!=null,"Authentic six-cent economy save migrates")
 	if old_game!=null:
-		check(store.normalize(old_game.state)==store.normalize(old_food.state),"Price migration preserves actual cash and inventory; no refund or supply grant")
+		check(store.upgraded_state(old_game.state)==store.upgraded_state(old_food.state),"Price migration preserves actual cash and inventory; no refund or supply grant")
 		check(old_game.pending==store.normalize(old_food.pending) and str(old_game.rng.state)==old_food.random,"Existing transaction quote and RNG survive the price change")
 		check(store.restore(store.capture(old_game))!=null,"Migrated food-price save can be saved again")
 	print("Historical economy: %d checks, %d failures" % [checks,failures])

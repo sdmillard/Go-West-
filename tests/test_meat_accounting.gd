@@ -64,7 +64,7 @@ func run():
 		check(store.restore(broken)==null,"Reject invalid physical mass ratio")
 	var previous: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-meat-value-save-v1.json"))
 	copy=store.restore(previous)
-	check(copy!=null and copy.state==store.normalize(previous.state),"Authentic pre-change save retains cash, supplies and date")
+	check(copy!=null and copy.state==store.upgraded_state(previous.state),"Authentic pre-change save retains cash, supplies and date")
 	previous=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-slaughter-save-v1.json"))
 	copy=store.restore(previous)
 	check(copy!=null and copy.provisions.fresh==store.normalize(previous.fresh),"Actual legacy dried batch is not repriced or reweighed on load")

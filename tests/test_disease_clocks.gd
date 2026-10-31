@@ -112,7 +112,7 @@ func run():
  check(choice>=0 and g.choose(choice) and g.party_health.members[1].conditions[0].elapsed==1,"Direct care supports health without skipping the clinical clock")
  var old: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-disease-clock-save-v1.json"))
  restored=store.restore(old)
- check(restored!=null and restored.state==store.normalize(old.state) and restored.party_health.members==store.normalize(old.party),"Genuine old illness/protection/immunity save keeps earned progress")
+ check(restored!=null and restored.state==store.upgraded_state(old.state) and restored.party_health.members==store.normalize(old.party),"Genuine old illness/protection/immunity save keeps earned progress")
  var before: int=int(restored.party_health.members[1].conditions[0].elapsed)
  restored._tick_day(true,false,"rest")
  check(restored.party_health.members[1].conditions[0].elapsed==before+1,"A legacy case continues with one new step per day")

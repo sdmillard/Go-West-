@@ -1,7 +1,8 @@
 extends RefCounted
 ## A demand is drawn once, then lives in the saved pending choice, never in the UI.
-const GOODS=["food","bullets","oxen","clothing","medicine","salt","wheels","axles","tongues","horses","mules"]
-const NAMES={"horses":["horse","horses"],"mules":["mule","mules"],"food":["food unit","food units"],"bullets":["bullet","bullets"],"oxen":["ox","oxen"],"clothing":["clothing set","clothing sets"],"medicine":["care kit","care kits"],"salt":["lb salt","lb salt"],"wheels":["wheel","wheels"],"axles":["axle","axles"],"tongues":["wagon tongue","wagon tongues"]}
+const GOODS=["food","bullets","oxen","clothing","medicine","salt","wheels","axles","tongues","horses","mules","revolvers","shotguns","pistols","rifles"]
+const Armory=preload("res://simulation/armory.gd")
+static var NAMES: Dictionary={"horses":["horse","horses"],"mules":["mule","mules"],"food":["food unit","food units"],"bullets":["bullet","bullets"],"oxen":["ox","oxen"],"clothing":["clothing set","clothing sets"],"medicine":["care kit","care kits"],"salt":["lb salt","lb salt"],"wheels":["wheel","wheels"],"axles":["axle","axles"],"tongues":["wagon tongue","wagon tongues"]}.merged(Armory.NAMES)
 static func number(v: Variant) -> bool:return (v is int or v is float) and is_finite(v)
 static func whole(v: Variant,low: int,high: int) -> bool:return number(v) and v==floor(v) and v>=low and v<=high
 static func valid_rules(v: Variant) -> bool:
@@ -49,6 +50,8 @@ static func prepare(game,content: Dictionary,rules: Dictionary) -> void:
   for item in GOODS:
    var held: int=int(game.state.get(item,0))
    if item=="clothing":held=maxi(0,held-int(game.state.party_size))
+   # Each traveler's own rifle stays in their hands; spare arms ride in the wagon.
+   if item in Armory.KEYS:held=maxi(0,held-int(Armory.data.home_kit.get(item,0))*int(game.state.get("arms_home",0)))
    if held>0:required[item]=held
  else:
   var style: float=rng.randf()

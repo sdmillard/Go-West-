@@ -99,7 +99,7 @@ func run():
 		if target!="Trading":check(not game.characters.available(game,target),"Refusing companion withholds cross-trained contribution")
 	var previous: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-character-catalog-save-v1.json"))
 	var restored=store.restore(previous)
-	check(restored!=null and restored.state==store.normalize(previous.state) and restored.characters.profiles==store.normalize(previous.characters),"Authentic previous save preserves profiles, old flaw, contract and inventory")
+	check(restored!=null and restored.state==store.upgraded_state(previous.state) and restored.characters.profiles==store.normalize(previous.characters),"Authentic previous save preserves profiles, old flaw, contract and inventory")
 	if restored!=null:check(store.restore(store.capture(restored))!=null,"Migrated old catalog save remains writable")
 	var screen=Main.instantiate()
 	root.add_child(screen)

@@ -27,12 +27,8 @@ static func valid_rules(v: Variant) -> bool:
 static func valid_state(state: Dictionary) -> bool:
 	if state.has("arms_home") and not whole(state.arms_home,0,100):return false
 	return KEYS.all(func(key):return not state.has(key) or whole(state[key],0,10000)) and (KEYS.all(func(key):return not state.has(key)) or state.has("arms_home"))
-## A journey saved before arms were counted holds no arms keys; every traveler still has the rifle and knife they set out with.
-## The kit is read, not written, so restoring such a save leaves its state unchanged.
-static func count(state: Dictionary,key: String) -> int:
-	if not state.has("arms_home") and state.get("party") is Array:return int(data.home_kit.get(key,0))*state.party.size()
-	return maxi(0,int(state.get(key,0)))
-## Write the old kit into the state before anything changes a count.
+static func count(state: Dictionary,key: String) -> int:return maxi(0,int(state.get(key,0)))
+## Journeys saved before arms were counted: every traveler still has the rifle and knife they set out with.
 static func settle(state: Dictionary) -> void:
 	if not state.has("arms_home") and state.get("party") is Array:home_kit(state,state.party.size())
 ## Each traveler's own rifle and knife. "arms_home" records how many travelers brought theirs, so their weight stays in personal gear.
@@ -50,8 +46,7 @@ static func long_guns(state: Dictionary) -> int:
 	return total
 ## Arms beyond the travelers' own add to the load; a dead traveler's rifle is carried by the others.
 static func extra_weight(inventory: Dictionary) -> float:
-	if not inventory.has("arms_home"):return 0.0
-	var home: int=int(inventory.arms_home)
+	var home: int=int(inventory.get("arms_home",0))
 	var pounds:=0.0
 	for key in KEYS:pounds+=maxi(0,count(inventory,key)-int(data.home_kit.get(key,0))*home)*float(data.weights_lb[key])
 	return pounds
@@ -74,6 +69,10 @@ static func equip(config: Dictionary,state: Dictionary) -> Dictionary:
 		config.squad[i]["weapon"]=kit[i].weapon
 		config.squad[i]["blade"]=kit[i].blade
 	return config
+const NAMES={"rifles":["rifle","rifles"],"shotguns":["shotgun","shotguns"],"pistols":["pistol","pistols"],"revolvers":["Colt revolver","Colt revolvers"],"knives":["knife","knives"],"hatchets":["hatchet","hatchets"]}
+## "1 Colt revolver, 2 knives", in KEYS order.
+static func describe(arms: Dictionary) -> String:
+	return ", ".join(KEYS.filter(func(key):return int(arms.get(key,0))>0).map(func(key):return "%d %s" % [int(arms[key]),NAMES[key][0 if int(arms[key])==1 else 1]]))
 static func label(key: String) -> String:
 	if data.firearms.has(key):return str(data.firearms[key].label)
 	if data.blades.has(key):return str(data.blades[key].label)

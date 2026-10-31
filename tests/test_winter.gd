@@ -73,7 +73,7 @@ func run():
 	var copy=store.restore(previous)
 	check(copy!=null,"Authentic previous-rule save migrates")
 	if copy!=null:
-		check(store.normalize(copy.state)==store.normalize(previous.state) and copy.pending==store.normalize(previous.pending) and str(copy.rng.state)==previous.random,"Migration preserves supplies, date, cash, pending choices and RNG")
+		check(store.upgraded_state(copy.state)==store.upgraded_state(previous.state) and copy.pending==store.normalize(previous.pending) and str(copy.rng.state)==previous.random,"Migration preserves supplies, date, cash, pending choices and RNG")
 		check(store.restore(store.capture(copy))!=null,"Migrated winter-rule save round trips")
 	var screen=Main.instantiate()
 	root.add_child(screen)

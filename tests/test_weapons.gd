@@ -22,6 +22,30 @@ func outfit(extra: Dictionary={}):
 func session(squad: Array,bullets: int=20) -> Dictionary:
 	var tc:=TacticalCombat.new()
 	return {"tc":tc,"s":tc.start_session({"seed":7,"venue_kind":"store","place_name":"Test","bullets":bullets,"squad":squad,"enemies":[{"uid":"keeper:test","name":"Keeper","role":"owner","health":100}]})}
+func pick(game,command: String) -> bool:
+	for index in range(game.pending.get("choices",[]).size()):
+		if game.pending.choices[index].get("crime_command","")==command:return game.choose(index)
+	return false
+func row(counter: Dictionary,item: String) -> Dictionary:
+	for each in counter.rows:
+		if each.item==item:return each
+	return {}
+## A party stopped at Fort Bridger's store.
+func at_bridger(extra: Dictionary={}):
+	var game=outfit(extra)
+	game.survival.forced_weather="clear"
+	game.party_health.daily_onset_chance=0
+	game.survival.data.event_chance=0
+	game.state.money=500.0
+	game.route_path=game.route.main_path_to("fort_bridger")
+	game.state.landmark="fort_bridger"
+	game.state.next_landmark="fort_bridger"
+	game.state.miles=int(game.route.node_miles()["fort_bridger"])
+	game.state.leg_miles=0
+	game.state.leg_length=0
+	game.pending={}
+	game._arrive_landmark(true,false)
+	return game
 func run() -> void:
 	check(Armory.valid_rules(Armory.data),"Weapon rules load")
 	# Everyone brings a rifle and a knife; bought arms come on top and cost money and weight.
@@ -115,5 +139,53 @@ func run() -> void:
 	check(not unarmed.can_fire() and not unarmed.can_hunt_with_gun(),"Without a firearm the party cannot shoot or hunt")
 	unarmed.state.pistols=1
 	check(unarmed.can_fire() and not unarmed.can_hunt_with_gun(),"A pistol can shoot but is no hunting arm")
+	# Posts sell plain arms by the piece at their own prices; no post has a Colt to sell.
+	var post=at_bridger()
+	var counter: Dictionary=post.post_store()
+	check(not row(counter,"rifles").is_empty() and not row(counter,"hatchets").is_empty() and row(counter,"revolvers").is_empty(),"Fort Bridger sells rifles and hatchets but no Colt")
+	check(int(row(counter,"rifles").buy_cents)>=1500 and int(row(counter,"rifles").sell_cents)<int(row(counter,"rifles").buy_cents),"A rifle costs at least the Independence price and sells back for less")
+	check(int(row(counter,"rifles").can_buy)==2 and int(row(counter,"shotguns").can_buy)==1,"The post has only a couple of guns on hand")
+	var rifles: int=Armory.count(post.state,"rifles")
+	check(post.counter_checkout({"rifles":1,"knives":-1}) and Armory.count(post.state,"rifles")==rifles+1 and Armory.count(post.state,"knives")==4,"A rifle bought and a knife sold at the counter")
+	check(int(row(post.post_store(),"rifles").can_buy)==1,"The post has one rifle left")
+	var copy_post=store.restore(JSON.parse_string(JSON.stringify(store.capture(post))))
+	check(copy_post!=null and int(row(copy_post.post_store(),"rifles").can_buy)==1,"Arms trades survive a save")
+	# The post's arms can be stolen.
+	var thief=at_bridger()
+	check(thief.open_crime("fort_bridger"),"The post can be targeted")
+	var quote: Dictionary=thief.theft_quote({"rifles":1,"hatchets":1})
+	check(quote.valid,"A rifle and a hatchet can be lifted from the post: "+str(quote.get("message","")))
+	check(not thief.theft_quote({"rifles":3}).valid and not thief.theft_quote({"revolvers":1}).valid,"Only arms the post holds can be taken")
+	# Bandits who take the wagon take the spare arms in it, not the rifles in the travelers' hands.
+	var robbed=outfit({"shotguns":1,"rifles":1})
+	var rules: Dictionary=robbed.combat.data.bandit_demands.duplicate(true)
+	rules.wagon_chance=1.0
+	var content: Dictionary={"id":"bandits","text":"Thieves demand {demand}.","choices":[{}]}
+	preload("res://simulation/bandit_demand.gd").prepare(robbed,content,rules)
+	var asked: Dictionary=content.choices[0].requires
+	check(int(asked.get("shotguns",0))==1 and int(asked.get("rifles",0))==1 and not asked.has("knives"),"The thieves take the spare shotgun and rifle from the wagon: "+str(asked))
+	check(preload("res://simulation/bandit_demand.gd").valid_choice(content.choices[0]),"An arms demand is a valid bandit demand")
+	# The accused give up their arms in custody and get them back when they walk free.
+	var held=outfit({"revolvers":1,"hatchets":1})
+	held.state.next_landmark="independence"
+	held._arrive_landmark()
+	held.state.miles=int(held.route.node_miles()["independence"])
+	check(held.open_crime("independence"),"The Independence store can be targeted")
+	held.crime.scenes.independence.theft_success=0
+	pick(held,"theft")
+	pick(held,"surrender")
+	var current: Dictionary=held.crime.incident()
+	check(current.get("stage","")=="custody" and current.custody.has("arms"),"The accused are in custody with their arms held")
+	var taken: int=current.custody.accused.size()
+	check(int(current.custody.arms.get("revolvers",0))==1 and Armory.count(held.state,"revolvers")==0 and Armory.count(held.state,"hatchets")==0,"The leader's Colt and hatchet are taken")
+	check(Armory.count(held.state,"rifles")+Armory.count(held.state,"pistols")+Armory.count(held.state,"shotguns")+Armory.count(held.state,"revolvers")==6-taken,"Each accused gives up one firearm")
+	var held_copy=store.restore(JSON.parse_string(JSON.stringify(store.capture(held))))
+	check(held_copy!=null and store.capture(held_copy)==store.capture(held),"Held arms survive a save")
+	var bad_held: Dictionary=store.capture(held)
+	bad_held.crime.record.incidents.back().custody.arms={"cannons":1}
+	check(store.restore(bad_held)==null,"A save cannot hold unknown arms in custody")
+	for key in held.crime.detention_data.conviction:held.crime.detention_data.conviction[key]=0.0
+	check(pick(held,"wait"),"The accused wait for the court")
+	check(Armory.count(held.state,"revolvers")==1 and Armory.count(held.state,"hatchets")==1 and Armory.count(held.state,"rifles")==5,"Discharged, the accused get their arms back")
 	print("Weapons: %d checks, %d failures" % [checks,failures])
 	quit(1 if failures else 0)

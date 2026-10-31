@@ -106,7 +106,7 @@ func run():
 	check(store.capture(game)==before,"Predecision concern does not change trust or random state")
 	var old: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-background-benefits-save-v1.json"))
 	restored=store.restore(old)
-	check(restored!=null and restored.pending==store.normalize(old.pending) and restored.state==store.normalize(old.state) and restored.rng.state==int(old.random),"Real prior save preserves old quotes, supplies and random state during migration")
+	check(restored!=null and restored.pending==store.normalize(old.pending) and restored.state==store.upgraded_state(old.state) and restored.rng.state==int(old.random),"Real prior save preserves old quotes, supplies and random state during migration")
 	if restored!=null:check(not restored.pending.choices[0].has("care_bonus"),"Old unquoted care is not retroactively enhanced")
 	var screen=Main.instantiate()
 	root.add_child(screen)

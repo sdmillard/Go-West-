@@ -61,7 +61,7 @@ func run():
  check(store.restore(saved)==null,"Malformed transport load flag is rejected")
  var old: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-horse-loads-v5.json"))
  copy=store.restore(old)
- check(copy!=null and copy.state==store.normalize(old.state) and str(copy.rng.state)==old.random,"Genuine pre-load-revision journey restores without invented state or RNG changes")
+ check(copy!=null and copy.state==store.upgraded_state(old.state) and str(copy.rng.state)==old.random,"Genuine pre-load-revision journey restores without invented state or RNG changes")
  g=party()
  check(g.field_outings.start(g,1,"ride_horse",2,5,"lead_strenuous"),"A companion can plan to ride out and lead home")
  copy=store.restore(JSON.parse_string(JSON.stringify(store.capture(g))))
