@@ -59,6 +59,7 @@ func reason(game,index: int,task: String,patient: int=-1) -> String:
   if game.state.medicine<1:return "Needs one care kit."
  return ""
 func specialist(game,index: int,background: String) -> bool:
+ if index==0 and not background.is_empty() and preload("res://simulation/profession_skill.gd").background(game)==background:return true
  var profile: Dictionary=game.characters.profiles[index]
  return profile.skill==background or profile.specials.any(func(s):return game.characters.catalog.data.specials[s].get("assists","")==background)
 func begin(game,action: String,leader_patient: int=-1) -> void:

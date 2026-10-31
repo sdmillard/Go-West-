@@ -178,7 +178,7 @@
       "wage_cents": 15
     },
     "Sharpshooter": {
-      "description": "Provides the existing Hunting reload benefit even with another background; does not stack. +15 cents/day if hired.",
+      "description": "Provides the existing Hunting reload benefit and a hunter's steadier aim in fights even with another background; does not stack. +15 cents/day if hired.",
       "assists": "Hunting",
       "wage_cents": 15
     },

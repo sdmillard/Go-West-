@@ -339,7 +339,7 @@ func experience(game) -> int:
 	var targets: Array=[]
 	for current in record.incidents:
 		if current.resolution in ["left","escaped"] and current.attempt!="noticed" and current.attempt!="resisted" and current.attempt!="missed" and current.attempt!="caught" and current.target not in targets:targets.append(current.target)
-	return mini(targets.size()+game.combat.victories(),int(modifiers.experience_cap))
+	return mini(targets.size()+game.combat.victories()+(int(game.characters.benefits.outlaw_experience) if game.characters.available(game,"Outlawry") else 0),int(modifiers.experience_cap))
 ## Party members fit and willing to take part in this kind of act.
 func able(game,action: String) -> int:
 	return game.party_health.members.filter(func(member):return game.party_health.is_active(member) and member.health>=int(game.combat.data.poor_health) and game.characters.willing(int(member.id),action)).size()

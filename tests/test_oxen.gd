@@ -12,7 +12,8 @@ func check(value: bool,message: String) -> void:
 func _initialize():call_deferred("run")
 func outfit(seed_value: int=57):
 	var game=Simulation.new(seed_value,"classic",true)
-	game.depart("farmer",["A","B","C","D","E"],5,{"oxen":6,"food":600,"clothing":5,"bullet_boxes":10,"wheels":1,"axles":1,"tongues":1,"salt":10})
+	# A carpenter rather than a farmer: the farmer's Stockman skill changes butchering yields (tests/test_profession_skills.gd).
+	game.depart("carpenter",["A","B","C","D","E"],5,{"oxen":6,"food":600,"clothing":5,"bullet_boxes":10,"wheels":1,"axles":1,"tongues":1,"salt":10})
 	game.party_health.daily_onset_chance=0
 	game.survival.data.event_chance=0
 	game.survival.forced_weather="clear"

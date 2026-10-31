@@ -119,6 +119,9 @@ func _ready() -> void:
 	for entry in game.outfitter.professions:
 		profession.add_item("%s  $%d" % [entry.label, int(entry.cash_cents) / 100])
 	profession.item_selected.connect(func(_value): _update_quote())
+	# Each profession's skill, as the leader carries it (bankers rely on their purse).
+	var skills: Dictionary=game.characters.benefits.get("profession_skills",{})
+	describe_items(profession,game.outfitter.professions.map(func(entry):return ("%s: %s" % [skills[entry.id].label,skills[entry.id].description]) if skills.has(entry.id) else "No trade skill: a banker's edge is the larger purse."))
 	put(profession, Rect2(12, 185, 233, 22), party_layer)
 	text("DEPARTURE MONTH", Rect2(12, 212, 235, 12), party_layer)
 	month = OptionButton.new()

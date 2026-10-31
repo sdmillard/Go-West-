@@ -30,7 +30,7 @@ func run() -> void:
 	setup.back_button.pressed.emit()
 	check(setup.scene_id == "town_setup" and setup.quantities.food.value == 650 and screen.game.state == before_store, "Going back preserves unpurchased cart without charging supplies")
 	setup.next_button.pressed.emit()
-	setup.profession.selected = 2
+	setup.profession.selected = screen.game.outfitter.professions.map(func(p): return p.id).find("farmer")
 	setup.quantities.food.value = 2000
 	check(setup.depart_button.disabled, "An overloaded suggested cart blocks departure")
 	setup.quantities.food.value = 600

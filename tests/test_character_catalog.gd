@@ -105,7 +105,7 @@ func run():
 	root.add_child(screen)
 	await process_frame
 	var setup=screen.departure_view
-	check(setup.personality.item_count==8 and setup.values.item_count==8 and setup.relationship.item_count==13 and setup.flaw_choice.item_count==13 and setup.special_checks.size()==16 and setup.background_choice.item_count==5,"Actual editor exposes the full catalog")
+	check(setup.personality.item_count==8 and setup.values.item_count==8 and setup.relationship.item_count==13 and setup.flaw_choice.item_count==13 and setup.special_checks.size()==16 and setup.background_choice.item_count==7,"Actual editor exposes the full catalog")
 	var initial_state: Dictionary=screen.game.state.duplicate(true)
 	var initial_rng: int=screen.game.rng.state
 	setup.generate_button.pressed.emit()

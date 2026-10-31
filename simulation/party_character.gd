@@ -1,7 +1,10 @@
 extends RefCounted
 ## Companion backgrounds, trust, participation and warned settlement departures.
 const Appearance=preload("res://simulation/traveler_appearance.gd")
-const SKILLS=["Hunting", "Carpentry", "Caregiving", "Trading", "Leatherworking"]
+const SKILLS=["Hunting", "Carpentry", "Caregiving", "Trading", "Leatherworking", "Soldiering", "Outlawry"]
+## Backgrounds dealt to generated parties and recruits. Kept to the original five so existing seeds
+## deal the same companions; Soldiering and Outlawry are chosen in the party editor or by profession.
+const DEALT_SKILLS=["Hunting", "Carpentry", "Caregiving", "Trading", "Leatherworking"]
 const KINDS=["rest_sick", "push_sick", "care", "defend", "hunter_left"]
 const ACTIONS=["robbery", "murder", "cannibalism", "miss_wages", "hunt", "repair", "care", "trade", "defend"]
 var RELATIONSHIPS: Dictionary={"self":50}
@@ -42,22 +45,31 @@ func load_benefits(value: Variant) -> bool:
 	if not value.get("wage_modifiers") is Dictionary or value.wage_modifiers.size()!=4:return false
 	for modifier in ["Compassionate","Pragmatic","Loyal","Veteran"]:
 		if not whole(value.wage_modifiers.get(modifier),-100,1000):return false
+	for key in ["outlaw_experience","soldier_guard_factor"]:
+		if not whole(value.get(key),1,3):return false
+	if not preload("res://simulation/profession_skill.gd").valid(value.get("profession_skills"),SKILLS) or not value.get("profession_skills_note") is String:return false
 	benefits=value.duplicate(true)
 	error=""
 	return true
 
 func available(game, background: String="", special: String="") -> bool:
+	# A leader whose profession matches the background provides it while fit (no special abilities).
+	if special.is_empty() and not background.is_empty() and preload("res://simulation/profession_skill.gd").background(game)==background:return true
+	# A Soldier leader serves as a Veteran.
+	if background.is_empty() and special=="Veteran" and preload("res://simulation/profession_skill.gd").background(game)=="Soldiering":return true
 	for profile in profiles:
 		if profile.id==0 or profile.id>=game.party_health.members.size():continue
 		var member: Dictionary=game.party_health.members[int(profile.id)]
 		if background=="Hunting" and game.camp_tasks.excludes_helper(game,int(profile.id)):continue
 		if not game.party_health.is_active(member) or member.health<benefits.minimum_health or member.conditions.any(func(condition):return condition.severity>=3):continue
-		var action: String="defend" if special=="Veteran" else {"Hunting":"hunt","Carpentry":"repair","Caregiving":"care","Trading":"trade"}.get(background,"")
+		var action: String="defend" if special=="Veteran" else {"Hunting":"hunt","Carpentry":"repair","Caregiving":"care","Trading":"trade","Soldiering":"defend"}.get(background,"")
 		if not willing(int(profile.id),action):continue
 		var assists: bool=profile.skill==background
 		for ability in profile.specials:
 			if catalog.data.specials[ability].get("assists","")==background:assists=true
-		if (background.is_empty() or assists) and (special.is_empty() or special in profile.specials):return true
+		# A Soldiering companion has a Veteran's service.
+		var has_special: bool=special.is_empty() or special in profile.specials or (special=="Veteran" and profile.skill=="Soldiering")
+		if (background.is_empty() or assists) and has_special:return true
 	return false
 
 func benefit_description(index: int) -> String:
@@ -71,7 +83,7 @@ func benefit_description(index: int) -> String:
 
 func creation_specials() -> Array:return SPECIALS.filter(func(name):return not catalog.data.specials[name].get("legacy_only",false))
 func background_benefit(background: String) -> String:
-	return {"Leatherworking":"Prepare hides into buckskin, make leather goods and take skilled leatherwork jobs.","Hunting":"Reload time reduced by %d%%." % roundi((1-benefits.hunter_reload_factor)*100),"Carpentry":"%d fewer day(s) for patch/wooden wagon repairs (minimum one day)." % benefits.carpentry_days_saved,"Caregiving":"Care restores %d extra health and advances recovery %d extra day(s)." % [benefits.care_health_bonus,benefits.care_recovery_bonus],"Trading":"%d%% off cash purchases; selling prices unchanged." % roundi((1-benefits.trade_buy_factor)*100)}.get(background,"")
+	return {"Leatherworking":"Prepare hides into buckskin, make leather goods and take skilled leatherwork jobs.","Hunting":"Reload time reduced by %d%%; knows how to shoot, so aims a little better in fights." % roundi((1-benefits.hunter_reload_factor)*100),"Carpentry":"%d fewer day(s) for patch/wooden wagon repairs (minimum one day)." % benefits.carpentry_days_saved,"Caregiving":"Care restores %d extra health and advances recovery %d extra day(s)." % [benefits.care_health_bonus,benefits.care_recovery_bonus],"Trading":"%d%% off cash purchases; selling prices unchanged." % roundi((1-benefits.trade_buy_factor)*100),"Soldiering":"Served in the Mexican War: counts as a Veteran (%d percentage points less confrontation injury risk, steadier tactical saves), aims like a soldier in fights, and stock thieves give a soldier's night watch a wider berth." % roundi(benefits.veteran_risk_reduction*100),"Outlawry":"Has done this before: one prior job counts toward the party's crime experience (still capped). Who notices still depends on the scene."}.get(background,"")
 
 func concern(game, decision: String) -> String:
 	var names: Array[String]=[]
@@ -91,7 +103,7 @@ func start(seed_value: int, count: int) -> void:
 	profiles.clear()
 	var random:=RandomNumberGenerator.new()
 	random.seed=seed_value ^ 0x43484152
-	var skills:=SKILLS.duplicate()
+	var skills:=DEALT_SKILLS.duplicate()
 	for index in range(skills.size()-1,0,-1):
 		var other:=random.randi_range(0,index)
 		var swap: String=skills[index]
@@ -245,7 +257,7 @@ func generate_candidate(seed_value: int, candidate_index: int, relationship: Str
 	if relationship=="random":relationship=catalog.data.relationships.keys()[random.randi_range(0,catalog.data.relationships.size()-1)]
 	var temperament: String=catalog.data.temperaments.keys()[random.randi_range(0,catalog.data.temperaments.size()-1)]
 	var values: String=catalog.data.values.keys()[random.randi_range(0,catalog.data.values.size()-1)]
-	var profile: Dictionary={"id":1,"traits":[temperament,values],"skill":SKILLS[random.randi_range(0,SKILLS.size()-1)],"trust":RELATIONSHIPS[relationship],"memories":[],"specials":[],"relationship":relationship,"boundaries":catalog.boundaries(values),"thresholds":{"loyalty":80,"breaking":20,"betrayal":10},"can_betray":values in ["Ruthless","Opportunistic"],"contract":{},"exit_warning":{}}
+	var profile: Dictionary={"id":1,"traits":[temperament,values],"skill":DEALT_SKILLS[random.randi_range(0,DEALT_SKILLS.size()-1)],"trust":RELATIONSHIPS[relationship],"memories":[],"specials":[],"relationship":relationship,"boundaries":catalog.boundaries(values),"thresholds":{"loyalty":80,"breaking":20,"betrayal":10},"can_betray":values in ["Ruthless","Opportunistic"],"contract":{},"exit_warning":{}}
 	profile["appearance"]=Appearance.generate(seed_value,candidate_index)
 	if random.randi_range(0,2)==0:profile.flaws=[FLAWS.keys()[random.randi_range(0,FLAWS.size()-1)]]
 	var pool: Array=creation_specials()
