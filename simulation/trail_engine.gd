@@ -802,6 +802,13 @@ func set_double_up(on: bool) -> bool:
 
 func _check_health() -> void:
 	state.health = clampi(state.health, 0, 100)
+	# The leader is the player. When they die the journey ends, whoever else is left.
+	var leader: Dictionary=party_health.members[0] if not party_health.members.is_empty() else {}
+	if state.status=="traveling" and state.extended_route and not leader.is_empty() and not leader.alive and not state.get("leader_succession",false):
+		state.status="lost"
+		state.loss_reason="%s, the party's leader, died of %s. The journey is over." % [leader.name,leader.cause]
+		pending={}
+		return
 	if state.health == 0:
 		state.status = "lost"
 		if state.loss_reason.is_empty():
