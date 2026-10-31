@@ -98,6 +98,20 @@ func _initialize() -> void:
 			check(bounds.position.x > 0 and bounds.end.x < 48 and bounds.position.y > 0 and bounds.end.y <= 40,"Dog stays inside its cell and ground baseline")
 		check(distinct.size() >= (6 if row == 1 else 2),"Dog poses animate with distinct frames")
 	var scenes = preload("res://ui/location_scenes.gd").new()
+	# Every ending ui/main.gd _ending_scene can pick has its picture.
+	for id in ["ending_post", "ending_cabin", "ending_run_off", "ending_east", "ending_lost", "ending_homestead_east", "ending_homestead_west"]:
+		check(scenes.textures.has(id) and scenes.texture_for(id).get_size() == Vector2(432, 150), "Ending picture fills the view: " + id)
+	# Trail events and wanted standoffs that ui/main.gd _event_scene pictures, and every community visit.
+	for id in ["event_bandits", "event_cayuse_riders", "event_waiilatpu_ruins", "event_horse_thieves", "event_war_volunteers", "event_wagon_fire", "event_posse", "event_regulators", "event_bounty_hunters"]:
+		check(scenes.textures.has(id) and scenes.texture_for(id).get_size() == Vector2(432, 150), "Event picture fills the view: " + id)
+	for site in ["the_dalles", "platte", "fort_hall", "grande_ronde", "umatilla", "deschutes", "columbia_raft"]:
+		check(not scenes.encounter_for(site).is_empty(), "Community visit has its picture: " + site)
+	# Every timber stop where a cabin can go up has a spot for the cabin overlay.
+	check(load("res://art/pixels/cabin_overlay.png").get_size() == Vector2(400, 168), "Cabin overlay keeps five stages in three sizes")
+	var cabin_rules: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/cabins.json"))
+	var cabin_places: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/scene_ambience.json")).scenes
+	for stop in cabin_rules.timber:
+		check(cabin_places.get(stop, {}).has("cabin"), "Timber stop has a cabin spot: " + stop)
 	# Ambient effects sit inside the pictures they decorate.
 	var ambience: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/scene_ambience.json"))
 	for id in ambience.scenes:

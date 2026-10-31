@@ -24,7 +24,7 @@ Source: `art/aseprite/scenes/encounter_wasco.lua`. Review outputs: `.tools/nativ
 
 ## Runtime contract
 
-Proposed filenames above end in `.png`; only `encounter_the_dalles.png` is installed. Install further scenes after approval via the Aseprite pipeline and display the community image in the existing main illustration area while its visit is open, restoring the landmark on exit. Keep the 432 × 150 composition so the service menu and party preview remain usable. Recruitment should retain the community setting without implying that every person there wishes to leave home. Do not edit simulation rules to install artwork.
+All seven scenes are now drawn: the Wasco scene from `encounter_wasco.lua`, and the other six from `art/aseprite/scenes/encounters.lua` (pending Spencer's review on its PR). Install scenes after approval via the Aseprite pipeline and display the community image in the existing main illustration area while its visit is open, restoring the landmark on exit. Keep the 432 × 150 composition so the service menu and party preview remain usable. Recruitment should retain the community setting without implying that every person there wishes to leave home. Do not edit simulation rules to install artwork.
 
 ## Reference starting points
 
@@ -45,4 +45,4 @@ These sources establish activities and geographic context. They do not authentic
 
 ## Installed Wasco scene
 
-`data/location_scenes.json` maps the presentation-only encounter key `the_dalles` to `encounter_the_dalles`. The main illustration switches while its community visit or local recruitment is open, including a restored save, and returns to the existing Dalles landmark on exit. Other visits retain their landmarks. No economy data, simulation RNG, save fingerprint or supply totals changed. The approved composition retains the evidence limits described above; approval does not make it an authenticated reconstruction.
+`data/location_scenes.json` maps each visit site (the_dalles, platte, fort_hall, grande_ronde, umatilla, deschutes, columbia_raft) to its `encounter_<site>` picture. The main illustration switches while its community visit or local recruitment is open, including a restored save, and returns to the existing Dalles landmark on exit. The six newer scenes follow the same figure treatment and evidence limits: plain clothing, everyday work (provisions on pack horses, a horse herd and its owners, gardens, a pilot's dugout, portage carriers with brow straps), no tipis, warbonnets or later reservation buildings. No economy data, simulation RNG, save fingerprint or supply totals changed. The approved composition retains the evidence limits described above; approval does not make it an authenticated reconstruction.

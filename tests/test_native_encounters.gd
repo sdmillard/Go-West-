@@ -147,6 +147,6 @@ func run():
  view.game.choose(view.game.pending.choices.size()-1);view.service_window.hide();view._refresh()
  check(view.landscape.scene_id=="the_dalles" and view.game.state==Save.new().upgraded_state(visual_state.state),"Closing the visit restores the landmark without changing the simulation")
  stop(view.game,"platte");view._open_native_contacts()
- check(view.landscape.scene_id=="platte","A visit without approved dedicated art retains its landmark")
+ check(view.landscape.scene_id=="encounter_platte","Platte visit selects its encounter image")
  view.queue_free();await process_frame
  print("Native encounters: %d checks, %d failures" % [checks,failures]);quit(1 if failures else 0)

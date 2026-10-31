@@ -668,4 +668,105 @@ function K.tent(cx, y, half_w, h)
 end
 
 
+-- One-room 1840s log cabin seen side-on, (x, y) = ground under the left corner. Round logs
+-- notched at the corners, a clapboard-shake gable roof, a stick-and-clay chimney at the right
+-- end, a plank door and one window of greased paper. `stage` builds it up for the cabin
+-- overlay: 1 felled logs, 2 walls half raised, 3 walls up and rafters, nil or 4 finished.
+-- `snow` lays snow on the roof and the log ends. Width w (about 3 px to a foot), wall height h.
+function K.log_cabin(x, y, w, h, stage, snow)
+  stage = stage or 4
+  local function logs(top)
+    for yy = y - 2, top, -3 do
+      rect(x, yy - 1, w, 3, "wood")
+      rect(x, yy - 1, w, 1, "ochre")
+      rect(x, yy + 1, w, 1, "deep")
+      for xx = x + 3, x + w - 4, 7 do px(xx + (yy % 2), yy, "ox") end
+      -- notched ends stick out past the corners
+      rect(x - 2, yy - 1, 2, 3, "ochre"); px(x - 2, yy, "sand")
+      rect(x + w, yy - 1, 2, 3, "ox"); px(x + w + 1, yy, "sand")
+    end
+  end
+  K.shadow(x - 3, y + 1, w + 8)
+  if stage == 1 then
+    -- logs felled and decked, bark on, a few hewn, stumps around
+    for i = 0, 2 do
+      local ly = y - 1 - i * 3
+      rect(x + i * 3, ly - 1, w - i * 6, 3, (i % 2 == 0) and "wood" or "ox")
+      rect(x + i * 3, ly - 1, w - i * 6, 1, "ochre")
+      ellipse(x + i * 3, ly, 1, 1, "sand"); px(x + i * 3, ly, "ochre")
+      ellipse(x + w - i * 3, ly, 1, 1, "sand"); px(x + w - i * 3, ly, "ochre")
+    end
+    for _, sx in ipairs({x - 10, x + w + 8}) do rect(sx, y - 3, 4, 3, "wood"); rect(sx, y - 3, 4, 1, "sand") end
+    for i = 1, 14 do px(x - 6 + rnd(w + 12), y + rnd(2), (rnd(2) == 0) and "sand" or "cream") end
+    return
+  end
+  local top = (stage == 2) and (y - math.floor(h / 2)) or (y - h)
+  logs(top)
+  if stage == 2 then
+    -- a skid log leaned up to roll the next course into place
+    line(x + w + 4, y, x + w - 6, top - 2, "wood"); line(x + w + 5, y, x + w - 5, top - 2, "ox")
+    return
+  end
+  -- door and window, cut through the courses
+  local dx, dw, dh = x + math.floor(w * 0.3), math.max(4, math.floor(w * 0.15)), math.min(18, h - 2)
+  rect(dx, y - dh - 1, dw, dh, "deep"); rect(dx + 1, y - dh, dw - 2, dh - 1, (stage == 3) and "ink" or "wood")
+  if stage ~= 3 and dw > 5 then rect(dx + math.floor(dw / 2), y - dh, 1, dh - 1, "deep"); px(dx + dw - 2, y - math.floor(dh / 2), "storm") end
+  local wx, ww, wh = x + math.floor(w * 0.62), math.max(3, math.floor(w * 0.13)), math.max(3, math.floor(h * 0.3))
+  rect(wx, y - math.floor(h * 0.75), ww, wh, "deep"); rect(wx + 1, y - math.floor(h * 0.75) + 1, ww - 2, wh - 2, (stage == 3) and "ink" or "cream")
+  -- gable roof, rafters only while building
+  local rise = math.floor(w * 0.18) + 2
+  if stage == 3 then
+    for xx = x - 2, x + w + 2, 6 do line(xx, top, xx + 2, top - rise, "wood") end
+    line(x - 3, top - rise, x + w + 3, top - rise, "ox")
+    return
+  end
+  poly({{x - 4, top + 1}, {x + 4, top - rise}, {x + w - 4, top - rise}, {x + w + 4, top + 1}}, "roof")
+  for yy = top - rise + 2, top, 2 do
+    for xx = x - 3, x + w + 3, 3 do if (xx + yy) % 6 == 0 then rect(xx, yy, 2, 1, "roof_dk") end end
+  end
+  line(x - 4, top + 1, x + 4, top - rise, "roof_lt")
+  rect(x - 4, top + 1, w + 9, 1, "ink")
+  -- stick-and-clay chimney at the right gable end
+  local cx = x + w - 6
+  rect(cx, top - rise - 6, 6, rise + 7, "ochre")
+  for yy = top - rise - 5, top, 2 do rect(cx, yy, 6, 1, "wood") end
+  rect(cx + 4, top - rise - 6, 2, rise + 7, "ox")
+  if snow then
+    -- a blanket of snow over the whole roof, thick at the ridge, sagging over the eaves in
+    -- uneven lumps, with a few shakes showing through where wind scoured it
+    poly({{x - 5, top}, {x + 3, top - rise - 1}, {x + w - 3, top - rise - 1}, {x + w + 5, top}}, "white")
+    rect(x + 3, top - rise - 2, w - 6, 1, "white")
+    for xx = x - 4, x + w + 4 do
+      local sag = ((xx * 7) % 5 < 2) and 1 or 0
+      if (xx * 13) % 11 == 0 then sag = 2 end
+      rect(xx, top + 1, 1, sag + 1, "white")
+      px(xx, top + 1 + sag, "mist")
+    end
+    for yy = top - rise + 3, top - 2, 3 do
+      for xx = x + 2, x + w - 2, 9 do px(xx + (yy % 4), yy, "cream"); px(xx + (yy % 4) + 1, yy, "cream") end
+    end
+    for xx = x + 5, x + w - 8, 13 do px(xx, top - math.floor(rise / 2), "roof_dk") end
+    line(x + w - 3, top - rise, x + w + 4, top, "mist")
+    -- the chimney stands clear of the snow, capped white, its foot buried
+    rect(cx, top - rise - 6, 6, rise + 2, "ochre")
+    for yy = top - rise - 5, top - rise - 4 + rise, 2 do rect(cx, yy, 6, 1, "wood") end
+    rect(cx + 4, top - rise - 6, 2, rise + 2, "ox")
+    rect(cx - 1, top - rise - 8, 8, 2, "white"); px(cx - 1, top - rise - 6, "cream")
+    rect(cx - 3, top - rise - 1, 3, 2, "white"); px(cx + 6, top - rise, "white")
+    -- snow on every protruding log end and along the window sill
+    for yy = y - 2, top, -3 do
+      rect(x - 2, yy - 2, 2, 1, "white"); rect(x + w, yy - 2, 2, 1, "white")
+    end
+    rect(wx - 1, y - math.floor(h * 0.75) + wh, ww + 2, 1, "white")
+    -- drifts banked against the walls and lying around the cabin
+    for xx = x - 8, x + w + 8 do
+      local d = 2 + math.floor(1.5 + 1.5 * math.sin(xx / 4))
+      if xx < x or xx > x + w then d = math.max(1, d - 2) end
+      if xx >= dx and xx < dx + dw then d = 1 end
+      rect(xx, y - d + 1, 1, d + 1, "white")
+      px(xx, y - d + 1, (xx % 3 == 0) and "cream" or "white")
+    end
+  end
+end
+
 return K
