@@ -42,6 +42,16 @@ func load_data(data: Variant) -> bool:
 		for key in ["trade_bulk","descent","portage"]:
 			if node.has(key) and not node[key] is bool:
 				return _fail("Invalid landmark activity flag.")
+		if node.has("snow_country"):
+			var snow: Variant=node.snow_country
+			if not snow is Dictionary or not snow.get("months") is Array or snow.months.is_empty() or not snow.months.all(func(m):return (m is int or m is float) and m==floor(m) and m>=1 and m<=12):
+				return _fail("Invalid snow country months.")
+			for key in ["snowbound_chance","death_chance"]:
+				if not (snow.get(key) is int or snow.get(key) is float) or snow[key]<0 or snow[key]>1:return _fail("Invalid snow country chance.")
+			if not (snow.get("animal_strain") is int or snow.get("animal_strain") is float) or snow.animal_strain<0 or snow.animal_strain>100 or snow.animal_strain!=floor(snow.animal_strain):return _fail("Invalid snow country strain.")
+			if not (snow.get("valley_strain") is int or snow.get("valley_strain") is float) or snow.valley_strain<0 or snow.valley_strain>snow.animal_strain or snow.valley_strain!=floor(snow.valley_strain):return _fail("Invalid snow country valley strain.")
+		if node.has("wagon_closed_months") and (not node.wagon_closed_months is Array or node.wagon_closed_months.is_empty() or not node.wagon_closed_months.all(func(m):return (m is int or m is float) and m==floor(m) and m>=1 and m<=12)):
+			return _fail("Invalid seasonal road closure.")
 		for key in ["toll_dollars","toll_per_ox","bulk_food_cents"]:
 			if node.has(key) and (not (node[key] is int or node[key] is float) or not is_finite(float(node[key])) or node[key] < 0):
 				return _fail("Invalid landmark price.")

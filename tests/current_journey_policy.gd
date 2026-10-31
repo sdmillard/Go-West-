@@ -201,7 +201,9 @@ func act(game,profile: Dictionary,aim: RandomNumberGenerator,count: Dictionary) 
  var limit: int=int(profile.get("health_rest_limit",0))
  var consecutive: int=int(count.get("health_rest_streak",0)) if int(count.get("health_rest_day",-1))==int(game.state.day) else 0
  if limit>0 and consecutive>=(maxi(3,limit) if worst<20 else limit):health_stop=false
- if profile.rest and (health_stop or game.state.fatigue>50 or (game.state.vehicle!="foot" and game.state.ox_health<int(profile.get("team_rest_below",65))) or (profile.get("mount_support",false) and game.mount_plan().mode in ["mounted","doubled","packing"] and game.Mounts.condition(game.state)<int(profile.get("mount_rest_below",65)))) and game.state.food>=game.state.party_size*(ration+1):
+ # In winter snow country there is no grass to rest on: a sensible party pushes over the pass.
+ var snowbound: bool=not game.snow_country().is_empty() and not game.snow_country().get("sheltered",false)
+ if profile.rest and (health_stop or (not snowbound and game.state.fatigue>50) or (not snowbound and game.state.vehicle!="foot" and game.state.ox_health<int(profile.get("team_rest_below",65))) or (profile.get("mount_support",false) and game.mount_plan().mode in ["mounted","doubled","packing"] and game.Mounts.condition(game.state)<int(profile.get("mount_rest_below",65)))) and game.state.food>=game.state.party_size*(ration+1):
   bump(count,"rests")
   if health_stop:
    count["health_rest_streak"]=consecutive+1

@@ -333,6 +333,9 @@ func _arrive_landmark(revisit: bool=false,roll_stage: bool=true) -> void:
 				leave["edge"] = index
 			if road.has("effects"):
 				leave["effects"] = road.effects.duplicate()
+			if route.nodes[road.to].has("wagon_closed_months"):
+				leave["seasonal_road"]=road.to
+				leave.label+=" · snowbound to wagons %s" % closed_months_text(road.to)
 			options.append(leave)
 	if node.get("descent",false):
 		options[0] = {"label":"Lower wagons carefully · 2 days", "action":"leave", "effects":{"days":2}}
@@ -515,6 +518,11 @@ func travel() -> bool:
 	if state.extended_route and not on_river and state.vehicle!="foot" and (team_conditions.pulling(state) == 0 or state.ox_health == 0):
 		pending = {"id": "no_team", "title": "No team to pull the wagon", "text": "Trade for an ox, rest a worn team, or abandon the wagon through Provisions / Cargo.", "choices": [{"label": "Return to camp", "effects": {}, "result": "The wagon stays in camp."}]}
 		return true
+	var snow: Dictionary=snow_country()
+	if not snow.is_empty() and rng.randf()<float(snow.get("snowbound_chance",0)):
+		_tick_day(false,false)
+		if state.status=="traveling":journal.append("Day %d · Snowbound near %s: drifts block the road and the party makes no miles." % [state.day,route.nodes[snow.place].name])
+		return true
 	var pace_miles: int = int(survival.data.pace_miles[state.pace]) if state.extended_route else PACE_MILES[state.pace]
 	var distance: int = pace_miles + rng.randi_range(-2, 2)
 	if state.vehicle == "corolla":
@@ -591,6 +599,7 @@ func can_choose(index: int) -> bool:
 	if choice.has("camp_repair_part") and (state.vehicle!="wagon" or not camp_repair.work.is_empty()):return false
 	if choice.get("care",0)==12 and not context.local_care(self):return false
 	if choice.get("action","")=="cross" and not Train.ready(self).is_empty():return false
+	if choice.has("seasonal_road") and road_closed(str(choice.seasonal_road)):return false
 	if choice.get("method","")=="ferry" and crime.ferry_refused(self,str(state.landmark)):return false
 	if not context.can_trade(choice) or not crime.can_trade(self,choice) or (choice.has("activity") and choice.activity in context.record.activities):return false
 	for key in choice.get("requires", {}):
@@ -623,6 +632,7 @@ func choose(index: int) -> bool:
 		field_outings.resolve_returns(self)
 		return chosen
 	var choice: Dictionary = pending.choices[index]
+	if choice.has("carcass_meat"):return _butcher_carcass(choice)
 	if choice.get("camp_repair_part","") in camp_repair.PARTS:
 		if not camp_repair.queue(self,str(choice.camp_repair_part)):return false
 		pending={}
@@ -700,6 +710,7 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 			state.ox_health=maxi(0,int(state.ox_health)-int(pasture.ox_work_strain))
 		_tick_mounts(resting,team_working)
 		team_conditions.settle(self,false,team_working and state.vehicle!="foot",(int(pasture.ox_rest_recovery) if resting else mini(2,int(pasture.ox_rest_recovery))) if not team_working and not pasture.waterless else -1)
+		_snow_starvation()
 	if state.extended_route:
 		var spoiled := provisions.spoil(int(state.day), int(state.food))
 		if spoiled > 0:
@@ -2013,6 +2024,71 @@ func _refresh_toll_offer() -> void:
 
 func pasture_assessment() -> Dictionary:return Pasture.assess(self)
 
+## High country where winter snow can block the road and starve animals: the stop just left or the one ahead.
+func snow_country() -> Dictionary:
+	if not state.extended_route:return {}
+	var month: int=int(calendar().month)
+	# Camped at a landmark below the pass (leg not begun) is a sheltered valley: safer, not safe.
+	# No drifts stop the wagon there, but grazing is still poor, so animals lose a little each day.
+	for place in [str(state.landmark),str(state.next_landmark)]:
+		if route.nodes.has(place) and route.nodes[place].has("snow_country") and route.nodes[place].snow_country.months.any(func(m):return int(m)==month):
+			var rules: Dictionary=route.nodes[place].snow_country.duplicate()
+			rules["place"]=place
+			if place!=str(state.landmark) and int(state.leg_miles)==0:
+				rules["sheltered"]=true
+				rules["snowbound_chance"]=0.0
+				rules["animal_strain"]=int(rules.get("valley_strain",0))
+			return rules
+	return {}
+## Deep snow: no grazing, so animals lose condition even in camp; worn-out animals die.
+func _snow_starvation() -> void:
+	var snow: Dictionary=snow_country()
+	if snow.is_empty():return
+	var strain: int=int(snow.get("animal_strain",0))
+	if int(state.oxen)>0:
+		state.ox_health=maxi(0,int(state.ox_health)-strain)
+		team_conditions.settle(self)
+		if int(state.ox_health)==0 and rng.randf()<float(snow.get("death_chance",0)):
+			_apply({"oxen":-1})
+			journal.append("Day %d · An ox, starved and worn out, died in the snow near %s." % [state.day,route.nodes[snow.place].name])
+			_offer_carcass("ox",float(provisions.data.ox_slaughter.usable_meat_lb),str(snow.place))
+	if Mounts.animals(state)>0:
+		state["horse_health"]=maxi(0,Mounts.condition(state)-strain)
+		team_conditions.settle(self)
+		if Mounts.condition(state)==0 and rng.randf()<float(snow.get("death_chance",0)):
+			var kind: String="mules" if int(state.get("mules",0))>0 else "horses"
+			_apply({kind:-1})
+			journal.append("Day %d · A %s starved in the snow near %s." % [state.day,"mule" if kind=="mules" else "horse",route.nodes[snow.place].name])
+			var animal: String="mule" if kind=="mules" else "horse"
+			_offer_carcass(animal,float(provisions.data.mounts[animal].meat_lb),str(snow.place))
+## A starved animal is still meat: offer to butcher the carcass (no bullet needed) or leave it.
+## The yield is the worn-out minimum, since the animal died at its lowest condition.
+func _offer_carcass(animal: String,full_lb: float,place: String) -> void:
+	if not pending.is_empty() or state.status!="traveling":
+		journal.append("With no time to spare, the %s was left where it fell." % animal)
+		return
+	var meat: int=floori(full_lb*float(provisions.data.ox_slaughter.minimum_yield_factor))
+	pending={"id":"snow_carcass","category":"historical","title":"A %s died in the snow" % animal,
+		"text":"The %s starved near %s. Its carcass is thin but still meat, and the cold will keep it." % [animal,route.nodes[place].name],
+		"choices":[
+			{"label":"Butcher the %s · 1 day, about %d lb of meat" % [animal,meat],"carcass_meat":meat,"carcass_animal":animal,"effects":{},"result":"You butcher the %s where it fell." % animal},
+			{"label":"Leave it in the snow","effects":{},"result":"You leave the %s where it fell." % animal}]}
+func _butcher_carcass(choice: Dictionary) -> bool:
+	pending={}
+	var meat: int=int(choice.carcass_meat)
+	state.food+=provisions.add_meat(meat,int(state.day)+1)
+	supply_history.append({"day":int(state.day)+1,"event":"butcher_carcass","changes":{"food":provisions.meat_units(meat)}})
+	journal.append("Day %d · Butchered the dead %s: %d lb of thin meat. Meals and spoilage still apply." % [int(state.day)+1,str(choice.carcass_animal),meat])
+	_tick_day(false)
+	if state.status=="traveling" and pending.is_empty():_schedule_event(false)
+	return true
+## Snow shuts a mountain wagon road for the season; walkers and pack trains can still go around.
+func road_closed(place: String) -> bool:
+	return state.vehicle!="foot" and route.nodes.has(place) and route.nodes[place].get("wagon_closed_months",[]).any(func(m):return int(m)==int(calendar().month))
+func closed_months_text(place: String) -> String:
+	var months: Array=route.nodes[place].wagon_closed_months
+	var names: Array=["January","February","March","April","May","June","July","August","September","October","November","December"]
+	return "%s to %s" % [names[int(months[0])-1],names[int(months[-1])-1]]
 func seasonal_pressure() -> Dictionary:
 	return survival.seasonal(int(calendar().month),str(state.terrain),context.region(self))
 
@@ -2020,7 +2096,16 @@ func season_notice(days_ahead: int=0) -> String:
 	if not state.extended_route:return ""
 	var date: Dictionary=Time.get_datetime_dict_from_unix_time(int(Time.get_unix_time_from_datetime_dict(calendar()))+maxi(0,days_ahead)*86400)
 	var month: int=int(date.month)
+	for place in [str(state.landmark),str(state.next_landmark)]:
+		if route.nodes.has(place) and route.nodes[place].has("snow_country") and route.nodes[place].snow_country.months.any(func(m):return int(m)==month):
+			if place!=str(state.landmark) and int(state.leg_miles)==0:return "Winter below %s: the valley is sheltered but grass is poor, and the animals slowly weaken. Drifts on the climb can stop the wagon for days." % route.nodes[place].name
+			return "Winter in snow country near %s: drifts can stop the wagon for days, and with no grass the animals weaken and can die." % route.nodes[place].name
 	if month in survival.data.seasonal.winter_months:return "Winter: slow roads and poor grazing. Clothes reduce, but do not erase, blizzard exposure."
+	if month in [9,10]:
+		var ahead: Array=[]
+		for place in ["south_pass","blue_mountains","barlow_pass"]:
+			if route.nodes.has(place) and place not in travelled_path():ahead.append(route.nodes[place].name)
+		if not ahead.is_empty():return "Autumn: snow closes the high country from November (%s). Late parties risk snowbound days, starving animals and a shut Barlow road." % ", ".join(ahead)
 	if month in [9,10]:return "Autumn: mountain snow is approaching. Longer stops risk worse roads and grazing."
 	if month in [3,4] and seasonal_pressure().upland:return "Spring: snow can still slow upland travel."
 	return ""
