@@ -337,6 +337,11 @@ func _arrive_landmark(revisit: bool=false,roll_stage: bool=true) -> void:
 			if route.nodes[road.to].has("wagon_closed_months"):
 				leave["seasonal_road"]=road.to
 				leave.label+=" · snowbound to wagons %s" % closed_months_text(road.to)
+			# No raft is launched on a frozen river.
+			if road.get("hazard","")=="river":
+				leave["river_leg"]=true
+				if river_frozen():leave.label+=" · the river is frozen"
+				elif not river_winter().is_empty():leave.label+=" · winter wind and cold"
 			options.append(leave)
 	if node.get("descent",false):
 		options[0] = {"label":"Lower wagons carefully · 2 days", "action":"leave", "effects":{"days":2}}
@@ -345,7 +350,7 @@ func _arrive_landmark(revisit: bool=false,roll_stage: bool=true) -> void:
 	if node.get("portage",false):
 		description="Six miles of rapids. Most parties portaged, often with Chinookan help. Running risks cargo, injuries and drowning."
 		options[0] = {"label":"Portage around the rapids · %d days" % int(RIVER.portage_days), "action":"leave", "effects":{"days":int(RIVER.portage_days)}}
-		options.insert(1,{"label":"Run the rapids · steer the raft · 1 day", "action":"leave", "effects":{"days":1}, "rafting":true})
+		options.insert(1,{"label":"Run the rapids · steer the raft · 1 day"+(" · icy water" if not river_winter().is_empty() else ""), "action":"leave", "effects":{"days":1}, "rafting":true})
 	if node.has("toll_dollars"):
 		var toll := (0.0 if state.vehicle=="foot" else float(node.toll_dollars)*Train.count(state)) + float(node.get("toll_per_ox",0)) * (int(state.oxen)+livestock.count(state,"dairy_cows")+livestock.count(state,"goats"))
 		options[0].label = "Pay Barlow toll · $%.2f, then continue" % toll
@@ -524,6 +529,16 @@ func travel() -> bool:
 		_tick_day(false,false)
 		if state.status=="traveling":journal.append("Day %d · Snowbound near %s: drifts block the road and the party makes no miles." % [state.day,route.nodes[snow.place].name])
 		return true
+	# Winter on the Columbia: wind and running ice pin the raft to the shore, and the cold wears on everyone afloat.
+	var river_cold: Dictionary=river_winter() if on_river else {}
+	if not river_cold.is_empty():
+		_change_health(-int(river_cold.chill_damage),"cold on the river")
+		if state.status!="traveling":return true
+		var pinned: float=float(river_cold.ice_bound_chance if river_frozen() else river_cold.windbound_chance)
+		if rng.randf()<pinned:
+			_tick_day(false,false)
+			if state.status=="traveling":journal.append("Day %d · %s pins the raft to the shore; the party makes no miles." % [state.day,"Running ice" if river_frozen() else "A hard east wind"])
+			return true
 	var pace_miles: int = int(survival.data.pace_miles[state.pace]) if state.extended_route else PACE_MILES[state.pace]
 	var distance: int = pace_miles + rng.randi_range(-2, 2)
 	if state.vehicle == "corolla":
@@ -601,6 +616,7 @@ func can_choose(index: int) -> bool:
 	if choice.get("care",0)==12 and not context.local_care(self):return false
 	if choice.get("action","")=="cross" and not Train.ready(self).is_empty():return false
 	if choice.has("seasonal_road") and road_closed(str(choice.seasonal_road)):return false
+	if (choice.get("river_leg",false) or choice.get("rafting",false)) and river_frozen():return false
 	if choice.get("method","")=="ferry" and crime.ferry_refused(self,str(state.landmark)):return false
 	if not context.can_trade(choice) or not crime.can_trade(self,choice) or (choice.has("activity") and choice.activity in context.record.activities):return false
 	for key in choice.get("requires", {}):
@@ -2087,6 +2103,22 @@ func _butcher_carcass(choice: Dictionary) -> bool:
 	if state.status=="traveling" and pending.is_empty():_schedule_event(false)
 	return true
 ## Snow shuts a mountain wagon road for the season; walkers and pack trains can still go around.
+## The Columbia's winter: its rules when this month is a river winter, else {}.
+func river_winter() -> Dictionary:
+	var rules: Dictionary=route.nodes.get("columbia_raft",{}).get("river_winter",{})
+	if not state.extended_route or rules.is_empty() or not rules.months.any(func(m):return int(m)==int(calendar().month)):return {}
+	return rules
+## Some winters are hard enough to freeze the lower Columbia (January 1847 at Vancouver). Each winter is hard or not
+## for the whole journey, drawn from the seed apart from the game's dice, so waiting a day never changes it.
+func hard_winter(year: int) -> bool:
+	var rules: Dictionary=route.nodes.get("columbia_raft",{}).get("river_winter",{})
+	if rules.is_empty():return false
+	var dice:=RandomNumberGenerator.new()
+	dice.seed=("%d|river_ice|%d" % [int(state.seed),year]).hash()
+	return dice.randf()<float(rules.hard_winter_chance)
+func river_frozen() -> bool:
+	var rules: Dictionary=river_winter()
+	return not rules.is_empty() and rules.frozen_months.any(func(m):return int(m)==int(calendar().month)) and hard_winter(int(calendar().year))
 func road_closed(place: String) -> bool:
 	return state.vehicle!="foot" and route.nodes.has(place) and route.nodes[place].get("wagon_closed_months",[]).any(func(m):return int(m)==int(calendar().month))
 func closed_months_text(place: String) -> String:
@@ -2104,6 +2136,11 @@ func season_notice(days_ahead: int=0) -> String:
 		if route.nodes.has(place) and route.nodes[place].has("snow_country") and route.nodes[place].snow_country.months.any(func(m):return int(m)==month):
 			if place!=str(state.landmark) and int(state.leg_miles)==0:return "Winter below %s: the valley is sheltered but grass is poor, and the animals slowly weaken. Drifts on the climb can stop the wagon for days." % route.nodes[place].name
 			return "Winter in snow country near %s: drifts can stop the wagon for days, and with no grass the animals weaken and can die." % route.nodes[place].name
+	var river: Dictionary=route.nodes.get("columbia_raft",{}).get("river_winter",{})
+	var near_river: bool=str(state.landmark) in ["the_dalles","columbia_raft"] and (int(state.leg_miles)==0 or current_edge().get("hazard","")=="river")
+	if not river.is_empty() and near_river and river.months.any(func(m):return int(m)==month):
+		if days_ahead==0 and river_frozen():return "The Columbia is frozen over. No raft can be launched until the ice breaks up, likely in March."
+		return "Winter on the Columbia: east winds pin rafts to the shore, the cold wears on everyone afloat, and a wreck in icy water is deadlier. In a hard winter the river freezes over in January and February."
 	if month in survival.data.seasonal.winter_months:return "Winter: slow roads and poor grazing. Clothes reduce, but do not erase, blizzard exposure."
 	if month in [9,10]:
 		var ahead: Array=[]
@@ -2213,6 +2250,8 @@ func finish_rafting() -> bool:
 	if raft.is_empty() or not raft.ended:return false
 	var session: Dictionary=raft.duplicate(true)
 	var losses: Dictionary=rafting.losses(session)
+	# Icy water drowns a wrecked crew more often.
+	if not river_winter().is_empty():losses.drowning=bool(session.wrecked) and float(session.drowning_roll)<float(rafting.data.drowning_chance_on_wreck)*float(river_winter().wreck_drowning_factor)
 	_tick_day(false,false,"raft")
 	var impact_survivors: Array=party_health.members.filter(func(m):return party_health.is_active(m)).map(func(m):return int(m.id))
 	var before_food: int=state.food;var before_clothes: int=state.clothing

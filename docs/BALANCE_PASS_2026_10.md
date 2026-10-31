@@ -182,3 +182,14 @@ Same seeds (90000-90011), farmer/carpenter/banker. The new `masked` bot style is
 | Petty thief, before and after | 5 | 10 | 11 | 26 |
 
 The petty thief is unchanged because a quiet theft never names anyone. Masked robbers lose the reputation bonus, so more victims resist (39 complied robberies against 48). Overall, crime still costs more than it pays, but a poor farmer now does better robbing traders than staying honest (8 against 4). Spencer accepted this: crime is a fair trade-off because a run can still end in a gunfight or a hanging (and in play a resisted robbery is the tactical fight, which the bot settles on quick odds).
+
+## Step 5: the Columbia in winter (October 31)
+
+Spencer: the Columbia raft should get harder in winter, and may even be impossible if the river freezes. Late parties historically took the river to avoid snow on the Barlow road (NPS, *Overlanders in the Columbia River Gorge, 1840-1870*: the reach below The Dalles was usually windy). The lower Columbia froze in hard winters; on January 26, 1847 ice held HMS *Modeste* at Vancouver (Clark County history, *The Columbian*). Rules are in `river_winter` on the `columbia_raft` node of `data/route.json`.
+
+- From November to February each day afloat costs everyone 2 health, and on 30% of days a hard east wind pins the raft to the shore with no miles made.
+- Running the Cascades in those months warns of icy water, and a wreck drowns someone twice as often.
+- About one winter in four is hard. The draw is per winter, from the seed, apart from the game's dice. In a hard winter the river is frozen in January and February: no raft launches from The Dalles, nobody runs the Cascades or floats on below them, and a raft already afloat is pinned by running ice on 60% of days. The Barlow road is also shut to wagons then, so a wagon party waits at The Dalles (or walks the Barlow road) until March.
+- The season notice and the leave choices say all of this. The guide's winter chapter has the plain rules.
+
+Same seeds, farmer/carpenter/banker: late June 23 and late July 22 arrivals of 36, before and after. Six late-June parties spent 8 to 45 days waiting out the ice; one of them was later lost. The river winter costs time rather than deciding outcomes on its own. `tests/current_journey_policy.gd` now rests when every road out of a stop is shut for the season.

@@ -50,6 +50,14 @@ func load_data(data: Variant) -> bool:
 				if not (snow.get(key) is int or snow.get(key) is float) or snow[key]<0 or snow[key]>1:return _fail("Invalid snow country chance.")
 			if not (snow.get("animal_strain") is int or snow.get("animal_strain") is float) or snow.animal_strain<0 or snow.animal_strain>100 or snow.animal_strain!=floor(snow.animal_strain):return _fail("Invalid snow country strain.")
 			if not (snow.get("valley_strain") is int or snow.get("valley_strain") is float) or snow.valley_strain<0 or snow.valley_strain>snow.animal_strain or snow.valley_strain!=floor(snow.valley_strain):return _fail("Invalid snow country valley strain.")
+		if node.has("river_winter"):
+			var river: Variant=node.river_winter
+			var month_list:=func(value):return value is Array and not value.is_empty() and value.all(func(m):return (m is int or m is float) and m==floor(m) and m>=1 and m<=12)
+			if not river is Dictionary or river.size()!=8 or not river.get("note") is String or not month_list.call(river.get("months")) or not month_list.call(river.get("frozen_months")) or not river.frozen_months.all(func(m):return m in river.months):return _fail("Invalid river winter months.")
+			for key in ["windbound_chance","hard_winter_chance","ice_bound_chance"]:
+				if not (river.get(key) is int or river.get(key) is float) or river[key]<0 or river[key]>1:return _fail("Invalid river winter chance.")
+			if not (river.get("chill_damage") is int or river.get("chill_damage") is float) or river.chill_damage<0 or river.chill_damage>20 or river.chill_damage!=floor(river.chill_damage):return _fail("Invalid river winter chill.")
+			if not (river.get("wreck_drowning_factor") is int or river.get("wreck_drowning_factor") is float) or river.wreck_drowning_factor<1 or river.wreck_drowning_factor>5:return _fail("Invalid river winter drowning factor.")
 		if node.has("wagon_closed_months") and (not node.wagon_closed_months is Array or node.wagon_closed_months.is_empty() or not node.wagon_closed_months.all(func(m):return (m is int or m is float) and m==floor(m) and m>=1 and m<=12)):
 			return _fail("Invalid seasonal road closure.")
 		for key in ["toll_dollars","toll_per_ox","bulk_food_cents"]:
