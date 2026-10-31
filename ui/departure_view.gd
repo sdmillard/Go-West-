@@ -487,12 +487,13 @@ func _load_companion() -> void:
 	var flaws: Array=profile.get("flaws",[])
 	accepted_flaw="" if flaws.is_empty() else flaws[0]
 	flaw_choice.select(0 if accepted_flaw.is_empty() else draft.FLAWS.keys().find(accepted_flaw)+1)
-	personality.selected=draft.catalog.data.temperaments.keys().find(profile.traits[0])
-	values.selected=draft.catalog.data.values.keys().find(profile.traits[1])
-	background_choice.selected=draft.SKILLS.find(profile.skill)
-	relationship.selected=draft.catalog.data.relationships.keys().find(profile.relationship)
+	if edited_member!=0:
+		personality.selected=draft.catalog.data.temperaments.keys().find(profile.traits[0])
+		values.selected=draft.catalog.data.values.keys().find(profile.traits[1])
+		background_choice.selected=draft.SKILLS.find(profile.skill)
+		relationship.selected=draft.catalog.data.relationships.keys().find(profile.relationship)
 	for special in special_checks:special_checks[special].button_pressed=special in profile.specials
-	var terms: Dictionary=draft_terms.get(str(edited_member),{"wage_cents":draft.wage_quote(profile).daily_cents*7,"interval_days":7})
+	var terms: Dictionary=draft_terms.get(str(edited_member),{"wage_cents":0 if edited_member==0 else draft.wage_quote(profile).daily_cents*7,"interval_days":7})
 	auto_pay.set_pressed_no_signal(bool(terms.get("auto_pay",false)))
 	interval.value=terms.interval_days
 	wage.min_value=0.01

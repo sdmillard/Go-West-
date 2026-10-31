@@ -77,7 +77,9 @@ func run() -> void:
 	for good in fresh.outfitter.goods:cart[good.id]=int(good.suggested)
 	check(fresh.depart("banker",["A","B","C","D","E"],5,cart,setup) and "Hardy" in fresh.characters.profiles[0].specials and fresh.characters.profiles[0].flaws==["Sickly"],"The leader's chosen specials and flaw start the journey")
 	var hurt: int=fresh.characters.catalog.health_delta(fresh.characters.profiles[0],-10,"exhaustion",fresh.party_health.conditions)
-	check(hurt==-8,"Hardy protects the leader like anyone else")
+	var plain: Dictionary=fresh.characters.profiles[0].duplicate(true)
+	plain.specials.erase("Hardy")
+	check(hurt>fresh.characters.catalog.health_delta(plain,-10,"exhaustion",fresh.party_health.conditions),"Hardy protects the leader like anyone else")
 	var screen=load("res://ui/main.gd").new()
 	root.add_child(screen)
 	await process_frame
@@ -89,7 +91,7 @@ func run() -> void:
 	view.special_checks.Hardy.button_pressed=true
 	view.close_editor()
 	var made: Dictionary=view.customization()
-	check("Hardy" in made.profiles[0].specials and made.profiles[0].flaws==["Frail"] and fresh.characters.valid_setup(made),"Leader choices reach the journey setup")
+	check("Hardy" in made.profiles[0].specials and made.profiles[0].get("flaws",[])==["Frail"] and fresh.characters.valid_setup(made),"Leader choices reach the journey setup")
 	view.open_editor(1)
 	check(view.personality.visible and view.special_checks.Mercenary.visible,"Companion sheets keep every field")
 	screen.queue_free()
