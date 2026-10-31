@@ -41,7 +41,7 @@ func run():
  game.state.food=0
  game.provisions.fresh.clear()
  for key in ["wheels","axles","tongues","salt","bullets","medicine"]:game.state[key]=0
- for member in game.party_health.members:member.health=20
+ for member in game.party_health.members:member.health=16
  game.state.health=game.party_health.average_health()
  check(game.provisions.cargo(game.state)>game.provisions.capacity(game.state),"Injured walking fixture cannot carry fixed gear")
  var before_day: int=game.state.day

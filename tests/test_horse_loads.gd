@@ -51,7 +51,7 @@ func run():
  check(Outfit.capacity(g,[0],"foot")==0,"Broken leg prevents hauling")
  g=party()
  g.state.vehicle="foot";g.state.party_size=5
- check(g.provisions.capacity(g.state)==75+225+160,"Mixed train counts four walkers and one rider without double counting")
+ check(g.provisions.capacity(g.state)==75+225+200,"Mixed train counts four walkers and one rider without double counting")
  check(g.set_strenuous_load(true) and g.provisions.storage_capacity(g.state)>g.provisions.capacity(g.state),"Explicit heavy transport allowance raises permitted storage")
  check(g.set_lead_mounts(true) and g.mount_plan().riding_people==0 and g.mount_plan().mode=="packing","Lead command switches everyone to walking pace")
  var saved: Dictionary=store.capture(g)

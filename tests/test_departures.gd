@@ -128,13 +128,13 @@ func run():
 	for member in game.party_health.members:member.health=100
 	game.state.health=100
 	game.state.vehicle="foot"
-	game.state.food=89
+	game.state.food=139
 	game.state.bullets=10
 	for key in ["wheels","axles","tongues","parts","medicine","salt"]:game.state[key]=0
 	check(game.provisions.cargo(game.state)<=game.provisions.capacity(game.state),"Walking party fits packs before departure")
 	game.choose(0)
 	game.choose(0)
-	check(game.provisions.capacity(game.state)==160 and game.provisions.cargo(game.state)>160,"Departure lowers walking capacity without deleting excess possessions")
+	check(game.provisions.capacity(game.state)==200 and game.provisions.cargo(game.state)>200,"Departure lowers walking capacity without deleting excess possessions")
 	game.choose(0)
 	day=game.state.day
 	game.travel()
