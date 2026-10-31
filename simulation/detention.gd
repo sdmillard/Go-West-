@@ -1,18 +1,29 @@
 extends RefCounted
 ## Custody between capture and sentence. Who holds the accused decides where and how they are heard:
-## Jackson County (Missouri), the army at Fort Kearny, or an emigrant jury anywhere else.
+## Jackson County (Missouri), the army at Fort Kearny, a Native household's council for wrongs done to that household,
+## or an emigrant jury anywhere else.
 ## Authored game rules from docs/FRONTIER_DETENTION_RESEARCH.md, not a historical sentencing table.
-const AUTHORITIES=["county","army","company"]
+const AUTHORITIES=["county","army","company","council"]
 const COMMANDS=["wait","bail","vouch"]
 const VERDICTS=["convicted","discharged","bailed"]
 ## Sentence kind by worst severity (theft, robbery, assault, killing) for each authority.
-const KINDS={"company":["restitution","robbery","assault","hanged"],"county":["fine","penitentiary","penitentiary","hanged"],"army":["restitution","sent_east","sent_east","sent_east"]}
-const TITLES={"county":"Jackson County jail","army":"Under guard at Fort Kearny","company":"Held by an emigrant company"}
-const LOSS={"penitentiary":"The party's leader was sent to the Missouri penitentiary.","sent_east":"The party's leader was sent east under military escort to stand trial."}
+const KINDS={"company":["restitution","robbery","assault","hanged"],"county":["fine","penitentiary","penitentiary","hanged"],"army":["restitution","sent_east","sent_east","sent_east"],"council":["returned","driven_out","driven_out","price"]}
+## A council's answer to a killing is the family's: "price" above, or "life".
+const COUNCIL_KILLING=["price","life"]
+const TITLES={"county":"Jackson County jail","army":"Under guard at Fort Kearny","company":"Held by an emigrant company","council":"Held by the household's kin"}
+const LOSS={"penitentiary":"The party's leader was sent to the Missouri penitentiary.","sent_east":"The party's leader was sent east under military escort to stand trial.","life":"The family of the dead took the party leader's life for the killing."}
 static func number(value: Variant) -> bool:return (value is int or value is float) and is_finite(value)
 static func whole(value: Variant,low: int,high: int) -> bool:return number(value) and value==floor(value) and value>=low and value<=high
 static func valid_rules(value: Variant) -> bool:
-	if not value is Dictionary or value.size()!=11 or not value.get("note") is String:return false
+	if not value is Dictionary or value.size()!=12 or not value.get("note") is String:return false
+	var council: Variant=value.get("council")
+	if not council is Dictionary or council.size()!=9 or not council.get("note") is String:return false
+	for key in ["theft_factor","violent_factor"]:
+		if not whole(council.get(key),1,5):return false
+	for key in ["theft_min_cents","violent_min_cents","price_cents"]:
+		if not whole(council.get(key),0,100000):return false
+	for key in ["life_chance","unpaid_life_step","surrender_step"]:
+		if not number(council.get(key)) or council[key]<0 or council[key]>1:return false
 	for group in ["hearing_days","conviction"]:
 		if not value.get(group) is Dictionary or value[group].size()!=AUTHORITIES.size():return false
 		for authority in AUTHORITIES:
@@ -25,6 +36,8 @@ static func valid_rules(value: Variant) -> bool:
 static func rules(crime) -> Dictionary:return crime.detention_data
 ## Soldiers hold their own post's offenders; Missouri holds what happened in Missouri; everyone else answers to emigrants.
 static func authority(crime,game,current: Dictionary) -> String:
+	# A household's kin bring those who wronged it before their own council.
+	if crime.household(current.place):return "council"
 	if current.action=="pursuit" or crime.rules(current.place).kind=="fort":return "army"
 	if current.place.begins_with("wanted_posse:"):return "county"
 	if current.action!="wanted" and not crime.transient(current.place) and crime.mile(game,current.place)<=int(crime.wanted_data.posse_max_mile):return "county"
@@ -53,7 +66,7 @@ static func arrest(crime,game,current: Dictionary,surrendered: bool) -> void:
 	current["custody"]={"authority":who,"day":int(game.state.day),"hearing_day":int(game.state.day)+int(rules(crime).hearing_days[who]),"surrendered":surrendered,"accused":accused(crime,game,known),"vouched":-1,"abandoned":[]}
 	current.stage="custody"
 	var names: String=", ".join(current.custody.accused.map(func(id):return game.party_health.members[int(id)].name))
-	game.journal.append("Day %d · %s %s. Held: %s. Hearing on day %d." % [game.state.day,"Surrendered to" if surrendered else "Taken by",{"county":"the Jackson County sheriff","army":"the soldiers","company":"an emigrant company"}[who],names,current.custody.hearing_day])
+	game.journal.append("Day %d · %s %s. Held: %s. Hearing on day %d." % [game.state.day,"Surrendered to" if surrendered else "Taken by",{"county":"the Jackson County sheriff","army":"the soldiers","company":"an emigrant company","council":"kin of the household"}[who],names,current.custody.hearing_day])
 static func charges_text(known: Array) -> String:
 	return ["theft","robbery","assault","a killing"][severity(known)-1]
 static func bail_cents(crime,known: Array) -> int:
@@ -86,7 +99,8 @@ static func menu(crime,game,current: Dictionary) -> Dictionary:
 	var text: String="Held: %s. Charge: %s. " % [names,charges_text(known)]
 	text+={"county":"The county keeps them in the brick jail at Independence until court sits. Theft brings a fine, worked off in jail if you cannot pay. Robbery or assault means the state penitentiary; a killing can mean hanging.",
 		"army":"The soldiers keep them under guard. Petty theft is paid back; anything violent and they are sent east under escort to a civil court.",
-		"company":"An emigrant company holds them for a hearing by its own jury. It can order restitution, a whipping, banishment or, for a killing, hanging."}[who]
+		"company":"An emigrant company holds them for a hearing by its own jury. It can order restitution, a whipping, banishment or, for a killing, hanging.",
+		"council":council_terms(crime,game,current,known)}[who]
 	text+="\nHearing in %d day(s). The rest of the party camps nearby and eats as usual. Thin evidence can mean release; it is never certain." % days
 	if known.all(func(item):return not item.identified):text+=" Nobody has named the party for certain."
 	if 0 in current.custody.accused and game.party_health.living_count()>current.custody.accused.size():text+="\nWhile you sit in jail, a companion with little faith in you may give up and leave."
@@ -101,6 +115,27 @@ static func menu(crime,game,current: Dictionary) -> Dictionary:
 	# The panel's last row is its way back; custody has none.
 	options.append(crime.option("Held in custody","back"))
 	return {"id":"crime","crime_menu":true,"service_menu":true,"title":TITLES[who],"text":text,"choices":options}
+## What the household's council will weigh. Invented game rules; no source gives these communities' 1848 penalties.
+static func council_terms(crime,game,current: Dictionary,known: Array) -> String:
+	var level:=severity(known)
+	if level==1:return "The household's council meets tomorrow. For a theft they want the goods' worth twice over, taken in cash and then goods."
+	if level<4:return "The household's council meets tomorrow. For robbery or an attack they want three times the loss, at least $%.2f, and will drive the party out of this country: no household here will deal with you again." % (int(council(crime).violent_min_cents)/100.0)
+	return "The household's council meets tomorrow. For a killing, the family of the dead chooses: a heavy price of $%.2f, taken in cash and then goods, or the killer's life. The chance they want a life: about %d in 10%s." % [price_cents(crime,known)/100.0,roundi(life_chance(crime,game,current,known)*10)," (you could not cover the price)" if not can_cover(crime,game,price_cents(crime,known)) else ""]
+static func council(crime) -> Dictionary:return rules(crime).council
+static func council_due(crime,known: Array) -> int:
+	var level:=severity(known)
+	if level==1:return maxi(value(known)*int(council(crime).theft_factor),int(council(crime).theft_min_cents))
+	if level<4:return maxi(value(known)*int(council(crime).violent_factor),int(council(crime).violent_min_cents))
+	return price_cents(crime,known)
+static func price_cents(crime,known: Array) -> int:return int(council(crime).price_cents)+value(known)
+## Cash plus the goods a council can take, at opening outfit prices.
+static func can_cover(crime,game,cents: int) -> bool:
+	return roundi(float(game.state.money)*100)+crime.Wanted.goods_value(game)>=cents
+static func life_chance(crime,game,current: Dictionary,known: Array) -> float:
+	var chance: float=float(council(crime).life_chance)
+	if not can_cover(crime,game,price_cents(crime,known)):chance+=float(council(crime).unpaid_life_step)
+	if bool(current.custody.surrendered):chance-=float(council(crime).surrender_step)
+	return clampf(chance,0.0,1.0)
 static func can_choose(crime,game,current: Dictionary,command: String) -> bool:
 	if command=="wait":return true
 	if command=="vouch":return voucher(game,current,crime.Wanted.trial_charges(crime,game,current))>=0

@@ -4,25 +4,32 @@ static var data: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res
 const GOODS=["food","bullets","clothing","oxen","wheels","axles","tongues","medicine","salt","wagon","horses","mules","saddles","pack_saddles","saddlebags"]
 const ANIMALS=["horses","mules"]
 ## Places with goods to pick from; a gate or ferry is robbed of its cash box and passage instead.
-const STOCKED=["store","fort","traders","emigrants"]
+const STOCKED=["store","fort","traders","emigrants","household"]
 static func valid_rules(v: Variant) -> bool:
  if not v is Dictionary or not v.get("note") is String:return false
  for key in ["value_penalty","wagon_penalty","mount_penalty","theft_value_penalty","animal_noise"]:
   var n: Variant=v.get(key)
   if not (n is int or n is float) or not is_finite(n) or n<0 or n>1:return false
  return true
-static func prefix(game,place: String) -> String:return place if game.crime.rules(place).kind in ["traders","emigrants"] else "post:"+place
+## A household's horses are the herd its visit sells, so taking one is counted against that herd.
+static func prefix(game,place: String) -> String:
+ if game.crime.household(place):return "herders:"+game.crime.node_of(place)
+ return place if game.crime.rules(place).kind in ["traders","emigrants"] else "post:"+place
 static func stock(game,place: String,initial: bool=false) -> Dictionary:
  var crime=game.crime
  var kind: String=crime.rules(place).kind
  var result: Dictionary={"cash_cents":int(crime.rules(place).cash_cents) if initial else int(crime.service(place).cash_cents),"food":crime.food_capacity(game,place) if initial else crime.food_left(game,place)}
- if kind not in ["store","fort","traders","emigrants"]:return result
+ if kind not in STOCKED:return result
  if kind in ["traders","emigrants"] and not initial:
   var purse: Dictionary=game.context.barter_goods(game,place) if kind=="traders" else game.context.camp_goods(game,place)
   result.cash_cents=mini(int(result.cash_cents),game._purse_left(place,int(purse.purse_cents)))
  var raw: Dictionary={}
  if kind=="traders":raw=game.context.barter_goods(game,place).stock
  elif kind=="emigrants":raw=game.context.camp_goods(game,place).stock
+ elif kind=="household":
+  # Only the preserved provisions (above) and the visit's own herd; fresh and dried baskets are not loot yet.
+  var herd: Dictionary=game.context.data.horse_traders.get(game.crime.node_of(place),{})
+  if not herd.is_empty():raw["horses"]=int(herd.horses)
  else:
   for lot in game.survival.data.trade_lots:raw[lot.item]=mini(int(game.context.data.post_lots),int(lot.get("post_lots",game.context.data.post_lots)))*int(lot.amount)
  if kind in ["store","fort","emigrants"]:raw["wagon"]=1

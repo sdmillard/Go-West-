@@ -283,6 +283,261 @@
       "injury_damage": 15,
       "wagon_access": true
     },
+    "native:platte": {
+      "kind": "household",
+      "title": "A Pawnee household",
+      "note": "An authored household at an existing Native visit, not a reconstruction of real people. The contact you know is the first person; the others are fictional relatives or co-workers, not the whole community. They hold only the visit's own finite stock and carry no cash. They are on home ground: they resist, remember and may ride after the party.",
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "provision keeper"
+        },
+        {
+          "id": "relative",
+          "role": "relative"
+        },
+        {
+          "id": "child",
+          "role": "grown child"
+        }
+      ],
+      "cash_cents": 0,
+      "food_lot": 0,
+      "loot_limit": 200,
+      "theft_success": 0.4,
+      "compliance": 0.25,
+      "shot_hit": 0.6,
+      "shot_fatal": 0.5,
+      "escape_capture": 0.15,
+      "escape_injury": 0.35,
+      "injury_damage": 25,
+      "breakout": 0.5,
+      "breakout_shots": 3,
+      "pursuit": {
+        "note": "Authored tuning. After the party gets away from an open crime, kin of the household may ride after it for a few days, once, while any of them are left who are not the contact.",
+        "days": 3,
+        "daily": 0.3
+      },
+      "wagon_access": true
+    },
+    "native:fort_hall": {
+      "kind": "household",
+      "title": "A Shoshone and Bannock household",
+      "note": "An authored household at an existing Native visit, not a reconstruction of real people. The contact you know is the first person; the others are fictional relatives or co-workers, not the whole community. They hold only the visit's own finite stock and carry no cash. They are on home ground: they resist, remember and may ride after the party. Separate from the Hudson's Bay post store.",
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "provision trader"
+        },
+        {
+          "id": "relative",
+          "role": "relative"
+        },
+        {
+          "id": "child",
+          "role": "grown child"
+        }
+      ],
+      "cash_cents": 0,
+      "food_lot": 0,
+      "loot_limit": 200,
+      "theft_success": 0.4,
+      "compliance": 0.25,
+      "shot_hit": 0.6,
+      "shot_fatal": 0.5,
+      "escape_capture": 0.15,
+      "escape_injury": 0.35,
+      "injury_damage": 25,
+      "breakout": 0.5,
+      "breakout_shots": 3,
+      "pursuit": {
+        "note": "Authored tuning. After the party gets away from an open crime, kin of the household may ride after it for a few days, once, while any of them are left who are not the contact.",
+        "days": 3,
+        "daily": 0.3
+      },
+      "wagon_access": true
+    },
+    "native:grande_ronde": {
+      "kind": "household",
+      "title": "A Nez Perce household",
+      "note": "An authored household at an existing Native visit, not a reconstruction of real people. The contact you know is the first person; the others are fictional relatives or co-workers, not the whole community. They hold only the visit's own finite stock and carry no cash. They are on home ground: they resist, remember and may ride after the party. The horses are the same herd sold at this visit.",
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "horse owner"
+        },
+        {
+          "id": "herder",
+          "role": "herder"
+        },
+        {
+          "id": "relative",
+          "role": "relative"
+        }
+      ],
+      "cash_cents": 0,
+      "food_lot": 0,
+      "loot_limit": 0,
+      "theft_success": 0.4,
+      "compliance": 0.25,
+      "shot_hit": 0.6,
+      "shot_fatal": 0.5,
+      "escape_capture": 0.15,
+      "escape_injury": 0.35,
+      "injury_damage": 25,
+      "breakout": 0.5,
+      "breakout_shots": 3,
+      "pursuit": {
+        "note": "Authored tuning. After the party gets away from an open crime, kin of the household may ride after it for a few days, once, while any of them are left who are not the contact.",
+        "days": 3,
+        "daily": 0.3
+      },
+      "wagon_access": true
+    },
+    "native:umatilla": {
+      "kind": "household",
+      "title": "An Umatilla household",
+      "note": "An authored household at an existing Native visit, not a reconstruction of real people. The contact you know is the first person; the others are fictional relatives or co-workers, not the whole community. They hold only the visit's own finite stock and carry no cash. They are on home ground: they resist, remember and may ride after the party. Only the preserved provisions can be carried off; the fresh baskets are not loot in this version.",
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "garden keeper"
+        },
+        {
+          "id": "relative",
+          "role": "relative"
+        },
+        {
+          "id": "child",
+          "role": "grown child"
+        }
+      ],
+      "cash_cents": 0,
+      "food_lot": 0,
+      "loot_limit": 200,
+      "theft_success": 0.4,
+      "compliance": 0.25,
+      "shot_hit": 0.6,
+      "shot_fatal": 0.5,
+      "escape_capture": 0.15,
+      "escape_injury": 0.35,
+      "injury_damage": 25,
+      "breakout": 0.5,
+      "breakout_shots": 3,
+      "pursuit": {
+        "note": "Authored tuning. After the party gets away from an open crime, kin of the household may ride after it for a few days, once, while any of them are left who are not the contact.",
+        "days": 3,
+        "daily": 0.3
+      },
+      "wagon_access": true
+    },
+    "native:deschutes": {
+      "kind": "household",
+      "title": "A river family",
+      "note": "An authored household at an existing Native visit, not a reconstruction of real people. The contact you know is the first person; the others are fictional relatives or co-workers, not the whole community. They hold only the visit's own finite stock and carry no cash. They are on home ground: they resist, remember and may ride after the party. The pilot holds no store to take.",
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "river pilot"
+        },
+        {
+          "id": "relative",
+          "role": "relative"
+        }
+      ],
+      "cash_cents": 0,
+      "food_lot": 0,
+      "loot_limit": 0,
+      "theft_success": 0.4,
+      "compliance": 0.25,
+      "shot_hit": 0.6,
+      "shot_fatal": 0.5,
+      "escape_capture": 0.15,
+      "escape_injury": 0.35,
+      "injury_damage": 25,
+      "breakout": 0.5,
+      "breakout_shots": 3,
+      "pursuit": {
+        "note": "Authored tuning. After the party gets away from an open crime, kin of the household may ride after it for a few days, once, while any of them are left who are not the contact.",
+        "days": 3,
+        "daily": 0.3
+      },
+      "wagon_access": true
+    },
+    "native:the_dalles": {
+      "kind": "household",
+      "title": "A Wasco household",
+      "note": "An authored household at an existing Native visit, not a reconstruction of real people. The contact you know is the first person; the others are fictional relatives or co-workers, not the whole community. They hold only the visit's own finite stock and carry no cash. They are on home ground: they resist, remember and may ride after the party. Only the preserved provisions can be carried off; the dried baskets are not loot in this version.",
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "provision seller"
+        },
+        {
+          "id": "relative",
+          "role": "relative"
+        },
+        {
+          "id": "child",
+          "role": "grown child"
+        }
+      ],
+      "cash_cents": 0,
+      "food_lot": 0,
+      "loot_limit": 200,
+      "theft_success": 0.4,
+      "compliance": 0.25,
+      "shot_hit": 0.6,
+      "shot_fatal": 0.5,
+      "escape_capture": 0.15,
+      "escape_injury": 0.35,
+      "injury_damage": 25,
+      "breakout": 0.5,
+      "breakout_shots": 3,
+      "pursuit": {
+        "note": "Authored tuning. After the party gets away from an open crime, kin of the household may ride after it for a few days, once, while any of them are left who are not the contact.",
+        "days": 3,
+        "daily": 0.3
+      },
+      "wagon_access": true
+    },
+    "native:columbia_raft": {
+      "kind": "household",
+      "title": "An Upper Chinookan portage crew",
+      "note": "An authored household at an existing Native visit, not a reconstruction of real people. The contact you know is the first person; the others are fictional relatives or co-workers, not the whole community. They hold only the visit's own finite stock and carry no cash. They are on home ground: they resist, remember and may ride after the party. The crew holds no store to take.",
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "load organizer"
+        },
+        {
+          "id": "carrier",
+          "role": "carrier"
+        },
+        {
+          "id": "hand",
+          "role": "crew hand"
+        }
+      ],
+      "cash_cents": 0,
+      "food_lot": 0,
+      "loot_limit": 0,
+      "theft_success": 0.4,
+      "compliance": 0.25,
+      "shot_hit": 0.6,
+      "shot_fatal": 0.5,
+      "escape_capture": 0.15,
+      "escape_injury": 0.35,
+      "injury_damage": 25,
+      "breakout": 0.5,
+      "breakout_shots": 3,
+      "pursuit": {
+        "note": "Authored tuning. After the party gets away from an open crime, kin of the household may ride after it for a few days, once, while any of them are left who are not the contact.",
+        "days": 3,
+        "daily": 0.3
+      },
+      "wagon_access": true
+    },
     "passing_traders": {
       "kind": "traders",
       "title": "Passing traders",
@@ -501,16 +756,18 @@
     "left_behind_trust": 60
   },
   "detention": {
-    "note": "Authored custody rules, not a historical sentencing table. Jackson County had a brick jail from 1841 and Missouri's penitentiary opened in 1836; Fort Kearny's guard holds offenders only once the post exists (June 1848); elsewhere an emigrant company tries its own. Hearing days, conviction odds, bail and jail-day rates are game estimates. See docs/FRONTIER_DETENTION_RESEARCH.md.",
+    "note": "Authored custody rules, not a historical sentencing table. Jackson County had a brick jail from 1841 and Missouri's penitentiary opened in 1836; Fort Kearny's guard holds offenders only once the post exists (June 1848); elsewhere an emigrant company tries its own. A Native household's kin bring a captured offender before their own council (see council). Hearing days, conviction odds, bail and jail-day rates are game estimates. See docs/FRONTIER_DETENTION_RESEARCH.md and docs/NATIVE_JUSTICE.md.",
     "hearing_days": {
       "county": 3,
       "army": 2,
-      "company": 1
+      "company": 1,
+      "council": 1
     },
     "conviction": {
       "county": 0.8,
       "army": 0.9,
-      "company": 0.85
+      "company": 0.85,
+      "council": 0.9
     },
     "unidentified_factor": 0.5,
     "vouch_bonus": 0.15,
@@ -523,6 +780,17 @@
     ],
     "bail_value_factor": 2,
     "jail_day_cents": 100,
-    "max_jail_days": 30
+    "max_jail_days": 30,
+    "council": {
+      "note": "Invented for the game. No source consulted gives 1848 penalties for these communities, so these are authored game rules, not customary law. Theft: the goods' value twice over (return plus as much again). Robbery or assault: three times the value, never less than the minimum, and the council drives the party out of that country. A killing: the family chooses between a heavy price and the killer's life. Payment is taken in cash first, then goods; it never wipes out what others have heard.",
+      "theft_factor": 2,
+      "theft_min_cents": 500,
+      "violent_factor": 3,
+      "violent_min_cents": 2500,
+      "price_cents": 15000,
+      "life_chance": 0.35,
+      "unpaid_life_step": 0.35,
+      "surrender_step": 0.1
+    }
   }
 }

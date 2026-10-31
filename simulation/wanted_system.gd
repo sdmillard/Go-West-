@@ -180,9 +180,15 @@ static func arrived(crime,game,source: Dictionary,place: Variant,day: int=-1) ->
 	if day<0:day=int(game.state.day)
 	if (place is String and place==source.origin) or here(game,place)==crime.mile(game,str(source.origin)):return int(source.day)<=day
 	return int(source.day)+int(crime.news_rules.delay_days)+ceili(absi(here(game,place)-crime.mile(game,str(source.origin)))/float(crime.news_rules.miles_per_day))<=day
+## Goods a court or council can take in payment, in outfit order. Animals, wagons and gear stay with the party.
+const CONFISCATED=["food","clothing","bullets","wheels","axles","tongues","medicine","salt"]
+static func unit_cents(game,id: String) -> int:
+	for good in game.outfitter.goods:
+		if good.id==id or (id=="bullets" and good.id=="bullet_boxes"):return maxi(1,int(float(good.price_cents)/(20.0 if id=="bullets" else 1.0)))
+	return 1
 static func value_of(game,item: Dictionary) -> int:
 	# Food restitution uses the documented opening staple price, in cents.
-	return int(item.cash_cents)+int(item.food)*int(game.outfitter.goods[1].price_cents)+roundi(game.RobberyDemand.value(game,item.get("taken_goods",{})))
+	return int(item.cash_cents)+int(item.food)*unit_cents(game,"food")+roundi(game.RobberyDemand.value(game,item.get("taken_goods",{})))
 static func incident_evidence(crime,game,item: Dictionary,identified: bool) -> Dictionary:
 	var action: String=item.action
 	var military: bool=crime.rules(item.place).kind=="fort"
@@ -212,10 +218,12 @@ static func notoriety(crime,game,place: Variant="",day: int=-1) -> float:
 	var total:=0.0
 	for item in evidence(crime,game,place,{},day):total+=float(item.weight)
 	return total
-static func settled(crime) -> Array:
+## Acts already answered at a hearing. A council's settlement answers only to that council, except a returned theft:
+## paying a household for violence does not clear it for anyone else.
+static func settled(crime,council: bool=false) -> Array:
 	var ids: Array=[]
 	for item in crime.record.incidents:
-		if item.has("sentence"):ids.append_array(item.sentence.charges)
+		if item.has("sentence") and (council or item.sentence.authority!="council" or item.sentence.kind=="returned"):ids.append_array(item.sentence.charges)
 	return ids
 static func charges(crime,game,place: Variant,local: Dictionary={}) -> Array:
 	var answered:=settled(crime)
@@ -394,20 +402,27 @@ static func trial_charges(crime,game,current: Dictionary) -> Array:
 				merge_array(known,incident_evidence(crime,game,crime.record.incidents[int(report.incident)-1],true))
 	# A violent fight just witnessed is evidence even if its report has not left yet.
 	if current.action=="wanted" and int(current.shots)>0:merge_array(known,incident_evidence(crime,game,current,true))
+	# A household's council hears only the wrongs done to that household, each once.
+	if crime.household(current.place):
+		var answered:=settled(crime,true)
+		known=known.filter(func(item):return item.origin==current.place and item.id not in answered)
 	return known
 ## Confiscate actual goods at opening outfit prices. Never create money or negative stock.
 static func confiscate(game,remaining: int) -> Dictionary:
 	var goods: Dictionary={}
-	for good in game.outfitter.goods:
-		var id: String="bullets" if good.id=="bullet_boxes" else str(good.id)
-		if id=="oxen" or remaining<=0:continue
-		var unit: int=maxi(1,float(good.price_cents)/(20.0 if id=="bullets" else 1.0))
+	for id in CONFISCATED:
+		if remaining<=0:continue
+		var unit: int=unit_cents(game,id)
 		var amount: int=mini(int(game.state.get(id,0)),ceili(remaining/float(unit)))
 		if amount<=0:continue
 		goods[id]=amount
 		game._apply({id:-amount})
 		remaining=maxi(0,remaining-amount*unit)
 	return goods
+static func goods_value(game) -> int:
+	var total:=0
+	for id in CONFISCATED:total+=int(game.state.get(id,0))*unit_cents(game,id)
+	return total
 ## The hearing's outcome. Custody (Detention) decides who hears the case; an emigrant company keeps the older frontier sentences.
 static func trial(crime,game,current: Dictionary,surrendered: bool,authority: String="company",verdict: String="convicted",bail: int=0) -> void:
 	var known:=trial_charges(crime,game,current)
@@ -421,6 +436,8 @@ static func trial(crime,game,current: Dictionary,surrendered: bool,authority: St
 			if int(id)>0 and int(id) not in helpers:helpers.append(int(id))
 	var accused: Array=current.custody.accused if current.has("custody") else []
 	var kind: String={"discharged":"discharged","bailed":"bailed"}.get(verdict,Detention.KINDS[authority][severity-1])
+	# For a killing, the family of the dead chooses between the price and the killer's life.
+	if kind=="price" and crime.rng.randf()<Detention.life_chance(crime,game,current,known):kind="life"
 	var paid:=bail
 	var goods: Dictionary={}
 	var banished: Array=[]
@@ -438,6 +455,11 @@ static func trial(crime,game,current: Dictionary,surrendered: bool,authority: St
 			# A county fine the party cannot pay is worked off in jail.
 			if due>paid:jail_days=mini(int(crime.detention_data.max_jail_days),ceili((due-paid)/float(crime.detention_data.jail_day_cents)))
 		else:goods=confiscate(game,due-paid)
+	if kind in ["returned","driven_out","price"]:
+		var owed: int=Detention.council_due(crime,known)
+		paid=mini(owed,roundi(float(game.state.money)*100))
+		game._apply({"money":-paid/100.0})
+		goods=confiscate(game,owed-paid)
 	if kind in ["robbery","assault"]:
 		if not surrendered:
 			var leader: Dictionary=game.party_health.members[acting_leader]
@@ -457,13 +479,19 @@ static func trial(crime,game,current: Dictionary,surrendered: bool,authority: St
 				game.wagon_cache={}
 				seizure="wagon"
 	if kind in ["penitentiary","sent_east"]:imprisoned=accused.filter(func(id):return game.party_health.is_active(game.party_health.members[int(id)]))
-	if kind not in ["discharged","bailed","hanged"]:
+	if kind not in ["discharged","bailed","hanged","life"]:
 		for profile in game.characters.profiles.slice(1):
 			if game.party_health.is_active(game.party_health.members[int(profile.id)]):game.characters.remember(game,profile,"action_trial",-3,"Frontier justice caught up with the party.")
 	var held: String=", ".join(imprisoned.map(func(id):return game.party_health.members[int(id)].name))
 	var text: String
+	var taken: String="$%.2f%s" % [paid/100.0,(" and "+", ".join(goods.keys().map(func(id):return "%d %s" % [goods[id],id]))) if not goods.is_empty() else ""]
+	var country: String=str(game.context.data.regions.get(str(game.route.nodes[crime.node_of(current.place)].get("hunting_region","")),{}).get("label","this country"))
 	match kind:
 		"hanged":text="Hanged for a known killing. The journey is over."
+		"returned":text="The household's council took %s for the theft, the goods' worth twice over. The household is repaid. (Invented rule.)" % taken
+		"driven_out":text="The household's council took %s and drove the party out of the %s. No household in this country will deal with you again. (Invented rule.)" % [taken,country]
+		"price":text="The family of the dead accepted a price: %s. The party is driven out of the %s. Paying settles the killing with this family only, not with anyone else who hears of it. (Invented rule.)" % [taken,country]
+		"life":text="The family of the dead chose the killer's life over any price. The journey is over. (Invented rule.)"
 		"discharged":text="Discharged: the evidence did not hold. The accused are free to go."
 		"bailed":text="Bail of $%.2f posted. The accused walk out and the party leaves Missouri; the bail is forfeited." % (paid/100.0)
 		"fine":text="Fined $%.2f; paid $%.2f.%s" % [maxi(value*2,int(crime.detention_data.fine_min_cents))/100.0,paid/100.0," The rest is worked off in the county jail: %d day(s)." % jail_days if jail_days>0 else ""]
@@ -474,7 +502,8 @@ static func trial(crime,game,current: Dictionary,surrendered: bool,authority: St
 	current.resolution="tried"
 	current.stage="report"
 	if current.action=="wanted":current.ended_day=int(game.state.day)
-	for bounty in crime.record.bounties:
+	# A council's settlement is the household's own; posted rewards still stand.
+	for bounty in ([] if authority=="council" else crime.record.bounties):
 		if int(bounty.cleared_day)<0 and bounty.incidents.all(func(id):return "incident:%d" % int(id) in current.sentence.charges):bounty.cleared_day=int(game.state.day)
 	# Write the sentence before departures so validators can account for each one.
 	game.flee(banished,"when banished at a frontier trial")
@@ -484,7 +513,7 @@ static func trial(crime,game,current: Dictionary,surrendered: bool,authority: St
 	game.state.health=game.party_health.average_health()
 	game.state.party_size=game.party_health.living_count()
 	game.journal.append("Day %d · %s" % [game.state.day,text])
-	if kind=="hanged" or 0 in imprisoned:
+	if kind in ["hanged","life"] or 0 in imprisoned:
 		current.stage="done"
 		crime.record.active={}
 		game.state.status="lost"
@@ -540,9 +569,11 @@ static func valid_extras(crime,r: Dictionary,current: Dictionary,game) -> bool:
 			"attack":level=4 if entry.attempt=="killed" else 3
 			_:level=2
 		severity=maxi(severity,level)
-	if s.kind!={"discharged":"discharged","bailed":"bailed"}.get(s.verdict,Detention.KINDS[s.authority][severity-1]):return false
+	var expected: String={"discharged":"discharged","bailed":"bailed"}.get(s.verdict,Detention.KINDS[s.authority][severity-1])
+	if s.kind!=expected and not (expected=="price" and s.kind in Detention.COUNCIL_KILLING):return false
 	if (s.verdict=="bailed")!=(s.authority=="county" and s.kind=="bailed") or (s.kind=="bailed" and severity>=4):return false
 	if s.kind=="hanged" and (game.state.status!="lost" or game.state.loss_reason!="The party's leader was hanged for murder."):return false
+	if s.kind=="life" and (game.state.status!="lost" or game.state.loss_reason!=Detention.LOSS.life):return false
 	if s.kind not in ["robbery","assault"] and (not s.banished.is_empty() or s.seizure!=""):return false
 	if s.kind!="fine" and s.jail_days!=0:return false
 	if s.kind not in ["penitentiary","sent_east"] and not s.imprisoned.is_empty():return false
