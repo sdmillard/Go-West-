@@ -92,7 +92,7 @@ local AUTUMN_MAP = {
   plains = {grass={"silt_lt", "silt_lt", "sand", "sage", "clap_sh", "silt"}, sage={"silt_lt", "sage", "sage"}, haze="far_hill"},
   sage = {grass={"silt_lt", "sand", "clap_sh"}, sage={"sage", "silt_lt", "clap_sh", "silt_lt"}, haze="far_hill"},
   mountain = {grass={"silt_lt", "sage", "ochre", "silt_lt", "rust"}, sage={"ochre", "silt_lt"}, haze="far_hill"},
-  west = {},
+  west = {grass={"grass", "grass", "grass", "grass", "leaf", "sage", "grass", "ochre"}},
 }
 local CAPPED = {pine=true, leaf=true, ink=true, roof=true, roof_lt=true, roof_dk=true}
 local OPEN = {sky=true, sky_top=true, light_blue=true, mist=true, haze=true, far_hill=true,
@@ -123,6 +123,19 @@ local function seasonal(image, season)
         local dot = scramble(x, y) >> 8
         if dot % 6 == 0 then pick = dot >> 3 end
         t = t[pick % #t + 1]
+      end
+      -- west of the Cascades: bigleaf maple gold and vine maple red among the firs and along
+      -- the forest edge
+      if season == "autumn" and K.region == "west" and (n == "pine" or n == "leaf") then
+        -- whole crowns, not specks: cells of a few pixels picked at random, each one tree
+        local cx, cy = (x + (y // 3 % 2) * 2) // 4, y // 3
+        local v = ((cx * 2654435761 + cy * 40503) ~ (cy * 97 + cx)) & 0xffff
+        local edge = at(x, y + 3) == "grass" or at(x, y + 4) == "grass" or at(x, y + 3) == "sage"
+        if (v % 9 == 0) or (edge and v % 3 == 0) then
+          local inner = ((x * 13 + y * 7) % 5)
+          t = (v % 4 == 0) and "brick_lt" or "gold"
+          if inner == 0 then t = (t == "gold") and "ochre" or "brick" end
+        end
       end
       if season == "autumn" and (K.region == "sage" or K.region == "plains") and n == "haze" and y > H * 0.5 and (x * 31 + y * 17) % 7 < 2 then t = "gold" end
       -- lone dark speckles in the grass go with the ground rather than staying green
