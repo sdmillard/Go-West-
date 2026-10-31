@@ -79,6 +79,13 @@ const NAMES={"rifles":["rifle","rifles"],"shotguns":["shotgun","shotguns"],"pist
 ## "1 Colt revolver, 2 knives", in KEYS order.
 static func describe(arms: Dictionary) -> String:
 	return ", ".join(KEYS.filter(func(key):return int(arms.get(key,0))>0).map(func(key):return "%d %s" % [int(arms[key]),NAMES[key][0 if int(arms[key])==1 else 1]]))
+## The 16x16 icon for an arm, cut from art/pixels/weapon_icons.png (one per KEYS entry, in order).
+static func icon(key: String) -> Texture2D:
+	if key not in KEYS:return null
+	var atlas:=AtlasTexture.new()
+	atlas.atlas=load("res://art/pixels/weapon_icons.png")
+	atlas.region=Rect2(16*KEYS.find(key),0,16,16)
+	return atlas
 static func label(key: String) -> String:
 	if data.firearms.has(key):return str(data.firearms[key].label)
 	if data.blades.has(key):return str(data.blades[key].label)

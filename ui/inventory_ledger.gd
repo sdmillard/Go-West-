@@ -76,7 +76,13 @@ func _init(game):
   var held: int=arms.count(game.state,key)
   if held==0:continue
   var spare: int=maxi(0,held-int(arms.data.home_kit.get(key,0))*own)
-  equipment.add_child(words(str(arms.NAMES[key][1]).capitalize()))
+  var name_cell:=HBoxContainer.new()
+  var picture:=TextureRect.new()
+  picture.texture=arms.icon(key)
+  picture.stretch_mode=TextureRect.STRETCH_KEEP_CENTERED
+  name_cell.add_child(picture)
+  name_cell.add_child(words(str(arms.NAMES[key][1]).capitalize()))
+  equipment.add_child(name_cell)
   equipment.add_child(words(str(held)+(" (%d own)" % (held-spare) if spare<held else "")))
   equipment.add_child(words("%.1f" % (spare*float(arms.data.weights_lb[key]))))
  var loose: Dictionary=game.Mounts.loose_tack(game.provisions.data.mounts,game.state)
