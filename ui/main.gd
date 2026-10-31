@@ -908,7 +908,7 @@ func _show_section(section: String) -> void:
 	for item in entries:
 		var entry:=button(item[0],_section_action.bind(item[1]))
 		entry.custom_minimum_size.y=27
-		if item[1]==Callable(self,"_start_hunt"):entry.disabled=not game.pending.is_empty() or (game.state.bullets==0 and not game.dogs.ready("hunt"))
+		if item[1]==Callable(self,"_start_hunt"):entry.disabled=not game.pending.is_empty() or (not game.can_hunt_with_gun() and not game.dogs.ready("hunt"))
 		if item[1]==Callable(self,"_open_fishing"):entry.disabled=not game.can_service()
 		section_rows.add_child(entry)
 	if SECTION_PARENTS.has(section):section_rows.add_child(button("< "+str(SECTION_PARENTS[section]).to_upper(),_section_action.bind(_show_section.bind(SECTION_PARENTS[section]))))
@@ -1354,7 +1354,7 @@ func _finish_fishing() -> void:
 		_refresh()
 
 func _start_hunt() -> void:
-	if game.state.bullets==0 and game.dogs.ready("hunt"):
+	if not game.can_hunt_with_gun() and game.dogs.ready("hunt"):
 		section_window.hide()
 		_pause_travel()
 		if game.start_hunt():_open_hunt_window()

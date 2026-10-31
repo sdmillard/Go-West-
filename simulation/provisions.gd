@@ -89,6 +89,7 @@ func cargo(inventory: Dictionary) -> float:
 	# Bodies carried with the party weigh what they weigh, on foot or in the wagon.
 	pounds+=preload("res://simulation/livestock.gd").cargo(inventory)+float(inventory.get("livestock_products_lb",0))+int(inventory.get("poultry_feed",0))*0.25+int(inventory.get("livestock_fodder",0))+float(inventory.get("poultry_feed_remainder_lb",0))+float(inventory.get("livestock_fodder_remainder_lb",0))
 	pounds+=float(inventory.get("_raw_hides_lb",0))
+	pounds+=preload("res://simulation/armory.gd").extra_weight(inventory)
 	pounds+=float(inventory.get("remains_lb",0))+float(inventory.get("camp_greens_lb",0))
 	for key in data.weights_lb:
 		pounds += maxf(0, float(inventory.get(key, 0))) * float(data.weights_lb[key])

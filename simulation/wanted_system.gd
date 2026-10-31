@@ -313,7 +313,7 @@ static func can_choose(crime,game,current: Dictionary,command: String) -> bool:
 	if current.stage!="standoff":return false
 	if command in ["surrender","flee"]:return true
 	if command=="ride":return can_ride_off(game)
-	if command=="breakout":return game.state.bullets>0
+	if command=="breakout":return game.can_fire()
 	return command=="payoff" and int(current.bounty)>0 and int(crime.record.bounties[int(current.bounty)-1].cleared_day)<0 and roundi(float(game.state.money)*100)>=payoff(crime,current)
 static func end_encounter(crime,game,current: Dictionary,resolution: String) -> void:
 	current.ended_day=int(game.state.day)

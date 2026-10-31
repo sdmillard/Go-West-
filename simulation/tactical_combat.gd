@@ -2,6 +2,7 @@ extends RefCounted
 
 var rules: Dictionary = {}
 var rng := RandomNumberGenerator.new()
+const Armory = preload("res://simulation/armory.gd")
 
 const BODY_PARTS := ["head", "torso", "arms", "legs"]
 const DIRS := [
@@ -61,9 +62,15 @@ func start_session(config: Dictionary) -> Dictionary:
 	for i in range(raw_squad.size()):
 		var m: Dictionary = raw_squad[i]
 		var spawn: Vector2i = _pick_open_spawn(player_spawns, i, Vector2i(2, 8), width, height, props, units)
-		var starts_loaded := loaded_assigned < bullets_left
-		if starts_loaded:
-			loaded_assigned += 1
+		# Each traveler fights with the arms handed out from the party's stock; a config without them means a rifle.
+		var weapon := String(m.get("weapon", "rifles"))
+		if not Armory.data.firearms.has(weapon):
+			weapon = ""
+		var rounds := 0
+		if not weapon.is_empty():
+			rounds = mini(int(Armory.data.firearms[weapon].capacity), maxi(0, bullets_left - loaded_assigned))
+		loaded_assigned += rounds
+		var starts_loaded := rounds > 0
 		var hp := clampi(int(m.get("health", 100)), 1, 100)
 		var broken_leg := bool(m.get("broken_leg", false))
 		var broken_arm := bool(m.get("broken_arm", false))
@@ -87,6 +94,9 @@ func start_session(config: Dictionary) -> Dictionary:
 			"max_ap": max_ap,
 			"ap": max_ap,
 			"loaded": starts_loaded,
+			"weapon": weapon,
+			"blade": String(m.get("blade", "")) if Armory.data.blades.has(String(m.get("blade", ""))) else "",
+			"rounds": rounds,
 			"broken_leg": broken_leg,
 			"broken_arm": broken_arm,
 			"wound": has_wound,
@@ -128,6 +138,9 @@ func start_session(config: Dictionary) -> Dictionary:
 			"max_ap": max_ap,
 			"ap": max_ap,
 			"loaded": true,
+			"weapon": "rifles",
+			"blade": "",
+			"rounds": 1,
 			"broken_leg": false,
 			"broken_arm": false,
 			"wound": false,
@@ -239,20 +252,42 @@ func move_cost_per_tile(unit: Dictionary) -> int:
 	return int(ap_cfg.get("move_cost", 1))
 
 
+## The firearm a unit carries, or {} when it has none. Units from older sessions carried rifles.
+func gun(unit: Dictionary) -> Dictionary:
+	return Armory.data.firearms.get(String(unit.get("weapon", "rifles")), {})
+
+
+## What a unit swings at close quarters: its blade, a clubbed long gun, or bare fists.
+func melee(unit: Dictionary) -> Dictionary:
+	var blade := String(unit.get("blade", ""))
+	if Armory.data.blades.has(blade):
+		return Armory.data.blades[blade]
+	if bool(gun(unit).get("long_gun", false)):
+		var club_cfg: Dictionary = rules.get("club", {})
+		return {"label": "Clubbed stock", "hit": float(club_cfg.get("hit_chance", 0.82)), "damage_min": int(club_cfg.get("damage_min", 16)), "damage_max": int(club_cfg.get("damage_max", 24)), "cost": int(rules.get("ap", {}).get("club_cost", 3))}
+	return Armory.data.fists
+
+
+func capacity(unit: Dictionary) -> int:
+	return int(gun(unit).get("capacity", 0))
+
+
 func reload_ap_cost(unit: Dictionary) -> int:
 	var ap_cfg: Dictionary = rules.get("ap", {})
+	var base := int(gun(unit).get("reload_cost", ap_cfg.get("reload_cost", 5)))
 	if bool(unit.get("broken_arm", false)):
-		return int(ap_cfg.get("reload_cost_broken_arm", 6))
-	return int(ap_cfg.get("reload_cost", 5))
+		return base + int(ap_cfg.get("reload_cost_broken_arm", 6)) - int(ap_cfg.get("reload_cost", 5))
+	return base
 
 
-func shot_ap_cost(mode: String) -> int:
+func shot_ap_cost(mode: String, unit: Dictionary = {}) -> int:
 	var ap_cfg: Dictionary = rules.get("ap", {})
-	if mode == "called":
-		return int(ap_cfg.get("called_shot_cost", 6))
 	if mode == "club":
-		return int(ap_cfg.get("club_cost", 3))
-	return int(ap_cfg.get("snap_shot_cost", 4))
+		return int(melee(unit).get("cost", ap_cfg.get("club_cost", 3))) if not unit.is_empty() else int(ap_cfg.get("club_cost", 3))
+	var arm: Dictionary = gun(unit) if not unit.is_empty() else {}
+	if mode == "called":
+		return int(arm.get("called_cost", ap_cfg.get("called_shot_cost", 6)))
+	return int(arm.get("snap_cost", ap_cfg.get("snap_shot_cost", 4)))
 
 
 func retreat_ap_cost() -> int:
@@ -264,7 +299,7 @@ func available_reload_balls(session: Dictionary) -> int:
 	var loaded_players := 0
 	for u in session.get("units", []):
 		if String(u.get("team", "")) == "player" and _unit_active(u) and bool(u.get("loaded", false)):
-			loaded_players += 1
+			loaded_players += maxi(1, int(u.get("rounds", 1)))
 	return maxi(0, int(session.get("bullets_left", 0)) - loaded_players)
 
 
@@ -479,12 +514,12 @@ func shot_preview_at(session: Dictionary, attacker_id: String, ax: int, ay: int,
 	var tx := int(target.get("x", 0))
 	var ty := int(target.get("y", 0))
 	var dist := absi(ax - tx) + absi(ay - ty)
-	var ap_cost := shot_ap_cost(use_mode)
+	var ap_cost := shot_ap_cost(use_mode, attacker)
 	var ap_avail := maxi(0, int(attacker.get("ap", 0)) - move_ap_spent)
 
 	if use_mode == "club":
-		var club_cfg: Dictionary = rules.get("club", {})
-		var club_hit := float(club_cfg.get("hit_chance", 0.82))
+		var club_cfg: Dictionary = melee(attacker)
+		var club_hit := float(club_cfg.get("hit", 0.82))
 		var terms: Array[String] = ["BASE %d%%" % int(round(club_hit * 100.0))]
 		if bool(attacker.get("broken_arm", false)):
 			club_hit -= 0.20
@@ -494,7 +529,7 @@ func shot_preview_at(session: Dictionary, attacker_id: String, ax: int, ay: int,
 		var can_club := dist == 1 and ap_avail >= ap_cost
 		var club_reason := ""
 		if dist != 1:
-			club_reason = "Must stand on an adjacent tile to swing a clubbed rifle."
+			club_reason = "Must stand on an adjacent tile to strike with %s." % String(club_cfg.get("label", "a blade")).to_lower()
 		elif ap_avail < ap_cost:
 			club_reason = "Needs %d AP." % ap_cost
 		return {
@@ -502,7 +537,7 @@ func shot_preview_at(session: Dictionary, attacker_id: String, ax: int, ay: int,
 			"reason": club_reason,
 			"mode": "club",
 			"body_part": "torso",
-			"part_label": "Clubbed Stock",
+			"part_label": String(club_cfg.get("label", "Clubbed stock")),
 			"ap_cost": ap_cost,
 			"hit_chance": final_club,
 			"breakdown": "  ".join(terms),
@@ -513,30 +548,31 @@ func shot_preview_at(session: Dictionary, attacker_id: String, ax: int, ay: int,
 			"damage_max": int(club_cfg.get("damage_max", 24)),
 			"condition": "",
 			"wound_severity": 0,
-			"summary": "Heavy walnut stock blow at close quarters. Uses no powder or ball.",
+			"summary": "%s at close quarters. Uses no powder or ball." % String(club_cfg.get("label", "A blow")),
 			"los_cells": [Vector2i(ax, ay), Vector2i(tx, ty)],
 		}
 
 	var acc_cfg: Dictionary = rules.get("accuracy", {})
-	var max_range := int(acc_cfg.get("max_range", 11))
+	var arm: Dictionary = gun(attacker)
+	var max_range := int(arm.get("max_range", acc_cfg.get("max_range", 11)))
 	var los := line_of_sight(session, ax, ay, tx, ty)
 	var cov := target_cover_from(session, ax, ay, tx, ty)
 	var called_cfg: Dictionary = rules.get("called_shots", {}).get(use_part, {})
 
-	var base_val := float(acc_cfg.get("base_hit", 0.78))
+	var base_val := float(acc_cfg.get("base_hit", 0.78)) + float(arm.get("hit_mod", 0.0))
 	var hit := base_val
 	var b_terms: Array[String] = ["BASE %d%%" % int(round(base_val * 100.0))]
 	if bool(attacker.get("soldier", false)):
 		var sb := float(acc_cfg.get("soldier_bonus", 0.08))
 		hit += sb
 		b_terms.append("SOLDIER +%d%%" % int(round(sb * 100.0)))
-	var opt_range := int(acc_cfg.get("optimal_range", 4))
+	var opt_range := int(arm.get("optimal_range", acc_cfg.get("optimal_range", 4)))
 	if dist <= 2:
 		var pb := float(acc_cfg.get("point_blank_bonus", 0.07))
 		hit += pb
 		b_terms.append("PT-BLANK +%d%%" % int(round(pb * 100.0)))
 	elif dist > opt_range:
-		var rf := float(dist - opt_range) * float(acc_cfg.get("range_falloff", 0.055))
+		var rf := float(dist - opt_range) * float(arm.get("range_falloff", acc_cfg.get("range_falloff", 0.055)))
 		hit -= rf
 		b_terms.append("RNG(%d) -%d%%" % [dist, int(round(rf * 100.0))])
 
@@ -571,15 +607,18 @@ func shot_preview_at(session: Dictionary, attacker_id: String, ax: int, ay: int,
 
 	var can_fire := true
 	var reason := ""
-	if not bool(attacker.get("loaded", false)):
+	if arm.is_empty():
 		can_fire = false
-		reason = "Rifle unloaded (Reload costs %d AP)." % reload_ap_cost(attacker)
+		reason = "No firearm. Close in and use %s." % String(melee(attacker).get("label", "a blade")).to_lower()
+	elif not bool(attacker.get("loaded", false)):
+		can_fire = false
+		reason = "%s unloaded (Reload costs %d AP)." % [String(arm.get("label", "Rifle")), reload_ap_cost(attacker)]
 	elif not bool(los.get("clear", false)):
 		can_fire = false
 		reason = "Blocked by %s." % String(los.get("blocker_label", "cover"))
 	elif dist > max_range:
 		can_fire = false
-		reason = "Out of effective rifle range (%d tiles)." % dist
+		reason = "Out of effective %s range (%d tiles)." % [String(arm.get("label", "rifle")).to_lower(), dist]
 	elif ap_avail < ap_cost:
 		can_fire = false
 		reason = "Needs %d AP (%d AP left)." % [ap_cost, ap_avail]
@@ -597,8 +636,8 @@ func shot_preview_at(session: Dictionary, attacker_id: String, ax: int, ay: int,
 		"distance": dist,
 		"in_cover": bool(cov.get("in_cover", false)),
 		"cover_label": String(cov.get("label", "")),
-		"damage_min": int(called_cfg.get("damage_min", 36)),
-		"damage_max": int(called_cfg.get("damage_max", 48)),
+		"damage_min": roundi(int(called_cfg.get("damage_min", 36)) * float(arm.get("damage_factor", 1.0))),
+		"damage_max": roundi(int(called_cfg.get("damage_max", 48)) * float(arm.get("damage_factor", 1.0))),
 		"condition": String(called_cfg.get("condition", "wound")),
 		"wound_severity": int(called_cfg.get("wound_severity", 2)),
 		"summary": String(called_cfg.get("summary", "")),
@@ -792,8 +831,13 @@ func _exec_reload(session: Dictionary, unit_id: String) -> bool:
 	var unit := get_unit(session, unit_id)
 	if unit.is_empty() or not _unit_active(unit):
 		return false
-	if bool(unit.get("loaded", false)):
-		_append_log(session, "%s's rifle is already loaded." % String(unit.get("name", "Traveler")))
+	var arm: Dictionary = gun(unit)
+	if arm.is_empty():
+		_append_log(session, "%s has no firearm to load." % String(unit.get("name", "Traveler")))
+		return false
+	var rounds := int(unit.get("rounds", 1 if bool(unit.get("loaded", false)) else 0))
+	if rounds >= int(arm.capacity):
+		_append_log(session, "%s's %s is already loaded." % [String(unit.get("name", "Traveler")), String(arm.label).to_lower()])
 		return false
 	var cost := reload_ap_cost(unit)
 	if int(unit.get("ap", 0)) < cost:
@@ -803,6 +847,10 @@ func _exec_reload(session: Dictionary, unit_id: String) -> bool:
 		_append_log(session, "Out of lead balls! No ammunition left in the pouch.")
 		return false
 	unit["ap"] = int(unit.get("ap", 0)) - cost
+	var fill := int(arm.capacity) - rounds
+	if String(unit.get("team", "")) == "player":
+		fill = mini(fill, available_reload_balls(session))
+	unit["rounds"] = rounds + fill
 	unit["loaded"] = true
 	unit["pose"] = "reload"
 	_append_log(session, "%s pours powder, rams a patched ball, and seats a percussion cap (%d AP)." % [String(unit.get("name", "Traveler")), cost])
@@ -840,7 +888,8 @@ func _exec_attack(session: Dictionary, attacker_id: String, target_id: String, m
 	var use_part := String(preview.get("body_part", "torso"))
 	var part_label := String(preview.get("part_label", "Torso")).to_lower()
 	if use_mode != "club":
-		attacker["loaded"] = false
+		attacker["rounds"] = maxi(0, int(attacker.get("rounds", 1)) - 1)
+		attacker["loaded"] = int(attacker.rounds) > 0
 		if String(attacker.get("team", "")) == "player":
 			session["bullets_left"] = maxi(0, int(session.get("bullets_left", 0)) - 1)
 			session["shots_fired"] = int(session.get("shots_fired", 0)) + 1
@@ -1013,6 +1062,7 @@ func _parting_fire_on_retreat(session: Dictionary, candidates: Array = []) -> vo
 					dmg,
 				])
 			e["loaded"] = false
+			e["rounds"] = 0
 			break
 
 
