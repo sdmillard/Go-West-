@@ -732,10 +732,40 @@ function K.log_cabin(x, y, w, h, stage, snow)
   for yy = top - rise - 5, top, 2 do rect(cx, yy, 6, 1, "wood") end
   rect(cx + 4, top - rise - 6, 2, rise + 7, "ox")
   if snow then
-    rect(x - 3, top - rise - 1, w + 7, 2, "white")
-    poly({{x - 4, top}, {x + 4, top - rise}, {x + 6, top - rise}, {x - 1, top}}, "white")
-    for yy = y - 2, top, -3 do px(x - 2, yy - 1, "white"); px(x + w + 1, yy - 1, "white") end
-    rect(cx, top - rise - 7, 6, 1, "white")
+    -- a blanket of snow over the whole roof, thick at the ridge, sagging over the eaves in
+    -- uneven lumps, with a few shakes showing through where wind scoured it
+    poly({{x - 5, top}, {x + 3, top - rise - 1}, {x + w - 3, top - rise - 1}, {x + w + 5, top}}, "white")
+    rect(x + 3, top - rise - 2, w - 6, 1, "white")
+    for xx = x - 4, x + w + 4 do
+      local sag = ((xx * 7) % 5 < 2) and 1 or 0
+      if (xx * 13) % 11 == 0 then sag = 2 end
+      rect(xx, top + 1, 1, sag + 1, "white")
+      px(xx, top + 1 + sag, "mist")
+    end
+    for yy = top - rise + 3, top - 2, 3 do
+      for xx = x + 2, x + w - 2, 9 do px(xx + (yy % 4), yy, "cream"); px(xx + (yy % 4) + 1, yy, "cream") end
+    end
+    for xx = x + 5, x + w - 8, 13 do px(xx, top - math.floor(rise / 2), "roof_dk") end
+    line(x + w - 3, top - rise, x + w + 4, top, "mist")
+    -- the chimney stands clear of the snow, capped white, its foot buried
+    rect(cx, top - rise - 6, 6, rise + 2, "ochre")
+    for yy = top - rise - 5, top - rise - 4 + rise, 2 do rect(cx, yy, 6, 1, "wood") end
+    rect(cx + 4, top - rise - 6, 2, rise + 2, "ox")
+    rect(cx - 1, top - rise - 8, 8, 2, "white"); px(cx - 1, top - rise - 6, "cream")
+    rect(cx - 3, top - rise - 1, 3, 2, "white"); px(cx + 6, top - rise, "white")
+    -- snow on every protruding log end and along the window sill
+    for yy = y - 2, top, -3 do
+      rect(x - 2, yy - 2, 2, 1, "white"); rect(x + w, yy - 2, 2, 1, "white")
+    end
+    rect(wx - 1, y - math.floor(h * 0.75) + wh, ww + 2, 1, "white")
+    -- drifts banked against the walls and lying around the cabin
+    for xx = x - 8, x + w + 8 do
+      local d = 2 + math.floor(1.5 + 1.5 * math.sin(xx / 4))
+      if xx < x or xx > x + w then d = math.max(1, d - 2) end
+      if xx >= dx and xx < dx + dw then d = 1 end
+      rect(xx, y - d + 1, 1, d + 1, "white")
+      px(xx, y - d + 1, (xx % 3 == 0) and "cream" or "white")
+    end
   end
 end
 
