@@ -252,6 +252,8 @@ func run() -> void:
 	game=robbery()
 	game.open_crime()
 	pick(game,"robbery")
+	# Journeys saved before the leader-death rule let a companion take over.
+	game.state.leader_succession=true
 	game.party_health.kill(game.party_health.members[0],int(game.state.day),"confrontation injuries")
 	game._collect_health_events()
 	game.crime.result(game,"captured")

@@ -152,6 +152,8 @@ func run() -> void:
 	# A companion who answers for the party goes to prison; the rest go on.
 	game=town_robbery()
 	current=game.crime.incident()
+	# Journeys saved before the leader-death rule let a companion take over.
+	game.state.leader_succession=true
 	game.party_health.kill(game.party_health.members[0],int(game.state.day),"confrontation injuries")
 	game._collect_health_events()
 	odds(game,1.0)

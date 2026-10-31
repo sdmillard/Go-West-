@@ -372,6 +372,10 @@ func restore(value: Variant):
 	for id in value.last_events:
 		if not id is String or not integer(value.last_events[id],0,int(s.day)):
 			return null
+	# The leader is the player: their death ends the journey. Journeys saved under the older rule,
+	# where a companion had already taken over, keep going.
+	if s.has("leader_succession") and (s.leader_succession!=true or value.party[0].get("alive")!=false):return null
+	if s.status=="traveling" and value.party[0].get("alive")==false:s["leader_succession"]=true
 	game.state = normalize(s)
 	if value.has("team_conditions"):
 		if not game.team_conditions.valid(value.team_conditions,s):return null
