@@ -177,7 +177,8 @@ func venue_noun(place: String) -> String:return str(rules(place).title).to_lower
 ## an unseen theft changes nothing until word of it arrives.
 func household_refusal(game,site: String) -> String:
 	var place: String=HOUSEHOLD+site
-	if not scenes.has(place):return ""
+	# A route that never reaches this visit has no household to refuse.
+	if not scenes.has(place) or not game.route.nodes.has(site):return ""
 	if record.services.has(place) and owner(place).health==0:return "The %s is dead. Nobody of the household will deal with your party." % role(place,owner_id(place))
 	if record.services.has(place) and service(place).alarmed:return "This household saw what your party did. They will not trade, work, guide or carry for you."
 	if driven_out(game,site):return "Their council drove your party out of this country. Nobody here will deal with you."
@@ -185,8 +186,8 @@ func household_refusal(game,site: String) -> String:
 	return ""
 ## A council's banishment covers every Native visit in the same country as the household that tried the party.
 func driven_out(game,site: String) -> bool:
-	var country: String=str(game.route.nodes[site].get("hunting_region",""))
-	return record.incidents.any(func(item):return item.get("sentence",{}).get("authority","")=="council" and item.sentence.kind in ["driven_out","price"] and str(game.route.nodes[node_of(item.place)].get("hunting_region",""))==country)
+	var country: String=str(game.route.nodes.get(site,{}).get("hunting_region",""))
+	return record.incidents.any(func(item):return item.get("sentence",{}).get("authority","")=="council" and item.sentence.kind in ["driven_out","price"] and str(game.route.nodes.get(node_of(item.place),{}).get("hunting_region",""))==country)
 ## Whether a venue holds anything to steal or demand; a pilot or a portage crew has only themselves.
 func stocked(game,place: String) -> bool:
 	if not household(place):return true
