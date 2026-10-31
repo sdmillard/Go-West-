@@ -14,6 +14,8 @@ The later-pursuer panel offers surrender, flight, fighting, and a reward-plus-20
 
 ## Capture and sentences
 
+**Since October 31, 2026, every capture goes to custody first** ([custody, court day and prison](DETENTION.md)). The list below is now the emigrant-company jury's sentences. Jackson County and the army at Fort Kearny have their own: fines and county jail time, the penitentiary, and being sent east under escort.
+
 Original-scene captures, surrender and later pursuits now share trials. Existing saved terminal custody losses remain terminal; the migration does not revive a lost journey.
 
 - Theft: double the stolen value, first cash and then held goods; trust losses.
