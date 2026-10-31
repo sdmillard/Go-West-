@@ -100,6 +100,8 @@ func cargo(inventory: Dictionary) -> float:
 func cart_cargo(cart: Dictionary) -> float:
 	var inventory := cart.duplicate()
 	inventory.bullets = int(cart.get("bullet_boxes", 0)) * 20
+	# A cart holds only bought arms; the travelers' own are not in it.
+	inventory["arms_home"] = 0
 	return cargo(inventory)+int(cart.get("produce",0))*float(data.foraging.mass_ratio)+int(cart.get("dried_produce",0))*float(data.foraging.mass_ratio)*float(data.produce_trade.dry_weight)
 func team_capacity(oxen: int) -> float:
 	return minf(float(data.cargo_guideline_lb),maxi(0,oxen)*float(data.working_load_per_ox_lb))

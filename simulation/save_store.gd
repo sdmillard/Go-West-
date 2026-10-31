@@ -377,7 +377,6 @@ func restore(value: Variant):
 	# where a companion had already taken over, keep going.
 	if s.has("leader_succession") and (s.leader_succession!=true or value.party[0].get("alive")!=false):return null
 	if s.status=="traveling" and value.party[0].get("alive")==false:s["leader_succession"]=true
-	Simulation.Armory.legacy(s,s.party.size())
 	game.state = normalize(s)
 	if value.has("team_conditions"):
 		if not game.team_conditions.valid(value.team_conditions,s):return null

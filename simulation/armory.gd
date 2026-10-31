@@ -27,14 +27,18 @@ static func valid_rules(v: Variant) -> bool:
 static func valid_state(state: Dictionary) -> bool:
 	if state.has("arms_home") and not whole(state.arms_home,0,100):return false
 	return KEYS.all(func(key):return not state.has(key) or whole(state[key],0,10000)) and (KEYS.all(func(key):return not state.has(key)) or state.has("arms_home"))
-static func count(state: Dictionary,key: String) -> int:return maxi(0,int(state.get(key,0)))
+## A journey saved before arms were counted holds no arms keys; every traveler still has the rifle and knife they set out with.
+## The kit is read, not written, so restoring such a save leaves its state unchanged.
+static func count(state: Dictionary,key: String) -> int:
+	if not state.has("arms_home") and state.get("party") is Array:return int(data.home_kit.get(key,0))*state.party.size()
+	return maxi(0,int(state.get(key,0)))
+## Write the old kit into the state before anything changes a count.
+static func settle(state: Dictionary) -> void:
+	if not state.has("arms_home") and state.get("party") is Array:home_kit(state,state.party.size())
 ## Each traveler's own rifle and knife. "arms_home" records how many travelers brought theirs, so their weight stays in personal gear.
 static func home_kit(state: Dictionary,travelers: int) -> void:
-	for key in data.home_kit:state[key]=count(state,key)+int(data.home_kit[key])*travelers
+	for key in data.home_kit:state[key]=maxi(0,int(state.get(key,0)))+int(data.home_kit[key])*travelers
 	state["arms_home"]=travelers
-## Journeys saved before arms were counted: every traveler had the rifle and knife they set out with.
-static func legacy(state: Dictionary,travelers: int) -> void:
-	if not state.has("arms_home"):home_kit(state,travelers)
 static func firearms(state: Dictionary) -> int:
 	var total:=0
 	for key in data.firearms:total+=count(state,key)
@@ -46,7 +50,8 @@ static func long_guns(state: Dictionary) -> int:
 	return total
 ## Arms beyond the travelers' own add to the load; a dead traveler's rifle is carried by the others.
 static func extra_weight(inventory: Dictionary) -> float:
-	var home: int=int(inventory.get("arms_home",0))
+	if not inventory.has("arms_home"):return 0.0
+	var home: int=int(inventory.arms_home)
 	var pounds:=0.0
 	for key in KEYS:pounds+=maxi(0,count(inventory,key)-int(data.home_kit.get(key,0))*home)*float(data.weights_lb[key])
 	return pounds
