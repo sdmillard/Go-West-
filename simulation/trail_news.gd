@@ -171,9 +171,12 @@ func gossip(game,place: String) -> Array:
 	for report in game.crime.heard(game,place):
 		if report.origin==place:continue
 		var incident: Dictionary=game.crime.record.incidents[int(report.incident)-1]
-		var act: String={"theft":"stole from","robbery":"robbed","shoot":"shot at","assault":"beat on","raid":"cleaned out","pursuit":"fought off soldiers from"}[incident.action]
+		var act: String={"theft":"stole from","robbery":"robbed","shoot":"shot at","assault":"beat on","raid":"cleaned out","pursuit":"fought off soldiers from","wanted":"fought"}[incident.action]
 		var target: String="%s %s" % [game.crime.kind(report.origin).noun,spoken(game.crime.where(game,report.origin))]
-		if report.identified:lines.append("Word came through that you folks %s %s. Nobody here wants anything to do with you." % [act,target])
+		var known: bool=game.crime.recognized(game,place,report)
+		if report.identified and known:lines.append("Word came through that you folks %s %s. Nobody here wants anything to do with you." % [act,target])
+		elif known:lines.append("Some masked outfit %s %s a while back. Folks figure it was you, and nobody here wants anything to do with you." % [act,target])
+		elif report.identified or incident.get("mask","")=="hidden":lines.append("Somebody %s %s a while back. Can't say who; folks don't figure it was you." % [act,target])
 		else:lines.append("Somebody %s %s a while back. Folks say they looked a lot like your outfit." % [act,target])
 	return lines
 

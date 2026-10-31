@@ -4,7 +4,7 @@ extends "res://tests/current_journey_policy.gd"
 ## Usage: godot --headless --path . --script tests/play_style_baseline.gd -- --label=baseline-01 [--seeds=10] [--seed-start=90000] [--styles=a,b] [--professions=a,b]
 ## Writes .tools/play-style-<label>.json (raw rows) and prints a summary table.
 const Observed=preload("res://tests/balance_observer.gd")
-const STYLES=["careful_apr","careful_may","reckless","fighter","on_foot","horses","criminal","petty","late_jun","late_jul"]
+const STYLES=["careful_apr","careful_may","reckless","fighter","on_foot","horses","criminal","masked","petty","late_jun","late_jul"]
 const PROFESSIONS=["farmer","carpenter","banker"]
 func style_month(style: String) -> int:
  return {"careful_may":5,"late_jun":6,"late_jul":7}.get(style,4)
@@ -102,10 +102,11 @@ func run():
      elif style=="petty" and available and acts.theft==0 and game.state.day>=10 and game.crime.eligible(game) and game.crime.transient(game.crime.target(game)):
       acts.theft+=1
       okay=game.open_crime() and pick(game,"crime_command","theft")
-     elif style=="criminal" and available and game.crime.eligible(game) and game.crime.transient(game.crime.target(game)) and (acts.theft<3 or (acts.robbery<3 and game.state.bullets>0)):
+     elif style in ["criminal","masked"] and available and game.crime.eligible(game) and game.crime.transient(game.crime.target(game)) and (acts.theft<3 or (acts.robbery<3 and game.state.bullets>0)):
       var kind: String="theft" if acts.theft<=acts.robbery or game.state.bullets==0 else "robbery"
       acts[kind]+=1
-      okay=game.open_crime() and pick(game,"crime_command",kind)
+      # Masked criminals tie kerchiefs on before every act.
+      okay=game.open_crime() and (style!="masked" or pick(game,"crime_command","mask")) and pick(game,"crime_command",kind)
      elif style in ["reckless","fighter"] and reckless_choice(game,style):okay=true
      else:
       okay=act(game,profile,aim,count)

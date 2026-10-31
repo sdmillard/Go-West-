@@ -32,12 +32,12 @@ func run():
  check(game.crime.local_targets(game)==targets and Store.new().capture(game)==before,"Listing/naming locals is deterministic and consumes no RNG, day or supplies")
  var worker: String=targets[1].uid
  check(game.open_local_attack(worker),"A supporting worker can be selected independently")
- check(game.pending.crime_target==worker and game.pending.choices.map(func(choice):return choice.crime_command)==["shoot","assault","back"],"The attack preview has the selected worker and actual attack methods only")
+ check(game.pending.crime_target==worker and game.pending.choices.map(func(choice):return choice.crime_command)==["shoot","assault","mask","back"],"The attack preview has the selected worker, actual attack methods and the mask only")
  check(restore(game)!=null,"Selected local target preview saves and loads")
  var bad: Dictionary=Store.new().capture(game)
  bad.pending.crime_target="keeper:barlow_pass"
  check(Store.new().restore(JSON.parse_string(JSON.stringify(bad)))==null,"A target from a different place cannot load")
- game.choose(2)
+ game.choose(3)
  check(Store.new().capture(game)==before,"Backing out of a local target preview is pure")
  var scene: Dictionary=game.crime.scenes.fort_bridger
  scene.shot_hit=1.0
@@ -149,10 +149,10 @@ func villainy_places(screen) -> void:
   var commands: Array=game.pending.get("choices",[]).map(func(choice):return choice.get("crime_command",""))
   check(screen.service_window.visible and game.pending.get("crime_place","")==camp and game.crime.rules(camp).kind=="emigrants",section+" > camp opens the camp's preview")
   var labels: Array=screen.service_rows.get_children().filter(func(row):return row is Button).map(func(row):return row.text)
-  check(labels.size()==2 and labels[0]==game.pending.choices[commands.find(act)].label and labels[1]=="< "+section.to_upper(),section+" > camp shows only that act and the way back")
+  check(labels.size()==3 and labels[0]==game.pending.choices[commands.find(act)].label and labels[1]==game.pending.choices[commands.find("mask")].label and labels[2]=="< "+section.to_upper(),section+" > camp shows only that act, the mask and the way back")
   check(restore(game)!=null and restore(game).pending.crime_place==camp,"A preview of a chosen place saves and loads")
   check(game.state.day==before.state.day and game.crime.record.incidents.is_empty(),"Previewing commits nothing")
-  screen.service_rows.get_children().filter(func(row):return row is Button)[1].pressed.emit()
+  screen.service_rows.get_children().filter(func(row):return row is Button)[2].pressed.emit()
   check(not screen.service_window.visible and screen.section_window.visible and screen.section_window.title==section.to_upper() and not game.pending.get("crime_menu",false),"Back returns to the "+section+" list")
   screen.section_window.hide()
  game.state.day=day_before

@@ -13,6 +13,9 @@ func check(value: bool,message: String):
 func _initialize():call_deferred("run")
 func party(values: Array=["Compassionate","Compassionate","Compassionate","Ruthless"],bonds: Array=[],seed_value: int=57):
 	var game=Simulation.new(seed_value,"classic",true)
+	# News mechanics are tested with certain recognition; the odds themselves are in test_recognition.gd.
+	for act in game.crime.recognition.acts:if act!="theft":game.crime.recognition.acts[act]=1.0
+	game.crime.recognition.half_life_days=100000000
 	var cart: Dictionary={}
 	for good in game.outfitter.goods:cart[good.id]=int(good.suggested)
 	game.depart("banker",["Lead","Ada","Ben","Cora","Dell"],5,cart)

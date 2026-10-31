@@ -10,8 +10,13 @@ func check(value: bool,message: String):
 		failures+=1
 		printerr("FAIL: "+message)
 func _initialize():call_deferred("run")
+## News mechanics are tested with certain recognition; the odds themselves are in test_recognition.gd.
+func sure(game) -> void:
+	for act in game.crime.recognition.acts:if act!="theft":game.crime.recognition.acts[act]=1.0
+	game.crime.recognition.half_life_days=100000000
 func outfit(seed_value: int=57):
 	var game=Simulation.new(seed_value,"classic",true)
+	sure(game)
 	var cart: Dictionary={}
 	for good in game.outfitter.goods:cart[good.id]=int(good.suggested)
 	game.depart("banker",["A","B","C","D","E"],5,cart)

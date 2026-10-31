@@ -1,6 +1,6 @@
 extends RefCounted
 ## Persistent local people, finite loot and staged incidents. No UI or global RNG.
-const COMMANDS=["theft","robbery","shoot","assault","raid","take","flee","breakout","surrender","finish","payoff","back","ride","wait","bail","vouch","jailbreak"]
+const COMMANDS=["theft","robbery","shoot","assault","raid","take","flee","breakout","surrender","finish","payoff","back","ride","wait","bail","vouch","jailbreak","mask"]
 const STAGES=["loot","escape","standoff","custody","report","done"]
 const ATTEMPTS=["unseen","noticed","complied","resisted","missed","wounded","killed","raided","caught"]
 const RESOLUTIONS=["","left","escaped","captured","surrendered","party_lost","tried","paid"]
@@ -42,6 +42,8 @@ const Remains=preload("res://simulation/remains.gd")
 var scenes: Dictionary={}
 var modifiers: Dictionary={}
 var news_rules: Dictionary={}
+var recognition: Dictionary={}
+var reputation: Dictionary={}
 var companion_rules: Dictionary={}
 var unarmed_data: Dictionary={}
 var remains_rules: Dictionary={}
@@ -86,6 +88,9 @@ func load_data(value: Variant) -> bool:
 	if bodies==null:return false
 	var news: Variant=value.get("reports")
 	if not news is Dictionary or not news.get("note") is String or not whole(news.get("delay_days"),0,30) or not whole(news.get("miles_per_day"),1,200):return false
+	if not valid_recognition(value.get("recognition")):return false
+	var fame: Variant=value.get("reputation")
+	if not fame is Dictionary or fame.size()!=4 or not fame.get("note") is String or not number(fame.get("step")) or fame.step<0 or fame.step>0.1 or not number(fame.get("cap")) or fame.cap<0 or fame.cap>0.3 or not fame.get("kinds") is Array or not fame.kinds.all(func(k):return KINDS.has(k) and k not in ["fort","pursuers","jail","household"]):return false
 	if mods.floor>=mods.ceiling or mods.experience_step*mods.experience_cap>0.25 or mods.stealth_step>mods.experience_step:return false
 	for place in value.scenes:
 		var scene: Variant=value.scenes[place]
@@ -131,10 +136,19 @@ func load_data(value: Variant) -> bool:
 	scenes=value.scenes.duplicate(true)
 	modifiers=mods.duplicate(true)
 	news_rules=news.duplicate(true)
+	recognition=value.recognition.duplicate(true)
+	reputation=fame.duplicate(true)
 	companion_rules=party.duplicate(true)
 	remains_rules=bodies
 	error=""
 	return true
+const RECOGNIZED_ACTS=["theft","robbery","raid","shoot","assault","pursuit","wanted","killed","tale"]
+const MASKS=["covered","hidden","slipped","known"]
+func valid_recognition(value: Variant) -> bool:
+	if not value is Dictionary or value.size()!=5 or not value.get("note") is String or not value.get("acts") is Dictionary or value.acts.size()!=RECOGNIZED_ACTS.size():return false
+	if not RECOGNIZED_ACTS.all(func(act):return number(value.acts.get(act)) and value.acts[act]>=0 and value.acts[act]<=1):return false
+	if not ["masked_factor","mask_slip"].all(func(key):return number(value.get(key)) and value[key]>=0 and value[key]<=1):return false
+	return whole(value.get("half_life_days"),1,3650)
 func start(seed_value: int) -> void:
 	rng.seed=seed_value ^ 0x4352494d
 	record={"version":VERSION,"people":{},"actors":{},"services":{},"incidents":[],"active":{},"reports":[],"bonds":[],"attacks":[],"remains":[],"human_food":[],"meals":{},"betrayals":[],"bounties":[]}
@@ -357,13 +371,21 @@ func odds(game,place: String,action: String="robbery") -> Dictionary:
 	var edge: float=experience(game)*float(modifiers.experience_step)-penalty
 	var low: float=float(modifiers.floor)
 	var high: float=float(modifiers.ceiling)
-	return {"edge":edge,
+	return {"edge":edge,"fame":fame(game,place),
 		"theft_success":bounded(float(scene.theft_success),float(scene.theft_success)+missing*float(modifiers.staff_step)+experience(game)*float(modifiers.stealth_step),low,high),
-		"compliance":bounded(float(scene.compliance),float(scene.compliance)+edge,low,high),
+		"compliance":bounded(float(scene.compliance),float(scene.compliance)+edge+fame(game,place),low,high),
 		"shot_hit":bounded(float(scene.shot_hit),float(scene.shot_hit)+edge,low,high),
 		"escape_capture":bounded(float(scene.escape_capture),float(scene.escape_capture)-edge,low,high),
 		"escape_injury":bounded(float(scene.escape_injury),float(scene.escape_injury)-edge,low,high),
 		"shot_fatal":float(scene.shot_fatal),"injury_damage":int(scene.injury_damage)}
+## A bare-faced party whose name has reached ordinary folk (not soldiers, posses, jailers or a household with its
+## council behind it) is believed when it threatens: victims give in more often. A masked party is nobody.
+func fame(game,place: String) -> float:
+	if game.pending.get("crime_masked",false) or rules(place).kind not in reputation.kinds:return 0.0
+	var named: float=0.0
+	for item in Wanted.evidence(self,game,place):
+		if item.identified and item.origin!=place:named+=float(item.weight)
+	return minf(float(reputation.cap),named*float(reputation.step))
 ## Modifiers cannot push a value past the floor/ceiling, but authored extremes are kept.
 func bounded(base: float,value: float,low: float,high: float) -> float:return clampf(value,minf(base,low),maxf(base,high))
 func condition(actor: Dictionary) -> String:
@@ -391,9 +413,15 @@ func menu(game) -> Dictionary:
 		else:options=[option(words.raid,"raid")]
 		# A pilot or a portage crew has nothing to carry off; only an attack is possible.
 		if not stocked(game,place):options=options.filter(func(choice):return choice.crime_command in ["shoot","assault"])
+		var masked: bool=game.pending.get("crime_masked",false)
+		text+="\n"+("Your faces are covered with kerchiefs. If you get away, word will describe a masked party, not name yours; a slipped mask, people who have dealt with you here, or anyone who catches you will still know you." if masked else "Your faces are bare. Anyone who sees you can name your party.")
+		if masked and faces_seen(game,place):text+=" These people have seen your faces already; a kerchief will not fool them."
+		if fame(game,place)>0:text+="\nWord of your party's deeds has reached these people. Bare-faced, a threat from you will be believed more readily; masked, you are nobody."
+		options.append(option("Take off the kerchiefs" if masked else "Tie kerchiefs over your faces","mask"))
 		if game.pending.has("crime_target"):
 			text="Target: %s (%s).\nNearby staff: %d. Your companions can observe this. An attack uses one day and meals; a shot spends one bullet. Unarmed attacks have higher injury risk. Staff may resist or pursue the party." % [display_name(game,place,keeper.uid),condition(keeper),living_staff(place).size()]
-			options=options.filter(func(choice):return choice.crime_command in ["shoot","assault"])
+			text+="\n"+("Your faces are covered with kerchiefs." if masked else "Your faces are bare.")
+			options=options.filter(func(choice):return choice.crime_command in ["shoot","assault","mask"])
 	elif current.stage=="loot":
 		var loot:=loot_quote(game,place)
 		if current.has("demand"):
@@ -440,6 +468,7 @@ func menu(game) -> Dictionary:
 	var result_menu: Dictionary={"id":"crime","crime_menu":true,"service_menu":true,"title":scene.title,"text":text,"choices":options}
 	# A place picked from the VILLAINY lists stays picked while the preview is open.
 	if game.pending.has("crime_place"):result_menu["crime_place"]=place
+	if current.is_empty() and game.pending.get("crime_masked",false):result_menu["crime_masked"]=true
 	if game.pending.has("crime_target"):
 		result_menu["crime_target"]=keeper.uid
 		result_menu["crime_place"]=place
@@ -450,7 +479,7 @@ func can_choose(game,command: String) -> bool:
 	if current.get("stage","")=="custody":return Detention.can_choose(self,game,current,command)
 	if current.get("action","")=="wanted":return Wanted.can_choose(self,game,current,command)
 	if current.is_empty():
-		if command=="back":return true
+		if command in ["back","mask"]:return true
 		if record.incidents.size()>=10000:return false
 		var place:=target(game)
 		if game.pending.has("crime_target") and command not in ["shoot","assault"]:return false
@@ -473,7 +502,7 @@ func report_for(current: Dictionary,day: int) -> Dictionary:
 	for fact in FACTS:
 		for uid in local_witnesses(current):
 			if fact in current.knowledge[uid] and fact not in facts:facts.append(fact)
-	return {"incident":current.id,"origin":current.place,"day":day,"senders":local_witnesses(current),"facts":facts,"identified":current.action!="theft"}
+	return {"incident":current.id,"origin":current.place,"day":day,"senders":local_witnesses(current),"facts":facts,"identified":current.action!="theft" and current.get("mask","")!="hidden"}
 ## Guide miles from the start of the road to each stop.
 func mile(game,id: String) -> int:
 	if miles.is_empty():miles=game.route.node_miles()
@@ -505,19 +534,69 @@ func tales(game) -> Array:
 	return result
 func heard_tales(game,place: String) -> Array:
 	return tales(game).filter(func(told):return arrival(game,told,place)<=int(game.state.day))
-## A post refuses only when news that names the party has actually arrived there, from witnesses or from a former companion.
+## A post refuses only when news of the party has actually arrived there, from witnesses or from a former companion,
+## and the people there know the party for the ones it describes.
 func refuses(game,place: String) -> bool:
-	return heard(game,place).any(func(report):return report.identified and report.origin!=place) or not heard_tales(game,place).is_empty()
+	return heard(game,place).any(func(report):return recognized(game,place,report)) or heard_tales(game,place).any(func(told):return recognized_tale(game,place,told))
+## The act people talk about: any killing counts as one, whatever was first attempted.
+func act_of(current: Dictionary) -> String:
+	return "killed" if current.get("attempt","")=="killed" or not current.get("kills",[]).is_empty() else str(current.action)
+## How likely people who have heard of an act are to know the party for the ones who did it. Named parties are
+## known more often the worse the act; a masked party that got away clean is known only by its outfit; a quiet
+## theft never names anyone. Faces and descriptions fade as the news grows old.
+func recognition_chance(game,report: Dictionary) -> float:
+	var current: Dictionary=record.incidents[int(report.incident)-1]
+	var chance: float=float(recognition.acts[act_of(current)])
+	if not report.identified:
+		if current.get("mask","")!="hidden":return 0.0
+		chance*=float(recognition.masked_factor)
+	return chance*fade(game,int(current.day))
+func fade(game,day: int) -> float:
+	return pow(0.5,maxi(0,int(game.state.day)-day)/float(recognition.half_life_days))
+## One fixed draw per place and piece of news, apart from the game's own dice: asking twice, saving or waiting a
+## day changes nothing, but as the news grows old a place that knew the party may stop knowing it.
+func recognition_roll(game,place: String,key: String) -> float:
+	var dice:=RandomNumberGenerator.new()
+	dice.seed=("%d|%s|%s" % [int(game.state.seed),place,key]).hash()
+	return dice.randf()
+func recognized(game,place: String,report: Dictionary) -> bool:
+	return report.origin!=place and recognition_roll(game,place,"incident:%d" % int(report.incident))<recognition_chance(game,report)
+## A former companion names the party outright, but the people hearing it still have to put the face to the name.
+func recognized_tale(game,place: String,told: Dictionary) -> bool:
+	return recognition_roll(game,place,"tale:%d" % int(told.teller))<float(recognition.acts.tale)*fade(game,int(told.day))
+## News of the party's acts that has reached a place without anyone there taking the party for the ones who did them.
+func rumor_text(game,place: String) -> String:
+	var lines: Array=[]
+	for report in heard(game,place):
+		# A quiet theft is told as a description by news_text.
+		if report.origin==place or recognized(game,place,report) or (not report.identified and record.incidents[int(report.incident)-1].get("mask","")!="hidden"):continue
+		var act: String={"theft":"stole from","robbery":"robbed","shoot":"shot at","assault":"attacked","raid":"looted","pursuit":"fought off soldiers from","wanted":"fought"}[record.incidents[int(report.incident)-1].action]
+		lines.append("People here talk of a party that %s %s %s, but nobody takes you for them." % [act,venue_noun(report.origin),where(game,report.origin)])
+	for told in heard_tales(game,place):
+		if not recognized_tale(game,place,told):lines.append("A traveler here tells of a party a former companion named, but nobody puts your faces to it.")
+	return " ".join(lines)
+## Everything said about the party at a place: what makes people refuse it, and what they say without knowing it.
+func talk(game,place: String) -> String:
+	return " ".join([news_text(game,place),rumor_text(game,place)].filter(func(text):return not text.is_empty()))
+## Whether kerchiefs would hide the party here: people it traded with, or who saw its faces in an earlier act, know them.
+func faces_seen(game,place: String) -> bool:
+	var prefixes: Array=[market_prefix(place)+"|",place+"|"]
+	if game.context.record.spent.keys().any(func(key):return prefixes.any(func(prefix):return str(key).begins_with(prefix))):return true
+	return record.incidents.any(func(other):return other.place==place and other.attempt!="unseen" and other.get("mask","") not in ["covered","hidden"])
+func mask_on(game,current: Dictionary,place: String) -> void:
+	if game.pending.get("crime_masked",false):current["mask"]="known" if faces_seen(game,place) else "covered"
 func news_text(game,place: String) -> String:
 	var lines: Array=[]
 	for report in heard(game,place):
-		if report.origin==place:continue
+		if report.origin==place or (report.identified and not recognized(game,place,report)):continue
 		var act: String={"theft":"stole from","robbery":"robbed","shoot":"shot at","assault":"attacked unarmed","raid":"looted","pursuit":"fought off soldiers from","wanted":"fought"}[record.incidents[int(report.incident)-1].action]
 		var origin: String=where(game,report.origin)
 		var noun: String=venue_noun(report.origin)
 		if report.identified:lines.append("Word reached here by day %d that your party %s %s %s. The people here will not trade with you or help you." % [arrival(game,report,place),act,noun,origin])
-		else:lines.append("People here have heard that someone matching a description of your party stole from %s %s." % [noun,origin])
+		elif recognized(game,place,report):lines.append("Word reached here by day %d that a masked party %s %s %s. People here take your outfit for theirs and will not trade with you or help you." % [arrival(game,report,place),act,noun,origin])
+		elif record.incidents[int(report.incident)-1].action=="theft":lines.append("People here have heard that someone matching a description of your party stole from %s %s." % [noun,origin])
 	for told in heard_tales(game,place):
+		if not recognized_tale(game,place,told):continue
 		var said: Array=[]
 		for id in told.incidents:said.append("%s %s %s" % [{"theft":"stole from","robbery":"robbed","shoot":"shot at","assault":"attacked unarmed","raid":"looted","pursuit":"fought soldiers from","wanted":"fought"}[record.incidents[id-1].action],venue_noun(record.incidents[id-1].place),where(game,record.incidents[id-1].place)])
 		for id in told.attacks:said.append(("attacked unarmed " if record.attacks[id-1].get("weapon","gun")=="unarmed" else "shot at ")+("them" if int(record.attacks[id-1].target)==int(told.teller) else game.party_health.members[int(record.attacks[id-1].target)].name))
@@ -542,6 +621,8 @@ func result(game,resolution: String) -> void:
 	Remains.sync(game)
 	var current:=incident()
 	if resolution in ["captured","surrendered"]:
+		# Anyone taken is seen bare-faced.
+		if current.has("mask"):current.mask="known"
 		Detention.arrest(self,game,current,resolution=="surrendered")
 		if game.state.status=="traveling":game.pending=menu(game)
 		return
@@ -549,6 +630,9 @@ func result(game,resolution: String) -> void:
 	current.resolution=resolution
 	current.stage="report"
 	game.journal.append("Day %d · %s incident %d: %s; %s. Took %d lb food and $%.2f; fired %d shot(s)." % [game.state.day,kind(current.place).journal,current.id,current.attempt,resolution,current.food,current.cash_cents/100.0,current.shots])
+	# A mask holds only if it stayed on through the getaway.
+	if current.has("custody") and current.get("mask","")=="covered":current.mask="known"
+	if resolution in ["left","escaped"] and current.get("mask","")=="covered":current.mask="slipped" if rng.randf()<float(recognition.mask_slip) else "hidden"
 	if resolution in ["left","escaped"] and (current.action not in ["wanted","pursuit"] or int(current.shots)>0) and not local_witnesses(current).is_empty():record.reports.append(report_for(current,int(game.state.day)))
 	if resolution in ["captured","surrendered","party_lost"]:
 		current.stage="done"
@@ -581,6 +665,10 @@ func choose(game,command: String,left: Array=[]) -> bool:
 		game.service_return={}
 		game.refresh_stop_offers()
 		return true
+	if command=="mask":
+		game.pending["crime_masked"]=not game.pending.get("crime_masked",false)
+		game.pending=menu(game)
+		return true
 	var place: String=target(game)
 	# A trading party enters the record only once the party commits to an act against it.
 	if incident().is_empty():add_transient(game,place)
@@ -592,6 +680,7 @@ func choose(game,command: String,left: Array=[]) -> bool:
 		var id: int=record.incidents.size()+1
 		var current: Dictionary={"id":id,"day":int(game.state.day),"place":place,"target":keeper.uid,"action":command,"attempt":"raided","resolution":"","stage":"escape","food":0,"cash_cents":0,"shots":0,"knowledge":{}}
 		current["joining"]=game.party_health.members.filter(func(member):return game.party_health.is_active(member) and game.characters.willing(int(member.id),"murder" if command in ["shoot","assault"] else "robbery")).map(func(member):return int(member.id))
+		mask_on(game,current,place)
 		if command=="robbery" and game.pending.has("robbery_demand"):
 			var demanded: Dictionary=game.RobberyDemand.quote(game,game.pending.robbery_demand,place)
 			if not demanded.valid:return false
@@ -1124,7 +1213,7 @@ func valid(value: Variant,game) -> bool:
 	var previous_day: int=-1
 	for index in range(r.incidents.size()):
 		var current: Variant=r.incidents[index]
-		if not current is Dictionary or (current.get("action")!="wanted" and current.size()!=12+int(current.has("sentence"))+int(current.has("custody"))+int(current.has("joining"))+int(current.has("kills"))+int(current.has("demand"))+int(current.has("taken_goods"))) or current.get("id")!=index+1 or not whole(current.get("day"),0,int(game.state.day)) or not (current.get("place") is String and r.services.has(current.place) and not TEMPLATE_KINDS.has(current.place)) or current.get("target") not in staff_ids(current.place):return false
+		if not current is Dictionary or (current.get("action")!="wanted" and current.size()!=12+int(current.has("sentence"))+int(current.has("custody"))+int(current.has("joining"))+int(current.has("kills"))+int(current.has("demand"))+int(current.has("taken_goods"))+int(current.has("mask"))) or current.get("id")!=index+1 or not whole(current.get("day"),0,int(game.state.day)) or not (current.get("place") is String and r.services.has(current.place) and not TEMPLATE_KINDS.has(current.place)) or current.get("target") not in staff_ids(current.place):return false
 		if not Wanted.valid_extras(self,r,current,game) or not Detention.valid_custody(self,r,current,game):return false
 		if current.get("action")=="wanted":
 			if not Wanted.valid_incident(self,r,current,game,index,previous_day):return false
@@ -1133,6 +1222,8 @@ func valid(value: Variant,game) -> bool:
 		if current.get("action") not in ["shoot","assault"] and current.target!=owner_id(current.place):return false
 		if current.get("action") not in ["theft","robbery","shoot","assault","raid","pursuit"] or current.get("attempt") not in ATTEMPTS or current.get("stage") not in STAGES or current.get("resolution") not in RESOLUTIONS:return false
 		if not game.RobberyDemand.valid(game,current):return false
+		# A mask is tied on before the act and holds or slips once the party gets away.
+		if current.has("mask") and (current.mask not in MASKS or ((current.mask in ["hidden","slipped"])!=(current.resolution in ["left","escaped"]) and current.mask!="known")):return false
 		if current.day<previous_day:return false
 		previous_day=int(current.day)
 		if current.attempt not in {"theft":["unseen","noticed"],"robbery":["complied","resisted","killed"],"shoot":["missed","wounded","killed"],"assault":["missed","wounded","killed"],"raid":["raided"],"pursuit":["caught"]}[current.action]:return false
@@ -1227,6 +1318,7 @@ func begin_tactical_shoot(game) -> bool:
 	current["joining"] = game.party_health.members.filter(func(member):
 		return game.party_health.is_active(member) and game.characters.willing(int(member.id), "murder")
 	).map(func(member): return int(member.id))
+	mask_on(game, current, place)
 	record.incidents.append(current)
 	record.active = {"id": id}
 	store.alarmed = true
