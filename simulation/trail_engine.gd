@@ -15,6 +15,8 @@ const CacheSupport=preload("res://simulation/wagon_cache.gd")
 const Remains=preload("res://simulation/remains.gd")
 const Mounts=preload("res://simulation/mounts.gd")
 const Armory=preload("res://simulation/armory.gd")
+const Cabins=preload("res://simulation/cabins.gd")
+const Scoring=preload("res://simulation/scoring.gd")
 const Pasture=preload("res://simulation/pasture.gd")
 ## Scoped to the synchronous grazing activity, never a saved ongoing bonus.
 var grazing_activity: bool=false
@@ -146,6 +148,8 @@ func _init(seed_value: int = 1848, mode: String = "classic", setup: bool = false
 		error=native_encounters.error;state.status="error"
 	if not Armory.valid_rules(Armory.data):
 		error="Invalid weapon rules.";state.status="error"
+	if not Cabins.valid_rules(Cabins.data,route if end_at.is_empty() else null) or not Scoring.valid_rules(Scoring.data):
+		error="Invalid cabin, settling or scoring rules.";state.status="error"
 	for place in native_encounters.data.get("sites",{}):
 		if end_at.is_empty() and not route.nodes.has(place):error="Unknown Native encounter location.";state.status="error"
 	if not rafting.error.is_empty():
@@ -775,11 +779,14 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 		var change: int=[-3,0,1][state.rations]-[0,1,4][state.pace]
 		_change_health(change if recovered_food else mini(0,change),"exhaustion")
 	if not party_health.members.is_empty():
-		var storm_damage: int=int(seasonal_pressure().storm_damage) if state.extended_route else 0
+		# A finished cabin keeps out the storms and the cold, and the winter sickness that comes with them.
+		var sheltered: bool=Cabins.sheltered(self)
+		var storm_damage: int=int(seasonal_pressure().storm_damage) if state.extended_route and not sheltered else 0
 		if storm_damage>0:_change_health(-storm_damage,"winter exposure")
 		# No water and little grass: animals get no recovery and people go thirsty.
 		if state.extended_route and current_edge().get("hazard","")=="waterless":_change_health(-int(WATERLESS.thirst),"thirst")
 		var unprotected: int = maxi(0, int(state.party_size) - int(state.clothing))
+		if sheltered:unprotected=0
 		if unprotected > 0 and int(survival.weather.exposure) > 0:
 			var exposed := 0
 			for member in party_health.members:
@@ -788,6 +795,7 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 					exposed += 1
 		var nutrition: int = state.rations if fed else 0
 		var risk_multiplier: float = [2.0, 1.3, 0.7][nutrition] * (0.6 if resting else 1.0) * (1.4 if unprotected and survival.weather.exposure else 1.0) * float(survival.weather.get("illness_risk",1.0))
+		if sheltered and int(calendar().month) in survival.data.seasonal.winter_months:risk_multiplier*=float(Cabins.data.winter_illness_factor)
 		party_health.tick(state.day, resting, risk_multiplier, nutrition, int(calendar().year), int(calendar().month) if state.extended_route else 0, context.region_id(self) if state.extended_route else "", party_health.days_without_fresh,camp_tasks.day_plan.get("rest",{}),vitamin_coverage)
 		_collect_health_events()
 		state.health = party_health.average_health()

@@ -5,7 +5,7 @@ const FORMAT := "westward-probably"
 const VERSION := 1
 const DEFAULT_PATH := "user://journey.json"
 const MAX_BYTES := 2097152
-const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes", "social_rules", "appearance", "recruitment", "robbery_demands", "camp_tasks", "field_outings", "fishing", "livestock", "trail_income", "leathercraft", "dogs", "rafting", "native_encounters", "weapons"]
+const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes", "social_rules", "appearance", "recruitment", "robbery_demands", "camp_tasks", "field_outings", "fishing", "livestock", "trail_income", "leathercraft", "dogs", "rafting", "native_encounters", "weapons", "cabins", "scoring"]
 var error := ""
 var rules_signature := ""
 var load_note := ""
@@ -21,7 +21,7 @@ func fingerprint() -> String:
 	return rules_signature
 
 func capture(game) -> Dictionary:
-	if not game.state.extended_route or not game.raft.is_empty() or not game.hunt.is_empty() or not game.tactical_session.is_empty() or game.state.status not in ["traveling", "arrived", "lost", "returned_east"]:
+	if not game.state.extended_route or not game.raft.is_empty() or not game.hunt.is_empty() or not game.tactical_session.is_empty() or game.state.status not in ["traveling", "arrived", "lost", "returned_east", "settled"]:
 		return {}
 	return normalize({"format": FORMAT, "version": VERSION, "rules": fingerprint(),
 		"native_contacts":game.native_encounters.record.duplicate(true),"rafting_history":game.rafting_history.duplicate(true),"dogs":game.dogs.record.duplicate(true),"team_conditions":game.team_conditions.snapshot(game),"livestock":game.livestock.record.duplicate(true),"recruitment":game.recruitment.snapshot(),"social":game.social.snapshot(),"crime":game.crime.snapshot(),
@@ -241,7 +241,7 @@ func restore(value: Variant):
 	# Saddle and pack animal keys are optional; records from before horses carry none.
 	if not Simulation.Mounts.valid_state(s):return null
 	if not Simulation.Armory.valid_state(s):return null
-	if not integer(s.get("seed"), -2147483648, 2147483647) or s.get("extended_route") != true or s.get("status") not in ["traveling", "arrived", "lost", "returned_east"]:
+	if not integer(s.get("seed"), -2147483648, 2147483647) or s.get("extended_route") != true or s.get("status") not in ["traveling", "arrived", "lost", "returned_east", "settled"]:
 		return null
 	var game = Simulation.new(int(s.seed), str(s.get("mode", "classic")), s.extended_route, str(value.get("route_end","")))
 	if not game.error.is_empty():
@@ -276,6 +276,7 @@ func restore(value: Variant):
 	if not Simulation.Train.valid(s,s.party.size()):return null
 	if not Simulation.Direction.valid_state(s,game.route) or not game.provisions.Shortfall.valid_state(s):return null
 	if s.has("household_gear_lb") and (not (s.household_gear_lb is int or s.household_gear_lb is float) or not is_finite(s.household_gear_lb) or s.household_gear_lb<0 or s.household_gear_lb>100000):return null
+	if not Simulation.Cabins.valid_state(s,game.route):return null
 	if s.status=="returned_east" and (s.landmark!=game.route.start or s.miles!=0 or s.next_landmark!=""):return null
 	if not game.route.nodes.has(s.landmark) or (s.next_landmark != "" and not game.route.nodes.has(s.next_landmark)) or not integer(s.day,0,100000) or not integer(s.miles,0,game.route.longest_miles) or s.leg_miles > s.leg_length:
 		return null

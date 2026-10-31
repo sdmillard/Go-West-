@@ -59,7 +59,7 @@ var ribbon_buttons: Dictionary={}
 var crime_category := ""
 ## The VILLAINY section a crime, attack or remains preview was opened from; its back button returns there.
 var crime_back := ""
-const SECTION_PARENTS={"Attack someone":"Villainy","Party member":"Attack someone","Someone here":"Attack someone","Steal":"Villainy","Rob":"Villainy","Preserve meat":"Camp","Dry produce":"Camp","Companion tasks":"Camp","Field trips":"Camp"}
+const SECTION_PARENTS={"Attack someone":"Villainy","Party member":"Attack someone","Someone here":"Attack someone","Steal":"Villainy","Rob":"Villainy","Preserve meat":"Camp","Dry produce":"Camp","Companion tasks":"Camp","Field trips":"Camp","Cabin":"Camp"}
 var display_fit: OptionButton
 var window_scale: OptionButton
 var fullscreen: CheckBox
@@ -732,7 +732,29 @@ func _show_section(section: String) -> void:
 			var note:=label("Opening camp spends no time or supplies.\nChoose an activity; rest is optional.")
 			note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 			section_rows.add_child(note)
-			entries=[["DOG >",func():section_window.hide();dog_window.open(game)],["LIVESTOCK / WORKING TEAM >",func():section_window.hide();livestock_window.open(game)],["LEATHERWORK >",func():section_window.hide();leathercraft_window.open(game)],["COMPANION TASKS >",_show_section.bind("Companion tasks")],["FIELD TRIPS / RETURNING HUNTERS >",_show_section.bind("Field trips")],["REST · CHOOSE DAYS",_rest],["PRESERVE MEAT >",_show_section.bind("Preserve meat")],["DRY FRUIT / GREENS >",_show_section.bind("Dry produce")],["CARE / MEDICAL ATTENTION",_open_care]]
+			entries=[["DOG >",func():section_window.hide();dog_window.open(game)],["LIVESTOCK / WORKING TEAM >",func():section_window.hide();livestock_window.open(game)],["LEATHERWORK >",func():section_window.hide();leathercraft_window.open(game)],["COMPANION TASKS >",_show_section.bind("Companion tasks")],["FIELD TRIPS / RETURNING HUNTERS >",_show_section.bind("Field trips")],["REST · CHOOSE DAYS",_rest],["PRESERVE MEAT >",_show_section.bind("Preserve meat")],["DRY FRUIT / GREENS >",_show_section.bind("Dry produce")],["CARE / MEDICAL ATTENTION",_open_care],["CABIN / SETTLE HERE >",_show_section.bind("Cabin")]]
+		"Cabin":
+			var place: String=str(game.state.landmark)
+			var needed: int=game.Cabins.units_needed()
+			var built: int=game.Cabins.progress(game,place)
+			var status:=label(("CABIN FINISHED: SHELTER FROM COLD AND STORMS" if game.Cabins.done(game,place) else "CABIN: %d OF %d WORKER-DAYS DONE" % [built/2,int(game.Cabins.data.worker_days)]) if built>0 else "NO CABIN HERE")
+			status.name="CabinStatus"
+			section_rows.add_child(status)
+			var why: String=game.Cabins.reason(game)
+			var build:=button("BUILD THE CABIN · 1 WORK DAY"+(" · ABOUT %d DAY(S) LEFT" % game.Cabins.days_left(game) if why.is_empty() else ""),func():
+				if game.Cabins.build(game):
+					_refresh()
+					if game.can_service():_show_section("Cabin"))
+			build.name="CabinBuild"
+			build.disabled=not why.is_empty()
+			build.tooltip_text=why if not why.is_empty() else "Every fit, willing traveler works on the cabin for a day instead of resting; meals as usual. A carpenter works half again as fast. A finished cabin keeps out cold exposure and storms and cuts winter sickness, but not hunger, scurvy or starving animals."
+			section_rows.add_child(build)
+			var settle_why: String=game.Cabins.settle_reason(game)
+			var settle:=button("SETTLE HERE FOR GOOD · ENDS THE JOURNEY",_confirm_settle)
+			settle.name="CabinSettle"
+			settle.disabled=not settle_why.is_empty()
+			settle.tooltip_text=settle_why if not settle_why.is_empty() else game.Cabins.settle_text(game)
+			section_rows.add_child(settle)
 		"Field trips":
 			for trip in game.field_outings.record.trips:
 				var info:=label("%s · %s · EXPECTED DAY %d\nSEARCH AREA: MILE %d · %s" % [game.party_health.members[trip.member].name,game.field_outings.public_status(trip),game.field_outings.expected_day(trip),trip.mile,outing_window.KIT_LABELS[game.field_outings.Outfit.KITS.find(game.field_outings.public_kit(trip))]])
@@ -1789,7 +1811,7 @@ func _refresh() -> void:
 	pace.selected = int(s.pace)
 	rations.selected = int(s.rations)
 	travel_settings_label.text="PACE: %s\nRATIONS: %s\nHEADING: %s\nCHANGE: TRAVEL >" % [pace.get_item_text(pace.selected),rations.get_item_text(rations.selected),game.Direction.heading(game).to_upper()]
-	save_button.disabled = s.status not in ["traveling", "arrived", "lost", "returned_east"] or not game.hunt.is_empty() or not game.raft.is_empty() or not landscape.crossing.is_empty() or _reviewing_crossing()
+	save_button.disabled = s.status not in ["traveling", "arrived", "lost", "returned_east", "settled"] or not game.hunt.is_empty() or not game.raft.is_empty() or not landscape.crossing.is_empty() or _reviewing_crossing()
 	load_button.disabled = not game.hunt.is_empty() or not game.raft.is_empty() or not landscape.crossing.is_empty() or _reviewing_crossing()
 	party_button.disabled = game.party_health.members.is_empty()
 	options_button.disabled = not game.hunt.is_empty() or not game.raft.is_empty() or not landscape.crossing.is_empty() or _reviewing_crossing()
@@ -1890,15 +1912,18 @@ func _refresh() -> void:
 			choices.add_child(option)
 	elif s.status == "arrived":
 		event_title.text = game.route.nodes[s.landmark].name if s.extended_route else "The far bank. A beginning."
-		event_text.text = (game.journey_summary() + "\nKEEPSAKE POINTS: %d" % game.income.points(game) + "\n\n" + game.route.nodes[s.landmark].text) if s.extended_route else "The first test leg is complete."
+		event_text.text = (game.journey_summary() + "\nKEEPSAKE POINTS: %d" % game.income.points(game) + "\n\n" + game.Scoring.text(game) + "\n\n" + game.route.nodes[s.landmark].text) if s.extended_route else "The first test leg is complete."
+	elif s.status == "settled":
+		event_title.text = game.Cabins.ending_title(game)
+		event_text.text = game.Cabins.ending_text(game) + "\n\n" + game.Scoring.text(game)
 	elif s.status == "returned_east":
 		event_title.text="Back east."
-		event_text.text="Your character decided to go back east."
+		event_text.text="Your character decided to go back east.\n\n" + game.Scoring.text(game)
 	elif s.status == "lost":
 		if game.party_health.members.any(func(member):return not member.alive):choices.add_child(button("LEAVE A GRAVESTONE", _edit_gravestone))
 		choices.add_child(button("MEMORIAL BOOK", _show_memorials))
 		event_title.text = "The journey ends here."
-		event_text.text = s.loss_reason if not s.loss_reason.is_empty() else "Your party can go no farther. Try a new journey with slower travel, fuller rations, or time to camp."
+		event_text.text = (s.loss_reason if not s.loss_reason.is_empty() else "Your party can go no farther. Try a new journey with slower travel, fuller rations, or time to camp.") + ("\n\n" + game.Scoring.text(game) if s.extended_route else "")
 	elif s.status == "error":
 		event_title.text = "Content could not be loaded"
 		event_text.text = game.error
@@ -2325,6 +2350,27 @@ func _refresh_place_actions() -> void:
 		option.tooltip_text="Available here. Opens a preview before you spend time or supplies."
 		place_actions.add_child(option)
 
+
+var settle_confirmation: ConfirmationDialog
+## Settling ends the journey, so it is confirmed with what staying here means.
+func _confirm_settle() -> void:
+	if not game.Cabins.settle_reason(game).is_empty():return
+	if not is_instance_valid(settle_confirmation):
+		settle_confirmation=ConfirmationDialog.new()
+		settle_confirmation.title="SETTLE HERE FOR GOOD?"
+		settle_confirmation.get_ok_button().text="STAY"
+		wrap_dialog(settle_confirmation)
+		settle_confirmation.confirmed.connect(func():
+			settle_confirmation.hide()
+			section_window.hide()
+			if game.Cabins.settle(game):_refresh())
+		settle_confirmation.canceled.connect(func():
+			settle_confirmation.hide()
+			_show_section("Cabin"))
+		add_child(settle_confirmation)
+	section_window.hide()
+	settle_confirmation.dialog_text=game.Cabins.settle_text(game)
+	popup_fitted(settle_confirmation)
 
 func _normalize_dialog_tree(node) -> void:
 	if not is_instance_valid(node):return
