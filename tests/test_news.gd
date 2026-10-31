@@ -63,7 +63,7 @@ func run():
     var told: Array=game.news.fragments(game,"post","fort_hall")
     var heard: int=told.filter(func(said):return said in headline_texts).size()
     check(heard>0 and heard<=3,"A post's clerk passes on up to three headlines")
-    check(told.has(game.news.data.road.snake_river),"The road ahead describes the next stop")
+    check(told.has(game.news.data.road.american_falls),"The road ahead describes the next stop")
     check(told.any(func(said):return said.contains("Next store's at Fort Boise,")),"The road ahead names the next store and its prices")
     check(not told.any(func(said):return said.contains("miles on") or said.contains("percent")),"People reckon in days and dearer or cheaper, not exact miles and percents")
     check(game.news.off(15)=="only a day or two off" and game.news.off(210).begins_with("a fortnight off") and game.news.off(900)=="more than a month off","Distances are told in rough days and weeks")

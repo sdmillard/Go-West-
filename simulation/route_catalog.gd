@@ -39,7 +39,7 @@ func load_data(data: Variant) -> bool:
 			return _fail("Invalid regional terrain.")
 		if node.get("river_source","rain") not in ["rain","snowmelt"]:
 			return _fail("Invalid river source.")
-		for key in ["trade_bulk","descent","portage"]:
+		for key in ["trade_bulk","descent","portage","minor"]:
 			if node.has(key) and not node[key] is bool:
 				return _fail("Invalid landmark activity flag.")
 		if node.has("snow_country"):
@@ -63,6 +63,8 @@ func load_data(data: Variant) -> bool:
 		for key in ["toll_dollars","toll_per_ox","bulk_food_cents"]:
 			if node.has(key) and (not (node[key] is int or node[key] is float) or not is_finite(float(node[key])) or node[key] < 0):
 				return _fail("Invalid landmark price.")
+		if node.get("minor",false) and node.kind!="camp":
+			return _fail("Only a camp can be a minor stop.")
 		candidate[node.id] = node.duplicate(true)
 	if not candidate.has(data.start):
 		return _fail("Route start does not exist.")
@@ -88,6 +90,8 @@ func load_data(data: Variant) -> bool:
 				return _fail("Road distance must be positive whole miles.")
 			if edge.to in targets or (edge.has("label") and (not edge.label is String or edge.label.is_empty())) or edge.get("hazard", "") not in ["", "waterless", "river", "unrest"]:
 				return _fail("Invalid road choice.")
+			if edge.has("wagon_opens") and not valid_date(edge.wagon_opens):
+				return _fail("Invalid wagon road opening date.")
 			if edge.has("effects") and (not edge.effects is Dictionary or edge.effects.keys() != ["days"] or not (edge.effects.days is int or edge.effects.days is float) or edge.effects.days != floor(edge.effects.days) or edge.effects.days < 1 or edge.effects.days > 5):
 				return _fail("Invalid road choice.")
 			targets.append(edge.to)
@@ -104,6 +108,13 @@ func load_data(data: Variant) -> bool:
 	total_miles = remaining(start)
 	longest_miles = _longest(start, {})
 	return true
+
+## A calendar date written YYYY-MM-DD that exists.
+static func valid_date(value: Variant) -> bool:
+	if not value is String or value.length()!=10:return false
+	var parts: PackedStringArray=value.split("-")
+	if parts.size()!=3 or not Array(parts).all(func(part):return part.is_valid_int()) or int(parts[1])<1 or int(parts[1])>12 or int(parts[2])<1 or int(parts[2])>31:return false
+	return Time.get_datetime_string_from_unix_time(Time.get_unix_time_from_datetime_string(value+"T00:00:00")).left(10)==value
 
 func _has_cycle(candidate: Dictionary, id: String, state: Dictionary) -> bool:
 	state[id] = 1

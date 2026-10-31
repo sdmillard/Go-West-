@@ -123,7 +123,8 @@ func _initialize() -> void:
 		check(not fingerprints.has(fingerprint), "Location art is distinct, not another name for the same image: " + id)
 		fingerprints[fingerprint] = true
 	for id in route.nodes:
-		check(scenes.textures.has(id), "Every route location has arrival art: " + id)
+		check(scenes.textures.has(id) or id in scenes.awaiting, "Every route location has arrival art, or is listed as awaiting it: " + id)
+	check(scenes.error.is_empty() and scenes.awaiting.all(func(id):return route.nodes.has(id)), "Only real stops await arrival art")
 	check(scenes.texture_for("missing-scene") != null, "Unknown scene has a safe presentation fallback")
 	var font: Font = load("res://art/pixels/trail_font.fnt")
 	check(font.has_char(65) and font.has_char(97) and font.has_char(183), "Bitmap font covers interface and encounter text")
