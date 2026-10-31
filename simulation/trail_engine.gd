@@ -376,7 +376,7 @@ func _choose_landmark(index: int) -> bool:
 	if choice.action == "notes":
 		pending.text = route.nodes[state.landmark].text + "\n\n" + choice.get("text",route.nodes[state.landmark].get("advice",""))
 		# Word of the party travels with everyone on the road; travelers camped here repeat what has reached them.
-		if crime.refuses(self,str(state.landmark)):pending.text+="\n\nTalk around the fires: "+crime.news_text(self,str(state.landmark))
+		if not crime.talk(self,str(state.landmark)).is_empty():pending.text+="\n\nTalk around the fires: "+crime.talk(self,str(state.landmark))
 		return true
 	if choice.action == "activity":
 		context.record.activities.append(choice.activity)
@@ -1078,7 +1078,7 @@ func open_trade() -> bool:
 	var options: Array=_trade_options(offer,at_post)
 	for choice in options:choice.erase("lot")
 	var days: int=context.trade_days(offer)
-	var rumor: String=crime.news_text(self,str(state.landmark)) if at_post else ""
+	var rumor: String=crime.talk(self,str(state.landmark)) if at_post else ""
 	var terms: String=("The first trade costs a day and meals; further trades at this stop take no extra time." if days>0 else "You have spent the day here already; further trades take no extra time.")
 	if not at_post:
 		var markup: int=roundi((float(context.data.passing_price_markup)-1.0)*100.0)
@@ -1187,7 +1187,7 @@ func post_store() -> Dictionary:
 	var wagon_row: Dictionary=provisions.WagonTrade.row(self,str(offer.key))
 	if state.vehicle=="foot":rows.push_front(wagon_row)
 	else:rows.append(wagon_row)
-	return {"name":name,"kind":"post","key":str(offer.key),"rows":rows,"days":context.trade_days(offer),"money_cents":roundi(float(state.money)*100.0),"purse_cents":-1,"rumor":crime.news_text(self,str(state.landmark)),"discount":characters.available(self,"Trading")}
+	return {"name":name,"kind":"post","key":str(offer.key),"rows":rows,"days":context.trade_days(offer),"money_cents":roundi(float(state.money)*100.0),"purse_cents":-1,"rumor":crime.talk(self,str(state.landmark)),"discount":characters.available(self,"Trading")}
 
 ## The trading counter where the party can trade by the unit: a post's store, a passing trading party, or (venue "camp")
 ## the emigrant family camped nearby. A party met on the road sells only what it carries and buys only what it wants,

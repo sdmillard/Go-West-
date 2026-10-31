@@ -1200,7 +1200,7 @@ func _show_service() -> void:
 		if crime_preview:
 			var command: String=game.pending.choices[index].get("crime_command","")
 			# VILLAINY picked the act; a preview restored from a save without one lists every act.
-			if not crime_category.is_empty() and command not in (["shoot","assault"] if crime_category=="attack" else [crime_category,"raid"]):continue
+			if not crime_category.is_empty() and command not in (["shoot","assault","mask"] if crime_category=="attack" else [crime_category,"raid","mask"]):continue
 		# Fixed offers the trading counter already covers are kept for the study policies only.
 		if game.pending.choices[index].get("policy_only",false):continue
 		# Questions spent at the family's counter count here too, so the camp's news label is read fresh.

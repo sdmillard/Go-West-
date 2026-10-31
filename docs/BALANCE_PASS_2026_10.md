@@ -166,3 +166,19 @@ Lawful arrivals of 60 (careful April/May, fighter, late June/July; same seeds):
 | Hunter | 13 |
 | Soldier | 12 |
 | Outlaw | 7 (its skill pays only in crime) |
+
+## Step 4: recognition, masks and reputation (October 31)
+
+Criminals arrived 0 of 36 times: once word of a named act reached a post, that post refused the party for good, and a party that could not restock died of scurvy or hunger. Spencer asked for a chance that posts do not recognize a known criminal, a mask that helps if the party gets away, and notoriety that makes robbery victims give in more readily (not lawmen or posses). The rules are in [WANTED_SYSTEM.md](WANTED_SYSTEM.md#recognition-masks-and-reputation).
+
+Same seeds (90000-90011), farmer/carpenter/banker. The new `masked` bot style is the criminal bot with kerchiefs on before every act.
+
+| Style | Farmer | Carpenter | Banker | Total |
+|---|---|---|---|---|
+| Careful April (lawful, for reference) | 4 | 12 | 12 | 28 |
+| Criminal, before | 0 | 0 | 0 | 0 |
+| Criminal, after | 8 | 7 | 6 | 21 |
+| Masked criminal | 5 | 8 | 9 | 22 |
+| Petty thief, before and after | 5 | 10 | 11 | 26 |
+
+The petty thief is unchanged because a quiet theft never names anyone. Masked robbers lose the reputation bonus, so more victims resist (39 complied robberies against 48). Overall, crime still costs more than it pays, but a poor farmer now does better robbing traders than staying honest (8 against 4). Spencer accepted this: crime is a fair trade-off because a run can still end in a gunfight or a hanging (and in play a resisted robbery is the tactical fight, which the bot settles on quick odds).

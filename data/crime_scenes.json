@@ -13,6 +13,19 @@
     "floor": 0.05,
     "ceiling": 0.95
   },
+  "recognition": {
+    "note": "Authored tuning. When word of an act reaches a place, the chance that people there know the party for the ones it describes, by the act (any killing counts as killed; tale is a former companion naming the party). In 1848 there were no likenesses on the road and thousands of outfits looked alike, so news travels as a description. A party masked with kerchiefs that got away clean is known only by its outfit (masked_factor); a mask can slip in the getaway (mask_slip). Faces and descriptions fade: the chance halves every half_life_days after the act. Each place draws once per piece of news.",
+    "acts": {"theft": 0, "robbery": 0.65, "raid": 0.6, "shoot": 0.8, "assault": 0.75, "pursuit": 0.85, "wanted": 0.85, "killed": 0.95, "tale": 0.9},
+    "masked_factor": 0.25,
+    "mask_slip": 0.15,
+    "half_life_days": 60
+  },
+  "reputation": {
+    "note": "Authored tuning. Ordinary folk who have heard of a bare-faced party's deeds give in to its threats more readily: each point of named notoriety (Wanted evidence weight: robbery 2, shooting 4, an army post 5) adds step to compliance, up to cap. Soldiers, posses, jailers and Native households answer to justice of their own and are not cowed. A masked party gets no benefit.",
+    "step": 0.02,
+    "cap": 0.15,
+    "kinds": ["store", "toll", "traders", "emigrants", "ferry"]
+  },
   "reports": {
     "note": "Authored tuning. Word of an incident leaves with its living local witnesses' contacts after a short delay and travels along the road with other parties and traders in both directions. Not a measured historical rate.",
     "delay_days": 2,
