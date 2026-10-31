@@ -1,4 +1,5 @@
 -- Town Preparation Screen, Independence, Missouri, 1848 (622x273 setup scene).
+-- no seasons: build.sh --seasons skips this script (indoors, a trading counter, or its own season).
 -- Wide outfitting panorama companion to scenes/independence.lua.
 -- Note: ui/departure_view.gd places the party setup panel on (0..259, 0..273)
 -- and the companion editor on (267..622, 0..230), leaving the lower-right street

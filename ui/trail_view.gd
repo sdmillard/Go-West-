@@ -92,6 +92,8 @@ var crossing_duration := 4.5
 var crossing_paused := false
 var water_spans: Array[Vector2i] = []
 var weather_id := "clear"
+## "winter", "autumn" or "" (spring and summer): which version of a place picture to show.
+var season := ""
 var terrain := "plains"
 
 func start_crossing(result: Dictionary) -> void:
@@ -154,9 +156,9 @@ func _draw() -> void:
 		_draw_crossing_sky()
 		return
 	if not scene_id.is_empty():
-		draw_texture(scenes.texture_for(scene_id), Vector2.ZERO)
+		draw_texture(scenes.texture_for(scene_id, season), Vector2.ZERO)
 		_draw_cabin()
-		ambience.draw(self, scene_id, scenes.texture_for(scene_id), clock_time)
+		ambience.draw(self, scene_id, scenes.texture_for(scene_id, season), clock_time)
 		if not scene_id.begins_with("ending_"): # ending pictures already show the party
 			if vehicle=="foot":
 				_draw_herd(false)

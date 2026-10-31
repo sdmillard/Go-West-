@@ -33,6 +33,17 @@ Output goes to `art/aseprite/out/`, which Git ignores and Godot skips:
 
 After `-Install`, run `godot --headless --path . --editor --import` and then `./test.ps1`. `tests/test_art.gd` checks exact sizes, crisp alpha and that every route stop has art.
 
+## Seasons
+
+`build.sh --seasons [scenes...]` (or `build.ps1 -Seasons`, not yet written) also builds `location_<name>_winter.png` and `location_<name>_autumn.png` for every location script. Those builds pass `season=winter` or `season=autumn`, and `K.season` is set to match.
+
+- `K.elm`, `K.willow` and `K.conifer` draw bare, turned or snow-laden trees themselves. A scene that paints its own broadleaf crowns takes its colours from `K.leaves(dark, mid, light)` (see `wakarusa.lua`).
+- `K.save` then repaints the flattened picture. In winter, grass and sage become snow, far hills turn pale, and snow lies on the top edge of evergreens and roofs. In autumn the grass dries to tan. Rock colours (ochre, gold, sand, silt) are left alone, so buttes, cliffs, sod and adobe keep their colour.
+- Never call `K.rnd` in season-only code. It would shift every later random mark, so the seasonal picture would stop matching the summer one.
+- Put `-- no seasons` near the top of a script to skip it. Indoor scenes, trading counters, the night camp, Independence and the endings are skipped this way.
+
+ui/main.gd `_scene_season()` picks the version: winter in snow weather or from December to February (Eagle Creek and Oregon City only when snowing), autumn in October and November.
+
 ## How to work
 
 1. **Look at every render.** Open the `_x3` preview and judge it before you go on. Most problems only show up when you look: a cupola floating above its roof, oxen that read as dogs, a wagon parked across a door. A model that cannot view images should not author art with this pipeline.

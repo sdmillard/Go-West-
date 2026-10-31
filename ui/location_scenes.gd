@@ -1,7 +1,10 @@
 extends RefCounted
 ## Presentation registry: adding artwork does not change simulation code or RNG.
 const FALLBACK = preload("res://art/pixels/prairie.png")
+const SEASONS := ["winter", "autumn"]
 var textures: Dictionary = {}
+## Winter and autumn versions built by `art/aseprite/build.sh --seasons`, keyed "id:season".
+var seasonal: Dictionary = {}
 var encounters: Dictionary = {}
 var error := ""
 
@@ -22,6 +25,10 @@ func _init() -> void:
 			textures.clear()
 			return
 		textures[id] = load(path)
+		for season in SEASONS:
+			var variant: String = path.get_basename() + "_" + season + ".png"
+			if ResourceLoader.exists(variant):
+				seasonal[str(id) + ":" + season] = load(variant)
 
 	var visits: Variant=data.get("encounters",{})
 	if not visits is Dictionary:
@@ -37,5 +44,8 @@ func _init() -> void:
 func encounter_for(site: String) -> String:
 	return encounters.get(site,"")
 
-func texture_for(id: String) -> Texture2D:
+## The picture for a scene, in the given season when it has one ("" or no variant: as drawn).
+func texture_for(id: String, season: String = "") -> Texture2D:
+	if not season.is_empty() and seasonal.has(id + ":" + season):
+		return seasonal[id + ":" + season]
 	return textures.get(id, FALLBACK)

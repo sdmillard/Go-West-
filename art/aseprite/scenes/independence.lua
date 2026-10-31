@@ -1,4 +1,5 @@
 -- Independence, Missouri, 1848: the courthouse square on outfitting day.
+-- no seasons: build.sh --seasons skips this script (indoors, a trading counter, or its own season).
 -- 432x150 arrival scene, light from the upper left. Build with art/aseprite/build.ps1 (or build.sh).
 -- Composition follows the circa-1853 engraving noted in art/LOCATION_REFERENCES.md:
 -- a brick courthouse with cupola, low frame and brick stores, wagons and people on the square.

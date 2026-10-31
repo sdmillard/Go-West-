@@ -1,4 +1,5 @@
 -- Ending pictures (432x150 each), shown when a journey ends short of or instead of Oregon.
+-- no seasons: build.sh --seasons skips this script (indoors, a trading counter, or its own season).
 --   location_ending_post            settled at a trading post: hands and squatters camped by its wall
 --   location_ending_cabin           settled in the party's own cabin in timber country
 --   location_ending_run_off         run off: the party walking away with what it can carry

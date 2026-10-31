@@ -1,4 +1,5 @@
 -- A passing trading party's camp beside the road, 1848 (622x273, the passing-traders counter screen).
+-- no seasons: build.sh --seasons skips this script (indoors, a trading counter, or its own season).
 -- Parties out of Fort Laramie, Bridger's post and Taos met the trains with a light wagon and pack
 -- mules: flour, powder and lead, blankets, tin kettles and buffalo robes, laid out on a robe for the
 -- emigrants to look over. They wanted clothing, ammunition and footsore oxen to fatten and resell.

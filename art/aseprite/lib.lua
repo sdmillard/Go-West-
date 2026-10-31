@@ -58,9 +58,72 @@ function K.at(x, y)
   for name, c in pairs(col) do if c == v then return name end end
 end
 
+-- Season: build.sh --seasons reruns location scenes with season=winter or season=autumn.
+-- The tree helpers draw bare or turned trees themselves; K.save then repaints the ground,
+-- far hills and sky and lays snow on the tops of evergreens and roofs, and writes
+-- <name>_<season>.png. Spring and summer are the plain pictures.
+K.season = app.params.season
+if K.season == "" then K.season = nil end
+local SEASON_MAP = {
+  winter = {grass="white", sage="stone_lt", haze="mist",
+            far_hill="stone_lt"},
+  autumn = {grass={"silt_lt", "silt_lt", "sand"}, sage="ochre", haze="far_hill"},
+}
+local CAPPED = {pine=true, leaf=true, ink=true, roof=true, roof_lt=true, roof_dk=true}
+local OPEN = {sky=true, sky_top=true, light_blue=true, mist=true, haze=true, far_hill=true,
+              storm=true, storm_lt=true, stone_lt=true, white=true, cream=true}
+local function seasonal(image, season)
+  local name_of = {}
+  for n, c in pairs(col) do name_of[c] = n end
+  local src = image:clone()
+  local map = SEASON_MAP[season]
+  local function at(x, y)
+    if x < 0 or y < 0 or x >= W or y >= H then return nil end
+    return name_of[src:getPixel(x, y)]
+  end
+  for y = 0, H - 1 do
+    for x = 0, W - 1 do
+      local n = at(x, y)
+      local t = n and map[n]
+      if type(t) == "table" then t = t[(x * 7 + y * 13) % #t + 1] end
+      -- lone dark speckles in the grass go with the ground rather than staying green
+      if (n == "leaf" or n == "pine") and y > H * 0.45 then
+        local same = 0
+        for _, d in ipairs({{-1,0},{1,0},{0,-1},{0,1}}) do
+          local m = at(x + d[1], y + d[2]); if m == "leaf" or m == "pine" or m == "ink" then same = same + 1 end
+        end
+        if same == 0 then t = (season == "winter") and "white" or "silt" end
+      end
+      if season == "winter" and n and CAPPED[n] and OPEN[at(x, y - 1) or ""] then
+        t = "white"
+        if (x * 7 + y * 3) % 5 < 2 and at(x, y + 1) == n then image:drawPixel(x, y + 1, col.white) end
+      end
+      if t then image:drawPixel(x, y, col[t]) end
+    end
+  end
+end
+
+-- Leaf colours for a broadleaf crown drawn by hand in a scene: the summer colours as given, a
+-- turned set in autumn, and in winter a grey haze of bare twigs.
+function K.leaves(dk, md, lt)
+  if K.season == "autumn" then return "brick", "rust", "ochre" end
+  if K.season == "winter" then return "ox", "storm_lt", "stone_dk" end
+  return dk, md, lt
+end
+
 -- Write <out>/<name>.png (flattened) and <out>/<name>.aseprite (layered).
 function K.save(name)
   local out = app.params.out or "."
+  if K.season then
+    spr:flatten()
+    local cel = spr.layers[1]:cel(1)
+    local image = Image(W, H, ColorMode.RGB)
+    image:drawImage(cel.image, cel.position)
+    seasonal(image, K.season)
+    image:saveAs(out .. "/" .. name .. "_" .. K.season .. ".png")
+    print("built " .. name .. "_" .. K.season .. " (" .. W .. "x" .. H .. ")")
+    return
+  end
   spr:saveAs(out .. "/" .. name .. ".aseprite")
   spr:saveCopyAs(out .. "/" .. name .. ".png")
   print("built " .. name .. " (" .. W .. "x" .. H .. ", " .. #spr.layers .. " layers)")
@@ -334,13 +397,19 @@ end
 -- Rounded willow or brush clump along a creek.
 function K.willow(x, y, s)
   s = s or 1
-  ellipse(x, y - 3 * s, 6 * s, 4 * s, "pine")
-  ellipse(x - 1, y - 4 * s, 5 * s, 3 * s, "leaf")
-  ellipse(x - 2, y - 5 * s, 3 * s, 2 * s, "grass")
-  px(x - 3 * s, y - 6 * s, "sage")
+  if K.season == "winter" then
+    -- a thicket of bare red-brown withes
+    for i = -5, 5, 2 do line(x + i // 2, y, math.floor(x + i * s), math.floor(y - 6 * s) - (i % 3), (i % 4 == 1) and "brick" or "ox") end
+    px(math.floor(x - 4 * s), math.floor(y - 6 * s), "white"); px(math.floor(x + 2 * s), math.floor(y - 7 * s), "white")
+    return
+  end
+  local dark, mid, lit, tip = "pine", "leaf", "grass", "sage"
+  if K.season == "autumn" then dark, mid, lit, tip = "rust", "ochre", "gold", "sand" end
+  ellipse(x, y - 3 * s, 6 * s, 4 * s, dark)
+  ellipse(x - 1, y - 4 * s, 5 * s, 3 * s, mid)
+  ellipse(x - 2, y - 5 * s, 3 * s, 2 * s, lit)
+  px(x - 3 * s, y - 6 * s, tip)
 end
-
--- Columnar basalt cliff face from x to x + w, rim at y, down to y + h.
 function K.basalt(x, y, w, h, rim)
   rect(x, y, w, h, "roof")
   for xx = x, x + w - 1 do
@@ -451,13 +520,27 @@ function K.elm(x, y, s)
   rect(x - 1, y - 14 * s, 3, 14 * s, "deep")
   px(x - 1, y - 6 * s, "wood"); line(x, y - 9 * s, x - 6 * s, y - 16 * s, "deep"); line(x + 1, y - 11 * s, x + 7 * s, y - 18 * s, "deep")
   local clumps = {{-7,-17,6,5},{6,-19,7,5},{0,-23,8,6},{-4,-27,6,4},{5,-27,5,4}}
-  for _, c in ipairs(clumps) do ellipse(x + c[1] * s, y + c[2] * s, c[3] * s, c[4] * s, "pine") end
-  for _, c in ipairs(clumps) do ellipse(x + c[1] * s - 1, y + c[2] * s - 1, c[3] * s - 2, c[4] * s - 2, "leaf") end
-  for _, c in ipairs(clumps) do ellipse(x + c[1] * s - 2, y + c[2] * s - 2, math.max(1, c[3] * s - 5), math.max(1, c[4] * s - 4), "grass") end
-  for _, c in ipairs(clumps) do px(x + c[1] * s - 3, y + c[2] * s - 3, "sage") end
+  if K.season == "winter" then
+    -- bare crown: limbs forking up into a fine grey haze of twigs, snow along the big limbs
+    -- (no K.rnd here, so the winter picture keeps every other random mark where summer has it)
+    local f = math.floor
+    line(x, f(y - 14 * s), f(x - 2 * s), f(y - 25 * s), "deep"); line(x, f(y - 14 * s), f(x + 3 * s), f(y - 28 * s), "deep")
+    for k, c in ipairs(clumps) do
+      local cx, cy, rw, rh = f(x + c[1] * s), f(y + c[2] * s), f(c[3] * s), f(c[4] * s)
+      line(x, f(y - 12 * s), cx, cy, "deep")
+      for i = 1, 3 do line(cx, cy, cx + (i - 2) * rw // 2 * 2, cy - rh, "ox") end
+      for i = 1, rw * 2 do px(cx - rw + (i * 7 + k * 3) % (rw * 2 + 1), cy - (i * 5 + k) % (rh + 2), "storm_lt") end
+    end
+    line(x - 1, f(y - 10 * s), f(x - 6 * s), f(y - 17 * s), "white"); line(x + 1, f(y - 12 * s), f(x + 6 * s), f(y - 19 * s), "white")
+    return
+  end
+  local dark, mid, lit, tip = "pine", "leaf", "grass", "sage"
+  if K.season == "autumn" then dark, mid, lit, tip = "brick", "rust", "ochre", "gold" end
+  for _, c in ipairs(clumps) do ellipse(x + c[1] * s, y + c[2] * s, c[3] * s, c[4] * s, dark) end
+  for _, c in ipairs(clumps) do ellipse(x + c[1] * s - 1, y + c[2] * s - 1, c[3] * s - 2, c[4] * s - 2, mid) end
+  for _, c in ipairs(clumps) do ellipse(x + c[1] * s - 2, y + c[2] * s - 2, math.max(1, c[3] * s - 5), math.max(1, c[4] * s - 4), lit) end
+  for _, c in ipairs(clumps) do px(x + c[1] * s - 3, y + c[2] * s - 3, tip) end
 end
-
--- Tall western conifer (ponderosa pine / Douglas fir) with layered boughs, lit from upper-left.
 function K.conifer(x, y, h, coat_dk, coat_mid, coat_lt)
   coat_dk  = coat_dk  or "ink"
   coat_mid = coat_mid or "pine"
@@ -479,8 +562,13 @@ function K.conifer(x, y, h, coat_dk, coat_mid, coat_lt)
     -- Sunlit left boughs
     poly({{x, ty - tier_h}, {x + 1, ty - 1}, {x - half_w, ty - 1}}, coat_lt)
     if t < tiers then px(x - math.max(1, math.floor(half_w * 0.5)), ty - 2, "grass") end
+    if K.season == "winter" then
+      -- snow loaded on the sunlit boughs of each tier
+      line(x, ty - tier_h, x - half_w + 1, ty - 2, "white")
+      line(x + 1, ty - tier_h + 1, x + half_w - 2, ty - 2, "mist")
+    end
   end
-  px(x, y - h - 1, coat_lt)
+  px(x, y - h - 1, (K.season == "winter") and "white" or coat_lt)
 end
 
 -- Rounded sandstone/granite boulder with ground shadow and upper-left highlight.

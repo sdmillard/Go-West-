@@ -1,4 +1,5 @@
 -- Evening Emigrant Campfire Scene, 1848 (432x150 arrival/rest scene).
+-- no seasons: a night scene lit by the fire; the seasonal repaint cannot tell its dark ground from trees.
 -- Deep twilight sky with low western sunset glow, creek-bottom timberline, unhitched covered wagon,
 -- pitched canvas ridge tent, resting oxen, tripod cooking kettle, and warm radial firelight.
 local K = dofile(app.params.kit)
