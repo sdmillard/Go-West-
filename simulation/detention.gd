@@ -12,13 +12,13 @@ const LOSS={"penitentiary":"The party's leader was sent to the Missouri penitent
 static func number(value: Variant) -> bool:return (value is int or value is float) and is_finite(value)
 static func whole(value: Variant,low: int,high: int) -> bool:return number(value) and value==floor(value) and value>=low and value<=high
 static func valid_rules(value: Variant) -> bool:
-	if not value is Dictionary or value.size()!=10 or not value.get("note") is String:return false
+	if not value is Dictionary or value.size()!=11 or not value.get("note") is String:return false
 	for group in ["hearing_days","conviction"]:
 		if not value.get(group) is Dictionary or value[group].size()!=AUTHORITIES.size():return false
 		for authority in AUTHORITIES:
 			if group=="hearing_days" and not whole(value[group].get(authority),1,5):return false
 			if group=="conviction" and (not number(value[group].get(authority)) or value[group][authority]<0.05 or value[group][authority]>0.95):return false
-	for key in ["unidentified_factor","vouch_bonus"]:
+	for key in ["unidentified_factor","vouch_bonus","abandon_daily"]:
 		if not number(value.get(key)) or value[key]<0 or value[key]>1:return false
 	if not value.get("bail_cents") is Array or value.bail_cents.size()!=3 or not value.bail_cents.all(func(cents):return whole(cents,100,100000)):return false
 	return whole(value.get("fine_min_cents"),0,100000) and whole(value.get("bail_value_factor"),1,5) and whole(value.get("jail_day_cents"),1,10000) and whole(value.get("max_jail_days"),1,120)
@@ -50,7 +50,7 @@ static func value(known: Array) -> int:
 static func arrest(crime,game,current: Dictionary,surrendered: bool) -> void:
 	var known: Array=crime.Wanted.trial_charges(crime,game,current)
 	var who: String=authority(crime,game,current)
-	current["custody"]={"authority":who,"day":int(game.state.day),"hearing_day":int(game.state.day)+int(rules(crime).hearing_days[who]),"surrendered":surrendered,"accused":accused(crime,game,known),"vouched":-1}
+	current["custody"]={"authority":who,"day":int(game.state.day),"hearing_day":int(game.state.day)+int(rules(crime).hearing_days[who]),"surrendered":surrendered,"accused":accused(crime,game,known),"vouched":-1,"abandoned":[]}
 	current.stage="custody"
 	var names: String=", ".join(current.custody.accused.map(func(id):return game.party_health.members[int(id)].name))
 	game.journal.append("Day %d · %s %s. Held: %s. Hearing on day %d." % [game.state.day,"Surrendered to" if surrendered else "Taken by",{"county":"the Jackson County sheriff","army":"the soldiers","company":"an emigrant company"}[who],names,current.custody.hearing_day])
@@ -89,6 +89,7 @@ static func menu(crime,game,current: Dictionary) -> Dictionary:
 		"company":"An emigrant company holds them for a hearing by its own jury. It can order restitution, a whipping, banishment or, for a killing, hanging."}[who]
 	text+="\nHearing in %d day(s). The rest of the party camps nearby and eats as usual. Thin evidence can mean release; it is never certain." % days
 	if known.all(func(item):return not item.identified):text+=" Nobody has named the party for certain."
+	if 0 in current.custody.accused and game.party_health.living_count()>current.custody.accused.size():text+="\nWhile you sit in jail, a companion with little faith in you may give up and leave."
 	var options: Array=[crime.option("Wait for the hearing · %d day(s)" % days if days>0 else "Face the hearing","wait")]
 	var helper:=voucher(game,current,known)
 	if helper>=0:options.append(crime.option("Ask %s to speak for the accused" % game.party_health.members[helper].name,"vouch"))
@@ -117,8 +118,7 @@ static func choose(crime,game,current: Dictionary,command: String) -> bool:
 	else:
 		# Waiting is ordinary camp time: meals, illness and weather continue.
 		while int(game.state.day)<int(current.custody.hearing_day):
-			game._tick_day(true,false,"rest")
-			game._check_health()
+			held_day(crime,game,current)
 			if game.state.status!="traveling":
 				crime.result(game,"party_lost")
 				return true
@@ -129,18 +129,35 @@ static func choose(crime,game,current: Dictionary,command: String) -> bool:
 	if game.state.status=="traveling":game.pending=crime.menu(game)
 	return true
 ## Days in the county jail for a fine the party cannot pay. The party camps and eats while it waits.
-static func serve(crime,game,days: int) -> void:
+static func serve(crime,game,current: Dictionary,days: int) -> void:
 	for day in range(days):
 		if game.state.status!="traveling":return
-		game._tick_day(true,false,"rest")
-		game._check_health()
+		held_day(crime,game,current)
+## One day with the accused locked up. While the leader sits in jail, a companion may give up on the party:
+## more likely the lower their trust; Loyal companions never do.
+static func held_day(crime,game,current: Dictionary) -> void:
+	game._tick_day(true,false,"rest")
+	game._check_health()
+	if game.state.status!="traveling" or acting_leader(game)!=0 or 0 not in current.custody.accused:return
+	var leaving: Array=[]
+	for profile in game.characters.profiles.slice(1):
+		var id: int=int(profile.id)
+		if id in current.custody.accused or not game.party_health.is_active(game.party_health.members[id]) or "Loyal" in profile.get("specials",[]):continue
+		if crime.rng.randf()<abandon_chance(crime,profile):leaving.append(id)
+	if leaving.is_empty():return
+	current.custody.abandoned.append_array(leaving)
+	game.flee(leaving,"while the leader sat in jail")
+static func abandon_chance(crime,profile: Dictionary) -> float:
+	return clampf(float(rules(crime).abandon_daily)*(100.0-float(profile.trust))/50.0,0.0,1.0)
 static func valid_custody(crime,r: Dictionary,current: Dictionary,game) -> bool:
 	if not current.has("custody"):return current.stage!="custody"
 	var c: Variant=current.custody
-	if not c is Dictionary or c.size()!=6 or c.get("authority") not in AUTHORITIES or not whole(c.get("day"),int(current.day),int(game.state.day)) or not c.get("surrendered") is bool:return false
+	if not c is Dictionary or c.size()!=7 or not c.get("abandoned") is Array or c.get("authority") not in AUTHORITIES or not whole(c.get("day"),int(current.day),int(game.state.day)) or not c.get("surrendered") is bool:return false
 	if c.hearing_day!=int(c.day)+int(rules(crime).hearing_days[c.authority]) or not c.get("accused") is Array or c.accused.is_empty():return false
 	for id in c.accused:
 		if not whole(id,0,game.party_health.members.size()-1) or c.accused.count(id)!=1:return false
+	for id in c.abandoned:
+		if not whole(id,1,game.party_health.members.size()-1) or c.abandoned.count(id)!=1 or id in c.accused or not game.party_health.members[int(id)].get("fled",false):return false
 	if not whole(c.get("vouched"),-1,game.party_health.members.size()-1) or int(c.vouched)==0 or int(c.vouched) in c.accused:return false
 	if current.stage=="custody":return current.resolution=="" and not current.has("sentence") and int(game.state.day)<=int(c.hearing_day)
 	return current.has("sentence") and current.sentence.get("authority")==c.authority

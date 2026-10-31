@@ -121,6 +121,26 @@ func run() -> void:
 	for profile in game.characters.profiles.slice(1):profile.boundaries=game.characters.catalog.boundaries("Compassionate")
 	game.pending=game.crime.menu(game)
 	check(not offers(game,"vouch") or Detention.voucher(game,game.crime.incident(),[])>0,"Only a willing companion can vouch")
+	# Companions may give up on a jailed leader; Loyal ones never do.
+	game=town_theft()
+	current=game.crime.incident()
+	current.joining=[0]
+	current.custody.accused=[0]
+	odds(game,0.0)
+	game.crime.detention_data.abandon_daily=1.0
+	for profile in game.characters.profiles.slice(1):profile.trust=10
+	game.characters.profiles[1].specials=["Loyal"]
+	game.pending=game.crime.menu(game)
+	check("give up and leave" in game.pending.text,"The custody panel warns that companions may leave")
+	check(pick(game,"wait") and current.custody.abandoned==[2,3,4] and game.party_health.members[1].get("departed",false)==false,"Companions with little trust leave a jailed leader; a Loyal one stays")
+	check([2,3,4].all(func(id):return game.party_health.members[id].get("fled",false)) and game.state.status=="traveling","Those who left are departed, and the journey goes on")
+	roundtrip(game,"Abandoned while in jail")
+	bad=store.capture(game)
+	bad.crime.record.incidents.back().custody.abandoned=[1,2,3,4]
+	check(store.restore(bad)==null,"A save cannot list a companion who stayed as having left")
+	game=town_theft()
+	game.crime.detention_data.abandon_daily=1.0
+	check(Detention.abandon_chance(game.crime,{"trust":100})==0.0 and is_equal_approx(Detention.abandon_chance(game.crime,{"trust":50}),1.0),"Full trust never abandons; the chance grows as trust falls")
 	# Robbery in Missouri: the penitentiary. The leader is the player; the journey ends.
 	game=town_robbery()
 	current=game.crime.incident()

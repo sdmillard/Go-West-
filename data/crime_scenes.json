@@ -514,6 +514,7 @@
     },
     "unidentified_factor": 0.5,
     "vouch_bonus": 0.15,
+    "abandon_daily": 0.02,
     "fine_min_cents": 500,
     "bail_cents": [
       1000,

@@ -1008,7 +1008,7 @@ func valid_party(r: Dictionary,game) -> bool:
 	if not valid_betrayals(r,game):return false
 	# Nobody fled the party except in answer to an attack, or after turning on it.
 	for member in members:
-		if member.get("fled",false) and not r.attacks.any(func(attack):return attack is Dictionary and attack.get("responses") is Dictionary and attack.responses.get(str(int(member.id)),"") in ["fled","retaliated"] and attack.day==member.departure_day) and not r.betrayals.any(func(item):return int(item.member)==int(member.id) and int(item.day)==int(member.departure_day)) and not r.incidents.any(func(item):return (item.get("sentence",{}).get("banished",[])+item.get("sentence",{}).get("imprisoned",[])).any(func(id):return number(id) and int(id)==int(member.id)) and int(item.sentence.day)==int(member.departure_day)):return false
+		if member.get("fled",false) and not r.attacks.any(func(attack):return attack is Dictionary and attack.get("responses") is Dictionary and attack.responses.get(str(int(member.id)),"") in ["fled","retaliated"] and attack.day==member.departure_day) and not r.betrayals.any(func(item):return int(item.member)==int(member.id) and int(item.day)==int(member.departure_day)) and not r.incidents.any(func(item):return (item.get("sentence",{}).get("banished",[])+item.get("sentence",{}).get("imprisoned",[])).any(func(id):return number(id) and int(id)==int(member.id)) and int(item.sentence.day)==int(member.departure_day)) and not r.incidents.any(func(item):return item.get("custody") is Dictionary and item.custody.get("abandoned") is Array and item.custody.abandoned.any(func(id):return number(id) and int(id)==int(member.id))):return false
 	return true
 func valid_betrayals(r: Dictionary,game) -> bool:
 	var members: Array=game.party_health.members

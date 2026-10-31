@@ -30,11 +30,13 @@ At the hearing the custodian convicts with an authored chance: county 80%, army 
 
 The leader is the player. A leader sent to the penitentiary, sent east under escort, or hanged ends the journey, with its own loss reason. A companion sent away leaves the party alive. They take nothing from the wagon: no food, no spare clothing, only their personal gear. Their place in the party records says where they were sent. The rest of the party carries on.
 
-County jail days for an unpaid fine are served on the spot. The party waits in Independence until the term is over, and the days come off the season.
+Short stays are served on the spot: the days waiting for court, and county jail days for an unpaid fine (up to 30). The party waits in Independence until the leader is let out, and the days come off the season. Long terms (penitentiary, sent east, hanging) end the journey, as Spencer decided.
+
+**Abandonment.** Each day the leader sits in custody, every companion who is not held has a chance to give up and leave: 2% a day at trust 50, scaled by (100 − trust) / 50, so full trust never leaves and low trust leaves fast. Loyal companions never leave. Those who go take their departure share like any companion who flees, and are recorded in the custody's `abandoned` list.
 
 ## Saves
 
-Crime record **v10** adds a `custody` block to a held incident and four sentence fields: `authority`, `verdict`, `jail_days` and `imprisoned`. Version 9 sentences become emigrant-company convictions with no jail time, exactly as they were tried. Saved custody is checked: the hearing day must match its authority, the accused cannot be duplicated, and a voucher cannot be one of the accused. The previous rules fingerprint `bd9000a01c1cfd8482a0e2e345f43adccb0c5aefcccf30f09da3ec265084e2c2` is compatible through `economy_v1`.
+Crime record **v10** adds a `custody` block (authority, days, accused, voucher, abandoned) to a held incident and four sentence fields: `authority`, `verdict`, `jail_days` and `imprisoned`. Version 9 sentences become emigrant-company convictions with no jail time, exactly as they were tried. Saved custody is checked: the hearing day must match its authority, the accused cannot be duplicated, and a voucher cannot be one of the accused. The previous rules fingerprint `bd9000a01c1cfd8482a0e2e345f43adccb0c5aefcccf30f09da3ec265084e2c2` is compatible through `economy_v1`.
 
 ## Historical limits
 

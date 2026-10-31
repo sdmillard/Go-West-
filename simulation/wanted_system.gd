@@ -491,7 +491,7 @@ static func trial(crime,game,current: Dictionary,surrendered: bool,authority: St
 		game.state.loss_reason="The party's leader was hanged for murder." if kind=="hanged" else Detention.LOSS[kind]
 		game.pending={}
 		game.service_return={}
-	elif jail_days>0:Detention.serve(crime,game,jail_days)
+	elif jail_days>0:Detention.serve(crime,game,current,jail_days)
 static func merge_array(items: Array,item: Dictionary) -> void:
 	for old in items:
 		if old.id==item.id:return
