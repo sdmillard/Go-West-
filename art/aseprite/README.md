@@ -38,7 +38,12 @@ After `-Install`, run `godot --headless --path . --editor --import` and then `./
 `build.sh --seasons [scenes...]` (or `build.ps1 -Seasons`, not yet written) also builds `location_<name>_winter.png` and `location_<name>_autumn.png` for every location script. Those builds pass `season=winter` or `season=autumn`, and `K.season` is set to match.
 
 - `K.elm`, `K.willow` and `K.conifer` draw bare, turned or snow-laden trees themselves. A scene that paints its own broadleaf crowns takes its colours from `K.leaves(dark, mid, light)` (see `wakarusa.lua`).
-- `K.save` then repaints the flattened picture. In winter, grass and sage become snow, far hills turn pale, and snow lies on the top edge of evergreens and roofs. In autumn the grass dries to tan. Rock colours (ochre, gold, sand, silt) are left alone, so buttes, cliffs, sod and adobe keep their colour.
+- `K.save` then repaints the flattened picture. In winter, grass and sage become snow, far hills turn pale, and snow lies on the top edge of evergreens and roofs. Autumn depends on the region, set by the `REGION` table in `lib.lua` (`build.sh` passes the script name as `scene`):
+  - tallgrass Missouri and Kansas: copper, rust and wine prairie with russet oaks;
+  - Platte plains: straw with grey-green patches and gold cottonwoods;
+  - sage country: silver sage, yellow rabbitbrush and bleached grass;
+  - mountains: straw and rust meadows with gold larch and aspen among the conifers;
+  - west of the Cascades: grass green again after the autumn rains. Rock colours (ochre, gold, sand, silt) are left alone, so buttes, cliffs, sod and adobe keep their colour.
 - Never call `K.rnd` in season-only code. It would shift every later random mark, so the seasonal picture would stop matching the summer one.
 - Put `-- no seasons` near the top of a script to skip it. Indoor scenes, trading counters, the night camp, Independence and the endings are skipped this way.
 

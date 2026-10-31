@@ -33,7 +33,7 @@ for scene in "${SCENES[@]}"; do
   # --seasons: location pictures also get winter and autumn versions (see K.season in lib.lua)
   if [ "$SEASONS" = 1 ] && grep -q 'K.save("location_' "$HERE/scenes/$scene.lua" && ! grep -q 'no seasons' "$HERE/scenes/$scene.lua"; then
     for season in winter autumn; do
-      LOG="$("$EXE" -b --script-param "kit=$HERE/lib.lua" --script-param "out=$OUT" --script-param "season=$season" --script "$HERE/scenes/$scene.lua" 2>&1)" || { echo "$LOG"; exit 1; }
+      LOG="$("$EXE" -b --script-param "kit=$HERE/lib.lua" --script-param "out=$OUT" --script-param "season=$season" --script-param "scene=$scene" --script "$HERE/scenes/$scene.lua" 2>&1)" || { echo "$LOG"; exit 1; }
       echo "$LOG"
       if echo "$LOG" | grep -q '\.lua:[0-9]*:'; then echo "Scene failed: $scene ($season)" >&2; exit 1; fi
     done

@@ -64,10 +64,35 @@ end
 -- <name>_<season>.png. Spring and summer are the plain pictures.
 K.season = app.params.season
 if K.season == "" then K.season = nil end
+-- Autumn differs along the road, so each scene script belongs to a region (build.sh passes the
+-- script name as `scene`):
+--   tallgrass  Missouri and eastern Kansas: bluestem copper and wine-red, Indian grass orange,
+--              oaks russet, hickory and cottonwood gold
+--   plains     the Platte and high plains: short grass cured to straw with a grey-green cast,
+--              cottonwoods and willows bright gold along the rivers
+--   sage       Sweetwater, Green River, Snake River, eastern Oregon: sagebrush stays silver-green,
+--              rabbitbrush in yellow bloom, grass bleached straw, cottonwoods gold
+--   mountain   Bear River, Blue Mountains, Cascades: conifers dark with gold aspen and (in the
+--              Blues) western larch among them, meadows straw and rust
+--   west       west of the Cascades: autumn rains green the grass again, maples yellow
+local REGION = {}
+for _, n in ipairs({"elm_grove", "wakarusa", "kansas_river", "big_vermilion", "big_blue", "jail_county", "little_blue"}) do REGION[n] = "tallgrass" end
+for _, n in ipairs({"platte", "fort_kearny", "fort_kearny_early", "jail_army", "south_platte", "ash_hollow", "courthouse_rock",
+    "chimney_rock", "scotts_bluff", "fort_laramie", "deer_creek", "north_platte"}) do REGION[n] = "plains" end
+for _, n in ipairs({"horseshoe_creek", "bear_river", "blue_mountains", "grande_ronde", "barlow_pass", "laurel_hill"}) do REGION[n] = "mountain" end
+for _, n in ipairs({"eagle_creek", "oregon_city", "columbia_raft"}) do REGION[n] = "west" end
+K.region = REGION[app.params.scene or ""] or "sage"
 local SEASON_MAP = {
   winter = {grass="white", sage="stone_lt", haze="mist",
             far_hill="stone_lt"},
   autumn = {grass={"silt_lt", "silt_lt", "sand"}, sage="ochre", haze="far_hill"},
+}
+local AUTUMN_MAP = {
+  tallgrass = {grass={"rust", "rust", "rust", "ochre", "ochre", "brick_lt", "silt", "gold", "brick"}, sage={"ochre", "silt_lt", "rust"}, haze="far_hill"},
+  plains = {grass={"silt_lt", "silt_lt", "sand", "sage", "clap_sh", "silt"}, sage={"silt_lt", "sage", "sage"}, haze="far_hill"},
+  sage = {grass={"silt_lt", "sand", "clap_sh"}, sage={"sage", "silt_lt", "clap_sh", "silt_lt"}, haze="far_hill"},
+  mountain = {grass={"silt_lt", "sage", "ochre", "silt_lt", "rust"}, sage={"ochre", "silt_lt"}, haze="far_hill"},
+  west = {},
 }
 local CAPPED = {pine=true, leaf=true, ink=true, roof=true, roof_lt=true, roof_dk=true}
 local OPEN = {sky=true, sky_top=true, light_blue=true, mist=true, haze=true, far_hill=true,
@@ -76,7 +101,7 @@ local function seasonal(image, season)
   local name_of = {}
   for n, c in pairs(col) do name_of[c] = n end
   local src = image:clone()
-  local map = SEASON_MAP[season]
+  local map = (season == "autumn") and AUTUMN_MAP[K.region] or SEASON_MAP[season]
   local function at(x, y)
     if x < 0 or y < 0 or x >= W or y >= H then return nil end
     return name_of[src:getPixel(x, y)]
@@ -85,7 +110,21 @@ local function seasonal(image, season)
     for x = 0, W - 1 do
       local n = at(x, y)
       local t = n and map[n]
-      if type(t) == "table" then t = t[(x * 7 + y * 13) % #t + 1] end
+      if type(t) == "table" then
+        -- patches a few pixels wide (staggered like tufts), with a sprinkle of single pixels,
+        -- so the mix reads as grass rather than hatching or gravel
+        local function scramble(a, b)
+          local v = ((a * 374761393 + b * 668265263) ~ (a * b * 1274126177)) & 0x7fffffff
+          return ((v ~ (v >> 13)) * 1103515245) & 0x7fffffff
+        end
+        local cy = y // 2
+        local cx = (x + (cy % 2) * 3) // 6
+        local pick = scramble(cx, cy) >> 8
+        local dot = scramble(x, y) >> 8
+        if dot % 6 == 0 then pick = dot >> 3 end
+        t = t[pick % #t + 1]
+      end
+      if season == "autumn" and (K.region == "sage" or K.region == "plains") and n == "haze" and y > H * 0.5 and (x * 31 + y * 17) % 7 < 2 then t = "gold" end
       -- lone dark speckles in the grass go with the ground rather than staying green
       if (n == "leaf" or n == "pine") and y > H * 0.45 then
         local same = 0
@@ -103,10 +142,17 @@ local function seasonal(image, season)
   end
 end
 
+-- Autumn crown colours (dark, mid, light, tip) for the region: russet oak country in the east,
+-- yellow cottonwood, aspen and maple elsewhere.
+function K.autumn_leaves()
+  if K.region == "tallgrass" then return "brick", "rust", "ochre", "gold" end
+  return "ochre", "gold", "sand", "cream"
+end
+
 -- Leaf colours for a broadleaf crown drawn by hand in a scene: the summer colours as given, a
 -- turned set in autumn, and in winter a grey haze of bare twigs.
 function K.leaves(dk, md, lt)
-  if K.season == "autumn" then return "brick", "rust", "ochre" end
+  if K.season == "autumn" then return K.autumn_leaves() end
   if K.season == "winter" then return "ox", "storm_lt", "stone_dk" end
   return dk, md, lt
 end
@@ -404,7 +450,7 @@ function K.willow(x, y, s)
     return
   end
   local dark, mid, lit, tip = "pine", "leaf", "grass", "sage"
-  if K.season == "autumn" then dark, mid, lit, tip = "rust", "ochre", "gold", "sand" end
+  if K.season == "autumn" then dark, mid, lit, tip = "rust", "ochre", "gold", "sand"; if K.region == "tallgrass" then dark, mid, lit, tip = "brick", "rust", "ochre", "gold" end end
   ellipse(x, y - 3 * s, 6 * s, 4 * s, dark)
   ellipse(x - 1, y - 4 * s, 5 * s, 3 * s, mid)
   ellipse(x - 2, y - 5 * s, 3 * s, 2 * s, lit)
@@ -535,7 +581,7 @@ function K.elm(x, y, s)
     return
   end
   local dark, mid, lit, tip = "pine", "leaf", "grass", "sage"
-  if K.season == "autumn" then dark, mid, lit, tip = "brick", "rust", "ochre", "gold" end
+  if K.season == "autumn" then dark, mid, lit, tip = K.autumn_leaves() end
   for _, c in ipairs(clumps) do ellipse(x + c[1] * s, y + c[2] * s, c[3] * s, c[4] * s, dark) end
   for _, c in ipairs(clumps) do ellipse(x + c[1] * s - 1, y + c[2] * s - 1, c[3] * s - 2, c[4] * s - 2, mid) end
   for _, c in ipairs(clumps) do ellipse(x + c[1] * s - 2, y + c[2] * s - 2, math.max(1, c[3] * s - 5), math.max(1, c[4] * s - 4), lit) end
@@ -545,6 +591,10 @@ function K.conifer(x, y, h, coat_dk, coat_mid, coat_lt)
   coat_dk  = coat_dk  or "ink"
   coat_mid = coat_mid or "pine"
   coat_lt  = coat_lt  or "leaf"
+  -- mountain autumn: a western larch or aspen turned gold among the evergreens, now and then
+  if K.season == "autumn" and K.region == "mountain" and coat_mid == "pine" and (x * 7 + h * 3) % 5 == 0 then
+    coat_dk, coat_mid, coat_lt = "rust", "ochre", "gold"
+  end
   local trunk_h = math.max(3, math.floor(h * 0.22))
   rect(x - 1, y - trunk_h, 3, trunk_h + 1, "deep")
   px(x - 1, y - trunk_h + 1, "wood")
