@@ -111,7 +111,9 @@ func _initialize() -> void:
 	var cabin_rules: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/cabins.json"))
 	var cabin_places: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/scene_ambience.json")).scenes
 	for stop in cabin_rules.timber:
-		check(cabin_places.get(stop, {}).has("cabin"), "Timber stop has a cabin spot: " + stop)
+		# A stop still awaiting its arrival picture gets its cabin spot with the picture.
+		var awaiting: Array = JSON.parse_string(FileAccess.get_file_as_string("res://data/location_scenes.json")).get("awaiting_art", [])
+		check(cabin_places.get(stop, {}).has("cabin") or stop in awaiting, "Timber stop has a cabin spot, or awaits its picture: " + stop)
 	# Ambient effects sit inside the pictures they decorate.
 	var ambience: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/scene_ambience.json"))
 	for id in ambience.scenes:
