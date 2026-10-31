@@ -4,7 +4,7 @@ extends RefCounted
 ## or an emigrant jury anywhere else.
 ## Authored game rules from docs/FRONTIER_DETENTION_RESEARCH.md, not a historical sentencing table.
 const AUTHORITIES=["county","army","company","council"]
-const COMMANDS=["wait","bail","vouch"]
+const COMMANDS=["wait","bail","vouch","jailbreak"]
 const VERDICTS=["convicted","discharged","bailed"]
 ## Sentence kind by worst severity (theft, robbery, assault, killing) for each authority.
 const KINDS={"company":["restitution","robbery","assault","hanged"],"county":["fine","penitentiary","penitentiary","hanged"],"army":["restitution","sent_east","sent_east","sent_east"],"council":["returned","driven_out","driven_out","price"]}
@@ -38,6 +38,9 @@ static func rules(crime) -> Dictionary:return crime.detention_data
 static func authority(crime,game,current: Dictionary) -> String:
 	# A household's kin bring those who wronged it before their own council.
 	if crime.household(current.place):return "council"
+	# Whoever was attacked at the jail holds those they take again.
+	for who in ["county","army","company"]:
+		if current.place.begins_with("jail_%s:" % who):return who
 	if current.action=="pursuit" or crime.rules(current.place).kind=="fort":return "army"
 	if current.place.begins_with("wanted_posse:"):return "county"
 	if current.action!="wanted" and not crime.transient(current.place) and crime.mile(game,current.place)<=int(crime.wanted_data.posse_max_mile):return "county"
@@ -127,6 +130,10 @@ static func menu(crime,game,current: Dictionary) -> Dictionary:
 		var cents:=bail_cents(crime,known)
 		options.append(crime.option("Post bail and leave Missouri · $%.2f, forfeited" % (cents/100.0),"bail"))
 		text+="\nBail is security for appearing in court. Leaving forfeits it and the case stays on the books as answered by forfeit."
+	var rescue: Array=rescuers(crime,game,current)
+	if not rescue.is_empty() and game.can_fire():
+		options.append(crime.option("Break them out · %s fight the guards" % ", ".join(rescue.map(func(id):return game.party_health.members[int(id)].name)),"jailbreak"))
+		text+="\nThe rest of the party could try to break them out. The guards will fight; the prisoners have no arms, and a failed attempt puts everyone who took part before the same court."
 	# The panel's last row is its way back; custody has none.
 	options.append(crime.option("Held in custody","back"))
 	return {"id":"crime","crime_menu":true,"service_menu":true,"title":TITLES[who],"text":text,"choices":options}
@@ -153,10 +160,14 @@ static func life_chance(crime,game,current: Dictionary,known: Array) -> float:
 	return clampf(chance,0.0,1.0)
 static func can_choose(crime,game,current: Dictionary,command: String) -> bool:
 	if command=="wait":return true
+	if command=="jailbreak":return game.can_fire() and not rescuers(crime,game,current).is_empty() and not crime.living_staff(jail_place(crime,current)).is_empty()
 	if command=="vouch":return voucher(game,current,crime.Wanted.trial_charges(crime,game,current))>=0
 	return command=="bail" and can_bail(crime,game,current)
 static func choose(crime,game,current: Dictionary,command: String) -> bool:
 	if not can_choose(crime,game,current,command):return false
+	if command=="jailbreak":
+		jailbreak(crime,game,current)
+		return true
 	if command=="vouch":
 		var id:=voucher(game,current,crime.Wanted.trial_charges(crime,game,current))
 		current.custody.vouched=id
@@ -199,12 +210,54 @@ static func held_day(crime,game,current: Dictionary) -> void:
 	game.flee(leaving,"while the leader sat in jail")
 static func abandon_chance(crime,profile: Dictionary) -> float:
 	return clampf(float(rules(crime).abandon_daily)*(100.0-float(profile.trust))/50.0,0.0,1.0)
+## Free companions willing to fight the guards: not held themselves, and ready to kill if it comes to that.
+static func rescuers(crime,game,current: Dictionary) -> Array:
+	return game.party_health.members.filter(func(member):return int(member.id)!=0 and int(member.id) not in current.custody.accused and game.party_health.is_active(member) and game.characters.willing(int(member.id),"murder")).map(func(member):return int(member.id))
+## Where the prisoners are held: a household's own kin guard them; everyone else has a jail, a guard tent or a company guard.
+static func jail_place(crime,current: Dictionary) -> String:
+	if current.custody.authority=="council":return current.place
+	return "jail_%s:%d" % [current.custody.authority,int(current.id)]
+## A jailbreak is an assault on the guards, opened the moment the party breaks custody. The custody it broke is the incident just before it.
+static func jailbreak_incident(crime,current: Dictionary) -> bool:
+	return not broken_custody(crime,current).is_empty()
+static func broken_custody(crime,current: Dictionary) -> Dictionary:
+	if current.get("action","")!="assault" or int(current.get("id",0))<2:return {}
+	var before: Dictionary=crime.record.incidents[int(current.id)-2]
+	if not before.get("custody",{}).get("broken",false) or (crime.household(current.place) and before.place!=current.place):return {}
+	if not crime.household(current.place) and current.place!=jail_place(crime,before):return {}
+	return before
+## The prisoners in a jailbreak fight: those the broken custody held, unarmed.
+static func prisoners(crime,current: Dictionary) -> Array:
+	var before: Dictionary=broken_custody(crime,current)
+	return [] if before.is_empty() else before.custody.accused.duplicate()
+## Breaking custody ends it as an escape (its crime is now reported) and opens an assault on the guards, standing off.
+static func jailbreak(crime,game,current: Dictionary) -> void:
+	var place: String=jail_place(crime,current)
+	crime.add_transient(game,place)
+	var guards: Array=crime.living_staff(place)
+	var rescue: Array=rescuers(crime,game,current)
+	current.custody["broken"]=true
+	crime.result(game,"escaped")
+	current.stage="done"
+	var id: int=crime.record.incidents.size()+1
+	var attack: Dictionary={"id":id,"day":int(game.state.day),"place":place,"target":guards[0],"action":"assault","attempt":"missed","resolution":"","stage":"standoff","food":0,"cash_cents":0,"shots":0,"knowledge":{},"joining":current.custody.accused+rescue}
+	crime.record.incidents.append(attack)
+	crime.record.active={"id":id}
+	crime.service(place).alarmed=true
+	crime.observe(game,attack,"attempt",true)
+	game.characters.react_to_incident(game,"murder",id)
+	game.journal.append("Day %d · %s tried to break the prisoners out." % [game.state.day,", ".join(rescue.map(func(id_):return game.party_health.members[int(id_)].name))])
+	game.pending=crime.menu(game)
+## Guards beaten: the prisoners take back the arms they gave up.
+static func recover_arms(crime,game,current: Dictionary) -> void:
+	var before: Dictionary=broken_custody(crime,current)
+	if not before.is_empty():return_arms(game,before)
 static func valid_arms(arms: Variant) -> bool:
 	return arms is Dictionary and arms.keys().all(func(key):return key in preload("res://simulation/armory.gd").KEYS and whole(arms[key],1,100))
 static func valid_custody(crime,r: Dictionary,current: Dictionary,game) -> bool:
 	if not current.has("custody"):return current.stage!="custody"
 	var c: Variant=current.custody
-	if not c is Dictionary or c.size()!=(8 if c.has("arms") else 7) or (c.has("arms") and not valid_arms(c.arms)) or not c.get("abandoned") is Array or c.get("authority") not in AUTHORITIES or not whole(c.get("day"),int(current.day),int(game.state.day)) or not c.get("surrendered") is bool:return false
+	if not c is Dictionary or c.size()!=7+int(c.has("arms"))+int(c.has("broken")) or (c.has("broken") and (c.broken!=true or current.stage=="custody" or current.has("sentence") or current.resolution!="escaped")) or (c.has("arms") and not valid_arms(c.arms)) or not c.get("abandoned") is Array or c.get("authority") not in AUTHORITIES or not whole(c.get("day"),int(current.day),int(game.state.day)) or not c.get("surrendered") is bool:return false
 	if c.hearing_day!=int(c.day)+int(rules(crime).hearing_days[c.authority]) or not c.get("accused") is Array or c.accused.is_empty():return false
 	for id in c.accused:
 		if not whole(id,0,game.party_health.members.size()-1) or c.accused.count(id)!=1:return false
@@ -212,4 +265,4 @@ static func valid_custody(crime,r: Dictionary,current: Dictionary,game) -> bool:
 		if not whole(id,1,game.party_health.members.size()-1) or c.abandoned.count(id)!=1 or id in c.accused or not game.party_health.members[int(id)].get("fled",false):return false
 	if not whole(c.get("vouched"),-1,game.party_health.members.size()-1) or int(c.vouched)==0 or int(c.vouched) in c.accused:return false
 	if current.stage=="custody":return current.resolution=="" and not current.has("sentence") and int(game.state.day)<=int(c.hearing_day)
-	return current.has("sentence") and current.sentence.get("authority")==c.authority
+	return c.has("broken") or (current.has("sentence") and current.sentence.get("authority")==c.authority)

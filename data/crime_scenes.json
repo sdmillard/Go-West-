@@ -726,6 +726,106 @@
       "escape_injury": 0.3,
       "injury_damage": 20,
       "wagon_access": true
+    },
+    "jail_county": {
+      "kind": "jail",
+      "cash_cents": 1,
+      "food_lot": 0,
+      "loot_limit": 0,
+      "injury_damage": 20,
+      "theft_success": 0.0,
+      "compliance": 0.0,
+      "shot_hit": 0.6,
+      "shot_fatal": 0.35,
+      "escape_capture": 0.7,
+      "escape_injury": 0.4,
+      "breakout_shots": 3,
+      "wagon_access": false,
+      "title": "The Jackson County jail",
+      "breakout": 0.35,
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "jailer"
+        },
+        {
+          "id": "deputy",
+          "role": "deputy"
+        },
+        {
+          "id": "guard",
+          "role": "deputy"
+        }
+      ],
+      "note": "An authored encounter for a jailbreak, not a named historical group or event."
+    },
+    "jail_army": {
+      "kind": "jail",
+      "cash_cents": 1,
+      "food_lot": 0,
+      "loot_limit": 0,
+      "injury_damage": 20,
+      "theft_success": 0.0,
+      "compliance": 0.0,
+      "shot_hit": 0.6,
+      "shot_fatal": 0.35,
+      "escape_capture": 0.7,
+      "escape_injury": 0.4,
+      "breakout_shots": 3,
+      "wagon_access": false,
+      "title": "The guard tent at Fort Kearny",
+      "breakout": 0.25,
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "sergeant"
+        },
+        {
+          "id": "sentry",
+          "role": "soldier"
+        },
+        {
+          "id": "guard",
+          "role": "soldier"
+        },
+        {
+          "id": "picket",
+          "role": "soldier"
+        }
+      ],
+      "note": "An authored encounter for a jailbreak, not a named historical group or event."
+    },
+    "jail_company": {
+      "kind": "jail",
+      "cash_cents": 1,
+      "food_lot": 0,
+      "loot_limit": 0,
+      "injury_damage": 20,
+      "theft_success": 0.0,
+      "compliance": 0.0,
+      "shot_hit": 0.6,
+      "shot_fatal": 0.35,
+      "escape_capture": 0.7,
+      "escape_injury": 0.4,
+      "breakout_shots": 3,
+      "wagon_access": false,
+      "title": "An emigrant company's guard",
+      "breakout": 0.45,
+      "staff": [
+        {
+          "id": "keeper",
+          "role": "company guard"
+        },
+        {
+          "id": "guard",
+          "role": "company guard"
+        },
+        {
+          "id": "watch",
+          "role": "company guard"
+        }
+      ],
+      "note": "An authored encounter for a jailbreak, not a named historical group or event."
     }
   },
   "unarmed": {

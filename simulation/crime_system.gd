@@ -1,6 +1,6 @@
 extends RefCounted
 ## Persistent local people, finite loot and staged incidents. No UI or global RNG.
-const COMMANDS=["theft","robbery","shoot","assault","raid","take","flee","breakout","surrender","finish","payoff","back","ride","wait","bail","vouch"]
+const COMMANDS=["theft","robbery","shoot","assault","raid","take","flee","breakout","surrender","finish","payoff","back","ride","wait","bail","vouch","jailbreak"]
 const STAGES=["loot","escape","standoff","custody","report","done"]
 const ATTEMPTS=["unseen","noticed","complied","resisted","missed","wounded","killed","raided","caught"]
 const RESOLUTIONS=["","left","escaped","captured","surrendered","party_lost","tried","paid"]
@@ -9,6 +9,7 @@ const FACTS=["attempt","loot","escape"]
 ## Venue wording. A store yields food and cash; a toll gate or ferry yields its cash box and passage.
 const KINDS={
 	"pursuers":{"journal":"Wanted","noun":"the pursuers"},
+	"jail":{"journal":"Jailbreak","noun":"the guards"},
 	"store":{"journal":"Store","noun":"the store","theft":"Take supplies without paying · 1 day","raid":"Enter the store and search for remaining supplies · 1 day"},
 	"toll":{"journal":"Toll gate","noun":"the toll gate","theft":"Slip the wagons past the gate without paying · 1 day","raid":"Search the gatekeeper's cabin for the toll money · 1 day","take":"Take $%.2f from the toll box and pass the gate · 1 day","passage":"the gate will be behind you"},
 	"fort":{"journal":"Fort","noun":"the army post","theft":"Take rations from the commissary tent · 1 day","raid":"Search the commissary tent for rations and the cash box · 1 day"},
@@ -31,8 +32,8 @@ const BETRAYAL_RESULTS={"theft":["stole","stopped"],"attack":["missed","wounded"
 const TRADERS:="passing_traders"
 ## Emigrant families camped near the road work the same way, named by their camp.
 const EMIGRANTS:="passing_emigrants"
-const TEMPLATES={"passing:":TRADERS,"emigrants:":EMIGRANTS,"wanted_posse:":"posse","wanted_regulators:":"regulators","wanted_hunters:":"bounty_hunters"}
-const TEMPLATE_KINDS={TRADERS:"traders",EMIGRANTS:"emigrants","posse":"pursuers","regulators":"pursuers","bounty_hunters":"pursuers"}
+const TEMPLATES={"passing:":TRADERS,"emigrants:":EMIGRANTS,"wanted_posse:":"posse","wanted_regulators:":"regulators","wanted_hunters:":"bounty_hunters","jail_county:":"jail_county","jail_army:":"jail_army","jail_company:":"jail_company"}
+const TEMPLATE_KINDS={TRADERS:"traders",EMIGRANTS:"emigrants","posse":"pursuers","regulators":"pursuers","bounty_hunters":"pursuers","jail_county":"jail","jail_army":"jail","jail_company":"jail"}
 const Wanted=preload("res://simulation/wanted_system.gd")
 const Detention=preload("res://simulation/detention.gd")
 var wanted_data: Dictionary={}
@@ -105,9 +106,9 @@ func load_data(value: Variant) -> bool:
 		# A fort's commissary holds its own stock; soldiers who stop an escape force a standoff.
 		var fort_keys: Array=["food_stock","breakout","breakout_shots"]
 		for key in fort_keys:
-			if scene.has(key)!=((scene.kind in ["fort","pursuers","household"] and key!="food_stock") or scene.kind=="fort" or (key=="food_stock" and scene.kind=="emigrants")):return false
+			if scene.has(key)!=((scene.kind in ["fort","pursuers","household","jail"] and key!="food_stock") or scene.kind=="fort" or (key=="food_stock" and scene.kind=="emigrants")):return false
 		if scene.has("food_stock") and not whole(scene.food_stock,1,2000):return false
-		if scene.kind in ["fort","pursuers","household"] and ( not number(scene.breakout) or scene.breakout<0 or scene.breakout>1 or not whole(scene.breakout_shots,1,5)):return false
+		if scene.kind in ["fort","pursuers","household","jail"] and ( not number(scene.breakout) or scene.breakout<0 or scene.breakout>1 or not whole(scene.breakout_shots,1,5)):return false
 		# Only soldiers and a household's kin ride after a party; a chase ends in the same standoff as a blocked escape.
 		if scene.has("pursuit"):
 			var chase: Variant=scene.pursuit
@@ -415,8 +416,12 @@ func menu(game) -> Dictionary:
 	elif current.stage=="standoff":
 		var shots: int=mini(int(scene.breakout_shots),int(game.state.bullets))
 		var captors: String="Men of the household" if household(place) else "Soldiers"
-		text=("%s from %s rode after you and have caught up. " % [captors,game.route.nodes[node_of(place)].name] if current.action=="pursuit" else "%s have blocked the way out. " % captors)+"Shooting your way out spends up to %d bullets; some of you will likely be hurt, and you may still be taken. Surrender brings a trial; a known killing can mean hanging." % int(scene.breakout_shots)
-		options=[option("Shoot your way out · %d bullet(s)" % shots,"breakout"),option("Surrender","surrender")]
+		if Detention.jailbreak_incident(self,current):
+			text="%s stand between your party and the prisoners. Breaking them out is a fight: some of you will likely be hurt, the prisoners have no arms, and you may all be taken. Surrender brings a trial for this too." % ("The household's kin" if household(place) else str(rules(place).title))
+			options=[option("Break them out · fight","breakout"),option("Surrender","surrender")]
+		else:
+			text=("%s from %s rode after you and have caught up. " % [captors,game.route.nodes[node_of(place)].name] if current.action=="pursuit" else "%s have blocked the way out. " % captors)+"Shooting your way out spends up to %d bullets; some of you will likely be hurt, and you may still be taken. Surrender brings a trial; a known killing can mean hanging." % int(scene.breakout_shots)
+			options=[option("Shoot your way out · %d bullet(s)" % shots,"breakout"),option("Surrender","surrender")]
 		if current.action=="pursuit":
 			options.append(option("Flee the detachment · 1 day, risk of capture","flee"))
 			if Wanted.can_ride_off(game):options.append(option(Wanted.ride_label(game),"ride"))
@@ -666,7 +671,7 @@ func choose(game,command: String,left: Array=[]) -> bool:
 		current.shots+=shots
 		# Each shot may drop a soldier.
 		for shot in range(shots):
-			var targets: Array=living_staff(place).filter(func(uid):return uid!=owner_id(place))
+			var targets: Array=living_staff(place).filter(func(uid):return uid!=owner_id(place) or Detention.jailbreak_incident(self,current))
 			if targets.is_empty() or rng.randf()>=scene.shot_hit:continue
 			var soldier: Dictionary=record.actors[targets[0]]
 			soldier.health=0 if soldier.health<=40 or rng.randf()<scene.shot_fatal else int(soldier.health)-40
@@ -685,6 +690,10 @@ func choose(game,command: String,left: Array=[]) -> bool:
 		if rng.randf()>=chance:
 			result(game,"captured")
 			return true
+		if Detention.jailbreak_incident(self,current):
+			if actor(place,current.target).health==0:current.attempt="killed"
+			elif actor(place,current.target).health<100:current.attempt="wounded"
+			Detention.recover_arms(self,game,current)
 		observe(game,current,"escape",true)
 		result(game,"escaped")
 	Remains.sync(game)
@@ -1133,7 +1142,8 @@ func valid(value: Variant,game) -> bool:
 			if chase.is_empty() or current.stage in ["loot","escape"] or r.incidents.slice(0,index).any(func(other):return other.get("place")==current.place and other.get("action")=="pursuit"):return false
 			if not r.reports.any(func(report):return report is Dictionary and report.get("origin")==current.place and whole(report.get("incident"),1,index) and r.incidents[int(report.incident)-1].get("resolution")=="escaped" and int(current.day)-int(report.get("day",0))<=int(wanted_data.army_max_days) and int(current.day)>=int(report.get("day",0))):return false
 		if (current.stage in ["loot","escape","standoff","custody"])!=(current.resolution==""):return false
-		if current.stage=="standoff" and rules(current.place).kind not in ["fort","household"]:return false
+		if current.stage=="standoff" and rules(current.place).kind not in ["fort","household","jail"]:return false
+		if rules(current.place).kind=="jail" and current.action!="assault":return false
 		if current.stage=="loot" and current.attempt not in ["unseen","complied","killed","raided","resisted"]:return false
 		if current.attempt!="unseen" and not r.services[current.place].alarmed:return false
 		if current.attempt=="killed" and r.actors[current.target].health!=0:return false
@@ -1142,7 +1152,7 @@ func valid(value: Variant,game) -> bool:
 		if current.target!=owner_id(current.place) and (current.stage=="loot" or current.food>0 or current.cash_cents>0):return false
 		# Only soldiers force the extra shots of a breakout.
 		var extra: int=int(current.shots)-(1 if current.action=="shoot" else 0)
-		if extra<0 or extra>(int(rules(current.place).breakout_shots) if rules(current.place).kind in ["fort","household"] else 0) or not current.get("knowledge") is Dictionary or current.knowledge.size()>game.party_health.members.size()+staff_ids(current.place).size():return false
+		if extra<0 or extra>(int(rules(current.place).breakout_shots) if rules(current.place).kind in ["fort","household","jail"] else 0) or not current.get("knowledge") is Dictionary or current.knowledge.size()>game.party_health.members.size()+staff_ids(current.place).size():return false
 		var local:=0
 		for uid in current.knowledge:
 			if not r.people.has(uid) and uid not in staff_ids(current.place):return false
@@ -1248,6 +1258,9 @@ func build_tactical_config(game, command: String = "") -> Dictionary:
 	# A household fights among its lodges and stores, laid out like a camp.
 	if venue_kind == "household":
 		venue_kind = "emigrants"
+	# Guards are fought where they hold the prisoners: the county's brick jail, the army's guard tent, a company's camp.
+	if venue_kind == "jail":
+		venue_kind = {"jail_county": "store", "jail_army": "fort"}.get(TEMPLATES[place.substr(0, place.find(":") + 1)], "emigrants")
 	var place_title: String = String(scene.get("title", place))
 	if game.route.nodes.has(node_of(place)):
 		place_title = String(game.route.nodes[node_of(place)].get("name", place_title))
@@ -1301,7 +1314,8 @@ func build_tactical_config(game, command: String = "") -> Dictionary:
 
 	var enemies: Array = []
 	var staff_list: Array = living_staff(place)
-	if (command == "breakout" or current.get("stage", "") == "standoff") and String(current.get("action", "")) != "wanted":
+	# Every guard stands against a jailbreak.
+	if (command == "breakout" or current.get("stage", "") == "standoff") and String(current.get("action", "")) != "wanted" and not Detention.jailbreak_incident(self, current):
 		var non_owner := staff_list.filter(func(uid): return uid != owner_id(place))
 		if not non_owner.is_empty():
 			staff_list = non_owner
@@ -1404,7 +1418,7 @@ func apply_tactical_result(game, session: Dictionary) -> void:
 
 	# 3. Apply enemy actor health & witness/kill bookkeeping while respecting save validator bounds.
 	var is_wanted_act: bool = String(current.get("action", "")) == "wanted"
-	var is_fort_like: bool = String(scene.get("kind", "")) in ["fort", "pursuers", "household"]
+	var is_fort_like: bool = String(scene.get("kind", "")) in ["fort", "pursuers", "household", "jail"]
 	var max_breakout_shots: int = int(scene.get("breakout_shots", 0)) if is_fort_like else 0
 	var max_kills_allowed: int = max_breakout_shots if is_wanted_act else 99
 
@@ -1446,7 +1460,7 @@ func apply_tactical_result(game, session: Dictionary) -> void:
 	var target_uid := String(current.get("target", owner_id(place)))
 	var keeper := actor(place, target_uid)
 	var any_killed: bool = int(keeper.health) == 0 or not current.get("kills", []).is_empty()
-	if String(current.get("action", "")) == "shoot":
+	if String(current.get("action", "")) == "shoot" or Detention.jailbreak_incident(self, current):
 		if int(keeper.health) == 0:
 			current.knowledge.erase(target_uid)
 			current.attempt = "killed"
@@ -1468,6 +1482,7 @@ func apply_tactical_result(game, session: Dictionary) -> void:
 
 	if outcome == "victory":
 		if reason == "breakout" or String(current.get("action", "")) in ["pursuit", "wanted"]:
+			if Detention.jailbreak_incident(self, current):Detention.recover_arms(self, game, current)
 			observe(game, current, "escape", true)
 			result(game, "escaped")
 		elif String(current.get("action", "")) == "shoot":
@@ -1500,4 +1515,7 @@ func apply_tactical_result(game, session: Dictionary) -> void:
 	else:
 		result(game, "captured")
 	Remains.sync(game)
+	# The panel underneath the fight shows where the incident now stands.
+	if game.state.status == "traveling" and not incident().is_empty():
+		game.pending = menu(game)
 

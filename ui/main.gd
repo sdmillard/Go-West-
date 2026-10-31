@@ -1262,6 +1262,15 @@ func _service_choice(index: int) -> void:
 		return
 	if DisplayServer.get_name() != "headless" and game.pending.get("crime_menu", false):
 		var ccmd := String(game.pending.choices[index].get("crime_command", ""))
+		# A jailbreak goes straight from the custody panel into the fight with the guards.
+		if ccmd == "jailbreak" and game.choose(index):
+			crime_category = ""
+			service_window.hide()
+			_pause_travel()
+			if _open_tactical_combat("breakout"):
+				return
+			_show_service()
+			return
 		if ccmd in ["shoot", "breakout"] and int(game.state.bullets) > 0:
 			crime_category = ""
 			service_window.hide()
@@ -1754,6 +1763,11 @@ func _choose(index: int) -> void:
 	if DisplayServer.get_name() != "headless" and game.can_choose(index):
 		if game.pending.get("crime_menu", false):
 			var ccmd := String(game.pending.choices[index].get("crime_command", ""))
+			if ccmd == "jailbreak" and game.choose(index):
+				if _open_tactical_combat("breakout"):
+					return
+				_refresh()
+				return
 			if ccmd in ["shoot", "breakout"] and int(game.state.bullets) > 0:
 				if _open_tactical_combat(ccmd):
 					return
