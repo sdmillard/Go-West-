@@ -485,7 +485,7 @@ static func trial(crime,game,current: Dictionary,surrendered: bool,authority: St
 	var held: String=", ".join(imprisoned.map(func(id):return game.party_health.members[int(id)].name))
 	var text: String
 	var taken: String="$%.2f%s" % [paid/100.0,(" and "+", ".join(goods.keys().map(func(id):return "%d %s" % [goods[id],id]))) if not goods.is_empty() else ""]
-	var country: String=str(game.context.data.regions.get(str(game.route.nodes[crime.node_of(current.place)].get("hunting_region","")),{}).get("label","this country"))
+	var country: String=str(game.context.data.regions.get(str(game.route.nodes[crime.node_of(current.place)].get("hunting_region","")),{}).get("label","this country")) if crime.household(current.place) else ""
 	match kind:
 		"hanged":text="Hanged for a known killing. The journey is over."
 		"returned":text="The household's council took %s for the theft, the goods' worth twice over. The household is repaid. (Invented rule.)" % taken
