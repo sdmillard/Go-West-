@@ -261,11 +261,12 @@ func valid_nutrients(batch: Dictionary) -> bool:
 
 ## Meals share a produce serving, then use other food; extra produce feeds shortages.
 ## Discarding/selling still uses remove(), without crediting dietary vitamins.
-func eat(amount: int,party_size: int,total: int,vitamin_offset: float=0.0) -> float:
+## vitamin_target < 0 serves the full shared vitamin-C portion; table meals pass a smaller planned one.
+func eat(amount: int,party_size: int,total: int,vitamin_offset: float=0.0,vitamin_target: float=-1.0) -> float:
 	var remaining:=amount
 	last_serving={"lb":float(data.weights_lb.food),"expires":1000100,"vitamin_c_lb":0.0}
 	var vitamin:=vitamin_offset
-	var target: float=party_size*float(data.foraging.vitamin_c_lb_per_person)
+	var target: float=party_size*float(data.foraging.vitamin_c_lb_per_person) if vitamin_target<0.0 else vitamin_target
 	var produce_total:=0
 	for batch in fresh:
 		if batch.get("vitamin_c",false):produce_total+=int(batch.pounds)

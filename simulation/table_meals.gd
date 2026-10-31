@@ -1,6 +1,18 @@
 extends RefCounted
 ## Exact edible table products alongside the existing whole-unit staple/meat inventory.
 ## An uneaten part of the final whole serving remains physical food, never calorie credit.
+## How much of the shared vitamin-C portion the party can use today. Reserves hold
+## onset_days of debt; a full portion repays VITAMIN_REPLENISHMENT_RATIO days. Fresh produce
+## spoils in days, so it is eaten as before; dried fruit keeps for months, so the cook
+## only opens what today's debt can absorb instead of feeding a full reserve.
+static func vitamin_need(game) -> float:
+ var health=game.party_health
+ var worst:=0
+ for member in health.members:
+  if not health.is_active(member):continue
+  if member.conditions.any(func(c):return c.id=="scurvy"):return 1.0
+  worst=maxi(worst,int(member.get("vitamin_debt_milli",int(member.get("vitamin_days",health.days_without_fresh))*1000)))
+ return clampf(float(worst+1000)/float(health.VITAMIN_REPLENISHMENT_RATIO*1000),0.0,1.0)
 static func serve(game,needed: int,vitamin_offset: float=0.0) -> Dictionary:
  var stock=game.livestock
  var provisions=game.provisions
@@ -15,14 +27,20 @@ static func serve(game,needed: int,vitamin_offset: float=0.0) -> Dictionary:
  var target: float=int(game.state.party_size)*float(provisions.data.foraging.vitamin_c_lb_per_person)
  var vegetables:=0
  var planned:=vitamin
+ # Sickness or a debt a full portion can absorb serves the whole portion, rounded up.
+ var preserved_target: float=target*vitamin_need(game)
+ provisions.fresh.sort_custom(func(a,b):return a.expires<b.expires)
  for batch in provisions.fresh:
   if not batch.get("vitamin_c",false) or planned>=target:continue
   var per_unit: float=batch.get("vitamin_c_per_unit",provisions.mass_ratio(batch))
   var take: int=mini(int(batch.pounds),ceili((target-planned)/per_unit))
+  if batch.get("preserved",false) and preserved_target<target:
+   if planned>=preserved_target:continue
+   take=mini(int(batch.pounds),floori((preserved_target-planned)/per_unit+0.000001))
   vegetables+=take;planned+=take*per_unit
  vegetables=mini(mini(vegetables,needed),int(game.state.food))
  if vegetables>0:
-  vitamin=provisions.eat(vegetables,int(game.state.party_size),int(game.state.food),vitamin)
+  vitamin=provisions.eat(vegetables,int(game.state.party_size),int(game.state.food),vitamin,planned)
   game.state.food-=vegetables;ordinary+=vegetables;remaining-=vegetables*unit
  stock.record.products.sort_custom(func(a,b):return a.expires<b.expires)
  for p in stock.record.products:
@@ -38,7 +56,7 @@ static func serve(game,needed: int,vitamin_offset: float=0.0) -> Dictionary:
  stock.record.products=stock.record.products.filter(func(p):return float(p.kcal)>0.000000001)
  var whole: int=mini(int(game.state.food),ceili(maxf(0,remaining-0.000000001)/unit))
  if whole>0:
-  vitamin=provisions.eat(whole,int(game.state.party_size),int(game.state.food),vitamin)
+  vitamin=provisions.eat(whole,int(game.state.party_size),int(game.state.food),vitamin,maxf(planned,vitamin))
   game.state.food-=whole;ordinary+=whole
   var excess: float=maxf(0,whole*unit-remaining)
   remaining=maxf(0,remaining-whole*unit)

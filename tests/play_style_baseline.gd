@@ -98,8 +98,13 @@ func run():
       acts[kind]+=1
       okay=game.open_crime() and pick(game,"crime_command",kind)
      elif style in ["reckless","fighter"] and reckless_choice(game,style):okay=true
-     else:okay=act(game,profile,aim,count)
-     if not okay:outcome="policy_blocked";errors.append({"run":id,"error":outcome,"pending":game.pending.get("id",""),"day":game.state.day,"stage":game.crime.incident().get("stage",""),"choices":game.pending.get("choices",[]).map(func(c):return [c.get("label",""),c.get("crime_command","")])});break
+     else:
+      okay=act(game,profile,aim,count)
+      # The shared bot gives up when a hunt cannot start (for example no long gun left); move on instead.
+      if not okay and game.pending.is_empty() and game.state.status=="traveling":
+       count["fallbacks"]=int(count.get("fallbacks",0))+1
+       okay=game.travel() or game.rest()
+     if not okay:outcome="policy_blocked";errors.append({"run":id,"error":outcome,"pending":game.pending.get("id",""),"day":game.state.day,"stage":game.crime.incident().get("stage",""),"status":game.state.status,"can_act":game._can_act(),"repair":game.camp_repair.blocked(game),"raft":not game.raft.is_empty(),"hunt":not game.hunt.is_empty(),"vehicle":game.state.vehicle,"oxen":game.state.oxen,"journal":game.journal.slice(-4),"choices":game.pending.get("choices",[]).map(func(c):return [c.get("label",""),c.get("crime_command","")])});break
      idle=idle+1 if day==game.state.day and mile==game.state.miles else 0
      if idle>40:outcome="policy_stalled";errors.append({"run":id,"error":outcome,"pending":game.pending.get("id","")});break
      if game.state.miles>mile:count.travel_days+=1
@@ -117,7 +122,9 @@ func run():
     var record: Dictionary=game.crime.record
     rows.append({"style":style,"profession":profession,"seed":seed_value,"month":style_month(style),"outcome":outcome,"loss_reason":str(game.state.get("loss_reason","")),
      "days":int(game.state.day),"arrival_month":int(game.calendar().month),"miles":int(game.state.miles),"survivors":int(game.state.party_size),"leader_alive":bool(leader.alive),
-     "deaths":deaths,"departures":game.party_health.members.filter(func(m):return m.get("departed",false)).size(),
+     "deaths":deaths,"scurvy_onsets":game.party_health.members.reduce(func(n,m):return n+m.history.filter(func(h):return h.ends_with("has scurvy.")).size(),0),
+     "scurvy_recoveries":game.party_health.members.reduce(func(n,m):return n+m.history.filter(func(h):return h.ends_with("recovered from scurvy.")).size(),0),
+     "scurvy_onset_miles":[],"departures":game.party_health.members.filter(func(m):return m.get("departed",false)).size(),
      "start_cash":start_cash,"outfit_cents":outfit_cents,"end_cash":game.state.money,"min_cash":min_cash,"end_food":int(game.state.food),"min_food":min_food,
      "oxen":int(game.state.oxen),"bullets":int(game.state.bullets),"audit":game.audit.duplicate(),"counts":count.duplicate(),
      "events":events,"fights":game.combat.history.map(func(r):return {"event":r.get("event",""),"tactic":r.get("tactic",""),"outcome":r.get("outcome","")}),
