@@ -69,6 +69,16 @@ func _init(game):
   if feed_lb>0:
    equipment.add_child(words(str(game.livestock.data.supplies[kind].label)))
    equipment.add_child(words("%.2f lb" % feed_lb));equipment.add_child(words("%.2f" % feed_lb))
+ # Arms: each traveler's own rifle and knife are personal gear; only the rest add weight.
+ var arms: Script=preload("res://simulation/armory.gd")
+ var own: int=int(game.state.get("arms_home",0))
+ for key in arms.KEYS:
+  var held: int=arms.count(game.state,key)
+  if held==0:continue
+  var spare: int=maxi(0,held-int(arms.data.home_kit.get(key,0))*own)
+  equipment.add_child(words(str(arms.NAMES[key][1]).capitalize()))
+  equipment.add_child(words(str(held)+(" (%d own)" % (held-spare) if spare<held else "")))
+  equipment.add_child(words("%.1f" % (spare*float(arms.data.weights_lb[key]))))
  var loose: Dictionary=game.Mounts.loose_tack(game.provisions.data.mounts,game.state)
  for key in loose:
   if int(loose[key])>0:

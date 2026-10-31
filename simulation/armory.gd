@@ -62,12 +62,18 @@ static func loadout(state: Dictionary,fighters: int) -> Array:
 	var result: Array=[]
 	for i in range(fighters):result.append({"weapon":guns[i] if i<guns.size() else "","blade":blades[i] if i<blades.size() else ""})
 	return result
-## Fill in each squad member's arms on a tactical config.
-static func equip(config: Dictionary,state: Dictionary) -> Dictionary:
-	var kit: Array=loadout(state,config.get("squad",[]).size())
+## Fill in each squad member's arms on a tactical config. Prisoners (unarmed, by squad id) fight bare-handed
+## and take nothing from the party's stock.
+static func equip(config: Dictionary,state: Dictionary,unarmed: Array=[]) -> Dictionary:
+	var armed: Array=config.get("squad",[]).filter(func(member):return str(member.get("id","")) not in unarmed.map(func(id):return str(id)))
+	var kit: Array=loadout(state,armed.size())
 	for i in range(kit.size()):
-		config.squad[i]["weapon"]=kit[i].weapon
-		config.squad[i]["blade"]=kit[i].blade
+		armed[i]["weapon"]=kit[i].weapon
+		armed[i]["blade"]=kit[i].blade
+	for member in config.get("squad",[]):
+		if not member.has("weapon"):
+			member["weapon"]=""
+			member["blade"]=""
 	return config
 const NAMES={"rifles":["rifle","rifles"],"shotguns":["shotgun","shotguns"],"pistols":["pistol","pistols"],"revolvers":["Colt revolver","Colt revolvers"],"knives":["knife","knives"],"hatchets":["hatchet","hatchets"]}
 ## "1 Colt revolver, 2 knives", in KEYS order.

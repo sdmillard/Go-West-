@@ -2187,7 +2187,7 @@ func start_tactical_combat(command: String = "") -> bool:
 	if cfg.is_empty():
 		return false
 	cfg["combat_wins"] = combat.victories()
-	Armory.equip(cfg, state)
+	Armory.equip(cfg, state, crime.Detention.prisoners(crime, crime.incident()))
 	tactical_session = tactical.start_session(cfg)
 	last_tactical = {}
 	return not tactical_session.is_empty()
