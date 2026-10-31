@@ -2288,6 +2288,15 @@ func _build_trail_tactical_config(command: String) -> Dictionary:
 	}
 
 
+## The event's own way out (flee, run, turn aside): a plain choice that costs time and no fight.
+func _trail_escape_choice(choices: Array) -> Dictionary:
+	for ch in choices:
+		var fx: Dictionary = ch.get("effects", {})
+		if int(fx.get("days", 0)) > 0 and not ch.has("combat") and not ch.has("risk") and not ch.has("requires"):
+			return ch
+	return {}
+
+
 func tactical_step(action: Dictionary) -> Dictionary:
 	if tactical_session.is_empty():
 		return {}
@@ -2383,14 +2392,20 @@ func _apply_trail_tactical_result(session: Dictionary) -> void:
 	if outcome_raw == "victory":
 		journal.append(String(choice.get("result", "The attackers are driven off.")))
 	elif outcome_raw == "retreated":
-		if int(state.oxen) > 0:
-			_apply({"ox_health": -10})
-		elif Mounts.animals(state) > 0:
-			_apply({"horse_health": -10})
-		if fight_id == "horse_thieves":
-			journal.append("You pull back under fire; the thieves drive off the stolen stock.")
+		# Breaking off a fight costs at least what fleeing would have cost from the start.
+		var escape: Dictionary = {} if fight_id == "horse_thieves" else _trail_escape_choice(choices)
+		if not escape.is_empty():
+			_apply(escape.get("effects", {}))
+			journal.append(String(escape.get("result", "You pull the party back from the skirmish under fire.")))
 		else:
-			journal.append("You pull the party back from the skirmish under fire.")
+			if int(state.oxen) > 0:
+				_apply({"ox_health": -10})
+			elif Mounts.animals(state) > 0:
+				_apply({"horse_health": -10})
+			if fight_id == "horse_thieves":
+				journal.append("You pull back under fire; the thieves drive off the stolen stock.")
+			else:
+				journal.append("You pull the party back from the skirmish under fire.")
 	else:
 		if fight_id == "bandits" and choices.size() > 0 and bool(choices[0].get("bandit_payment", false)):
 			_apply(choices[0].get("effects", {}))

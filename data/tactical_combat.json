@@ -99,8 +99,8 @@
       ]
     },
     "fort": {
-      "title": "Fort Parade & Stockade Gate",
-      "subtitle": "U.S. Mounted Riflemen hold the timber stockade and freight stacks.",
+      "title": "Fort Parade Ground",
+      "subtitle": "The volunteer garrison holds the sod buildings, tents and freight stacks.",
       "base_tile": 1,
       "floor_rect": [3, 1, 10, 3],
       "floor_tile": 0,
@@ -108,10 +108,10 @@
       "player_spawns": [[1, 8], [2, 7], [4, 7], [6, 8], [8, 7]],
       "enemy_spawns": [[6, 2], [9, 3], [4, 2], [8, 2], [7, 2]],
       "props": [
-        {"x": 4, "y": 1, "cover": 2, "prop": 0, "label": "Stockade Wall"},
-        {"x": 5, "y": 1, "cover": 2, "prop": 0, "label": "Stockade Wall"},
-        {"x": 8, "y": 1, "cover": 2, "prop": 0, "label": "Stockade Wall"},
-        {"x": 9, "y": 1, "cover": 2, "prop": 0, "label": "Stockade Wall"},
+        {"x": 4, "y": 1, "cover": 2, "prop": 0, "label": "Sod Wall"},
+        {"x": 5, "y": 1, "cover": 2, "prop": 0, "label": "Sod Wall"},
+        {"x": 8, "y": 1, "cover": 2, "prop": 0, "label": "Sod Wall"},
+        {"x": 9, "y": 1, "cover": 2, "prop": 0, "label": "Sod Wall"},
         {"x": 6, "y": 3, "cover": 1, "prop": 4, "label": "Breastwork Rail"},
         {"x": 7, "y": 3, "cover": 1, "prop": 1, "label": "Powder Casks"},
         {"x": 9, "y": 4, "cover": 2, "prop": 1, "label": "Quartermaster Stack"},

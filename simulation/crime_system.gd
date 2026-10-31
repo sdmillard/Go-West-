@@ -1412,8 +1412,21 @@ func apply_tactical_result(game, session: Dictionary) -> void:
 			observe(game, current, "escape", true)
 			result(game, "escaped")
 	elif outcome == "retreated":
-		observe(game, current, "escape", true)
-		result(game, "escaped")
+		# Pulling back from the fight is still an escape attempt, with the scene's usual odds of capture.
+		if current.stage == "standoff" and String(current.get("action", "")) != "pursuit":
+			var edge: float = float(odds(game, place, "murder" if String(current.get("action", "")) in ["shoot", "assault"] else "robbery").edge)
+			var chance: float = bounded(float(scene.breakout), float(scene.breakout) + edge, float(modifiers.floor), float(modifiers.ceiling))
+			if rng.randf() >= chance:
+				result(game, "captured")
+				return
+			observe(game, current, "escape", true)
+			result(game, "escaped")
+		else:
+			if current.stage != "standoff":
+				current.stage = "escape"
+			if not choose(game, "flee"):
+				observe(game, current, "escape", true)
+				result(game, "escaped")
 	elif outcome == "surrendered":
 		result(game, "surrendered")
 	else:

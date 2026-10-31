@@ -23,6 +23,7 @@ func _initialize() -> void:
 	_test_crime_and_save_validation()
 	_test_roadside_and_wanted_encounters()
 	_test_bug_regressions()
+	_test_retreat_is_not_free()
 	await _test_ui_integration()
 	print("Tactical combat: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)
@@ -648,6 +649,53 @@ func _test_bug_regressions() -> void:
 
 
 
+
+
+func _test_retreat_is_not_free() -> void:
+	# Breaking off a roadside fight costs what fleeing would have: the day and the team strain.
+	var game := Simulation.new(184907, "classic", true)
+	game.depart("carpenter", ["SPENCER", "SAM", "JO", "LOU", "PAT"], 5, {"oxen": 4, "food": 400, "clothing": 5, "bullet_boxes": 2, "medicine": 2})
+	var bandit_ev: Dictionary = {}
+	for ev in game.trail_events.events:
+		if String(ev.get("id", "")) == "bandits":
+			bandit_ev = ev
+	game._present_trail_event(bandit_ev)
+	var day_before := int(game.state.day)
+	var ox_before := float(game.state.ox_health)
+	var money_before := float(game.state.money)
+	check(game.start_tactical_combat("trail:1"), "Bandit defense opens tactical combat for the retreat check")
+	check(SaveStore.new().capture(game).is_empty(), "A journey cannot be saved in the middle of a tactical fight")
+	game.tactical_step({"type": "retreat_all"})
+	check(game.finish_tactical_combat(), "Immediate retreat from bandits settles")
+	check(int(game.state.day) == day_before + 1, "Retreating from bandits costs the same day as fleeing")
+	var twin := Simulation.new(184907, "classic", true)
+	twin.depart("carpenter", ["SPENCER", "SAM", "JO", "LOU", "PAT"], 5, {"oxen": 4, "food": 400, "clothing": 5, "bullet_boxes": 2, "medicine": 2})
+	twin._present_trail_event(bandit_ev)
+	twin.choose(2)
+	check(is_equal_approx(float(game.state.ox_health), float(twin.state.ox_health)) and float(game.state.ox_health) < ox_before, "Retreating from bandits strains the team as much as fleeing (%s vs %s)" % [game.state.ox_health, twin.state.ox_health])
+	check(is_equal_approx(float(game.state.money), money_before), "Retreating from bandits pays no demand")
+
+	# Pulling back from a post shootout is an escape attempt with the post's usual capture odds.
+	var escaped := 0
+	var caught := 0
+	for i in range(40):
+		var g := Simulation.new(185000 + i * 7919, "classic", true)
+		g.depart("carpenter", ["SPENCER", "SAM", "JO", "LOU", "PAT"], 5, {"oxen": 4, "food": 400, "clothing": 5, "bullet_boxes": 2, "medicine": 2})
+		g.route_path = g.route.main_path_to("fort_bridger")
+		g.state.merge({"day": 45, "landmark": "fort_bridger", "next_landmark": "fort_bridger", "miles": 989, "leg_length": 0, "leg_miles": 0}, true)
+		g._arrive_landmark(true, false)
+		g.open_crime()
+		if not g.start_tactical_combat("shoot"):
+			continue
+		g.tactical_step({"type": "retreat_all"})
+		g.finish_tactical_combat()
+		var last: Dictionary = g.crime.record.incidents[-1]
+		if String(last.get("resolution", "")) == "escaped":
+			escaped += 1
+		else:
+			caught += 1
+	check(escaped > 0, "Some parties get away after pulling back from a post shootout (%d)" % escaped)
+	check(caught > 0, "Some parties are caught after pulling back from a post shootout (%d)" % caught)
 
 
 func _test_ui_integration() -> void:

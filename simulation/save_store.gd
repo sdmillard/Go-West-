@@ -21,7 +21,7 @@ func fingerprint() -> String:
 	return rules_signature
 
 func capture(game) -> Dictionary:
-	if not game.state.extended_route or not game.raft.is_empty() or not game.hunt.is_empty() or game.state.status not in ["traveling", "arrived", "lost", "returned_east"]:
+	if not game.state.extended_route or not game.raft.is_empty() or not game.hunt.is_empty() or not game.tactical_session.is_empty() or game.state.status not in ["traveling", "arrived", "lost", "returned_east"]:
 		return {}
 	return normalize({"format": FORMAT, "version": VERSION, "rules": fingerprint(),
 		"native_contacts":game.native_encounters.record.duplicate(true),"rafting_history":game.rafting_history.duplicate(true),"dogs":game.dogs.record.duplicate(true),"team_conditions":game.team_conditions.snapshot(game),"livestock":game.livestock.record.duplicate(true),"recruitment":game.recruitment.snapshot(),"social":game.social.snapshot(),"crime":game.crime.snapshot(),
