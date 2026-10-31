@@ -103,3 +103,32 @@ Before and after, same seeds (90000-90011):
 | reckless | 0/36 | 0 | 0 | 36 | 0 | 0 | 0 | 2.42 | 0.0 | 0 |
 
 Every remaining scurvy case starts past mile 1,200 (Snake River onward) at a median of day 211. Careful April parties spend about 137 days moving, 30 resting and 45 on stops and events, so they reach the dry far west in autumn. Journey length is the next question for Spencer. Late starts now do even better (June 27/36), which sharpens the "leaving late costs nothing" finding.
+
+## Step 2: winter (October 31)
+
+Spencer: a careful party taking long is the point, time against risk is the core trade-off, so journeys stay long and lateness gets dangerous instead. He picked all three rules below, asked that a dead animal can be butchered rather than wasted, and that valleys below a pass be "safer, not safe".
+
+Rules (data/route.json, all labelled authored, not reconstructed 1848 weather):
+
+- **Barlow Road closed to wagons November to April** (`wagon_closed_months`). The Dalles labels the road "snowbound to wagons November to April"; the Columbia raft and resting stay open, and walkers may still go around. Barlow's own 1845 party was caught by snow and cached wagons at Fort Deposit; a military train left 45 wagons on the road in 1849.
+- **Snow country** (`snow_country`) at South Pass and the Blue Mountains (November to March) and the Barlow Road (November to April). On the leg into, or at, the pass: 40% (Barlow 50%) of travel days are snowbound (a day passes, no miles), and animals lose 4 condition a day even in camp; at 0 condition each day has a 15% chance an ox, mule or horse dies. A starved animal offers its carcass: butcher it (1 day, the worn-out minimum yield: 200 lb from an ox, no bullet) or leave it.
+- **Sheltered valleys:** camped at the landmark below a pass, before starting the climb (for example Grande Ronde below the Blue Mountains), there are no snowbound days, but animals still lose 2 a day (`valley_strain`), about what winter rest recovers, so they hold rather than heal.
+- **Warnings:** in September and October the season notice names the high country still ahead ("snow closes the high country from November"); in season it says "Winter in snow country near X" or "Winter below X: the valley is sheltered but grass is poor".
+
+The baseline bot now pushes on in snow country instead of resting for its team or fatigue (resting there cannot recover them). The first version, without that and with no valley shelter, was a trap rather than a danger: late June arrivals fell to 2 of 36 as parties sat for months on the climb.
+
+Same 360 journeys (seeds 90000-90011), before = step 1 rules:
+
+| Style | Before | After |
+|---|---|---|
+| Careful April | 26 | 28 |
+| Careful May | 26 | 24 |
+| Late June | 27 | 21 |
+| Late July | 21 | 17 |
+| Fighter | 29 | 29 |
+| Horses | 14 | 11 |
+| Petty thief | 23 | 23 |
+
+Lawful arrivals 129 → 119 of 180. Late parties: bankers still arrive (24 of 24), carpenters 17 → 13, farmers 8 → 1 of 24. Money buys a way through winter; a poor late party mostly does not. Tried and rejected: 45%/5 a day (late July 12 of 36, too harsh) and 30%/3 a day (late July 17 with no valley strain, too soft once the bot pushed on).
+
+Follow-ups (Spencer's ideas, not built): a winter cabin buildable anywhere if the party spends the days, with camp life rather than dead time, and possibly a "settled short of Oregon" ending.

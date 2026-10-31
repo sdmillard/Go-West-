@@ -381,6 +381,7 @@
     },
     {
       "id": "south_pass",
+      "snow_country": {"months": [11, 12, 1, 2, 3], "snowbound_chance": 0.4, "animal_strain": 4, "valley_strain": 2, "death_chance": 0.15, "note": "Authored winter risk, not reconstructed 1848 weather. Late parties met snow in the high country: Barlow's 1845 party on Mount Hood, the 1846 Applegate and Donner parties, the 1856 handcart companies near South Pass. Snow blocks the road some days; with no grass, animals lose condition even in camp and worn-out animals can die."},
       "name": "South Pass",
       "kind": "camp",
       "text": "The Continental Divide is a broad, gently rising saddle here, rather than a narrow alpine notch. Your wagon can cross, but distance, weather and worn livestock still matter.",
@@ -735,6 +736,7 @@
     },
     {
       "id": "blue_mountains",
+      "snow_country": {"months": [11, 12, 1, 2, 3], "snowbound_chance": 0.4, "animal_strain": 4, "valley_strain": 2, "death_chance": 0.15, "note": "Authored winter risk, not reconstructed 1848 weather. Late parties met snow in the high country: Barlow's 1845 party on Mount Hood, the 1846 Applegate and Donner parties, the 1856 handcart companies near South Pass. Snow blocks the road some days; with no grass, animals lose condition even in camp and worn-out animals can die."},
       "name": "Blue Mountains",
       "kind": "camp",
       "text": "Forested ridges replace the open river valleys. The ascent and descent demand care with loads and animals. The main road descends to the Umatilla; an older road turns north to the Hudson's Bay Company's Fort Walla Walla, through country at war since the killings at the Whitman mission last November.",
@@ -912,6 +914,7 @@
     },
     {
       "id": "barlow_pass",
+      "snow_country": {"months": [11, 12, 1, 2, 3, 4], "snowbound_chance": 0.5, "animal_strain": 4, "valley_strain": 2, "death_chance": 0.15, "note": "Authored winter risk, not reconstructed 1848 weather. Late parties met snow in the high country: Barlow's 1845 party on Mount Hood, the 1846 Applegate and Donner parties, the 1856 handcart companies near South Pass. Snow blocks the road some days; with no grass, animals lose condition even in camp and worn-out animals can die."},
       "name": "Barlow Road / Mount Hood",
       "kind": "camp",
       "text": "The toll road opened in 1846. It climbs through the forests south of Mount Hood. The charter rate was five dollars per wagon and ten cents per head of livestock; paying does not make the road easy.",
@@ -929,6 +932,8 @@
       ],
       "toll_dollars": 5.0,
       "toll_per_ox": 0.1,
+      "wagon_closed_months": [11, 12, 1, 2, 3, 4],
+      "closure_note": "Authored season. Barlow Pass stands above 4,000 feet south of Mount Hood. Barlow's own 1845 party was caught by autumn snow and cached its wagons at Fort Deposit; in 1849 a military train abandoned 45 wagons on the road after its mules starved. Wagons are shut out November through April; walkers and pack trains may still go around.",
       "hunting_region": "forest"
     },
     {
