@@ -172,7 +172,7 @@ func run():
  screen.game.turn_direction("east")
  screen.game.travel()
  screen._refresh()
- check(screen.event_title.text=="Back east." and screen.event_text.text=="Your character decided to go back east." and screen.choices.get_child_count()==0,"Peaceful end screen has no death or Oregon victory text")
+ check(screen.event_title.text=="Back east." and screen.event_text.text.begins_with("Your character decided to go back east.") and "SCORE" in screen.event_text.text and not ("Oregon City" in screen.event_text.text) and screen.choices.get_child_count()==0,"Peaceful end screen has no death or Oregon victory text")
  screen.game=Simulation.new(1848,"classic",true)
  screen.departure_view.game=screen.game
  var leader: String=screen.departure_view.names[0].text

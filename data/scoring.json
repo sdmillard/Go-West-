@@ -1,0 +1,19 @@
+{
+  "note": "Authored scoring for every ending (Spencer, October 31). Each surviving traveler scores by health; what the party still owns counts at Independence prices; each keepsake still carried counts its arrival points as before. The ending scales the total, so reaching Oregon is worth most, settling short less, being run off or turning back far less, and a lost journey nothing. Poorer professions multiply the score by the banker's purse over their own, so a farmer's arrival is worth more than a banker's.",
+  "traveler_points": {
+    "healthy": 100,
+    "fair": 70,
+    "poor": 40
+  },
+  "healthy_at": 70,
+  "fair_at": 40,
+  "dollars_per_point": 5,
+  "endings": {
+    "arrived": 1.0,
+    "settled": 0.6,
+    "run_off": 0.3,
+    "returned_east": 0.25,
+    "lost": 0.0
+  },
+  "profession_base": "banker"
+}

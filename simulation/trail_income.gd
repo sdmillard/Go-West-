@@ -71,6 +71,9 @@ func rows(game,venue: String,kind: String) -> Array:
  return result
 func points(game) -> int:
  if game.state.status!="arrived":return 0
+ return held_points(game)
+## Keepsakes still carried, whatever the ending; the final score counts them for every ending.
+func held_points(game) -> int:
  var count:=0
  for owner in record.keepsakes:
   count+=int(game.state.get(key(int(owner)),0))
