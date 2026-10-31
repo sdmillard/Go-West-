@@ -1874,6 +1874,13 @@ func _refresh() -> void:
 			var recruiting: bool=game.pending.get("recruit_menu",false) and game.pending.get("recruit_site","") in ["native:"+str(s.landmark),"post:"+str(s.landmark)]
 			var encounter_scene: String=landscape.scenes.encounter_for(str(s.landmark))
 			if (visiting or recruiting) and not encounter_scene.is_empty():landscape.scene_id=encounter_scene
+		if not _reviewing_crossing() and not game.pending.is_empty() and s.status == "traveling":
+			var event_scene := _event_scene()
+			if not event_scene.is_empty() and (landscape.scene_id.is_empty() or event_scene in ["event_posse", "event_regulators", "event_bounty_hunters"]):
+				landscape.scene_id = event_scene
+		if not _reviewing_crossing() and s.status in ["settled", "returned_east", "lost"]:
+			landscape.scene_id = _ending_scene(s)
+	landscape.cabin_frame = _cabin_frame(landscape.scene_id, date)
 	if landscape.scene_id == "fort_kearny" and date.year == 1848 and date.month < 6:
 		landscape.scene_id = "fort_kearny_early"
 	landscape.river_scene = not s.extended_route and s.miles >= 90
@@ -2166,6 +2173,44 @@ func _load_journey() -> void:
 		_refresh()
 	visited_graves.clear()
 	notice("TRAIL RECORD",result.message if not result.is_empty() else save_store.error)
+
+## The picture for an open trail event or a wanted standoff, or "" to keep the travel strip.
+func _event_scene() -> String:
+	var id := str(game.pending.get("id", ""))
+	if id in ["bandits", "cayuse_riders", "waiilatpu_ruins", "horse_thieves", "war_volunteers", "wagon_fire"]:
+		return "event_" + id
+	var current: Dictionary = game.crime.incident()
+	if not current.is_empty() and str(current.get("action", "")) == "wanted" and str(current.get("stage", "")) == "standoff":
+		var pictures := {"wanted_posse:": "event_posse", "wanted_regulators:": "event_regulators", "wanted_hunters:": "event_bounty_hunters"}
+		for prefix in pictures:
+			if str(current.get("place", "")).begins_with(prefix):
+				return pictures[prefix]
+	return ""
+
+## Build stage of the party's cabin drawn over a stop's picture: -1 none, 0 felled logs,
+## 1 walls half raised, 2 rafters, 3 finished, 4 finished under winter snow.
+func _cabin_frame(stop: String, date: Dictionary) -> int:
+	var units: int = game.Cabins.progress(game, stop) if not stop.is_empty() else 0
+	if units <= 0:
+		return -1
+	if not game.Cabins.done(game, stop):
+		return mini(2, units * 3 / game.Cabins.units_needed())
+	var snowy: bool = landscape.weather_id in ["snow", "blizzard"] or int(date.month) in [12, 1, 2]
+	return 4 if snowy else 3
+
+## The picture for a journey that has ended short of Oregon (docs/CABINS_AND_ENDINGS.md).
+func _ending_scene(s: Dictionary) -> String:
+	if s.status == "returned_east":
+		return "ending_east"
+	if s.status == "lost":
+		return "ending_lost"
+	var settled: Dictionary = s.get("settled", {})
+	match str(settled.get("kind", "")):
+		"post": return "ending_post"
+		"cabin": return "ending_cabin"
+		"run_off": return "ending_run_off"
+		"open": return "ending_homestead_east" if str(settled.get("place", "")) == "independence" else "ending_homestead_west"
+	return "ending_cabin"
 
 ## With a buried companion's remains entry, marks that grave; otherwise the lost party's own stone.
 func _edit_gravestone(grave: Dictionary = {}) -> void:
