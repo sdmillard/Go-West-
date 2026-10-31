@@ -74,6 +74,10 @@ func run():
 			if game.crime.incident().stage=="escape":
 				choose(game,"flee")
 				choose(copy,"flee")
+			# A capture is held for its hearing first; both copies face the same court.
+			if game.crime.incident().get("stage","")=="custody":
+				choose(game,"wait")
+				choose(copy,"wait")
 			check(store.capture(game)==store.capture(copy),"Save/load preserves committed random outcomes and future escape")
 			check(game.crime.valid(game.crime.snapshot(),game),"Resolved ledger conserves cash and stock")
 			check(store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))!=null,"Final report or capture round-trips")
@@ -556,9 +560,11 @@ func fort_checks(store) -> void:
 	check(store.restore(JSON.parse_string(JSON.stringify(store.capture(copy))))!=null,"A breakout round-trips through saves")
 	copy=store.restore(JSON.parse_string(JSON.stringify(saved)))
 	copy.crime.scenes.fort_kearny.breakout=0
-	check(choose(copy,"breakout") and copy.state.status=="lost","A failed breakout ends the journey in custody")
+	copy.crime.detention_data.conviction.army=1.0
+	check(choose(copy,"breakout") and copy.crime.incident().stage=="custody" and copy.crime.incident().custody.authority=="army","A failed breakout ends in army custody")
+	check(choose(copy,"wait") and copy.state.status=="lost" and copy.crime.record.incidents.back().sentence.kind=="sent_east","Soldiers send a leader who shot at them east under escort; the journey ends")
 	copy=store.restore(JSON.parse_string(JSON.stringify(saved)))
-	check(choose(copy,"surrender") and copy.crime.record.incidents.back().resolution=="tried","Surrender to soldiers leads to a trial")
+	check(choose(copy,"surrender") and choose(copy,"wait") and copy.crime.record.incidents.back().resolution=="tried","Surrender to soldiers leads to a trial")
 	copy=store.restore(JSON.parse_string(JSON.stringify(saved)))
 	copy.state.bullets=0
 	copy.pending=copy.crime.menu(copy)
@@ -617,7 +623,10 @@ func fort_checks(store) -> void:
 	game.open_crime()
 	choose(game,"robbery")
 	choose(game,"flee")
-	check(game.state.status=="traveling" and game.crime.incident().resolution=="tried","Store capture leads to a nonfatal trial; only soldiers force a standoff")
+	check(game.crime.incident().stage=="custody" and game.crime.incident().custody.authority=="company","Store capture at a trading post is held for an emigrant jury; only soldiers force a standoff")
+	game.crime.detention_data.conviction.company=1.0
+	choose(game,"wait")
+	check(game.state.status=="traveling" and game.crime.incident().resolution=="tried","Store capture leads to a nonfatal trial")
 	var rules: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/crime_scenes.json"))
 	var crime=game.crime.get_script().new()
 	var broken: Dictionary=rules.duplicate(true)

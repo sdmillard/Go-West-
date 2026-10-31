@@ -499,5 +499,30 @@
     "mounted_flight_bonus": 0.15,
     "left_behind_taken": 0.4,
     "left_behind_trust": 60
+  },
+  "detention": {
+    "note": "Authored custody rules, not a historical sentencing table. Jackson County had a brick jail from 1841 and Missouri's penitentiary opened in 1836; Fort Kearny's guard holds offenders only once the post exists (June 1848); elsewhere an emigrant company tries its own. Hearing days, conviction odds, bail and jail-day rates are game estimates. See docs/FRONTIER_DETENTION_RESEARCH.md.",
+    "hearing_days": {
+      "county": 3,
+      "army": 2,
+      "company": 1
+    },
+    "conviction": {
+      "county": 0.8,
+      "army": 0.9,
+      "company": 0.85
+    },
+    "unidentified_factor": 0.5,
+    "vouch_bonus": 0.15,
+    "abandon_daily": 0.02,
+    "fine_min_cents": 500,
+    "bail_cents": [
+      1000,
+      10000,
+      15000
+    ],
+    "bail_value_factor": 2,
+    "jail_day_cents": 100,
+    "max_jail_days": 30
   }
 }

@@ -49,6 +49,10 @@ func violence(killed: bool=false):
 	elif game.crime.incident().stage=="escape":pick(game,"flee")
 	pick(game,"finish")
 	return game
+## Custody comes before every sentence. Tests force a conviction unless they set the odds themselves.
+func hear(game,odds: float=1.0) -> bool:
+	for key in game.crime.detention_data.conviction:game.crime.detention_data.conviction[key]=odds
+	return game.crime.incident().get("stage","")=="custody" and pick(game,"wait")
 func roundtrip(game,label: String) -> void:
 	var store=Store.new()
 	var snapshot: Dictionary=store.capture(game)
@@ -57,7 +61,7 @@ func roundtrip(game,label: String) -> void:
 	if copy!=null:check(store.capture(copy)==snapshot,label+" restores exactly")
 func run() -> void:
 	var game=outfit()
-	check(game.error.is_empty() and game.crime.record.version==9,"Wanted rules and v9 load")
+	check(game.error.is_empty() and game.crime.record.version==10,"Wanted rules and v10 load")
 	var random: int=game.crime.rng.state
 	check(not game.crime.check_wanted(game) and game.crime.rng.state==random,"Lawful party does not roll or alter the crime RNG")
 	check(game.crime.notoriety(game)==0 and game.crime.wanted_label(game)=="Wanted: not known","Lawful party has no notoriety")
@@ -92,21 +96,25 @@ func run() -> void:
 	var active: Dictionary=game.crime.incident()
 	check(active.action=="wanted" and game.pending.choices.any(func(choice):return choice.crime_command=="flee"),"Wanted panel exposes encounter choices")
 	var health: int=game.party_health.members[0].health
-	check(pick(game,"surrender") and game.state.status=="traveling","Surrender for a nonfatal attack continues the journey")
-	check(active.sentence.kind=="assault" and active.sentence.surrendered and game.party_health.members[0].health==health,"Voluntary surrender omits flogging")
+	check(pick(game,"surrender") and active.stage=="custody" and not active.has("sentence"),"Surrender leads to custody, not an instant sentence")
+	check(active.custody.authority=="company" and active.custody.accused.size()==5,"Regulators hold the leader and the recorded helpers for an emigrant jury")
+	roundtrip(game,"Held for an emigrant jury")
+	check(hear(game) and game.state.status=="traveling","Surrender for a nonfatal attack continues the journey")
+	check(active.sentence.kind=="assault" and active.sentence.surrendered and not game.party_health.members[0].conditions.any(func(item):return item.id=="wound"),"Voluntary surrender omits flogging")
 	check(active.sentence.banished.size()==4 and game.state.party_size==1,"Only recorded helpers can be banished")
 	roundtrip(game,"Sentence and banishment")
 	check(pick(game,"finish") and Wanted.eligible(game.crime,game).is_empty(),"A served sentence does not punish the same charges again")
 	check(game.crime.notoriety(game,"fort_bridger")==4,"Sentence settles charges without erasing historical notoriety")
 	game=violence(true)
 	Wanted.start(game.crime,game,"regulators")
-	check(pick(game,"surrender") and game.state.status=="lost" and game.state.loss_reason=="The party's leader was hanged for murder.","A known killing leads to hanging")
+	check(pick(game,"surrender") and hear(game) and game.state.status=="lost" and game.state.loss_reason=="The party's leader was hanged for murder.","A known killing leads to hanging")
 	roundtrip(game,"Terminal murder sentence")
 	game=robbery()
 	game.open_crime()
 	pick(game,"robbery")
 	health=game.party_health.members[0].health
 	game.crime.result(game,"captured")
+	hear(game)
 	check(game.crime.incident().sentence.kind=="robbery" and game.party_health.members[0].health<health and game.party_health.members[0].conditions.any(func(item):return item.id=="wound"),"Captured robbers are wounded, rather than automatically losing")
 	roundtrip(game,"Original crime capture sentence")
 	game=outfit()
@@ -121,7 +129,7 @@ func run() -> void:
 	pick(game,"finish")
 	game.open_crime()
 	pick(game,"theft")
-	check(pick(game,"surrender") and game.crime.incident().sentence.kind=="restitution" and game.state.status=="traveling","Theft capture leads to restitution")
+	check(pick(game,"surrender") and hear(game) and game.crime.incident().sentence.kind=="restitution" and game.state.status=="traveling","Theft capture leads to restitution")
 	roundtrip(game,"Theft sentence")
 	# Each escape/fight result is exercised with deterministic seeds, using public commands.
 	var outcomes: Dictionary={}
@@ -132,6 +140,7 @@ func run() -> void:
 		var reports: int=game.crime.record.reports.size()
 		check(pick(game,"flee"),"Flight is available without ammunition")
 		active=game.crime.record.incidents.back()
+		if active.stage=="custody":hear(game)
 		outcomes[active.resolution]=true
 		check(game.crime.record.reports.size()==reports,"Flight does not manufacture a crime report")
 		roundtrip(game,"Flight outcome %d" % seed_value)
@@ -142,6 +151,7 @@ func run() -> void:
 		Wanted.start(game.crime,game,"regulators")
 		var bullets: int=game.state.bullets
 		check(pick(game,"breakout") and game.state.bullets==bullets-3,"Fighting consumes actual ammunition")
+		if game.crime.incident().get("stage","")=="custody":hear(game)
 		roundtrip(game,"Fight outcome %d" % seed_value)
 	game=violence()
 	game.state.day=100
@@ -162,8 +172,8 @@ func run() -> void:
 	legacy.record.version=8
 	legacy.record.erase("bounties")
 	var upgraded: Dictionary=game.crime.upgrade(legacy,game)
-	check(upgraded.record.version==9 and upgraded.record.bounties==[] and upgraded.random==legacy.random and game.crime.valid(upgraded,game),"v8 upgrades without inventing rewards or consuming randomness")
-	check(game.crime.upgrade(upgraded,game)==upgraded,"v9 upgrade is idempotent")
+	check(upgraded.record.version==10 and upgraded.record.bounties==[] and upgraded.random==legacy.random and game.crime.valid(upgraded,game),"v8 upgrades without inventing rewards or consuming randomness")
+	check(game.crime.upgrade(upgraded,game)==upgraded,"v10 upgrade is idempotent")
 	# Identification and experience do not manufacture evidence.
 	game=robbery()
 	var score: float=game.crime.notoriety(game,"fort_bridger")
@@ -190,6 +200,7 @@ func run() -> void:
 	game.party_health.members[0].health=2
 	game.characters.profiles[0].flaws=["Frail"]
 	game.crime.result(game,"captured")
+	hear(game)
 	check(game.party_health.members[0].alive and game.party_health.members[0].health==1 and game.state.status=="traveling","Frail or badly hurt leaders survive nonfatal punishment")
 	game=violence()
 	Wanted.start(game.crime,game,"regulators")
@@ -213,7 +224,9 @@ func run() -> void:
 	check(game.crime.check_pursuit(game),"The original army pursuit still creates a standoff")
 	var army_save: Dictionary=Store.new().capture(game)
 	check(game.pending.choices.any(func(choice):return choice.crime_command=="flee"),"A pursuing army detachment offers flight")
-	check(pick(game,"surrender") and game.crime.incident().sentence.kind=="robbery","Being pursued without fighting is not charged as an assault")
+	check(pick(game,"surrender") and game.crime.incident().custody.authority=="army","Soldiers hold what happened at their own post")
+	check(hear(game) and game.crime.record.incidents.back().sentence.kind=="sent_east" and not game.crime.record.incidents.back().sentence.charges.any(func(id):return int(Wanted.incident_evidence(game.crime,game,game.crime.record.incidents[int(id.get_slice(":",1))-1],true).severity)>2),"Being pursued without fighting is not charged as an assault")
+	check(game.state.status=="lost" and game.state.loss_reason=="The party's leader was sent east under military escort to stand trial.","A leader sent east ends the journey")
 	roundtrip(game,"Army surrender sentence")
 	game=Store.new().restore(JSON.parse_string(JSON.stringify(army_save)))
 	check(game!=null and pick(game,"flee"),"Flight from the army resolves through a public action")
@@ -242,6 +255,7 @@ func run() -> void:
 	game.party_health.kill(game.party_health.members[0],int(game.state.day),"confrontation injuries")
 	game._collect_health_events()
 	game.crime.result(game,"captured")
+	hear(game)
 	check(not game.party_health.members[0].alive and game.party_health.members[0].health==0,"A trial never gives health back to a leader already killed in the fight")
 	roundtrip(game,"A survivor answers the nonfatal trial after the original leader died")
 	var screen=Main.instantiate()
