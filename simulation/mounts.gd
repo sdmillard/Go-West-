@@ -110,9 +110,11 @@ static func burden(rules: Dictionary,plan_: Dictionary,cargo: float,human_capaci
 		if row.improvised and carried>0:improvised=true
 		fitted+=float(row.tack_lb);body+=float(row.riders)*float(rules.rider_lb)
 	return {"ratio":ratio,"human_ratio":human_cargo/human_capacity if human_capacity>0 else 0.0,"worst_kind":kind,"improvised":improvised,"rider_lb":body,"tack_lb":fitted,"animal_cargo_lb":animal_cargo,"human_cargo_lb":human_cargo,"animal_total_lb":body+fitted+animal_cargo}
+## Animals slow past 85% of their load. Walkers slow past 80% of their packs: a loaded walker
+## still out-walks an ox team (foot-packers passed the trains), but an overfull pack drags.
 static func speed_factor(plan_: Dictionary,load_: Dictionary) -> float:
 	var ratio: float=maxf(float(load_.ratio),float(load_.human_ratio))
-	return clampf(1.0-maxf(0,ratio-(0.85 if plan_.mode!="walking" else 0.5))*(0.6 if plan_.mode!="walking" else 0.5),0.25,1.0)
+	return clampf(1.0-maxf(0,ratio-(0.85 if plan_.mode!="walking" else 0.8))*(0.6 if plan_.mode!="walking" else 0.5),0.25,1.0)
 
 static func mounted(plan_: Dictionary) -> bool:return plan_.mode in ["mounted","doubled"]
 static func label(plan_: Dictionary) -> String:

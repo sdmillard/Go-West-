@@ -10,7 +10,7 @@ func style_month(style: String) -> int:
  return {"careful_may":5,"late_jun":6,"late_jul":7}.get(style,4)
 func outfit(game,style: String) -> Dictionary:
  var cart: Dictionary={}
- if style=="on_foot":return {"wagon":0,"oxen":0,"food":45,"clothing":5,"bullet_boxes":1,"medicine":1,"salt":2,"dried_produce":3}
+ if style=="on_foot":return {"wagon":0,"oxen":0,"food":80,"clothing":5,"bullet_boxes":1,"medicine":1,"salt":2,"dried_produce":3}
  if style=="horses":return {"wagon":0,"oxen":0,"food":450,"clothing":5,"bullet_boxes":5,"medicine":1,"salt":5,"dried_produce":10,"horses":5,"mules":3,"saddles":5,"pack_saddles":3,"saddlebags":5}
  for good in game.outfitter.goods:cart[good.id]=int(good.suggested)
  cart.dried_produce=20

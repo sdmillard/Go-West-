@@ -44,7 +44,7 @@ Spencer chose full capacity through Good **and Fair**, with reductions beginning
 | 0 or dead/absent | Unavailable | Zero |
 | Any score with broken leg | Injury restriction | Zero human hauling |
 
-Base limits remain 40 lb per walker and 50 lb per retrieval participant, with the existing 200 lb group retrieval ceiling. Pack mass is still subtracted once. Thus the quoted solo foot hunter with a 27.5 lb pack has 22 lb catch room throughout Good/Fair. A Poor hunter at health 35 has 37.5 lb gross and 10 lb catch room. This is one-trip capacity, not total usable meat on the carcass.
+Base limits remain 50 lb per walker (40 before November 2026) and 50 lb per retrieval participant, with the existing 200 lb group retrieval ceiling. Pack mass is still subtracted once. Thus the quoted solo foot hunter with a 27.5 lb pack has 22 lb catch room throughout Good/Fair. A Poor hunter at health 35 has 37.5 lb gross and 10 lb catch room. This is one-trip capacity, not total usable meat on the carcass.
 
 These health breakpoints are explicit gameplay interpretation, not clinical measurements of strength. [Army load-carriage research](https://www.army.mil/article/234235/) supports treating load, terrain, fatigue and speed as interacting costs; it does not justify interpreting an abstract health score as a literal lifting-strength percentage. A revised day-hunt kit or multiple retrieval trips would be separate changes. The present change does not invent extra hauling or remove the actual pack costs.
 

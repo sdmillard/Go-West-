@@ -41,7 +41,7 @@
   },
   "working_load_per_ox_lb": 625,
   "walking": {
-    "carry_lb_per_person": 40,
+    "carry_lb_per_person": 50,
     "personal_gear_lb_per_person": 15,
     "miles_per_day": 20,
     "cache_loss_base": 0.15,

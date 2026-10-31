@@ -28,7 +28,7 @@ func run():
 	check(not game.abandon_wagon({"food":500}) and store.capture(game)==before,"Overweight pack rejects without transferring goods or spending time")
 	check(not game.abandon_wagon({"free_money":1}) and store.capture(game)==before,"Unknown pack item rejects atomically")
 	var offer:=game.pack_quote(PACK)
-	check(offer.valid and offer.capacity_lb==200 and offer.cargo_lb==190,"Five survivors can carry two hundred pounds including seventy-five pounds personal gear")
+	check(offer.valid and offer.capacity_lb==250 and offer.cargo_lb==190,"Five survivors can carry two hundred fifty pounds including seventy-five pounds personal gear")
 	check(game.abandon_wagon(PACK) and game.state.vehicle=="foot" and game.state.day==1 and game.state.food==65,"Packing costs one day and ordinary rations")
 	check(game.wagon_cache.inventory.food+game.state.food==585 and game.wagon_cache.inventory.bullets+game.state.bullets==200,"Cached and carried stock conserves goods apart from meals")
 	check(game.wagon_cache.inventory.wheels==1 and game.state.wheels==0 and game.state.money==before.state.money,"Heavy spares stay in cache while money stays with party")
@@ -180,7 +180,7 @@ func run():
 		await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png("res://docs/walking-packs.png")
 	screen.packing_window.confirmed.emit()
-	check(screen.game.state.vehicle=="foot" and screen.game.provisions.cargo(screen.game.state)<=200,"Actual pack confirmation transfers selected goods and switches mode")
+	check(screen.game.state.vehicle=="foot" and screen.game.provisions.cargo(screen.game.state)<=250,"Actual pack confirmation transfers selected goods and switches mode")
 	screen.supplies_window.hide()
 	screen.game.travel()
 	screen._refresh()

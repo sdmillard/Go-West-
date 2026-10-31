@@ -26,7 +26,8 @@ func counter_visit(game,profile: Dictionary,count: Dictionary,fundraising: bool=
    if habitat in ["plains","woodland"]:food_goal=90
    elif game.state.landmark=="fort_boise":food_goal=900
    elif habitat=="highcountry":food_goal=300
-  if walking and (not profile.get("mount_support",false) or game.mount_plan().mode=="walking"):food_goal=mini(25,food_goal)
+  # Walkers fill their packs: everything the party can carry beyond what it already holds.
+  if walking and (not profile.get("mount_support",false) or game.mount_plan().mode=="walking"):food_goal=mini(food_goal,int(game.state.food)+maxi(0,floori(game.provisions.storage_capacity(game.state)-game.provisions.cargo(game.state))))
   if game.state.food<food_goal:targets.food=food_goal
   if game.state.clothing<game.state.party_size:targets.clothing=int(game.state.party_size)
   if profile.hunt and game.state.bullets<(60 if store.kind=="post" else 15):targets.bullets=100 if store.kind=="post" else 40
