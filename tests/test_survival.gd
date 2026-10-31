@@ -230,6 +230,7 @@ func run() -> void:
 	screen.departure_view.quantities.medicine.value = 2
 	if "--capture" in OS.get_cmdline_user_args():
 		await capture("store")
+	screen.departure_view.fill_suggested()
 	screen.departure_view.depart_button.pressed.emit()
 	screen.game.party_health.daily_onset_chance = 0
 	screen.game.survival.data.event_chance = 0
