@@ -86,6 +86,8 @@ func run() -> void:
 	check(game.crime.record.reports.any(func(report):return int(report.incident)==int(custody.id)),"The original crime is now reported as an escape")
 	roundtrip(game,"Jailbreak standoff")
 	# The tactical fight: prisoners fight bare-handed; the rescuers carry the party's arms; every guard fights.
+	check(game.crime.build_tactical_config(game,"breakout").venue_kind=="jail_county","The county jailbreak is fought in the Jackson County jail")
+	check(Armory.icon("hatchets").region==Rect2(80,0,16,16) and Armory.icon("food")==null,"Each arm has its icon")
 	check(game.start_tactical_combat("breakout"),"The jailbreak opens the tactical fight")
 	var session: Dictionary=game.tactical_session
 	var leader: Dictionary=game.tactical.get_unit(session,"0")

@@ -1260,7 +1260,7 @@ func build_tactical_config(game, command: String = "") -> Dictionary:
 		venue_kind = "emigrants"
 	# Guards are fought where they hold the prisoners: the county's brick jail, the army's guard tent, a company's camp.
 	if venue_kind == "jail":
-		venue_kind = {"jail_county": "store", "jail_army": "fort"}.get(TEMPLATES[place.substr(0, place.find(":") + 1)], "emigrants")
+		venue_kind = {"jail_county": "jail_county", "jail_army": "jail_army"}.get(TEMPLATES[place.substr(0, place.find(":") + 1)], "emigrants")
 	var place_title: String = String(scene.get("title", place))
 	if game.route.nodes.has(node_of(place)):
 		place_title = String(game.route.nodes[node_of(place)].get("name", place_title))

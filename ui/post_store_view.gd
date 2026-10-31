@@ -141,6 +141,14 @@ func open(where: String = "") -> void:
 		if game.leathercraft.is_good(row.item):tip="Crafted trade good: %.2f lb each. Sell through this counter within its remaining demand. Glove pairs do not replace a full clothing set." % float(game.leathercraft.data.goods[row.item].weight_lb)
 		# Goods move by the unit (a pound, a bullet, an ox). Counts follow the basket, so goods cross over as you choose them.
 		# A passing party prices only what it carries and what it wants; the rest shows a dash.
+		# Arms carry their small picture beside each column.
+		var arms_icon: Texture2D = preload("res://simulation/armory.gd").icon(str(row.item))
+		if arms_icon != null:
+			for column in [POST_X, PARTY_X]:
+				var picture := TextureRect.new()
+				picture.texture = arms_icon
+				picture.tooltip_text = tip
+				put(picture, Rect2(column - 17, y, 16, 16), rows_layer)
 		var stock := line(POST_X, y, goods, row.buy_cents / float(row.amount) if row.get("sells", true) else -1.0, tip)
 		var have := line(PARTY_X, y, goods, row.sell_cents / float(row.amount) if row.get("buys", true) else -1.0, tip)
 		# A family pays over the odds for what it is short of: those prices show in green.
