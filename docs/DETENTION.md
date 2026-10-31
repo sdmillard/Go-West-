@@ -42,11 +42,25 @@ Crime record **v10** adds a `custody` block (authority, days, accused, voucher, 
 
 Hearing days, conviction odds, bail, fine and jail-day rates are game estimates, not a reconstruction of the 1845 Missouri code. The supported facts are the 1841 Jackson County jail, the 1836 Jefferson City penitentiary, Fort Kearny's mid-1848 start, and the 1834 act's limited military custody before removal to civil authority. See the research report for sources and open questions.
 
+## Jailbreak
+
+Added October 31, 2026. The guards and odds are authored game values, not historical events.
+
+- **When it's offered:** the custody panel offers "Break them out" when at least one free companion would kill if it came to that and the party has a loaded gun. Free means not held, and the leader is always held.
+- **What happens when you choose it:** custody ends as an escape, so the original crime is reported like any getaway. A new `assault` incident opens against the guards in a standoff:
+  - County: the jailer and two deputies at `jail_county:<id>`.
+  - Army: a sergeant and three soldiers at `jail_army:<id>`.
+  - Emigrant company: three company guards at `jail_company:<id>`.
+  - Council: the household's own living kin, at the household itself.
+- **The fight:** it is always the tactical mini-game. The prisoners fight bare-handed, because their arms are held. The rescuers carry the party's remaining arms, and every guard fights, the jailer included.
+- **Win:** everyone gets away and the prisoners take back their arms. The jailbreak is an assault, or a killing if a guard dies, with witnesses, reports and the usual Wanted consequences.
+- **Lose or surrender:** the whole party is taken back into custody by the same authority. The court hears the jailbreak and the original crime.
+- **Retreat:** like any standoff retreat, it rolls the guards' escape odds.
+- **How it's recorded:** the broken custody is marked `custody.broken`. `Detention.broken_custody()` finds it as the incident just before the jailbreak.
+
 ## Next
 
-- **Jailbreak:** a prison break played as a tactical fight. Any fight opens the tactical mini-game.
-- **Leader death ends the journey,** as agreed with Spencer, in its own change.
-- Later: Native justice (docs/NATIVE_JUSTICE_HANDOFF.md), Oregon City civil court, and dated militia cases.
+- Later: Oregon City civil court, and dated militia cases.
 
 ## Verification
 
