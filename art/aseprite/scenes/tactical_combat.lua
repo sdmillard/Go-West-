@@ -2,8 +2,9 @@
 -- Project palette, 2:1 isometric projection, integer grid, binary alpha.
 -- Outputs:
 --   tactical_tiles  (192x32: six 32x32 diamond ground/highlight cells)
---   tactical_cover  (192x64: two rows of six 32x32 half-cover and full-cover props)
+--   tactical_cover  (192x96: rows of six 32x32 half-cover and full-cover props, then jail props)
 --   tactical_units  (192x96: three rows of six 32x32 isometric rifleman poses & smoke)
+--   tactical_arms   (192x448: the same six poses for each weapon a traveler can carry)
 local K = dofile(app.params.kit)
 
 -- Helper: fill an isometric 32x16 diamond centered at (cx, cy)
@@ -88,8 +89,10 @@ K.save("tactical_tiles")
 -- the same 2:1 isometric depth buffer as crossing_sprites.lua.
 -- Row 0: Half cover (counter, barrels, crate, boulder, log breastwork, chest+wheel)
 -- Row 1: Full cover (adobe/log wall, stacked crates+barrel, covered wagon, tent, water tun, tree)
+-- Row 2: Jail props, prop ids 6-11 (limestone wall, barred cell grate, jailer's desk, sod wall,
+--        plank bunk, box stove)
 -- ============================================================================
-K.canvas(192, 64, 184881)
+K.canvas(192, 96, 184881)
 
 local AX, AY = 0.894, 0.447
 local Z, OX, OY
@@ -383,6 +386,66 @@ K.layer("full cover walls and obstacles", function()
   blob(-1.8, -1.4, 14.2, 4.2, 4.2, 3.2, "sage", "leaf", "grass")
   flush3d(160, 32, 32, 32)
 end)
+
+K.layer("jail props", function()
+  -- Col 0 (prop 6): rough-cut limestone wall of the Jackson County jail, head-high, coursed
+  begin3d(16, 22)
+  box3d(-5.8, 5.8, -3.4, 3.4, 0, 11.5, "stone_lt", "stone", "stone_dk", "white")
+  for h = 2.4, 10.5, 2.4 do
+    seg(-5.8, 3.5, h, 5.8, 3.5, h, "stone_ink")
+    seg(-5.9, -3.4, h, -5.9, 3.4, h, "stone_dk")
+  end
+  for i, s0 in ipairs({-4.2, -1.0, 2.2, 5.0}) do
+    local h0 = ((i % 2 == 0) and 2.4 or 4.8)
+    seg(s0, 3.5, h0, s0, 3.5, h0 + 2.4, "stone_ink")
+    seg(s0 + 1.6, 3.5, h0 + 4.8, s0 + 1.6, 3.5, h0 + 7.2, "stone_ink")
+  end
+  flush3d(0, 64, 32, 32)
+
+  -- Col 1 (prop 7): the cell front, a strap-iron grate set in a stone sill and lintel
+  begin3d(16, 22)
+  box3d(-5.8, 5.8, -1.0, 1.0, 0, 1.2, "stone_lt", "stone", "stone_dk", nil)
+  box3d(-5.8, 5.8, -1.0, 1.0, 10.4, 11.6, "stone_lt", "stone", "stone_dk", nil)
+  for s0 = -5.0, 5.2, 1.7 do seg(s0, 0.6, 1.2, s0, 0.6, 10.4, "storm_dk"); seg(s0 + 0.4, 0.6, 1.2, s0 + 0.4, 0.6, 10.4, "storm_lt") end
+  for _, h in ipairs({4.0, 7.6}) do seg(-5.8, 0.7, h, 5.8, 0.7, h, "storm_dk") end
+  flush3d(32, 64, 32, 32)
+
+  -- Col 2 (prop 8): the jailer's table: plank top, a ledger, the key ring and a tin lamp
+  begin3d(16, 22)
+  box3d(-4.8, 4.8, -3.0, 3.0, 4.6, 5.6, "sand", "ochre", "wood", "cream")
+  for _, l in ipairs({{-4.2, -2.4}, {4.2, -2.4}, {-4.2, 2.4}, {4.2, 2.4}}) do box3d(l[1] - 0.4, l[1] + 0.4, l[2] - 0.4, l[2] + 0.4, 0, 4.6, "wood", "wood", "deep", nil) end
+  box3d(-3.0, -0.4, -1.8, 0.8, 5.6, 6.0, "cream", "white", "stone", nil)
+  blob(1.8, 0.6, 5.9, 0.8, 0.8, 0.2, "gold", "gold", "ochre")
+  cyl_v(2.6, -1.6, 0.7, 5.6, 7.6, "storm_lt", "storm_lt", "storm", "storm_dk", nil)
+  pt(2.6, -1.6, 8.0, "gold")
+  flush3d(64, 64, 32, 32)
+
+  -- Col 3 (prop 9): sod wall of the Fort Kearny guardhouse, cut prairie blocks laid grass-down
+  begin3d(16, 22)
+  box3d(-5.8, 5.8, -3.6, 3.6, 0, 10.0, "grass", "silt", "dirt_dk", "sage")
+  for h = 1.8, 9.0, 1.8 do
+    seg(-5.8, 3.7, h, 5.8, 3.7, h, "deep")
+    seg(-5.9, -3.6, h, -5.9, 3.6, h, "silt_dk")
+  end
+  for s0 = -5.0, 5.0, 2.5 do pt(s0, 3.7, 10.2, "leaf"); pt(s0 + 1.0, -3.7, 10.2, "grass") end
+  flush3d(96, 64, 32, 32)
+
+  -- Col 4 (prop 10): a plank bunk on trestles with a rolled blanket
+  begin3d(16, 22)
+  box3d(-5.2, 5.2, -2.6, 2.6, 2.8, 3.6, "sand", "ochre", "wood", "cream")
+  for _, l in ipairs({-4.4, 4.4}) do box3d(l - 0.5, l + 0.5, -2.2, 2.2, 0, 2.8, "wood", "wood", "deep", nil) end
+  cyl_s(-4.6, -1.6, 0, 4.6, 1.0, "ox_white", "ox_white", "stone", "stone_dk", nil)
+  flush3d(128, 64, 32, 32)
+
+  -- Col 5 (prop 11): a cast-iron box stove with its pipe and a coal scuttle
+  begin3d(16, 22)
+  box3d(-3.0, 3.0, -2.2, 2.2, 0.8, 5.4, "storm", "storm_lt", "storm_dk", "stone")
+  for _, l in ipairs({{-2.6, -1.8}, {2.6, -1.8}, {-2.6, 1.8}, {2.6, 1.8}}) do pt(l[1], l[2], 0.4, "ink") end
+  cyl_v(1.6, 0, 0.9, 5.4, 14.0, "storm_dk", "storm_lt", "storm", "storm_dk", nil)
+  pt(-3.1, 0.5, 2.6, "gold"); pt(-3.1, -0.5, 2.6, "gold")
+  cyl_v(-1.0, 3.6, 1.2, 0, 2.2, "ink", "storm_lt", "storm", "storm_dk", nil)
+  flush3d(160, 64, 32, 32)
+end)
 K.save("tactical_cover")
 
 -- ============================================================================
@@ -394,7 +457,9 @@ K.save("tactical_cover")
 -- ============================================================================
 K.canvas(192, 96, 184882)
 
-local function draw_unit(col_idx, row_idx, dir, pose, soldier)
+local draw_arm -- defined with the arms sheet below
+
+local function draw_unit(col_idx, row_idx, dir, pose, soldier, weapon)
   local ox = col_idx * 32
   local oy = row_idx * 32
   local coat_mid = soldier and "sky" or "blue"
@@ -411,6 +476,7 @@ local function draw_unit(col_idx, row_idx, dir, pose, soldier)
     K.rect(ox + 19, oy + 20, 6, 4, pants)
     K.ellipse(ox + 7, oy + 20, 3, 2, "skin")
     K.rect(ox + 23, oy + 16, 4, 2, hat_col)
+    if weapon and weapon ~= "rifles" then draw_arm(weapon, ox, oy, dir, pose, 0); return end
     K.line(ox + 9, oy + 25, ox + 22, oy + 24, "wood")
     return
   end
@@ -465,6 +531,8 @@ local function draw_unit(col_idx, row_idx, dir, pose, soldier)
     K.rect(ox + 12, hy, 8, 2, hat_col)
     K.line(ox + 12, hy + 1, ox + 19, hy + 1, "ochre")
   end
+
+  if weapon and weapon ~= "rifles" then draw_arm(weapon, ox, oy, dir, pose, dy); return end
 
   -- 1848 Hawken / Plains Muzzleloader Rifle
   if pose == "ready" or pose == "crouch" then
@@ -544,3 +612,141 @@ K.layer("soldier poses and powder smoke", function()
   K.px(sx + 16, sy + 22, "gold"); K.px(sx + 14, sy + 20, "brick_lt")
 end)
 K.save("tactical_units")
+-- ============================================================================
+-- 4. TACTICAL ARMS (192x448, 6 cols x 14 rows of 32x32 cells)
+-- The traveler poses again, once per weapon so nobody is drawn as a rifleman by default.
+-- Rows come in pairs, facing NE then SW, in the order of ARMS below (simulation/armory.gd keys,
+-- then "fists" for a traveler with neither gun nor blade). Columns as in tactical_units:
+-- Ready, Aim, Fire, Reload, Crouch, Downed. Blades and fists have no reload, so that column
+-- repeats Ready; for them Aim is the raised blade and Fire the blow.
+-- 1848 arms: the double-barrelled muzzle-loading shotgun, the single-shot percussion pistol,
+-- the Colt revolver (a Dragoon, brass trigger guard), a Bowie-pattern knife and a trade hatchet.
+-- Weapons avoid the coat, skin and hair colours that ui/traveler_palette.gd recolours.
+-- ============================================================================
+local ARMS = {"rifles", "shotguns", "pistols", "revolvers", "knives", "hatchets", "fists"}
+
+draw_arm = function(kind, ox, oy, dir, pose, dy)
+  local function X(x) return ox + ((dir > 0) and x or (31 - x)) end
+  local function P(x, y, c) K.px(X(x), oy + y, c) end
+  local function L(x0, y0, x1, y1, c) K.line(X(x0), oy + y0, X(x1), oy + y1, c) end
+  local function R(x, y, w, h, c) K.rect((dir > 0) and (ox + x) or (ox + 32 - x - w), oy + y, w, h, c) end
+  local function flash(x, y, big)
+    R(x - 1, y - 1, 3, 3, "gold"); P(x, y, "white")
+    if big then
+      for _, d in ipairs({{2, -2}, {3, 0}, {2, 2}, {4, -1}, {4, 1}, {1, -2}, {1, 2}}) do P(x + d[1], y + d[2], (d[1] > 3) and "cream" or "gold") end
+    else
+      P(x + 2, y, "cream")
+    end
+  end
+
+  if pose == "downed" then
+    -- the weapon dropped beside the fallen traveler (never mirrored, like the body)
+    if kind == "shotguns" then
+      K.line(ox + 11, oy + 25, ox + 18, oy + 25, "wood"); K.line(ox + 15, oy + 24, ox + 21, oy + 24, "storm_dk")
+    elseif kind == "pistols" or kind == "revolvers" then
+      K.line(ox + 20, oy + 25, ox + 22, oy + 25, "storm_dk"); K.px(ox + 19, oy + 26, "wood")
+      if kind == "revolvers" then K.px(ox + 20, oy + 24, "storm"); K.px(ox + 19, oy + 25, "gold") end
+    elseif kind == "knives" then
+      K.line(ox + 20, oy + 25, ox + 22, oy + 25, "stone_lt"); K.px(ox + 23, oy + 25, "white"); K.px(ox + 19, oy + 25, "wood")
+    elseif kind == "hatchets" then
+      K.line(ox + 18, oy + 25, ox + 22, oy + 25, "wood"); K.rect(ox + 22, oy + 24, 2, 2, "stone_dk"); K.px(ox + 23, oy + 26, "stone_lt")
+    end
+    return
+  end
+
+  local ready = (pose == "ready" or pose == "crouch" or (pose == "reload" and (kind == "knives" or kind == "hatchets" or kind == "fists")))
+  if kind == "shotguns" then
+    -- short double gun: stubby twin barrels, thick stock, a wide spreading flash
+    if ready then
+      L(11, 18 + dy, 22, 13 + dy, "wood")
+      L(17, 15 + dy, 24, 12 + dy, "storm_dk"); L(17, 16 + dy, 24, 13 + dy, "storm")
+      P(14, 16 + dy, "skin"); P(19, 14 + dy, "skin")
+    elseif pose == "aim" or pose == "fire" then
+      L(12, 15, 18, 13, "wood"); P(12, 16, "wood"); P(13, 16, "wood")
+      L(16, 14, 25, 10, "storm_dk"); L(17, 14, 25, 11, "storm")
+      P(16, 14, "skin"); P(20, 12, "skin")
+      if pose == "fire" then flash(27, 10, true) end
+    else
+      local rx = 21
+      L(rx, 14, rx, 26, "wood"); L(rx + 1, 13, rx + 1, 21, "storm_dk")
+      L(rx + 1, 6, rx + 1, 13, "sand"); R(rx, 8, 2, 2, "skin"); P(16, 15, "skin")
+    end
+  elseif kind == "pistols" or kind == "revolvers" then
+    local colt = (kind == "revolvers")
+    local function gun(x, y, len)
+      -- grip below and behind the hand, barrel forward
+      P(x, y + 1, "wood"); P(x - 1, y + 1, "wood")
+      L(x + 1, y, x + len, y, "storm_dk")
+      if colt then P(x + 1, y - 1, "storm"); P(x + 2, y - 1, "storm_lt"); P(x, y + 1, "gold") end
+      P(x, y, "skin")
+    end
+    if ready and pose ~= "crouch" then
+      -- arm hanging, muzzle down by the leg
+      L(20, 13, 21, 18, "blue"); P(21, 19 + dy, "skin")
+      L(22, 20 + dy, 23, colt and 23 or 22, "storm_dk"); P(21, 20 + dy, "wood")
+      if colt then P(22, 19 + dy, "storm"); P(21, 21 + dy, "gold") end
+    elseif pose == "aim" or pose == "fire" or pose == "crouch" then
+      -- arm straight out at the target
+      local y = 13 + dy
+      L(19, y, 23, y - 1, "blue"); L(19, y + 1, 22, y, "light_blue")
+      gun(24, y - 1, colt and 5 or 4)
+      if pose == "fire" then flash(colt and 31 or 30, y - 1, false) end
+    else
+      if colt then
+        -- capping the cylinder: the revolver held level at the chest, a cap in the other hand
+        L(14, 16, 19, 16, "storm_dk"); P(16, 15, "storm"); P(17, 15, "storm_lt"); P(14, 17, "wood"); P(15, 17, "gold")
+        P(13, 16, "skin"); P(20, 15, "skin"); P(21, 14, "gold")
+      else
+        -- ramming a ball: pistol held muzzle up, ramrod in the off hand
+        L(16, 13, 16, 16, "storm_dk"); P(17, 17, "wood"); P(16, 17, "skin")
+        L(17, 8, 17, 12, "sand"); P(17, 9, "skin")
+      end
+    end
+  elseif kind == "knives" then
+    if ready then
+      L(20, 14 + dy, 21, 17 + dy, "blue"); P(22, 17 + dy, "skin")
+      P(23, 16 + dy, "stone_lt"); P(24, 15 + dy, "stone_lt"); P(25, 14 + dy, "white"); P(22, 18 + dy, "ochre")
+    elseif pose == "aim" then
+      L(20, 13, 21, 9, "blue"); P(21, 8, "skin"); P(21, 9, "ochre")
+      L(21, 5, 21, 7, "stone_lt"); P(21, 4, "white")
+    else
+      L(19, 14, 24, 13, "blue"); L(19, 15, 23, 14, "light_blue"); P(25, 13, "skin")
+      L(26, 13, 28, 12, "stone_lt"); P(29, 12, "white")
+      P(30, 10, "stone_lt"); P(30, 15, "stone_lt")
+    end
+  elseif kind == "hatchets" then
+    if ready then
+      L(20, 13 + dy, 21, 18 + dy, "blue"); P(21, 19 + dy, "skin")
+      L(21, 20 + dy, 21, 24 + dy, "wood"); R(22, 23 + dy, 2, 2, "stone_dk"); P(24, 23 + dy, "stone_lt"); P(24, 24 + dy, "stone_lt")
+    elseif pose == "aim" then
+      L(20, 13, 20, 8, "blue"); P(20, 7, "skin")
+      L(20, 2, 20, 6, "wood"); R(21, 2, 2, 2, "stone_dk"); P(23, 2, "stone_lt"); P(23, 3, "stone_lt")
+    else
+      L(20, 13, 24, 14, "blue"); L(20, 14, 23, 15, "light_blue"); P(25, 14, "skin")
+      L(26, 15, 28, 18, "wood"); R(27, 18, 2, 2, "stone_dk"); P(27, 20, "stone_lt"); P(28, 20, "stone_lt")
+      P(30, 16, "stone_lt"); P(29, 21, "stone_lt")
+    end
+  else
+    -- bare fists, up like a prize-fighter
+    if pose == "fire" then
+      L(19, 13, 25, 12, "blue"); L(19, 14, 24, 13, "light_blue"); R(26, 11, 2, 2, "skin"); P(27, 12, "skin_dk")
+      P(17, 14, "skin")
+    else
+      local y = (pose == "aim") and 12 or (14 + dy)
+      L(20, y + 1, 21, y + 2, "blue"); R(21, y, 2, 2, "skin"); P(22, y + 1, "skin_dk")
+      R(17, y + 1, 2, 2, "skin")
+    end
+  end
+end
+
+K.canvas(192, 448, 184883)
+K.layer("arms", function()
+  local poses = {"ready", "aim", "fire", "reload", "crouch", "downed"}
+  for a, kind in ipairs(ARMS) do
+    for i, p in ipairs(poses) do
+      draw_unit(i - 1, (a - 1) * 2, 1, p, false, kind)
+      draw_unit(i - 1, (a - 1) * 2 + 1, -1, p, false, kind)
+    end
+  end
+end)
+K.save("tactical_arms")
