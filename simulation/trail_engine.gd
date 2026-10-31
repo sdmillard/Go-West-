@@ -62,6 +62,8 @@ const RIVER := {"miles":15,"portage_days":2}
 var route = Route.new()
 # Stops reached so far, in order, from the start; records which road was taken.
 var route_path: Array = []
+## Miles of the day left over when the party reached a minor camp; consumed by _arrive_landmark.
+var _spare_miles: int = 0
 var last_crossing: Dictionary = {}
 var crossing_history: Array[Dictionary] = []
 var party_health = PartyHealth.new()
@@ -341,6 +343,10 @@ func _arrive_landmark(revisit: bool=false,roll_stage: bool=true) -> void:
 			if route.nodes[road.to].has("wagon_closed_months"):
 				leave["seasonal_road"]=road.to
 				leave.label+=" · snowbound to wagons %s" % closed_months_text(road.to)
+			# A road broken by pack trains before wagons could use it (Hensley's 1848 Salt Lake cutoff).
+			if road.has("wagon_opens"):
+				leave["wagon_opens"]=road.wagon_opens
+				if wagon_road_unopened(str(road.wagon_opens)):leave.label+=" · no wagon road until %s; pack animals and walkers only" % opening_text(str(road.wagon_opens))
 			# No raft is launched on a frozen river.
 			if road.get("hazard","")=="river":
 				leave["river_leg"]=true
@@ -371,6 +377,13 @@ func _arrive_landmark(revisit: bool=false,roll_stage: bool=true) -> void:
 	if context.data.horse_traders.has(node.id):options.append({"label":"Trade for horses with the %s" % context.data.horse_traders[node.id].name,"action":"trade","horse_traders":true})
 	options.append({"label": "Rest here · 1 day, food consumed", "action": "rest"})
 	pending = {"id": "stop_" + node.id, "landmark": node.id, "title": node.name, "text": description, "choices": options}
+	# A minor camp reached early in the day: leaving at once uses the rest of the day's travel.
+	if _spare_miles>0 and not revisit and node.get("minor",false):
+		pending["day_miles_left"]=_spare_miles
+		pending["arrived_day"]=int(state.day)
+		for choice in options:
+			if choice.get("action","")=="leave" and int(choice.get("effects",{}).get("days",0))==0:choice.label+=" · about %d more miles today" % _spare_miles
+	_spare_miles=0
 	Direction.adapt_stop(self,pending,approach)
 
 func _choose_landmark(index: int) -> bool:
@@ -450,8 +463,18 @@ func _choose_landmark(index: int) -> bool:
 	if not last_crossing.is_empty():
 		journal.append("Crossed %s by %s." % [last_crossing.place, last_crossing.method])
 	journal.append("Leaving " + route.nodes[state.landmark].name + ".")
+	var spare: int=int(pending.get("day_miles_left",0)) if int(pending.get("arrived_day",-1))==int(state.day) and choice.get("action","")=="leave" and int(choice.get("effects",{}).get("days",0))==0 else 0
 	pending = {}
 	_set_next_leg(int(choice.get("edge", 0)))
+	if spare>0 and state.extended_route and Direction.heading(self)=="west" and int(state.leg_length)>1:
+		var onward: int=mini(spare,int(state.leg_length)-1)
+		onward=Direction.clamp_at_cache(self,onward)
+		onward=field_outings.clamp_distance(self,onward)
+		if onward>0:
+			state.leg_miles+=onward
+			state.miles+=onward
+			if state.has("trail_history"):Direction.remember(self)
+			journal.append("Day %d · Pushed on past %s another %d miles before camp." % [state.day,route.nodes[state.landmark].name,onward])
 	if int(choice.get("edge", 0)) > 0:
 		journal.append("Day %d · Took the road toward %s." % [state.day, route.nodes[state.next_landmark].name])
 	_schedule_event(false)
@@ -512,6 +535,7 @@ func configure(pace: int, rations: int) -> void:
 		state.rations = clampi(rations, 0, 2)
 
 func travel() -> bool:
+	_spare_miles=0
 	if _can_act() and not Train.ready(self).is_empty():
 		pending={"id":"train_unready","title":"Reorganize the wagon train","text":Train.ready(self),"choices":[{"label":"Return to camp","effects":{},"result":"The train remains stopped."}]}
 		return true
@@ -568,7 +592,9 @@ func travel() -> bool:
 		elif Train.count(state)>1:distance=maxi(1,roundi(distance*Train.speed(self)))
 		else:distance = maxi(1, roundi(distance * survival.movement_factor(team_conditions.pulling(state), state.ox_health, state.fatigue, 0, state.terrain, int(calendar().month), context.region(self)) * provisions.movement_factor(provisions.cargo(state),team_conditions.pulling(state))))
 		var east: bool=Direction.heading(self)=="east"
+		var uncapped: int=distance
 		distance=mini(distance,int(state.leg_miles) if east else int(state.leg_length)-int(state.leg_miles))
+		_spare_miles=uncapped-distance if not east and not on_river and route.nodes[str(state.next_landmark)].get("minor",false) else 0
 		distance=Direction.clamp_at_cache(self,distance)
 		distance=field_outings.clamp_distance(self,distance)
 		state.leg_miles+=-distance if east else distance
@@ -583,6 +609,8 @@ func travel() -> bool:
 	journal.append("Day %d · Traveled to mile %d. Food remaining: %d units." % [state.day, state.miles, state.food])
 	if state.status == "traveling" and not crime.check_pursuit(self) and not crime.check_wanted(self):
 		if not field_outings.camp_notice(self) and not Direction.cache_notice(self):_schedule_event()
+	# Spare miles count only for an arrival inside this day's travel, so a save never holds them half-used.
+	_spare_miles=0
 	return true
 
 func rest() -> bool:
@@ -620,6 +648,7 @@ func can_choose(index: int) -> bool:
 	if choice.get("care",0)==12 and not context.local_care(self):return false
 	if choice.get("action","")=="cross" and not Train.ready(self).is_empty():return false
 	if choice.has("seasonal_road") and road_closed(str(choice.seasonal_road)):return false
+	if choice.has("wagon_opens") and wagon_road_unopened(str(choice.wagon_opens)):return false
 	if (choice.get("river_leg",false) or choice.get("rafting",false)) and river_frozen():return false
 	if choice.get("method","")=="ferry" and crime.ferry_refused(self,str(state.landmark)):return false
 	if not context.can_trade(choice) or not crime.can_trade(self,choice) or (choice.has("activity") and choice.activity in context.record.activities):return false
@@ -2129,6 +2158,14 @@ func river_frozen() -> bool:
 	return not rules.is_empty() and rules.frozen_months.any(func(m):return int(m)==int(calendar().month)) and hard_winter(int(calendar().year))
 func road_closed(place: String) -> bool:
 	return state.vehicle!="foot" and route.nodes.has(place) and route.nodes[place].get("wagon_closed_months",[]).any(func(m):return int(m)==int(calendar().month))
+## Wagons wait until a pack trail has been made into a wagon road; walkers and riders can go now.
+func wagon_road_unopened(opens: String) -> bool:
+	var date: Dictionary=calendar()
+	return state.vehicle!="foot" and "%04d-%02d-%02d" % [int(date.year),int(date.month),int(date.day)]<opens
+func opening_text(opens: String) -> String:
+	var parts: PackedStringArray=opens.split("-")
+	var names: Array=["January","February","March","April","May","June","July","August","September","October","November","December"]
+	return "%s %d, %s" % [names[int(parts[1])-1],int(parts[2]),parts[0]]
 func closed_months_text(place: String) -> String:
 	var months: Array=route.nodes[place].wagon_closed_months
 	var names: Array=["January","February","March","April","May","June","July","August","September","October","November","December"]

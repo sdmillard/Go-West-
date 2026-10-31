@@ -6,6 +6,7 @@ var textures: Dictionary = {}
 ## Winter and autumn versions built by `art/aseprite/build.sh --seasons`, keyed "id:season".
 var seasonal: Dictionary = {}
 var encounters: Dictionary = {}
+var awaiting: Array = [] # stops whose arrival picture is still being painted
 var error := ""
 
 func _init() -> void:
@@ -40,6 +41,11 @@ func _init() -> void:
 			encounters.clear()
 			return
 	encounters=visits.duplicate()
+	var pending: Variant=data.get("awaiting_art",[])
+	if not pending is Array or not pending.all(func(id):return id is String and not textures.has(id)):
+		error="Invalid awaiting-art list."
+		return
+	awaiting=pending.duplicate()
 
 func encounter_for(site: String) -> String:
 	return encounters.get(site,"")

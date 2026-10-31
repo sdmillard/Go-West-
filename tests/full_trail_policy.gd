@@ -25,8 +25,13 @@ static func step(game) -> void:
     return
  elif game.state.oxen == 0:
   if game.open_trade():game.choose(8)
- elif game.state.food < 90 and game.state.money >= 15:
-  if game.open_trade():game.choose(0)
+ elif game.state.food < 90 and game.state.money >= 15 and game.open_trade():
+  if game.can_choose(0):
+   game.choose(0)
+   return
+  # Traders with no food left to sell: close the counter and keep going rather than asking again.
+  game.choose(game.pending.choices.size()-1)
+  if game.pending.is_empty():game.travel()
  elif game.state.health < 75 or game.state.fatigue > 50 or game.state.ox_health < 65:
   game.rest()
  else:

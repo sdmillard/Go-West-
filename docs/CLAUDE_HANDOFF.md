@@ -6,6 +6,14 @@ Last updated October 31, 2026. Latest checkpoint: tactical combat finished and m
 
 - **Endings, cabin, visit and event art, PR #148 (October 31, Claude; Spencer approved):** all drawn with the Aseprite pipeline. `scenes/endings.lua` gives seven ending pictures, chosen by `_ending_scene()` in ui/main.gd: post, cabin, run off, east, lost, and homestead east or west. `scenes/cabin_overlay.lua` (with `K.log_cabin`) is a 5-stage x 3-size sheet. ui/trail_view.gd draws it at the `cabin` point in data/scene_ambience.json for all 21 timber stops. It follows `Cabins.progress`, is snowy in snow weather or Dec-Feb, and smokes when finished. `scenes/encounters.lua` covers all seven Native visits. `scenes/events.lua` has nine trail event pictures, picked by `_event_scene()` from pending events and wanted standoffs. Next: seasonal (winter/autumn) scene variants (Spencer asked), a cascades_portage picture when that stop exists, and scenes for new stops.
 
+- **New stops, the Salt Lake road and Native nations on the map (October 31, Claude; Spencer asked, Salt Lake in the same PR):** see [ROUTE_STOPS.md](ROUTE_STOPS.md).
+  - 11 main-road camps at Palmer's own named camps. Bear River and the Umatilla's mouth are where Greenwood's cutoff and the Walla Walla road now rejoin. The main road is still 1,938 miles.
+  - Salt Lake branch from Fort Bridger (121 mi, Clayton 1848) and Hensley's cutoff to the Raft River (230 mi, authored). Wagons wait until September 15, 1848 (`wagon_opens`); walkers and riders can go at once.
+  - Map: nation labels (`map.json` `nations`) and dashed ticks where the people per stop changes.
+  - The 11 road camps are `minor`: a party that reaches one partway through a day and leaves at once makes the rest of the day's miles, so the extra stops don't add a week. Bot arrivals are unchanged within noise (see ROUTE_STOPS.md).
+  - Old saves are walked onto the split roads (`upgrade_split_roads`).
+  - The 12 new stops' scenes (with seasons and cabin spots) are in PR #149.
+
 - **Winter cabins, settling short and scores (October 31, Claude; Spencer's design answers):** see [CABINS_AND_ENDINGS.md](CABINS_AND_ENDINGS.md).
   - Cabins: CAMP > CABIN builds at timber stops (a hatchet, 15 worker-days, Carpentry x1.5). A finished cabin stops storms and cold exposure and cuts winter illness by 0.6; hunger, scurvy and animals go on.
   - Settling: allowed at any stop, any time. Open places and posts take the party. In Native country the people decide (30%, seed-hashed); staying anyway means `run_off`. The new status is `settled`.

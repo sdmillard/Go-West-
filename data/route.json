@@ -72,21 +72,39 @@
       "ferry_dollars": 1,
       "next": [
         {
-          "to": "big_blue",
-          "miles": 93,
+          "to": "big_vermilion",
+          "miles": 79,
           "source_rows": [
             14,
             24,
             12,
-            29,
-            8,
-            6
+            29
           ],
           "source_table_rows": [
             6,
             7,
             8,
-            9,
+            9
+          ]
+        }
+      ],
+      "hunting_region": "plains"
+    },
+    {
+      "id": "big_vermilion",
+      "name": "Big Vermilion",
+      "kind": "camp",
+      "text": "The road crosses Turkey Creek and the Little Vermilion to the Big Vermilion, a wooded creek with steep clay banks. Palmer's table counts intermediate camps along it; there is wood, water and grass here before the Big Blue.",
+      "minor": true,
+      "next": [
+        {
+          "to": "big_blue",
+          "miles": 14,
+          "source_rows": [
+            8,
+            6
+          ],
+          "source_table_rows": [
             10,
             11
           ]
@@ -101,19 +119,37 @@
       "text": "The Big Blue interrupts the emigrant road. No ferryman offers passage at your crossing. Judge the water before committing the wagon and livestock.",
       "next": [
         {
-          "to": "platte",
-          "miles": 143,
+          "to": "little_blue",
+          "miles": 70,
           "source_rows": [
             10,
             42,
-            18,
-            53,
-            20
+            18
           ],
           "source_table_rows": [
             12,
             14,
-            15,
+            15
+          ]
+        }
+      ],
+      "hunting_region": "plains"
+    },
+    {
+      "id": "little_blue",
+      "name": "Little Blue River",
+      "kind": "camp",
+      "text": "The St. Joseph road joins from the east, and the trail strikes the Little Blue (Palmer's Republican fork of the Blue) near the Big Sandy. Days of good camps follow up the river's timbered bottom before the road climbs over to the Platte.",
+      "minor": true,
+      "next": [
+        {
+          "to": "platte",
+          "miles": 73,
+          "source_rows": [
+            53,
+            20
+          ],
+          "source_table_rows": [
             16,
             17
           ]
@@ -276,41 +312,79 @@
       "terrain": "plains",
       "next": [
         {
-          "to": "north_platte",
-          "miles": 126,
+          "to": "horseshoe_creek",
+          "miles": 36,
           "source_rows": [
             12,
             10,
             7,
-            7,
-            8,
-            8,
-            16,
-            5,
-            12,
-            10,
-            6,
-            25
+            7
           ],
           "source_table_rows": [
             29,
             30,
             31,
-            32,
-            33,
-            34,
-            35,
-            36,
-            37,
-            38,
-            39,
-            40
+            32
           ]
         }
       ],
       "trade_bulk": true,
       "hunting_region": "highcountry",
       "advice": "Check food for the next long leg, allow for days lost to weather, and keep money for later supplies. A post is a chance to prepare, not a guarantee that the journey ahead is safe."
+    },
+    {
+      "id": "horseshoe_creek",
+      "name": "Horse Shoe Creek",
+      "kind": "camp",
+      "text": "Past the Big Spring and Bitter Cottonwood, the road over the Black Hills reaches Horse Shoe Creek, a clear stream with timber and grass. The hills ahead are rough on wheels and feet.",
+      "minor": true,
+      "terrain": "plains",
+      "next": [
+        {
+          "to": "deer_creek",
+          "miles": 65,
+          "source_rows": [
+            8,
+            8,
+            16,
+            5,
+            12,
+            10,
+            6
+          ],
+          "source_table_rows": [
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39
+          ]
+        }
+      ],
+      "hunting_region": "highcountry"
+    },
+    {
+      "id": "deer_creek",
+      "name": "Deer Creek",
+      "kind": "camp",
+      "text": "The road returns to the Platte at Deer Creek, a favorite camp with good grass, cottonwood and fish. Many companies rest here before the crossing of the North Fork.",
+      "minor": true,
+      "terrain": "plains",
+      "next": [
+        {
+          "to": "north_platte",
+          "miles": 25,
+          "source_rows": [
+            25
+          ],
+          "source_table_rows": [
+            40
+          ]
+        }
+      ],
+      "hunting_region": "highcountry"
     },
     {
       "id": "north_platte",
@@ -320,24 +394,43 @@
       "terrain": "plains",
       "next": [
         {
-          "to": "independence_rock",
-          "miles": 45,
+          "to": "willow_spring",
+          "miles": 23,
           "source_rows": [
             10,
             8,
-            5,
-            22
+            5
           ],
           "source_table_rows": [
             41,
             42,
-            43,
-            44
+            43
           ]
         }
       ],
       "hunting_region": "highcountry",
       "river_source": "snowmelt"
+    },
+    {
+      "id": "willow_spring",
+      "name": "Willow Spring",
+      "kind": "camp",
+      "text": "After the Mineral Springs, where the water is bad and cattle sicken, Willow Spring is a welcome good camp: cold water, willows for fuel and some grass, a long day short of the Sweetwater.",
+      "minor": true,
+      "terrain": "plains",
+      "next": [
+        {
+          "to": "independence_rock",
+          "miles": 22,
+          "source_rows": [
+            22
+          ],
+          "source_table_rows": [
+            44
+          ]
+        }
+      ],
+      "hunting_region": "highcountry"
     },
     {
       "id": "independence_rock",
@@ -448,23 +541,13 @@
       "terrain": "mountains",
       "next": [
         {
-          "to": "soda_springs",
-          "miles": 124,
+          "to": "bear_river",
+          "miles": 64,
           "source_rows": [
-            64,
-            10,
-            7,
-            3,
-            4,
-            36
+            64
           ],
           "source_table_rows": [
-            53,
-            66,
-            67,
-            69,
-            70,
-            72
+            53
           ]
         }
       ],
@@ -506,20 +589,15 @@
       "terrain": "mountains",
       "next": [
         {
-          "to": "soda_springs",
-          "miles": 136,
+          "to": "bear_river",
+          "miles": 76,
           "source_rows": [
             8,
             10,
             32,
             10,
             6,
-            10,
-            10,
-            7,
-            3,
-            4,
-            36
+            10
           ],
           "source_table_rows": [
             60,
@@ -527,7 +605,43 @@
             62,
             63,
             64,
-            65,
+            65
+          ]
+        },
+        {
+          "to": "salt_lake",
+          "miles": 121,
+          "label": "Take the Mormon road to Great Salt Lake City \u00b7 about 121 miles",
+          "source_rows": [
+            121
+          ],
+          "source_table_rows": [],
+          "allocation_note": "William Clayton, The Latter-Day Saints' Emigrants' Guide (1848): Fort Bridger to the City of the Great Salt Lake about 121 1/2 miles, by Echo Canyon and Emigration Canyon."
+        }
+      ],
+      "trade_bulk": true,
+      "hunting_region": "sagebrush",
+      "advice": "Check food for the next long leg, allow for days lost to weather, and keep money for later supplies. A post is a chance to prepare, not a guarantee that the journey ahead is safe."
+    },
+    {
+      "id": "bear_river",
+      "name": "Bear River valley",
+      "kind": "camp",
+      "text": "The road from Bridger's post comes down to the Bear River, where Greenwood's northern cutoff rejoins it near Smith's Fork. The valley has grass, willows and good water; Big Hill and the Bear River narrows lie ahead.",
+      "minor": true,
+      "terrain": "mountains",
+      "next": [
+        {
+          "to": "soda_springs",
+          "miles": 60,
+          "source_rows": [
+            10,
+            7,
+            3,
+            4,
+            36
+          ],
+          "source_table_rows": [
             66,
             67,
             69,
@@ -536,9 +650,31 @@
           ]
         }
       ],
+      "hunting_region": "sagebrush"
+    },
+    {
+      "id": "salt_lake",
+      "name": "Great Salt Lake City",
+      "kind": "camp",
+      "text": "The Latter-day Saints reached this valley in July 1847 and have laid out a city of wide streets around the Old Fort. In 1848 crickets and frost cut the harvest; food is scarce and dear, but the settlers want cloth, tools and cattle. North, Hensley's new cutoff runs past the Bear River to the California road and on to the Raft River.",
+      "terrain": "mountains",
       "trade_bulk": true,
-      "hunting_region": "sagebrush",
-      "advice": "Check food for the next long leg, allow for days lost to weather, and keep money for later supplies. A post is a chance to prepare, not a guarantee that the journey ahead is safe."
+      "bulk_food_cents": 4500,
+      "next": [
+        {
+          "to": "raft_river",
+          "miles": 230,
+          "label": "Take Hensley's Salt Lake cutoff north to the Raft River \u00b7 about 230 miles",
+          "wagon_opens": "1848-09-15",
+          "source_rows": [
+            180,
+            50
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored estimate: about 180 miles from the city north of the lake to the California road near the City of Rocks (Salt Lake Cutoff, opened by Samuel Hensley's pack train in summer 1848 and made a wagon road by returning Mormon Battalion men in September 1848), then about 50 miles down the Raft River valley to the Oregon road."
+        }
+      ],
+      "hunting_region": "highcountry"
     },
     {
       "id": "soda_springs",
@@ -578,35 +714,15 @@
       "terrain": "desert",
       "next": [
         {
-          "to": "snake_river",
-          "miles": 162,
+          "to": "american_falls",
+          "miles": 18,
           "source_rows": [
             6,
-            12,
-            15,
-            8,
-            15,
-            11,
-            23,
-            8,
-            15,
-            20,
-            6,
-            23
+            12
           ],
           "source_table_rows": [
             79,
-            80,
-            81,
-            82,
-            83,
-            84,
-            85,
-            86,
-            87,
-            88,
-            89,
-            90
+            80
           ]
         }
       ],
@@ -614,6 +730,83 @@
       "bulk_food_cents": 4000,
       "hunting_region": "sagebrush",
       "advice": "Check food for the next long leg, allow for days lost to weather, and keep money for later supplies. A post is a chance to prepare, not a guarantee that the journey ahead is safe."
+    },
+    {
+      "id": "american_falls",
+      "name": "American Falls",
+      "kind": "camp",
+      "text": "Past the crossing of the Portneuf, the Snake drops over a broad ledge of dark rock. Shoshone and Bannock families fish below the falls in season.",
+      "minor": true,
+      "terrain": "desert",
+      "next": [
+        {
+          "to": "raft_river",
+          "miles": 23,
+          "source_rows": [
+            15,
+            8
+          ],
+          "source_table_rows": [
+            81,
+            82
+          ]
+        }
+      ],
+      "hunting_region": "sagebrush"
+    },
+    {
+      "id": "raft_river",
+      "name": "Raft River",
+      "kind": "camp",
+      "text": "At Cassia Creek and the Raft River the California road turns off south toward the City of Rocks. Oregon companies keep west along the Snake into dry sage country.",
+      "minor": true,
+      "terrain": "desert",
+      "next": [
+        {
+          "to": "salmon_falls",
+          "miles": 98,
+          "source_rows": [
+            15,
+            11,
+            23,
+            8,
+            15,
+            20,
+            6
+          ],
+          "source_table_rows": [
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89
+          ]
+        }
+      ],
+      "hunting_region": "sagebrush"
+    },
+    {
+      "id": "salmon_falls",
+      "name": "Salmon Falls",
+      "kind": "camp",
+      "text": "Shoshone fishermen spear and trap salmon at the falls and dry them on racks. Emigrants trade powder, clothing or fishhooks for fish. The road beyond climbs to the first crossing of the Snake.",
+      "minor": true,
+      "terrain": "desert",
+      "next": [
+        {
+          "to": "snake_river",
+          "miles": 23,
+          "source_rows": [
+            23
+          ],
+          "source_table_rows": [
+            90
+          ]
+        }
+      ],
+      "hunting_region": "sagebrush"
     },
     {
       "id": "snake_river",
@@ -646,17 +839,13 @@
       "terrain": "desert",
       "next": [
         {
-          "to": "burnt_river",
-          "miles": 43,
+          "to": "malheur",
+          "miles": 15,
           "source_rows": [
-            15,
-            20,
-            8
+            15
           ],
           "source_table_rows": [
-            94,
-            95,
-            96
+            94
           ]
         }
       ],
@@ -665,6 +854,29 @@
       "hunting_region": "sagebrush",
       "advice": "This is the old Hudson's Bay Company post near the river confluence, not the United States Army post built near modern Boise in 1863.",
       "river_source": "snowmelt"
+    },
+    {
+      "id": "malheur",
+      "name": "Malheur River",
+      "kind": "camp",
+      "text": "Across the Snake from the post, the road reaches the Malheur, where hot springs steam beside the cold stream. Ahead the trail leaves the Snake for good at the bend and climbs to Burnt River.",
+      "minor": true,
+      "terrain": "desert",
+      "next": [
+        {
+          "to": "burnt_river",
+          "miles": 28,
+          "source_rows": [
+            20,
+            8
+          ],
+          "source_table_rows": [
+            95,
+            96
+          ]
+        }
+      ],
+      "hunting_region": "sagebrush"
     },
     {
       "id": "burnt_river",
@@ -778,15 +990,14 @@
       "bulk_food_cents": 4000,
       "next": [
         {
-          "to": "john_day",
-          "miles": 58,
+          "to": "umatilla_mouth",
+          "miles": 25,
           "hazard": "unrest",
           "source_rows": [
-            25,
-            33
+            25
           ],
           "source_table_rows": [],
-          "allocation_note": "Authored estimate of about 25 miles down the Columbia's south bank to the Umatilla's mouth, then Palmer's 33 miles (row 106) to the John Day."
+          "allocation_note": "Authored estimate of about 25 miles down the Columbia's south bank to the Umatilla's mouth. Not a Palmer table row."
         }
       ],
       "hunting_region": "sagebrush",
@@ -800,19 +1011,38 @@
       "terrain": "plains",
       "next": [
         {
-          "to": "john_day",
-          "miles": 77,
+          "to": "umatilla_mouth",
+          "miles": 44,
           "source_rows": [
-            44,
-            33
+            44
           ],
           "source_table_rows": [
-            105,
-            106
+            105
           ]
         }
       ],
       "hunting_region": "forest"
+    },
+    {
+      "id": "umatilla_mouth",
+      "name": "Columbia River at the Umatilla",
+      "kind": "camp",
+      "text": "The Umatilla meets the Columbia in sand and sage. The road from Fort Walla Walla along the south bank joins the main road here, and both follow the great river west toward the John Day.",
+      "minor": true,
+      "terrain": "desert",
+      "next": [
+        {
+          "to": "john_day",
+          "miles": 33,
+          "source_rows": [
+            33
+          ],
+          "source_table_rows": [
+            106
+          ]
+        }
+      ],
+      "hunting_region": "sagebrush"
     },
     {
       "id": "john_day",
