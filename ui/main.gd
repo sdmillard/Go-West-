@@ -893,14 +893,14 @@ func _show_section(section: String) -> void:
 		"Steal","Rob":
 			# Every store, post, gate, ferry, trading party or camp within reach is its own branch, like ATTACK SOMEONE > SOMEONE HERE.
 			var category: String="theft" if section=="Steal" else "robbery"
-			var places: Array=game.crime.local_places(game,game.pending) if game.crime.incident().is_empty() else []
+			var places: Array=game.crime.local_places(game,game.pending).filter(func(place):return game.crime.stocked(game,place)) if game.crime.incident().is_empty() else []
 			for place in places:
 				var target:=button(game.crime.place_label(game,place).to_upper()+" >",_section_action.bind(_open_crime_at.bind(place,category)))
 				target.custom_minimum_size.y=27
 				target.set_meta("crime_place",place)
 				section_rows.add_child(target)
 			if places.is_empty():
-				var none:=label("Nobody here to %s. Stop at a trading post, the Kansas River ferry, Fort Kearny once soldiers are there, or the Barlow Road toll gate, or meet passing traders or an emigrant camp on the road." % ("steal from" if section=="Steal" else "rob"))
+				var none:=label("Nobody here to %s. Stop at a trading post, the Kansas River ferry, Fort Kearny once soldiers are there, or the Barlow Road toll gate, visit a Native household with provisions or horses, or meet passing traders or an emigrant camp on the road." % ("steal from" if section=="Steal" else "rob"))
 				none.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 				none.custom_minimum_size.x=330
 				section_rows.add_child(none)

@@ -347,7 +347,7 @@ func _arrive_landmark(revisit: bool=false,roll_stage: bool=true) -> void:
 		options.append({"label":"Read trail notes", "action":"notes"})
 	if node.id == "fort_kearny" and int(calendar().month) < 6 and int(calendar().year) == 1848:
 		description += "\nYou arrive before June; construction has not yet begun."
-	if node.id=="columbia_raft" and Direction.heading(self)=="west":options.append(native_encounters.portage_choice(self))
+	if node.id=="columbia_raft" and Direction.heading(self)=="west" and native_encounters.refusal(self,"columbia_raft").is_empty():options.append(native_encounters.portage_choice(self))
 	options.append_array(context.activity_choices(self))
 	if context.data.horse_traders.has(node.id):options.append({"label":"Trade for horses with the %s" % context.data.horse_traders[node.id].name,"action":"trade","horse_traders":true})
 	options.append({"label": "Rest here · 1 day, food consumed", "action": "rest"})
@@ -1070,6 +1070,8 @@ func open_trade() -> bool:
 func open_horse_traders() -> bool:
 	var herd: Dictionary=context.data.horse_traders.get(str(state.landmark),{})
 	if herd.is_empty() or not can_service():return false
+	# The herd belongs to a household; one the party wronged will not trade.
+	if native_encounters.data.sites.has(str(state.landmark)) and not native_encounters.refusal(self,str(state.landmark)).is_empty():return _service_menu(context.data.horse_traders[str(state.landmark)].name.capitalize(),native_encounters.refusal(self,str(state.landmark)),[])
 	var key: String="herders:"+str(state.landmark)
 	var days: int=0 if context.record.spent.has(key+"|visit") else 1
 	var left: int=int(herd.horses)-int(context.record.spent.get(key+"|buy_horses",0))
@@ -1373,8 +1375,9 @@ static func _unit_name(item: String,n: int) -> String:
 ## The crime preview for this stop's target, or (place) one chosen from crime.local_places, as VILLAINY > STEAL lists them.
 func open_crime(place: String="") -> bool:
 	if pending.get("crime_menu",false):return true
-	if not crime.eligible(self):return false
-	if not place.is_empty() and place not in crime.local_places(self,pending):return false
+	# A household is picked by name from VILLAINY; it is never the stop's default target.
+	if place.is_empty() and not crime.eligible(self):return false
+	if not place.is_empty() and (not can_service() or place not in crime.local_places(self,pending)):return false
 	service_return=pending.duplicate(true)
 	if not place.is_empty():pending={"crime_menu":true,"crime_place":place}
 	pending=crime.menu(self)
@@ -1406,7 +1409,7 @@ func open_camp() -> bool:
 
 ## What a family met on the road heard at the posts behind it: which posts ahead already know of the party.
 func camp_news() -> String:
-	var warned: Array=crime.venues().filter(func(place):return crime.mile(self,place)>int(state.miles) and crime.refuses(self,place)).map(func(place):return route.nodes[place].name)
+	var warned: Array=crime.venues().filter(func(place):return not crime.household(place) and crime.mile(self,place)>int(state.miles) and crime.refuses(self,place)).map(func(place):return route.nodes[place].name)
 	if warned.is_empty():return "We didn't hear any talk about you folks at the posts we passed."
 	return "Folks at %s have already heard about you. I'd watch yourselves there." % " and ".join(warned.map(func(name):return news.spoken(name)))
 

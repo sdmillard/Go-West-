@@ -42,6 +42,8 @@ static func valid_state(model,site: String,v: Variant,day: int) -> bool:
  return true
 static func active_guide(model,game) -> bool:
  var s: Dictionary=state(model,"deschutes")
+ # A dead or wronged pilot honours no agreement.
+ if not model.refusal(game,"deschutes").is_empty():return false
  return not s.agreement_closed and game.state.landmark=="deschutes" and game.Direction.heading(game)=="west" and int(s.agreement_until)>=int(game.state.day) and int(s.agreement_loads)>=maxi(1,game.wagon_count()) and standing(model,"deschutes")>=0
 static func end_guide(model,game,reason: String) -> void:
  if not model.record.get("deschutes",{}).has("story"):return

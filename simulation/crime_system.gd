@@ -14,7 +14,10 @@ const KINDS={
 	"fort":{"journal":"Fort","noun":"the army post","theft":"Take rations from the commissary tent · 1 day","raid":"Search the commissary tent for rations and the cash box · 1 day"},
 	"traders":{"journal":"Trader","noun":"a trading party","theft":"Take goods from the traders' packs without paying · 1 day","raid":"Search the traders' packs · 1 day"},
 	"emigrants":{"journal":"Emigrant","noun":"an emigrant family","theft":"Take from their camp while they sleep · 1 day","raid":"Search their wagon · 1 day"},
-	"ferry":{"journal":"Ferry","noun":"the ferry","theft":"Cast off with the ferry while the crew is away · 1 day","raid":"Take the ferry and the crew's cash box · 1 day","take":"Take $%.2f and the ferry · 1 day","passage":"the ferry will be yours to work across"}}
+	"ferry":{"journal":"Ferry","noun":"the ferry","theft":"Cast off with the ferry while the crew is away · 1 day","raid":"Take the ferry and the crew's cash box · 1 day","take":"Take $%.2f and the ferry · 1 day","passage":"the ferry will be yours to work across"},
+	"household":{"journal":"Household","noun":"a Native household","theft":"Take from the household's stores unseen · 1 day","raid":"Search the household's lodges for what is left · 1 day"}}
+## A Native household is the people at one of the existing visits, keyed by the route stop it lives at.
+const HOUSEHOLD:="native:"
 ## Attempts that reach the loot stage; only these can win passage at a gate or ferry.
 const LOOTING=["unseen","complied","killed","raided"]
 ## Sparse named bonds between companions, and how each companion answers an attack on another.
@@ -90,9 +93,11 @@ func load_data(value: Variant) -> bool:
 			if not scene.get(key) is String or scene[key].is_empty():return false
 		if not KINDS.has(scene.get("kind")) or not scene.get("wagon_access") is bool:return false
 		for key in ["cash_cents","food_lot","loot_limit","injury_damage"]:
-			if not whole(scene.get(key),0 if key in ["food_lot","loot_limit"] else 1,100000):return false
+			# A household carries no cash; every other venue keeps a cash box.
+			if not whole(scene.get(key),0 if key in ["food_lot","loot_limit"] or (key=="cash_cents" and scene.get("kind")=="household") else 1,100000):return false
 		# Only stores sell or hold food; a gate or ferry holds only its cash box.
 		if (scene.kind in TEMPLATE_KINDS.values())!=TEMPLATE_KINDS.has(place) or (TEMPLATE_KINDS.has(place) and scene.kind!=TEMPLATE_KINDS[place]):return false
+		if (scene.kind=="household")!=place.begins_with(HOUSEHOLD) or (scene.kind=="household" and scene.cash_cents!=0):return false
 		if (scene.kind=="emigrants")!=scene.has("every_days") or scene.has("every_days")!=scene.has("window_days"):return false
 		if scene.kind=="emigrants" and (not whole(scene.every_days,2,60) or not whole(scene.window_days,1,scene.every_days-1)):return false
 		# Food lots match what each venue sells: a post's 200 lb lot, a passing party's 50 lb lot.
@@ -100,13 +105,13 @@ func load_data(value: Variant) -> bool:
 		# A fort's commissary holds its own stock; soldiers who stop an escape force a standoff.
 		var fort_keys: Array=["food_stock","breakout","breakout_shots"]
 		for key in fort_keys:
-			if scene.has(key)!=((scene.kind in ["fort","pursuers"] and key!="food_stock") or scene.kind=="fort" or (key=="food_stock" and scene.kind=="emigrants")):return false
+			if scene.has(key)!=((scene.kind in ["fort","pursuers","household"] and key!="food_stock") or scene.kind=="fort" or (key=="food_stock" and scene.kind=="emigrants")):return false
 		if scene.has("food_stock") and not whole(scene.food_stock,1,2000):return false
-		if scene.kind in ["fort","pursuers"] and ( not number(scene.breakout) or scene.breakout<0 or scene.breakout>1 or not whole(scene.breakout_shots,1,5)):return false
-		# Only soldiers ride after a party; a chase ends in the same standoff as a blocked escape.
+		if scene.kind in ["fort","pursuers","household"] and ( not number(scene.breakout) or scene.breakout<0 or scene.breakout>1 or not whole(scene.breakout_shots,1,5)):return false
+		# Only soldiers and a household's kin ride after a party; a chase ends in the same standoff as a blocked escape.
 		if scene.has("pursuit"):
 			var chase: Variant=scene.pursuit
-			if scene.kind!="fort" or not chase is Dictionary or chase.size()!=3 or not chase.get("note") is String or not whole(chase.get("days"),1,14) or not number(chase.get("daily")) or chase.daily<0 or chase.daily>1:return false
+			if scene.kind not in ["fort","household"] or not chase is Dictionary or chase.size()!=3 or not chase.get("note") is String or not whole(chase.get("days"),1,14) or not number(chase.get("daily")) or chase.daily<0 or chase.daily>1:return false
 		if (scene.kind=="ferry")!=scene.has("seized_risk_low") or scene.has("seized_risk_low")!=scene.has("seized_risk_high"):return false
 		if scene.kind=="ferry":
 			for key in ["seized_risk_low","seized_risk_high"]:
@@ -163,6 +168,32 @@ func staff_ids(place: String) -> Array:
 func owner_id(place: String) -> String:return staff_ids(place)[0]
 func role(place: String,uid: String) -> String:return rules(place).staff[staff_ids(place).find(uid)].role
 func kind(place: String) -> Dictionary:return KINDS[rules(place).kind]
+func household(place: String) -> bool:return place.begins_with(HOUSEHOLD) and scenes.has(place)
+## The route stop a fixed venue stands at. A household shares its stop with any post there but is a separate venue.
+func node_of(place: String) -> String:return place.trim_prefix(HOUSEHOLD) if household(place) else place
+## How news and VILLAINY lists name a venue: a household by its own title, everything else by its kind.
+func venue_noun(place: String) -> String:return str(rules(place).title).to_lower() if household(place) else str(kind(place).noun)
+## Why the household at a Native visit will not deal with the party, or "" when it will. Only what they saw or heard counts:
+## an unseen theft changes nothing until word of it arrives.
+func household_refusal(game,site: String) -> String:
+	var place: String=HOUSEHOLD+site
+	# A route that never reaches this visit has no household to refuse.
+	if not scenes.has(place) or not game.route.nodes.has(site):return ""
+	if record.services.has(place) and owner(place).health==0:return "The %s is dead. Nobody of the household will deal with your party." % role(place,owner_id(place))
+	if record.services.has(place) and service(place).alarmed:return "This household saw what your party did. They will not trade, work, guide or carry for you."
+	if driven_out(game,site):return "Their council drove your party out of this country. Nobody here will deal with you."
+	if refuses(game,place):return news_text(game,place)
+	return ""
+## A council's banishment covers every Native visit in the same country as the household that tried the party.
+func driven_out(game,site: String) -> bool:
+	var country: String=str(game.route.nodes.get(site,{}).get("hunting_region",""))
+	return record.incidents.any(func(item):return item.get("sentence",{}).get("authority","")=="council" and item.sentence.kind in ["driven_out","price"] and str(game.route.nodes.get(node_of(item.place),{}).get("hunting_region",""))==country)
+## Whether a venue holds anything to steal or demand; a pilot or a portage crew has only themselves.
+func stocked(game,place: String) -> bool:
+	if not household(place):return true
+	var goods: Dictionary=game.RobberyDemand.stock(game,place)
+	goods.erase("cash_cents")
+	return goods.values().any(func(amount):return int(amount)>0)
 ## Passage won at a toll gate or ferry: the party took the cash box or the boat and got away with it, or killed the gatekeeper.
 func passage(place: String) -> bool:
 	if not scenes.has(place) or scenes[place].kind not in ["toll","ferry"]:return false
@@ -181,6 +212,10 @@ func actor(place: String,uid: String) -> Dictionary:return record.actors[uid] if
 func owner(place: String) -> Dictionary:return actor(place,owner_id(place))
 ## Cosmetic names derive from actor identity on a separate RNG; no incident rolls are consumed.
 func display_name(game,place: String,uid: String) -> String:
+	# The household keeps the contact's own authored identity; no invented personal names.
+	if household(place):
+		if uid==owner_id(place):return str(game.native_encounters.data.sites[node_of(place)].contact.label)
+		return "%s · %s" % [str(rules(place).title).trim_prefix("An ").trim_prefix("A "),role(place,uid)]
 	var random:=RandomNumberGenerator.new()
 	random.seed=int(game.state.seed) ^ int(uid.hash()) ^ 0x4e414d45
 	var names: Array=game.characters.catalog.data.first_names
@@ -198,10 +233,13 @@ func local_places(game,stop: Dictionary) -> Array:
 		if market.available and not market.post:places_here.append(market.key)
 	var nearby_camp:=camp(game)
 	if not nearby_camp.is_empty():places_here.append(nearby_camp)
+	# The household at a Native visit, while anyone of it is left.
+	if stop.get("landmark","")==landmark and scenes.has(HOUSEHOLD+landmark) and not living_staff(HOUSEHOLD+landmark).is_empty():places_here.append(HOUSEHOLD+landmark)
 	return places_here
 ## How a place reads in the VILLAINY lists: the post's name for a fixed venue, the scene's own title on the road.
 func place_label(game,place: String) -> String:
 	if transient(place):return rules(place).title
+	if household(place):return "%s · %s" % [game.route.nodes[node_of(place)].name,rules(place).title]
 	return "%s · %s" % [game.route.nodes[place].name,str(rules(place).title).trim_prefix("The ")]
 func local_targets(game) -> Array:
 	if not game.can_service() or not incident().is_empty():return []
@@ -240,17 +278,24 @@ func camp(game) -> String:
 	return "emigrants:%s:%d" % [game.context.region_id(game),day/int(rule.every_days)]
 ## A post still waiting for its builders has nobody to rob.
 func staffed(game,place: String) -> bool:
-	var node: Dictionary=game.route.nodes[place]
+	var node: Dictionary=game.route.nodes[node_of(place)]
 	return not node.has("construction_from_month") or int(game.calendar().year)!=1848 or int(game.calendar().month)>=int(node.construction_from_month)
 func closed(place: String) -> bool:
 	return record.services.has(place) and (service(place).alarmed or owner(place).health==0)
 func food_capacity(game,place: String) -> int:
 	if rules(place).has("food_stock"):return int(rules(place).food_stock)
+	# A household holds exactly the preserved provisions its visit sells, and no more.
+	if household(place):
+		var total:=0
+		for offer in game.native_encounters.data.sites[node_of(place)].offers:
+			if offer.item=="food":total+=int(offer.amount)*int(offer.lots)
+		return total
 	# A passing party carries its own load of food, seeded per meeting.
 	if trader(place) and game!=null:return int(game.context.barter_goods(game,place).stock.get("food",0))
 	return int(game.context.data.passing_lots if trader(place) else game.context.data.post_lots)*int(rules(place).food_lot)
 func food_left(game,place: String) -> int:
 	# Food bought from traders not yet in the record still left their packs.
+	if household(place):return maxi(0,food_capacity(game,place)-game.native_encounters.food_sold(node_of(place))-int(service(place).food_taken))
 	var sold: int=int(service(place).food_sold) if record.services.has(place) else int(game.context.record.spent.get(market_prefix(place)+"|buy_food|units",int(game.context.record.spent.get(market_prefix(place)+"|buy_food",0))*int(rules(place).food_lot)))
 	# An emigrant family's food traded away on a peaceful visit is no longer in their wagon.
 	if rules(place).kind=="emigrants":sold+=int(game.context.record.spent.get(place+"|barter_food",0))*int(game.context.data.emigrant_camp.barter_food)+int(game.context.record.spent.get(place+"|buy_food|units",0))
@@ -285,7 +330,7 @@ func loot_quote(game,place: String) -> Dictionary:
 	var alongside: bool=game.state.vehicle=="wagon" and rules(place).wagon_access and current.get("action","")!="theft"
 	var hauling: int=game.hauling_capacity("murder" if current.get("action","") in ["shoot","assault"] else "robbery")
 	var food_space:=floori(mini(room,room if alongside else hauling)/float(game.provisions.data.weights_lb.food))
-	return {"food":mini(mini(food_left(game,place),int(rules(place).loot_limit)),food_space) if rules(place).kind in ["store","fort","traders","emigrants"] else 0,"money":service(place).cash_cents if not current.is_empty() and current.action!="theft" else 0,"wagon_access":alongside,"haul_limit_lb":hauling}
+	return {"food":mini(mini(food_left(game,place),int(rules(place).loot_limit)),food_space) if rules(place).kind in ["store","fort","traders","emigrants","household"] else 0,"money":service(place).cash_cents if not current.is_empty() and current.action!="theft" else 0,"wagon_access":alongside,"haul_limit_lb":hauling}
 func option(label: String,command: String) -> Dictionary:
 	return {"label":label,"crime_command":command,"effects":{},"result":""}
 ## Distinct targets the party got away from, plus clean defensive victories. Capped; the same target never counts twice.
@@ -336,12 +381,15 @@ func menu(game) -> Dictionary:
 		if scene.kind=="emigrants":text+="\nHead of the family: %s. Others with them: %d. Food in their wagon: %d lb. Cash: $%.2f. Their company is camped within earshot." % [condition(keeper),living_staff(place).size()-1,food_left(game,place),service(place).cash_cents/100.0]
 		elif scene.kind=="traders":text+="\nLead trader: %s. Food in their packs: %d lb. Cash: $%.2f. Nobody else is in sight on this stretch of road." % [condition(keeper),food_left(game,place),service(place).cash_cents/100.0]
 		elif scene.kind=="store":text+="\nKeeper: %s. Accessible food stock: %d lb. Cash stash: $%.2f." % [condition(keeper),food_left(game,place),service(place).cash_cents/100.0]
+		elif scene.kind=="household":text+="\n%s: %s. Others of the household nearby: %d. Food in their stores: %d lb. They carry no cash. They are on home ground: they resist, remember faces and may ride after the party." % [display_name(game,place,keeper.uid),condition(keeper),living_staff(place).size()-1,food_left(game,place)]
 		elif scene.kind=="fort":text+="\n%s: %s. Soldiers on duty nearby: %d. Commissary rations: %d lb. Cash box: $%.2f. If soldiers stop an escape, the party must surrender or shoot its way out." % [keeper.role.capitalize(),condition(keeper),living_staff(place).size()-1,food_left(game,place),service(place).cash_cents/100.0]
 		else:text+="\n%s: %s. Cash box: $%.2f." % [keeper.role.capitalize(),condition(keeper),service(place).cash_cents/100.0]
 		text+="\nStaff on hand: %d. Your party's condition: %s. Fit, willing participants: %d. Prior successful jobs counted: %d of %d." % [living_staff(place).size(),party_condition(game),able(game,"robbery"),experience(game),int(modifiers.experience_cap)]
 		if keeper.health>0:
 			options=[option(words.theft,"theft"),option("Threaten the %s with your gun · 1 day" % keeper.role,"robbery"),option("Shoot at the %s · 1 bullet, 1 day" % keeper.role,"shoot"),option("Attack the %s unarmed · 1 day, higher injury risk" % keeper.role,"assault")]
 		else:options=[option(words.raid,"raid")]
+		# A pilot or a portage crew has nothing to carry off; only an attack is possible.
+		if not stocked(game,place):options=options.filter(func(choice):return choice.crime_command in ["shoot","assault"])
 		if game.pending.has("crime_target"):
 			text="Target: %s (%s).\nNearby staff: %d. Your companions can observe this. An attack uses one day and meals; a shot spends one bullet. Unarmed attacks have higher injury risk. Staff may resist or pursue the party." % [display_name(game,place,keeper.uid),condition(keeper),living_staff(place).size()]
 			options=options.filter(func(choice):return choice.crime_command in ["shoot","assault"])
@@ -366,7 +414,8 @@ func menu(game) -> Dictionary:
 		if Wanted.can_ride_off(game):options.append(option(Wanted.ride_label(game),"ride"))
 	elif current.stage=="standoff":
 		var shots: int=mini(int(scene.breakout_shots),int(game.state.bullets))
-		text=("Soldiers from %s rode after you and have caught up. " % game.route.nodes[place].name if current.action=="pursuit" else "Soldiers have blocked the way out. ")+"Shooting your way out spends up to %d bullets; some of you will likely be hurt, and you may still be taken. Surrender brings a trial; a known killing can mean hanging." % int(scene.breakout_shots)
+		var captors: String="Men of the household" if household(place) else "Soldiers"
+		text=("%s from %s rode after you and have caught up. " % [captors,game.route.nodes[node_of(place)].name] if current.action=="pursuit" else "%s have blocked the way out. " % captors)+"Shooting your way out spends up to %d bullets; some of you will likely be hurt, and you may still be taken. Surrender brings a trial; a known killing can mean hanging." % int(scene.breakout_shots)
 		options=[option("Shoot your way out · %d bullet(s)" % shots,"breakout"),option("Surrender","surrender")]
 		if current.action=="pursuit":
 			options.append(option("Flee the detachment · 1 day, risk of capture","flee"))
@@ -425,7 +474,7 @@ func mile(game,id: String) -> int:
 	if miles.is_empty():miles=game.route.node_miles()
 	# A trading party is wherever the party met it; one not yet in the record is here.
 	if transient(id):return int(record.services[id].mile) if record.services.has(id) else int(game.state.miles)
-	return int(miles.get(id,0))
+	return int(miles.get(node_of(id),0))
 ## News moves along the road with other travelers and traders, in both directions.
 func arrival(game,report: Dictionary,place: String) -> int:
 	if place==report.origin:return int(report.day)
@@ -460,19 +509,19 @@ func news_text(game,place: String) -> String:
 		if report.origin==place:continue
 		var act: String={"theft":"stole from","robbery":"robbed","shoot":"shot at","assault":"attacked unarmed","raid":"looted","pursuit":"fought off soldiers from","wanted":"fought"}[record.incidents[int(report.incident)-1].action]
 		var origin: String=where(game,report.origin)
-		var noun: String=kind(report.origin).noun
+		var noun: String=venue_noun(report.origin)
 		if report.identified:lines.append("Word reached here by day %d that your party %s %s %s. The people here will not trade with you or help you." % [arrival(game,report,place),act,noun,origin])
 		else:lines.append("People here have heard that someone matching a description of your party stole from %s %s." % [noun,origin])
 	for told in heard_tales(game,place):
 		var said: Array=[]
-		for id in told.incidents:said.append("%s %s %s" % [{"theft":"stole from","robbery":"robbed","shoot":"shot at","assault":"attacked unarmed","raid":"looted","pursuit":"fought soldiers from","wanted":"fought"}[record.incidents[id-1].action],kind(record.incidents[id-1].place).noun,where(game,record.incidents[id-1].place)])
+		for id in told.incidents:said.append("%s %s %s" % [{"theft":"stole from","robbery":"robbed","shoot":"shot at","assault":"attacked unarmed","raid":"looted","pursuit":"fought soldiers from","wanted":"fought"}[record.incidents[id-1].action],venue_noun(record.incidents[id-1].place),where(game,record.incidents[id-1].place)])
 		for id in told.attacks:said.append(("attacked unarmed " if record.attacks[id-1].get("weapon","gun")=="unarmed" else "shot at ")+("them" if int(record.attacks[id-1].target)==int(told.teller) else game.party_health.members[int(record.attacks[id-1].target)].name))
 		for id in told.remains:said.append("butchered %s's remains for food" % Remains.entry(game,id).name)
 		lines.append("%s, who left your party on day %d, has told people here that you %s. They will not trade with you or help you." % [game.party_health.members[int(told.teller)].name,told.day,", ".join(said)])
 	return " ".join(lines)
 ## "at Fort Hall", or for a trading party, the stretch of road where it was met.
 func where(game,place: String) -> String:
-	if not transient(place):return "at "+game.route.nodes[place].name
+	if not transient(place):return "at "+game.route.nodes[node_of(place)].name
 	var region: String=place.get_slice(":",1)
 	return "on the road through the "+str(game.context.data.regions[region].label) if game.context.data.regions.has(region) else "on the road"
 func observe(game,current: Dictionary,fact: String,staff: bool) -> void:
@@ -663,8 +712,9 @@ func check_pursuit(game) -> bool:
 	record.incidents.append(current)
 	record.active={"id":id}
 	observe(game,current,"attempt",true)
-	game.journal.append("Day %d · Soldiers from %s rode after the party and caught up." % [game.state.day,game.route.nodes[place].name])
-	game.health_events.append("Soldiers from %s have caught up with the party." % game.route.nodes[place].name)
+	var captors: String="Men of %s" % str(rules(place).title).to_lower() if household(place) else "Soldiers"
+	game.journal.append("Day %d · %s from %s rode after the party and caught up." % [game.state.day,captors,game.route.nodes[node_of(place)].name])
+	game.health_events.append("%s from %s have caught up with the party." % [captors,game.route.nodes[node_of(place)].name])
 	game.service_return=game.pending.duplicate(true)
 	game.pending=menu(game)
 	return true
@@ -1083,7 +1133,7 @@ func valid(value: Variant,game) -> bool:
 			if chase.is_empty() or current.stage in ["loot","escape"] or r.incidents.slice(0,index).any(func(other):return other.get("place")==current.place and other.get("action")=="pursuit"):return false
 			if not r.reports.any(func(report):return report is Dictionary and report.get("origin")==current.place and whole(report.get("incident"),1,index) and r.incidents[int(report.incident)-1].get("resolution")=="escaped" and int(current.day)-int(report.get("day",0))<=int(wanted_data.army_max_days) and int(current.day)>=int(report.get("day",0))):return false
 		if (current.stage in ["loot","escape","standoff","custody"])!=(current.resolution==""):return false
-		if current.stage=="standoff" and rules(current.place).kind!="fort":return false
+		if current.stage=="standoff" and rules(current.place).kind not in ["fort","household"]:return false
 		if current.stage=="loot" and current.attempt not in ["unseen","complied","killed","raided","resisted"]:return false
 		if current.attempt!="unseen" and not r.services[current.place].alarmed:return false
 		if current.attempt=="killed" and r.actors[current.target].health!=0:return false
@@ -1092,7 +1142,7 @@ func valid(value: Variant,game) -> bool:
 		if current.target!=owner_id(current.place) and (current.stage=="loot" or current.food>0 or current.cash_cents>0):return false
 		# Only soldiers force the extra shots of a breakout.
 		var extra: int=int(current.shots)-(1 if current.action=="shoot" else 0)
-		if extra<0 or extra>(int(rules(current.place).breakout_shots) if rules(current.place).kind=="fort" else 0) or not current.get("knowledge") is Dictionary or current.knowledge.size()>game.party_health.members.size()+staff_ids(current.place).size():return false
+		if extra<0 or extra>(int(rules(current.place).breakout_shots) if rules(current.place).kind in ["fort","household"] else 0) or not current.get("knowledge") is Dictionary or current.knowledge.size()>game.party_health.members.size()+staff_ids(current.place).size():return false
 		var local:=0
 		for uid in current.knowledge:
 			if not r.people.has(uid) and uid not in staff_ids(current.place):return false
@@ -1195,9 +1245,12 @@ func build_tactical_config(game, command: String = "") -> Dictionary:
 	var venue_kind: String = String(scene.get("kind", "store"))
 	if venue_kind == "pursuers":
 		venue_kind = "traders" if place.begins_with("wanted_") else "fort"
+	# A household fights among its lodges and stores, laid out like a camp.
+	if venue_kind == "household":
+		venue_kind = "emigrants"
 	var place_title: String = String(scene.get("title", place))
-	if game.route.nodes.has(place):
-		place_title = String(game.route.nodes[place].get("name", place_title))
+	if game.route.nodes.has(node_of(place)):
+		place_title = String(game.route.nodes[node_of(place)].get("name", place_title))
 
 	var is_defensive: bool = String(current.get("action", "")) in ["pursuit", "wanted"]
 	var action_kind: String = "defend" if is_defensive else ("murder" if (command == "shoot" or String(current.get("action", "")) in ["shoot", "assault"]) else "robbery")
@@ -1351,7 +1404,7 @@ func apply_tactical_result(game, session: Dictionary) -> void:
 
 	# 3. Apply enemy actor health & witness/kill bookkeeping while respecting save validator bounds.
 	var is_wanted_act: bool = String(current.get("action", "")) == "wanted"
-	var is_fort_like: bool = String(scene.get("kind", "")) in ["fort", "pursuers"]
+	var is_fort_like: bool = String(scene.get("kind", "")) in ["fort", "pursuers", "household"]
 	var max_breakout_shots: int = int(scene.get("breakout_shots", 0)) if is_fort_like else 0
 	var max_kills_allowed: int = max_breakout_shots if is_wanted_act else 99
 

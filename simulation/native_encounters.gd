@@ -44,6 +44,14 @@ func load_data(v: Variant) -> bool:
  for site in data.sites.values():
   for offer in site.offers:offer.months=offer.months.map(func(m):return int(m))
  error="";return true
+## Preserved provisions this household has sold or traded away; what is stolen is counted by the crime record.
+func food_sold(site: String) -> int:
+ var total:=0
+ for offer in data.sites.get(site,{}).get("offers",[]):
+  if offer.item=="food":total+=int(contact(site).purchases.get(offer.key,0))*int(offer.amount)
+ return total
+## Why this household turns the party away, or "" when it will deal with it.
+func refusal(game,site: String) -> String:return game.crime.household_refusal(game,site)
 func contact(site: String) -> Dictionary:return record.get(site,{"heard":false,"first_trade_day":-1,"purchases":{},"guide_day":-1,"guide_loads":0})
 func site_at(game) -> String:
  if not data.sites.has(str(game.state.landmark)):return ""
@@ -64,9 +72,11 @@ func price(game,offer: Dictionary) -> int:
  if Story.standing(self,str(game.state.landmark))>0:factor*=0.95
  return maxi(1,roundi(base*int(offer.amount)*factor))
 func available(game,site: String,offer: Dictionary) -> bool:
+ if not offer.is_empty() and offer.item=="food" and game.crime.food_left(game,game.crime.HOUSEHOLD+site)<int(offer.amount):return false
  return not offer.is_empty() and int(game.calendar().month) in offer.months and int(contact(site).purchases.get(offer.key,0))<int(offer.lots)
 func guidance_factor(game) -> float:
  var c: Dictionary=contact(str(game.state.landmark))
+ if data.sites.has(str(game.state.landmark)) and not refusal(game,str(game.state.landmark)).is_empty():return 1.0
  if Story.standing(self,str(game.state.landmark))<0:return 1.0
  if Story.active_guide(self,game):return float(game.context.data.prepared_risk_factor)
  return float(game.context.data.prepared_risk_factor) if str(game.state.landmark)=="deschutes" and int(c.guide_day)==int(game.state.day) and int(c.guide_loads)>=maxi(1,game.wagon_count()) else 1.0
@@ -82,7 +92,7 @@ func valid_portage(game,selected: Dictionary) -> bool:
   if not (value is int or value is float) or not is_finite(value):return false
  return effects.money==canonical.effects.money and effects.days==canonical.effects.days and needs.money==canonical.requires.money
 func can_portage(game) -> bool:
- return game.state.landmark=="columbia_raft" and game.Direction.heading(game)=="west" and game.pending.get("landmark","")=="columbia_raft" and not game.pending.get("retreat_without_crossing",false)
+ return refusal(game,"columbia_raft").is_empty() and game.state.landmark=="columbia_raft" and game.Direction.heading(game)=="west" and game.pending.get("landmark","")=="columbia_raft" and not game.pending.get("retreat_without_crossing",false)
 func choice(label: String,command: String,offer: String="") -> Dictionary:return {"label":label,"native_command":command,"native_offer":offer,"effects":{},"result":""}
 func menu(game,site: String,view: String="intro") -> Dictionary:
  var local: Dictionary=data.sites[site];var c: Dictionary=contact(site)
@@ -105,6 +115,12 @@ func menu(game,site: String,view: String="intro") -> Dictionary:
 func open(game) -> bool:
  var site: String=site_at(game)
  if site.is_empty() or not game.can_service():return false
+ # A household the party wronged, or one that has heard it named, turns it away.
+ var refused: String=refusal(game,site)
+ if not refused.is_empty():
+  game.service_return=game.pending.duplicate(true)
+  game.pending={"id":"native_contacts","service_menu":true,"native_menu":true,"native_site":site,"native_view":"intro","title":data.sites[site].name,"text":refused,"choices":[choice("Back to the trail","back")]}
+  return true
  if can_portage(game) and not game.pending.choices.any(func(c):return c.get("native_portage",false)):game.pending.choices.append(portage_choice(game))
  game.service_return=game.pending.duplicate(true);game.pending=menu(game,site);return true
 func can_choose(game,index: int) -> bool:
@@ -112,7 +128,9 @@ func can_choose(game,index: int) -> bool:
  if site.is_empty() or index<0 or index>=game.pending.get("choices",[]).size():return false
  var selected: Dictionary=game.pending.choices[index]
  var command: String=str(selected.get("native_command",""))
- if command=="back" or command=="notes" or command=="overview":return true
+ if command=="back":return true
+ if not refusal(game,site).is_empty():return false
+ if command=="notes" or command=="overview":return true
  if command=="contact":return data.sites[site].has("contact")
  if command=="story":return game.pending.get("native_view","")=="contact" and Story.can_choose(self,game,site,Story.action(self,site,str(selected.get("native_offer",""))))
  if command=="trade":
