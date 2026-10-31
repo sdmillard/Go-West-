@@ -24,7 +24,7 @@ static func people(game,members: Array,riding: int) -> float:
  for id in members:actual.append(id if id is Dictionary else game.party_health.members[int(id)])
  return minf(float(game.hunting.data.carry_limit),game.provisions.Carrying.capacity(game.Mounts.walking_members(actual,riding),float(game.hunting.data.carry_per_person_lb),game.provisions.data.walking.health_load_curve))
 static func capacity(game,members: Array,kit: String,allocated: Dictionary={},return_mode: String="ride") -> float:
- if kit=="wagon":return float(game.provisions.data.cargo_guideline_lb)
+ if kit=="wagon":return game.provisions.storage_capacity(game.state)
  var plan: Dictionary=game.Mounts.plan(game.provisions.data.mounts,transport(game,members,kit,allocated,return_mode))
  return people(game,members,int(plan.riding_people))+game.Mounts.freight_limit(plan)
 static func mass(game,members: Array,kit: String,inventory: Dictionary,fresh: Array,allocated: Dictionary={},return_mode: String="ride") -> float:
@@ -61,6 +61,7 @@ static func wagon_quote(game,members: Array) -> Dictionary:
  var fail: Dictionary={"valid":false,"message":"Take everyone currently with you to bring the wagon."}
  var active: Array=game.party_health.members.filter(func(p):return game.party_health.is_active(p)).map(func(p):return int(p.id))
  if members.size()!=active.size() or not active.all(func(id):return id in members):return fail
+ if not game.Train.ready(game).is_empty():fail.message=game.Train.ready(game);return fail
  if game.state.vehicle!="wagon" or game.team_conditions.pulling(game.state)<1 or game.state.ox_health<1:fail.message="A wagon and a working ox team are required.";return fail
  var region: String=game.context.region_id(game)
  if not game.hunting.data.regions[region].wagon_access:fail.message="The wagon cannot reach this hunting ground. Use people or animals here.";return fail
@@ -77,7 +78,7 @@ static func quote(game,members: Array,kit: String,days: int,bullets: int,return_
  if kit=="wagon":return wagon_quote(game,members)
  if return_mode not in RETURN_MODES:return result
  if activity not in ["hunt","fish"]:return result
- if kit not in KITS or days<1 or days>3 or bullets<(0 if activity=="fish" else 1) or bullets>30 or members.is_empty() or members.size()>5:return result
+ if kit not in KITS or days<1 or days>3 or bullets<(0 if activity=="fish" else 1) or bullets>30 or members.is_empty() or members.size()>game.party_health.members.size():return result
  var seen: Array=[]
  for id in members:
   if not game.crime.whole(id,0,game.party_health.members.size()-1) or int(id) in seen:return result

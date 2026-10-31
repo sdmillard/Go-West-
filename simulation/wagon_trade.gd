@@ -9,21 +9,39 @@ static func row(game,key: String) -> Dictionary:
  var left: int=maxi(0,int(rule.stock_per_post)+int(game.context.record.spent.get(key+"|sell_wagon|units",0))-int(game.context.record.spent.get(buy_key+"|units",0)))
  var factor: float=float(game.context.region(game).price)
  if game.characters.available(game,"Trading"):factor*=float(game.characters.benefits.trade_buy_factor)
- return {"item":"wagon","label":"Empty wagon","amount":1,"buy_cents":roundi(int(rule.price_cents)*factor),"sell_cents":0,"can_buy":left if game.state.vehicle=="foot" else 0,"can_sell":0,"held":int(game.state.vehicle=="wagon"),"buy_key":buy_key,"sell_key":key+"|sell_wagon","sells":true,"buys":false}
+ var held: int=game.Train.count(game.state)
+ var price: int=roundi(int(rule.price_cents)*factor)
+ return {"item":"wagon","label":"Empty wagon","amount":1,"buy_cents":price,"sell_cents":floori(float(rule.price_cents)*float(game.context.region(game).price)*0.5),"can_buy":mini(left,maxi(0,game.Train.drivers(game).size()-held)),"can_sell":maxi(0,held-1),"held":held,"buy_key":buy_key,"sell_key":key+"|sell_wagon","sells":true,"buys":held>1}
 static func apply_inventory(game,inventory: Dictionary,amount: int) -> bool:
- if amount!=1 or inventory.vehicle!="foot":return false
- inventory.vehicle="wagon"
- inventory["household_gear_lb"]=int(game.provisions.data.walking.personal_gear_lb_per_person)*int(inventory.party_size)
+ if amount==0:return true
+ var old_count: int=game.Train.count(inventory)
+ if old_count+amount<1 or (amount>0 and old_count+amount>game.Train.drivers(game).size()):return false
+ game.Train.ensure(game,inventory)
+ if inventory.vehicle=="foot":
+  inventory.vehicle="wagon"
+  inventory["household_gear_lb"]=int(game.provisions.data.walking.personal_gear_lb_per_person)*int(inventory.party_size)
+ if amount>0:
+  for i in range(amount):
+   inventory.wagon_train.append({"id":int(inventory.next_wagon_id),"driver":-1,"team":[],"condition":100});inventory.next_wagon_id+=1
+ else:
+  for i in range(-amount):inventory.wagon_train.pop_back()
  return true
 static func commit(game,effects: Dictionary) -> void:
  if not effects.has("wagon"):return
- apply_inventory(game,game.state,int(effects.wagon))
+ var amount: int=int(effects.wagon)
+ var after: Dictionary=game.Produce.model_after(game,effects)
+ if not after.valid:return
+ for key in ["vehicle","wagon_train","next_wagon_id","household_gear_lb","repair_wagon_id"]:
+  if after.inventory.has(key):game.state[key]=after.inventory[key].duplicate(true) if after.inventory[key] is Array else after.inventory[key]
  effects.erase("wagon")
- game.journal.append("Day %d · Bought an empty covered wagon. Oxen and supplies are separate; only existing personal belongings were loaded." % game.state.day)
+ game.journal.append("Day %d · %s %d empty wagon(s). Train now has %d. Oxen and supplies are separate." % [game.state.day,"Bought" if amount>0 else "Sold",absi(amount),game.Train.count(game.state)])
 
 static func sale_quote(game,cart: Dictionary,keep_oxen: int=-1) -> Dictionary:
  var result: Dictionary={"valid":false,"message":"No open post will buy the wagon here."}
  var counter: Dictionary=game.post_store()
+ if game.Train.count(game.state)>1:
+  result.message="Sell additional empty wagons at the trading counter. Sell the final wagon through this packing screen."
+  return result
  if game.state.vehicle!="wagon" or counter.is_empty() or game.camp_repair.blocked(game):return result
  var key: String=counter.key
  if int(game.context.record.spent.get(key+"|sell_wagon|units",0))>=1:
@@ -86,6 +104,7 @@ static func sell(game,cart: Dictionary,keep_oxen: int=-1) -> bool:
  game.team_conditions.sync(game)
  game.state.parts=int(game.state.wheels)+int(game.state.axles)+int(game.state.tongues)
  game.state.vehicle="foot"
+ if game.state.has("wagon_train"):game.state.wagon_train=[]
  game.state.household_gear_lb=float(game.provisions.data.walking.personal_gear_lb_per_person)*int(game.state.party_size)
  game.journal.append("Day %d · Sold the wagon and accepted leftovers for $%.2f. Sold: %s. Left behind permanently: %s." % [game.state.day,int(offer.payout_cents)/100.0,JSON.stringify(offer.sold),JSON.stringify(offer.dropped)])
  game.supply_history.append({"day":int(game.state.day),"event":"wagon_sale","sold":offer.sold.duplicate(true),"discarded":offer.dropped.duplicate(true),"payout_cents":offer.payout_cents})

@@ -10,6 +10,7 @@ const PRAIRIE = preload("res://art/pixels/prairie.png")
 const ANIMALS = [preload("res://art/pixels/hunt_bison.png"), preload("res://art/pixels/hunt_deer.png"), preload("res://art/pixels/hunt_rabbit.png")]
 const COVER = preload("res://art/pixels/hunt_cover.png") # the model's 12 x 14 cover
 const HUNTER = preload("res://art/pixels/hunt_hunter.png") # 16x18 frames; rows standing, walking
+const DOG=preload("res://art/pixels/dog.png")
 const SMOKE = preload("res://art/pixels/hunt_smoke.png") # 16x16 frames
 const HEADROOM := [0, 7, 2]
 const FOOTROOM := [0, 0, 1]
@@ -52,6 +53,9 @@ func _draw() -> void:
 	draw_texture(PRAIRIE if scenery.is_empty() else scenes.texture_for(scenery), Vector2.ZERO)
 	if encounter.is_empty():
 		return
+	if encounter.has("dog"):
+		var dog_frame: int=int(float(encounter.elapsed)*12)%8
+		draw_texture_rect_region(DOG,Rect2(235,124,24,22),Rect2(dog_frame*48,0,48,44))
 	var running: bool = encounter.shots > 0
 	for index in range(encounter.animals.size()):
 		var down: bool = index in encounter.targets

@@ -48,7 +48,11 @@
     "fort_kearny_early": "location_fort_kearny_early.png",
     "travel_mountains": "travel_mountains.png",
     "travel_desert": "travel_desert.png",
-    "travel_forest": "travel_forest.png"
+    "travel_forest": "travel_forest.png",
+    "encounter_the_dalles": "encounter_the_dalles.png"
   },
-  "reference_notes": "art/LOCATION_REFERENCES.md: dated sources, geographic limits and interpretive choices. All runtime pictures are original pixel art."
+  "reference_notes": "art/LOCATION_REFERENCES.md: dated sources, geographic limits and interpretive choices. All runtime pictures are original pixel art.",
+  "encounters": {
+    "the_dalles": "encounter_the_dalles"
+  }
 }

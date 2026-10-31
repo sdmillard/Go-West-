@@ -148,21 +148,22 @@ func run() -> void:
 	game.state.oxen = 6
 	drive_to(game, "columbia_raft")
 	leaves = game.pending.choices.filter(func(choice): return choice.get("action", "") == "leave")
-	check(game.state.landmark == "columbia_raft" and leaves.size() == 2 and "Portage" in leaves[0].label and leaves[1].has("portage_risk"), "The Cascades offer a portage or running the rapids")
+	check(game.state.landmark == "columbia_raft" and leaves.size() == 3 and "Portage" in leaves[0].label and leaves[1].get("rafting",false) and leaves[2].get("native_portage",false), "The Cascades offer a portage or running the rapids")
 	copy = store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))
-	check(copy != null and copy.pending.choices == game.pending.choices, "The Cascades choice survives a save")
+	check(copy != null and copy.pending.choices == store.normalize(game.pending.choices), "The Cascades choice survives a save")
 	bad = JSON.parse_string(JSON.stringify(store.capture(game)))
 	for choice in bad.pending.choices:
-		if choice.has("portage_risk"):
-			choice.portage_risk = 5
-	check(store.restore(bad) == null, "A malformed rapids risk is rejected")
-	var wreck = store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))
-	for choice in wreck.pending.choices:
-		if choice.has("portage_risk"):
-			choice.portage_risk = 1.0
-	var food_before: int = wreck.state.food
-	wreck.choose(wreck.pending.choices.find(wreck.pending.choices.filter(func(choice): return choice.has("portage_risk"))[0]))
-	check(food_before - int(wreck.state.food) >= 60 and wreck.journal.any(func(entry): return "breaks up in the Cascades" in entry), "Running the rapids can wreck the raft")
+		if choice.has("rafting"):choice.rafting="yes"
+	check(store.restore(bad)==null,"A malformed interactive rapids marker is rejected")
+	var wreck=store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))
+	var food_before: int=wreck.state.food
+	wreck.choose(wreck.pending.choices.find(wreck.pending.choices.filter(func(choice):return choice.get("rafting",false))[0]))
+	check(not wreck.raft.is_empty() and wreck.state.day==game.state.day,"Running rapids opens the activity before charging time")
+	for tick in range(1800):
+		if wreck.raft.ended:break
+		wreck.advance_rafting(1.0/60.0,3.0)
+	check(wreck.raft.wrecked and wreck.finish_rafting(),"Repeated impacts can wreck and settle the raft")
+	check(food_before-wreck.state.food>=60 and wreck.rafting_history[0].wrecked,"Wreck losses are applied and recorded")
 	day = game.state.day
 	food_before = game.state.food
 	var cash: float = game.state.money

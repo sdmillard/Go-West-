@@ -27,3 +27,15 @@ The downloaded PDFs and reference image are in ignored `.tools/reference-pdfs`. 
 - Barlow Pass, Laurel Hill and Eagle Creek use [Oregon Historical Society's road description](https://www.oregonencyclopedia.org/articles/barlow_road/). The hill/rope scene conveys the documented type of descent, not a measured profile or an assertion that one precise tree was used. Mount Hood and the forests provide location cues.
 
 No image alone proves service availability, travel time, tolls or hazard rates. Those belong to the route/simulation evidence ledger. Reference years, depiction years, guide dates and our game setting are kept distinct.
+
+
+## Farm shepherd (dog art, October 27, 2026)
+
+See [dog art references and limitations](../docs/DOG_ART.md). Working-type history: https://englishshepherd.org/breed-history/ . Modern anatomy reference: https://www.ukcdogs.com/docs/breeds/english-shepherd.pdf . These support a plausible visual basis, not a verified 1848 Oregon Trail pedigree.
+
+
+## Local Native community encounter drafts (October27,2026)
+
+See [the encounter art brief](../docs/NATIVE_ENCOUNTER_ART_BRIEF.md) for seven separate1848 scenes and evidence limits. `aseprite/scenes/encounter_wasco.lua` is an original landing composition approved by Spencer on October27,2026 and installed as `pixels/encounter_the_dalles.png`. The remaining six encounters are briefed only. Primary community context: [Warm Springs history](https://warmsprings-nsn.gov/history/), [Pawnee homeland](https://pawneenation.org/historical-marker-pawnee-marker-nebraska/), [Shoshone-Bannock history](https://www.sbtribes.com/about/), [CTUIR history](https://ctuir.org/about/brief-history-of-ctuir/). [NPS Columbia report](https://www.nps.gov/oreg/learn/historyculture/upload/HRA_Columbia_River_Narrative_History_Final_200917-reduced-size.pdf) supplies crossing/portage context.
+
+For detail review, [Warm Springs community arts and basketry](https://www.lib.uidaho.edu/digital/L3/ShowOneObjectSiteID66ObjectID981.html) distinguishes nineteenth-century objects from later demonstrations and describes everyday storage/fishing materials. [ROM's Kane publication account](https://www.rom.on.ca/rom-publications/wanderings-artist-among-indians-north-america) establishes late1840s travel but not accuracy of every later painting. The current plain garments, baskets and canoe silhouette are provisional; no patterns or sacred designs are copied. No later reservation architecture, generic warbonnets, locks or railway portage infrastructure.

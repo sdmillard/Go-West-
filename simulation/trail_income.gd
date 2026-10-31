@@ -85,6 +85,10 @@ func offers(game) -> Array:
   var job: Dictionary=data.jobs[id]
   result.append({"id":id,"label":job.label,"cents":int(job.cents),"background":job.background,"left":left,"openings":mini(left,int(job.openings))})
  return result
+func worker_available(game,index: int) -> bool:
+ if index<0 or index>=game.party_health.members.size():return false
+ var member: Dictionary=game.party_health.members[index]
+ return game.party_health.is_active(member) and member.health>=40 and not member.conditions.any(func(c):return c.severity>=3 or c.id=="broken_leg") and not game.camp_tasks.patient_nurses(game).has(index)
 func quote(game,index: int,job_id: String) -> Dictionary:
  var result: Dictionary={"valid":false,"message":"No suitable local work available.","cents":0,"days":1,"meals":int(game.provisions.data.rations_lb[game.state.rations])*int(game.state.party_size)}
  var matching: Array=offers(game).filter(func(o):return o.id==job_id and o.left>0)
@@ -92,7 +96,7 @@ func quote(game,index: int,job_id: String) -> Dictionary:
  var person: Dictionary=game.party_health.members[index];var offer: Dictionary=matching[0]
  if not game.party_health.is_active(person) or person.health<40 or person.conditions.any(func(c):return c.severity>=3 or c.id=="broken_leg"):
   result.message="This traveler is too ill, injured or absent to work.";return result
- if game.camp_tasks.patient_nurses(game).has(index):result.message="This traveler is being nursed and must rest.";return result
+ if not worker_available(game,index):result.message="This traveler is being nursed and must rest.";return result
  if not offer.background.is_empty() and not game.camp_tasks.specialist(game,index,offer.background) and not (index==0 and game.state.profession=="carpenter" and offer.background=="Carpentry"):
   result.message="This job needs a suitable background.";return result
  result.valid=true;result.market_cents=int(game.characters.wage_quote(game.characters.profiles[index]).daily_cents)

@@ -3,6 +3,8 @@ extends Control
 const Palette=preload("res://ui/traveler_palette.gd")
 var traveler_profiles: Array = []
 var livestock_counts: Dictionary={}
+var dog_present: bool=false
+const DOG=preload("res://art/pixels/dog.png")
 const LIVESTOCK_COW=preload("res://art/pixels/livestock_cow.png")
 const LIVESTOCK_GOAT=preload("res://art/pixels/livestock_goat.png")
 const LIVESTOCK_HEN=preload("res://art/pixels/livestock_chicken.png")
@@ -69,6 +71,7 @@ var scenes = preload("res://ui/location_scenes.gd").new()
 var ambience = preload("res://ui/scene_ambience.gd").new()
 var scene_id := ""
 var miles := 0
+var train_count: int=1
 var vehicle := "wagon"
 var herded_oxen := 0
 ## How the party's horses and mules are used (simulation/mounts.gd plan); empty without any.
@@ -179,6 +182,12 @@ func _draw() -> void:
 	elif vehicle == "corolla":
 		draw_texture(CAR, Vector2(173 + shift, 96 + bob))
 	else:
+		# Representative trailing wagons; the ledger holds the complete train.
+		for i in range(mini(3,maxi(0,train_count-1)),0,-1):
+			var rear: int=137-i*130+shift
+			draw_texture_rect_region(WAGON,Rect2(rear,75-i*5+bob,96,64),Rect2(frame*96,0,96,64))
+			draw_line(Vector2(rear+83,117-i*5),Vector2(rear+110,117-i*5),Color("76503c"),1)
+			draw_texture_rect_region(OXEN,Rect2(rear+90,103-i*5,48,32),Rect2(((frame+i*2)%FRAMES)*48,0,48,32))
 		draw_texture_rect_region(WAGON, Rect2(137 + shift, 75 + bob, 96, 64), Rect2(frame * 96, 0, 96, 64))
 		draw_line(Vector2(220 + shift, 117), Vector2(262 + shift, 117), Color("76503c"), 1)
 		draw_texture_rect_region(OXEN, Rect2(227 + shift, 103, 48, 32), Rect2(frame * 48, 0, 48, 32))
@@ -201,6 +210,7 @@ func _draw() -> void:
 
 func _draw_livestock(moving: bool,camped: bool) -> void:
 	var frame: int=int(clock_time*FPS)%FRAMES
+	if dog_present:draw_texture_rect_region(DOG,Rect2(235,119,24,22),Rect2(frame*48,88 if camped else 44 if moving else 0,48,44))
 	for spec in [["dairy_cows",LIVESTOCK_COW,320],["goats",LIVESTOCK_GOAT,373]]:
 		if int(livestock_counts.get(spec[0],0))>0:draw_texture_rect_region(spec[1],Rect2(spec[2],99,48,44),Rect2(frame*48,44 if moving else 0,48,44))
 	if int(livestock_counts.get("hens",0))>0:
@@ -225,7 +235,7 @@ func _draw_herd(moving: bool) -> void:
 func party_layout(origin: Vector2) -> Dictionary:
 	var count: int=mount_rows().size()
 	var on_foot: int=maxi(0,walkers-int(mount_plan.get("riding_people",0)))
-	var walking_width: float=(on_foot-1)*19.0+16.0 if on_foot>0 else 0.0
+	var walking_width: float=(mini(8,on_foot)-1)*19.0+16.0 if on_foot>0 else 0.0
 	var gap: float=12.0 if on_foot>0 and count>0 else 0.0
 	var animal_width: float=(count-1)*30.0+48.0 if count>0 else 0.0
 	var width: float=walking_width+gap+animal_width
@@ -266,7 +276,7 @@ func mount_rows() -> Array:
 	return rows.slice(0,8)
 
 func _draw_walkers(origin: Vector2,moving: bool,offset: int=0) -> void:
-	for index in range(maxi(0,walkers-offset)):
+	for index in range(mini(8,maxi(0,walkers-offset))):
 		var x:=origin.x+index*19
 		var y:=origin.y-(index%2)*3
 		var step:=int(clock_time*FPS+index*3)%FRAMES if moving else 0

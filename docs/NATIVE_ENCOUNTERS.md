@@ -1,0 +1,34 @@
+# Native community visits
+
+October 27, 2026. A first playable encounter set at seven existing route stops: Pawnee families in the Platte country; Northern Shoshone and Bannock families near Fort Hall; existing Nez Perce horse traders at Grande Ronde; Umatilla families; Sahaptin-speaking Deschutes river families; Wasco families at The Dalles; Upper Chinookan portage crews at the Cascades.
+
+[Recurring contacts](NATIVE_CONTACTS.md) now deepen all seven visits with finite work and exchanges, local disputes/reconciliation, produce wages, horse terms, a portage labor credit, a short guide agreement and a companion introduction.
+
+Use the **Visit** action below the landmark picture. Conversation is free. Finite household provisions use existing regional prices and food accounting. The first purchase takes a day and meals; additional parcels use stock without another visit day. Fresh Umatilla produce is available June–October; preserved provisions are abstracted as shelf-stable food. There is no replenishing shop inventory or free vitamin reward.
+
+At the Deschutes, local crossing assistance costs $1 per wagonload (one load minimum on foot) and one day including meals. It applies to the next crossing started that resulting day, multiplying its existing risk by 0.85. Waiting another day expires it. Existing preparation and guidance do not stack: the stronger applies. Water remains dangerous. The Cascades offer a paid one-day portage for $3 per wagonload, the existing longer self-portage or the rafting minigame. Paid portage uses the actual landmark departure and outstanding-outrider warnings.
+
+## Companions
+
+Every visit links to normal companion recruitment. The existing 65% find chance applies once per place, costing one real day and meals. The traveler can be accepted or declined after reviewing traits, background, trust, appearance and wage terms. A full starting party can add a sixth traveler using the expandable roster. Mercenaries use the existing contracts; all recruits need ordinary food and bring the existing clothing/personal gear, with no bonus supplies. Closing/reopening or saving does not reroll them. An old settlement search at the same stop is preserved instead of granting a second roll.
+
+Local upbringing labels are selected from the communities associated with the visit, independently of skills, personalities, wages and survival statistics. Names are fictional outputs from the game's current general name pool, not claimed authentic names or historical individuals. Community-specific naming needs more research. Local guide services are temporary paid assistance, not a guaranteed recruit, a permanent safety buff or a new Guide skill.
+
+## Evidence and authored estimates
+
+- [Pawnee Nation](https://pawneenation.org/historical-marker-pawnee-marker-nebraska/): central Nebraska homeland and Platte/Republican-country farming and extended buffalo hunts support the first visit's context. Its later dated village evidence is not a literal 1848 scene plan.
+- [Shoshone-Bannock Tribes](https://www.sbtribes.com/about/): distinct communities, ancestral territory and seasonal food gathering support the Fort Hall encounter. The later reservation is not depicted in 1848.
+- [CTUIR history](https://ctuir.org/about/brief-history-of-ctuir/): regional communities, exchange and disruption inform the Umatilla encounter; no family speaks for neighboring nations. [CTUIR comprehensive plan](https://ctuir.org/media/sychezsg/2018updated-2010_comprehensiveplan-webversion.pdf) also discusses documented nineteenth-century crops.
+- [Warm Springs tribal history](https://warmsprings-nsn.gov/history/): Wasco salmon-meal/root-bread trade and seasonal regional economies support the Dalles visit. Modern confederation and reservation structures are not projected backward.
+- [Nez Perce tribal newsletter](https://nezperce.org/wp-content/uploads/2022/04/Volume-4-Issue-8.pdf): historical horse use and breeding. The existing Grande Ronde herd is reused with its original stock and prices.
+- [NPS narrative](https://home.nps.gov/articles/000/overlanders-in-the-columbia-river-gorge-1840-1870-a-narrative-history.htm) and [research report](https://www.nps.gov/oreg/learn/historyculture/upload/HRA_Columbia_River_Narrative_History_Final_200917-reduced-size.pdf): paid Indigenous navigation/crossing assistance and local portage labor. PDF pages64–66 discuss Deschutes assistance in1847–48; pages127–132 discuss Cascades communities and portage. Later1853 wagon tariffs are not evidence for exact1848 prices.
+
+The $1 guide fee, $3 portage fee, day costs, 0.85 assistance factor, limited stock, season window and recruitment opportunities are authored gameplay estimates. No source establishes those exact values or guarantees a trading household at every arrival. Dialogue is original indirect narration, not quoted testimony. These visits are local fictional households, not comprehensive tribal simulation. There is no global Indigenous reputation, racial ability modifier or generic friendliness roll.
+
+## Implementation and scope
+
+`data/native_encounters.json` owns text, sources, offers, seasons and local recruitment upbringing pools. `simulation/native_encounters.gd` owns visits, finite stock and guide bookings; the existing engine/provisions/recruitment systems own time, meals, food, companions and departures. `native_contacts` stores household transactions/bookings. Recruitment uses persistent `native:<site>` search keys and the existing validated candidate structure. Saves rebuild open menus from canonical rules, reject forged offer effects and retain previous allowlisted saves without giving goods or advancing time.
+
+This pass adds peaceful local services, not new community crime targets, tribal governance, comprehensive diplomacy or hired all-route guides. Existing regional unrest events remain. The approved Wasco landing artwork is installed for its visit and local recruitment, with the normal Dalles landmark restored on exit. Other visits retain existing landmark backgrounds; [the art brief](NATIVE_ENCOUNTER_ART_BRIEF.md) lists the six remaining scenes.
+
+Validation: focused encounter tests cover stock, cash, meals, seasons, guide duration, portage per wagon, route/saves, local recruitment, failed searches, decline, immutable identities, no racial stat changes and menu placement. All104 regression suites pass in `.tools/native-full-tests-03.log`, including71 focused encounter checks. Actual encounter and recruitment screens were captured and inspected. No full survival-economy recalibration is claimed.

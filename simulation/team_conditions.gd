@@ -12,6 +12,8 @@ func start_legacy(game) -> void:
   record[kind]=[]
   for i in range(int(game.state.get(kind,0))):record[kind].append(int(game.state.get("ox_health" if kind=="oxen" else "horse_health",100)))
  record.working=range(mini(6,record.oxen.size()));record.custom=false
+ if game.state.has("wagon_train") and game.state.vehicle!="foot":
+  game.Train.sync(game);record.working=game.Train.working(game.state);record.custom=true
  summarize(game)
 func sync(game) -> void:
  for kind in KINDS:
@@ -20,6 +22,10 @@ func sync(game) -> void:
   while record[kind].size()<n:record[kind].append(100)
  record.working=record.working.filter(func(i):return int(i)<record.oxen.size())
  if not record.custom:record.working=range(mini(6,record.oxen.size()))
+ if game.state.has("wagon_train"):
+  if game.state.vehicle!="foot":
+   game.Train.sync(game);record.working=game.Train.working(game.state);record.custom=true
+  else:record.working=range(mini(6,record.oxen.size()));record.custom=false
  summarize(game)
 func summarize(game) -> void:
  if not record.oxen.is_empty():game.state.ox_health=ox_average()
@@ -40,22 +46,27 @@ func settle(game,single_ox: bool=false,working_day: bool=false,recovery: int=-1)
   for i in range(record[kind].size()):record[kind][i]=clampi(int(record[kind][i])+horse_delta,0,100)
  sync(game)
 func select(game,selection: Array) -> bool:
- if not game.can_service() or selection.size()>6:return false
+ if not game.can_service() or selection.size()>6 or game.Train.count(game.state)>1:return false
  var seen: Array=[]
  for i in selection:
   if not (i is int or i is float) or not is_finite(i) or i!=floor(i) or i<0 or i>=record.oxen.size() or i in seen:return false
   seen.append(int(i))
+ if game.state.has("wagon_train") and game.state.vehicle!="foot":game.state.wagon_train[0].team=seen.duplicate()
  record.working=seen;record.custom=true;summarize(game);return true
 func valid(v: Variant,s: Dictionary) -> bool:
- if not v is Dictionary or v.size()!=5 or not v.get("custom") is bool or not v.get("working") is Array or v.working.size()>6:return false
+ if not v is Dictionary or v.size()!=5 or not v.get("custom") is bool or not v.get("working") is Array or v.working.size()>6*maxi(1,preload("res://simulation/wagon_train.gd").count(s)):return false
  for kind in KINDS:
-  if not v.get(kind) is Array or v[kind].size()!=int(s.get(kind,0)) or v[kind].size()>1000:return false
+  if not v.get(kind) is Array or v[kind].size()!=int(s.get(kind,0)) or v[kind].size()>1000000:return false
   for condition in v[kind]:
    if not (condition is int or condition is float) or not is_finite(condition) or condition!=floor(condition) or condition<0 or condition>100:return false
  var seen: Array=[]
  for i in v.working:
   if not (i is int or i is float) or not is_finite(i) or i!=floor(i) or i<0 or i>=v.oxen.size() or int(i) in seen:return false
   seen.append(int(i))
+ if s.has("wagon_train") and s.vehicle!="foot":
+  var assigned: Array=preload("res://simulation/wagon_train.gd").working(s).map(func(i):return int(i));assigned.sort()
+  var actual: Array=seen.duplicate();actual.sort()
+  if assigned!=actual:return false
  if not v.custom and seen!=range(mini(6,v.oxen.size())):return false
  var old: Dictionary=record;record=v
  var ok: bool=(record.oxen.is_empty() or ox_average()==int(s.ox_health)) and (record.horses.is_empty() and record.mules.is_empty() or horse_average()==int(s.get("horse_health",100)))

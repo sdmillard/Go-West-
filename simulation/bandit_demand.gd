@@ -78,6 +78,10 @@ static func prepare(game,content: Dictionary,rules: Dictionary) -> void:
   demand="wagon, team and all packed goods"+(" + $%.2f" % required.money if required.has("money") else "")+". You keep worn clothes, tools and remaining cash; bodies stay here. Surrender means on foot, no food/ammo, no wagon recovery"
   choice.label="Surrender wagon, team and cargo"
   choice.result="The thieves drive off with the loaded wagon and team. You are left on foot; the stolen wagon cannot be recovered."
+  if game.Train.count(game.state)>1:
+   demand=demand.replace("wagon, team and all packed goods","entire %d-wagon train, teams and all packed goods" % game.Train.count(game.state))
+   choice.label="Surrender train, teams and cargo"
+   choice.result="The thieves take the entire wagon train, teams and packed goods. You are left on foot."
  elif required.is_empty():
   content.text="The thieves find nothing they want to take and wave your party on."
   choice.label="Continue"

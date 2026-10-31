@@ -81,6 +81,7 @@ static func pack(game,cart: Dictionary,from_cache: bool=false,guard_ids: Array=[
 		if not game.camp_repair.work.is_empty():
 			game.wagon_cache["camp_repair"]=game.camp_repair.work.duplicate(true)
 			game.camp_repair.work={}
+		if game.state.has("wagon_train"):game.wagon_cache["wagons"]=game.state.wagon_train.duplicate(true)
 		game.Guards.assign(game,guard_ids)
 	else:
 		game.wagon_cache.inventory=left
@@ -88,6 +89,9 @@ static func pack(game,cart: Dictionary,from_cache: bool=false,guard_ids: Array=[
 	game.provisions.fresh.assign(offer.carried)
 	game.state.parts=game.state.wheels+game.state.axles+game.state.tongues
 	game.state.vehicle="foot"
+	if game.state.has("wagon_train"):game.state.wagon_train=[]
+	game.state.erase("repair_wagon_id")
+	game.team_conditions.sync(game)
 	game.state["household_gear_lb"]=float(game.provisions.data.walking.personal_gear_lb_per_person)*int(game.state.party_size)
 	if not from_cache:
 		if "muddy_trail" not in game.seen:game.seen.append("muddy_trail")
@@ -161,8 +165,20 @@ static func _recover_here(game) -> bool:
 	game.provisions.fresh.append_array(game.wagon_cache.fresh.duplicate(true))
 	game.state.parts=game.state.wheels+game.state.axles+game.state.tongues
 	game.state["household_gear_lb"]=game.provisions.household_mass(game.state)+float(game.wagon_cache.get("household_gear_lb",maxf(0.0,float(game.provisions.data.household_gear_lb)-float(game.provisions.data.walking.personal_gear_lb_per_person)*int(game.state.party_size))))
+	var cached: Array=game.wagon_cache.get("wagons",[{"condition":100}])
+	game.Train.ensure(game,game.state)
+	for wagon in cached:
+		var wagon_id: int=int(wagon.get("id",game.state.next_wagon_id))
+		if game.state.wagon_train.any(func(w):return int(w.id)==wagon_id):wagon_id=int(game.state.next_wagon_id)
+		game.state.wagon_train.append({"id":wagon_id,"driver":-1,"team":[],"condition":int(wagon.condition)})
+		game.state.next_wagon_id=maxi(int(game.state.next_wagon_id),wagon_id+1)
 	game.state.vehicle="wagon"
+	game.Train.balance(game.state,game.Train.drivers(game),game.team_conditions.record.oxen)
+	game.team_conditions.sync(game)
 	game.camp_repair.work=game.wagon_cache.get("camp_repair",{}).duplicate(true)
+	if not game.camp_repair.work.is_empty():
+		var broken: Dictionary=game.state.wagon_train.filter(func(w):return w.condition==0).front() if game.state.wagon_train.any(func(w):return w.condition==0) else game.state.wagon_train[0]
+		broken.condition=0;game.state["repair_wagon_id"]=int(broken.id)
 	game.wagon_cache={}
 	game._tick_day(false)
 	game.journal.append("Day %d · Recovered and hitched the wagon. Forward progress resumes from mile %d; backtracking miles must be traveled again." % [game.state.day,game.state.miles])
@@ -177,10 +193,15 @@ static func location(game) -> Dictionary:
 		var from: String=str(path[-2])
 		return {"from":from,"to":str(game.state.landmark),"offset":int(game.route.edge_between(from,str(game.state.landmark)).miles),"path":path.slice(0,-1)}
 	return {"from":str(game.state.landmark),"to":str(game.state.next_landmark),"offset":int(game.state.leg_miles),"path":path}
-static func valid(value: Variant,game,day: int) -> bool:
+static func valid(value: Variant,game,day: int,party_count: int=-1) -> bool:
+	if party_count<0:party_count=game.state.party.size()
 	if not value is Dictionary:return false
 	if value.has("household_gear_lb") and (not (value.household_gear_lb is int or value.household_gear_lb is float) or not is_finite(value.household_gear_lb) or value.household_gear_lb<0 or value.household_gear_lb>100000):return false
 	if value.is_empty():return true
+	if value.has("wagons"):
+		if not value.wagons is Array or value.wagons.is_empty():return false
+		var cached_state: Dictionary={"vehicle":"wagon","oxen":2147483647,"wagon_train":value.wagons,"next_wagon_id":2147483647}
+		if not game.Train.valid(cached_state,party_count):return false
 	for field in ["mile","day"]:
 		if (not value.get(field) is int and not value.get(field) is float) or not is_finite(float(value[field])) or value[field]!=floor(value[field]) or value[field]<0:return false
 	if value.mile>game.route.longest_miles or value.day>day or not value.get("found") is bool or not value.get("inventory") is Dictionary or not value.get("fresh") is Array:return false

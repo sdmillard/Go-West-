@@ -431,7 +431,7 @@ func tale(game,slot: int) -> Dictionary:
 	var uid:=person_id(int(game.state.seed),slot)
 	var member: Dictionary=game.party_health.members[slot]
 	var objects:=func(action):return game.characters.response(slot,action) in ["forbidden","reluctant","disapproved"]
-	var acts: Array=record.incidents.filter(func(current):return current.knowledge.has(uid) and (current.action not in ["pursuit","wanted"] or int(current.shots)>0) and objects.call("murder" if current.action in ["shoot","assault","pursuit","wanted"] else "robbery")).map(func(current):return int(current.id))
+	var acts: Array=record.incidents.filter(func(current):return current.knowledge.has(uid) and (current.action not in ["pursuit","wanted"] or int(current.shots)>0) and objects.call("murder" if current.action in ["shoot","assault","pursuit","wanted"] or current.attempt=="killed" or not current.get("kills",[]).is_empty() else "robbery")).map(func(current):return int(current.id))
 	var attacks: Array=record.attacks.filter(func(attack):return int(attack.day)<=int(member.departure_day) and (int(attack.target)==slot or attack.responses.has(str(slot))) and (int(attack.target)==slot or bond(slot,int(attack.target)) in CLOSE or objects.call("murder"))).map(func(attack):return int(attack.id))
 	var bodies: Array=record.remains.filter(func(item):return slot in item.witnesses and (objects.call("cannibalism") or (record.people.has(item.person) and bond(slot,int(record.people[item.person].slot)) in CLOSE))).map(func(item):return int(item.id))
 	return {"teller":slot,"origin":member.departure_place,"day":int(member.departure_day),"incidents":acts,"attacks":attacks,"remains":bodies}
@@ -1061,7 +1061,7 @@ func valid(value: Variant,game) -> bool:
 		if not game.RobberyDemand.valid(game,current):return false
 		if current.day<previous_day:return false
 		previous_day=int(current.day)
-		if current.attempt not in {"theft":["unseen","noticed"],"robbery":["complied","resisted"],"shoot":["missed","wounded","killed"],"assault":["missed","wounded","killed"],"raid":["raided"],"pursuit":["caught"]}[current.action]:return false
+		if current.attempt not in {"theft":["unseen","noticed"],"robbery":["complied","resisted","killed"],"shoot":["missed","wounded","killed"],"assault":["missed","wounded","killed"],"raid":["raided"],"pursuit":["caught"]}[current.action]:return false
 		# A chase follows an escape from the same post, within its days, and happens once.
 		if current.action=="pursuit":
 			var chase: Dictionary=rules(current.place).get("pursuit",{})
@@ -1069,7 +1069,7 @@ func valid(value: Variant,game) -> bool:
 			if not r.reports.any(func(report):return report is Dictionary and report.get("origin")==current.place and whole(report.get("incident"),1,index) and r.incidents[int(report.incident)-1].get("resolution")=="escaped" and int(current.day)-int(report.get("day",0))<=int(wanted_data.army_max_days) and int(current.day)>=int(report.get("day",0))):return false
 		if (current.stage in ["loot","escape","standoff"])!=(current.resolution==""):return false
 		if current.stage=="standoff" and rules(current.place).kind!="fort":return false
-		if current.stage=="loot" and current.attempt not in ["unseen","complied","killed","raided"]:return false
+		if current.stage=="loot" and current.attempt not in ["unseen","complied","killed","raided","resisted"]:return false
 		if current.attempt!="unseen" and not r.services[current.place].alarmed:return false
 		if current.attempt=="killed" and r.actors[current.target].health!=0:return false
 		for key in ["food","cash_cents","shots"]:
@@ -1125,3 +1125,311 @@ func unarmed_mishap(game) -> void:
 		game._check_health()
 		game.journal.append("Day %d · Hurt in the unarmed struggle." % game.state.day)
 		game.health_events.append("You were hurt in the unarmed struggle.")
+
+
+func begin_tactical_shoot(game) -> bool:
+	if not incident().is_empty() or not can_choose(game, "shoot"):
+		return false
+	var place: String = target(game)
+	add_transient(game, place)
+	var keeper: Dictionary = actor(place, attack_target(game, place))
+	var store: Dictionary = service(place)
+	var id: int = record.incidents.size() + 1
+	var current: Dictionary = {
+		"id": id,
+		"day": int(game.state.day),
+		"place": place,
+		"target": keeper.uid,
+		"action": "shoot",
+		"attempt": "wounded",
+		"resolution": "",
+		"stage": "escape",
+		"food": 0,
+		"cash_cents": 0,
+		"shots": 1,
+		"knowledge": {},
+	}
+	current["joining"] = game.party_health.members.filter(func(member):
+		return game.party_health.is_active(member) and game.characters.willing(int(member.id), "murder")
+	).map(func(member): return int(member.id))
+	record.incidents.append(current)
+	record.active = {"id": id}
+	store.alarmed = true
+	observe(game, current, "attempt", true)
+	game.characters.react_to_incident(game, "murder", id)
+	game.journal.append("Day %d · %s incident %d: gunfire opened at %s." % [
+		game.state.day,
+		kind(place).journal,
+		id,
+		display_name(game, place, keeper.uid),
+	])
+	if not advance(game):
+		return false
+	if game.state.status == "traveling":
+		game.pending = menu(game)
+	return true
+
+
+func build_tactical_config(game, command: String = "") -> Dictionary:
+	var current := incident()
+	var place: String = current.get("place", target(game))
+	if place.is_empty():
+		return {}
+	add_transient(game, place)
+	var scene: Dictionary = rules(place)
+	var venue_kind: String = String(scene.get("kind", "store"))
+	if venue_kind == "pursuers":
+		venue_kind = "traders" if place.begins_with("wanted_") else "fort"
+	var place_title: String = String(scene.get("title", place))
+	if game.route.nodes.has(place):
+		place_title = String(game.route.nodes[place].get("name", place_title))
+
+	var is_defensive: bool = String(current.get("action", "")) in ["pursuit", "wanted"]
+	var action_kind: String = "defend" if is_defensive else ("murder" if (command == "shoot" or String(current.get("action", "")) in ["shoot", "assault"]) else "robbery")
+	var squad: Array = []
+	var joined_slots: Array = []
+	for member in game.party_health.members:
+		if not game.party_health.is_active(member):
+			continue
+		var mid := int(member.id)
+		var joins: bool = (mid == 0) or bool(game.characters.willing(mid, action_kind))
+		if not joins:
+			continue
+		joined_slots.append(mid)
+		var has_leg: bool = member.conditions.any(func(c): return c.id == "broken_leg")
+		var has_arm: bool = member.conditions.any(func(c): return c.id == "broken_arm")
+		var has_wound: bool = member.conditions.any(func(c): return c.id == "wound")
+		var profile: Dictionary = game.characters.profiles[mid] if mid < game.characters.profiles.size() else {}
+		squad.append({
+			"id": str(mid),
+			"slot": mid,
+			"name": String(member.name),
+			"role": "leader" if mid == 0 else "companion",
+			"health": int(member.health),
+			"broken_leg": has_leg,
+			"broken_arm": has_arm,
+			"wound": has_wound,
+			"profile": profile,
+		})
+	if squad.is_empty():
+		for member in game.party_health.members:
+			if game.party_health.is_active(member):
+				var mid := int(member.id)
+				joined_slots.append(mid)
+				squad.append({
+					"id": str(mid),
+					"slot": mid,
+					"name": String(member.name),
+					"role": "leader",
+					"health": int(member.health),
+					"broken_leg": member.conditions.any(func(c): return c.id == "broken_leg"),
+					"broken_arm": member.conditions.any(func(c): return c.id == "broken_arm"),
+					"wound": member.conditions.any(func(c): return c.id == "wound"),
+					"profile": game.characters.profiles[mid] if mid < game.characters.profiles.size() else {},
+				})
+				break
+	if not current.is_empty():
+		current["joining"] = joined_slots.duplicate()
+
+	var enemies: Array = []
+	var staff_list: Array = living_staff(place)
+	if (command == "breakout" or current.get("stage", "") == "standoff") and String(current.get("action", "")) != "wanted":
+		var non_owner := staff_list.filter(func(uid): return uid != owner_id(place))
+		if not non_owner.is_empty():
+			staff_list = non_owner
+	for uid in staff_list:
+		var act: Dictionary = actor(place, uid)
+		var r_name: String = role(place, uid)
+		var is_soldier := venue_kind == "fort" or r_name in ["soldier", "sergeant", "corporal", "deputy", "marshal", "hunter", "regulator"]
+		enemies.append({
+			"uid": uid,
+			"id": uid,
+			"name": display_name(game, place, uid),
+			"role": "owner" if uid == owner_id(place) else r_name,
+			"health": int(act.get("health", 100)),
+			"soldier": is_soldier,
+			"profile": _actor_profile(game, uid),
+		})
+	if enemies.is_empty():
+		return {}
+
+	var reason := command
+	if reason.is_empty():
+		if current.get("stage", "") == "standoff":
+			reason = "breakout"
+		elif current.get("action", "") == "shoot":
+			reason = "shoot"
+		else:
+			reason = "resisted"
+
+	var seed_val: int = int(game.state.seed) ^ (int(game.state.day) * 2654435761) ^ (record.incidents.size() * 40503) ^ int(place.hash())
+	return {
+		"seed": seed_val,
+		"venue_kind": venue_kind,
+		"place": place,
+		"place_name": place_title,
+		"reason": reason,
+		"command": command,
+		"bullets": int(game.state.bullets),
+		"squad": squad,
+		"enemies": enemies,
+	}
+
+
+func _actor_profile(game, uid: String) -> Dictionary:
+	var h := absi(int(uid.hash()))
+	return {
+		"appearance": preload("res://simulation/traveler_appearance.gd").generate(int(game.state.seed), h)
+	}
+
+
+func apply_tactical_result(game, session: Dictionary) -> void:
+	var current := incident()
+	if current.is_empty():
+		return
+	var place: String = String(current.get("place", target(game)))
+	var scene: Dictionary = rules(place)
+	var outcome: String = String(session.get("outcome", "retreated"))
+	var reason: String = String(session.get("reason", "resisted"))
+	var day := int(game.state.day)
+
+	# 1. Sync ammunition spent.
+	var fired := maxi(0, int(session.get("shots_fired", 0)))
+	var base_shot: int = 1 if String(current.get("action", "")) == "shoot" else 0
+	var min_spent: int = maxi(fired, base_shot)
+	game.state.bullets = maxi(0, mini(int(session.get("bullets_left", game.state.bullets)), int(game.state.bullets) - min_spent))
+
+	# 2. Apply squad health & gunshot wound / fracture conditions into party_health.
+	for u in session.get("units", []):
+		if String(u.get("team", "")) != "player":
+			continue
+		var slot := int(str(u.get("id", "0")))
+		if slot < 0 or slot >= game.party_health.members.size():
+			continue
+		var member: Dictionary = game.party_health.members[slot]
+		if not game.party_health.is_active(member):
+			continue
+		var new_hp := clampi(int(u.get("health", member.health)), 0, 100)
+		var delta := new_hp - int(member.health)
+		if new_hp <= 0:
+			game.party_health.kill(member, day, "gunshot wounds at " + String(session.get("place_name", place)))
+			continue
+		if delta < 0:
+			member.health = new_hp
+			member.history.append("Day %d · Hit by gunfire at %s." % [day, String(session.get("place_name", place))])
+		if int(u.get("wounds_taken", 0)) > 0:
+			var sev := clampi(int(u.get("wound_severity", 2)), 1, 3)
+			if not game.party_health.begin_condition(slot, "wound", day, sev):
+				for active in member.conditions:
+					if active.id == "wound":
+						active.severity = maxi(int(active.severity), sev)
+		if bool(u.get("new_broken_leg", false)):
+			game.party_health.begin_condition(slot, "broken_leg", day, 2)
+		if bool(u.get("new_broken_arm", false)):
+			game.party_health.begin_condition(slot, "broken_arm", day, 2)
+
+	game._collect_health_events()
+	if not game.party_health.members.is_empty():
+		game.state.health = game.party_health.average_health()
+		game.state.party_size = game.party_health.living_count()
+	game._check_health()
+
+	# 3. Apply enemy actor health & witness/kill bookkeeping while respecting save validator bounds.
+	var is_wanted_act: bool = String(current.get("action", "")) == "wanted"
+	var is_fort_like: bool = String(scene.get("kind", "")) in ["fort", "pursuers"]
+	var max_breakout_shots: int = int(scene.get("breakout_shots", 0)) if is_fort_like else 0
+	var max_kills_allowed: int = max_breakout_shots if is_wanted_act else 99
+
+	var kills_added := 0
+	for u in session.get("units", []):
+		if String(u.get("team", "")) != "enemy":
+			continue
+		var uid := String(u.get("uid", u.get("id", "")))
+		if not record.actors.has(uid):
+			continue
+		var act: Dictionary = record.actors[uid]
+		var yielded := bool(u.get("yielded", false)) or bool(u.get("surrendered", false))
+		var hp := clampi(int(u.get("health", act.health)), 0, 100)
+		if yielded and hp <= 0:
+			hp = maxi(1, int(act.health))
+		if hp == 0 and kills_added >= max_kills_allowed:
+			hp = maxi(1, mini(int(act.health), 10))
+		act.health = hp
+		u["health"] = hp
+		u["yielded"] = yielded
+		u["surrendered"] = yielded
+		if hp == 0 and not yielded:
+			kills_added += 1
+			current.knowledge.erase(uid)
+			if not current.has("kills"):
+				current["kills"] = []
+			if uid not in current.kills:
+				current.kills.append(uid)
+
+	var kill_floor: int = mini(current.get("kills", []).size(), max_breakout_shots)
+	if is_wanted_act:
+		current.shots = clampi(maxi(fired, kill_floor), 0, max_breakout_shots)
+	elif reason == "breakout" or String(current.get("action", "")) == "pursuit":
+		var extra := clampi(maxi(fired, kill_floor), 0, max_breakout_shots)
+		current.shots = base_shot + extra
+	else:
+		current.shots = base_shot
+
+	var target_uid := String(current.get("target", owner_id(place)))
+	var keeper := actor(place, target_uid)
+	var any_killed: bool = int(keeper.health) == 0 or not current.get("kills", []).is_empty()
+	if String(current.get("action", "")) == "shoot":
+		if int(keeper.health) == 0:
+			current.knowledge.erase(target_uid)
+			current.attempt = "killed"
+		else:
+			current.attempt = "wounded" if int(keeper.health) < 100 else "missed"
+	elif String(current.get("action", "")) == "robbery":
+		if int(keeper.health) == 0:
+			current.attempt = "killed"
+		elif outcome == "victory":
+			current.attempt = "resisted" if any_killed else "complied"
+
+	# 4. Advance day for breakout and settle incident stage/outcome.
+	if reason == "breakout":
+		if not advance(game):
+			return
+	if game.state.status != "traveling":
+		result(game, "party_lost")
+		return
+
+	if outcome == "victory":
+		if reason == "breakout" or String(current.get("action", "")) in ["pursuit", "wanted"]:
+			observe(game, current, "escape", true)
+			result(game, "escaped")
+		elif String(current.get("action", "")) == "shoot":
+			current.stage = ("loot" if target_uid == owner_id(place) else "escape") if int(keeper.health) == 0 else "escape"
+			game.pending = menu(game)
+		elif String(current.get("action", "")) == "robbery":
+			current.stage = "loot"
+			game.pending = menu(game)
+		else:
+			observe(game, current, "escape", true)
+			result(game, "escaped")
+	elif outcome == "retreated":
+		# Pulling back from the fight is still an escape attempt, with the scene's usual odds of capture.
+		if current.stage == "standoff" and String(current.get("action", "")) != "pursuit":
+			var edge: float = float(odds(game, place, "murder" if String(current.get("action", "")) in ["shoot", "assault"] else "robbery").edge)
+			var chance: float = bounded(float(scene.breakout), float(scene.breakout) + edge, float(modifiers.floor), float(modifiers.ceiling))
+			if rng.randf() >= chance:
+				result(game, "captured")
+				return
+			observe(game, current, "escape", true)
+			result(game, "escaped")
+		else:
+			if current.stage != "standoff":
+				current.stage = "escape"
+			if not choose(game, "flee"):
+				observe(game, current, "escape", true)
+				result(game, "escaped")
+	elif outcome == "surrendered":
+		result(game, "surrendered")
+	else:
+		result(game, "captured")
+	Remains.sync(game)
+

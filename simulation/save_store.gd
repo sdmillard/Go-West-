@@ -5,7 +5,7 @@ const FORMAT := "westward-probably"
 const VERSION := 1
 const DEFAULT_PATH := "user://journey.json"
 const MAX_BYTES := 2097152
-const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes", "social_rules", "appearance", "recruitment", "robbery_demands", "camp_tasks", "field_outings", "fishing", "livestock", "trail_income", "leathercraft"]
+const RULE_FILES = ["outfitting", "route", "health_conditions", "survival_rules", "hunting", "provisions", "trail_events", "trail_context", "combat_rules", "party_benefits", "character_catalog", "crime_scenes", "social_rules", "appearance", "recruitment", "robbery_demands", "camp_tasks", "field_outings", "fishing", "livestock", "trail_income", "leathercraft", "dogs", "rafting", "native_encounters"]
 var error := ""
 var rules_signature := ""
 var load_note := ""
@@ -21,10 +21,10 @@ func fingerprint() -> String:
 	return rules_signature
 
 func capture(game) -> Dictionary:
-	if not game.state.extended_route or not game.hunt.is_empty() or game.state.status not in ["traveling", "arrived", "lost", "returned_east"]:
+	if not game.state.extended_route or not game.raft.is_empty() or not game.hunt.is_empty() or not game.tactical_session.is_empty() or game.state.status not in ["traveling", "arrived", "lost", "returned_east"]:
 		return {}
 	return normalize({"format": FORMAT, "version": VERSION, "rules": fingerprint(),
-		"team_conditions":game.team_conditions.snapshot(game),"livestock":game.livestock.record.duplicate(true),"recruitment":game.recruitment.snapshot(),"social":game.social.snapshot(),"crime":game.crime.snapshot(),
+		"native_contacts":game.native_encounters.record.duplicate(true),"rafting_history":game.rafting_history.duplicate(true),"dogs":game.dogs.record.duplicate(true),"team_conditions":game.team_conditions.snapshot(game),"livestock":game.livestock.record.duplicate(true),"recruitment":game.recruitment.snapshot(),"social":game.social.snapshot(),"crime":game.crime.snapshot(),
 		"camp_repair":game.camp_repair.work.duplicate(true),"field_outings":game.field_outings.snapshot(),"characters_version":5,"camp_tasks":game.camp_tasks.snapshot(),"characters":game.characters.profiles.duplicate(true),
 		"combat_history":game.combat.history.duplicate(true),"context":game.context.record.duplicate(true),"route_end":game.route.end_id,"wagon_cache":game.wagon_cache.duplicate(true), "state":game.state.duplicate(true), "pending":game.pending.duplicate(true),
 		"income":game.income.record.duplicate(true), "seen":game.seen.duplicate(), "journal":Array(game.journal),
@@ -129,16 +129,21 @@ func valid_menu(menu: Dictionary, game, count: int=5) -> bool:
 	if menu.has("retreat_without_crossing") and (menu.retreat_without_crossing!=true or not menu.has("landmark")):return false
 	if menu.is_empty():
 		return true
-	if not menu.get("id") is String or not menu.get("title") is String or not menu.get("text") is String or not menu.get("choices") is Array or menu.choices.is_empty() or menu.choices.size() > 40:
+	if not menu.get("id") is String or not menu.get("title") is String or not menu.get("text") is String or not menu.get("choices") is Array or menu.choices.is_empty() or menu.choices.size() > maxi(40,count*3):
 		return false
 	if menu.has("landmark") and not game.route.nodes.has(menu.landmark):
 		return false
 	for choice in menu.choices:
 		if not choice is Dictionary or not choice.get("label") is String:
 			return false
+		if menu.get("native_menu",false):
+			if not menu.get("service_menu",false) or choice.get("native_command","") not in game.native_encounters.COMMANDS or not choice.get("effects",{}) is Dictionary or not choice.get("effects",{}).is_empty():return false
+		elif choice.has("native_command"):return false
+		if choice.has("native_portage") and (choice.native_portage!=true or menu.get("landmark","")!="columbia_raft" or choice.get("action","")!="leave"):return false
 		if menu.get("recruit_menu",false) or menu.get("dismiss_menu",false):
 			if not menu.get("service_menu",false) or choice.get("recruit_command","") not in ["search","accept","decline","dismiss","back"] or not choice.get("effects",{}) is Dictionary or not choice.get("effects",{}).is_empty():return false
 		elif choice.has("recruit_command"):return false
+		if choice.has("rafting") and (not choice.rafting is bool or not choice.rafting or choice.get("action","")!="leave" or menu.get("landmark","")!="columbia_raft"):return false
 		if choice.has("portage_risk") and (choice.get("action","")!="leave" or not (choice.portage_risk is int or choice.portage_risk is float) or not is_finite(float(choice.portage_risk)) or choice.portage_risk<0 or choice.portage_risk>1):return false
 		if choice.has("edge") and (choice.get("action","")!="leave" or not menu.has("landmark") or not integer(choice.edge,1,game.route.nodes[menu.landmark].next.size()-1)):return false
 		if menu.has("crime_menu") and (menu.crime_menu!=true or menu.id!="crime" or not menu.get("service_menu",false) or choice.get("crime_command","") not in game.crime.COMMANDS):return false
@@ -267,6 +272,7 @@ func restore(value: Variant):
 			return null
 	if s.mode not in ["classic", "unhinged"] or not integer(s.pace,0,2) or not integer(s.rations,0,2) or not integer(s.departure_month,3,8) or not integer(s.health,0,100) or not integer(s.ox_health,0,100) or not integer(s.fatigue,0,100) or not strings(s.party,Simulation.MAX_TRAVELERS) or s.party.size()<5 or not strings(s.items,100):
 		return null
+	if not Simulation.Train.valid(s,s.party.size()):return null
 	if not Simulation.Direction.valid_state(s,game.route) or not game.provisions.Shortfall.valid_state(s):return null
 	if s.has("household_gear_lb") and (not (s.household_gear_lb is int or s.household_gear_lb is float) or not is_finite(s.household_gear_lb) or s.household_gear_lb<0 or s.household_gear_lb>100000):return null
 	if s.status=="returned_east" and (s.landmark!=game.route.start or s.miles!=0 or s.next_landmark!=""):return null
@@ -278,7 +284,7 @@ func restore(value: Variant):
 	if s.next_landmark!="" and s.next_landmark!=s.landmark and game.route.edge_between(s.landmark,s.next_landmark).is_empty():return null
 	if not game.combat.valid(value.get("combat_history",[]),int(s.day),s.party.size()):return null
 	if not game.context.valid_record(value.get("context",{"spent":{},"activities":[],"prepared":[]}),game.route):return null
-	if not Simulation.CacheSupport.valid(value.get("wagon_cache",{}),game,int(s.day)):return null
+	if not Simulation.CacheSupport.valid(value.get("wagon_cache",{}),game,int(s.day),s.party.size()):return null
 	if not value.get("wagon_cache",{}).is_empty() and value.wagon_cache.mile>s.miles and not s.has("travel_direction"):return null
 	for key in ["pending","service_return","last_crossing","last_events","weather"]:
 		if not value.get(key) is Dictionary:
@@ -340,7 +346,7 @@ func restore(value: Variant):
 			for id in member.immune:
 				if not game.party_health.conditions.has(id) or not game.party_health.conditions[id].get("immunizing",false):return null
 	if not Simulation.Guards.valid(value.get("wagon_cache",{}),game,int(s.day),value.party):return null
-	if s.extended_route and (alive>Simulation.PARTY_CAPACITY or s.party_size != alive or s.health != (roundi(float(health) / alive) if alive else 0)):
+	if s.extended_route and (s.party_size != alive or s.health != (roundi(float(health) / alive) if alive else 0)):
 		return null
 	if not integer(s.get("departed_gear_lb",0),0,(s.party.size()-1)*int(game.provisions.data.walking.personal_gear_lb_per_person)) or s.get("departed_gear_lb",0)!=departed*int(game.provisions.data.walking.personal_gear_lb_per_person):return null
 	if departed>0 and not integer(value.get("characters_version"),3,5):return null
@@ -394,6 +400,10 @@ func restore(value: Variant):
 	if not game.camp_repair.valid(value.get("camp_repair",{}),game):return null
 	game.camp_repair.work=normalize(value.get("camp_repair",{}))
 	if not game.camp_repair.work.is_empty() and s.vehicle!="wagon":return null
+	if s.has("wagon_train") and s.vehicle!="foot":
+		var broken: Array=s.wagon_train.filter(func(w):return int(w.condition)==0)
+		if broken.size()>1 or (not broken.is_empty() and (game.camp_repair.work.is_empty() or int(s.get("repair_wagon_id",-1))!=int(broken[0].id))):return null
+		if s.has("repair_wagon_id") and (broken.is_empty() or game.camp_repair.work.is_empty()):return null
 	if s.has("camp_watch_day")!=s.has("camp_watch_member"):return null
 	if s.has("camp_watch_day") and (not integer(s.camp_watch_day,0,int(s.day)) or not integer(s.camp_watch_member,1,value.party.size()-1)):return null
 	if int(value.get("characters_version",1))>=5:
@@ -405,6 +415,8 @@ func restore(value: Variant):
 	game.wagon_cache=normalize(value.get("wagon_cache",{}))
 	game.pending = normalize(value.pending.resume if value.pending.get("outing_warning",false) else value.pending)
 	game.service_return = normalize(value.service_return)
+	game.upgrade_rafting_choice(game.pending)
+	game.upgrade_rafting_choice(game.service_return)
 	game.upgrade_foot_crossing(game.pending)
 	game.upgrade_foot_crossing(game.service_return)
 	game.seen = value.seen.duplicate()
@@ -415,7 +427,14 @@ func restore(value: Variant):
 	game.crossing_history.assign(normalize(value.crossing_history))
 	game.supply_history.assign(normalize(value.supply_history))
 	game.last_crossing = normalize(value.last_crossing)
+	var raft_history: Variant=value.get("rafting_history",[])
+	if not game.rafting.valid_history(raft_history,int(s.day),value.party.size()):return null
+	game.rafting_history.assign(normalize(raft_history))
 	game.hunting_outings = int(value.outings)
+	if not migrated and not economy_migrated and not value.has("dogs"):return null
+	var dog_record: Variant=value.get("dogs",{"dog":{},"purchased_at":[]})
+	if not game.dogs.valid(dog_record,game):return null
+	game.dogs.record=normalize(dog_record)
 	game.party_health.days_without_fresh = int(value.get("days_without_fresh",0))
 	game.route_path = normalize(value.get("route_path",game.route.main_path_to(str(game.state.landmark))))
 	game.rng.state = int(value.random)
@@ -440,6 +459,14 @@ func restore(value: Variant):
 		if not game.recruitment.valid(value.recruitment,game):return null
 		game.recruitment.restore(normalize(value.recruitment))
 	elif value.party.size()!=5:return null
+	if not Simulation.Train.valid(game.state,game.party_health.members.size()):return null
+	if not migrated and not economy_migrated and not value.has("native_contacts"):return null
+	var contacts: Variant=value.get("native_contacts",{})
+	if not game.native_encounters.valid(contacts,int(s.day)):return null
+	game.native_encounters.record=normalize(contacts)
+	if game.pending.get("native_menu",false):
+		if not game.native_encounters.valid_menu(game.pending,game):return null
+		game.pending=game.native_encounters.menu(game,str(game.pending.native_site),str(game.pending.native_view))
 	var income: Variant=normalize(value.get("income",{"keepsakes":{},"work":{}}))
 	if not game.income.valid(income,game):return null
 	game.income.record=income

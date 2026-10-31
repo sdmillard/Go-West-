@@ -35,7 +35,7 @@ At The Dalles the Barlow road stays first. The second choice builds a raft (3 da
 The river route totals 1,894 guide miles against 1,938 by the Barlow road, and it avoids the Barlow toll and Laurel Hill.
 
 - Road hazard `river`: the current carries the party at about 15 miles a day times the day's weather speed (wind). The team does not pull, a party with no oxen can still float, and wagon and ox trail events are skipped. In reality livestock were usually driven along trails; the game keeps the animals with the party.
-- The Cascades stop (`portage` flag) offers **Portage around the rapids · 2 days** or **Run the rapids · 1 day** with a 30% wreck chance: up to 60 lb food, a clothing set and 15 health from everyone ("near drowning"). The rapids risk is validated in saves.
+- The Cascades stop (`portage` flag) offers **Portage around the rapids · 2 days** or **Run the rapids · 1 day**. The original30% wreck roll has been replaced by the [interactive steering prototype](COLUMBIA_RAFTING_PROTOTYPE.md); collisions determine damage and actual losses. Old saved choices upgrade safely.
 - Road `effects` (days only, 1 to 5) are copied onto the leave choice; that is how raft building costs time.
 - Sources: [NPS, Overlanders in the Columbia River Gorge](https://www.nps.gov/articles/000/overlanders-in-the-columbia-river-gorge-1840-1870-a-narrative-history.htm) (rafts, Chinookan and HBC help, wind, livestock trails) and [Historic Oregon City, The Final Leg of the Trail](https://historicoregoncity.org/2019/04/02/the-final-leg-of-the-trail/) (HBC bateau about $80, rafts overturned by wind, about one in four took the river after the Barlow Road opened). Hiring an HBC boat is not offered yet.
 

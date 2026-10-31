@@ -14,6 +14,9 @@ func valid(value: Variant,game) -> bool:
 func queue(game,part: String) -> bool:
  if part not in PARTS or blocked(game) or game.state.vehicle!="wagon":return false
  work={"part":part,"method":"","progress":0,"kit_spent":false}
+ if game.state.has("wagon_train"):
+  var wagon: Dictionary=game.state.wagon_train[game.rng.randi_range(0,game.state.wagon_train.size()-1) if game.state.wagon_train.size()>1 else 0]
+  wagon.condition=0;game.state["repair_wagon_id"]=int(wagon.id)
  game.journal.append("Day %d · The broken %s needs camp repairs before wagon travel resumes." % [game.state.day,part])
  return true
 func reason(game,index: int,method: String,kits: int=-1) -> String:
@@ -30,12 +33,14 @@ func advance(game,index: int) -> void:
  game.journal.append("Day %d · %s repaired the %s: %d / %d work units." % [game.state.day,game.party_health.members[index].name,work.part,mini(int(work.progress),needed),needed])
  if int(work.progress)>=needed:
   game.supply_history.append({"day":game.state.day,"event":"camp_repair_complete","part":work.part,"worker":index,"changes":{}})
+  game.Train.repair_done(game)
   work={}
   game.journal.append("Day %d · The wagon repair is complete." % game.state.day)
 func fit_spare(game) -> bool:
  if not game.can_service() or not blocked(game) or int(game.state.get(work.part,0))<1:return false
  var part: String=work.part
  game._apply({part:-1})
+ game.Train.repair_done(game)
  work={}
  game.journal.append("Day %d · Fitted a spare %s; no day passed." % [game.state.day,part])
  return true

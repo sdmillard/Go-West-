@@ -1,0 +1,138 @@
+{
+  "note": "Authored Cascades prototype, not historical casualty rates. Fixed rocks mixed with four drifting logs at different speeds, seeded pattern order/mirroring/phase, and breathers. Each generated course must have a collision-free route at reduced steering speed.",
+  "duration_seconds": 25,
+  "speed": 18.0,
+  "steer_speed": 1.1,
+  "drift": 0.12,
+  "obstacles": 13,
+  "damage_per_hit": 20,
+  "food_per_hit": 12,
+  "max_food_loss": 60,
+  "injury_hits": 2,
+  "clothing_hits": 3,
+  "drowning_chance_on_wreck": 0.2,
+  "wreck_health_loss": 15,
+  "shore_left": -1.28,
+  "shore_right": 1.31,
+  "raft_half_width": 0.15,
+  "course_version": 4,
+  "collision_grace_seconds": 0.35,
+  "route_speed_fraction": 0.8,
+  "route_clearance": 0.04,
+  "reaction_seconds": 0.75,
+  "patterns": {
+    "intro": {
+      "duration": 4,
+      "objects": [
+        {
+          "at": 2,
+          "x": 0,
+          "kind": "rock"
+        }
+      ]
+    },
+    "slalom": {
+      "duration": 6,
+      "objects": [
+        {
+          "at": 1,
+          "x": -0.55,
+          "kind": "log",
+          "amplitude": 0.24,
+          "omega": 0.55
+        },
+        {
+          "at": 3,
+          "x": 0.55,
+          "kind": "rock"
+        },
+        {
+          "at": 5,
+          "x": -0.55,
+          "kind": "log",
+          "amplitude": 0.38,
+          "omega": 1.25
+        }
+      ]
+    },
+    "split": {
+      "duration": 6,
+      "objects": [
+        {
+          "at": 1.2,
+          "x": -0.18,
+          "kind": "log",
+          "amplitude": 0.32,
+          "omega": 1.1
+        },
+        {
+          "at": 1.2,
+          "x": 0.18,
+          "kind": "rock"
+        },
+        {
+          "at": 4.2,
+          "x": -0.86,
+          "kind": "rock"
+        },
+        {
+          "at": 4.2,
+          "x": 0.86,
+          "kind": "rock"
+        }
+      ]
+    },
+    "breather": {
+      "duration": 2,
+      "objects": []
+    },
+    "shore": {
+      "duration": 5,
+      "objects": [
+        {
+          "at": 0.6,
+          "x": -0.94,
+          "kind": "rock"
+        },
+        {
+          "at": 0.6,
+          "x": -0.79,
+          "kind": "rock"
+        },
+        {
+          "at": 2.6,
+          "x": 0.79,
+          "kind": "rock"
+        },
+        {
+          "at": 2.6,
+          "x": 0.94,
+          "kind": "rock"
+        },
+        {
+          "at": 4,
+          "x": 0,
+          "kind": "log",
+          "amplitude": 0.55,
+          "omega": 0.9
+        }
+      ]
+    },
+    "exit": {
+      "duration": 2,
+      "objects": []
+    }
+  },
+  "sequence": [
+    "intro",
+    "challenge",
+    "breather",
+    "challenge",
+    "shore",
+    "exit"
+  ],
+  "challenge_pool": [
+    "slalom",
+    "split"
+  ]
+}

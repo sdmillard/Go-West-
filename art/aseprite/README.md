@@ -100,3 +100,11 @@ When you draw something two scenes could share, such as a river bank, rock face,
 | 6 | Optional ambient animation (smoke, water) | Not started |
 
 Update this table when a scene is installed.
+
+## Installed rafting pack
+
+`scenes/rafting.lua` builds the approved isometric raft, four-frame obstacle/debris sheet and water foam. Installed October27,2026 after Spencer approved the in-game comparison. Layouts and runtime anchors: [rafting artwork](../../docs/RAFTING_ART.md).
+
+## Installed Wasco encounter scene
+
+Spencer approved the Wasco trading-landing draft on October27,2026. `scenes/encounter_wasco.lua` now outputs `encounter_the_dalles.png` (432×150), installed with the same pixel data as the approved preview. Build with `-Scene encounter_wasco`; the presentation registry switches from the normal Dalles landmark only during the community visit or local recruitment. Six further scenes remain briefed, not approved or installed. See [the encounter art brief](../../docs/NATIVE_ENCOUNTER_ART_BRIEF.md) for references and historical limits.

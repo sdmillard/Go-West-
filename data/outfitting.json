@@ -192,6 +192,14 @@
       "maximum": 2500,
       "step": 25,
       "suggested": 0
+    },
+    {
+      "id": "dog",
+      "label": "WORKING DOG $5",
+      "price_cents": 500,
+      "maximum": 1,
+      "step": 1,
+      "suggested": 0
     }
   ]
 }
