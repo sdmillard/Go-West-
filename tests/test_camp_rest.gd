@@ -112,7 +112,8 @@ func run():
 	screen.record_notice.hide()
 	screen.game=outfit()
 	screen.game.state.food=0
-	screen.game.party_health.members[0].health=1
+	# A companion, not the leader: the leader's death would end the journey.
+	screen.game.party_health.members[1].health=1
 	screen.game.state.health=screen.game.party_health.average_health()
 	screen.last_food_alert=2
 	screen.rest_days_input.text="30"

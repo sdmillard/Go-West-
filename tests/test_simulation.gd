@@ -72,6 +72,7 @@ func _initialize() -> void:
 			setup_game.choose(0)
 	setup_game.choose(0)
 	check(is_equal_approx(setup_game.state.money, 288.95), "Period ferry payment preserves cents")
+	var platte_arrivals := 0
 	for occupation in ["banker", "carpenter", "farmer"]:
 		for seed_value in range(20):
 			var outfitted = Simulation.new(seed_value, "classic", true, "platte")
@@ -81,7 +82,10 @@ func _initialize() -> void:
 				if outfitted.state.status != "traveling":
 					break
 				preload("res://tests/survival_policy.gd").step(outfitted)
-			check(outfitted.state.status == "arrived" and outfitted.state.miles == 317 and outfitted.state.money >= 0 and outfitted.state.party.size() == 5, "Outfitted journey reaches Platte corridor")
+			# The leader's death ends a journey; anything else must still reach the Platte.
+			if outfitted.state.status == "arrived":platte_arrivals += 1
+			check((outfitted.state.status == "arrived" and outfitted.state.miles == 317 and outfitted.state.money >= 0 and outfitted.state.party.size() == 5) or (outfitted.state.status == "lost" and not outfitted.party_health.members[0].alive), "Outfitted journey reaches Platte corridor unless the leader dies")
+	check(platte_arrivals >= 54, "Nine in ten outfitted parties reach the Platte corridor")
 	var game = Simulation.new()
 	check(game.error.is_empty(), "Bundled JSON loads")
 	check(game.travel(), "Travel accepted")

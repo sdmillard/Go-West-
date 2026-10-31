@@ -94,7 +94,7 @@ func betrayal(store) -> void:
 	game.crime.check_betrayal(game)
 	item=game.crime.record.betrayals[0]
 	check(item.act=="attack" and item.attempt=="killed" and not game.party_health.members[0].alive and "Ben" in game.party_health.members[0].cause,"A ruthless betrayer can kill the leader; the cause names them")
-	check(item.noticed==[1,3,4] and game.state.bullets==bullets-1-item.taken.bullets and game.state.status=="traveling","The shot wakes the camp; the journey goes on without its leader")
+	check(item.noticed==[1,3,4] and game.state.bullets==bullets-1-item.taken.bullets and game.state.status=="lost" and "Ben" in game.state.loss_reason,"The shot wakes the camp, but the leader is dead: the journey ends, naming the killer")
 	check(round_trip(store,game),"A killing betrayal round-trips")
 	saved=store.capture(game)
 	bad=saved.duplicate(true)
