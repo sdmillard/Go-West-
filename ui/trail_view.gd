@@ -55,6 +55,8 @@ const BOLT = preload("res://art/pixels/weather_bolt.png") # three 32x96 bolts
 const DUST_DEVIL = preload("res://art/pixels/dust_devil.png") # four 16x40 frames, ground point (8, 39)
 const TRAIL_DUST = preload("res://art/pixels/trail_dust.png") # three 16x12 puffs
 const STAMPEDE_OX = preload("res://art/pixels/stampede_ox.png") # four 26x16 frames, rump at (0, 15)
+const CABIN = preload("res://art/pixels/cabin_overlay.png") # 80x56 frames: columns stages, rows small/medium/large
+const AMBIENT_SMOKE = preload("res://art/pixels/ambient_smoke.png") # 12x24 frames, source at (6, 23)
 const FLOTSAM = preload("res://art/pixels/flotsam.png") # two 24x12 pieces, water line at y 9
 const RAIN_CLOUDS = preload("res://art/pixels/rain_clouds.png") # 432x56, tiles sideways
 const RAIN_SPLASH = preload("res://art/pixels/rain_splash.png") # four 8x4 frames
@@ -70,6 +72,7 @@ signal crossing_finished
 var scenes = preload("res://ui/location_scenes.gd").new()
 var ambience = preload("res://ui/scene_ambience.gd").new()
 var scene_id := ""
+var cabin_frame := -1 # the party's cabin at this stop, see _draw_cabin
 var miles := 0
 var train_count: int=1
 var vehicle := "wagon"
@@ -152,11 +155,13 @@ func _draw() -> void:
 		return
 	if not scene_id.is_empty():
 		draw_texture(scenes.texture_for(scene_id), Vector2.ZERO)
+		_draw_cabin()
 		ambience.draw(self, scene_id, scenes.texture_for(scene_id), clock_time)
-		if vehicle=="foot":
-			_draw_herd(false)
-			_draw_party(Vector2(140,135),false)
-		_draw_livestock(false,true)
+		if not scene_id.begins_with("ending_"): # ending pictures already show the party
+			if vehicle=="foot":
+				_draw_herd(false)
+				_draw_party(Vector2(140,135),false)
+			_draw_livestock(false,true)
 		_draw_weather()
 		return # Parked wagons/people are composed into each arrival illustration.
 	# Parallax: each layer of the backdrop slides at its own speed, nearest fastest, and the
@@ -207,6 +212,23 @@ func _draw() -> void:
 			draw_rect(Rect2(150, 130, 80, 7), Color("76503c"))
 			draw_rect(Rect2(159, 132, 60, 2), Color("a16b43"))
 	_draw_weather()
+
+## The party's cabin at a timber stop, at its build stage (cabin_frame: -1 none, 0 logs,
+## 1 half walls, 2 rafters, 3 finished, 4 finished under snow), with chimney smoke once lived in.
+func _draw_cabin() -> void:
+	var spots: Array = ambience.places.get(scene_id, {}).get("cabin", [])
+	if cabin_frame < 0 or spots.is_empty():
+		return
+	var spot: Array = spots[0]
+	var size := clampi(int(spot[2]), 0, 2)
+	draw_texture_rect_region(CABIN, Rect2(int(spot[0]) - 12, int(spot[1]) - 52, 80, 56), Rect2(cabin_frame * 80, size * 56, 80, 56))
+	if cabin_frame >= 3:
+		var w: int = [30, 40, 54][size]
+		var h: int = [12, 16, 21][size]
+		var chimney := Vector2(int(spot[0]) + w - 3, int(spot[1]) - h - (int(w * 0.18) + 2) - 7)
+		var frame := int(clock_time * 7.0) % 8
+		draw_texture_rect_region(AMBIENT_SMOKE, Rect2(chimney.x - 6, chimney.y - 23, 12, 24), Rect2(frame * 12, 0, 12, 24))
+
 
 func _draw_livestock(moving: bool,camped: bool) -> void:
 	var frame: int=int(clock_time*FPS)%FRAMES
