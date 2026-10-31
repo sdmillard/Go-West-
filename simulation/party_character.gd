@@ -7,6 +7,10 @@ const ACTIONS=["robbery", "murder", "cannibalism", "miss_wages", "hunt", "repair
 var RELATIONSHIPS: Dictionary={"self":50}
 var SPECIALS: Array=[]
 const MAX_CREATION_SPECIALS=2
+## The leader is the player: trust, wages and loyalty do not apply, and party benefits come from companions.
+## The leader may take only the personal specials, and no flaw about trust.
+const LEADER_SPECIALS=["Hardy","Quick Healer","Iron Stomach","Sure-footed","Cool-headed","Weatherwise","Tireless"]
+const LEADER_EXCLUDED_FLAWS=["Hot-tempered","Distrustful","Proud","Restless"]
 var FLAWS: Dictionary={}
 var catalog=preload("res://simulation/character_catalog.gd").new()
 const MAX_PAYMENT_INTERVAL=7
@@ -220,6 +224,7 @@ func valid_setup(setup: Dictionary) -> bool:
 	if setup.has("romance") and not setup.romance is bool:return false
 	for profile in setup.profiles:
 		if profile.specials.size()>creation_special_limit(profile):return false
+		if int(profile.id)==0 and (profile.specials.any(func(special):return special not in LEADER_SPECIALS) or profile.get("flaws",[]).any(func(flaw):return flaw in LEADER_EXCLUDED_FLAWS)):return false
 		if profile.trust!=RELATIONSHIPS[profile.relationship] or not profile.memories.is_empty() or not profile.contract.is_empty() or not profile.exit_warning.is_empty():return false
 		var key:=str(int(profile.id))
 		if "Mercenary" in profile.specials:
@@ -342,7 +347,7 @@ func valid(value: Variant, count: int, day: int, legacy: bool=false, framework_v
 		if not half_number(profile.get("trust"),0,100) or (legacy and not whole(profile.trust,0,100)) or not profile.get("memories") is Array or profile.memories.size()>12:return false
 		if not legacy and not valid_framework(profile,index,day):return false
 		var flaws: Variant=profile.get("flaws",[])
-		if not flaws is Array or flaws.size()>1 or (index==0 and not flaws.is_empty()):return false
+		if not flaws is Array or flaws.size()>1 or (index==0 and flaws.any(func(flaw):return flaw in LEADER_EXCLUDED_FLAWS)):return false
 		for flaw in flaws:
 			if not flaw is String or flaw not in FLAWS:return false
 		if not legacy and framework_version==2 and profile.has("exit_warning"):return false
@@ -502,7 +507,7 @@ func valid_framework(profile: Dictionary, index: int, day: int) -> bool:
 		if contract.last_assessed_day>contract.last_due_day or contract.last_due_day>=contract.next_due_day:return false
 		if not whole(contract.get("oldest_due_day"),-1,day) or (contract.arrears_cents==0)!=(contract.oldest_due_day==-1):return false
 		if contract.oldest_due_day>contract.last_due_day or (contract.last_due_day>=0 and contract.next_due_day-contract.last_due_day!=contract.interval_days):return false
-	if index==0 and (not profile.specials.is_empty() or not contract.is_empty() or profile.can_betray or not seen.is_empty()):return false
+	if index==0 and (profile.specials.any(func(special):return special not in LEADER_SPECIALS) or not contract.is_empty() or profile.can_betray or not seen.is_empty()):return false
 	return true
 
 

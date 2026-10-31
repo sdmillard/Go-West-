@@ -37,6 +37,8 @@ var interval: SpinBox
 var keepsake_check: CheckBox
 var keepsake_choices: Array=[true,true,true,true,true]
 var edited_member:=1
+## Character-sheet rows that only apply to companions; hidden while editing the leader.
+var companion_rows: Array=[]
 var draft_terms: Dictionary={}
 var wage_quote_label: Label
 var loading_companion:=false
@@ -103,19 +105,13 @@ func _ready() -> void:
 		# Companions get an EDIT button that opens their character sheet; the leader is defined by play.
 		put(entry, Rect2(95, 48 + i * 23, 108, 21), party_layer)
 		names.append(entry)
-		if i > 0:
-			var edit := Button.new()
-			edit.text = "EDIT"
-			edit.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-			edit.tooltip_text = "Set this companion's temperament, values, background, relationship, specials, flaw and wages."
-			edit.pressed.connect(open_editor.bind(i))
-			put(edit, Rect2(207, 48 + i * 23, 38, 21), party_layer)
-			edit_buttons.append(edit)
-		else:
-			var look := Button.new()
-			look.text="LOOK"
-			look.pressed.connect(open_appearance.bind(0))
-			put(look,Rect2(207,48,38,21),party_layer)
+		var edit := Button.new()
+		edit.text = "EDIT"
+		edit.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		edit.tooltip_text = "Set your own specials, flaw and appearance. If you die, the journey ends." if i == 0 else "Set this companion's temperament, values, background, relationship, specials, flaw and wages."
+		edit.pressed.connect(open_editor.bind(i))
+		put(edit, Rect2(207, 48 + i * 23, 38, 21), party_layer)
+		edit_buttons.append(edit)
 	text("PROFESSION / TRAIL FUNDS", Rect2(12, 169, 235, 12), party_layer)
 	profession = OptionButton.new()
 	for entry in game.outfitter.professions:
@@ -292,15 +288,17 @@ func _build_companions() -> void:
 	appearance_button.text="APPEARANCE & PERSONAL BACKGROUND"
 	appearance_button.pressed.connect(open_appearance.bind(-1))
 	rows.add_child(appearance_button)
-	text("Temperament / values",Rect2(),rows)
+	companion_rows.append(generate_button)
+	companion_rows.append(text("Temperament / values",Rect2(),rows))
 	personality=select_box(draft.catalog.data.temperaments.keys(),rows)
 	values=select_box(draft.catalog.data.values.keys(),rows)
-	text("Background / party benefit",Rect2(),rows)
+	companion_rows.append(text("Background / party benefit",Rect2(),rows))
 	background_choice=select_box(draft.SKILLS,rows)
-	text("Relationship to you",Rect2(),rows)
+	companion_rows.append(text("Relationship to you",Rect2(),rows))
 	relationship=select_box(draft.catalog.data.relationships.keys(),rows)
 	for index in range(relationship.item_count):relationship.set_item_text(index,relationship.get_item_text(index).replace("_"," ").capitalize())
 	character_summary=text("",Rect2(),rows)
+	companion_rows.append_array([personality,values,background_choice,relationship,character_summary])
 	character_summary.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	text("Optional flaw (+1 special slot; maximum one)",Rect2(),rows)
 	flaw_choice=select_box(["None"]+draft.FLAWS.keys(),rows)
@@ -321,19 +319,22 @@ func _build_companions() -> void:
 		rows.add_child(check)
 		special_checks[special]=check
 	wage_quote_label=text("",Rect2(),rows)
-	text("Mercenary wage per payment ($)",Rect2(),rows)
+	companion_rows.append(wage_quote_label)
+	companion_rows.append(text("Mercenary wage per payment ($)",Rect2(),rows))
 	wage=SpinBox.new()
 	wage.min_value=7
 	wage.max_value=1000
 	wage.step=0.01
 	wage.value=7
 	rows.add_child(wage)
-	text("Pay every (days)",Rect2(),rows)
+	companion_rows.append(wage)
+	companion_rows.append(text("Pay every (days)",Rect2(),rows))
 	interval=SpinBox.new()
 	interval.min_value=1
 	interval.max_value=7
 	interval.value=7
 	rows.add_child(interval)
+	companion_rows.append(interval)
 	auto_pay=CheckBox.new()
 	auto_pay.text="AUTO-PAY WAGES"
 	auto_pay.tooltip_text="Automatically pay this companion from available cash when wages are due. Unpaid wages still lose trust. Change this later in Party."
@@ -458,6 +459,14 @@ func _store_companion() -> void:
 	_refresh_wage_quote()
 	wage.apply()
 	var profile: Dictionary=draft.profiles[edited_member]
+	if edited_member==0:
+		# The leader's sheet holds only specials and a flaw; the rest of their profile is untouched.
+		profile.specials=[]
+		profile.erase("flaws")
+		if not accepted_flaw.is_empty():profile.flaws=[accepted_flaw]
+		for special in special_checks:
+			if special_checks[special].button_pressed:profile.specials.append(special)
+		return
 	profile.traits=[personality.get_item_text(personality.selected),values.get_item_text(values.selected)]
 	profile.skill=draft.SKILLS[background_choice.selected]
 	profile.relationship=draft.catalog.data.relationships.keys()[relationship.selected]
@@ -491,6 +500,11 @@ func _load_companion() -> void:
 	wage.editable="Mercenary" in profile.specials
 	interval.editable=wage.editable
 	auto_pay.visible=wage.editable
+	var leader: bool=edited_member==0
+	for node in companion_rows:node.visible=not leader
+	if leader:auto_pay.visible=false
+	for special in special_checks:special_checks[special].visible=not leader or special in draft.LEADER_SPECIALS
+	for index in range(draft.FLAWS.size()):flaw_choice.set_item_disabled(index+1,leader and draft.FLAWS.keys()[index] in draft.LEADER_EXCLUDED_FLAWS)
 	loading_companion=false
 	_refresh_wage_quote()
 
