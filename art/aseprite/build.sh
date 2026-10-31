@@ -30,12 +30,17 @@ for scene in "${SCENES[@]}"; do
   LOG="$("$EXE" -b --script-param "kit=$HERE/lib.lua" --script-param "out=$OUT" --script "$HERE/scenes/$scene.lua" 2>&1)" || { echo "$LOG"; exit 1; }
   echo "$LOG"
   if echo "$LOG" | grep -q '\.lua:[0-9]*:'; then echo "Scene failed: $scene" >&2; exit 1; fi
-  # --seasons: location pictures also get winter and autumn versions (see K.season in lib.lua)
-  if [ "$SEASONS" = 1 ] && grep -q 'K.save("location_' "$HERE/scenes/$scene.lua" && ! grep -q 'no seasons' "$HERE/scenes/$scene.lua"; then
-    for season in winter autumn; do
-      LOG="$("$EXE" -b --script-param "kit=$HERE/lib.lua" --script-param "out=$OUT" --script-param "season=$season" --script-param "scene=$scene" --script "$HERE/scenes/$scene.lua" 2>&1)" || { echo "$LOG"; exit 1; }
+  # --seasons: location pictures and the scrolling travel layers also get winter and autumn
+  # versions (see K.season in lib.lua); the prairie/river sets get a tallgrass autumn_east too
+  if [ "$SEASONS" = 1 ] && ! grep -q 'no seasons' "$HERE/scenes/$scene.lua" && \
+     { grep -q 'K.save("location_' "$HERE/scenes/$scene.lua" || [[ "$scene" =~ ^(prairie|river|travel_.*)$ ]]; }; then
+    VARIANTS="winter: autumn:"
+    if [[ "$scene" =~ ^(prairie|river|travel_ground|travel_horizon)$ ]]; then VARIANTS="$VARIANTS autumn:tallgrass:autumn_east"; fi
+    for v in $VARIANTS; do
+      IFS=: read -r season region tag <<< "$v"
+      LOG="$("$EXE" -b --script-param "kit=$HERE/lib.lua" --script-param "out=$OUT" --script-param "season=$season" --script-param "scene=$scene" --script-param "region=$region" --script-param "tag=$tag" --script "$HERE/scenes/$scene.lua" 2>&1)" || { echo "$LOG"; exit 1; }
       echo "$LOG"
-      if echo "$LOG" | grep -q '\.lua:[0-9]*:'; then echo "Scene failed: $scene ($season)" >&2; exit 1; fi
+      if echo "$LOG" | grep -q '\.lua:[0-9]*:'; then echo "Scene failed: $scene ($v)" >&2; exit 1; fi
     done
   fi
 done

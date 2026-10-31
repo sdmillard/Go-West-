@@ -39,7 +39,6 @@ const RAFT_LENGTH := 25.0 # path units; one unit is (2, -1) pixels, 2.24 sprite 
 const CAR = preload("res://art/pixels/corolla.png")
 const ELDER = preload("res://art/pixels/elder.png")
 const SABER = preload("res://art/pixels/lightsaber.png")
-const HORIZON = preload("res://art/pixels/travel_horizon.png")
 # Backdrop layers drawn far to near, with how fast each slides relative to the road.
 const PARALLAX := {
 	"prairie": [["sky", 0.0], ["clouds", 0.04], ["far", 0.1], ["floor", 0.0]],
@@ -48,7 +47,6 @@ const PARALLAX := {
 	"travel_desert": [["sky", 0.0], ["clouds", 0.04], ["far", 0.12], ["mid", 0.3], ["ground", 1.0]],
 	"travel_forest": [["sky", 0.0], ["clouds", 0.04], ["far", 0.15], ["mid", 0.5], ["ground", 1.0]],
 }
-const GROUND = preload("res://art/pixels/travel_ground.png")
 # Weather and event overlays (art/aseprite/scenes/weather.lua).
 const STORM_CLOUDS = preload("res://art/pixels/storm_clouds.png") # 432x56, tiles sideways
 const BOLT = preload("res://art/pixels/weather_bolt.png") # three 32x96 bolts
@@ -94,6 +92,9 @@ var water_spans: Array[Vector2i] = []
 var weather_id := "clear"
 ## "winter", "autumn" or "" (spring and summer): which version of a place picture to show.
 var season := ""
+## On the Kansas leg autumn is the tallgrass kind (copper bluestem, red oak), so the prairie and
+## river travel layers use their "autumn_east" version there.
+var tallgrass := false
 var terrain := "plains"
 
 func start_crossing(result: Dictionary) -> void:
@@ -173,12 +174,12 @@ func _draw() -> void:
 	for layer in layers:
 		if layer[0] == "clouds" and weather_id in ["thunderstorm", "hail", "rain", "heavy_rain", "blizzard", "fog"]:
 			continue # fair-weather clouds are lost under the overcast
-		var texture: Texture2D = _layer_texture(set_name + "_" + layer[0])
+		var texture: Texture2D = _travel_texture(set_name + "_" + layer[0])
 		var drift: float = clock_time * 1.5 if layer[0] == "clouds" else 0.0
 		_tile(texture, 0, posmod(int(scroll_distance * layer[1] + drift), 432))
 	if set_name in ["prairie", "river"]:
-		_tile(HORIZON, 65, int(scroll_distance / 7.0) % 432)
-		_tile(GROUND, 100, int(scroll_distance) % 432)
+		_tile(_travel_texture("travel_horizon"), 65, int(scroll_distance / 7.0) % 432)
+		_tile(_travel_texture("travel_ground"), 100, int(scroll_distance) % 432)
 	_draw_fog_banks()
 	var frame := int(clock_time * FPS) % FRAMES if scrolling or motion > 0 else 0
 	var bob := -1 if frame % 4 >= 2 else 0
@@ -453,10 +454,25 @@ func _draw_stampede() -> void:
 		draw_texture_rect_region(STAMPEDE_OX, Rect2(at.x, at.y - 15 + bob, 26, 16), Rect2(frame * 26, 0, 26, 16))
 
 var layer_textures: Dictionary = {}
+## A picture from art/pixels, or null when there is none (looked up once).
 func _layer_texture(name: String) -> Texture2D:
 	if not layer_textures.has(name):
-		layer_textures[name] = load("res://art/pixels/" + name + ".png")
+		var path := "res://art/pixels/" + name + ".png"
+		layer_textures[name] = load(path) if ResourceLoader.exists(path) else null
 	return layer_textures[name]
+
+## A travel layer in the version for the season (art/aseprite build.sh --seasons), falling back
+## to the plain picture.
+func _travel_texture(name: String) -> Texture2D:
+	if season == "autumn" and tallgrass:
+		var east := _layer_texture(name + "_autumn_east")
+		if east != null:
+			return east
+	if not season.is_empty():
+		var seasonal := _layer_texture(name + "_" + season)
+		if seasonal != null:
+			return seasonal
+	return _layer_texture(name)
 
 func _tile(texture: Texture2D, y: int, offset: int) -> void:
 	draw_texture(texture, Vector2(-offset, y))

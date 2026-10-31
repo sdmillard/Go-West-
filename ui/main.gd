@@ -1392,6 +1392,8 @@ func _open_hunt_window() -> void:
 		var shooter: Dictionary=game.party_health.members.filter(func(member):return game.party_health.is_active(member))[0]
 		hunt_view.traveler_profile=game.characters.profiles[int(shooter.id)]
 		hunt_view.encounter = game.hunt
+		hunt_view.season = landscape.season
+		hunt_view.tallgrass = landscape.tallgrass
 		hunt_view.active = true
 		pelt_recovery.reset(game)
 		_update_hunt_report()
@@ -1880,7 +1882,9 @@ func _refresh() -> void:
 				landscape.scene_id = event_scene
 		if not _reviewing_crossing() and s.status in ["settled", "returned_east", "lost"]:
 			landscape.scene_id = _ending_scene(s)
-	landscape.season = _scene_season(landscape.scene_id, date)
+	# on the road the last place passed decides the mild lower-river winter
+	landscape.season = _scene_season(landscape.scene_id if not landscape.scene_id.is_empty() else str(s.landmark), date)
+	landscape.tallgrass = str(s.landmark) in TALLGRASS_LANDMARKS
 	landscape.cabin_frame = _cabin_frame(landscape.scene_id, date)
 	if landscape.scene_id == "fort_kearny" and date.year == 1848 and date.month < 6:
 		landscape.scene_id = "fort_kearny_early"
@@ -2201,6 +2205,8 @@ func _cabin_frame(stop: String, date: Dictionary) -> int:
 ## Lower Columbia and Willamette places where winter is rain and green grass, not snow, unless
 ## it is snowing: they keep the picture as drawn.
 const MILD_WINTER_SCENES := ["eagle_creek", "oregon_city"]
+## Missouri and eastern Kansas: travel from these places shows tallgrass autumn colours.
+const TALLGRASS_LANDMARKS := ["independence", "elm_grove", "wakarusa", "kansas_river", "big_vermilion", "big_blue", "little_blue"]
 
 ## Which version of a place picture fits the day: winter in snow weather or from December to
 ## February (on the mild lower river only when it snows), autumn in October and November.

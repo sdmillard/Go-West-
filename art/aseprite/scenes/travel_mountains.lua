@@ -162,5 +162,9 @@ K.layer("ground", function()
   end
 end)
 
+-- winter: the road is trodden to mud through the snow
+K.season_extra = {
+  {season="winter", y0=100, y1=150, map={ochre="silt", sand="stone_lt", clap_sh="stone_lt", rust="silt_dk", leaf="white", pine="stone_lt"}},
+}
 K.save("travel_mountains")
 K.save_layers({sky = "travel_mountains_sky", clouds = "travel_mountains_clouds", far = "travel_mountains_far", mid = "travel_mountains_mid", ground = "travel_mountains_ground"})

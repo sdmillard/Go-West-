@@ -176,5 +176,10 @@ K.layer("ground", function()
   end
 end)
 
+-- winter: snow lies on the flats and the mesa tops; the road is trodden to mud
+K.season_extra = {
+  {season="winter", y0=100, y1=150, map={ochre="silt", gold="silt_lt", sand="white", clap_sh="stone_lt", rust="silt_dk", cream="white"}},
+  {season="winter", map={sand="white", clap_sh="stone_lt"}},
+}
 K.save("travel_desert")
 K.save_layers({sky = "travel_desert_sky", clouds = "travel_desert_clouds", far = "travel_desert_far", mid = "travel_desert_mid", ground = "travel_desert_ground"})

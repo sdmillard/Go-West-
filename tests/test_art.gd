@@ -126,6 +126,24 @@ func _initialize() -> void:
 		for layer in preload("res://ui/trail_view.gd").PARALLAX[set_name]:
 			var tile: Texture2D = load("res://art/pixels/%s_%s.png" % [set_name, layer[0]])
 			check(tile != null and tile.get_size() == Vector2(432, 150), "Parallax layer is a 432 x 150 tile: %s %s" % [set_name, layer[0]])
+			# the land layers have winter and autumn versions (sky and clouds stay as drawn)
+			if layer[0] in ["far", "mid", "floor", "ground"]:
+				for tag in ["winter", "autumn"] + (["autumn_east"] if set_name in ["prairie", "river"] else []):
+					var path := "res://art/pixels/%s_%s_%s.png" % [set_name, layer[0], tag]
+					check(ResourceLoader.exists(path) and load(path).get_size() == Vector2(432, 150), "Travel layer has a %s version: %s %s" % [tag, set_name, layer[0]])
+	for name in ["travel_horizon", "travel_ground"]:
+		for tag in ["winter", "autumn", "autumn_east"]:
+			var path := "res://art/pixels/%s_%s.png" % [name, tag]
+			check(ResourceLoader.exists(path) and load(path).get_size() == load("res://art/pixels/%s.png" % name).get_size(), "Travel tile has a %s version: %s" % [tag, name])
+	var view = preload("res://ui/trail_view.gd").new()
+	view.season = "winter"
+	check(view._travel_texture("travel_ground") == load("res://art/pixels/travel_ground_winter.png"), "Travel view scrolls the winter road in winter")
+	check(view._travel_texture("prairie_sky") == load("res://art/pixels/prairie_sky.png"), "A layer without a seasonal version falls back to the plain one")
+	view.season = "autumn"
+	view.tallgrass = true
+	check(view._travel_texture("prairie_far") == load("res://art/pixels/prairie_far_autumn_east.png"), "Kansas autumn uses the tallgrass travel layers")
+	check(view._travel_texture("travel_desert_ground") == load("res://art/pixels/travel_desert_ground_autumn.png"), "Sets without a tallgrass version use the plain autumn")
+	view.free()
 	for name in ["ambient_smoke", "ambient_flag", "ambient_bird"]:
 		check(load("res://art/pixels/" + name + ".png").get_width() % 8 == 0, name + " holds eight frames")
 	check(scenes.error.is_empty(), "Scene registry loads every image")
