@@ -25,8 +25,10 @@ var scenes = preload("res://ui/location_scenes.gd").new()
 const SpeechBubble = preload("res://ui/speech_bubble.gd")
 var refreshing := false
 const GOODS := {"wagon":"WAGON","produce":"FRUIT/GRN","dried_produce":"DRY FRUIT","food": "FOOD LB", "bullets": "BULLETS", "medicine": "CARE KITS", "clothing": "CLOTHES", "oxen": "OXEN", "wheels": "WHEELS", "axles": "AXLES", "tongues": "TONGUES", "salt": "SALT LB", "horses": "HORSES", "mules": "MULES", "saddles": "SADDLES", "pack_saddles": "PACK SDL", "saddlebags": "SADDLEBAG", "rifles": "RIFLES", "shotguns": "SHOTGUNS", "pistols": "PISTOLS", "revolvers": "COLT", "knives": "KNIVES", "hatchets": "HATCHETS"}
-const POST_X := 250
-const PARTY_X := 440
+## Each column's paper starts 20 px left of its text, leaving a gutter for the arms pictures.
+const POST_X := 236
+const PARTY_X := 438
+const ROW := 17
 
 func _init(simulation) -> void:
 	game = simulation
@@ -65,9 +67,9 @@ func _ready() -> void:
 	put(background, Rect2(0, 0, 622, 273))
 	# Laid out like a barter screen: the post's goods on the left, the party's on the right, the reckoning below.
 	# Both sit to the right so the keeper and the room stay in view.
-	paper(Rect2(POST_X - 6, 6, 184, 194))
-	paper(Rect2(PARTY_X - 6, 6, 184, 194))
-	paper(Rect2(POST_X - 6, 204, 374, 30))
+	paper(Rect2(POST_X - 20, 6, 198, 194))
+	paper(Rect2(PARTY_X - 20, 6, 198, 194))
+	paper(Rect2(POST_X - 20, 204, 400, 30))
 	paper(Rect2(0, 236, 622, 37))
 	title = text("", Rect2(POST_X, 10, 172, 12))
 	wagon_title = text("", Rect2(PARTY_X, 10, 172, 12))
@@ -76,9 +78,11 @@ func _ready() -> void:
 	rows_layer = Control.new()
 	rows_scroll=ScrollContainer.new()
 	rows_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
-	put(rows_scroll,Rect2(244,40,374,156))
+	put(rows_scroll,Rect2(POST_X - 20,40,400,9*ROW))
+	# Scroll a whole row at a time so no row sits half hidden under the headings.
+	rows_scroll.get_v_scroll_bar().step=ROW
 	rows_scroll.add_child(rows_layer)
-	rows_layer.custom_minimum_size=Vector2(358,200)
+	rows_layer.custom_minimum_size=Vector2(384,200)
 	sale_button=Button.new()
 	sale_button.text="SELL WAGON / PACK >"
 	sale_button.pressed.connect(func():sale_requested.emit())
@@ -103,9 +107,9 @@ func _ready() -> void:
 
 func columns(x: int, count: String, action: String) -> void:
 	text("GOODS", Rect2(x, 26, 50, 12))
-	right(text(count, Rect2(x + 46, 26, 36, 12)))
-	text("EACH", Rect2(x + 88, 26, 34, 12))
-	text(action, Rect2(x + 126, 26, 46, 12))
+	right(text(count, Rect2(x + 44, 26, 36, 12)))
+	text("EACH", Rect2(x + 85, 26, 34, 12))
+	text(action, Rect2(x + 126, 26, 42, 12))
 
 ## Rebuild the counter from the post's current stock; quantities reset to zero.
 func open(where: String = "") -> void:
@@ -130,7 +134,7 @@ func open(where: String = "") -> void:
 	refreshing = true
 	for i in range(store.rows.size()):
 		var row: Dictionary = store.rows[i]
-		var y := 40 + i * 17
+		var y := 40 + i * ROW
 		var goods: String = game.leathercraft.label_for(row.item).to_upper() if game.leathercraft.is_good(row.item) else game.income.label_for(game,row.item).to_upper() if game.income.is_keepsake(row.item) else game.provisions.data.pelts.goods.get(row.item,{}).get("short_label",GOODS.get(row.item, row.item.to_upper()))
 		var unit: String = "lb" if row.item in ["food", "salt"] else "each"
 		var tip := "Buy at $%.3f or sell at $%.3f %s. You hold %d. The post can sell %d more and buy %d." % [row.buy_cents / 100.0 / row.amount, row.sell_cents / 100.0 / row.amount, "a pound" if unit == "lb" else "each", row.held, row.can_buy, row.can_sell]
@@ -147,30 +151,31 @@ func open(where: String = "") -> void:
 			for column in [POST_X, PARTY_X]:
 				var picture := TextureRect.new()
 				picture.texture = arms_icon
+				picture.mouse_filter = Control.MOUSE_FILTER_PASS
 				picture.tooltip_text = tip
-				put(picture, Rect2(column - 17, y, 16, 16), rows_layer)
+				put(picture, Rect2(column - 18, y, 16, 16), rows_layer)
 		var stock := line(POST_X, y, goods, row.buy_cents / float(row.amount) if row.get("sells", true) else -1.0, tip)
 		var have := line(PARTY_X, y, goods, row.sell_cents / float(row.amount) if row.get("buys", true) else -1.0, tip)
 		# A family pays over the odds for what it is short of: those prices show in green.
 		if float(row.get("premium", 1.0)) >= 1.3:
 			rows_layer.get_child(rows_layer.get_child_count() - 2).add_theme_color_override("font_color", Color("2f6b2f"))
-		buys[row.item] = spin(row.can_buy, Rect2(POST_X + 128, y, 36, 17))
-		sells[row.item] = spin(row.can_sell, Rect2(PARTY_X + 128, y, 36, 17))
+		buys[row.item] = spin(row.can_buy, Rect2(POST_X + 124, y, 44, 17))
+		sells[row.item] = spin(row.can_sell, Rect2(PARTY_X + 124, y, 44, 17))
 		counts[row.item] = [have, stock]
 		held[row.item] = row
-	for child in rows_layer.get_children():child.position-=Vector2(244,40)
-	rows_layer.custom_minimum_size.y=store.rows.size()*17+2
+	for child in rows_layer.get_children():child.position-=Vector2(POST_X - 20,40)
+	rows_layer.custom_minimum_size.y=store.rows.size()*ROW
 	rows_scroll.scroll_vertical=0
 	refreshing = false
 	update_news_button()
 	update_quote()
 
 func line(x: int, y: int, goods: String, cents: float, tip: String) -> Label:
-	var name := text(goods, Rect2(x, y + 2, 58, 16), rows_layer)
+	var name := text(goods, Rect2(x, y + 2, 56, 16), rows_layer)
 	name.tooltip_text = tip
 	name.mouse_filter = Control.MOUSE_FILTER_PASS
-	text("$%.2f" % (cents / 100.0) if cents >= 0 else "  -", Rect2(x + 88, y + 2, 38, 16), rows_layer)
-	return right(text("", Rect2(x + 58, y + 2, 24, 16), rows_layer))
+	text("$%.2f" % (cents / 100.0) if cents >= 0 else "  -", Rect2(x + 85, y + 2, 38, 16), rows_layer)
+	return right(text("", Rect2(x + 56, y + 2, 24, 16), rows_layer))
 
 func spin(limit: int, bounds: Rect2) -> SpinBox:
 	var box := SpinBox.new()
@@ -178,9 +183,19 @@ func spin(limit: int, bounds: Rect2) -> SpinBox:
 	box.max_value = limit
 	box.step = 1
 	box.editable = limit > 0
-	box.get_line_edit().add_theme_constant_override("minimum_character_width", 1)
+	# Room for four digits (selling 1,998 lb of food or bullets): slim padding, arrows flush to the field, figures right-aligned.
+	box.alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	box.add_theme_constant_override("field_and_buttons_separation", 0)
+	var field := box.get_line_edit()
+	field.add_theme_constant_override("minimum_character_width", 1)
 	box.value_changed.connect(func(_value): update_quote())
 	put(box, bounds, rows_layer)
+	# The parchment field style comes from the window's theme, so it is read once the box is on screen.
+	for state in ["normal", "focus", "read_only"]:
+		var look: StyleBox = field.get_theme_stylebox(state).duplicate()
+		look.content_margin_left = 2
+		look.content_margin_right = 2
+		field.add_theme_stylebox_override(state, look)
 	return box
 
 ## Buying and selling the same goods in one visit nets out; the post settles the difference.
