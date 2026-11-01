@@ -152,15 +152,15 @@ func run():
 	if guard!=null:guard.pressed.emit()
 	check(screen.game.state.get("night_guard",false),"The guard button sets the watch")
 	screen.section_window.hide()
-	screen._show_supplies()
+	screen.livestock_window.open(screen.game)
 	var texts: Array=[]
-	var stack: Array=[screen.supplies_window]
+	var stack: Array=[screen.livestock_window]
 	while not stack.is_empty():
 		var node=stack.pop_back()
 		if node is Button:texts.append(node.text)
 		stack.append_array(node.get_children())
-	check(texts.any(func(text):return text.begins_with("BUTCHER 1 HORSE")) and texts.any(func(text):return text.begins_with("BUTCHER 1 MULE")),"Supplies offers to butcher a horse or a mule")
-	screen.supplies_window.hide()
+	check(texts.any(func(text):return text.begins_with("BUTCHER 1 HORSE")) and texts.any(func(text):return text.begins_with("BUTCHER 1 MULE")),"Livestock offers to butcher a horse or a mule")
+	screen.livestock_window.hide()
 	screen.queue_free()
 	await process_frame
 	print("Horse country: %d checks, %d failures" % [checks,failures])

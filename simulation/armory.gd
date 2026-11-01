@@ -26,7 +26,19 @@ static func valid_rules(v: Variant) -> bool:
 ## Arms counts are optional in a saved state; journeys from before arms carry none.
 static func valid_state(state: Dictionary) -> bool:
 	if state.has("arms_home") and not whole(state.arms_home,0,100):return false
+	if state.has("arms_assigned") and not valid_assignments(state.arms_assigned):return false
 	return KEYS.all(func(key):return not state.has(key) or whole(state[key],0,10000)) and (KEYS.all(func(key):return not state.has(key)) or state.has("arms_home"))
+## Who the player chose to carry what: {"<traveler id>": {"weapon": key or "", "blade": key or ""}}.
+## A missing slot means "choose for me"; "" means that traveler carries none.
+static func valid_assignments(v: Variant) -> bool:
+	if not v is Dictionary or v.size()>100:return false
+	for id in v:
+		if not id is String or not id.is_valid_int() or int(id)<0 or int(id)>999 or str(int(id))!=id:return false
+		var pick: Variant=v[id]
+		if not pick is Dictionary or pick.is_empty() or not pick.keys().all(func(slot):return slot in ["weapon","blade"]):return false
+		if pick.has("weapon") and not (pick.weapon is String and (pick.weapon=="" or data.firearms.has(pick.weapon))):return false
+		if pick.has("blade") and not (pick.blade is String and (pick.blade=="" or data.blades.has(pick.blade))):return false
+	return true
 static func count(state: Dictionary,key: String) -> int:return maxi(0,int(state.get(key,0)))
 ## Journeys saved before arms were counted: every traveler still has the rifle and knife they set out with.
 static func settle(state: Dictionary) -> void:
@@ -53,20 +65,66 @@ static func extra_weight(inventory: Dictionary) -> float:
 ## One firearm and one blade per fighter, in squad order (the leader first). Scarcer, closer-range arms go first,
 ## so a bought Colt or shotgun is always in someone's hands; anyone left over fights with a blade or bare hands.
 static func loadout(state: Dictionary,fighters: int) -> Array:
-	var guns: Array=[]
-	for key in data.loadout_order:
-		for i in range(count(state,key)):guns.append(key)
-	var blades: Array=[]
-	for key in data.blade_order:
-		for i in range(count(state,key)):blades.append(key)
+	var ids: Array=[]
+	for i in range(fighters):ids.append(-1-i)
+	return loadout_for(state,ids)
+## One firearm and one blade per traveler id, in the order given (squad order, leader first).
+## Picks the player made come first, as far as the stock allows; everyone else, and anyone whose pick
+## is gone (stolen, sold, held), shares out what is left the automatic way.
+static func loadout_for(state: Dictionary,ids: Array) -> Array:
+	var picks: Dictionary=state.get("arms_assigned",{}) if state.get("arms_assigned") is Dictionary else {}
+	var stock: Dictionary={}
+	for key in KEYS:stock[key]=count(state,key)
 	var result: Array=[]
-	for i in range(fighters):result.append({"weapon":guns[i] if i<guns.size() else "","blade":blades[i] if i<blades.size() else ""})
-	return result
+	for id in ids:result.append({"weapon":"","blade":"","auto_weapon":true,"auto_blade":true})
+	for slot in ["weapon","blade"]:
+		for i in range(ids.size()):
+			var pick: Dictionary=picks.get(str(ids[i]),{})
+			if not pick.has(slot):continue
+			var key: String=str(pick[slot])
+			if key=="":result[i]["auto_"+slot]=false
+			elif int(stock.get(key,0))>0:
+				result[i][slot]=key
+				result[i]["auto_"+slot]=false
+				stock[key]-=1
+		var order: Array=data.loadout_order if slot=="weapon" else data.blade_order
+		for i in range(ids.size()):
+			if not result[i]["auto_"+slot]:continue
+			for key in order:
+				if int(stock[key])>0:
+					result[i][slot]=key
+					stock[key]-=1
+					break
+	return result.map(func(kit):return {"weapon":kit.weapon,"blade":kit.blade})
+## The player hands a traveler an arm: "auto" clears the pick, "" carries none, otherwise a weapon key.
+## If every piece of that kind is already promised to others in the party, the last such pick goes back to automatic.
+static func assign(state: Dictionary,id: int,slot: String,key: String,party: Array) -> void:
+	if slot not in ["weapon","blade"]:return
+	var table: Dictionary=data.firearms if slot=="weapon" else data.blades
+	if key!="auto" and key!="" and not table.has(key):return
+	if not state.get("arms_assigned") is Dictionary:state["arms_assigned"]={}
+	var picks: Dictionary=state.arms_assigned
+	var mine: Dictionary=picks.get(str(id),{})
+	if key=="auto":mine.erase(slot)
+	else:mine[slot]=key
+	if mine.is_empty():picks.erase(str(id))
+	else:picks[str(id)]=mine
+	if key in ["auto",""]:return
+	var others: Array=party.filter(func(other):return int(other)!=id and str(picks.get(str(other),{}).get(slot,""))==key)
+	while others.size()>=count(state,key) and not others.is_empty():
+		var other: String=str(others.pop_back())
+		picks[other].erase(slot)
+		if picks[other].is_empty():picks.erase(other)
+## The traveler's pick for a slot: "auto", "" (none) or a weapon key.
+static func pick(state: Dictionary,id: int,slot: String) -> String:
+	var picks: Variant=state.get("arms_assigned",{})
+	if not picks is Dictionary or not picks.get(str(id),{}).has(slot):return "auto"
+	return str(picks[str(id)][slot])
 ## Fill in each squad member's arms on a tactical config. Prisoners (unarmed, by squad id) fight bare-handed
 ## and take nothing from the party's stock.
 static func equip(config: Dictionary,state: Dictionary,unarmed: Array=[]) -> Dictionary:
 	var armed: Array=config.get("squad",[]).filter(func(member):return str(member.get("id","")) not in unarmed.map(func(id):return str(id)))
-	var kit: Array=loadout(state,armed.size())
+	var kit: Array=loadout_for(state,armed.map(func(member):return int(member.id) if str(member.get("id","")).is_valid_int() else -1))
 	for i in range(kit.size()):
 		armed[i]["weapon"]=kit[i].weapon
 		armed[i]["blade"]=kit[i].blade
