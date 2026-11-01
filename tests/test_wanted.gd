@@ -28,7 +28,10 @@ func outfit(seed_value: int=57):
 	return game
 func pick(game,command: String) -> bool:
 	for index in range(game.pending.get("choices",[]).size()):
-		if game.pending.choices[index].get("crime_command","")==command:return game.choose(index)
+		if game.pending.choices[index].get("crime_command","")==command:
+			# The old hit roll: an attack that comes to a fight off the grid. New openings are tested in test_strike.gd.
+			if command in ["shoot","assault"]:game.crime.forced_strike="fight"
+			return game.choose(index)
 	return false
 func robbery(seed_value: int=57):
 	var game=outfit(seed_value)

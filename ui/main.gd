@@ -18,6 +18,8 @@ const NOTICE_WIDTH := 460
 var wagon_train_window=preload("res://ui/wagon_train_view.gd").new()
 var rafting_window=preload("res://ui/rafting_view.gd").new()
 var tactical_window=preload("res://ui/tactical_view.gd").new()
+## Where the journal stood when a fight with a companion began, so its result can be summed up after; -1 otherwise.
+var party_fight_journal: int = -1
 var dog_window=preload("res://ui/dog_view.gd").new()
 var livestock_window=preload("res://ui/livestock_view.gd").new()
 var fishing_window=preload("res://ui/fishing_view.gd").new()
@@ -1270,7 +1272,15 @@ func _service_choice(index: int) -> void:
 				return
 			_show_service()
 			return
-		if ccmd in ["shoot", "breakout"] and int(game.state.bullets) > 0:
+		# An attack opens one of three ways; only a fight goes to the grid. Off guard or bolting settle on the panel.
+		if ccmd in ["shoot", "assault"] and game.crime.incident().is_empty() and game.can_choose(index):
+			if game.crime.preroll_local(game, ccmd) == "fight":
+				crime_category = ""
+				service_window.hide()
+				_pause_travel()
+				if _open_tactical_combat(ccmd):
+					return
+		elif ccmd == "breakout" and int(game.state.bullets) > 0:
 			crime_category = ""
 			service_window.hide()
 			_pause_travel()
@@ -1293,6 +1303,22 @@ func _service_choice(index: int) -> void:
 		return
 	var burial: int = int(game.pending.choices[index].get("remains_id",-1)) if game.pending.get("remains_menu",false) and game.pending.choices[index].get("remains_command","")=="bury" else -1
 	var shooting: bool = game.pending.get("attack_menu",false) and int(game.pending.choices[index].get("attack_target",-1)) >= 0
+	if shooting and DisplayServer.get_name() != "headless" and game.can_choose(index):
+		var chosen: Dictionary = game.pending.choices[index]
+		if game.crime.preroll_party(game, int(chosen.attack_target), bool(chosen.get("unarmed", false))) == "fight":
+			party_fight_journal = game.journal.size()
+			service_window.hide()
+			if game.open_party_fight(index):
+				if _open_tactical_combat("party:%d:%s" % [int(chosen.attack_target), "unarmed" if chosen.get("unarmed", false) else "gun"]):
+					return
+				# No grid to fight on: the old quick roll settles it.
+				var written_before: int = party_fight_journal
+				party_fight_journal = -1
+				game.crime.attack(game, int(chosen.attack_target), bool(chosen.get("unarmed", false)))
+				_refresh()
+				_show_attack_result(game.journal.slice(written_before))
+				return
+			party_fight_journal = -1
 	var attacks: int = game.crime.record.attacks.size()
 	var written: int = game.journal.size()
 	_choose(index)
@@ -1774,7 +1800,10 @@ func _choose(index: int) -> void:
 					return
 				_refresh()
 				return
-			if ccmd in ["shoot", "breakout"] and int(game.state.bullets) > 0:
+			if ccmd in ["shoot", "assault"] and game.crime.incident().is_empty():
+				if game.crime.preroll_local(game, ccmd) == "fight" and _open_tactical_combat(ccmd):
+					return
+			elif ccmd == "breakout" and int(game.state.bullets) > 0:
 				if _open_tactical_combat(ccmd):
 					return
 		elif not game.pending.get("service_menu", false) and not game.pending.has("landmark"):
@@ -2497,8 +2526,12 @@ func _open_tactical_combat(command: String = "") -> bool:
 
 func _finish_tactical_combat() -> void:
 	tactical_window.hide()
+	var attacks: int = game.crime.record.attacks.size()
 	if game.finish_tactical_combat():
 		_refresh()
+		if party_fight_journal >= 0 and game.crime.record.attacks.size() > attacks:
+			_show_attack_result(game.journal.slice(party_fight_journal))
+		party_fight_journal = -1
 		if game.state.status == "traveling" and game.pending.get("service_menu", false):
 			_show_service()
 	else:

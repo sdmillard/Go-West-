@@ -867,6 +867,19 @@
       "note": "An authored encounter for a jailbreak, not a named historical group or event."
     }
   },
+  "strike": {
+    "note": "Authored tuning, not historical rates. The moment an attack begins, one of three things happens: the attacker catches the target off guard (ambush: a shot drops them, bare hands knock them senseless), the target bolts and raises the alarm unhurt (flee), or it comes to a fight (the rest). Crime experience and the party's condition move the ambush share through the usual edge; each other person on hand makes surprise harder; a wounded target is easier to drop and slower to run. Mounted traders run more often; soldiers, a household on home ground and guards never run. Soldiers are watchful, so surprise against one is cut by soldier_ambush_factor.",
+    "gun": {"ambush": 0.35, "flee": 0.25},
+    "unarmed": {"ambush": 0.2, "flee": 0.3},
+    "bystander_step": 0.05,
+    "wounded_ambush": 0.1,
+    "wounded_flee": 0.1,
+    "mounted_flee": 0.1,
+    "soldier_ambush_factor": 0.5,
+    "ambush_cap": 0.75,
+    "flee_cap": 0.5,
+    "stand_kinds": ["fort", "household", "jail", "pursuers"]
+  },
   "unarmed": {
     "note": "Authored close-combat risk; never consumes ammunition. Applies to a chosen unarmed attack, even with ammunition available.",
     "hit_penalty": 0.25,

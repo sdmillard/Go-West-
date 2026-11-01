@@ -1681,6 +1681,14 @@ func imprison(ids: Array,where: String) -> void:
 	for id in ids:
 		if party_health.is_active(party_health.members[id]):plan.append({"id":id,"food":0,"clothing":0,"gear_lb":int(provisions.data.walking.personal_gear_lb_per_person)})
 	if not plan.is_empty():_depart(plan,where,"was sent ")
+## An attack on a companion that came to blows: back to the stop underneath, then the grid opens with the given command.
+func open_party_fight(index: int) -> bool:
+	if not pending.get("attack_menu",false) or not can_choose(index):return false
+	var target: int=int(pending.choices[index].attack_target)
+	if target<0:return false
+	pending=service_return.duplicate(true)
+	service_return={}
+	return true
 func open_attack(target: int) -> bool:
 	if not crime.can_attack(self,target):return false
 	service_return=pending.duplicate(true)
@@ -2416,8 +2424,24 @@ func start_tactical_combat(command: String = "") -> bool:
 		tactical_session = tactical.start_session(trail_cfg)
 		last_tactical = {}
 		return not tactical_session.is_empty()
-	if command == "shoot" and crime.incident().is_empty():
-		if not crime.begin_tactical_shoot(self):
+	# A fight with a companion: the leader and whoever joins against the target and those who stand with them.
+	if command.begins_with("party:"):
+		var party_cfg: Dictionary = crime.build_party_fight(self, int(command.get_slice(":", 1)), command.get_slice(":", 2) == "unarmed")
+		if party_cfg.is_empty():
+			return false
+		party_cfg["combat_wins"] = combat.victories()
+		party_cfg["leader_veteran"] = ProfessionSkill.background(self) == "Soldiering"
+		party_cfg["leader_background"] = ProfessionSkill.background(self)
+		Armory.equip(party_cfg, state)
+		tactical_session = tactical.start_session(party_cfg)
+		last_tactical = {}
+		if tactical_session.is_empty():
+			return false
+		tactical_session["target"] = int(party_cfg.target)
+		tactical_session["unarmed"] = bool(party_cfg.unarmed)
+		return true
+	if command in ["shoot", "assault"] and crime.incident().is_empty():
+		if not crime.begin_tactical_attack(self, command):
 			return false
 	var cfg: Dictionary = crime.build_tactical_config(self, command)
 	if cfg.is_empty():
@@ -2581,6 +2605,8 @@ func finish_tactical_combat() -> bool:
 	last_tactical = session
 	if String(session.get("mode_source", "")) == "trail_event":
 		_apply_trail_tactical_result(session)
+	elif String(session.get("mode_source", "")) == "party_attack":
+		crime.apply_party_fight(self, session)
 	else:
 		crime.apply_tactical_result(self, session)
 	return true

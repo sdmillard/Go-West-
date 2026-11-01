@@ -46,6 +46,10 @@ var recognition: Dictionary={}
 var reputation: Dictionary={}
 var companion_rules: Dictionary={}
 var unarmed_data: Dictionary={}
+var strike_data: Dictionary={}
+## The UI rolls how an attack opens before it decides whether to open the grid; choose() then uses that roll once.
+var forced_strike: String=""
+const STRIKES=["ambush","fled","fight"]
 var remains_rules: Dictionary={}
 var miles: Dictionary={}
 var record: Dictionary={}
@@ -65,6 +69,8 @@ func load_data(value: Variant) -> bool:
 		if not number(unarmed.get(key)) or unarmed[key]<0 or unarmed[key]>1:return false
 	if not whole(unarmed.get("mishap_damage"),1,100):return false
 	unarmed_data=unarmed.duplicate(true)
+	if not valid_strike(value.get("strike")):return false
+	strike_data=value.strike.duplicate(true)
 	var mods: Dictionary=value.modifiers
 	if not mods.get("note") is String:return false
 	for key in ["experience_step","stealth_step","staff_step","poor_condition_penalty","fair_condition_penalty","small_party_penalty","floor","ceiling"]:
@@ -149,6 +155,13 @@ func valid_recognition(value: Variant) -> bool:
 	if not RECOGNIZED_ACTS.all(func(act):return number(value.acts.get(act)) and value.acts[act]>=0 and value.acts[act]<=1):return false
 	if not ["masked_factor","mask_slip"].all(func(key):return number(value.get(key)) and value[key]>=0 and value[key]<=1):return false
 	return whole(value.get("half_life_days"),1,3650)
+func valid_strike(value: Variant) -> bool:
+	if not value is Dictionary or not value.get("note") is String:return false
+	for weapon in ["gun","unarmed"]:
+		var base: Variant=value.get(weapon)
+		if not base is Dictionary or not ["ambush","flee"].all(func(key):return number(base.get(key)) and base[key]>=0 and base[key]<=1) or base.ambush+base.flee>1:return false
+	if not ["bystander_step","wounded_ambush","wounded_flee","mounted_flee","soldier_ambush_factor","ambush_cap","flee_cap"].all(func(key):return number(value.get(key)) and value[key]>=0 and value[key]<=1):return false
+	return value.get("stand_kinds") is Array and value.stand_kinds.all(func(k):return KINDS.has(k))
 func start(seed_value: int) -> void:
 	rng.seed=seed_value ^ 0x4352494d
 	record={"version":VERSION,"people":{},"actors":{},"services":{},"incidents":[],"active":{},"reports":[],"bonds":[],"attacks":[],"remains":[],"human_food":[],"meals":{},"betrayals":[],"bounties":[]}
@@ -382,6 +395,57 @@ func odds(game,place: String,action: String="robbery") -> Dictionary:
 		"escape_capture":bounded(float(scene.escape_capture),float(scene.escape_capture)-edge,low,high),
 		"escape_injury":bounded(float(scene.escape_injury),float(scene.escape_injury)-edge,low,high),
 		"shot_fatal":float(scene.shot_fatal),"injury_damage":int(scene.injury_damage)}
+## How an attack on someone here opens: caught off guard, bolting unhurt, or a fight. Shares sum to 1.
+func strike_odds(game,place: String,uid: String,unarmed: bool) -> Dictionary:
+	var base: Dictionary=strike_data["unarmed" if unarmed else "gun"]
+	var scene: Dictionary=rules(place)
+	var victim: Dictionary=actor(place,uid)
+	var hurt: bool=int(victim.get("health",100))<100
+	var others: int=maxi(0,living_staff(place).filter(func(id):return id!=uid).size())
+	var ambush: float=float(base.ambush)+float(odds(game,place,"murder").edge)-others*float(strike_data.bystander_step)+(float(strike_data.wounded_ambush) if hurt else 0.0)
+	if soldier(place,uid):ambush*=float(strike_data.soldier_ambush_factor)
+	ambush=clampf(ambush,float(modifiers.floor),float(strike_data.ambush_cap))
+	var flee: float=0.0
+	if scene.kind not in strike_data.stand_kinds and not soldier(place,uid):
+		flee=float(base.flee)+(float(strike_data.mounted_flee) if scene.kind=="traders" else 0.0)-(float(strike_data.wounded_flee) if hurt else 0.0)
+		flee=clampf(flee,0.0,minf(float(strike_data.flee_cap),1.0-ambush))
+	return {"ambush":ambush,"fled":flee,"fight":maxf(0.0,1.0-ambush-flee)}
+## The same three openings against a companion: everyone joining helps pin them; those close to the target may shout a warning.
+func party_strike_odds(game,target: int,unarmed: bool) -> Dictionary:
+	var base: Dictionary=strike_data["unarmed" if unarmed else "gun"]
+	var side:=attack_side(game,target)
+	var victim: Dictionary=game.party_health.members[target]
+	var hurt: bool=int(victim.health)<100
+	var penalty: float={"poor":float(modifiers.poor_condition_penalty),"fair":float(modifiers.fair_condition_penalty),"good":0.0}[party_condition(game)]
+	var edge: float=experience(game)*float(modifiers.experience_step)-penalty+float(companion_rules.participant_step)*(side.joining.size()-1)
+	var ambush: float=float(base.ambush)+edge-side.refusing.size()*float(strike_data.bystander_step)+(float(strike_data.wounded_ambush) if hurt else 0.0)
+	ambush=clampf(ambush,float(modifiers.floor),float(strike_data.ambush_cap))
+	# A broken leg keeps anyone from running.
+	var lame: bool=victim.conditions.any(func(c):return c.id=="broken_leg")
+	var flee: float=0.0 if lame else clampf(float(base.flee)-(float(strike_data.wounded_flee) if hurt else 0.0),0.0,minf(float(strike_data.flee_cap),1.0-ambush))
+	return {"ambush":ambush,"fled":flee,"fight":maxf(0.0,1.0-ambush-flee)}
+func roll_strike(shares: Dictionary) -> String:
+	var roll: float=rng.randf()
+	if roll<float(shares.ambush):return "ambush"
+	if roll<float(shares.ambush)+float(shares.fled):return "fled"
+	return "fight"
+func strike_text(shares: Dictionary) -> String:
+	return "As you strike: off guard %d%%, they get away %d%%, a fight %d%%." % [roundi(shares.ambush*100),roundi(shares.fled*100),roundi(shares.fight*100)]
+## Soldiers are watchful and never run.
+func soldier(place: String,uid: String) -> bool:
+	return rules(place).kind=="fort" or role(place,uid) in ["soldier","sergeant","corporal","deputy","marshal","hunter","regulator","sentry","private"]
+## UI: roll how an attack here or on a companion opens, once, before deciding whether the grid opens.
+func preroll_local(game,command: String) -> String:
+	var place: String=target(game)
+	forced_strike=roll_strike(strike_odds(game,place,attack_target(game,place),command=="assault"))
+	return forced_strike
+func preroll_party(game,target: int,unarmed: bool) -> String:
+	forced_strike=roll_strike(party_strike_odds(game,target,unarmed))
+	return forced_strike
+func take_strike(shares: Dictionary) -> String:
+	var outcome: String=forced_strike if forced_strike in STRIKES else roll_strike(shares)
+	forced_strike=""
+	return outcome
 ## A bare-faced party whose name has reached ordinary folk (not soldiers, posses, jailers or a household with its
 ## council behind it) is believed when it threatens: victims give in more often. A masked party is nobody.
 func fame(game,place: String) -> float:
@@ -425,6 +489,7 @@ func menu(game) -> Dictionary:
 		if game.pending.has("crime_target"):
 			text="Target: %s (%s).\nNearby staff: %d. Your companions can observe this. An attack uses one day and meals; a shot spends one bullet. Unarmed attacks have higher injury risk. Staff may resist or pursue the party." % [display_name(game,place,keeper.uid),condition(keeper),living_staff(place).size()]
 			text+="\n"+("Your faces are covered with kerchiefs." if masked else "Your faces are bare.")
+			if keeper.health>0:text+="\nShot · "+strike_text(strike_odds(game,place,keeper.uid,false))+"\nUnarmed · "+strike_text(strike_odds(game,place,keeper.uid,true))
 			options=options.filter(func(choice):return choice.crime_command in ["shoot","assault","mask"])
 	elif current.stage=="loot":
 		var loot:=loot_quote(game,place)
@@ -701,16 +766,22 @@ func choose(game,command: String,left: Array=[]) -> bool:
 		elif command=="robbery":current.attempt="complied" if rng.randf()<scene.compliance else "resisted"
 		elif command in ["shoot","assault"]:
 			var unarmed: bool = command == "assault"
+			# Off guard, bolting, or a fight; without the grid (bots, tests) a fight is settled by the old hit roll.
+			var opening: String=take_strike(strike_odds(game,place,keeper.uid,unarmed))
+			current["strike"]=opening
 			if not unarmed:
 				game._apply({"bullets":-1})
 				current.shots=1
 			current.attempt="missed"
-			if rng.randf()<scene.shot_hit - (float(unarmed_rules().hit_penalty) if unarmed else 0.0):
+			if opening=="ambush" or (opening=="fight" and rng.randf()<scene.shot_hit - (float(unarmed_rules().hit_penalty) if unarmed else 0.0)):
 				keeper.health=0 if keeper.health<=40 or rng.randf()<scene.shot_fatal * (float(unarmed_rules().fatal_factor) if unarmed else 1.0) else maxi(0,int(keeper.health)-40)
 				current.attempt="killed" if keeper.health==0 else "wounded"
-		if command == "assault": unarmed_mishap(game)
+			if opening=="ambush":game.journal.append("Day %d · You caught %s off guard." % [game.state.day,display_name(game,place,keeper.uid)])
+			elif opening=="fled":game.journal.append("Day %d · %s bolted before you could strike and raised the alarm." % [game.state.day,display_name(game,place,keeper.uid)])
+		if command == "assault" and current.get("strike","")=="fight": unarmed_mishap(game)
 		if current.attempt!="unseen":store.alarmed=true
-		if current.attempt in ["unseen","complied","killed","raided"]:current.stage="loot"
+		# A keeper dropped by surprise, dead or senseless, cannot stop the party taking what it came for.
+		if current.attempt in ["unseen","complied","killed","raided"] or (current.get("strike","")=="ambush" and current.attempt=="wounded"):current.stage="loot"
 		# Attacking a supporting worker does not seize the keeper's stock or passage.
 		if keeper.uid!=owner_id(place):current.stage="escape"
 		game.journal.append("Day %d · %s incident %d: %s; %s %s. Nearby staff %s." % [game.state.day,kind(place).journal,id,command,display_name(game,place,keeper.uid),current.attempt,"were alerted" if store.alarmed else "did not notice the attempt"])
@@ -887,7 +958,7 @@ func attack_menu(game,target: int) -> Dictionary:
 	var side:=attack_side(game,target)
 	var name: String=members[target].name
 	var names:=func(ids):return ", ".join(ids.map(func(id):return members[id].name)) if not ids.is_empty() else "nobody"
-	var text: String="You intend to attack %s. Joining you: %s. Refusing: %s. Chance to hit: %d%%. A hit may kill or only wound. Unarmed attacks have a 25-point lower hit chance and a 45%% additional injury risk. Everyone with the wagon sees it; companions close to %s may fight you or flee at once, and others who object may leave." % [name,names.call(side.joining),names.call(side.refusing),roundi(attack_chance(game,target)*100),name]
+	var text: String="You intend to attack %s. Joining you: %s. Refusing: %s.\nShot · %s\nUnarmed · %s\nCaught off guard, they are hit and may die. If they get away they leave the party. A fight is fought out among the wagons; with bare hands it is blades, stocks and fists. Everyone with the wagon sees it; companions close to %s may fight you or flee at once, and others who object may leave." % [name,names.call(side.joining),names.call(side.refusing),strike_text(party_strike_odds(game,target,false)),strike_text(party_strike_odds(game,target,true)),name]
 	for item in record.bonds:
 		if int(item.a)==target or int(item.b)==target:text+="\n%s and %s: %s." % [members[int(item.a)].name,members[int(item.b)].name,item.kind]
 	return {"id":"attack","attack_menu":true,"service_menu":true,"title":"Attack "+name,"text":text,"choices":[{"label":"Shoot %s · 1 bullet" % name,"attack_target":target,"effects":{},"result":""},{"label":"Attack %s unarmed · higher injury risk" % name,"attack_target":target,"unarmed":true,"effects":{},"result":""},{"label":"Back","attack_target":-1,"effects":{},"result":""}]}
@@ -902,30 +973,44 @@ func choose_attack(game,index: int) -> bool:
 func attack(game,target: int, unarmed: bool = false) -> void:
 	if not attack_ready(game,target) or (not unarmed and not game.can_fire()): return
 	var members: Array=game.party_health.members
+	var victim: Dictionary=members[target]
+	var day: int=int(game.state.day)
+	# Off guard, bolting, or a fight; without the grid (bots, tests) a fight is settled by the old hit roll.
+	var opening: String=take_strike(party_strike_odds(game,target,unarmed))
+	var chance:=maxf(0.05,attack_chance(game,target) - (float(unarmed_rules().hit_penalty) if unarmed else 0.0))
+	if not unarmed: game._apply({"bullets":-1})
+	var attempt: String="missed"
+	if opening=="ambush" or (opening=="fight" and rng.randf()<chance):attempt="killed" if victim.health<=int(companion_rules.wound_damage) or rng.randf()<float(companion_rules.fatal) * (float(unarmed_rules().fatal_factor) if unarmed else 1.0) else "wounded"
+	if attempt=="killed":game.party_health.kill(victim,day,("an unarmed attack by " if unarmed else "being shot by ")+members[0].name)
+	elif attempt=="wounded":
+		game.party_health.affect(victim,-int(companion_rules.wound_damage),day,("an unarmed attack by " if unarmed else "a gunshot wound from ")+members[0].name)
+		game.party_health.begin_condition(target,"wound",day,1)
+		if not victim.alive:attempt="killed"
+	settle_attack(game,target,unarmed,attempt,opening,[])
+## Who answers how, once the blow has landed or missed. fought: companions who already fought it out on the grid.
+func settle_attack(game,target: int,unarmed: bool,attempt: String,opening: String,fought: Array) -> void:
+	var members: Array=game.party_health.members
 	var leader: Dictionary=members[0]
 	var victim: Dictionary=members[target]
 	var day: int=int(game.state.day)
-	var side:=attack_side(game,target)
-	var chance:=maxf(0.05,attack_chance(game,target) - (float(unarmed_rules().hit_penalty) if unarmed else 0.0))
+	var side:=attack_side_at(game,target,fought)
 	var verb := "attacked unarmed" if unarmed else "shot at"
-	if not unarmed: game._apply({"bullets":-1})
-	var attempt: String="missed"
-	if rng.randf()<chance:attempt="killed" if victim.health<=int(companion_rules.wound_damage) or rng.randf()<float(companion_rules.fatal) * (float(unarmed_rules().fatal_factor) if unarmed else 1.0) else "wounded"
-	if attempt=="killed":game.party_health.kill(victim,day,("an unarmed attack by " if unarmed else "being shot by ")+leader.name)
-	elif attempt=="wounded":
-		game.party_health.affect(victim,-int(companion_rules.wound_damage),day,("an unarmed attack by " if unarmed else "a gunshot wound from ")+leader.name)
-		game.party_health.begin_condition(target,"wound",day,1)
-		if not victim.alive:attempt="killed"
 	var id: int=record.attacks.size()+1
 	var responses: Dictionary={}
 	var poor: int=int(game.combat.data.poor_health)
 	for member in members:
 		var other: int=int(member.id)
-		if other==0 or other in side.joining or not game.party_health.is_active(member):continue
+		if other==0 or other in side.joining:continue
+		var in_fight: bool=other in fought
+		if not in_fight and not game.party_health.is_active(member):continue
+		if other==target and attempt=="killed":continue
 		var profile: Dictionary=game.characters.profiles[other]
 		var fighter: bool=profile.traits[0] in ["Bold","Reckless"] and member.health>=poor
 		var answer: String="stood by"
-		if other==target or bond(other,target) in CLOSE:answer="retaliated" if fighter else "fled"
+		if in_fight:answer="retaliated"
+		# Caught off guard or bolting, the target has no chance to strike back; they run.
+		elif other==target and opening in ["ambush","fled"]:answer="fled"
+		elif other==target or bond(other,target) in CLOSE:answer="retaliated" if fighter else "fled"
 		elif bond(other,target)!="rival" and game.characters.response(other,"murder") in ["forbidden","reluctant"]:answer="fled" if attempt=="killed" else "objected"
 		responses[str(other)]=answer
 		# Harm to oneself or a loved one is never an ordinary trust loss; a rival is unmoved.
@@ -933,26 +1018,109 @@ func attack(game,target: int, unarmed: bool = false) -> void:
 		elif bond(other,target)!="rival":
 			var reaction: String=game.characters.response(other,"murder")
 			if reaction!="neutral":game.characters.remember(game,profile,"action_murder",-12 if reaction in ["forbidden","reluctant"] else (2 if reaction=="approved" else -2),"You %s %s. Response: %s." % [verb,victim.name,reaction],reaction in ["forbidden","reluctant"],0,id)
-	record.attacks.append({"id":id,"day":day,"target":target,"attempt":attempt,"joining":side.joining,"responses":responses,"weapon":"unarmed" if unarmed else "gun"})
+	var entry: Dictionary={"id":id,"day":day,"target":target,"attempt":attempt,"joining":side.joining,"responses":responses,"weapon":"unarmed" if unarmed else "gun"}
+	if opening in STRIKES:entry["strike"]=opening
+	record.attacks.append(entry)
+	if opening=="ambush":game.journal.append("Day %d · You caught %s off guard." % [day,victim.name])
+	elif opening=="fled":game.journal.append("Day %d · %s saw it coming and ran before you could strike." % [day,victim.name])
 	game.journal.append("Day %d · You %s %s: %s." % [day,verb,victim.name,attempt])
 	var leaving: Array=[]
 	for key in responses:
 		var member: Dictionary=members[int(key)]
-		if responses[key]=="retaliated" and game.party_health.is_active(leader):
+		if responses[key]=="retaliated" and int(key) not in fought and game.party_health.is_active(leader):
 			var hit: bool=rng.randf()<float(companion_rules.retaliate_hit)
 			if hit:
 				game.party_health.affect(leader,-int(companion_rules.retaliate_damage),day,"being shot by "+member.name)
 				game.party_health.begin_condition(0,"wound",day,1)
 			game.journal.append("Day %d · %s fought back%s." % [day,member.name," and hit you" if hit else " and missed"])
-		if responses[key] in ["fled","retaliated"]:leaving.append(int(key))
+		if responses[key] in ["fled","retaliated"] and game.party_health.is_active(member):leaving.append(int(key))
 		elif responses[key]=="objected":game.journal.append("Day %d · %s objects to the attack." % [day,member.name])
-	if unarmed: unarmed_mishap(game)
+	if unarmed and opening=="fight" and fought.is_empty(): unarmed_mishap(game)
 	game._collect_health_events()
 	game.flee(leaving,"after you "+verb+" "+victim.name)
 	game.health_events.append("You %s %s: %s.%s" % [verb,victim.name,attempt,(" Leaving at once: "+", ".join(leaving.map(func(other):return members[other].name))+".") if not leaving.is_empty() else ""])
 	game.state.health=game.party_health.average_health()
 	game.state.party_size=game.party_health.living_count()
 	game._check_health()
+## The sides as they stood when the fight began: the grid can leave someone dead who still counts as having answered.
+func attack_side_at(game,target: int,fought: Array) -> Dictionary:
+	if fought.is_empty():return attack_side(game,target)
+	return {"joining":last_party_fight.get("joining",[0]),"refusing":[]}
+var last_party_fight: Dictionary={}
+## Those close to the target who would take up arms for them stand with them on the grid.
+func party_defenders(game,target: int) -> Array:
+	var poor: int=int(game.combat.data.poor_health)
+	var side:=attack_side(game,target)
+	var ids: Array=[target]
+	for member in game.party_health.members:
+		var other: int=int(member.id)
+		if other==0 or other==target or other in side.joining or not game.party_health.is_active(member):continue
+		if bond(other,target) in CLOSE and game.characters.profiles[other].traits[0] in ["Bold","Reckless"] and member.health>=poor:ids.append(other)
+	return ids
+## The grid fight for an attack on a companion that came to blows.
+func build_party_fight(game,target: int,unarmed: bool) -> Dictionary:
+	forced_strike=""
+	if not attack_ready(game,target) or (not unarmed and not game.can_fire()):return {}
+	var side:=attack_side(game,target)
+	var squad: Array=[]
+	for id in side.joining:
+		var member: Dictionary=game.party_health.members[id]
+		squad.append({"id":str(id),"slot":id,"name":String(member.name),"role":"leader" if id==0 else "companion","health":int(member.health),
+			"broken_leg":member.conditions.any(func(c):return c.id=="broken_leg"),"broken_arm":member.conditions.any(func(c):return c.id=="broken_arm"),"wound":member.conditions.any(func(c):return c.id=="wound"),
+			"profile":game.characters.profiles[id] if id<game.characters.profiles.size() else {}})
+	var enemies: Array=[]
+	for id in party_defenders(game,target):
+		var member: Dictionary=game.party_health.members[id]
+		enemies.append({"uid":"member:%d" % id,"id":"member:%d" % id,"name":String(member.name),"role":"owner" if id==target else "companion","health":int(member.health),"soldier":false,"profile":game.characters.profiles[id]})
+	var place_name: String="the wagons"
+	if game.route.nodes.has(game.state.landmark):place_name=String(game.route.nodes[game.state.landmark].get("name","the wagons"))
+	return {"seed":int(game.state.seed) ^ (int(game.state.day)*2654435761) ^ (record.attacks.size()*40503) ^ target,
+		"venue_kind":"emigrants","place":"party","place_name":place_name,"title":"Attack "+String(game.party_health.members[target].name),"subtitle":"A fight within the party",
+		"reason":"party","command":"party","mode_source":"party_attack","target":target,"unarmed":unarmed,
+		"bullets":0 if unarmed else int(game.state.bullets),"squad":squad,"enemies":enemies}
+## Settles a grid fight with a companion: wounds and deaths on both sides, then everyone's answer as for any attack.
+func apply_party_fight(game,session: Dictionary) -> void:
+	var day: int=int(game.state.day)
+	var target: int=int(session.get("target",-1))
+	var unarmed: bool=bool(session.get("unarmed",false))
+	var members: Array=game.party_health.members
+	if target<1 or target>=members.size():return
+	if not unarmed:
+		var spent: int=maxi(1,int(session.get("shots_fired",0)))
+		game.state.bullets=maxi(0,int(game.state.bullets)-spent)
+	var fought: Array=[]
+	var joining: Array=[]
+	var start_health: int=int(members[target].health)
+	for u in session.get("units",[]):
+		var team: String=String(u.get("team",""))
+		var slot: int=int(str(u.get("id","")).trim_prefix("member:")) if team=="enemy" else int(str(u.get("id","-1")))
+		if slot<0 or slot>=members.size():continue
+		var member: Dictionary=members[slot]
+		if team=="enemy":fought.append(slot)
+		else:joining.append(slot)
+		if not game.party_health.is_active(member):continue
+		var hp: int=clampi(int(u.get("health",member.health)),0,100)
+		if team=="enemy" and (bool(u.get("yielded",false)) or bool(u.get("surrendered",false))):hp=maxi(1,hp)
+		var why: String=("being shot by your party" if not unarmed else "a struggle with your party") if team=="enemy" else ("the fight with "+String(members[target].name))
+		if hp<=0:
+			game.party_health.kill(member,day,why)
+			continue
+		if hp<int(member.health):game.party_health.affect(member,hp-int(member.health),day,why)
+		if int(u.get("wounds_taken",0))>0 and member.alive:
+			var sev:=clampi(int(u.get("wound_severity",2)),1,3)
+			if not game.party_health.begin_condition(slot,"wound",day,sev):
+				for active in member.conditions:
+					if active.id=="wound":active.severity=maxi(int(active.severity),sev)
+		if bool(u.get("new_broken_leg",false)):game.party_health.begin_condition(slot,"broken_leg",day,2)
+		if bool(u.get("new_broken_arm",false)):game.party_health.begin_condition(slot,"broken_arm",day,2)
+	joining.sort()
+	if joining.is_empty() or joining[0]!=0:joining.push_front(0)
+	last_party_fight={"joining":joining}
+	var victim: Dictionary=members[target]
+	var attempt: String="killed" if not victim.alive else ("wounded" if int(victim.health)<start_health else "missed")
+	if attempt=="killed":fought.erase(target)
+	settle_attack(game,target,unarmed,attempt,"fight",fought)
+	last_party_fight={}
 ## Ruthless or opportunistic companions whose trust has fallen to their betrayal point (shown as a warning in View Party).
 func betrayer(game,slot: int) -> bool:
 	var profile: Dictionary=game.characters.profiles[slot]
@@ -1145,7 +1313,7 @@ func valid_party(r: Dictionary,game) -> bool:
 	var previous_day:=0
 	for index in range(r.attacks.size()):
 		var attack: Variant=r.attacks[index]
-		if not attack is Dictionary or attack.size() not in [6,7] or attack.get("id")!=index+1 or not whole(attack.get("day"),previous_day,int(game.state.day)) or not whole(attack.get("target"),1,members.size()-1) or attack.get("attempt") not in ATTACK_RESULTS:return false
+		if not attack is Dictionary or attack.size() not in [6,7,8] or attack.get("strike","fight") not in STRIKES or attack.size()!=6+int(attack.has("weapon"))+int(attack.has("strike")) or attack.get("id")!=index+1 or not whole(attack.get("day"),previous_day,int(game.state.day)) or not whole(attack.get("target"),1,members.size()-1) or attack.get("attempt") not in ATTACK_RESULTS:return false
 		if attack.get("weapon","gun") not in ["gun","unarmed"]:return false
 		previous_day=int(attack.day)
 		var victim: Dictionary=members[int(attack.target)]
@@ -1219,7 +1387,7 @@ func valid(value: Variant,game) -> bool:
 	var previous_day: int=-1
 	for index in range(r.incidents.size()):
 		var current: Variant=r.incidents[index]
-		if not current is Dictionary or (current.get("action")!="wanted" and current.size()!=12+int(current.has("sentence"))+int(current.has("custody"))+int(current.has("joining"))+int(current.has("kills"))+int(current.has("demand"))+int(current.has("taken_goods"))+int(current.has("mask"))) or current.get("id")!=index+1 or not whole(current.get("day"),0,int(game.state.day)) or not (current.get("place") is String and r.services.has(current.place) and not TEMPLATE_KINDS.has(current.place)) or current.get("target") not in staff_ids(current.place):return false
+		if not current is Dictionary or (current.get("action")!="wanted" and current.size()!=12+int(current.has("sentence"))+int(current.has("custody"))+int(current.has("joining"))+int(current.has("kills"))+int(current.has("demand"))+int(current.has("taken_goods"))+int(current.has("mask"))+int(current.has("strike"))) or current.get("id")!=index+1 or not whole(current.get("day"),0,int(game.state.day)) or not (current.get("place") is String and r.services.has(current.place) and not TEMPLATE_KINDS.has(current.place)) or current.get("target") not in staff_ids(current.place):return false
 		if not Wanted.valid_extras(self,r,current,game) or not Detention.valid_custody(self,r,current,game):return false
 		if current.get("action")=="wanted":
 			if not Wanted.valid_incident(self,r,current,game,index,previous_day):return false
@@ -1228,6 +1396,8 @@ func valid(value: Variant,game) -> bool:
 		if current.get("action") not in ["shoot","assault"] and current.target!=owner_id(current.place):return false
 		if current.get("action") not in ["theft","robbery","shoot","assault","raid","pursuit"] or current.get("attempt") not in ATTEMPTS or current.get("stage") not in STAGES or current.get("resolution") not in RESOLUTIONS:return false
 		if not game.RobberyDemand.valid(game,current):return false
+		# How an attack opened; only attacks carry it, and older saves have none.
+		if current.has("strike") and (current.strike not in STRIKES or current.action not in ["shoot","assault"]):return false
 		# A mask is tied on before the act and holds or slips once the party gets away.
 		if current.has("mask") and (current.mask not in MASKS or ((current.mask in ["hidden","slipped"])!=(current.resolution in ["left","escaped"]) and current.mask!="known")):return false
 		if current.day<previous_day:return false
@@ -1241,7 +1411,7 @@ func valid(value: Variant,game) -> bool:
 		if (current.stage in ["loot","escape","standoff","custody"])!=(current.resolution==""):return false
 		if current.stage=="standoff" and rules(current.place).kind not in ["fort","household","jail"]:return false
 		if rules(current.place).kind=="jail" and current.action!="assault":return false
-		if current.stage=="loot" and current.attempt not in ["unseen","complied","killed","raided","resisted"]:return false
+		if current.stage=="loot" and current.attempt not in ["unseen","complied","killed","raided","resisted"] and not (current.get("strike","")=="ambush" and current.attempt=="wounded"):return false
 		if current.attempt!="unseen" and not r.services[current.place].alarmed:return false
 		if current.attempt=="killed" and r.actors[current.target].health!=0:return false
 		for key in ["food","cash_cents","shots"]:
@@ -1300,7 +1470,13 @@ func unarmed_mishap(game) -> void:
 
 
 func begin_tactical_shoot(game) -> bool:
-	if not incident().is_empty() or not can_choose(game, "shoot"):
+	return begin_tactical_attack(game, "shoot")
+
+
+## An attack that came to a fight: the incident opens with the gunfire or the struggle, and the grid settles it.
+func begin_tactical_attack(game, command: String) -> bool:
+	forced_strike = ""
+	if command not in ["shoot", "assault"] or not incident().is_empty() or not can_choose(game, command):
 		return false
 	var place: String = target(game)
 	add_transient(game, place)
@@ -1312,14 +1488,15 @@ func begin_tactical_shoot(game) -> bool:
 		"day": int(game.state.day),
 		"place": place,
 		"target": keeper.uid,
-		"action": "shoot",
-		"attempt": "wounded",
+		"action": command,
+		"attempt": "wounded" if command == "shoot" else "missed",
 		"resolution": "",
 		"stage": "escape",
 		"food": 0,
 		"cash_cents": 0,
-		"shots": 1,
+		"shots": 1 if command == "shoot" else 0,
 		"knowledge": {},
+		"strike": "fight",
 	}
 	current["joining"] = game.party_health.members.filter(func(member):
 		return game.party_health.is_active(member) and game.characters.willing(int(member.id), "murder")
@@ -1330,10 +1507,11 @@ func begin_tactical_shoot(game) -> bool:
 	store.alarmed = true
 	observe(game, current, "attempt", true)
 	game.characters.react_to_incident(game, "murder", id)
-	game.journal.append("Day %d · %s incident %d: gunfire opened at %s." % [
+	game.journal.append("Day %d · %s incident %d: %s %s." % [
 		game.state.day,
 		kind(place).journal,
 		id,
+		"gunfire opened at" if command == "shoot" else "a struggle broke out with",
 		display_name(game, place, keeper.uid),
 	])
 	if not advance(game):
@@ -1450,10 +1628,20 @@ func build_tactical_config(game, command: String = "") -> Dictionary:
 		"place_name": place_title,
 		"reason": reason,
 		"command": command,
-		"bullets": int(game.state.bullets),
+		"bullets": 0 if unarmed_fight(current) else int(game.state.bullets),
 		"squad": squad,
 		"enemies": enemies,
 	}
+
+
+## An unarmed attack that came to a fight: the party fights with blades, clubbed stocks and fists, and spends no powder.
+func unarmed_fight(current: Dictionary) -> bool:
+	return String(current.get("action", "")) == "assault" and String(current.get("strike", "")) == "fight"
+
+
+## A shot or a struggle that came to a fight on the grid (a jailbreak is an assault too, but has its own rules).
+func attack_fight(current: Dictionary) -> bool:
+	return String(current.get("action", "")) == "shoot" or unarmed_fight(current)
 
 
 func _actor_profile(game, uid: String) -> Dictionary:
@@ -1477,7 +1665,8 @@ func apply_tactical_result(game, session: Dictionary) -> void:
 	var fired := maxi(0, int(session.get("shots_fired", 0)))
 	var base_shot: int = 1 if String(current.get("action", "")) == "shoot" else 0
 	var min_spent: int = maxi(fired, base_shot)
-	game.state.bullets = maxi(0, mini(int(session.get("bullets_left", game.state.bullets)), int(game.state.bullets) - min_spent))
+	if not unarmed_fight(current):
+		game.state.bullets = maxi(0, mini(int(session.get("bullets_left", game.state.bullets)), int(game.state.bullets) - min_spent))
 
 	# 2. Apply squad health & gunshot wound / fracture conditions into party_health.
 	for u in session.get("units", []):
@@ -1558,7 +1747,7 @@ func apply_tactical_result(game, session: Dictionary) -> void:
 	var target_uid := String(current.get("target", owner_id(place)))
 	var keeper := actor(place, target_uid)
 	var any_killed: bool = int(keeper.health) == 0 or not current.get("kills", []).is_empty()
-	if String(current.get("action", "")) == "shoot" or Detention.jailbreak_incident(self, current):
+	if attack_fight(current) or Detention.jailbreak_incident(self, current):
 		if int(keeper.health) == 0:
 			current.knowledge.erase(target_uid)
 			current.attempt = "killed"
@@ -1583,7 +1772,7 @@ func apply_tactical_result(game, session: Dictionary) -> void:
 			if Detention.jailbreak_incident(self, current):Detention.recover_arms(self, game, current)
 			observe(game, current, "escape", true)
 			result(game, "escaped")
-		elif String(current.get("action", "")) == "shoot":
+		elif attack_fight(current):
 			current.stage = ("loot" if target_uid == owner_id(place) else "escape") if int(keeper.health) == 0 else "escape"
 			game.pending = menu(game)
 		elif String(current.get("action", "")) == "robbery":
