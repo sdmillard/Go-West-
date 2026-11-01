@@ -29,7 +29,12 @@ const PENCIL:="555d68"
 const FADED:="76503c"
 const TURN_TIME:=0.22
 ## Thumb-tab labels where a chapter title would not fit.
-const TAB_NAMES:={"provisions":"GAME","preface":"PREFACE"}
+const TAB_NAMES:={"provisions":"GAME","preface":"PREFACE","mounts":"HORSES","keeping":"KEEPING","trade":"TRADE","natives":"NATIONS"}
+## An engraved plate (art/aseprite/scenes/guide_plates.lua) takes PLATE_LINES lines of a page.
+const PLATE_SIZE:=Vector2i(216,79)
+const PLATE_LINES:=8
+const TAB_STEP:=16
+const TAB_H:=15
 
 var data: Dictionary={}
 var game
@@ -117,8 +122,8 @@ func _init(simulation=null) -> void:
 		tab.focus_mode=Control.FOCUS_NONE
 		tab.mouse_default_cursor_shape=Control.CURSOR_POINTING_HAND
 		tab.alignment=HORIZONTAL_ALIGNMENT_RIGHT
-		tab.position=Vector2(RIGHT_PAGE.end.x-4,14+index*27)
-		tab.size=Vector2(56,25)
+		tab.position=Vector2(RIGHT_PAGE.end.x-4,14+index*TAB_STEP)
+		tab.size=Vector2(56,TAB_H)
 		tab.set_meta("rect",Rect2(tab.position,tab.size))
 		tab.pressed.connect(func():_go(index,0,1 if index>chapter_index else -1))
 		add_child(tab)
@@ -265,13 +270,20 @@ func pages(id: String) -> Array:
 	var lines: Array=chapter_lines(id,plain_toggle.button_pressed)
 	var result: Array=[]
 	var page: Array=[]
+	var used:=0
 	for line in lines:
 		if page.is_empty() and line[1]=="blank":continue
+		var weight: int=line_weight(line)
+		if used+weight>LINES_PER_PAGE:result.append(page);page=[];used=0
+		if page.is_empty() and line[1]=="blank":continue
 		page.append(line)
-		if page.size()==LINES_PER_PAGE:result.append(page);page=[]
+		used+=weight
 	if not page.is_empty() or result.is_empty():result.append(page)
 	_pages[id]=result
 	return result
+
+static func line_weight(line: Array) -> int:
+	return PLATE_LINES if line[1]=="plate" else 1
 
 ## Book page number of a chapter's first page: every chapter opens on a left-hand page.
 func first_folio(id: String) -> int:
@@ -289,7 +301,12 @@ func chapter_lines(id: String,plain: bool) -> Array:
 		if id==str(data.chapters[0].id):
 			lines.append(["","blank"])
 			for row in _wrap(str(data.subtitle)):lines.append([row,"subtitle"])
-		lines.append(["~ * ~","ornament"])
+		var plate: String="res://art/pixels/%s.png" % str(chapter.get("plate",""))
+		if chapter.get("plate") is String and ResourceLoader.exists(plate):
+			lines.append(["","blank"])
+			lines.append(["","plate",plate])
+			for row in _wrap(str(chapter.get("caption",""))):lines.append([row,"caption"])
+		else:lines.append(["~ * ~","ornament"])
 		lines.append(["","blank"])
 		_add_text(lines,str(chapter.period),"body")
 		if chapter.get("outfit",false) and game!=null:
@@ -389,7 +406,7 @@ func _show_spread() -> void:
 			tab.add_theme_stylebox_override(state,box)
 		for key in ["font_color","font_hover_color","font_pressed_color","font_focus_color"]:
 			tab.add_theme_color_override(key,Color(INK if picked else "f6e7bc"))
-		tab.set_meta("rect",Rect2(RIGHT_PAGE.end.x-(8 if picked else 4),tab.position.y,60 if picked else 56,25))
+		tab.set_meta("rect",Rect2(RIGHT_PAGE.end.x-(8 if picked else 4),tab.position.y,60 if picked else 56,TAB_H))
 		tab.position.x=RIGHT_PAGE.end.x-(8 if picked else 4)
 		tab.size.x=60 if picked else 56
 	_turn.queue_redraw()
@@ -402,6 +419,8 @@ func _render(lines: Array) -> String:
 			"title":out.append("[center][color=#%s]%s[/color][/center]" % [RUBRIC,words])
 			"subtitle":out.append("[center][color=#%s]%s[/color][/center]" % [FADED,words])
 			"ornament":out.append("[center][color=#%s]%s[/color][/center]" % [RUBRIC,words])
+			"plate":out.append("[center][img=%dx%d]%s[/img][/center]" % [PLATE_SIZE.x,PLATE_SIZE.y,line[2]])
+			"caption":out.append("[center][color=#%s]%s[/color][/center]" % [FADED,words])
 			"plain_head":out.append("[color=#%s]%s[/color]" % [PENCIL,words])
 			"plain":out.append("[color=#%s]%s[/color]" % [PENCIL,words])
 			"table_head":out.append("[color=#%s]%s[/color]" % [RUBRIC,words])

@@ -13,8 +13,10 @@ func run():
 	var data: Dictionary=GuideBook.load_data()
 	check(not data.is_empty(),"data/guide.json loads and validates")
 	var ids: Array=data.get("chapters",[]).map(func(c):return c.id)
-	for id in ["preface","outfit","road","rivers","sickness","provisions","winter","callings","law","fighting"]:
+	for id in ["preface","outfit","mounts","road","rivers","camp","keeping","provisions","dogs","sickness","winter","trade","natives","callings","law","arms","fighting"]:
 		check(id in ids,"The guide has a chapter: %s" % id)
+	for chapter in data.get("chapters",[]):
+		check(ResourceLoader.exists("res://art/pixels/%s.png" % chapter.get("plate","")) and not str(chapter.get("caption","")).is_empty(),"Chapter %s has an engraved plate and caption" % chapter.id)
 	check(not GuideBook.valid({"title":"x","subtitle":"y","chapters":[{"id":"a","title":"A","period":"p","plain":""}],"outfit":{"food":1}}),"A chapter without plain rules is rejected")
 	check(not GuideBook.valid({"title":"x","subtitle":"y","chapters":[{"id":"a","title":"A","period":"p","plain":"q"},{"id":"a","title":"B","period":"p","plain":"q"}],"outfit":{"food":1}}),"Duplicate chapters are rejected")
 	var game=Simulation.new(5,"classic",true)
@@ -101,7 +103,7 @@ func run():
 	await process_frame
 	check(screen.guide.visible and screen.guide.current_id()=="outfit","At the store the guide opens at the outfit chapter")
 	if "--capture" in OS.get_cmdline_user_args():
-		for shot in [["outfit",false,0],["outfit",true,0],["road",true,1],["preface",false,0]]:
+		for shot in [["outfit",false,0],["outfit",true,0],["road",true,1],["preface",false,0],["mounts",false,0],["arms",true,0],["dogs",false,0],["keeping",true,0]]:
 			screen.guide.set_plain_rules(shot[1])
 			screen.guide.open_chapter(shot[0])
 			for i in range(shot[2]):screen.guide.turn(1)
