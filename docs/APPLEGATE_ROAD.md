@@ -59,4 +59,4 @@ Careful May parties reach the fork later, and 3 of 28 arrive.
 
 The time is the killer. At the bots' careful pace they reach the turnoff in September, Fandango Pass in late October, and the Rogue in November. That is close to the 1846 companies, who did not reach the Willamette until November and December. The South Road is a gamble that rewards an early start, a strong team and a lot of food, and a party that drives hard. The main-road styles are unchanged within noise.
 
-Spencer has a decision card open: keep it a gamble, keep the relief parties (built, and recommended), or soften the road.
+Spencer kept the relief parties as built (November 1, 2026): the road stays a gamble, with one rescue for a late company in need.

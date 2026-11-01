@@ -104,7 +104,7 @@
   },
   "reference_notes": "art/LOCATION_REFERENCES.md: dated sources, geographic limits and interpretive choices. All runtime pictures are original pixel art.",
   "awaiting_art_note": "New stops (October 2026) whose arrival pictures are being painted in the Aseprite pipeline; until then they show the open-trail picture. Remove a stop from this list when its scene lands.",
-  "awaiting_art": ["city_of_rocks", "humboldt_wells", "gravelly_ford", "lassen_meadows", "black_rock", "high_rock_canyon", "fandango_pass", "goose_lake", "tule_lake", "klamath_river", "green_springs", "rogue_valley", "canyon_creek", "umpqua_valley", "south_willamette"],
+  "awaiting_art": [],
   "encounters": {
     "the_dalles": "encounter_the_dalles",
     "platte": "encounter_platte",
