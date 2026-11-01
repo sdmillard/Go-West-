@@ -8,6 +8,11 @@ signal plain_rules_toggled(shown: bool)
 
 const FONT=preload("res://art/pixels/trail_font.fnt")
 const ART=preload("res://art/pixels/guide_book.png")
+const FRONT_ART=preload("res://art/pixels/guide_book_front.png")
+const BACK_ART=preload("res://art/pixels/guide_book_back.png")
+## Boards of the closed book in art/aseprite/scenes/guide_book_covers.lua.
+const FRONT_BOARD:=Rect2(286,2,280,310)
+const BACK_BOARD:=Rect2(6,2,280,310)
 ## Geometry of art/aseprite/scenes/guide_book.lua (608 x 320).
 const BOOK_SIZE:=Vector2i(608,320)
 const LEFT_PAGE:=Rect2(12,10,268,276)
@@ -39,6 +44,12 @@ var right_head: Label
 var back_button: Button
 var next_button: Button
 var tabs: Array=[]
+## "" while the book is open, "front" or "back" when it has been paged shut onto a cover.
+var cover:=""
+var art: TextureRect
+var open_nodes: Array=[]
+var front_nodes: Array=[]
+var back_nodes: Array=[]
 var chapter_index:=0
 var spread:=0
 var _pages: Dictionary={} # chapter id -> Array of pages, each an Array of [text, kind]
@@ -80,7 +91,7 @@ func _init(simulation=null) -> void:
 	min_size=BOOK_SIZE
 	close_requested.connect(hide)
 	window_input.connect(_on_input)
-	var art:=TextureRect.new()
+	art=TextureRect.new()
 	art.texture=ART
 	art.position=Vector2.ZERO
 	art.size=Vector2(BOOK_SIZE)
@@ -121,12 +132,52 @@ func _init(simulation=null) -> void:
 	plain_toggle.add_theme_constant_override("h_separation",4)
 	plain_toggle.tooltip_text="Write each chapter's plain game rules after the period text, like notes in the margin."
 	plain_toggle.toggled.connect(func(shown):_pages.clear();_show_spread();plain_rules_toggled.emit(shown))
+	for node in get_children():
+		if node!=art:open_nodes.append(node)
+	_build_covers()
 	_turn=Control.new()
 	_turn.mouse_filter=Control.MOUSE_FILTER_IGNORE
 	_turn.size=Vector2(BOOK_SIZE)
 	_turn.draw.connect(_draw_turn)
 	add_child(_turn)
 	_show_spread()
+
+func _build_covers() -> void:
+	var board: Rect2=FRONT_BOARD
+	var heading: Label=_label(Rect2(0,0,90,10),"ddb461",HORIZONTAL_ALIGNMENT_CENTER)
+	heading.text=str(data.get("title","THE OVERLAND GUIDE"))
+	heading.scale=Vector2(2,2)
+	heading.set_meta("rect",Rect2(board.get_center().x-90,70,90,10))
+	front_nodes.append(heading)
+	var subtitle: String=str(data.get("subtitle",""))
+	var parts: PackedStringArray=subtitle.split(", with ",false,1)
+	var lines: Array=[[parts[0].to_upper(),112,170]]
+	if parts.size()>1:lines.append([("With "+parts[1]).to_upper().replace(". INDEPENDENCE, 1848.","."),214,220])
+	lines.append(["INDEPENDENCE, 1848",262,170])
+	for line in lines:
+		var label: Label=_label(Rect2(board.get_center().x-line[2]/2.0,line[1],line[2],30),"ddb461",HORIZONTAL_ALIGNMENT_CENTER)
+		label.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+		label.text=line[0]
+		front_nodes.append(label)
+	var open_front: Button=_gilt_button("OPEN THE BOOK >",Rect2(board.end.x-24-92,282,92,10))
+	open_front.alignment=HORIZONTAL_ALIGNMENT_RIGHT
+	open_front.tooltip_text="Open at the first page (right arrow)."
+	open_front.pressed.connect(func():turn(1))
+	var away_front: Button=_gilt_button("PUT IT AWAY",Rect2(board.position.x+24,282,80,10))
+	away_front.tooltip_text="Close the guide (Esc)."
+	away_front.pressed.connect(hide)
+	front_nodes.append_array([open_front,away_front])
+	board=BACK_BOARD
+	var open_back: Button=_gilt_button("< OPEN THE BOOK",Rect2(board.position.x+24,282,92,10))
+	open_back.tooltip_text="Open at the last page (left arrow)."
+	open_back.pressed.connect(func():turn(-1))
+	var away_back: Button=_gilt_button("PUT IT AWAY",Rect2(board.end.x-24-80,282,80,10))
+	away_back.alignment=HORIZONTAL_ALIGNMENT_RIGHT
+	away_back.tooltip_text="Close the guide (Esc)."
+	away_back.pressed.connect(hide)
+	var finis: Label=_label(Rect2(board.position.x+24,176,board.size.x-48,10),"c18d4d",HORIZONTAL_ALIGNMENT_CENTER)
+	finis.text="FINIS"
+	back_nodes.append_array([open_back,away_back,finis])
 
 ## Controls are sized in _init, before the game's theme reaches the window, so their sizes are
 ## measured against the engine's default font and come out too big. Put them back once it has.
@@ -167,7 +218,7 @@ func set_plain_rules(shown: bool) -> void:
 func open_chapter(id: String) -> void:
 	var chapters: Array=data.get("chapters",[])
 	for index in range(chapters.size()):
-		if chapters[index].id==id:chapter_index=index;spread=0
+		if chapters[index].id==id:chapter_index=index;spread=0;cover=""
 	_show_spread()
 
 func current_id() -> String:
@@ -175,15 +226,32 @@ func current_id() -> String:
 	return str(chapters[chapter_index].id) if chapter_index<chapters.size() else ""
 
 ## Turns one spread forward (1) or back (-1), running on into the next or previous chapter.
+## Paging back past the first page closes the book onto its front cover; paging on past the
+## last page closes it onto the back.
 func turn(direction: int) -> void:
 	var chapters: Array=data.get("chapters",[])
 	if chapters.is_empty():return
+	if cover=="front":
+		if direction>0:_set_cover("",0,0)
+		return
+	if cover=="back":
+		if direction<0:_set_cover("",chapters.size()-1,spreads(str(chapters[-1].id))-1)
+		return
 	if direction>0:
 		if spread+1<spreads(current_id()):_go(chapter_index,spread+1,1)
 		elif chapter_index+1<chapters.size():_go(chapter_index+1,0,1)
+		else:_set_cover("back",chapter_index,spread)
 	else:
 		if spread>0:_go(chapter_index,spread-1,-1)
 		elif chapter_index>0:_go(chapter_index-1,spreads(str(chapters[chapter_index-1].id))-1,-1)
+		else:_set_cover("front",0,0)
+
+func _set_cover(side: String,index: int,to_spread: int) -> void:
+	cover=side
+	chapter_index=index
+	spread=to_spread
+	_turn_t=1.0
+	_show_spread()
 
 func spreads(id: String) -> int:
 	return int(ceil(pages(id).size()/2.0))
@@ -271,7 +339,8 @@ static func tab_name(chapter: Dictionary) -> String:
 	return name
 
 func _go(index: int,to_spread: int,direction: int) -> void:
-	if index==chapter_index and to_spread==spread:return
+	if index==chapter_index and to_spread==spread and cover=="":return
+	cover=""
 	chapter_index=index
 	spread=to_spread
 	_turn_dir=direction
@@ -281,6 +350,10 @@ func _go(index: int,to_spread: int,direction: int) -> void:
 func _show_spread() -> void:
 	if left_page==null:return
 	if plain_toggle!=null:plain_toggle.icon=_tick_box(plain_toggle.button_pressed)
+	art.texture={"front":FRONT_ART,"back":BACK_ART}.get(cover,ART)
+	for node in open_nodes:node.visible=cover==""
+	for node in front_nodes:node.visible=cover=="front"
+	for node in back_nodes:node.visible=cover=="back"
 	var id:=current_id()
 	var book_pages: Array=pages(id)
 	spread=clampi(spread,0,maxi(0,spreads(id)-1))
@@ -293,9 +366,9 @@ func _show_spread() -> void:
 	right_folio.text="- %d -" % (folio+1)
 	left_head.text=str(data.get("title","THE OVERLAND GUIDE"))
 	right_head.text=str(data.chapters[chapter_index].title).to_upper() if not data.get("chapters",[]).is_empty() else ""
-	var last: int=data.get("chapters",[]).size()-1
-	back_button.visible=chapter_index>0 or spread>0
-	next_button.visible=chapter_index<last or spread+1<spreads(id)
+	if cover!="":
+		_turn.queue_redraw()
+		return
 	for index in range(tabs.size()):
 		var picked: bool=index==chapter_index
 		var tab: Button=tabs[index]
