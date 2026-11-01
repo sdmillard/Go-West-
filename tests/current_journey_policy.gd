@@ -166,7 +166,7 @@ func act(game,profile: Dictionary,aim: RandomNumberGenerator,count: Dictionary) 
    if profile.get("branch","")!="":
     for index in range(game.pending.choices.size()):
      var choice: Dictionary=game.pending.choices[index]
-     if choice.get("action","")=="leave" and str(choice.label).to_lower().contains(str(profile.branch)) and game.can_choose(index):return game.choose(index)
+     if choice.get("action","")=="leave" and str(choice.label).to_lower().contains(str(profile.branch)) and not str(choice.label).contains("late in the year") and game.can_choose(index):return game.choose(index)
   for index in range(game.pending.choices.size()):
    if game.pending.choices[index].get("action","") not in ["notes","trade","rest"] and game.can_choose(index):return game.choose(index)
   if game.pending.has("landmark") and game.route.nodes[game.state.landmark].has("toll_dollars"):
@@ -179,7 +179,13 @@ func act(game,profile: Dictionary,aim: RandomNumberGenerator,count: Dictionary) 
    for index in range(game.pending.choices.size()):
     if game.pending.choices[index].get("action","")=="rest" and game.can_choose(index):bump(count,"season_waits");return game.choose(index)
   return false
+ # Out on a dry stretch there is no grass or water to rest on: a sensible party drives on to water.
+ var dry: bool=game.on_dry_stretch()
+ # Likewise in winter snow country: worn-out cattle starve there, so push over the pass.
+ var in_snow: bool=not game.snow_country().is_empty() and not game.snow_country().get("sheltered",false)
  if game.state.vehicle!="foot" and game.state.oxen>0 and game.state.ox_health<=0:
+  # A worn-out team cannot recover without water or grass: leave the wagon and walk out.
+  if dry and abandon(game,count):return true
   bump(count,"rests")
   return game.rest()
  if game.state.oxen==0 and game.state.vehicle!="foot":
@@ -206,8 +212,9 @@ func act(game,profile: Dictionary,aim: RandomNumberGenerator,count: Dictionary) 
  var limit: int=int(profile.get("health_rest_limit",0))
  var consecutive: int=int(count.get("health_rest_streak",0)) if int(count.get("health_rest_day",-1))==int(game.state.day) else 0
  if limit>0 and consecutive>=(maxi(3,limit) if worst<20 else limit):health_stop=false
+ if dry:health_stop=false
  # In winter snow country there is no grass to rest on: a sensible party pushes over the pass.
- var snowbound: bool=not game.snow_country().is_empty() and not game.snow_country().get("sheltered",false)
+ var snowbound: bool=in_snow or dry
  if profile.rest and (health_stop or (not snowbound and game.state.fatigue>50) or (not snowbound and game.state.vehicle!="foot" and game.state.ox_health<int(profile.get("team_rest_below",65))) or (profile.get("mount_support",false) and game.mount_plan().mode in ["mounted","doubled","packing"] and game.Mounts.condition(game.state)<int(profile.get("mount_rest_below",65)))) and game.state.food>=game.state.party_size*(ration+1):
   bump(count,"rests")
   if health_stop:

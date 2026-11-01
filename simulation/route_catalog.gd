@@ -39,7 +39,7 @@ func load_data(data: Variant) -> bool:
 			return _fail("Invalid regional terrain.")
 		if node.get("river_source","rain") not in ["rain","snowmelt"]:
 			return _fail("Invalid river source.")
-		for key in ["trade_bulk","descent","portage","minor"]:
+		for key in ["trade_bulk","descent","portage","minor","remote"]:
 			if node.has(key) and not node[key] is bool:
 				return _fail("Invalid landmark activity flag.")
 		if node.has("snow_country"):
@@ -88,10 +88,12 @@ func load_data(data: Variant) -> bool:
 				return _fail("Invalid road destination or distance.")
 			if not is_finite(float(edge.miles)) or edge.miles <= 0 or edge.miles != floor(edge.miles):
 				return _fail("Road distance must be positive whole miles.")
-			if edge.to in targets or (edge.has("label") and (not edge.label is String or edge.label.is_empty())) or edge.get("hazard", "") not in ["", "waterless", "river", "unrest"]:
+			if edge.to in targets or (edge.has("label") and (not edge.label is String or edge.label.is_empty())) or edge.get("hazard", "") not in ["", "waterless", "river", "unrest", "raids"]:
 				return _fail("Invalid road choice.")
 			if edge.has("wagon_opens") and not valid_date(edge.wagon_opens):
 				return _fail("Invalid wagon road opening date.")
+			if edge.has("late_after") and (not edge.late_after is String or not valid_date("1848-"+str(edge.late_after))):
+				return _fail("Invalid late-season date.")
 			if edge.has("effects") and (not edge.effects is Dictionary or edge.effects.keys() != ["days"] or not (edge.effects.days is int or edge.effects.days is float) or edge.effects.days != floor(edge.effects.days) or edge.effects.days < 1 or edge.effects.days > 5):
 				return _fail("Invalid road choice.")
 			targets.append(edge.to)

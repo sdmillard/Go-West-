@@ -519,7 +519,7 @@
         {
           "to": "greenwood_cutoff",
           "miles": 46,
-          "label": "Take Greenwood's Cutoff \u00c2\u00b7 46 miles to the Green, 40 without water",
+          "label": "Take Greenwood's Cutoff \u00b7 46 miles to the Green, 40 without water",
           "hazard": "waterless",
           "source_rows": [
             6,
@@ -758,12 +758,14 @@
       "id": "raft_river",
       "name": "Raft River",
       "kind": "camp",
-      "text": "At Cassia Creek and the Raft River the California road turns off south toward the City of Rocks. Oregon companies keep west along the Snake into dry sage country.",
+      "text": "At Cassia Creek and the Raft River the California road turns off south toward the City of Rocks. Oregon companies keep west along the Snake into dry sage country. The Applegates' South Road also follows the California road as far as the Humboldt, then turns northwest across the Black Rock desert to the Rogue and Umpqua valleys.",
+      "advice": "The South Road was opened in 1846 to keep Oregon emigrants off the Columbia and away from the British posts. It avoids the Blue Mountains, the Cayuse country and the Barlow toll, but it is about three hundred miles longer, with no posts or traders, a long dry drive to Black Rock, raiders who shoot stock from cover, and the Canyon Creek defile at the end. The 1846 companies did not reach the Willamette until November and December.",
       "minor": true,
       "terrain": "desert",
       "next": [
         {
           "to": "salmon_falls",
+          "label": "Keep west along the Snake toward Fort Boise and the Columbia",
           "miles": 98,
           "source_rows": [
             15,
@@ -783,6 +785,17 @@
             88,
             89
           ]
+        },
+        {
+          "to": "city_of_rocks",
+          "miles": 50,
+          "late_after": "08-31",
+          "label": "Take the South Road to Oregon by the Humboldt, Black Rock and the Rogue River \u00b7 about 300 miles longer",
+          "source_rows": [
+            50
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored estimate: about 50 miles from the Raft River up the California road to the City of Rocks (the same stretch as the Salt Lake road note). Huber (1847) and W. S. Adams (1848) put the whole South Road about 300 miles longer than the Columbia road."
         }
       ],
       "hunting_region": "sagebrush"
@@ -968,7 +981,7 @@
         {
           "to": "fort_walla_walla",
           "miles": 55,
-          "label": "Detour to Fort Walla Walla \u00c2\u00b7 Cayuse War country, about 20 miles longer",
+          "label": "Detour to Fort Walla Walla \u00b7 Cayuse War country, about 20 miles longer",
           "hazard": "unrest",
           "source_rows": [
             30,
@@ -984,7 +997,7 @@
       "id": "fort_walla_walla",
       "name": "Fort Walla Walla",
       "kind": "fort",
-      "text": "The Hudson's Bay Company's Fort Nez Perc\u00c3\u00a9s stands where the Walla Walla River meets the Columbia. Since the killings at Waiilatpu the post has been a place of ransom and refuge; most emigrants this year avoid it. Supplies are scarce and dear.",
+      "text": "The Hudson's Bay Company's Fort Nez Perc\u00e9s stands where the Walla Walla River meets the Columbia. Since the killings at Waiilatpu the post has been a place of ransom and refuge; most emigrants this year avoid it. Supplies are scarce and dear.",
       "terrain": "plains",
       "trade_bulk": true,
       "bulk_food_cents": 4000,
@@ -1104,7 +1117,7 @@
         {
           "to": "columbia_raft",
           "miles": 40,
-          "label": "Build a raft and float the Columbia \u00c2\u00b7 3 days building",
+          "label": "Build a raft and float the Columbia \u00b7 3 days building",
           "hazard": "river",
           "effects": {
             "days": 3
@@ -1214,6 +1227,342 @@
         }
       ],
       "hunting_region": "forest"
+    },
+    {
+      "id": "city_of_rocks",
+      "name": "City of Rocks",
+      "kind": "camp",
+      "remote": true,
+      "terrain": "desert",
+      "hunting_region": "sagebrush",
+      "text": "Granite towers stand over the road like a ruined town, and the Californians paint their names on them in axle grease. From here the road climbs over Granite Pass toward the Humboldt. It is a long way to any post now: there is none on this road, nor traders, until the Oregon settlements.",
+      "next": [
+        {
+          "to": "humboldt_wells",
+          "miles": 100,
+          "source_rows": [
+            100
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored estimate from modern trail guides (Trails West, NPS California and Applegate trail maps) checked against 1847-1848 diary figures (Hulin, Olmsted); not a Palmer table row."
+        }
+      ]
+    },
+    {
+      "id": "humboldt_wells",
+      "name": "Humboldt Wells",
+      "kind": "camp",
+      "remote": true,
+      "terrain": "desert",
+      "hunting_region": "sagebrush",
+      "text": "Deep spring holes in a green meadow are the head of Mary's River, which the trappers call the Humboldt. The road follows it west for weeks. The water grows worse and the grass thinner the farther down you go, and the Shoshone and Paiute along it have learned to shoot the emigrants' stock.",
+      "next": [
+        {
+          "to": "gravelly_ford",
+          "miles": 90,
+          "source_rows": [
+            90
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored estimate from modern trail guides (Trails West, NPS California and Applegate trail maps) checked against 1847-1848 diary figures (Hulin, Olmsted); not a Palmer table row."
+        }
+      ]
+    },
+    {
+      "id": "gravelly_ford",
+      "name": "Gravelly Ford",
+      "kind": "camp",
+      "remote": true,
+      "terrain": "desert",
+      "hunting_region": "sagebrush",
+      "text": "A gravel bar lets the wagons cross the Humboldt. Willows and rye grass line the river, and there is nothing else for fuel or shade. Guards sit up with the cattle every night along this stretch.",
+      "next": [
+        {
+          "to": "lassen_meadows",
+          "miles": 120,
+          "hazard": "raids",
+          "source_rows": [
+            120
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored estimate from modern trail guides (Trails West, NPS California and Applegate trail maps) checked against 1847-1848 diary figures (Hulin, Olmsted); not a Palmer table row."
+        }
+      ]
+    },
+    {
+      "id": "lassen_meadows",
+      "name": "Applegate turnoff",
+      "kind": "camp",
+      "remote": true,
+      "terrain": "desert",
+      "hunting_region": "sagebrush",
+      "advice": "West of here the road leaves the river. It is about sixty miles to Black Rock with only the poor wells at Antelope and Rabbit Hole Springs, and the last twenty are a dry desert of white clay. Fill every keg, cut grass to carry, and drive the worst of it at night.",
+      "text": "In a wide meadow on the Humboldt, the Applegate road turns northwest off the California road into the desert. The 1846 companies dug for water at Rabbit Hole Springs and lost cattle on the drive to Black Rock.",
+      "next": [
+        {
+          "to": "black_rock",
+          "miles": 58,
+          "hazard": "waterless",
+          "source_rows": [
+            22,
+            13,
+            23
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored estimate from modern trail guides (Trails West, NPS California and Applegate trail maps) checked against 1847-1848 diary figures (Hulin, Olmsted); not a Palmer table row."
+        }
+      ]
+    },
+    {
+      "id": "black_rock",
+      "name": "Black Rock",
+      "kind": "camp",
+      "remote": true,
+      "terrain": "desert",
+      "hunting_region": "sagebrush",
+      "text": "A dark point of rock stands over boiling springs at the edge of the playa. Hot water pools into warm creeks where the cattle can drink once it cools. Paiute bands watch the road from the hills.",
+      "next": [
+        {
+          "to": "high_rock_canyon",
+          "miles": 40,
+          "hazard": "raids",
+          "source_rows": [
+            40
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored estimate from modern trail guides (Trails West, NPS California and Applegate trail maps) checked against 1847-1848 diary figures (Hulin, Olmsted); not a Palmer table row."
+        }
+      ]
+    },
+    {
+      "id": "high_rock_canyon",
+      "name": "High Rock Canyon",
+      "kind": "camp",
+      "remote": true,
+      "terrain": "mountains",
+      "hunting_region": "sagebrush",
+      "text": "The road threads a narrow canyon between walls of red and grey rock, with water and grass in its bottom. The walls give shelter from the wind and cover for anyone who wants to shoot into a camp.",
+      "next": [
+        {
+          "to": "fandango_pass",
+          "miles": 55,
+          "hazard": "raids",
+          "source_rows": [
+            55
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored estimate from modern trail guides (Trails West, NPS California and Applegate trail maps) checked against 1847-1848 diary figures (Hulin, Olmsted); not a Palmer table row."
+        }
+      ]
+    },
+    {
+      "id": "fandango_pass",
+      "name": "Fandango Pass",
+      "kind": "camp",
+      "remote": true,
+      "terrain": "mountains",
+      "hunting_region": "sagebrush",
+      "descent": true,
+      "snow_country": {
+        "months": [11, 12, 1, 2, 3],
+        "snowbound_chance": 0.4,
+        "animal_strain": 4,
+        "valley_strain": 2,
+        "death_chance": 0.15,
+        "note": "Authored winter risk. Fandango Pass crosses the Warner Mountains above 6,000 feet; the 1846 companies crossed it in October and the Lassen companies of 1848-1849 met early snow on this road."
+      },
+      "text": "Across Surprise Valley the road climbs straight up the Warner Mountains to a pass among pines. The far side drops so steeply to Goose Lake that the wagons must be let down with ropes and locked wheels.",
+      "next": [
+        {
+          "to": "goose_lake",
+          "miles": 20,
+          "hazard": "raids",
+          "source_rows": [
+            20
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored estimate from modern trail guides (Trails West, NPS California and Applegate trail maps) checked against 1847-1848 diary figures (Hulin, Olmsted); not a Palmer table row."
+        }
+      ]
+    },
+    {
+      "id": "goose_lake",
+      "name": "Goose Lake",
+      "kind": "camp",
+      "remote": true,
+      "terrain": "plains",
+      "hunting_region": "sagebrush",
+      "text": "A long shallow lake lies under the mountains, with good grass along its south shore. In 1847 a company lost sixteen head of stock to raiders near here. Beyond, the road crosses broken lava country to the Tule lakes.",
+      "next": [
+        {
+          "to": "tule_lake",
+          "miles": 60,
+          "hazard": "raids",
+          "source_rows": [
+            60
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored estimate from modern trail guides (Trails West, NPS California and Applegate trail maps) checked against 1847-1848 diary figures (Hulin, Olmsted); not a Palmer table row."
+        }
+      ]
+    },
+    {
+      "id": "tule_lake",
+      "name": "Tule Lake",
+      "kind": "camp",
+      "remote": true,
+      "terrain": "desert",
+      "hunting_region": "sagebrush",
+      "text": "The road skirts a great marshy lake under a bluff, where the tules grow higher than a man. This is Modoc country. The Applegates crossed the Lost River on a natural bridge of stone a little to the west.",
+      "next": [
+        {
+          "to": "klamath_river",
+          "miles": 45,
+          "hazard": "raids",
+          "source_rows": [
+            45
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored estimate from modern trail guides (Trails West, NPS California and Applegate trail maps) checked against 1847-1848 diary figures (Hulin, Olmsted); not a Palmer table row."
+        }
+      ]
+    },
+    {
+      "id": "klamath_river",
+      "name": "Klamath River crossing",
+      "kind": "camp",
+      "remote": true,
+      "terrain": "plains",
+      "hunting_region": "forest",
+      "text": "Below the Klamath lake the river runs over a rock ledge shallow enough to ford in the fall. West of it the road climbs into pine timber: the Cascade Mountains, and the first real forest since the Missouri.",
+      "next": [
+        {
+          "to": "green_springs",
+          "miles": 25,
+          "source_rows": [
+            12,
+            13
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored estimate from modern trail guides (Trails West, NPS California and Applegate trail maps) checked against 1847-1848 diary figures (Hulin, Olmsted); not a Palmer table row."
+        }
+      ]
+    },
+    {
+      "id": "green_springs",
+      "name": "Green Springs Mountain",
+      "kind": "camp",
+      "remote": true,
+      "terrain": "mountains",
+      "hunting_region": "forest",
+      "descent": true,
+      "snow_country": {
+        "months": [12, 1, 2, 3],
+        "snowbound_chance": 0.4,
+        "animal_strain": 4,
+        "valley_strain": 2,
+        "death_chance": 0.15,
+        "note": "Authored winter risk. The road crosses the southern Cascades near 4,500 feet; the 1846 companies reached the Rogue valley in late October and the last wagons reached the Willamette in December."
+      },
+      "text": "The summit of the Cascade road is a little meadow among the pines with good springs. Down the west side the road plunges into the Jenny Creek and Keene Creek country, steep enough that wagons slide.",
+      "next": [
+        {
+          "to": "rogue_valley",
+          "miles": 30,
+          "hazard": "raids",
+          "source_rows": [
+            10,
+            10,
+            10
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored estimate from modern trail guides (Trails West, NPS California and Applegate trail maps) checked against 1847-1848 diary figures (Hulin, Olmsted); not a Palmer table row."
+        }
+      ]
+    },
+    {
+      "id": "rogue_valley",
+      "name": "Rogue River valley",
+      "kind": "camp",
+      "remote": true,
+      "terrain": "forest",
+      "hunting_region": "forest",
+      "text": "Bear Creek runs down a wide oak valley to the Rogue River, the best grass and game since the Snake. The Shasta and Takelma people here have fought the trapping parties for twenty years. In 1847 they shot horses in an emigrant camp; companies keep together and stand guard.",
+      "next": [
+        {
+          "to": "canyon_creek",
+          "miles": 85,
+          "hazard": "raids",
+          "source_rows": [
+            50,
+            35
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored estimate from modern trail guides (Trails West, NPS California and Applegate trail maps) checked against 1847-1848 diary figures (Hulin, Olmsted); not a Palmer table row."
+        }
+      ]
+    },
+    {
+      "id": "canyon_creek",
+      "name": "Canyon Creek",
+      "kind": "camp",
+      "remote": true,
+      "terrain": "mountains",
+      "hunting_region": "forest",
+      "descent": true,
+      "text": "The road enters a narrow canyon with the creek for its floor: twelve miles with no way through but the water, crossed and recrossed dozens of times among boulders and fallen timber. In November 1846 the rains caught the companies here. Wagons were broken and abandoned, cattle died, and people waded out with what they could carry.",
+      "next": [
+        {
+          "to": "umpqua_valley",
+          "miles": 35,
+          "source_rows": [
+            12,
+            23
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored estimate from modern trail guides (Trails West, NPS California and Applegate trail maps) checked against 1847-1848 diary figures (Hulin, Olmsted); not a Palmer table row."
+        }
+      ]
+    },
+    {
+      "id": "umpqua_valley",
+      "name": "Umpqua valley",
+      "kind": "camp",
+      "remote": true,
+      "terrain": "forest",
+      "hunting_region": "forest",
+      "text": "Below the canyon the Umpqua country opens into round oak hills and grassy bottoms. The Umpqua people trade salmon and camas, and the road is easier from here. Ahead lie the Calapooya Mountains and the head of the Willamette valley.",
+      "next": [
+        {
+          "to": "south_willamette",
+          "miles": 70,
+          "source_rows": [
+            55,
+            15
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored estimate from modern trail guides (Trails West, NPS California and Applegate trail maps) checked against 1847-1848 diary figures (Hulin, Olmsted); not a Palmer table row."
+        }
+      ]
+    },
+    {
+      "id": "south_willamette",
+      "name": "Head of the Willamette",
+      "kind": "camp",
+      "terrain": "forest",
+      "hunting_region": "forest",
+      "text": "Over the Calapooya hills the Willamette valley opens wide and green, with a few new claims at its head, Eugene Skinner's among them. From here it is about a hundred miles down the valley to Oregon City, on easy roads among the settlements.",
+      "next": [
+        {
+          "to": "oregon_city",
+          "miles": 110,
+          "source_rows": [
+            110
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored estimate: about 110 miles down the Willamette valley from Skinner's claim (present Eugene) to Oregon City. The 1848 Hulin party reckoned about 120 miles from Oregon City to the south end of the valley."
+        }
+      ]
     },
     {
       "id": "oregon_city",

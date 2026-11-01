@@ -144,7 +144,7 @@ func _initialize() -> void:
 	check(scenes.texture_for("missing-scene") != null, "Unknown scene has a safe presentation fallback")
 	# Seasonal versions (art/aseprite/build.sh --seasons): every outdoor route stop has both.
 	for id in route.nodes:
-		if id == "independence":
+		if id == "independence" or id in scenes.awaiting:
 			continue
 		for season in ["winter", "autumn"]:
 			check(scenes.seasonal.has(id + ":" + season), "Route stop has a %s picture: %s" % [season, id])

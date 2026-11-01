@@ -50,7 +50,7 @@ func drive_to(game, target: String, limit: int = 300) -> void:
 func run() -> void:
 	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/route.json"))
 	var route = Route.new()
-	check(route.error.is_empty() and route.total_miles == 1938 and route.longest_miles == 2070, "Main road stays 1938 guide miles; the Salt Lake road and the Walla Walla detour together make the longest way")
+	check(route.error.is_empty() and route.total_miles == 1938 and route.longest_miles == 2359, "Main road stays 1938 guide miles; the Salt Lake road and the South Road together make the longest way")
 	check(route.nodes.little_sandy.next.size() == 2 and route.nodes.little_sandy.next[0].to == "green_river", "The southern road stays the first (main) road at the Little Sandy")
 	check(route.remaining("greenwood_cutoff") == 1883 - 972, "Remaining miles follow the branch")
 	check(route.main_path_to("fort_bridger").has("green_river") and route.main_path_to("greenwood_cutoff").is_empty(), "Main path excludes branch stops")

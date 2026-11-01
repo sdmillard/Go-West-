@@ -36,7 +36,7 @@ func load_data(data: Variant, repeatable: bool = false) -> bool:
 			return _fail("Invalid onset effects")
 		if event.has("weight") and (not _number(event.weight) or event.weight <= 0 or event.weight != floor(event.weight)):
 			return _fail("Invalid event weight")
-		if event.get("hazard", "") not in ["", "unrest"]:
+		if event.get("hazard", "") not in ["", "unrest", "raids"]:
 			return _fail("Unknown road hazard for event")
 		if event.has("weather") and (not event.weather is Array or event.weather.is_empty()):
 			return _fail("Invalid weather eligibility")

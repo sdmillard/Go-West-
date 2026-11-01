@@ -21,6 +21,13 @@ func outfit(game,style: String) -> Dictionary:
 func profile_for(style: String) -> Dictionary:
  var p: Dictionary={"id":style,"pace":0,"rations":1,"rest":true,"hunt":true,"accuracy":0.65,"hunt_below":90,"rest_below":55,"care_below":55,"adaptive_rations":true,"produce":true,"forage_gap":20,"preserve":"salt","preserve_meals":3.3,"slaughter":true,"slaughter_team_floor":4,"opportunity":1,"cash_reserve":20,"post_food":600,"team_rest_below":65}
  if style=="reckless":p.merge({"pace":2,"rations":1,"rest_below":25,"care_below":0,"adaptive_rations":false,"hunt_below":45,"preserve":"","produce":false,"team_rest_below":30},true)
+ # Optional route study: --branch=TEXT takes the fork whose label contains TEXT (e.g. "south road" for the Applegate road).
+ for argument in OS.get_cmdline_user_args():
+  if argument.begins_with("--branch="):p["branch"]=argument.get_slice("=",1).to_lower()
+  # A careful player bound for the South Road stocks up at the last posts: there are no traders on it.
+  if argument=="--branch=south road":p["post_food"]=1600
+  if argument.begins_with("--team-rest="):p["team_rest_below"]=int(argument.get_slice("=",1))
+  if argument.begins_with("--pace="):p["pace"]=int(argument.get_slice("=",1))
  if style in ["on_foot","horses"]:p.merge({"mount_support":true,"mount_rest_below":65,"mount_targets":{"horses":5,"mules":3} if style=="horses" else {}},true)
  return p
 ## Reckless players push at a grueling pace on meager rations, rest only near collapse,

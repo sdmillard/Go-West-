@@ -134,6 +134,8 @@ func local_care(game) -> bool:
 func market(game) -> Dictionary:
 	var at_post: bool=game.pending.has("landmark") and game.route.nodes[game.state.landmark].get("trade_bulk",false)
 	if at_post:return {"available":true,"key":"post:"+game.state.landmark,"lots":int(data.post_lots),"price":float(region(game).price),"post":true}
+	# No traders work the South Road: nobody but a few emigrant companies has used it since 1846.
+	if game.route.nodes[game.state.landmark].get("remote",false):return {"available":false,"remote":true,"key":"","lots":0,"price":float(region(game).price),"post":false}
 	var period: int=region(game).period
 	var phase: int=posmod(int(game.state.day)+posmod(int(game.state.seed),3),period)
 	return {"available":phase<int(data.passing_window_days),"key":"passing:%s:%d" % [region_id(game),(int(game.state.day)+posmod(int(game.state.seed),3))/period],"lots":int(data.passing_lots),"price":float(region(game).price)*float(data.passing_price_markup),"post":false}

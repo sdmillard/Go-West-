@@ -24,7 +24,7 @@ func run():
   for region in ["woodland","plains","highcountry","sagebrush","forest"]:
    for id in g.route.nodes:
     if g.route.nodes[id].get("hunting_region","")==region and not g.route.nodes[id].next.is_empty():
-     g.state.landmark=id;g.state.next_landmark=g.route.nodes[id].next[0].to;break
+     g.state.landmark=id;g.state.next_landmark=g.route.nodes[id].next[0].to;g.state.leg_miles=1;break
    var edge: Dictionary=g.current_edge();var original: Variant=edge.get("hazard")
    for waterless in [false,true]:
     if waterless:edge["hazard"]="waterless"

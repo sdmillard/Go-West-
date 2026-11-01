@@ -56,6 +56,13 @@ const WATERLESS := {"ox_strain": 3, "thirst": 1}
 ## Placeholder trouble on an unsettled road: trail events twice as likely,
 ## and these encounters three times as likely among them.
 const UNREST := {"chance_factor": 2.0, "weight_factor": 3, "events": ["riders", "bandits"]}
+## Raided country on the 1846 South Road: Paiute, Pit River, Modoc, Shasta and Takelma men shot
+## emigrant stock from cover at night. Trail events a quarter again as likely, stock losses twice as likely.
+const RAIDS := {"chance_factor": 1.25, "weight_factor": 2, "events": ["arrows_in_the_stock", "horse_thieves"]}
+## The 1846 relief: when the South Road companies were caught late in the Rogue and Umpqua country, settlers
+## rode out from the Willamette with pack horses of flour and fresh cattle (Thomas Holt's party, December 1846).
+## Once per journey, October to March, for a party short of food or with a failing team. Authored amounts.
+const RELIEF := {"stops": ["rogue_valley", "canyon_creek", "umpqua_valley"], "months": [10, 11, 12, 1, 2, 3], "need_days": 10, "flour_per_person": 40, "team": 4, "key": "relief|south_road"}
 ## Placeholder river travel: raft or boat miles per day before wind, and the
 ## portage time. Interactive Cascades consequences live in data/rafting.json.
 const RIVER := {"miles":15,"portage_days":2}
@@ -275,6 +282,10 @@ func travelled_path() -> Array:
 	return main if not main.is_empty() else route_path
 
 ## The road the party is on between stops, or {} at a stop.
+## Out on a waterless stretch: on the dry leg itself, or setting out on it today. A camp at the stop
+## before it still has the stream it stands on (Little Sandy, the Humboldt at the Applegate turnoff).
+func on_dry_stretch() -> bool:
+	return current_edge().get("hazard","")=="waterless" and (int(state.leg_miles)>0 or field_outings.moving)
 func current_edge() -> Dictionary:
 	if state.next_landmark == state.landmark:
 		return {}
@@ -344,6 +355,8 @@ func _arrive_landmark(revisit: bool=false,roll_stage: bool=true) -> void:
 				leave["seasonal_road"]=road.to
 				leave.label+=" · snowbound to wagons %s" % closed_months_text(road.to)
 			# A road broken by pack trains before wagons could use it (Hensley's 1848 Salt Lake cutoff).
+			# A road that only a party early in the season should start (the South Road's passes and canyon).
+			if road.has("late_after") and road_late(str(road.late_after)):leave.label+=" · late in the year for this road; snow on the passes from November"
 			if road.has("wagon_opens"):
 				leave["wagon_opens"]=road.wagon_opens
 				if wagon_road_unopened(str(road.wagon_opens)):leave.label+=" · no wagon road until %s; pack animals and walkers only" % opening_text(str(road.wagon_opens))
@@ -385,6 +398,29 @@ func _arrive_landmark(revisit: bool=false,roll_stage: bool=true) -> void:
 			if choice.get("action","")=="leave" and int(choice.get("effects",{}).get("days",0))==0:choice.label+=" · about %d more miles today" % _spare_miles
 	_spare_miles=0
 	Direction.adapt_stop(self,pending,approach)
+	if not revisit and approach!="east":_offer_relief()
+
+## A relief party from the settlements meets a late, needy company on the South Road, once.
+func relief_offer() -> Dictionary:
+	if not state.extended_route or str(state.landmark) not in RELIEF.stops or context.record.spent.has(RELIEF.key):return {}
+	if not RELIEF.months.has(int(calendar().month)):return {}
+	var meals: int=int(provisions.data.rations_lb[1])*int(state.party_size)*int(RELIEF.need_days)
+	var oxen: int=maxi(0,int(RELIEF.team)-int(state.oxen)) if state.vehicle!="foot" else 0
+	var failing: bool=state.vehicle!="foot" and (oxen>0 or int(state.ox_health)<25)
+	if int(state.food)>=meals and not failing:return {}
+	var effects: Dictionary={"food":int(RELIEF.flour_per_person)*int(state.party_size)}
+	if state.vehicle!="foot" and (oxen>0 or int(state.ox_health)<25):
+		var fresh: int=maxi(1,oxen)
+		effects["oxen"]=fresh
+		# Fresh cattle raise the team's average condition.
+		effects["ox_health"]=ceili(float(100-int(state.ox_health))*fresh/float(int(state.oxen)+fresh))
+	return effects
+func _offer_relief() -> void:
+	var effects: Dictionary=relief_offer()
+	if effects.is_empty() or not can_service():return
+	var cattle: String=(" and %d fresh ox%s" % [int(effects.oxen),"" if int(effects.oxen)==1 else "en"]) if effects.has("oxen") else ""
+	_service_menu("Relief from the settlements","Riders come up the road with pack horses: men sent out from the Willamette settlements to meet the companies still on the South Road. They bring flour%s, and news that the road ahead is passable." % cattle,
+		[{"label":"Take the %d lb of flour%s" % [int(effects.food),cattle],"market_key":RELIEF.key,"stock_limit":1,"effects":effects,"result":"Relief from the settlements: %d lb of flour%s." % [int(effects.food),cattle]}])
 
 func _choose_landmark(index: int) -> bool:
 	refresh_stop_offers()
@@ -813,7 +849,7 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 		var storm_damage: int=int(seasonal_pressure().storm_damage) if state.extended_route and not sheltered else 0
 		if storm_damage>0:_change_health(-storm_damage,"winter exposure")
 		# No water and little grass: animals get no recovery and people go thirsty.
-		if state.extended_route and current_edge().get("hazard","")=="waterless":_change_health(-int(WATERLESS.thirst),"thirst")
+		if state.extended_route and on_dry_stretch():_change_health(-int(WATERLESS.thirst),"thirst")
 		var unprotected: int = maxi(0, int(state.party_size) - int(state.clothing))
 		if sheltered:unprotected=0
 		if unprotected > 0 and int(survival.weather.exposure) > 0:
@@ -959,7 +995,7 @@ func _schedule_event(allow_random: bool = true) -> void:
 		var event := roll_absurd(rng.randf())
 		if not event.is_empty():
 			_present(event)
-	if allow_random and state.extended_route and pending.is_empty() and survival.rng.randf() < survival.data.event_chance * (float(UNREST.chance_factor) if current_edge().get("hazard","")=="unrest" else 1.0):
+	if allow_random and state.extended_route and pending.is_empty() and survival.rng.randf() < survival.data.event_chance * {"unrest":float(UNREST.chance_factor),"raids":float(RAIDS.chance_factor)}.get(current_edge().get("hazard",""),1.0):
 		_roll_trail_event()
 
 func roll_absurd(roll: float) -> Dictionary:
@@ -988,6 +1024,7 @@ func _roll_trail_event() -> void:
 		if state.oxen==0 and event.id=="ox_injury":continue
 		if state.oxen<2 and event.id=="stampede":continue
 		if event.id=="horse_thieves" and Mounts.animals(state)==0:continue
+		if event.id=="arrows_in_the_stock" and int(state.oxen)<2:continue
 		if current_edge().get("hazard","")=="river" and event.id in ["breakdown","ox_injury","wandering_ox","stampede"]:continue
 		# Encounters tied to a kind of road happen only on that road.
 		if event.has("hazard") and current_edge().get("hazard","")!=event.hazard:continue
@@ -998,12 +1035,15 @@ func _roll_trail_event() -> void:
 		if current_edge().get("hazard","")=="unrest" and event.id in UNREST.events:
 			weighted=event.duplicate(true)
 			weighted.weight=int(event.weight)*int(UNREST.weight_factor)
+		if current_edge().get("hazard","")=="raids" and event.id in RAIDS.events:
+			weighted=event.duplicate(true)
+			weighted.weight=int(event.weight)*int(RAIDS.weight_factor)
 		# A night guard on the picket line keeps most horse thieves away.
-		if event.id=="horse_thieves" and camp_tasks.stock_guarded(self):
+		if event.id in ["horse_thieves","arrows_in_the_stock"] and camp_tasks.stock_guarded(self):
 			weighted=weighted.duplicate(true)
 			# Thieves give a soldier's watch a wider berth.
 			weighted.weight=maxi(1,int(weighted.weight)/(int(provisions.data.mounts.guard_factor)*(int(characters.benefits.soldier_guard_factor) if characters.available(self,"Soldiering") else 1)))
-		if event.id=="horse_thieves" and dogs.ready("watch"):
+		if event.id in ["horse_thieves","arrows_in_the_stock"] and dogs.ready("watch"):
 			weighted=weighted.duplicate(true)
 			weighted.weight=maxi(1,int(float(weighted.weight)/float(dogs.data.theft_weight_factor)))
 		candidates.append(weighted)
@@ -1092,7 +1132,7 @@ func forage_offer(companion: bool=false) -> Dictionary:
 	for member in party_health.members:
 		if party_health.is_active(member) and not member.conditions.any(func(c): return c.id == "broken_leg") and (companion or not camp_tasks.enabled() or int(member.id)==camp_tasks.leader_id(self)):
 			workers += member.health / 100.0 * (float(ProfessionSkill.stockman(self).get("forage_worker_factor",1.0)) if int(member.id)==0 else 1.0)
-	var blocked: bool = current_edge().get("hazard", "") in ["river", "waterless"] or survival.weather.id in ["blizzard", "snow"]
+	var blocked: bool = current_edge().get("hazard", "")=="river" or on_dry_stretch() or survival.weather.id in ["blizzard", "snow"]
 	return {"available": factor > 0 and workers > 0 and not blocked, "factor": factor, "workers": workers}
 
 func open_forage() -> bool:
@@ -1125,6 +1165,7 @@ func open_trade() -> bool:
 	if offer.post and crime.refuses(self,str(state.landmark)):return _service_menu("The post will not trade",crime.news_text(self,str(state.landmark)),[])
 	if offer.available and not offer.post and crime.closed(str(offer.key)):return _service_menu("The traders will not deal with you","These are the traders your party robbed. They keep their rifles close and will not trade.",[])
 	if offer.available and not offer.post and crime.refuses(self,str(offer.key)):return _service_menu("The traders will not deal with you",crime.news_text(self,str(offer.key)),[])
+	if offer.get("remote",false):return _service_menu("No traders on this road","No traders work the South Road. Until the Oregon settlements, the party lives on what it carries, what it hunts and what other emigrants will spare.",[])
 	if not offer.available:
 		return _service_menu("No traders nearby","No trading party is available today. Waiting costs a day and meals; another trader may not arrive immediately.",[{"label":"Wait and watch for traders · 1 day","effects":{"days":1},"result":"Waited for passing traders. Check again or continue along the road."}])
 	var at_post: bool=_at_post()
@@ -1551,6 +1592,12 @@ func _choose_service(index: int) -> bool:
 	return true
 
 ## Thieves take up to two animals, horses before mules; the recovery choices match what was taken.
+## The ox the raiders killed is still meat: butchering it by hand takes the day but no bullet.
+func _adapt_arrows(content: Dictionary) -> void:
+	var rules: Dictionary=provisions.data.ox_slaughter
+	var factor: float=float(rules.minimum_yield_factor)+(1.0-float(rules.minimum_yield_factor))*float(state.ox_health)/100.0
+	var meat: int=floori(float(rules.usable_meat_lb)*factor*_butcher_factor())
+	content.choices.insert(0,{"label":"Butcher the dead ox · 1 day, about %d lb of meat" % meat,"carcass_meat":meat,"carcass_animal":"ox","effects":{},"result":"You butcher the ox where it fell."})
 func _adapt_horse_thieves(content: Dictionary) -> void:
 	var kind: String="horses" if Mounts.count(state,"horses")>0 else "mules"
 	var taken: int=mini(2,Mounts.count(state,kind))
@@ -2159,6 +2206,10 @@ func river_frozen() -> bool:
 func road_closed(place: String) -> bool:
 	return state.vehicle!="foot" and route.nodes.has(place) and route.nodes[place].get("wagon_closed_months",[]).any(func(m):return int(m)==int(calendar().month))
 ## Wagons wait until a pack trail has been made into a wagon road; walkers and riders can go now.
+## True once this year's date is past MM-DD.
+func road_late(after: String) -> bool:
+	var date: Dictionary=calendar()
+	return "%02d-%02d" % [int(date.month),int(date.day)]>after
 func wagon_road_unopened(opens: String) -> bool:
 	var date: Dictionary=calendar()
 	return state.vehicle!="foot" and "%04d-%02d-%02d" % [int(date.year),int(date.month),int(date.day)]<opens
@@ -2220,6 +2271,7 @@ func open_local_attack(uid: String) -> bool:
 
 func adapt_travel_event(content: Dictionary) -> void:
 	if content.get("id","")=="horse_thieves":_adapt_horse_thieves(content)
+	if content.get("id","")=="arrows_in_the_stock":_adapt_arrows(content)
 	if state.vehicle!="foot" or content.get("choices",[]).size()<2:return
 	_adapt_wagonless(content)
 	if content.get("id","")=="ox_injury":

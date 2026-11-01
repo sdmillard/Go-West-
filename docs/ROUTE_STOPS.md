@@ -85,3 +85,5 @@ Late starts are the most sensitive to the random draws, so they were rerun on a 
 Over both sets (72 journeys each), late June is 42 before and 42 after, and late July is 35 before and 38 after. The journey's pace at each mile matches master.
 
 The first try, without minor camps, dropped late June and late July to 12 each. That is why the minor-camp rule exists.
+
+The Applegate South Road (November 2026) is documented in [APPLEGATE_ROAD.md](APPLEGATE_ROAD.md).
