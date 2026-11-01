@@ -435,7 +435,7 @@ func _generate_leader() -> void:
 		var swap: Variant=pool[index]
 		pool[index]=pool[other]
 		pool[other]=swap
-	leader.specials=pool.slice(0,random.randi_range(0,draft.creation_special_limit(leader)))
+	leader.specials=pool.slice(0,draft.creation_special_limit(leader))
 	var full_name: String=offer.name
 	names[0].text=full_name if full_name.length()<=14 else full_name.get_slice(" ",0)+" "+full_name.get_slice(" ",1).left(1)+"."
 	if edited_member==0:_load_companion()

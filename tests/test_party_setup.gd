@@ -34,7 +34,7 @@ func run():
 		setup.leader_generate_button.pressed.emit()
 		var leader: Dictionary=setup.draft.profiles[0]
 		if not leader.specials.is_empty() or leader.has("flaws"):rolled=true
-		if leader.specials.any(func(s):return s not in setup.draft.LEADER_SPECIALS) or leader.get("flaws",[]).any(func(f):return f in setup.draft.LEADER_EXCLUDED_FLAWS) or leader.specials.size()>setup.draft.creation_special_limit(leader):legal=false
+		if leader.specials.any(func(s):return s not in setup.draft.LEADER_SPECIALS) or leader.get("flaws",[]).any(func(f):return f in setup.draft.LEADER_EXCLUDED_FLAWS) or leader.specials.size()!=setup.draft.creation_special_limit(leader):legal=false
 		var shown: Array=setup.special_checks.keys().filter(func(s):return setup.special_checks[s].button_pressed)
 		var expected: Array=leader.specials.duplicate()
 		expected.sort()
