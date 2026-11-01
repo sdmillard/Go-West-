@@ -351,9 +351,11 @@ func _arrive_landmark(revisit: bool=false,roll_stage: bool=true) -> void:
 				leave["edge"] = index
 			if road.has("effects"):
 				leave["effects"] = road.effects.duplicate()
-			if route.nodes[road.to].has("wagon_closed_months"):
-				leave["seasonal_road"]=road.to
-				leave.label+=" · snowbound to wagons %s" % closed_months_text(road.to)
+			# A road can close with a pass beyond its first stop (the Barlow road from The Dalles).
+			var closes: String=str(road.get("closed_with",road.to))
+			if route.nodes[closes].has("wagon_closed_months"):
+				leave["seasonal_road"]=closes
+				leave.label+=" · snowbound to wagons %s" % closed_months_text(closes)
 			# A road broken by pack trains before wagons could use it (Hensley's 1848 Salt Lake cutoff).
 			# A road that only a party early in the season should start (the South Road's passes and canyon).
 			if road.has("late_after") and road_late(str(road.late_after)):leave.label+=" · late in the year for this road; snow on the passes from November"

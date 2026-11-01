@@ -23,6 +23,8 @@ const FPS := 12.0
 # River crossings are drawn in a three-quarter view on a 720x300 world that the view pans across.
 # Sprite frames are placed by their anchor, the ground point under the rear of the piece.
 const CROSSING = preload("res://art/pixels/river_crossing.png")
+## The crossing world's banks by country (route.json crossing_country): cottonwood prairie by default.
+const CROSSING_COUNTRY = {"sage": preload("res://art/pixels/river_crossing_sage.png"), "pine": preload("res://art/pixels/river_crossing_pine.png"), "oak": preload("res://art/pixels/river_crossing_oak.png")}
 const CROSS_WAGON = preload("res://art/pixels/cross_wagon.png") # 64x48; rows: team, wading, alone, floating
 const CROSS_SWIM_OX = preload("res://art/pixels/cross_swim_ox.png") # 32x24
 const CROSS_RAFT = preload("res://art/pixels/cross_raft.png")
@@ -631,11 +633,13 @@ func _draw_crossing() -> void:
 	var method: String = "ferry" if crossing.method == "seized" else crossing.method
 	# The Kansas runs yellow-brown with silt, matching its location picture; the others run clearer.
 	var silty: bool = crossing.get("place", "") == "Kansas River"
-	var water := Color("a38b64") if silty else Color("3d7f99")
+	# Glacier flour turns the White River milky grey-green.
+	var glacial: bool = crossing.get("place", "") == "White River crossing"
+	var water := Color("a38b64") if silty else (Color("8aa39b") if glacial else Color("3d7f99"))
 	# Snowmelt high water runs fast, swollen and muddier, over the gravel at its edges.
 	var high: bool = crossing.get("stage", "") == "high"
 	if high:
-		water = Color("8f7a58") if silty else Color("5a7c7c")
+		water = Color("8f7a58") if silty else (Color("98a59a") if glacial else Color("5a7c7c"))
 	var cam := _camera()
 	draw_set_transform(-cam)
 	draw_rect(Rect2(cam, Vector2(432, 150)), water)
@@ -647,7 +651,7 @@ func _draw_crossing() -> void:
 		var length := 2 + i % 3
 		for k in range(length):
 			_water_rect(Rect2(sx + k * 2, sy + k, 3, 1), Color("afd5ce") if i % 4 else Color("f6e7bc"))
-	draw_texture(CROSSING, Vector2.ZERO)
+	draw_texture(CROSSING_COUNTRY.get(crossing.get("country", ""), CROSSING), Vector2.ZERO)
 	if high:
 		_draw_high_water(water)
 	var phase := _crossing_phase()
