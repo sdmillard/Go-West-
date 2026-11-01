@@ -249,7 +249,9 @@ func restore(value: Variant):
 	if not game.error.is_empty():
 		return null
 	# Records from before the 1848 road gained its new stops: walk them onto the split roads.
-	if migrated or economy_migrated:upgrade_split_roads(value,s,game.route)
+	if migrated or economy_migrated:
+		upgrade_split_roads(value,s,game.route)
+		upgrade_new_crossings(value,game.route)
 	if not (migrated or economy_migrated) and (not value.has("livestock") or not value.has("team_conditions")):return null
 	var stock: Variant=value.get("livestock",{"animals":[],"products":[],"next_id":0,"care":true})
 	if egg_boundary_migrated and stock is Dictionary and stock.get("animals") is Array:
@@ -562,6 +564,17 @@ func restore(value: Variant):
 	error = ""
 	return game
 
+## Big Vermilion was a minor camp before it became a crossing (November 2026): a record saved
+## at its stop keeps its menu but loses the spare miles only a minor camp gives.
+static func upgrade_new_crossings(value: Dictionary,route) -> void:
+	for key in ["pending","service_return"]:
+		var menu: Variant=value.get(key)
+		if menu is Dictionary and menu.get("outing_warning",false) and menu.get("resume") is Dictionary:menu=menu.resume
+		if menu is Dictionary and menu.has("day_miles_left") and route.nodes.has(str(menu.get("landmark",""))) and not route.nodes[menu.landmark].get("minor",false):
+			menu.erase("day_miles_left");menu.erase("arrived_day")
+			for choice in menu.get("choices",[]):
+				if choice is Dictionary and choice.get("label") is String:choice.label=choice.label.get_slice(" · about ",0)
+
 ## A saved state as restore() leaves it: normalized, with the arms an older journey set out with.
 func upgraded_state(state: Dictionary) -> Dictionary:
 	var s: Dictionary=normalize(state)
@@ -569,14 +582,15 @@ func upgraded_state(state: Dictionary) -> Dictionary:
 	upgrade_split_roads({},s,preload("res://simulation/route_catalog.gd").new())
 	return s
 
-## The stops added inside an older road (October 2026), or null when a and b were never one road apart.
+## The stops added inside an older road (camps October 2026, crossings November 2026), or null when a and b were never one road apart.
 static func bridge(route,a: String,b: String,depth: int=4) -> Variant:
 	if not route.nodes.has(a) or not route.nodes.has(b):return null
 	for edge in route.nodes[a].next:
 		if edge.to==b:return []
 	if depth<=1:return null
 	for edge in route.nodes[a].next:
-		if route.nodes[edge.to].kind!="camp":continue
+		# Camps were added inside older roads in October 2026, crossings in November 2026.
+		if route.nodes[edge.to].kind not in ["camp","river"]:continue
 		var rest: Variant=bridge(route,str(edge.to),b,depth-1)
 		if rest!=null:return [str(edge.to)]+rest
 	return null

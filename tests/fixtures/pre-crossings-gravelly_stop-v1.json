@@ -1,0 +1,1022 @@
+{
+  "camp_repair": {
+
+  },
+  "camp_tasks": {
+
+  },
+  "characters": [
+    {
+      "appearance": {
+        "clothing": "Red",
+        "hair": "Gray",
+        "heritage": "French Canadian",
+        "outfit": 1,
+        "skin": "Tan"
+      },
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": []
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 0,
+      "memories": [],
+      "relationship": "self",
+      "skill": "Leadership",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [],
+      "trust": 50
+    },
+    {
+      "appearance": {
+        "clothing": "Green",
+        "hair": "Black",
+        "heritage": "Mexican",
+        "outfit": 0,
+        "skin": "Fair"
+      },
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": [
+          "murder"
+        ]
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 1,
+      "memories": [],
+      "relationship": "fellow_traveler",
+      "skill": "Leatherworking",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [
+        "Bold",
+        "Pragmatic"
+      ],
+      "trust": 50
+    },
+    {
+      "appearance": {
+        "clothing": "Plum",
+        "hair": "Gray",
+        "heritage": "Scottish American",
+        "outfit": 1,
+        "skin": "Fair"
+      },
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": [
+          "murder"
+        ]
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 2,
+      "memories": [],
+      "relationship": "fellow_traveler",
+      "skill": "Carpentry",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [
+        "Bold",
+        "Pragmatic"
+      ],
+      "trust": 50
+    },
+    {
+      "appearance": {
+        "clothing": "Plum",
+        "hair": "Chestnut",
+        "heritage": "Irish American",
+        "outfit": 1,
+        "skin": "Fair"
+      },
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": [
+          "robbery",
+          "murder",
+          "cannibalism"
+        ]
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 3,
+      "memories": [],
+      "relationship": "fellow_traveler",
+      "skill": "Hunting",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [
+        "Bold",
+        "Compassionate"
+      ],
+      "trust": 50
+    },
+    {
+      "appearance": {
+        "clothing": "Red",
+        "hair": "Gray",
+        "heritage": "Mexican",
+        "outfit": 0,
+        "skin": "Tan"
+      },
+      "boundaries": {
+        "approved": [],
+        "disapproved": [],
+        "forbidden": [
+          "murder"
+        ]
+      },
+      "can_betray": false,
+      "contract": {
+
+      },
+      "exit_warning": {
+
+      },
+      "id": 4,
+      "memories": [],
+      "relationship": "fellow_traveler",
+      "skill": "Trading",
+      "specials": [],
+      "thresholds": {
+        "betrayal": 10,
+        "breaking": 20,
+        "loyalty": 80
+      },
+      "traits": [
+        "Cautious",
+        "Pragmatic"
+      ],
+      "trust": 50
+    }
+  ],
+  "characters_version": 5,
+  "combat_history": [],
+  "context": {
+    "activities": [],
+    "prepared": [],
+    "spent": {
+
+    }
+  },
+  "crime": {
+    "random": "123013194191326966",
+    "record": {
+      "active": {
+
+      },
+      "actors": {
+        "carrier:native:columbia_raft": {
+          "health": 100,
+          "place": "native:columbia_raft",
+          "role": "carrier",
+          "uid": "carrier:native:columbia_raft"
+        },
+        "child:native:fort_hall": {
+          "health": 100,
+          "place": "native:fort_hall",
+          "role": "grown child",
+          "uid": "child:native:fort_hall"
+        },
+        "child:native:platte": {
+          "health": 100,
+          "place": "native:platte",
+          "role": "grown child",
+          "uid": "child:native:platte"
+        },
+        "child:native:the_dalles": {
+          "health": 100,
+          "place": "native:the_dalles",
+          "role": "grown child",
+          "uid": "child:native:the_dalles"
+        },
+        "child:native:umatilla": {
+          "health": 100,
+          "place": "native:umatilla",
+          "role": "grown child",
+          "uid": "child:native:umatilla"
+        },
+        "clerk:fort_laramie": {
+          "health": 100,
+          "place": "fort_laramie",
+          "role": "clerk",
+          "uid": "clerk:fort_laramie"
+        },
+        "corporal:fort_kearny": {
+          "health": 100,
+          "place": "fort_kearny",
+          "role": "corporal of the guard",
+          "uid": "corporal:fort_kearny"
+        },
+        "hand:fort_boise": {
+          "health": 100,
+          "place": "fort_boise",
+          "role": "hired hand",
+          "uid": "hand:fort_boise"
+        },
+        "hand:fort_bridger": {
+          "health": 100,
+          "place": "fort_bridger",
+          "role": "hired hand",
+          "uid": "hand:fort_bridger"
+        },
+        "hand:fort_hall": {
+          "health": 100,
+          "place": "fort_hall",
+          "role": "hired hand",
+          "uid": "hand:fort_hall"
+        },
+        "hand:fort_laramie": {
+          "health": 100,
+          "place": "fort_laramie",
+          "role": "hired hand",
+          "uid": "hand:fort_laramie"
+        },
+        "hand:fort_walla_walla": {
+          "health": 100,
+          "place": "fort_walla_walla",
+          "role": "hired hand",
+          "uid": "hand:fort_walla_walla"
+        },
+        "hand:independence": {
+          "health": 100,
+          "place": "independence",
+          "role": "hired hand",
+          "uid": "hand:independence"
+        },
+        "hand:kansas_river": {
+          "health": 100,
+          "place": "kansas_river",
+          "role": "ferry hand",
+          "uid": "hand:kansas_river"
+        },
+        "hand:native:columbia_raft": {
+          "health": 100,
+          "place": "native:columbia_raft",
+          "role": "crew hand",
+          "uid": "hand:native:columbia_raft"
+        },
+        "hand:salt_lake": {
+          "health": 100,
+          "place": "salt_lake",
+          "role": "hired hand",
+          "uid": "hand:salt_lake"
+        },
+        "herder:native:grande_ronde": {
+          "health": 100,
+          "place": "native:grande_ronde",
+          "role": "herder",
+          "uid": "herder:native:grande_ronde"
+        },
+        "keeper:barlow_pass": {
+          "health": 100,
+          "place": "barlow_pass",
+          "role": "gatekeeper",
+          "uid": "keeper:barlow_pass"
+        },
+        "keeper:fort_boise": {
+          "health": 100,
+          "place": "fort_boise",
+          "role": "keeper",
+          "uid": "keeper:fort_boise"
+        },
+        "keeper:fort_bridger": {
+          "health": 100,
+          "place": "fort_bridger",
+          "role": "keeper",
+          "uid": "keeper:fort_bridger"
+        },
+        "keeper:fort_hall": {
+          "health": 100,
+          "place": "fort_hall",
+          "role": "keeper",
+          "uid": "keeper:fort_hall"
+        },
+        "keeper:fort_kearny": {
+          "health": 100,
+          "place": "fort_kearny",
+          "role": "commissary sergeant",
+          "uid": "keeper:fort_kearny"
+        },
+        "keeper:fort_laramie": {
+          "health": 100,
+          "place": "fort_laramie",
+          "role": "keeper",
+          "uid": "keeper:fort_laramie"
+        },
+        "keeper:fort_walla_walla": {
+          "health": 100,
+          "place": "fort_walla_walla",
+          "role": "keeper",
+          "uid": "keeper:fort_walla_walla"
+        },
+        "keeper:independence": {
+          "health": 100,
+          "place": "independence",
+          "role": "keeper",
+          "uid": "keeper:independence"
+        },
+        "keeper:kansas_river": {
+          "health": 100,
+          "place": "kansas_river",
+          "role": "ferryman",
+          "uid": "keeper:kansas_river"
+        },
+        "keeper:native:columbia_raft": {
+          "health": 100,
+          "place": "native:columbia_raft",
+          "role": "load organizer",
+          "uid": "keeper:native:columbia_raft"
+        },
+        "keeper:native:deschutes": {
+          "health": 100,
+          "place": "native:deschutes",
+          "role": "river pilot",
+          "uid": "keeper:native:deschutes"
+        },
+        "keeper:native:fort_hall": {
+          "health": 100,
+          "place": "native:fort_hall",
+          "role": "provision trader",
+          "uid": "keeper:native:fort_hall"
+        },
+        "keeper:native:grande_ronde": {
+          "health": 100,
+          "place": "native:grande_ronde",
+          "role": "horse owner",
+          "uid": "keeper:native:grande_ronde"
+        },
+        "keeper:native:platte": {
+          "health": 100,
+          "place": "native:platte",
+          "role": "provision keeper",
+          "uid": "keeper:native:platte"
+        },
+        "keeper:native:the_dalles": {
+          "health": 100,
+          "place": "native:the_dalles",
+          "role": "provision seller",
+          "uid": "keeper:native:the_dalles"
+        },
+        "keeper:native:umatilla": {
+          "health": 100,
+          "place": "native:umatilla",
+          "role": "garden keeper",
+          "uid": "keeper:native:umatilla"
+        },
+        "keeper:salt_lake": {
+          "health": 100,
+          "place": "salt_lake",
+          "role": "keeper",
+          "uid": "keeper:salt_lake"
+        },
+        "private:fort_kearny": {
+          "health": 100,
+          "place": "fort_kearny",
+          "role": "private",
+          "uid": "private:fort_kearny"
+        },
+        "relative:native:deschutes": {
+          "health": 100,
+          "place": "native:deschutes",
+          "role": "relative",
+          "uid": "relative:native:deschutes"
+        },
+        "relative:native:fort_hall": {
+          "health": 100,
+          "place": "native:fort_hall",
+          "role": "relative",
+          "uid": "relative:native:fort_hall"
+        },
+        "relative:native:grande_ronde": {
+          "health": 100,
+          "place": "native:grande_ronde",
+          "role": "relative",
+          "uid": "relative:native:grande_ronde"
+        },
+        "relative:native:platte": {
+          "health": 100,
+          "place": "native:platte",
+          "role": "relative",
+          "uid": "relative:native:platte"
+        },
+        "relative:native:the_dalles": {
+          "health": 100,
+          "place": "native:the_dalles",
+          "role": "relative",
+          "uid": "relative:native:the_dalles"
+        },
+        "relative:native:umatilla": {
+          "health": 100,
+          "place": "native:umatilla",
+          "role": "relative",
+          "uid": "relative:native:umatilla"
+        },
+        "sentry:fort_kearny": {
+          "health": 100,
+          "place": "fort_kearny",
+          "role": "sentry",
+          "uid": "sentry:fort_kearny"
+        }
+      },
+      "attacks": [],
+      "betrayals": [],
+      "bonds": [
+        {
+          "a": 1,
+          "b": 2,
+          "kind": "friend"
+        },
+        {
+          "a": 1,
+          "b": 3,
+          "kind": "friend"
+        },
+        {
+          "a": 2,
+          "b": 4,
+          "kind": "rival"
+        }
+      ],
+      "bounties": [],
+      "human_food": [],
+      "incidents": [],
+      "meals": {
+
+      },
+      "people": {
+        "party:57:original:0": {
+          "name": "A",
+          "slot": 0
+        },
+        "party:57:original:1": {
+          "name": "B",
+          "slot": 1
+        },
+        "party:57:original:2": {
+          "name": "C",
+          "slot": 2
+        },
+        "party:57:original:3": {
+          "name": "D",
+          "slot": 3
+        },
+        "party:57:original:4": {
+          "name": "E",
+          "slot": 4
+        }
+      },
+      "remains": [],
+      "reports": [],
+      "services": {
+        "barlow_pass": {
+          "alarmed": false,
+          "cash_cents": 4000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:barlow_pass",
+          "staff": [
+            "keeper:barlow_pass"
+          ]
+        },
+        "fort_boise": {
+          "alarmed": false,
+          "cash_cents": 3000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:fort_boise",
+          "staff": [
+            "keeper:fort_boise",
+            "hand:fort_boise"
+          ]
+        },
+        "fort_bridger": {
+          "alarmed": false,
+          "cash_cents": 5000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:fort_bridger",
+          "staff": [
+            "keeper:fort_bridger",
+            "hand:fort_bridger"
+          ]
+        },
+        "fort_hall": {
+          "alarmed": false,
+          "cash_cents": 4000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:fort_hall",
+          "staff": [
+            "keeper:fort_hall",
+            "hand:fort_hall"
+          ]
+        },
+        "fort_kearny": {
+          "alarmed": false,
+          "cash_cents": 2500,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:fort_kearny",
+          "staff": [
+            "keeper:fort_kearny",
+            "sentry:fort_kearny",
+            "corporal:fort_kearny",
+            "private:fort_kearny"
+          ]
+        },
+        "fort_laramie": {
+          "alarmed": false,
+          "cash_cents": 6000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:fort_laramie",
+          "staff": [
+            "keeper:fort_laramie",
+            "clerk:fort_laramie",
+            "hand:fort_laramie"
+          ]
+        },
+        "fort_walla_walla": {
+          "alarmed": false,
+          "cash_cents": 4000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:fort_walla_walla",
+          "staff": [
+            "keeper:fort_walla_walla",
+            "hand:fort_walla_walla"
+          ]
+        },
+        "independence": {
+          "alarmed": false,
+          "cash_cents": 5000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:independence",
+          "staff": [
+            "keeper:independence",
+            "hand:independence"
+          ]
+        },
+        "kansas_river": {
+          "alarmed": false,
+          "cash_cents": 1500,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:kansas_river",
+          "staff": [
+            "keeper:kansas_river",
+            "hand:kansas_river"
+          ]
+        },
+        "native:columbia_raft": {
+          "alarmed": false,
+          "cash_cents": 0,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:native:columbia_raft",
+          "staff": [
+            "keeper:native:columbia_raft",
+            "carrier:native:columbia_raft",
+            "hand:native:columbia_raft"
+          ]
+        },
+        "native:deschutes": {
+          "alarmed": false,
+          "cash_cents": 0,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:native:deschutes",
+          "staff": [
+            "keeper:native:deschutes",
+            "relative:native:deschutes"
+          ]
+        },
+        "native:fort_hall": {
+          "alarmed": false,
+          "cash_cents": 0,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:native:fort_hall",
+          "staff": [
+            "keeper:native:fort_hall",
+            "relative:native:fort_hall",
+            "child:native:fort_hall"
+          ]
+        },
+        "native:grande_ronde": {
+          "alarmed": false,
+          "cash_cents": 0,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:native:grande_ronde",
+          "staff": [
+            "keeper:native:grande_ronde",
+            "herder:native:grande_ronde",
+            "relative:native:grande_ronde"
+          ]
+        },
+        "native:platte": {
+          "alarmed": false,
+          "cash_cents": 0,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:native:platte",
+          "staff": [
+            "keeper:native:platte",
+            "relative:native:platte",
+            "child:native:platte"
+          ]
+        },
+        "native:the_dalles": {
+          "alarmed": false,
+          "cash_cents": 0,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:native:the_dalles",
+          "staff": [
+            "keeper:native:the_dalles",
+            "relative:native:the_dalles",
+            "child:native:the_dalles"
+          ]
+        },
+        "native:umatilla": {
+          "alarmed": false,
+          "cash_cents": 0,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:native:umatilla",
+          "staff": [
+            "keeper:native:umatilla",
+            "relative:native:umatilla",
+            "child:native:umatilla"
+          ]
+        },
+        "salt_lake": {
+          "alarmed": false,
+          "cash_cents": 3000,
+          "food_sold": 0,
+          "food_taken": 0,
+          "owner": "keeper:salt_lake",
+          "staff": [
+            "keeper:salt_lake",
+            "hand:salt_lake"
+          ]
+        }
+      },
+      "version": 10
+    }
+  },
+  "crossing_history": [],
+  "days_without_fresh": 0,
+  "dogs": {
+    "dog": {
+
+    },
+    "purchased_at": []
+  },
+  "field_outings": {
+    "next_id": 1,
+    "preferences": {
+
+    },
+    "trips": []
+  },
+  "format": "westward-probably",
+  "fresh": [],
+  "health_events": [],
+  "health_random": "-8147447316415321669",
+  "income": {
+    "keepsakes": {
+
+    },
+    "work": {
+
+    }
+  },
+  "journal": [
+    "Independence, 1848. Outfit your wagon.",
+    "Departed 6 1, 1848 as a banker. Party: A, B, C, D, E.",
+    "Supplies cost $450.60. Cash remaining: $1024.40.",
+    "Day 80 · Reached Gravelly Ford. Guide mileage: 0."
+  ],
+  "last_crossing": {
+
+  },
+  "last_events": {
+
+  },
+  "livestock": {
+    "animals": [],
+    "care": true,
+    "next_id": 0,
+    "products": [],
+    "share_scraps": false
+  },
+  "native_contacts": {
+
+  },
+  "outings": 0,
+  "party": [
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 85,
+      "history": [],
+      "id": 0,
+      "name": "A"
+    },
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 85,
+      "history": [],
+      "id": 1,
+      "name": "B"
+    },
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 85,
+      "history": [],
+      "id": 2,
+      "name": "C"
+    },
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 85,
+      "history": [],
+      "id": 3,
+      "name": "D"
+    },
+    {
+      "alive": true,
+      "cause": "",
+      "conditions": [],
+      "death_day": -1,
+      "health": 85,
+      "history": [],
+      "id": 4,
+      "name": "E"
+    }
+  ],
+  "pending": {
+    "approach_direction": "west",
+    "choices": [
+      {
+        "action": "leave",
+        "label": "Continue toward Applegate turnoff"
+      },
+      {
+        "action": "rest",
+        "label": "Rest here · 1 day, food consumed"
+      }
+    ],
+    "id": "stop_gravelly_ford",
+    "landmark": "gravelly_ford",
+    "text": "A gravel bar lets the wagons cross the Humboldt. Willows and rye grass line the river, and there is nothing else for fuel or shade. Guards sit up with the cattle every night along this stretch.",
+    "title": "Gravelly Ford"
+  },
+  "rafting_history": [],
+  "random": "3937041516539914903",
+  "recruitment": {
+    "searches": {
+
+    },
+    "slots": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "route_end": "oregon_city",
+  "route_path": [
+    "independence",
+    "elm_grove",
+    "wakarusa",
+    "kansas_river",
+    "big_vermilion",
+    "big_blue",
+    "little_blue",
+    "platte",
+    "fort_kearny",
+    "south_platte",
+    "ash_hollow",
+    "courthouse_rock",
+    "chimney_rock",
+    "scotts_bluff",
+    "fort_laramie",
+    "horseshoe_creek",
+    "deer_creek",
+    "north_platte",
+    "willow_spring",
+    "independence_rock",
+    "devils_gate",
+    "south_pass",
+    "little_sandy",
+    "green_river",
+    "fort_bridger",
+    "bear_river",
+    "soda_springs",
+    "fort_hall",
+    "american_falls",
+    "raft_river",
+    "city_of_rocks",
+    "humboldt_wells",
+    "gravelly_ford"
+  ],
+  "rules": "b961c0954e58bf16820c72e6725d90ece34b53fe115619a3171b8e93b99388e0",
+  "seen": [],
+  "service_return": {
+
+  },
+  "social": {
+    "last_day": 0,
+    "pairs": [
+      {
+        "a": 1,
+        "affinity": 45,
+        "b": 2,
+        "history": []
+      },
+      {
+        "a": 1,
+        "affinity": 45,
+        "b": 3,
+        "history": []
+      },
+      {
+        "a": 1,
+        "affinity": 0,
+        "b": 4,
+        "history": []
+      },
+      {
+        "a": 2,
+        "affinity": 0,
+        "b": 3,
+        "history": []
+      },
+      {
+        "a": 2,
+        "affinity": -45,
+        "b": 4,
+        "history": []
+      },
+      {
+        "a": 3,
+        "affinity": 0,
+        "b": 4,
+        "history": []
+      }
+    ],
+    "romance": true
+  },
+  "state": {
+    "arms_home": 5,
+    "axles": 1,
+    "bison_hide": 0,
+    "bullets": 200,
+    "clothing": 5,
+    "day": 80,
+    "deer_hide": 0,
+    "departure_month": 6,
+    "extended_route": true,
+    "fatigue": 0,
+    "food": 1700,
+    "fuel": 0,
+    "hatchets": 0,
+    "health": 85,
+    "items": [],
+    "knives": 5,
+    "landmark": "gravelly_ford",
+    "leg_length": 90,
+    "leg_miles": 89,
+    "loss_reason": "",
+    "medicine": 2,
+    "miles": 0,
+    "mode": "classic",
+    "money": 1024.4,
+    "next_landmark": "gravelly_ford",
+    "ox_health": 100,
+    "oxen": 6,
+    "pace": 0,
+    "parts": 3,
+    "party": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ],
+    "party_size": 5,
+    "pistols": 0,
+    "profession": "banker",
+    "rabbit_pelt": 0,
+    "rations": 2,
+    "revolvers": 0,
+    "rifles": 5,
+    "river_stage": "",
+    "salt": 10,
+    "seed": 57,
+    "shotguns": 0,
+    "status": "traveling",
+    "terrain": "plains",
+    "tongues": 1,
+    "vehicle": "wagon",
+    "weather": "Clear",
+    "wheels": 1
+  },
+  "supply_history": [],
+  "survival_random": "1360573283353127490",
+  "team_conditions": {
+    "custom": false,
+    "horses": [],
+    "mules": [],
+    "oxen": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "working": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "version": 1,
+  "wagon_cache": {
+
+  },
+  "weather": {
+    "exposure": 0,
+    "id": "clear",
+    "label": "Clear",
+    "speed": 1,
+    "weight": 50,
+    "wet": 0
+  },
+  "wet_ground": 0
+}

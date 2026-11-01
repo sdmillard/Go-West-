@@ -83,6 +83,9 @@ for _, n in ipairs({"horseshoe_creek", "bear_river", "blue_mountains", "grande_r
     "fandango_pass"}) do REGION[n] = "mountain" end
 -- the oak valleys of the Applegate road: grass cured to straw, oaks turning brown and gold
 for _, n in ipairs({"rogue_valley", "umpqua_valley"}) do REGION[n] = "plains" end
+-- river crossings added later: the Laramie ford on the Platte plains, the Weber and the White
+-- River in the mountains, the Bear River of Hensley's cutoff in sage country
+REGION.laramie_ford = "plains"; REGION.weber_river = "mountain"; REGION.white_river = "mountain"; REGION.bear_river_ford = "sage"
 for _, n in ipairs({"eagle_creek", "oregon_city", "columbia_raft", "south_willamette"}) do REGION[n] = "west" end
 -- the southern Cascades of the Applegate road: mountain meadows, but fir and pine with no larch
 for _, n in ipairs({"green_springs", "canyon_creek"}) do REGION[n] = "cascade" end

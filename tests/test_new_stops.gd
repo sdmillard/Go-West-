@@ -22,8 +22,8 @@ func at(stop: String,date: String,foot: bool=false):
 	if foot:game.state.vehicle="foot"
 	game.state.day=int((Time.get_unix_time_from_datetime_string(date+"T00:00:00")-Time.get_unix_time_from_datetime_string("1848-06-01T00:00:00"))/86400)
 	if stop=="salt_lake":
-		game.route_path=game.route.main_path_to("fort_bridger")
-		game.state.landmark="fort_bridger"
+		game.route_path=game.route.main_path_to("fort_bridger")+["weber_river"]
+		game.state.landmark="weber_river"
 	game.state.next_landmark=stop
 	game._arrive_landmark()
 	return game
@@ -41,26 +41,26 @@ func run():
 		check(id in path,"The main road passes %s" % id)
 	check(not route.edge_between("greenwood_cutoff","bear_river").is_empty() and not route.edge_between("fort_walla_walla","umatilla_mouth").is_empty(),"Greenwood's cutoff and the Walla Walla road rejoin at the new junctions")
 	# A minor camp reached early in the day costs no travel time if the party leaves at once.
-	check(NEW.filter(func(id):return route.nodes[id].get("minor",false)).size()==11 and not route.nodes.salt_lake.get("minor",false),"The eleven road camps are minor stops; Salt Lake is not")
-	var walk=at("kansas_river","1848-06-10")
+	check(NEW.filter(func(id):return route.nodes[id].get("minor",false)).size()==10 and not route.nodes.salt_lake.get("minor",false) and route.nodes.big_vermilion.kind=="river","The ten road camps are minor stops; Salt Lake is not, and Big Vermilion is a crossing")
+	var walk=at("big_blue","1848-06-10")
 	walk.pending={}
-	walk.state.merge({"next_landmark":"big_vermilion","leg_length":79,"leg_miles":76},true)
+	walk.state.merge({"next_landmark":"little_blue","leg_length":70,"leg_miles":67},true)
 	var day: int=walk.state.day
 	walk.travel()
-	check(walk.pending.get("landmark","")=="big_vermilion" and int(walk.pending.get("day_miles_left",0))>0,"Reaching Big Vermilion early leaves miles in the day")
+	check(walk.pending.get("landmark","")=="little_blue" and int(walk.pending.get("day_miles_left",0))>0,"Reaching the Little Blue early leaves miles in the day")
 	var spare: int=int(walk.pending.day_miles_left)
 	var miles: int=walk.state.miles
 	walk.choose(onward(walk))
-	check(walk.state.day==day+1 and walk.state.miles==miles+mini(spare,13) and walk.state.next_landmark=="big_blue","Leaving at once makes the rest of the day's miles (day %d/%d miles %d/%d+%d next %s pending %s)" % [walk.state.day,day+1,walk.state.miles,miles,spare,walk.state.next_landmark,walk.pending.get("title","")])
-	var stay=at("kansas_river","1848-06-10")
+	check(walk.state.day==day+1 and walk.state.miles==miles+mini(spare,73) and walk.state.next_landmark=="platte","Leaving at once makes the rest of the day's miles (day %d/%d miles %d/%d+%d next %s pending %s)" % [walk.state.day,day+1,walk.state.miles,miles,spare,walk.state.next_landmark,walk.pending.get("title","")])
+	var stay=at("big_blue","1848-06-10")
 	stay.pending={}
-	stay.state.merge({"next_landmark":"big_vermilion","leg_length":79,"leg_miles":76},true)
+	stay.state.merge({"next_landmark":"little_blue","leg_length":70,"leg_miles":67},true)
 	stay.travel()
 	for index in range(stay.pending.choices.size()):
 		if stay.pending.choices[index].get("action","")=="rest":
 			stay.choose(index)
 			break
-	stay.pending={"landmark":"big_vermilion"} if stay.pending.is_empty() else stay.pending
+	stay.pending={"landmark":"little_blue"} if stay.pending.is_empty() else stay.pending
 	var before: int=stay.state.miles
 	stay.choose(onward(stay))
 	check(stay.state.miles==before and stay.state.leg_miles==0,"A party that spends the day at the camp starts fresh tomorrow (%d/%d leg %d, pending %s)" % [stay.state.miles,before,stay.state.leg_miles,stay.pending.get("title","")])
@@ -69,10 +69,11 @@ func run():
 	forged.pending={"id":"x","title":"x","text":"x","choices":[{"label":"x"}],"day_miles_left":5}
 	check(Store.new().restore(JSON.parse_string(JSON.stringify(forged)))==null,"Spare miles belong only to a minor camp's stop menu")
 	# Salt Lake branch.
-	var branch: Dictionary=route.edge_between("fort_bridger","salt_lake")
-	var cutoff: Dictionary=route.edge_between("salt_lake","raft_river")
+	var branch: Dictionary=route.edge_between("fort_bridger","weber_river")
+	var cutoff: Dictionary=route.edge_between("salt_lake","bear_river_ford")
+	var salt_road: int=int(branch.get("miles",0))+int(route.edge_between("weber_river","salt_lake").get("miles",0))+int(cutoff.get("miles",0))+int(route.edge_between("bear_river_ford","raft_river").get("miles",0))
 	check(not branch.is_empty() and not cutoff.is_empty() and route.nodes.fort_bridger.next[0].to=="bear_river","Salt Lake is a branch from Fort Bridger, not the main road")
-	check(branch.miles+cutoff.miles>route.remaining("fort_bridger")-route.remaining("raft_river"),"The Salt Lake road is the longer way to the Raft River")
+	check(salt_road==351 and salt_road>route.remaining("fort_bridger")-route.remaining("raft_river"),"The Salt Lake road (by the Weber and Bear River fords) is the longer way to the Raft River")
 	var bad: Dictionary=data.duplicate(true)
 	for node in bad.nodes:if node.id=="salt_lake":node.next[0].wagon_opens="1848-13-40"
 	check(not Route.new().load_data(bad),"A malformed wagon-road opening date is rejected")
