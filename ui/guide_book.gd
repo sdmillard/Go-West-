@@ -305,6 +305,7 @@ func chapter_lines(id: String,plain: bool) -> Array:
 		if chapter.get("plate") is String and ResourceLoader.exists(plate):
 			lines.append(["","blank"])
 			lines.append(["","plate",plate])
+			lines.append(["","gap"]) # an image line sits low on its baseline: keep the caption clear of it
 			for row in _wrap(str(chapter.get("caption",""))):lines.append([row,"caption"])
 		else:lines.append(["~ * ~","ornament"])
 		lines.append(["","blank"])
