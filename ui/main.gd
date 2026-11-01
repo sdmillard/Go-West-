@@ -38,7 +38,7 @@ var seed_input: SpinBox
 var travel_settings_label: Label
 var travel_button: Button
 var rest_button: Button
-var guide: AcceptDialog # GuideBook
+var guide: Window # GuideBook
 var journal_window: AcceptDialog
 var party_window: AcceptDialog
 var party_button: Button
@@ -1570,6 +1570,9 @@ func _show_guide(chapter: String="") -> void:
 	_pause_travel()
 	_refresh()
 	guide.set_game(game)
+	# The one GUIDE button opens the book where it was left, except at the Independence counter,
+	# where it opens at the outfit chapter.
+	if chapter.is_empty() and is_instance_valid(departure_view) and departure_view.visible and departure_view.scene_id=="store":chapter="outfit"
 	if not chapter.is_empty():guide.open_chapter(chapter)
 	guide.popup_centered()
 
@@ -1622,7 +1625,6 @@ func _open_departure() -> void:
 	departure_view = Departure.new(game)
 	place(departure_view, Rect2(9, 55, 622, 273))
 	departure_view.departure_requested.connect(_depart)
-	departure_view.guide_requested.connect(_show_guide)
 
 func _depart(profession: String, names: Array, month: int, cart: Dictionary) -> void:
 	if game.depart(profession, names, month, cart,departure_view.customization()):
