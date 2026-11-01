@@ -123,6 +123,20 @@ func hire(game,place: String) -> void:
 	if not person.terms.is_empty():game.characters.start_contract(game,id,int(person.terms.wage_cents),int(person.terms.interval_days))
 	game.journal.append("Day %d · %s joined the party as traveler %d." % [game.state.day,name,id+1])
 	game.health_events.append(name+" joined your party.")
+func can_sign_sailor(game) -> bool:
+	return game.state.mode=="unhinged" and game.pending.get("id","")=="beached_ship" and game.party_health.members.size()<game.MAX_TRAVELERS and record.searches.size()<128 and not record.searches.has("oddity:beached_ship")
+func sign_sailor(game) -> bool:
+	if not can_sign_sailor(game):return false
+	# Candidate generation has its own stream; meeting the ship never rolls the journey's dice.
+	var person: Dictionary=game.characters.generate_candidate(int(game.state.seed),867431,"stranger")
+	person.name="Hollis Venn"
+	person.profile.skill="Carpentry"
+	person.profile.specials.erase("Mercenary")
+	person.terms={}
+	var place: String="oddity:beached_ship"
+	record.searches[place]={"day":int(game.state.day),"candidate":person,"declined":false,"hired_id":-1}
+	hire(game,place)
+	return true
 func eligible_dismiss(game,target: int, service: bool=true) -> bool:
 	return (game.can_service() if service else game.state.status=="traveling") and target>0 and target<game.party_health.members.size() and game.party_health.is_active(game.party_health.members[target])
 func open_dismiss(game,target: int) -> bool:
@@ -158,6 +172,7 @@ func valid_open_menu(game) -> bool:
 	if game.pending.get("recruit_menu",false):return game.pending.id=="recruitment" and game.pending.get("recruit_site","") is String and (game.pending.recruit_site.is_empty() or valid_site(game,game.pending.recruit_site))
 	return true
 func valid_site(game,key: String) -> bool:
+	if key=="oddity:beached_ship":return game.state.mode=="unhinged"
 	if key.begins_with("native:"):return game.native_encounters.data.sites.has(key.trim_prefix("native:"))
 	if key.begins_with("post:"):return game.route.nodes.has(key.trim_prefix("post:")) and (game.route.nodes[key.trim_prefix("post:")].kind in ["town","fort"] or game.route.nodes[key.trim_prefix("post:")].get("trade_bulk",false))
 	return (key.begins_with("passing:") or key.begins_with("emigrants:")) and key.length()<=64

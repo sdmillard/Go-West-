@@ -21,7 +21,7 @@ Classic deals nothing. Every oddity happens at most once (it goes into `seen`).
 | taco_hut | place | Elm Grove to Fort Kearny | Eat ($2, health), sack of food ($3 for 30 lb), Fire Sauce packets |
 | prairie_light | place | Fort Kearny to Fort John | Lighthouse: safe rest day, fish $1 for 20 lb |
 | onyx_sphere | place | Weber River to Salt Lake to Hensley's Bear River ford | Seen from Bridger to the Raft River; touching it costs a day, may heal |
-| beached_ship | place | Fort Kearny to Fort John | Three-master on the grass; salt pork for directions |
+| beached_ship | place | Fort Kearny to Fort John | Three-master on the grass; salt pork for directions, or recruit Hollis Venn, the ship's carpenter |
 | cul_de_sac | place | South Pass to Soda Springs | Eleven empty houses; rest a day on a lawn (people and team) |
 | laundromat | place | either side of Soda Springs | $1 wash, health |
 | round_hole | place | Fort Hall to The Dalles | Drop in bullets or food; something may come back |
@@ -41,7 +41,7 @@ Names are invented (Spencer: legally distinct names, so Novablade, Hanabi Civet,
 
 Spencer approved every item below. Build them in this order. Each one is its own PR, with tests in `tests/test_unhinged.gd`.
 
-1. **Sailor companion (beached_ship).** Add a choice "Sign on the sailor" that recruits one companion through the normal recruitment path (`simulation/party_recruitment.gd`; see how native and post recruits are added). Give them a sailing or rope background if one fits, and an invented name.
+1. **Sailor companion (beached_ship) — implemented.** "Sign on the sailor" recruits Hollis Venn through `party_recruitment.gd`'s normal hiring path. The ship's carpenter uses the existing Carpentry background (there is no sailing or rope background). No wages or extra day; ordinary recruit clothing, personal gear, relationships and permanent traveler history apply. The traveler-record/contact limits still apply, and the sailor can join only once. Offer and recruited-party saves are covered in `tests/test_unhinged.gd`. **Next: item 2.**
 2. **Cul-de-sac ending (cul_de_sac).** Add a choice "Move into a house" that settles the party there. Follow `docs/CABINS_AND_ENDINGS.md` and the settle code: add a new `state.settled` kind, an ending score factor in `data/scoring.json` (suggest the same as settling at a post), and an ending picture `location_ending_cul_de_sac`. That picture is for the Aseprite thread, or use the place picture until it exists.
 3. **Laundromat slows disease.** "Wash everything" should also lower disease onset for some days, for example `state.clean_until = day + 14`. Find the daily disease onset in `party_health.gd` or the disease clocks and scale it down while clean. Keep it modest.
 4. **The sphere on the horizon.** `game.oddities.in_view(game)` already lists `onyx_sphere` while the party is at a `visible_from` stop. Draw a big black disc on the travel horizon in `ui/trail_view.gd` (behind the ground layer), and in stop pictures, while it is in view. The sprite is for the Aseprite thread. "The compass points only at it" can be a journal line.
