@@ -133,6 +133,25 @@ func run():
 	var cash: float=float(armed.state.money)
 	check(armed.counter_checkout({"novablades":-1}) and int(armed.state.novablades)==0 and float(armed.state.money)>cash+59.0,"Selling the Novablade pays for it and it is gone")
 	check(Armory.loadout(armed.state,2)[0].blade!="novablades","Sold, it is out of the fight")
+	# The Onyx Sphere seen from miles off: it grows as you near it and is gone past the horizon.
+	var FarSphere=load("res://ui/far_sphere.gd")
+	var stops: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/map.json")).stops
+	var there: Array=[lerpf(stops.salt_lake[0],stops.bear_river_ford[0],0.4),lerpf(stops.salt_lake[1],stops.bear_river_ford[1],0.4)]
+	var near: Dictionary=FarSphere.view(stops.salt_lake,there)
+	var far: Dictionary=FarSphere.view(stops.raft_river,there)
+	check(not near.is_empty() and not far.is_empty() and int(near.size)>int(far.size)*3 and int(near.tier)<int(far.tier),"The sphere looms near Salt Lake and is a far grey dome from the Raft River")
+	check(FarSphere.view(stops.fort_laramie,there).is_empty(),"It is out of sight from Fort Laramie")
+	var plain:=Image.load_from_file("res://art/pixels/location_fort_hall.png")
+	plain.convert(Image.FORMAT_RGBA8)
+	var painted: Image=FarSphere.new().paint(plain,FarSphere.view(stops.fort_hall,there))
+	var changed:=0
+	var on_land:=0
+	for y in plain.get_height():
+		for x in plain.get_width():
+			if painted.get_pixel(x,y)!=plain.get_pixel(x,y):
+				changed+=1
+				if not FarSphere._is_sky(plain.get_pixel(x,y)):on_land+=1
+	check(changed>20 and on_land==0,"In a stop picture it is painted over the sky only (%d px, %d on land)" % [changed,on_land])
 	test_sailor()
 	test_novablade_custody()
 	print("Unhinged: %d checks, %d failures" % [checks,failures])

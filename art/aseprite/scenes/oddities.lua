@@ -37,13 +37,17 @@ K.layer("country", function()
   road({{-10, 140, 6}, {140, 132, 5}, {300, 126, 4}, {440, 120, 3}})
 end)
 K.layer("building", function()
-  -- paved lot in front, painted stall lines
-  K.rect(196, 106, 200, 16, "asphalt"); K.rect(196, 106, 200, 1, "asphalt_lt")
-  for x = 206, 386, 22 do K.rect(x, 110, 1, 10, "cream") end
-  -- low stucco block with a mission-style parapet
+  -- paved lot in front, lying flat: painted stall lines slant away from us
+  K.poly({{190, 104}, {402, 104}, {414, 124}, {180, 124}}, "asphalt")
+  K.rect(190, 104, 212, 1, "asphalt_lt")
+  for x = 204, 392, 20 do K.line(x, 106, x - 3, 113, "cream") end
+  for i = 1, 60 do K.px(190 + K.rnd(220), 105 + K.rnd(18), "asphalt_lt") end
+  K.rect(180, 124, 234, 1, "stone")
+  -- low stucco block with a mission-style parapet; its east end turned away in shade
   K.rect(214, 74, 140, 32, "hut_purple")
   K.rect(214, 74, 140, 2, "hut_purple_lt")
-  K.side_wall(354, 106, 12, 32, "hut_purple_dk", "hut_purple_dk")
+  K.poly({{354, 74}, {364, 70}, {364, 102}, {354, 106}}, "hut_purple_dk")
+  K.poly({{214, 74}, {224, 70}, {364, 70}, {354, 74}}, "hut_yellow")
   K.poly({{232, 74}, {246, 62}, {274, 62}, {288, 74}}, "hut_yellow")
   K.rect(246, 62, 28, 1, "white")
   K.rect(214, 98, 140, 8, "hut_yellow")
@@ -107,28 +111,56 @@ K.save("event_prairie_light")
 ---------------------------------------------------------------- the sphere
 K.canvas(W, H, 2203)
 K.layer("country", function()
-  K.sky(W, 100, {{20, 12, 0.8}, {360, 18, 0.9}}, "mist")
-  K.ridge(0, W - 1, 98, 102, function(x) return 10 + 6 * math.sin(x / 37) + 2 * math.sin(x / 7) end, "far_hill", "mist", "haze")
-  -- salt flat, dead white with a grey crust pattern
+  K.sky(W, 100, {{20, 12, 0.8}, {380, 22, 0.7}}, "mist")
+end)
+K.layer("sphere", function()
+  -- the salt flat first, with the far range low on the horizon
+  K.ridge(0, W - 1, 98, 102, function(x) return 7 + 4 * math.sin(x / 37) + 2 * math.sin(x / 7) end, "far_hill", "mist", "haze")
   K.rect(0, 102, W, H - 102, "white")
   for y = 102, H - 1 do for x = 0, W - 1 do if K.rnd(9) == 0 then K.px(x, y, "stone_lt") end end end
   for i = 1, 30 do local x, y = K.rnd(W), 106 + K.rnd(40); K.line(x, y, x + 6 + K.rnd(10), y + K.rnd(3) - 1, "stone_lt") end
-end)
-K.layer("sphere", function()
-  -- colossal: it fills the right of the sky and stands on the salt
-  local cx, cy, r = 290, 58, 56
-  K.ellipse(cx, 112, r + 6, 5, "stone") -- its shadow on the salt
-  K.ellipse(cx, cy, r, r, "onyx")
-  -- a soft ramp of reflected sky on the upper left, a hard window glint
-  for i = 1, 4 do K.ellipse(cx - 18 - i * 2, cy - 18 - i * 2, math.max(2, 22 - i * 5), math.max(2, 18 - i * 4), i < 3 and "onyx_hi" or "onyx_glint") end
-  K.rect(cx - 30, cy - 34, 6, 3, "white"); K.rect(cx - 28, cy - 37, 2, 2, "white")
-  -- the salt reflected along its lower rim
-  for x = cx - 40, cx + 40 do local y = cy + math.floor(math.sqrt(math.max(0, r * r - (x - cx) ^ 2))) - 1; K.px(x, y, "stone_ink") end
+  -- standing at its foot: only the bottom of the sphere is in the picture, a black curve
+  -- rising out of the top of the frame and coming down to touch the salt beside the party
+  local R, contact_x, ground = 420, 318, 122
+  local cx, cy = contact_x, ground - R
+  local function limb(y) local d = R * R - (y - cy) ^ 2; return d > 0 and cx - math.sqrt(d) or nil end
+  for y = 0, ground do
+    local lx = limb(y)
+    if lx then
+      for x = math.max(0, math.floor(lx)), W - 1 do
+        -- below its equator it faces the ground: the lower it is the more white salt it mirrors
+        local nx, ny = (x - cx) / R, (y - cy) / R
+        local c = "onyx"
+        if ny > 0.985 then c = "storm_dk" elseif ny > 0.97 then c = "onyx_hi" end
+        if ny > 0.995 then c = (nx < -0.02) and "storm" or "storm_dk" end
+        K.px(x, y, c)
+      end
+      -- a thin bright line of sky along the limb
+      K.px(math.floor(lx), y, "onyx_glint"); K.px(math.floor(lx) + 1, y, "onyx_hi")
+    end
+  end
+  -- the long gleam of the sky running down its curve, a little inside the limb
+  for y = 0, 90 do
+    local lx = limb(y)
+    if lx then
+      local t = y / 90
+      local w = math.floor(1 + 5 * math.sin(math.pi * t))
+      local x0 = math.floor(lx) + 10 + math.floor(8 * t)
+      for x = x0, x0 + w do K.px(x, y, (x - x0 > 0 and x - x0 < w and t > 0.25 and t < 0.75) and "onyx_glint" or "onyx_hi") end
+    end
+  end
+  -- the dark wedge of shade where it meets the salt
+  for x = contact_x - 60, W - 1 do
+    local lx = limb(ground - 1)
+    local y = ground + 1 + math.floor(math.max(0, (x - (contact_x - 60)) / 40))
+    for yy = ground, math.min(H - 1, y) do if x >= contact_x - 60 then K.px(x, yy, (x > contact_x - 30) and "stone_dk" or "stone") end end
+  end
 end)
 K.layer("figures", function()
-  -- the party halted far off, small against it
-  K.far_wagon(64, 124, 1); K.far_wagon(96, 128, 1)
-  K.person(130, 132, "blue", "roof"); K.person(140, 133, "red", "bonnet", true)
+  -- the party halted right beside it, at their own size
+  party(60, 140)
+  K.person(222, 132, "blue", "roof"); K.person(236, 134, "red", "bonnet", true)
+  K.person(262, 126, "brick", "rust") -- one gone up close to put a hand on it
 end)
 K.save("event_onyx_sphere")
 
@@ -211,14 +243,17 @@ K.layer("country", function()
   road({{-10, 144, 6}, {200, 134, 5}, {440, 126, 3}})
 end)
 K.layer("building", function()
-  K.rect(218, 76, 150, 36, "laundro_white"); K.side_wall(368, 112, 10, 36, "stone_lt", "stone_lt")
-  K.rect(214, 72, 158, 5, "storm_dk")
+  K.rect(218, 76, 150, 36, "laundro_white")
+  K.poly({{368, 76}, {378, 72}, {378, 108}, {368, 112}}, "stone_lt")
+  K.rect(214, 72, 158, 5, "storm_dk"); K.poly({{372, 72}, {382, 68}, {382, 72}, {372, 77}}, "storm_dk")
+  K.rect(214, 112, 168, 2, "stone") -- a concrete apron
   -- long glass front with the machines inside, round doors in a row
   K.rect(224, 82, 138, 24, "glass")
   for x = 228, 352, 14 do K.rect(x, 92, 12, 12, "laundro_white"); K.ellipse(x + 5, 98, 3, 3, "storm_lt"); K.px(x + 4, 97, "white") end
   K.rect(224, 82, 138, 1, "white")
   -- sign boards: OPEN 24 HOURS suggested by lettering blocks
   K.sign(232, 64, 60, "cream", 18); K.sign(310, 64, 48, "signal_red", 14)
+  for _, x in ipairs({240, 284, 318, 350}) do K.rect(x, 68, 1, 4, "storm_dk") end
   K.rect(290, 104, 12, 8, "glass")
 end)
 K.layer("figures", function()
@@ -255,7 +290,11 @@ K.save("event_round_hole")
 K.canvas(W, H, 2208)
 K.layer("country", function()
   K.sky(W, 88, {{50, 16, 0.9}, {290, 12, 1.1}}, "mist")
-  K.peaks(0, W - 1, 80, 90, function(x) return 22 + 12 * math.sin(x / 53 + 1) + 4 * math.sin(x / 11) end, 26)
+  -- the Wind River peaks off to the north, the pass itself a broad open saddle
+  local function top(x) return 62 - 12 * math.sin(x / 53 + 1) - 5 * math.sin(x / 17) - 2 * math.sin(x / 5) end
+  K.ridge(0, W - 1, 0, 90, function(x) return -top(x) end, "far_hill", "mist", "haze")
+  for x = 0, W - 1 do local t = math.floor(top(x) + 0.5); if t < 56 then for y = t, t + (56 - t) // 2 do K.px(x, y, ((x + y) % 4 == 0) and "mist" or "white") end end end
+  K.ridge(0, W - 1, 0, 92, function(x) return -(80 - 3 * math.sin(x / 31)) end, "sage", "haze", "teal")
   sage_ground(90)
   road({{-10, 142, 6}, {200, 128, 5}, {440, 112, 3}})
 end)
