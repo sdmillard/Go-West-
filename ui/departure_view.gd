@@ -2,7 +2,6 @@ extends Panel
 ## Party preparation and the illustrated store share one pending purchase transaction.
 signal departure_requested(profession: String, names: Array, month: int, cart: Dictionary)
 ## The store starts empty; the guide book carries the recommended outfit.
-signal guide_requested(chapter: String)
 var game
 var profession: OptionButton
 var month: OptionButton
@@ -13,8 +12,6 @@ var feedback: Label
 var depart_button: Button
 var next_button: Button
 var back_button: Button
-var guide_button: Button
-var party_guide_button: Button
 var party_layer: Control
 var shop_layer: Control
 var background: TextureRect
@@ -141,7 +138,10 @@ func _ready() -> void:
 	var leader_keepsake:=CheckBox.new();leader_keepsake.text="MY KEEPSAKE";leader_keepsake.button_pressed=true
 	leader_keepsake.tooltip_text="Bring your own 0.25 lb family keepsake. Companion choices are in EDIT."
 	leader_keepsake.toggled.connect(func(on):keepsake_choices[0]=on;_update_quote())
-	put(leader_keepsake,Rect2(382,240,110,25),party_layer)
+	# A plain tick box beside the month label: the bottom button row is full.
+	for state in ["normal","hover","pressed","hover_pressed","focus"]:leader_keepsake.add_theme_stylebox_override(state,StyleBoxEmpty.new())
+	for key in ["font_color","font_hover_color","font_pressed_color","font_hover_pressed_color","font_focus_color"]:leader_keepsake.add_theme_color_override(key,Color("45372f"))
+	put(leader_keepsake,Rect2(146,208,101,16),party_layer)
 	next_button = Button.new()
 	next_button.text = "ENTER THE STORE >"
 	next_button.pressed.connect(show_store)
@@ -175,7 +175,7 @@ func _ready() -> void:
 		put(quantity, Rect2(236, i * 18, 78, 18), stock_rows)
 		quantities[good.id] = quantity
 	totals = text("", Rect2(278, 212, 330, 24), shop_layer)
-	feedback = text("", Rect2(137, 240, 330, 29), shop_layer)
+	feedback = text("", Rect2(130, 238, 342, 34), shop_layer)
 	feedback.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	back_button = Button.new()
 	back_button.text = "< PARTY"
@@ -185,17 +185,7 @@ func _ready() -> void:
 	depart_button.text = "DEPART >"
 	depart_button.pressed.connect(_request_departure)
 	put(depart_button, Rect2(478, 242, 130, 25), shop_layer)
-	guide_button = Button.new()
-	guide_button.text = "GUIDE: OUTFIT"
-	guide_button.tooltip_text = "Open the overland guide at its chapter on the necessary outfit."
-	guide_button.pressed.connect(func(): guide_requested.emit("outfit"))
-	put(guide_button, Rect2(129, 242, 111, 25), shop_layer)
-	party_guide_button = Button.new()
-	party_guide_button.text = "GUIDE"
-	party_guide_button.tooltip_text = "Open the overland guide."
-	party_guide_button.pressed.connect(func(): guide_requested.emit("preface"))
-	put(party_guide_button, Rect2(415, 240, 74, 25), party_layer)
-	for node in [next_button, back_button, depart_button, guide_button, party_guide_button]:
+	for node in [next_button, back_button, depart_button]:
 		node.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	show_party()
 	_update_quote()
