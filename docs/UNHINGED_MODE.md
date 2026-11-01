@@ -37,9 +37,22 @@ Classic deals nothing. Every oddity happens at most once (it goes into `seen`).
 
 Names are invented (Spencer: legally distinct names, so Novablade, Hanabi Civet, Taco Hut).
 
-## Still to do
+## Handoff: what to build next (November 1, 2026)
 
-- Art: place pictures (`event_<id>`, 432 × 150, wired in `main.gd` `_event_scene` once they exist in `data/location_scenes.json`), road sprites, the sphere on the travel horizon, and the elder god (done: a realistic tear in reality, art/pixels/elder_rift.png, drawn at full window resolution; the god itself is too vast to show).
-- Deeper versions Spencer approved: a sailor from the ship joins as a companion, settling in the cul-de-sac as its own ending, clean clothes slowing disease, the compass pointing at the sphere.
+Spencer approved every item below. Build them in this order. Each one is its own PR, with tests in `tests/test_unhinged.gd`.
+
+1. **Sailor companion (beached_ship).** Add a choice "Sign on the sailor" that recruits one companion through the normal recruitment path (`simulation/party_recruitment.gd`; see how native and post recruits are added). Give them a sailing or rope background if one fits, and an invented name.
+2. **Cul-de-sac ending (cul_de_sac).** Add a choice "Move into a house" that settles the party there. Follow `docs/CABINS_AND_ENDINGS.md` and the settle code: add a new `state.settled` kind, an ending score factor in `data/scoring.json` (suggest the same as settling at a post), and an ending picture `location_ending_cul_de_sac`. That picture is for the Aseprite thread, or use the place picture until it exists.
+3. **Laundromat slows disease.** "Wash everything" should also lower disease onset for some days, for example `state.clean_until = day + 14`. Find the daily disease onset in `party_health.gd` or the disease clocks and scale it down while clean. Keep it modest.
+4. **The sphere on the horizon.** `game.oddities.in_view(game)` already lists `onyx_sphere` while the party is at a `visible_from` stop. Draw a big black disc on the travel horizon in `ui/trail_view.gd` (behind the ground layer), and in stop pictures, while it is in view. The sprite is for the Aseprite thread. "The compass points only at it" can be a journal line.
+5. **Road encounter sprites.** Each road oddity has only text on the travel strip. Draw small sprites for novablade, civet (a beige sedan towing the wagon, used while `fuel` > 0; replaces `art/pixels/corolla.png`), vending_machine, french_bison, phone_booth, frog_rain (an overlay) and mirror_train (an east-facing copy of the party's wagon). Wire them in `trail_view.gd` `match encounter`.
+6. **More oddities.** Add new entries to `data/events.json` with `"category": "absurd"`, `oddity`, `chance` (keep about 0.25) and placement fields. Use invented names only, never a real brand (Spencer: legally distinct, for example Taco Hut, Novablade, Hanabi Civet). Tell them in the same plain 1848 voice as everything else.
+
+Rules to keep:
+- Classic must deal nothing.
+- The deal uses its own RNG (`hash("oddities:%d" % seed)`); never draw from `game.rng` in `deal`.
+- Any edit to `data/*.json` rules changes the save fingerprint. Add the previous master fingerprint to `data/save_migrations.json` `economy_v1`.
+- Run `./test.ps1`. Also run `tests/chaos_journeys.gd -- --unhinged`, which forces every oddity into each bot journey.
+- Art: the place pictures are in `art/aseprite/scenes/oddities.lua`, written but not rendered yet; the Aseprite thread is rendering them for Spencer's approval. Register each one in `data/location_scenes.json` as `event_<id>`. The elder god is deliberately not pixel art (`elder_rift.png`, full window resolution).
 
 Tests: `tests/test_unhinged.gd`. `tests/chaos_journeys.gd -- --unhinged` forces every oddity into each bot journey.
