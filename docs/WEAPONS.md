@@ -16,7 +16,9 @@ Built October 31, 2026, with Spencer's decision: "Period kit, revolvers rare". A
 
 ## In a tactical fight
 
-Each traveler takes one firearm and one blade from the party's stock, in squad order (leader first). The scarcer close arms go first (Colt, shotgun, rifle, pistol; hatchet before knife), so a bought piece is always in someone's hands. Anyone left over fights with a blade or bare hands.
+Arms are still counted as party stock, but the player can hand a piece to a chosen traveler (November 1, 2026, Spencer chose "show and assign"). VIEW PARTY shows each traveler's gun and blade as icons on their row, and the selected traveler has a GUN and a BLADE picker: AUTO, any arm the party holds, or none. Picks live in `state.arms_assigned` (`{"<traveler id>": {"weapon": key or "", "blade": key or ""}}`, optional in saves).
+
+When a fight starts, `Armory.loadout_for(state, ids)` first gives each fighter their pick while the stock lasts, then shares out the rest to everyone on AUTO in squad order (leader first), scarcer close arms first (Colt, shotgun, rifle, pistol; hatchet before knife), so a bought piece is always in someone's hands. A pick that has been stolen, sold or held falls back to AUTO without being forgotten. Handing the last piece of a kind to someone takes it from whoever had it picked. Travelers who don't fight (guarding, away, unwilling) don't hold their pick back from the others. Anyone left over fights with a blade or bare hands.
 
 | Arm | Loads | Range (best / most) | Character |
 |---|---|---|---|
@@ -34,6 +36,6 @@ Each traveler takes one firearm and one blade from the party's stock, in squad o
 - Post store counters sell rifles (2 on hand), a shotgun (1), pistols (2), knives (4) and hatchets (3) at the region's prices, and buy them back for less. Only Independence sells the Colt. Passing traders and emigrant camps don't deal in arms yet.
 - A post's arms can be stolen or demanded in a robbery like its other goods.
 - Bandits can demand a Colt, shotgun, pistol or rifle among the goods. When they take the wagon, they take the spare arms in it but not each traveler's own rifle.
-- When the party is taken into custody, each accused gives up one firearm and one blade, the first in the loadout (`custody.arms`). They get them back when they walk free (discharged, bailed, fined, or sentenced without prison). This sets up jailbreak as a tactical fight.
+- When the party is taken into custody, each accused gives up the firearm and blade they carry (their pick first, `custody.arms`). They get them back when they walk free (discharged, bailed, fined, or sentenced without prison). This sets up jailbreak as a tactical fight.
 
 Tests: `tests/test_weapons.gd`.

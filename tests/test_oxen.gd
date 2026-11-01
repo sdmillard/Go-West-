@@ -141,8 +141,11 @@ func run():
 		await process_frame
 		await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png("res://docs/ox-supplies.png")
+	screen.supplies_window.hide()
+	screen.livestock_window.open(screen.game)
+	check(screen.livestock_window.find_child("SlaughterOxen",true,false)!=null and screen.supplies_window.find_child("SlaughterOxen",true,false)==null,"Slaughtering an ox is offered under Livestock, not Supplies")
 	snapshot=store.capture(screen.game)
-	screen._confirm_slaughter()
+	screen.livestock_window.find_child("SlaughterOxen",true,false).pressed.emit()
 	check(screen.slaughter_confirmation.visible and store.capture(screen.game)==snapshot,"Opening review does not kill an animal or advance time")
 	screen.slaughter_confirmation.get_cancel_button().pressed.emit()
 	screen.slaughter_confirmation.hide()

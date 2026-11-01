@@ -26,6 +26,10 @@ const SpeechBubble = preload("res://ui/speech_bubble.gd")
 var refreshing := false
 const GOODS := {"wagon":"WAGON","produce":"FRUIT/GRN","dried_produce":"DRY FRUIT","food": "FOOD LB", "bullets": "BULLETS", "medicine": "CARE KITS", "clothing": "CLOTHES", "oxen": "OXEN", "wheels": "WHEELS", "axles": "AXLES", "tongues": "TONGUES", "salt": "SALT LB", "horses": "HORSES", "mules": "MULES", "saddles": "SADDLES", "pack_saddles": "PACK SDL", "saddlebags": "SADDLEBAG", "rifles": "RIFLES", "shotguns": "SHOTGUNS", "pistols": "PISTOLS", "revolvers": "COLT", "knives": "KNIVES", "hatchets": "HATCHETS"}
 ## Each column's paper starts 20 px left of its text, leaving a gutter for the arms pictures.
+## Pictures in art/pixels/horse_icons.png and goods_icons.png (art/aseprite/scenes/), in sheet order.
+const HORSE_ICONS := ["horses", "mules", "saddles", "pack_saddles", "saddlebags"]
+const GOODS_ICONS := ["food", "bullets", "medicine", "clothing", "oxen", "wheels", "axles", "tongues", "salt", "wagon", "produce", "dried_produce", "hide", "gloves", "keepsake"]
+const LEATHER_SHORT := {"hide_scraped": "HIDE SCRP", "hide_softened": "HIDE SOFT", "buckskin": "BUCKSKIN", "glove_pieces": "GLOVE PCS", "buckskin_gloves": "GLOVES"}
 const POST_X := 236
 const PARTY_X := 438
 const ROW := 17
@@ -135,22 +139,22 @@ func open(where: String = "") -> void:
 	for i in range(store.rows.size()):
 		var row: Dictionary = store.rows[i]
 		var y := 40 + i * ROW
-		var goods: String = game.leathercraft.label_for(row.item).to_upper() if game.leathercraft.is_good(row.item) else game.income.label_for(game,row.item).to_upper() if game.income.is_keepsake(row.item) else game.provisions.data.pelts.goods.get(row.item,{}).get("short_label",GOODS.get(row.item, row.item.to_upper()))
+		var goods: String = short_name(str(row.item))
 		var unit: String = "lb" if row.item in ["food", "salt"] else "each"
 		var tip := "Buy at $%.3f or sell at $%.3f %s. You hold %d. The post can sell %d more and buy %d." % [row.buy_cents / 100.0 / row.amount, row.sell_cents / 100.0 / row.amount, "a pound" if unit == "lb" else "each", row.held, row.can_buy, row.can_sell]
 		if row.item=="wagon":tip="Empty covered wagon: no oxen, food or new household outfit. Your current belongings are loaded. One per store; team and supplies are bought separately."
 		if row.item in game.Produce.ITEMS:tip="One basket = one food unit from 4 lb fresh produce. "+("Dried: lighter, up to 90 days, less vitamin C." if row.item=="dried_produce" else "Fresh: 4 lb, spoils in 3 days, more vitamin C.")+" Only eating it helps; prices are per basket."
 		if row.item in game.provisions.data.pelts.goods:tip="Rough prepared trade skin, not a finished robe. Weight %.1f lb each. This buyer pays $%.2f each and will buy %d more; resale only." % [float(game.provisions.data.pelts.goods[row.item].weight_lb),row.sell_cents/100.0,row.can_sell]
-		if game.income.is_keepsake(row.item):tip="Personal property, %.2f lb; consent from a present trusting owner is required before sale. Manage permission through Supplies > Keepsakes. Deceased owners leave estate goods. Retaining this item until Oregon earns 100 keepsake points." % float(game.income.data.keepsake.weight_lb)
-		if game.leathercraft.is_good(row.item):tip="Crafted trade good: %.2f lb each. Sell through this counter within its remaining demand. Glove pairs do not replace a full clothing set." % float(game.leathercraft.data.goods[row.item].weight_lb)
+		if game.income.is_keepsake(row.item):tip=game.income.label_for(game,row.item)+": personal property, %.2f lb; consent from a present trusting owner is required before sale. Manage permission through Supplies > Keepsakes. Deceased owners leave estate goods. Retaining this item until Oregon earns 100 keepsake points." % float(game.income.data.keepsake.weight_lb)
+		if game.leathercraft.is_good(row.item):tip=game.leathercraft.label_for(row.item)+": crafted trade good, %.2f lb each. Sell through this counter within its remaining demand. Glove pairs do not replace a full clothing set." % float(game.leathercraft.data.goods[row.item].weight_lb)
 		# Goods move by the unit (a pound, a bullet, an ox). Counts follow the basket, so goods cross over as you choose them.
 		# A passing party prices only what it carries and what it wants; the rest shows a dash.
-		# Arms carry their small picture beside each column.
-		var arms_icon: Texture2D = preload("res://simulation/armory.gd").icon(str(row.item))
-		if arms_icon != null:
+		# Every kind of goods carries its small picture beside each column.
+		var icon: Texture2D = goods_icon(str(row.item))
+		if icon != null:
 			for column in [POST_X, PARTY_X]:
 				var picture := TextureRect.new()
-				picture.texture = arms_icon
+				picture.texture = icon
 				picture.mouse_filter = Control.MOUSE_FILTER_PASS
 				picture.tooltip_text = tip
 				put(picture, Rect2(column - 18, y, 16, 16), rows_layer)
@@ -170,8 +174,51 @@ func open(where: String = "") -> void:
 	update_news_button()
 	update_quote()
 
+## A goods name that fits the 9-letter column; the tooltip and the icon carry the rest.
+## A keepsake shows its owner's name beside the pocket-watch picture.
+func short_name(item: String) -> String:
+	if game.leathercraft.is_good(item):
+		return LEATHER_SHORT.get(item, game.leathercraft.label_for(item).to_upper())
+	if game.income.is_keepsake(item):
+		var index := int(item.trim_prefix("keepsake_"))
+		var members: Array = game.party_health.members
+		return str(members[index].name).to_upper() if index < members.size() else "FAMILY"
+	return game.provisions.data.pelts.goods.get(item, {}).get("short_label", GOODS.get(item, item.to_upper()))
+
+## The 16 x 16 store picture for a kind of goods: arms, horse gear, farm stock, or the goods sheet; null when none fits.
+func goods_icon(item: String) -> Texture2D:
+	var arms: Texture2D = preload("res://simulation/armory.gd").icon(item)
+	if arms != null:
+		return arms
+	var sheet: Texture2D = null
+	var index := HORSE_ICONS.find(item)
+	if index >= 0:
+		sheet = preload("res://art/pixels/horse_icons.png")
+	elif item in ["dairy_cows", "goats", "hens"]:
+		sheet = preload("res://art/pixels/livestock_icons.png")
+		index = ["dairy_cows", "goats", "hens"].find(item)
+	else:
+		index = GOODS_ICONS.find(item)
+		if index < 0 and game.provisions.data.pelts.goods.has(item):
+			index = GOODS_ICONS.find("hide")
+		elif index < 0 and game.leathercraft.is_good(item):
+			index = GOODS_ICONS.find("gloves" if "glove" in item else "hide")
+		elif index < 0 and game.income.is_keepsake(item):
+			index = GOODS_ICONS.find("keepsake")
+		if index < 0:
+			return null
+		sheet = preload("res://art/pixels/goods_icons.png")
+	var atlas := AtlasTexture.new()
+	atlas.atlas = sheet
+	atlas.region = Rect2(16 * index, 0, 16, 16)
+	return atlas
+
 func line(x: int, y: int, goods: String, cents: float, tip: String) -> Label:
 	var name := text(goods, Rect2(x, y + 2, 56, 16), rows_layer)
+	# Never let a long name run into the counts and prices.
+	name.clip_text = true
+	name.text_overrun_behavior = TextServer.OVERRUN_TRIM_CHAR
+	name.size = Vector2(56, 16)
 	name.tooltip_text = tip
 	name.mouse_filter = Control.MOUSE_FILTER_PASS
 	text("$%.2f" % (cents / 100.0) if cents >= 0 else "  -", Rect2(x + 85, y + 2, 38, 16), rows_layer)

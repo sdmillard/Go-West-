@@ -1,5 +1,7 @@
 extends AcceptDialog
 signal changed
+## Oxen, horses and mules are butchered through main.gd's confirmation (it knows team speed and cargo).
+signal slaughter_requested(by_hand: bool,kind: String)
 var game
 var rows:=VBoxContainer.new()
 var confirmation:=ConfirmationDialog.new()
@@ -84,6 +86,23 @@ func refresh() -> void:
   rows.add_child(pick)
  for kind in ["horses","mules"]:
   for i in range(teams[kind].size()):note("%s %d · %s (%d)" % [kind.trim_suffix("s").to_upper(),i+1,game.PartyHealth.condition_label(int(teams[kind][i])),teams[kind][i]])
+ # Emergency meat from the team itself, once lived under SUPPLIES; one place only.
+ var team_offers: Array=[]
+ var ox_offer: Dictionary=game.ox_slaughter_offer()
+ if not ox_offer.is_empty():team_offers.append(["SHOOT / BUTCHER 1 OX · %d LB · 1 BULLET · 1 DAY" % ox_offer.meat,false,"oxen","Smaller teams pull less cargo and travel slowly. No oxen means no wagon movement. Meat may spoil."])
+ var hand_offer: Dictionary=game.ox_slaughter_offer(true)
+ if not hand_offer.is_empty():team_offers.append(["BUTCHER 1 OX BY HAND · NO AMMO · %d%% INJURY RISK · 1 DAY" % roundi(hand_offer.injury_chance*100),true,"oxen","Smaller teams pull less cargo and travel slowly. No oxen means no wagon movement. Meat may spoil."])
+ for kind in game.Mounts.ANIMALS:
+  var stock_offer: Dictionary=game.mount_slaughter_offer(kind,game.state.bullets<1)
+  if stock_offer.is_empty():continue
+  var animal: String={"horses":"HORSE","mules":"MULE"}[kind]
+  team_offers.append([("BUTCHER 1 %s · %d LB · " % [animal,stock_offer.meat])+("1 BULLET · 1 DAY" if not stock_offer.by_hand else "BY HAND · %d%% INJURY RISK · 1 DAY" % roundi(stock_offer.injury_chance*100)),stock_offer.by_hand,kind,"Fewer animals means fewer riders and smaller loads. Meat may spoil."])
+ if not team_offers.is_empty():
+  note("SLAUGHTER FOR MEAT")
+  for offer in team_offers:
+   var kill:=Button.new();kill.text=offer[0];kill.tooltip_text=offer[3];kill.name="Slaughter"+str(offer[2]).capitalize()+("ByHand" if offer[1] else "")
+   kill.pressed.connect(func():slaughter_requested.emit(offer[1],offer[2]))
+   rows.add_child(kill)
 func confirm_butcher(kind: String,hand: bool) -> void:
  var offer: Dictionary=game.livestock.butcher_offer(game,kind,hand)
  if offer.is_empty():return

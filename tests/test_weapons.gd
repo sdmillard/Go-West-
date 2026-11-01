@@ -87,6 +87,38 @@ func run() -> void:
 	check(Armory.loadout(bare,2)==[{"weapon":"rifles","blade":""},{"weapon":"","blade":""}],"Travelers past the party's arms fight bare-handed")
 	var cfg: Dictionary=Armory.equip({"squad":[{"id":"0"},{"id":"1"}]},armed.state)
 	check(cfg.squad[0].weapon=="revolvers" and cfg.squad[1].weapon=="shotguns","A fight's squad carries the party's arms")
+	# The player can hand an arm to a chosen traveler; everyone else shares out the rest automatically.
+	var picked=outfit({"shotguns":1,"revolvers":1,"hatchets":2})
+	var party: Array=[0,1,2,3,4]
+	Armory.assign(picked.state,3,"weapon","revolvers",party)
+	Armory.assign(picked.state,0,"weapon","rifles",party)
+	var chosen: Array=Armory.loadout_for(picked.state,party)
+	check(chosen.map(func(item):return item.weapon)==["rifles","shotguns","rifles","revolvers","rifles"],"A chosen traveler carries the Colt and the rest share out what is left")
+	Armory.assign(picked.state,2,"weapon","revolvers",party)
+	check(Armory.pick(picked.state,3,"weapon")=="auto" and Armory.loadout_for(picked.state,party)[2].weapon=="revolvers","Handing the only Colt to someone else takes it from the first")
+	Armory.assign(picked.state,4,"blade","",party)
+	check(Armory.loadout_for(picked.state,party)[4].blade=="","A traveler can be told to carry no blade")
+	picked.state.revolvers=0
+	check(Armory.loadout_for(picked.state,party)[2].weapon=="rifles" and Armory.pick(picked.state,2,"weapon")=="revolvers","A pick that is gone falls back to the automatic share")
+	picked.state.revolvers=1
+	cfg=Armory.equip({"squad":[{"id":"0"},{"id":"2"},{"id":"3"}]},picked.state)
+	check(cfg.squad[1].weapon=="revolvers" and cfg.squad[0].weapon=="rifles","A fight's squad carries the arms the player handed out")
+	snapshot=store.capture(picked)
+	copy=store.restore(JSON.parse_string(JSON.stringify(snapshot)))
+	check(copy!=null and store.capture(copy)==snapshot and Armory.pick(copy.state,2,"weapon")=="revolvers","Arms picks round-trip through saves")
+	bad=store.capture(picked)
+	bad.state.arms_assigned={"2":{"weapon":"cannon"}}
+	check(store.restore(bad)==null,"A save cannot hand out an arm that does not exist")
+	bad.state.arms_assigned={"x":{"weapon":"rifles"}}
+	check(store.restore(bad)==null,"A save's arms picks are keyed by traveler")
+	Armory.assign(picked.state,2,"weapon","auto",party)
+	Armory.assign(picked.state,0,"weapon","auto",party)
+	Armory.assign(picked.state,4,"blade","auto",party)
+	check(not picked.state.arms_assigned.has("2") and picked.state.arms_assigned.is_empty(),"Setting every pick back to AUTO leaves no picks")
+	# Custody takes the accused's own arms.
+	Armory.assign(picked.state,3,"weapon","revolvers",party)
+	var custody_arms: Dictionary=preload("res://simulation/detention.gd").take_arms(picked,[3])
+	check(custody_arms.get("revolvers",0)==1 and Armory.count(picked.state,"revolvers")==0,"The accused give up the arms they carry")
 	# Each weapon fights differently.
 	var fight: Dictionary=session([{"id":"0","name":"A","weapon":"revolvers","blade":"hatchets"},{"id":"1","name":"B","weapon":"shotguns"},{"id":"2","name":"C","weapon":"pistols"},{"id":"3","name":"D","weapon":"","blade":"knives"},{"id":"4","name":"E"}])
 	var tc=fight.tc
