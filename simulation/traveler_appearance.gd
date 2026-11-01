@@ -16,6 +16,11 @@ static func generate(seed_value: int, index: int) -> Dictionary:
 	result.outfit=random.randi_range(0,data.outfits.size()-1)
 	result.heritage=data.heritage[random.randi_range(0,data.heritage.size()-1)]
 	return result
+## Generated names follow the outfit: a dress and bonnet draws from women's given names.
+static func wears_dress(value: Dictionary) -> bool:
+	var outfits: Array=catalog().outfits
+	var index:=int(value.get("outfit",0))
+	return index>=0 and index<outfits.size() and str(outfits[index]).begins_with("Dress")
 static func valid(value: Variant) -> bool:
 	if not value is Dictionary or value.size()!=5:return false
 	var data := catalog()
