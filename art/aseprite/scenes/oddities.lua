@@ -111,42 +111,60 @@ K.save("event_prairie_light")
 ---------------------------------------------------------------- the sphere
 K.canvas(W, H, 2203)
 K.layer("country", function()
-  K.sky(W, 100, {{20, 12, 0.8}, {360, 18, 0.9}}, "mist")
+  K.sky(W, 100, {{20, 12, 0.8}, {380, 22, 0.7}}, "mist")
+end)
+K.layer("sphere", function()
+  -- colossal and miles off: it stands beyond the mountains, so only its lower part shows,
+  -- a black dome filling the sky; the range at its foot is a low line against it
+  local cx, cy, r = 250, -150, 252
+  local function edge(x) local d = r * r - (x - cx) ^ 2; return d > 0 and cy + math.sqrt(d) or nil end
+  for x = 0, W - 1 do
+    local e = edge(x)
+    if e and e > 0 then
+      for y = 0, math.min(H - 1, math.floor(e)) do
+        local c = "onyx"
+        local below = e - y
+        if below < 9 - 4 * math.abs(x - cx) / r then c = (below < 3) and "storm_dk" or "onyx_hi" end -- salt reflected along the lower curve
+        K.px(x, y, c)
+      end
+    end
+  end
+  -- the bright sky reflected high on its left shoulder, and a sun glint
+  -- (a long soft band just inside the left limb, following the curve, not a spot)
+  for x = 52, 190 do
+    local t = (x - 52) / 138
+    local y0 = math.floor(edge(x) - 18 - 10 * t)
+    local w = math.floor(1 + 6 * math.sin(math.pi * t))
+    for y = math.max(0, y0 - w), y0 do K.px(x, y, (y0 - y < w // 2 and t > 0.3 and t < 0.7) and "onyx_glint" or "onyx_hi") end
+  end
+  -- a rim of sky light along the left limb
+  for y = 0, 96 do
+    local d = r * r - (y - cy) ^ 2
+    if d > 0 then K.px(math.floor(cx - math.sqrt(d)) + 1, y, "onyx_hi") end
+  end
+  -- distance: the air between greys its foot, in dithered bands
+  local bands = {{82, "roof_dk"}, {88, "storm_dk"}, {93, "storm"}, {97, "storm_lt"}}
+  for y = 80, 101 do for x = 0, W - 1 do
+    local c = K.at(x, y)
+    if c == "onyx" or c == "onyx_hi" or c == "storm_dk" or c == "roof_dk" or c == "storm" then
+      local pick
+      for i, bd in ipairs(bands) do
+        if y >= bd[1] then pick = bd[2] elseif y == bd[1] - 1 and (x + y) % 2 == 0 then pick = bd[2] end
+      end
+      if pick then K.px(x, y, pick) end
+    end
+  end end
+  -- the far range at its foot, then the salt flat
   K.ridge(0, W - 1, 98, 102, function(x) return 7 + 4 * math.sin(x / 37) + 2 * math.sin(x / 7) end, "far_hill", "mist", "haze")
-  -- salt flat, dead white with a grey crust pattern
   K.rect(0, 102, W, H - 102, "white")
   for y = 102, H - 1 do for x = 0, W - 1 do if K.rnd(9) == 0 then K.px(x, y, "stone_lt") end end end
   for i = 1, 30 do local x, y = K.rnd(W), 106 + K.rnd(40); K.line(x, y, x + 6 + K.rnd(10), y + K.rnd(3) - 1, "stone_lt") end
 end)
-K.layer("sphere", function()
-  -- colossal, and far off: the whole sphere stands miles away out on the flat, its foot on
-  -- the horizon, and the mountain range behind it barely reaches its waist
-  local cx, cy, r = 268, 52, 58
-  local foot = cy + r
-  -- its shadow, a long dark ellipse on the salt toward us and to the right
-  K.ellipse(cx + 16, foot + 2, r + 18, 4, "stone")
-  K.ellipse(cx + 10, foot + 1, r - 6, 2, "stone_dk")
-  K.ellipse(cx, cy, r, r, "onyx")
-  -- the sky reflected over its upper left in a soft ramp, with a hard sun glint
-  for i = 1, 4 do K.ellipse(cx - 20 - i * 2, cy - 18 - i * 2, math.max(3, 30 - i * 6), math.max(3, 24 - i * 5), (i < 3) and "onyx_hi" or "onyx_glint") end
-  K.rect(cx - 34, cy - 30, 4, 2, "white"); K.px(cx - 33, cy - 31, "white")
-  -- the white salt and the far hills reflected as pale bands round its lower curve
-  for x = cx - r + 3, cx + r - 3 do
-    local edge = cy + math.floor(math.sqrt(math.max(0, r * r - (x - cx) ^ 2)))
-    local lift = math.floor(5 * math.abs(x - cx) / r)
-    for y = edge - 10 + lift, edge - 2 do K.px(x, y, (y < edge - 6) and "onyx_hi" or "storm_dk") end
-    K.px(x, edge - 1, "stone_ink")
-  end
-  -- a thin rim of sky light on the left limb
-  for y = cy - r + 8, cy + r - 12 do
-    local x = cx - math.floor(math.sqrt(math.max(0, r * r - (y - cy) ^ 2)))
-    K.px(x + 1, y, "onyx_hi")
-  end
-end)
 K.layer("figures", function()
-  -- the party halted far off, small against it
-  K.far_wagon(64, 124, 1); K.far_wagon(96, 128, 1)
-  K.person(130, 132, "blue", "roof"); K.person(140, 133, "red", "bonnet", true)
+  -- the party, halted and looking
+  party(90, 138)
+  K.person(200, 136, "blue", "roof"); K.person(212, 137, "red", "bonnet", true)
+  K.far_wagon(330, 112, -1)
 end)
 K.save("event_onyx_sphere")
 
