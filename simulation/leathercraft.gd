@@ -39,7 +39,7 @@ func reason(game,index: int,job: String) -> String:
  if person.health<40 or person.conditions.any(func(c):return c.severity>=3):return "Too ill to work."
  if not data.recipes.has(job):return "Unknown leatherwork recipe."
  if game.current_edge().get("hazard","")=="river":return "Find a land camp before doing leatherwork."
- if job=="tan_leather" and game.current_edge().get("hazard","")=="waterless":return "Hide dressing needs water; this is a waterless stretch."
+ if job=="tan_leather" and game.on_dry_stretch():return "Hide dressing needs water; this is a waterless stretch."
  if next_step(game.state,job).is_empty():return "No suitable morning materials for this stage."
  return ""
 func quote(game,index: int,job: String) -> Dictionary:

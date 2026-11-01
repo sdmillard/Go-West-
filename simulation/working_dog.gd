@@ -78,7 +78,7 @@ func tick(game,resting: bool,moving: bool,hunting_today: bool=false) -> void:
   budget=minf(wanted,maxf(0,int(game.state.food)*float(game.provisions.data.food_energy.unit_kcal)+game.livestock.available_kcal()-reserve))
  var eaten: float=eat(game,budget) if budget>0 else 0.0
  dog.fed=clampf(eaten/wanted,0,1)
- var waterless: bool=game.current_edge().get("hazard","")=="waterless"
+ var waterless: bool=game.on_dry_stretch()
  dog.condition=clampf(float(dog.condition)+(2.0 if resting and dog.fed>=0.95 else 0.0)-6.0*(1.0-float(dog.fed))-(3.0 if waterless else 0.0),0,100)
  dog.fatigue=clampf(float(dog.fatigue)+(12.0 if hunting_today else 3.0 if watching else 4.0 if moving else -16.0),0,100)
  last={"day":int(game.state.day),"eaten_kcal":eaten,"needed_kcal":wanted,"working":working}

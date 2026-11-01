@@ -48,7 +48,7 @@ func run():
  check(g.camp_tasks.assign(g,1,"tan_leather") and g.camp_tasks.assign(g,2,"tan_leather"),"Two background artisans may hold standing tasks")
  check(g.rest() and g.state.deer_hide==0 and g.state.hide_scraped==1 and int(g.state.get("hide_softened",0))==0,"Morning reservation prevents duplicate input or same-day stage chaining")
  check(g.rest() and g.state.hide_scraped==0 and g.state.hide_softened==1 and int(g.state.get("buckskin",0))==0,"Another day's standing work advances only one stage")
- g=party();g.state.landmark="south_pass";g.state.next_landmark="little_sandy"
+ g=party();g.state.landmark="south_pass";g.state.next_landmark="little_sandy";g.state.leg_miles=5
  var edge: Dictionary=g.current_edge()
  var saved_hazard: String=edge.get("hazard","");edge.hazard="waterless"
  check(not g.leathercraft.quote(g,1,"tan_leather").valid,"Hide dressing cannot pretend water exists on a waterless stretch")

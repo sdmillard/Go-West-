@@ -202,7 +202,7 @@ func run() -> void:
 	game.choose(8)
 	check(game.state.oxen == 1 and game.state.day == 1, "A replacement ox can be acquired after losing the team")
 	game = outfit()
-	check(game.trail_events.events.size() == 22, "All sixteen BASIC selector categories plus rider tactics, the Platte stampede, three Cayuse War encounters and horse thieves are present")
+	check(game.trail_events.events.size() == 23, "All sixteen BASIC selector categories plus rider tactics, the Platte stampede, three Cayuse War encounters, horse thieves and the South Road raids are present")
 	for event in game.trail_events.events:
 		game = outfit()
 		game._present_trail_event(event)

@@ -1124,7 +1124,7 @@ func _show_stop_activities() -> void:
 	heading.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	stop_rows.add_child(heading)
 	var offer: Dictionary=game.context.market(game)
-	stop_rows.add_child(label("Trading post: limited stock and buying demand." if offer.post else ("Passing traders are nearby today; their supplies are limited." if offer.available else "No passing trading party is available today.")))
+	stop_rows.add_child(label("Trading post: limited stock and buying demand." if offer.post else ("Passing traders are nearby today; their supplies are limited." if offer.available else ("No traders work this road; the next are in the Oregon settlements." if offer.get("remote",false) else "No passing trading party is available today."))))
 	if game.pending.has("landmark"):
 		stop_window.title="AT "+game.pending.title
 		for index in range(game.pending.choices.size()):
@@ -1835,7 +1835,7 @@ func _refresh() -> void:
 	if s.vehicle=="foot" and s.oxen>0:stats.text+="\nHERD "+game.PartyHealth.condition_label(s.ox_health).to_upper()
 	if s.extended_route:
 		var nearby: Dictionary=game.context.market(game)
-		stats.text+="\nPOST: STOCK LIMITED" if nearby.post else ("\nTRADERS NEARBY" if nearby.available else "\nNO TRADERS IN SIGHT")
+		stats.text+="\nPOST: STOCK LIMITED" if nearby.post else ("\nTRADERS NEARBY" if nearby.available else ("\nNO TRADERS ON THIS ROAD" if nearby.get("remote",false) else "\nNO TRADERS IN SIGHT"))
 	if s.vehicle == "corolla":
 		stats.text += "\nFUEL      %d" % s.fuel
 	if not s.items.is_empty():

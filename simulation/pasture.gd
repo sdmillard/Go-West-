@@ -11,7 +11,7 @@ static func assess(game) -> Dictionary:
  var feeding: Dictionary=game.livestock.data.feeding
  var habitat: Dictionary=feeding.habitats.get(region,feeding.habitats.plains)
  var season: float=game.livestock.data.months[month-1]
- var waterless: bool=game.current_edge().get("hazard","")=="waterless"
+ var waterless: bool=game.on_dry_stretch()
  var activity: Dictionary=game.context.data.activities.get(str(game.state.landmark),{})
  var grazing: bool=game.grazing_activity and activity.get("kind","")=="graze"
  # A named better camp removes the broad habitat limit for this one rest day.

@@ -675,5 +675,34 @@
         "result": "You pack what the remaining animals can carry and move on."
       }
     ]
+  },
+  {
+    "id": "arrows_in_the_stock",
+    "category": "historical",
+    "trigger": "random",
+    "weight": 4,
+    "hazard": "raids",
+    "title": "Arrows in the night",
+    "text": "At daylight an ox lies dead at the edge of the herd with arrows in its side, and others limp with broken shafts in them. Whoever did it was gone into the rocks before the guard saw anything. Raiders on this road shot the emigrants' stock so that it would be left behind.",
+    "onset_effects": {
+      "oxen": -1,
+      "ox_health": -10
+    },
+    "choices": [
+      {
+        "label": "Cut out the arrows and rest the wounded oxen \u00b7 1 day",
+        "effects": {
+          "days": 1,
+          "ox_health": 5
+        },
+        "rest": true,
+        "result": "You cut the arrowheads out, wash the wounds and keep the herd close under guard."
+      },
+      {
+        "label": "Leave the carcass and push on",
+        "effects": {},
+        "result": "You yoke what is left of the team and drive on, keeping the cattle close."
+      }
+    ]
   }
 ]
