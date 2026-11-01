@@ -366,7 +366,7 @@ func _build_ui() -> void:
 	pace.item_selected.connect(_settings_changed)
 	pace.tooltip_text = "Nominal 22/26/30 miles per day before weather, load, team condition and stops. Faster travel costs health."
 	for index in range(3):
-		pace.get_popup().set_item_tooltip(index, ["Steady: about 22 miles a day. Easiest on people and oxen.", "Strenuous: about 26 miles a day. More strain on the party and team.", "Grueling: about 30 miles a day. Hard on health; sick travelers suffer most."][index])
+		pace.get_popup().set_item_tooltip(index, ["Steady: about 22 miles a day. Easiest on people and oxen.", "Strenuous: about 26 miles a day. Tires the party and wears the oxen faster.", "Grueling: about 30 miles a day. Wears down people and oxen fast; sick travelers suffer most."][index])
 	add_child(pace)
 	pace.hide()
 	rations = OptionButton.new()

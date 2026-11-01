@@ -565,6 +565,12 @@ func _collect_health_events() -> void:
 	party_health.notices.clear()
 	Remains.sync(self)
 
+## Extra wear a pushed pace puts on the wagon team today. Fractional rates are spread
+## evenly over the days (0.5 = one point every other day) without using randomness.
+func pace_ox_strain() -> int:
+	var rate: float=float(survival.data.pace_ox_strain[state.pace])
+	return floori(int(state.day)*rate+0.000001)-floori((int(state.day)-1)*rate+0.000001)
+
 func configure(pace: int, rations: int) -> void:
 	if _can_act():
 		state.pace = clampi(pace, 0, 2)
@@ -793,7 +799,8 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 		if not team_working and not pasture.waterless:
 			state.ox_health=mini(100,int(state.ox_health)+(int(pasture.ox_rest_recovery) if resting else mini(2,int(pasture.ox_rest_recovery))))
 		elif state.vehicle!="foot":
-			state.ox_health=maxi(0,int(state.ox_health)-int(pasture.ox_work_strain))
+			# Pushing the pace wears the team down faster than the road alone.
+			state.ox_health=maxi(0,int(state.ox_health)-int(pasture.ox_work_strain)-(pace_ox_strain() if team_working and state.vehicle=="wagon" else 0))
 		_tick_mounts(resting,team_working)
 		team_conditions.settle(self,false,team_working and state.vehicle!="foot",(int(pasture.ox_rest_recovery) if resting else mini(2,int(pasture.ox_rest_recovery))) if not team_working and not pasture.waterless else -1)
 		_snow_starvation()
@@ -836,12 +843,12 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 		for member in party_health.members:
 			if not party_health.is_active(member):continue
 			var rests: bool=camp_tasks.day_plan.rest.get(int(member.id),false)
-			var change: int=int(survival.data.rest_recovery[state.rations]) if rests else [-3,0,1][state.rations]-[0,1,4][state.pace]
+			var change: int=int(survival.data.rest_recovery[state.rations]) if rests else [-3,0,1][state.rations]-int(survival.data.pace_health_cost[state.pace])
 			party_health.affect(member,change if recovered_food else mini(0,change),state.day,"ill health" if rests else "exhaustion")
 	elif resting:
 		if recovered_food:_change_health(int(survival.data.rest_recovery[state.rations]) if state.extended_route else 7,"ill health")
 	else:
-		var change: int=[-3,0,1][state.rations]-[0,1,4][state.pace]
+		var change: int=[-3,0,1][state.rations]-int(survival.data.pace_health_cost[state.pace])
 		_change_health(change if recovered_food else mini(0,change),"exhaustion")
 	if not party_health.members.is_empty():
 		# A finished cabin keeps out the storms and the cold, and the winter sickness that comes with them.
