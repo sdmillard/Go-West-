@@ -69,6 +69,8 @@ func load_data(data: Variant, repeatable: bool = false) -> bool:
 				return _fail("Choice needs label and result")
 			if not _effects(choice.get("effects", {})):
 				return _fail("Invalid effects")
+			if choice.has("oddity_recruit") and (choice.oddity_recruit!="beached_ship" or event.id!="beached_ship" or event.category!="absurd"):
+				return _fail("Invalid oddity recruit")
 			if choice.get("service", "") not in ["", "repair", "defend"]:
 				return _fail("Invalid event action")
 			if not choice.get("complete", false) is bool:
