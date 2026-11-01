@@ -14,6 +14,7 @@ func run():
 	root.add_child(screen)
 	await process_frame
 	var setup=screen.departure_view
+	setup.use_preset_party()
 	setup.special_checks.Loyal.button_pressed=true
 	setup.special_checks.Mercenary.button_pressed=true
 	setup.flaw_choice.select(1)

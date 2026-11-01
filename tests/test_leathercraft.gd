@@ -78,6 +78,7 @@ func run():
  if loaded!=null:check(loaded.leathercraft.qualified(loaded,1),"Old Leatherworker cross-training retains its ability")
  var screen=load("res://ui/main.gd").new();root.add_child(screen);await process_frame
  var view=screen.departure_view
+ view.use_preset_party()
  check(view.background_choice.item_count==7 and not view.special_checks.has("Leatherworker"),"Creation offers Leatherworking among backgrounds rather than specials")
  var found:=false
  for i in range(view.background_choice.item_count):

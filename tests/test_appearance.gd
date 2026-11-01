@@ -82,6 +82,7 @@ func run():
 	root.add_child(screen)
 	await process_frame
 	var view=screen.departure_view
+	view.use_preset_party()
 	view.open_appearance(0)
 	view.look_boxes.skin.select(Appearance.catalog().skin.keys().find("Deep"))
 	view.heritage_entry.text="Custom family history"

@@ -14,6 +14,24 @@ func run():
 	root.add_child(screen)
 	await process_frame
 	var setup=screen.departure_view
+	# The party starts blank: no names, no chosen companions, plain looks.
+	check(setup.names.all(func(entry):return entry.text.is_empty()) and setup.unchosen.size()==4,"Setup starts with blank names and unchosen companions")
+	check(setup.draft.profiles.all(func(p):return p.appearance.heritage=="Not specified"),"No heritage is pre-rolled")
+	setup.edit_buttons[0].pressed.emit()
+	check(setup.personality.selected==-1 and setup.values.selected==-1 and setup.background_choice.selected==-1 and setup.relationship.selected==-1,"An unchosen companion's sheet shows nothing picked")
+	setup.done_button.pressed.emit()
+	for i in range(5):
+		setup.names[i].text="P%d" % i
+		setup.names[i].text_changed.emit(setup.names[i].text)
+	check(setup.depart_button.disabled and "companion" in setup.feedback.text,"Departure waits until every companion is chosen or generated")
+	setup.leader_edit.pressed.emit()
+	check(setup.leader_generate_button.visible and not setup.generate_button.visible,"The leader's sheet offers GENERATE MY CHARACTER")
+	setup.leader_generate_button.pressed.emit()
+	check(setup.names[0].text!="P0" and " " in setup.names[0].text,"Generating the leader fills a name")
+	setup.done_button.pressed.emit()
+	setup.generate_party_button.pressed.emit()
+	check(setup.unchosen.is_empty() and setup.names.slice(1).all(func(entry):return " " in entry.text),"GENERATE PARTY fills every companion")
+	setup.use_preset_party()
 	check(setup.interval.value==7,"Default wage interval stays weekly before any edits")
 	check(not setup.editor_layer.visible and setup.edit_buttons.size()==4,"The character sheet starts closed; each companion has an EDIT button")
 	setup.edit_buttons[0].pressed.emit()
@@ -87,6 +105,7 @@ func run():
 	check(copy!=null and store.capture(copy)==snapshot,"Customized party and contract save/load exactly")
 	screen._new_journey()
 	setup=screen.departure_view
+	setup.use_preset_party()
 	check(setup.customization().contracts.is_empty() and setup.customization().profiles.all(func(p):return p.specials.is_empty()),"New journey clears previous custom contracts and specials")
 	setup.background_choice.selected=0
 	setup.background_choice.item_selected.emit(0)

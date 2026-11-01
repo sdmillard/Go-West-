@@ -15,6 +15,7 @@ func _initialize() -> void:
 
 func prepare(method: String, risk: float = -1.0, food: int = 600, health: int = 85) -> void:
 	screen._new_journey()
+	screen.departure_view.use_preset_party()
 	screen.departure_view.next_button.pressed.emit()
 	screen.departure_view.fill_suggested()
 	screen.departure_view.depart_button.pressed.emit()
@@ -42,6 +43,7 @@ func run() -> void:
 	screen = Main.instantiate()
 	root.add_child(screen)
 	await process_frame
+	screen.departure_view.use_preset_party()
 	screen.departure_view.next_button.pressed.emit()
 	screen.departure_view.fill_suggested()
 	screen.departure_view.depart_button.pressed.emit()
@@ -126,6 +128,7 @@ func run() -> void:
 	check(screen.game.state.status == "lost" and screen.travel_button.disabled, "Acknowledging fatal mishap cannot resume travel")
 	screen._new_journey()
 	# Starvation during crossing remains a loss even after the visual finishes.
+	screen.departure_view.use_preset_party()
 	screen.departure_view.next_button.pressed.emit()
 	screen.departure_view.fill_suggested()
 	screen.departure_view.depart_button.pressed.emit()

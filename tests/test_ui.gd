@@ -21,6 +21,7 @@ func run() -> void:
 	await capture("departure")
 	screen.game.route.truncate_at("platte")
 	var setup = screen.departure_view
+	setup.use_preset_party()
 	check(setup.scene_id == "town_setup" and setup.party_layer.visible and not setup.shop_layer.visible, "Party setup has the town background")
 	var before_store: Dictionary = screen.game.state.duplicate(true)
 	setup.next_button.pressed.emit()
@@ -143,6 +144,7 @@ func run() -> void:
 	screen._new_journey()
 	check(screen.game.state.day == 0 and screen.game.state.status == "outfitting" and screen.departure_view.visible, "Restart returns to setup without old purchases")
 	check(screen.mode.item_count == 1 and screen.mode.disabled, "Classic remains the only player mode")
+	screen.departure_view.use_preset_party()
 	screen.departure_view.next_button.pressed.emit()
 	screen.departure_view.depart_button.pressed.emit()
 	screen.travel_button.pressed.emit()

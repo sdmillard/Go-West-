@@ -226,6 +226,7 @@ func run() -> void:
 	var screen = Main.instantiate()
 	root.add_child(screen)
 	await process_frame
+	screen.departure_view.use_preset_party()
 	screen.departure_view.next_button.pressed.emit()
 	screen.departure_view.quantities.medicine.value = 2
 	if "--capture" in OS.get_cmdline_user_args():

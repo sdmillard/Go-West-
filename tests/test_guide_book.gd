@@ -89,6 +89,7 @@ func run():
 	root.add_child(screen)
 	await process_frame
 	var setup=screen.departure_view
+	setup.use_preset_party()
 	check(setup.quantities.values().all(func(q):return int(q.value)==0),"Nothing is bought for the player")
 	# One GUIDE button for the whole game (Spencer, November 1): no extra guide buttons on the
 	# setup screens. At the store counter it opens the outfit chapter.

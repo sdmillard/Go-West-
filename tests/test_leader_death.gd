@@ -84,6 +84,7 @@ func run() -> void:
 	root.add_child(screen)
 	await process_frame
 	var view=screen.departure_view
+	view.use_preset_party()
 	view.leader_edit.pressed.emit()
 	check(not view.personality.visible and not view.relationship.visible and not view.wage.visible and not view.special_checks.Mercenary.visible and view.special_checks.Hardy.visible,"The leader's sheet shows only specials, a flaw and appearance")
 	view.flaw_choice.select(view.draft.FLAWS.keys().find("Frail")+1)

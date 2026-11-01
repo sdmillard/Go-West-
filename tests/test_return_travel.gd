@@ -175,6 +175,7 @@ func run():
  check(screen.event_title.text=="Back east." and screen.event_text.text.begins_with("Your character decided to go back east.") and "SCORE" in screen.event_text.text and not ("Oregon City" in screen.event_text.text) and screen.choices.get_child_count()==0,"Peaceful end screen has no death or Oregon victory text")
  screen.game=Simulation.new(1848,"classic",true)
  screen.departure_view.game=screen.game
+ screen.departure_view.use_preset_party()
  var leader: String=screen.departure_view.names[0].text
  var original: Array=screen.departure_view.draft.profiles.duplicate(true)
  screen.departure_view.generate_party_button.pressed.emit()
