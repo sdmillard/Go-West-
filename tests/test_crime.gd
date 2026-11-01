@@ -822,6 +822,19 @@ func emigrant_checks(store) -> void:
 		if not game.crime.camp(game).is_empty():camps[game.crime.camp(game)]=true
 	check(camps.size()>=9 and camps.size()<=11,"About one camp a week is met along the road")
 	camp_visit_checks(store)
+	# Bug pass: food bought from a family by the pound before an act is not also counted as sold in the record.
+	game=at_camp(willing(outfit()))
+	key=game.crime.camp(game)
+	game.context.record.spent[key+"|buy_food"]=1
+	game.context.record.spent[key+"|buy_food|units"]=20
+	game.crime.scenes.passing_emigrants.theft_success=1
+	game.open_crime()
+	choose(game,"theft")
+	check(game.crime.service(key).food_sold==0,"A family's sold food stays in the visit record, not the crime record")
+	choose(game,"take")
+	choose(game,"finish")
+	game.pending={} if game.crime.record.active.is_empty() else game.pending
+	check(store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))!=null,"Robbing a family after buying food from it saves: "+store.error)
 	game=at_camp(willing(outfit()))
 	key=game.crime.camp(game)
 	game.crime.scenes.passing_emigrants.shot_hit=1
