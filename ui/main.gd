@@ -1574,7 +1574,7 @@ func _show_guide(chapter: String="") -> void:
 	# where it opens at the outfit chapter.
 	if chapter.is_empty() and is_instance_valid(departure_view) and departure_view.visible and departure_view.scene_id=="store":chapter="outfit"
 	if not chapter.is_empty():guide.open_chapter(chapter)
-	guide.popup_centered()
+	guide.open()
 
 func _show_journal() -> void:
 	section_window.hide()

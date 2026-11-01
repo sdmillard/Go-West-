@@ -28,7 +28,7 @@ const TAB_NAMES:={"provisions":"GAME","preface":"PREFACE"}
 
 var data: Dictionary={}
 var game
-var plain_toggle: CheckBox
+var plain_toggle: Button
 var close_button: Button
 var left_page: RichTextLabel
 var right_page: RichTextLabel
@@ -108,29 +108,45 @@ func _init(simulation=null) -> void:
 		tab.alignment=HORIZONTAL_ALIGNMENT_RIGHT
 		tab.position=Vector2(RIGHT_PAGE.end.x-4,14+index*27)
 		tab.size=Vector2(56,25)
+		tab.set_meta("rect",Rect2(tab.position,tab.size))
 		tab.pressed.connect(func():_go(index,0,1 if index>chapter_index else -1))
 		add_child(tab)
 		tabs.append(tab)
-	close_button=_gilt_button("CLOSE THE BOOK",Rect2(18,296,100,12))
+	close_button=_gilt_button("CLOSE THE BOOK",Rect2(16,297,100,10))
 	close_button.tooltip_text="Close the guide (Esc)."
 	close_button.pressed.connect(hide)
-	plain_toggle=CheckBox.new()
-	plain_toggle.text="PLAIN RULES IN PENCIL"
+	plain_toggle=_gilt_button("PLAIN RULES IN PENCIL",Rect2(392,297,150,10))
+	plain_toggle.toggle_mode=true
+	plain_toggle.icon=_tick_box(false)
+	plain_toggle.add_theme_constant_override("h_separation",4)
 	plain_toggle.tooltip_text="Write each chapter's plain game rules after the period text, like notes in the margin."
-	plain_toggle.focus_mode=Control.FOCUS_NONE
-	for state in ["normal","hover","pressed","hover_pressed","focus"]:plain_toggle.add_theme_stylebox_override(state,StyleBoxEmpty.new())
-	for key in ["font_color","font_hover_color","font_pressed_color","font_hover_pressed_color","font_focus_color"]:plain_toggle.add_theme_color_override(key,Color("ddb461"))
-	plain_toggle.add_theme_font_size_override("font_size",8)
-	plain_toggle.position=Vector2(404,295)
-	plain_toggle.size=Vector2(150,14)
 	plain_toggle.toggled.connect(func(shown):_pages.clear();_show_spread();plain_rules_toggled.emit(shown))
-	add_child(plain_toggle)
 	_turn=Control.new()
 	_turn.mouse_filter=Control.MOUSE_FILTER_IGNORE
 	_turn.size=Vector2(BOOK_SIZE)
 	_turn.draw.connect(_draw_turn)
 	add_child(_turn)
 	_show_spread()
+
+## Controls are sized in _init, before the game's theme reaches the window, so their sizes are
+## measured against the engine's default font and come out too big. Put them back once it has.
+func _ready() -> void:
+	_apply_layout()
+	visibility_changed.connect(func():if visible:_apply_layout())
+
+func _apply_layout() -> void:
+	for node in get_children():
+		if node is Control and node.has_meta("rect"):
+			var rect: Rect2=node.get_meta("rect")
+			node.position=rect.position
+			node.size=rect.size
+			node.reset_size()
+			node.size=Vector2(maxf(rect.size.x,node.size.x),maxf(rect.size.y,node.size.y))
+
+## Opens the book over the 640-wide play area, clear of the TRAIL ACTIONS rail and the bottom bar.
+func open() -> void:
+	popup(Rect2i(Vector2i(18,8),BOOK_SIZE))
+	_apply_layout()
 
 func _process(delta: float) -> void:
 	if _turn_t>=1.0:return
@@ -144,6 +160,7 @@ func set_game(simulation) -> void:
 
 func set_plain_rules(shown: bool) -> void:
 	plain_toggle.set_pressed_no_signal(shown)
+	plain_toggle.icon=_tick_box(shown)
 	_pages.clear()
 	_show_spread()
 
@@ -263,6 +280,7 @@ func _go(index: int,to_spread: int,direction: int) -> void:
 
 func _show_spread() -> void:
 	if left_page==null:return
+	if plain_toggle!=null:plain_toggle.icon=_tick_box(plain_toggle.button_pressed)
 	var id:=current_id()
 	var book_pages: Array=pages(id)
 	spread=clampi(spread,0,maxi(0,spreads(id)-1))
@@ -295,6 +313,7 @@ func _show_spread() -> void:
 			tab.add_theme_stylebox_override(state,box)
 		for key in ["font_color","font_hover_color","font_pressed_color","font_focus_color"]:
 			tab.add_theme_color_override(key,Color(INK if picked else "f6e7bc"))
+		tab.set_meta("rect",Rect2(RIGHT_PAGE.end.x-(8 if picked else 4),tab.position.y,60 if picked else 56,25))
 		tab.position.x=RIGHT_PAGE.end.x-(8 if picked else 4)
 		tab.size.x=60 if picked else 56
 	_turn.queue_redraw()
@@ -357,6 +376,7 @@ func _label(bounds: Rect2,colour: String,align: HorizontalAlignment) -> Label:
 	var label:=Label.new()
 	label.position=bounds.position
 	label.size=bounds.size
+	label.set_meta("rect",bounds)
 	label.horizontal_alignment=align
 	label.add_theme_color_override("font_color",Color(colour))
 	label.add_theme_font_size_override("font_size",8)
@@ -387,6 +407,7 @@ func _flat_button(text: String,bounds: Rect2,colour: String,hover: String) -> Bu
 	button.add_theme_font_size_override("font_size",8)
 	button.position=bounds.position
 	button.size=bounds.size
+	button.set_meta("rect",bounds)
 	add_child(button)
 	return button
 
@@ -424,3 +445,13 @@ func _amount(id: String,amount: int) -> String:
 	if id=="dried_produce":return "%d baskets" % amount
 	if id=="clothing":return "%d sets" % amount
 	return str(amount)
+
+## A small gold-stamped tick box for the binding, sized to the pixel font.
+static func _tick_box(ticked: bool) -> ImageTexture:
+	var image:=Image.create(7,7,false,Image.FORMAT_RGBA8)
+	var gold:=Color("ddb461")
+	for i in range(7):
+		for edge in [Vector2i(i,0),Vector2i(i,6),Vector2i(0,i),Vector2i(6,i)]:image.set_pixelv(edge,gold)
+	if ticked:
+		for p in [Vector2i(2,3),Vector2i(3,4),Vector2i(4,2),Vector2i(4,3),Vector2i(2,2),Vector2i(3,3)]:image.set_pixelv(p,Color("fff4d4"))
+	return ImageTexture.create_from_image(image)
