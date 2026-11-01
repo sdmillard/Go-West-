@@ -104,6 +104,7 @@ static func sell(game,cart: Dictionary,keep_oxen: int=-1) -> bool:
  game.team_conditions.sync(game)
  game.state.parts=int(game.state.wheels)+int(game.state.axles)+int(game.state.tongues)
  game.state.vehicle="foot"
+ game.camp_repair.work={}
  if game.state.has("wagon_train"):game.state.wagon_train=[]
  game.state.household_gear_lb=float(game.provisions.data.walking.personal_gear_lb_per_person)*int(game.state.party_size)
  game.journal.append("Day %d · Sold the wagon and accepted leftovers for $%.2f. Sold: %s. Left behind permanently: %s." % [game.state.day,int(offer.payout_cents)/100.0,JSON.stringify(offer.sold),JSON.stringify(offer.dropped)])

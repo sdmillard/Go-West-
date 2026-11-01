@@ -142,5 +142,13 @@ func run():
   root.get_texture().get_image().save_png("res://.tools/bandit-wagon-demand.png")
  screen.queue_free()
  await process_frame
+ # A broken wheel waiting for camp repair leaves with a surrendered wagon; the save still loads.
+ var broken=outfit()
+ check(broken.camp_repair.queue(broken,"wheels"),"A wheel can break before the robbery")
+ broken.combat.data.bandit_demands.wagon_chance=1.0
+ encounter(broken)
+ check(broken.pending.choices[0].get("bandit_wagon",false) and broken.choose(0) and broken.state.vehicle=="foot","The broken wagon is surrendered")
+ check(broken.camp_repair.work.is_empty(),"No repair is left for a wagon the party no longer has")
+ trip(broken,"Surrendering a wagon mid-repair saves")
  print("Bandit demands: %d checks, %d failures; mixed %d, cash-only %d, goods-only %d, wagons %d, low %d, high %d" % [checks,failures,mixed,cash_only,goods_only,wagons,low,high])
  quit(1 if failures else 0)

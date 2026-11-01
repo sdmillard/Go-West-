@@ -475,6 +475,8 @@ static func trial(crime,game,current: Dictionary,surrendered: bool,authority: St
 				seizure="oxen"
 			elif game.state.vehicle!="foot":
 				game.state.vehicle="foot"
+				game.camp_repair.work={}
+				if game.state.has("wagon_train"):game.state.wagon_train=[];game.state.erase("repair_wagon_id")
 				# Seized wagons cannot be recovered; goods must now be carried or dropped.
 				game.wagon_cache={}
 				seizure="wagon"
