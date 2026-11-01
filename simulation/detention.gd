@@ -67,14 +67,15 @@ static func arrest(crime,game,current: Dictionary,surrendered: bool) -> void:
 	var known: Array=crime.Wanted.trial_charges(crime,game,current)
 	var who: String=authority(crime,game,current)
 	current["custody"]={"authority":who,"day":int(game.state.day),"hearing_day":int(game.state.day)+int(rules(crime).hearing_days[who]),"surrendered":surrendered,"accused":accused(crime,game,known),"vouched":-1,"abandoned":[]}
-	current.custody["arms"]=take_arms(game,current.custody.accused.size())
+	current.custody["arms"]=take_arms(game,current.custody.accused)
 	current.stage="custody"
 	var names: String=", ".join(current.custody.accused.map(func(id):return game.party_health.members[int(id)].name))
 	game.journal.append("Day %d · %s %s. Held: %s. Hearing on day %d.%s" % [game.state.day,"Surrendered to" if surrendered else "Taken by",{"county":"the Jackson County sheriff","army":"the soldiers","company":"an emigrant company","council":"kin of the household"}[who],names,current.custody.hearing_day,(" Their arms are held: %s." % arms_text(current.custody.arms)) if not current.custody.arms.is_empty() else ""])
 ## The accused give up the arms they carry, the first in the party's loadout as the leader is held first.
-static func take_arms(game,held: int) -> Dictionary:
+## Each accused gives up the gun and blade they carry (their own pick first, see Armory.loadout_for).
+static func take_arms(game,held: Array) -> Dictionary:
 	var arms: Dictionary={}
-	for kit in preload("res://simulation/armory.gd").loadout(game.state,held):
+	for kit in preload("res://simulation/armory.gd").loadout_for(game.state,held.map(func(id):return int(id))):
 		for key in [kit.weapon,kit.blade]:
 			if key!="":arms[key]=int(arms.get(key,0))+1
 	for key in arms:game.state[key]=int(game.state[key])-int(arms[key])
