@@ -31,7 +31,7 @@ Dairy/egg batches cannot pass through the meat-drying action and do not reset th
 
 Post supply and buying demand are finite per market. Purchases/sales use the existing counter visit/day and cash rules. Animal sale price is half local purchase price; it is not an appraisal of breed or individual condition. Regular ferries add an authored ten cents per milk cow/goat. Barlow tolls include them at the existing per-head rate. Paid ferries retain existing safe-passage behavior; a mishap while fording, floating or using a seized ferry can lose livestock, recorded in crossing history and the journal. These probabilities are estimates.
 
-Emergency butchery permanently removes one animal and takes a day. Cow/goat gun slaughter costs one bullet; hand slaughter uses the existing 35% injury convention. Routine hen butchery needs no bullet and does not inherit cattle-handling injury risk. Actual edible yield depends on condition, converts by a labeled nutrition proxy and respects cargo after the camp meal. Milk animals do not replace trained draft oxen.
+Emergency butchery permanently removes one animal and takes a day. Cow/goat gun slaughter costs one bullet; hand slaughter uses the existing 35% injury convention. Routine hen butchery needs no bullet and does not inherit cattle-handling injury risk. Actual edible yield depends on condition, converts by a labeled nutrition proxy and respects cargo after the camp meal. Milk animals do not replace trained draft oxen. The ox, horse and mule slaughter buttons sit at the bottom of this same Livestock window (SLAUGHTER FOR MEAT); they used to be in SUPPLIES > TRANSPORT.
 
 ## Historical and biological evidence
 

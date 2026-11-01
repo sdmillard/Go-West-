@@ -86,6 +86,10 @@ var packing_review: RichTextLabel
 var packing_cache_mode:=false
 var packing_guards: Dictionary={}
 var dismiss_button: Button
+# The selected traveler's gun and blade (Armory picks), above their details.
+var arms_row: HBoxContainer
+var gun_pick: OptionButton
+var blade_pick: OptionButton
 var show_past_travelers := false
 var service_window: AcceptDialog
 var post_store_window: AcceptDialog
@@ -484,6 +488,22 @@ func _build_ui() -> void:
 	place(wages_button,Rect2(261,194,291,22),party_content)
 	dismiss_button=button("ASK TO LEAVE",_dismiss_selected)
 	place(dismiss_button,Rect2(410,194,142,22),party_content)
+	arms_row=HBoxContainer.new()
+	arms_row.add_theme_constant_override("separation",5)
+	place(arms_row,Rect2(261,0,291,22),party_content)
+	gun_pick=OptionButton.new()
+	gun_pick.tooltip_text="The gun this traveler takes into a fight. AUTO shares out what nobody was given, rarest close arms first. A pick that is stolen, sold or held falls back to AUTO."
+	blade_pick=OptionButton.new()
+	blade_pick.tooltip_text="The blade this traveler takes into a fight. AUTO shares out what nobody was given, hatchets before knives."
+	for pick in [gun_pick,blade_pick]:
+		pick.custom_minimum_size=Vector2(143,22)
+		pick.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+		pick.clip_text=true
+		pick.add_theme_constant_override("icon_max_width",16)
+		arms_row.add_child(pick)
+	gun_pick.item_selected.connect(_pick_arm.bind("weapon"))
+	blade_pick.item_selected.connect(_pick_arm.bind("blade"))
+	arms_row.hide()
 	# Gameplay sections have short, contextual trees; Options contains preferences only.
 	options_window = AcceptDialog.new()
 	options_window.title = "GAME OPTIONS"
@@ -552,6 +572,7 @@ func _build_ui() -> void:
 	dog_window.changed.connect(_refresh)
 	add_child(livestock_window)
 	livestock_window.changed.connect(_refresh)
+	livestock_window.slaughter_requested.connect(_confirm_slaughter)
 	add_child(fishing_window)
 	fishing_window.start_requested.connect(func(kit: String):
 		if game.start_fishing(kit):fishing_window.show_activity();_refresh()
@@ -1487,6 +1508,9 @@ func _refresh_party() -> void:
 	dismiss_button.hide()
 	wages_button.size.x=291
 	member_details.size.y=216
+	member_details.position.y=0
+	arms_row.hide()
+	party_kit=_party_kit()
 	for node in party_rows.get_children():
 		party_rows.remove_child(node)
 		node.queue_free()
@@ -1532,6 +1556,50 @@ func _refresh_party() -> void:
 		dismiss_button.position.x=410 if wages_button.visible else 261
 		dismiss_button.size.x=142 if wages_button.visible else 291
 		if wages_button.visible:wages_button.size.x=143
+	var kit: Dictionary=party_kit.get(selected_member,{})
+	if not kit.is_empty():
+		arms_row.show()
+		member_details.position.y=26
+		member_details.size.y-=26
+		_fill_arm_pick(gun_pick,"weapon",kit)
+		_fill_arm_pick(blade_pick,"blade",kit)
+
+var party_kit: Dictionary={}
+## Who carries what if a fight broke out now: present travelers, leader first.
+func _party_kit() -> Dictionary:
+	var ids: Array=_armed_ids()
+	var kit: Array=game.Armory.loadout_for(game.state,ids)
+	var result: Dictionary={}
+	for i in range(ids.size()):result[int(ids[i])]=kit[i]
+	return result
+func _armed_ids() -> Array:
+	return game.party_health.members.filter(func(m):return game.party_health.is_active(m) and not m.get("guarding",false) and not m.get("away",false)).map(func(m):return int(m.id))
+func _fill_arm_pick(pick: OptionButton,slot: String,kit: Dictionary) -> void:
+	var Armory=game.Armory
+	pick.clear()
+	var keys: Array=Armory.data.loadout_order if slot=="weapon" else Armory.data.blade_order
+	var carried: String=str(kit[slot])
+	var automatic: bool=not (Armory.pick(game.state,selected_member,slot)=="" or Armory.pick(game.state,selected_member,slot)==carried)
+	pick.add_item(("AUTO · "+(Armory.label(carried).to_upper() if carried!="" else "NONE LEFT")) if automatic else "AUTO")
+	pick.set_item_metadata(0,"auto")
+	if automatic and carried!="":pick.set_item_icon(0,Armory.icon(carried))
+	for key in keys:
+		if Armory.count(game.state,key)<1:continue
+		pick.add_item("%s (%d)" % [Armory.label(key).to_upper(),Armory.count(game.state,key)])
+		pick.set_item_icon(pick.item_count-1,Armory.icon(key))
+		pick.set_item_metadata(pick.item_count-1,key)
+	pick.add_item("NO GUN" if slot=="weapon" else "NO BLADE")
+	pick.set_item_metadata(pick.item_count-1,"")
+	var index:=0
+	if not automatic:
+		for i in range(pick.item_count):
+			if str(pick.get_item_metadata(i))==Armory.pick(game.state,selected_member,slot):index=i
+	pick.select(index)
+	pick.disabled=not game.can_service()
+func _pick_arm(index: int,slot: String) -> void:
+	var pick: OptionButton=gun_pick if slot=="weapon" else blade_pick
+	game.Armory.assign(game.state,selected_member,slot,str(pick.get_item_metadata(index)),_armed_ids())
+	_refresh_party()
 
 func _add_party_row(member: Dictionary) -> void:
 	var condition: String = "AWAY HUNTING" if member.get("away",false) else "GUARDING WAGON" if member.get("guarding",false) else "LEFT PARTY" if member.get("departed",false) else (game.PartyHealth.condition_label(member.health) if member.alive else "DECEASED")
@@ -1551,6 +1619,25 @@ func _add_party_row(member: Dictionary) -> void:
 	row.tooltip_text = "View condition and personal history"
 	party_rows.add_child(row)
 	row.set_meta("traveler_id",int(member.id))
+	# The gun and blade they would carry into a fight, at the right of the row.
+	var kit: Dictionary=party_kit.get(int(member.id),{})
+	if not kit.is_empty():
+		var arms:=HBoxContainer.new()
+		arms.name="Arms"
+		arms.mouse_filter=Control.MOUSE_FILTER_IGNORE
+		arms.add_theme_constant_override("separation",1)
+		arms.set_anchors_and_offsets_preset(Control.PRESET_CENTER_RIGHT,Control.PRESET_MODE_MINSIZE)
+		for key in [kit.weapon,kit.blade]:
+			var picture:=TextureRect.new()
+			picture.texture=game.Armory.icon(key)
+			picture.custom_minimum_size=Vector2(16,16)
+			picture.mouse_filter=Control.MOUSE_FILTER_IGNORE
+			arms.add_child(picture)
+		row.add_child(arms)
+		arms.position=Vector2(row.size.x-40,8)
+		row.resized.connect(func():arms.position=Vector2(row.size.x-38,8))
+		var names: Array=[kit.weapon,kit.blade].filter(func(key):return key!="").map(func(key):return game.Armory.label(key))
+		row.tooltip_text+="\nCarries: "+(" and ".join(names) if not names.is_empty() else "nothing; fights bare-handed")
 
 func _toggle_party_history() -> void:
 	show_past_travelers=not show_past_travelers
@@ -1696,7 +1783,7 @@ func _warn_food() -> bool:
 	_pause_travel()
 	_refresh()
 	food_notice.title="NO FOOD — STARVATION RISK" if level==2 else "LOW FOOD / SPOILAGE WARNING"
-	food_notice.dialog_text=("There is no food. Another day can cause starvation damage. " if level==2 else "Your supplies cannot cover three full days at the current ration setting, including known spoilage. ")+"Resting and waiting also use meals.\nConsider hunting, available traders, or emergency slaughter through Provisions / Cargo.\nTravel is paused. No extra day passed for this warning."
+	food_notice.dialog_text=("There is no food. Another day can cause starvation damage. " if level==2 else "Your supplies cannot cover three full days at the current ration setting, including known spoilage. ")+"Resting and waiting also use meals.\nConsider hunting, available traders, or emergency slaughter through Livestock.\nTravel is paused. No extra day passed for this warning."
 	popup_fitted(food_notice)
 	return true
 
@@ -2044,22 +2131,6 @@ func _show_supplies() -> void:
 			recover.disabled=not game.can_service()
 			transport.add_child(recover)
 		if game.CacheSupport.can_pack(game,true):transport.add_child(button("REPACK FROM THE CACHED WAGON",func():_show_packing(true)))
-	var ox_offer: Dictionary = game.ox_slaughter_offer()
-	if not ox_offer.is_empty():
-		var slaughter := button("SHOOT / BUTCHER 1 OX · %d LB · 1 BULLET · 1 DAY" % ox_offer.meat,func():_confirm_slaughter(false))
-		slaughter.tooltip_text = "Smaller teams pull less cargo and travel slowly. No oxen means no wagon movement. Meat may spoil."
-		transport.add_child(slaughter)
-	var hand_offer: Dictionary = game.ox_slaughter_offer(true)
-	if not hand_offer.is_empty():
-		transport.add_child(button("BUTCHER BY HAND · NO AMMO · %d%% INJURY RISK · 1 DAY" % roundi(hand_offer.injury_chance*100),func():_confirm_slaughter(true)))
-	# Starving packers ate their stock: a horse or mule gives less meat than an ox.
-	for kind in game.Mounts.ANIMALS:
-		var stock_offer: Dictionary = game.mount_slaughter_offer(kind,game.state.bullets<1)
-		if stock_offer.is_empty():continue
-		var name: String={"horses":"HORSE","mules":"MULE"}[kind]
-		var butcher := button(("BUTCHER 1 %s · %d LB · " % [name,stock_offer.meat])+("1 BULLET · 1 DAY" if not stock_offer.by_hand else "BY HAND · %d%% INJURY RISK · 1 DAY" % roundi(stock_offer.injury_chance*100)),_confirm_slaughter.bind(stock_offer.by_hand,kind))
-		butcher.tooltip_text = "Fewer animals means fewer riders and smaller loads. Meat may spoil."
-		transport.add_child(butcher)
 	supplies_window.popup_centered()
 
 func _packing_cart() -> Dictionary:
@@ -2162,10 +2233,10 @@ func _confirm_slaughter(by_hand: bool = false,kind: String = "oxen") -> void:
 			slaughter_confirmation.hide()
 			if (game.slaughter_ox(slaughter_by_hand) if slaughter_kind=="oxen" else game.slaughter_mount(slaughter_kind,slaughter_by_hand)):
 				_refresh()
-				_show_supplies())
+			livestock_window.open(game))
 		slaughter_confirmation.canceled.connect(func():
 			slaughter_confirmation.hide()
-			_show_supplies())
+			livestock_window.open(game))
 		add_child(slaughter_confirmation)
 	slaughter_confirmation.dialog_text="Lose one ox and use %d bullet; spend one camp day.\n%d oxen remain. Below four, pulling speed falls.\nRecover all %d lb usable meat without a hunting carry limit.\nMeat supplies %d food units before meals. Extra load slows travel; fresh meat spoils.\nYou may need to dry meat or discard cargo.\nThis cannot be undone within the current journey." % [offer.bullets,offer.remaining,offer.meat,game.provisions.meat_units(int(offer.meat))]
 	if offer.remaining==0:slaughter_confirmation.dialog_text+="\nNO TEAM REMAINS. Wagon stops until you acquire another ox."
@@ -2176,7 +2247,7 @@ func _confirm_slaughter(by_hand: bool = false,kind: String = "oxen") -> void:
 		slaughter_confirmation.dialog_text="Lose one %s and use %d bullet; spend one camp day.\n%d %s remain; fewer animals carry fewer riders and loads.\nRecover all %d lb usable meat, %d food units before meals. Fresh meat spoils.\nThis cannot be undone within the current journey." % [name,offer.bullets,offer.remaining,kind,offer.meat,game.provisions.meat_units(int(offer.meat))]
 	else:slaughter_confirmation.title="SLAUGHTER AN OX?"
 	if by_hand:slaughter_confirmation.dialog_text+="\nHousehold tools included; %d%% chance of wounding a traveler." % roundi(offer.injury_chance*100)
-	supplies_window.hide()
+	livestock_window.hide()
 	popup_fitted(slaughter_confirmation)
 
 
