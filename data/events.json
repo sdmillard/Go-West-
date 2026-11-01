@@ -199,7 +199,7 @@
     "oddity": "place",
     "chance": 0.25,
     "title": "The houses in the sage",
-    "text": "A paved street curves off the trail and ends in a circle of eleven houses. The lawns are green and the sprinklers are on. Every door is unlocked and nobody is home.",
+    "text": "A paved street curves off the trail and ends in a circle of eleven houses. The lawns are green and the sprinklers are on. Every door is unlocked and nobody is home. You could move into one and end your journey here, short of Oregon.",
     "label": "HOUSES",
     "span": [
       "south_pass",
@@ -220,6 +220,12 @@
         "label": "Look inside",
         "effects": {},
         "result": "Every house has the same couch. Every television shows the same weather map, and it is of somewhere else. You touch nothing."
+      },
+      {
+        "label": "Move into a house",
+        "settle_oddity": "cul_de_sac",
+        "effects": {},
+        "result": "You unload at the house with the blue door. The sprinklers come on at dusk. Your journey ends here, short of Oregon."
       }
     ]
   },

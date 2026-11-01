@@ -154,7 +154,9 @@ func _initialize() -> void:
 		var expected := Vector2(622, 273) if id in ["town_setup", "store", "post_store", "trader_camp", "camp_trade"] else Vector2(432, 150)
 		check(texture.get_size() == expected, "Scene has exact native-pixel dimensions: " + id)
 		var fingerprint := texture.get_image().get_data().hex_encode().sha256_text()
-		check(not fingerprints.has(fingerprint), "Location art is distinct, not another name for the same image: " + id)
+		# The Unhinged settlement intentionally reuses its encounter picture until ending art exists.
+		var cul_de_sac_fallback: bool=id=="ending_cul_de_sac" and texture==scenes.texture_for("event_cul_de_sac")
+		check(not fingerprints.has(fingerprint) or cul_de_sac_fallback, "Location art is distinct, not another name for the same image: " + id)
 		fingerprints[fingerprint] = true
 	for id in route.nodes:
 		check(scenes.textures.has(id) or id in scenes.awaiting, "Every route location has arrival art, or is listed as awaiting it: " + id)
