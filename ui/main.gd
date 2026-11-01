@@ -2202,9 +2202,9 @@ func _cabin_frame(stop: String, date: Dictionary) -> int:
 		return mini(2, units * 3 / game.Cabins.units_needed())
 	return 4 if _scene_season(stop, date) == "winter" else 3
 
-## Lower Columbia and Willamette places where winter is rain and green grass, not snow, unless
+## Lower Columbia, Willamette and southern Oregon valley places where winter is rain and green grass, not snow, unless
 ## it is snowing: they keep the picture as drawn.
-const MILD_WINTER_SCENES := ["eagle_creek", "oregon_city"]
+const MILD_WINTER_SCENES := ["eagle_creek", "oregon_city", "rogue_valley", "umpqua_valley", "south_willamette"]
 ## Missouri and eastern Kansas: travel from these places shows tallgrass autumn colours.
 const TALLGRASS_LANDMARKS := ["independence", "elm_grove", "wakarusa", "kansas_river", "big_vermilion", "big_blue", "little_blue"]
 

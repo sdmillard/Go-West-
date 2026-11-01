@@ -79,8 +79,13 @@ local REGION = {}
 for _, n in ipairs({"elm_grove", "wakarusa", "kansas_river", "big_vermilion", "big_blue", "jail_county", "little_blue"}) do REGION[n] = "tallgrass" end
 for _, n in ipairs({"platte", "fort_kearny", "fort_kearny_early", "jail_army", "south_platte", "ash_hollow", "courthouse_rock",
     "chimney_rock", "scotts_bluff", "fort_laramie", "deer_creek", "north_platte"}) do REGION[n] = "plains" end
-for _, n in ipairs({"horseshoe_creek", "bear_river", "blue_mountains", "grande_ronde", "barlow_pass", "laurel_hill"}) do REGION[n] = "mountain" end
-for _, n in ipairs({"eagle_creek", "oregon_city", "columbia_raft"}) do REGION[n] = "west" end
+for _, n in ipairs({"horseshoe_creek", "bear_river", "blue_mountains", "grande_ronde", "barlow_pass", "laurel_hill",
+    "fandango_pass"}) do REGION[n] = "mountain" end
+-- the oak valleys of the Applegate road: grass cured to straw, oaks turning brown and gold
+for _, n in ipairs({"rogue_valley", "umpqua_valley"}) do REGION[n] = "plains" end
+for _, n in ipairs({"eagle_creek", "oregon_city", "columbia_raft", "south_willamette"}) do REGION[n] = "west" end
+-- the southern Cascades of the Applegate road: mountain meadows, but fir and pine with no larch
+for _, n in ipairs({"green_springs", "canyon_creek"}) do REGION[n] = "cascade" end
 -- the scrolling travel layers: prairie and river sets serve Kansas and the Platte (build.sh also
 -- makes an "autumn_east" tallgrass version of them), desert is sage country, mountains and
 -- forest are the high timber
@@ -99,6 +104,7 @@ local AUTUMN_MAP = {
   plains = {grass={"silt_lt", "silt_lt", "sand", "sage", "clap_sh", "silt"}, sage={"silt_lt", "sage", "sage"}, haze="far_hill"},
   sage = {grass={"silt_lt", "sand", "clap_sh"}, sage={"sage", "silt_lt", "clap_sh", "silt_lt"}, haze="far_hill"},
   mountain = {grass={"silt_lt", "sage", "ochre", "silt_lt", "rust"}, sage={"ochre", "silt_lt"}, haze="far_hill"},
+  cascade = {grass={"silt_lt", "sage", "ochre", "silt_lt", "rust"}, sage={"ochre", "silt_lt"}, haze="far_hill"},
   west = {grass={"grass", "grass", "grass", "grass", "leaf", "sage", "grass", "ochre"}},
 }
 local CAPPED = {pine=true, leaf=true, ink=true, roof=true, roof_lt=true, roof_dk=true}

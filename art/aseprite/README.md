@@ -43,6 +43,7 @@ After `-Install`, run `godot --headless --path . --editor --import` and then `./
   - Platte plains: straw with grey-green patches and gold cottonwoods;
   - sage country: silver sage, yellow rabbitbrush and bleached grass;
   - mountains: straw and rust meadows with gold larch and aspen among the conifers;
+  - southern Cascades of the Applegate road (`cascade`): like the mountains but no larch;
   - west of the Cascades: grass green again after the autumn rains. Rock colours (ochre, gold, sand, silt) are left alone, so buttes, cliffs, sod and adobe keep their colour.
 - Never call `K.rnd` in season-only code. It would shift every later random mark, so the seasonal picture would stop matching the summer one.
 - Put `-- no seasons` near the top of a script to skip it. Indoor scenes, trading counters, the night camp, Independence and the endings are skipped this way.
