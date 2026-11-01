@@ -112,26 +112,35 @@ K.save("event_prairie_light")
 K.canvas(W, H, 2203)
 K.layer("country", function()
   K.sky(W, 100, {{20, 12, 0.8}, {360, 18, 0.9}}, "mist")
-  K.ridge(0, W - 1, 98, 102, function(x) return 10 + 6 * math.sin(x / 37) + 2 * math.sin(x / 7) end, "far_hill", "mist", "haze")
+  K.ridge(0, W - 1, 98, 102, function(x) return 7 + 4 * math.sin(x / 37) + 2 * math.sin(x / 7) end, "far_hill", "mist", "haze")
   -- salt flat, dead white with a grey crust pattern
   K.rect(0, 102, W, H - 102, "white")
   for y = 102, H - 1 do for x = 0, W - 1 do if K.rnd(9) == 0 then K.px(x, y, "stone_lt") end end end
   for i = 1, 30 do local x, y = K.rnd(W), 106 + K.rnd(40); K.line(x, y, x + 6 + K.rnd(10), y + K.rnd(3) - 1, "stone_lt") end
 end)
 K.layer("sphere", function()
-  -- colossal: it rises off the top of the picture and its foot sits on the salt; the
-  -- party is a speck beside it
-  local cx, cy, r = 300, 18, 96
-  K.ellipse(cx - 8, 113, r + 14, 6, "stone") -- its shadow on the salt
+  -- colossal, and far off: the whole sphere stands miles away out on the flat, its foot on
+  -- the horizon, and the mountain range behind it barely reaches its waist
+  local cx, cy, r = 268, 52, 58
+  local foot = cy + r
+  -- its shadow, a long dark ellipse on the salt toward us and to the right
+  K.ellipse(cx + 16, foot + 2, r + 18, 4, "stone")
+  K.ellipse(cx + 10, foot + 1, r - 6, 2, "stone_dk")
   K.ellipse(cx, cy, r, r, "onyx")
-  -- the bright sky reflected high on the upper left, softly ramped
-  for i = 1, 4 do K.ellipse(cx - 40 - i * 3, cy + 26 - i * 3, math.max(3, 30 - i * 7), math.max(3, 24 - i * 6), (i < 3) and "onyx_hi" or "onyx_glint") end
-  K.rect(cx - 58, cy + 12, 4, 2, "white"); K.px(cx - 57, cy + 11, "white")
-  -- the white salt flat reflected as a pale band along the lower curve
-  for x = cx - r + 6, cx + r - 6 do
+  -- the sky reflected over its upper left in a soft ramp, with a hard sun glint
+  for i = 1, 4 do K.ellipse(cx - 20 - i * 2, cy - 18 - i * 2, math.max(3, 30 - i * 6), math.max(3, 24 - i * 5), (i < 3) and "onyx_hi" or "onyx_glint") end
+  K.rect(cx - 34, cy - 30, 4, 2, "white"); K.px(cx - 33, cy - 31, "white")
+  -- the white salt and the far hills reflected as pale bands round its lower curve
+  for x = cx - r + 3, cx + r - 3 do
     local edge = cy + math.floor(math.sqrt(math.max(0, r * r - (x - cx) ^ 2)))
-    for y = edge - 12, edge - 5 do if y > edge - 12 + math.floor(4 * math.abs(x - cx) / r) then K.px(x, y, (y < edge - 8) and "onyx_hi" or "storm_dk") end end
+    local lift = math.floor(5 * math.abs(x - cx) / r)
+    for y = edge - 10 + lift, edge - 2 do K.px(x, y, (y < edge - 6) and "onyx_hi" or "storm_dk") end
     K.px(x, edge - 1, "stone_ink")
+  end
+  -- a thin rim of sky light on the left limb
+  for y = cy - r + 8, cy + r - 12 do
+    local x = cx - math.floor(math.sqrt(math.max(0, r * r - (y - cy) ^ 2)))
+    K.px(x + 1, y, "onyx_hi")
   end
 end)
 K.layer("figures", function()
