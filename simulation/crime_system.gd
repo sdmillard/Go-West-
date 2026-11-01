@@ -172,7 +172,9 @@ func fresh_service(place: String,food_sold: int) -> Dictionary:
 func add_transient(game,place: String) -> void:
 	if not transient(place) or record.services.has(place):return
 	for uid in staff_ids(place):record.actors[uid]=fresh_actor(place,uid)
-	record.services[place]=fresh_service(place,int(game.context.record.spent.get(place+"|buy_food",0))*int(rules(place).food_lot))
+	# The counter sells by the pound: count the pounds actually bought, not whole lots (older records kept only lots).
+	var spent: Dictionary=game.context.record.spent
+	record.services[place]=fresh_service(place,int(spent.get(place+"|buy_food|units",int(spent.get(place+"|buy_food",0))*int(rules(place).food_lot))))
 	record.services[place]["mile"]=int(game.state.miles)
 func person_id(seed_value: int,slot: int) -> String:return "party:%d:original:%d" % [seed_value,slot]
 func actor_id(place: String,id: String) -> String:return id+":"+place
@@ -732,13 +734,15 @@ func choose(game,command: String,left: Array=[]) -> bool:
 	elif command=="surrender":result(game,"surrendered")
 	elif command in ["flee","ride"]:
 		var current:=incident()
+		# Walking off from an unseen theft: traders already on guard from an earlier act did not see this one.
+		var seen: bool=store.alarmed and current.attempt!="unseen"
 		if command=="ride":
 			if not Wanted.cut_loose(self,game,left):return false
-			Wanted.left_at_wagon(self,game,store.alarmed)
+			Wanted.left_at_wagon(self,game,seen)
 		# Riders get clear of the scene more often, though never surely.
 		var capture: float=maxf(minf(float(scene.escape_capture),float(modifiers.floor)),float(scene.escape_capture)-Wanted.flight_bonus(self,game))
-		if store.alarmed:Wanted.ride_hard(game)
-		if store.alarmed:
+		if seen:Wanted.ride_hard(game)
+		if seen:
 			if not advance(game):return true
 			if rng.randf()<capture:
 				# Soldiers stop the party instead of simply taking it.
@@ -751,7 +755,7 @@ func choose(game,command: String,left: Array=[]) -> bool:
 				result(game,"captured")
 				return true
 			if rng.randf()<scene.escape_injury:wound(game,int(scene.injury_damage),1)
-		observe(game,current,"escape",store.alarmed)
+		observe(game,current,"escape",seen)
 		result(game,"escaped" if game.state.status=="traveling" else "party_lost")
 	elif command=="breakout":
 		var current:=incident()
