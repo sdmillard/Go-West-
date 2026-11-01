@@ -158,13 +158,19 @@
     "oddity": "place",
     "chance": 0.25,
     "title": "A ship on the Platte",
-    "text": "A three-masted ship sits upright in the grass beside the river, sails furled, decks scrubbed. The crew is lowering a boat onto the prairie. The mate asks very politely which way the sea is.",
+    "text": "A three-masted ship sits upright in the grass beside the river, sails furled, decks scrubbed. The crew is lowering a boat onto the prairie. The mate asks very politely which way the sea is. Their carpenter, Hollis Venn, asks to travel with you. The sailor brings clothing and tools, and asks only a place at your meals.",
     "label": "SHIP",
     "span": [
       "fort_kearny",
       "fort_laramie"
     ],
     "choices": [
+      {
+        "label": "Sign on the sailor",
+        "oddity_recruit": "beached_ship",
+        "effects": {},
+        "result": "Hollis Venn comes down the ladder with a small bundle. The mate enters the discharge in his book."
+      },
       {
         "label": "Point them west",
         "effects": {

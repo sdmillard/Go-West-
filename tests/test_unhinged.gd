@@ -152,5 +152,55 @@ func run():
 				changed+=1
 				if not FarSphere._is_sky(plain.get_pixel(x,y)):on_land+=1
 	check(changed>20 and on_land==0,"In a stop picture it is painted over the sky only (%d px, %d on land)" % [changed,on_land])
+	test_sailor()
 	print("Unhinged: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures==0 else 1)
+
+func test_sailor():
+	var g=started(4242)
+	g._present(event(g,"beached_ship"))
+	var index: int=-1
+	for i in range(g.pending.choices.size()):
+		if g.pending.choices[i].label=="Sign on the sailor":index=i
+	check(index>=0 and g.can_choose(index),"The beached ship offers its sailor")
+	var store=Store.new()
+	var restored=store.restore(JSON.parse_string(JSON.stringify(store.capture(g))))
+	check(restored!=null and restored.can_choose(index),"The sailor offer survives a save")
+	var day: int=g.state.day
+	var food: int=g.state.food
+	var money: float=g.state.money
+	var bullets: int=g.state.bullets
+	var clothing: int=g.state.clothing
+	var gear: int=g.state.get("household_gear_lb",0)
+	var dice=g.rng.state
+	check(g.choose(index),"Signing on the sailor succeeds")
+	check(g.party_health.members.size()==6 and g.party_health.members[5].id==5 and g.state.party_size==6 and g.current_party_slots().has(5),"The sailor joins the ordinary roster with a permanent id")
+	check(g.party_health.members[5].name=="Hollis Venn" and g.characters.profiles[5].skill=="Carpentry" and g.characters.profiles[5].contract.is_empty(),"The ship's carpenter has an invented name, existing background and no wage contract")
+	check(g.state.day==day and g.state.food==food and g.state.money==money and g.state.bullets==bullets and g.rng.state==dice,"Recruiting costs no day or cash and grants no provisions or main RNG draws")
+	check(g.state.clothing==clothing+int(g.recruitment.rules.clothing) and g.state.recruited_gear_lb==int(g.recruitment.rules.personal_gear_lb) and (not g.state.has("household_gear_lb") or g.state.household_gear_lb==gear+int(g.recruitment.rules.personal_gear_lb)),"The sailor brings normal recruit clothing and personal gear")
+	check(g.recruitment.valid(g.recruitment.snapshot(),g),"The sailor has a valid recruitment ledger")
+	var after=store.restore(JSON.parse_string(JSON.stringify(store.capture(g))))
+	check(after!=null and after.recruitment.snapshot()==g.recruitment.snapshot() and after.party_health.members==g.party_health.members and after.social.snapshot()==g.social.snapshot(),"Sailor health, recruitment and relationships round-trip")
+	if restored!=null:
+		restored.choose(index)
+		check(restored.characters.profiles[5]==g.characters.profiles[5],"Reloading the offer recruits the same sailor")
+	g._present(event(g,"beached_ship"))
+	check(not g.can_choose(index) and not g.choose(index) and g.party_health.members.size()==6,"A replayed ship cannot recruit a second sailor")
+	var decline=started(4242)
+	decline._present(event(decline,"beached_ship"))
+	decline.choose(decline.pending.choices.size()-1)
+	check(decline.party_health.members.size()==5 and decline.recruitment.record.searches.is_empty(),"Leaving the ship does not recruit anyone")
+	var vacant=started(4242)
+	vacant.party_health.members[2].alive=false
+	vacant.state.party_size=vacant.party_health.living_count()
+	vacant._present(event(vacant,"beached_ship"))
+	vacant.choose(index)
+	check(vacant.recruitment.record.slots[2]==5 and not vacant.party_health.members[2].alive and vacant.party_health.members.size()==6,"The sailor fills a vacancy without overwriting its history")
+	var full=started(4242)
+	while full.party_health.members.size()<full.MAX_TRAVELERS:full.party_health.members.append({})
+	full._present(event(full,"beached_ship"))
+	var before: Dictionary=full.recruitment.snapshot()
+	check(not full.can_choose(index) and not full.choose(index) and full.recruitment.snapshot()==before,"The traveler cap rejects recruitment without changing the ledger")
+	var plain=started(4242,"classic")
+	plain._present(event(plain,"beached_ship"))
+	check(not plain.can_choose(index),"Classic cannot sign on the sailor")
