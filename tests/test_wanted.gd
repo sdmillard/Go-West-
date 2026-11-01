@@ -273,5 +273,12 @@ func run() -> void:
 	check(screen.member_details.text.begins_with("Wanted:"),"Party details show derived wanted status")
 	screen.queue_free()
 	await process_frame
+	# Bug pass (November 2026): a companion who left on the day a bounty was posted, after the posting, told of acts
+	# the bounty did not price in; the save was refused. A real chaos-bot save from that day now loads.
+	var fixture: Variant=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/same-day-tale-bounty-v1.json"))
+	var same_day=Store.new().restore(fixture)
+	check(same_day!=null,"A bounty posted the day a companion left still loads")
+	if same_day!=null:
+		check(int(same_day.crime.record.bounties[0].cents)==16250 and Wanted.notoriety(same_day.crime,same_day,"fort_laramie",83)*2500>16250,"Its price left out the tale told that same day")
 	print("Wanted system: %d checks, %d failures" % [checks,failures])
 	quit(1 if failures else 0)

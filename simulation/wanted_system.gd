@@ -198,12 +198,13 @@ static func incident_evidence(crime,game,item: Dictionary,identified: bool) -> D
 	if action in ["wanted","pursuit"] and int(item.shots)==0:weight=0
 	return {"id":"incident:%d" % int(item.id),"weight":weight if identified else weight*0.5,"severity":severity,"value":value_of(game,item),"day":int(item.day),"identified":identified,"origin":item.place,"joining":item.get("joining",[])}
 ## Merge reports and tales about the same act, taking the strongest identification, never double-counting.
-static func evidence(crime,game,place: Variant="",local: Dictionary={},day: int=-1) -> Array:
+## same_day_tales=false leaves out companions who left on `day` itself (a bounty may be posted before they go).
+static func evidence(crime,game,place: Variant="",local: Dictionary={},day: int=-1,same_day_tales: bool=true) -> Array:
 	var known: Dictionary={}
 	for report in crime.record.reports:
 		if arrived(crime,game,report,place,day):merge(known,incident_evidence(crime,game,crime.record.incidents[int(report.incident)-1],report.identified))
 	for told in crime.tales(game):
-		if not arrived(crime,game,told,place,day):continue
+		if not arrived(crime,game,told,place,day) or (not same_day_tales and int(told.day)>=day):continue
 		for id in told.incidents:merge(known,incident_evidence(crime,game,crime.record.incidents[int(id)-1],true))
 		for id in told.attacks:
 			var attack: Dictionary=crime.record.attacks[int(id)-1]
@@ -214,9 +215,9 @@ static func evidence(crime,game,place: Variant="",local: Dictionary={},day: int=
 	return known.values().filter(func(item):return float(item.weight)>0)
 static func merge(known: Dictionary,item: Dictionary) -> void:
 	if not known.has(item.id) or float(known[item.id].weight)<float(item.weight):known[item.id]=item
-static func notoriety(crime,game,place: Variant="",day: int=-1) -> float:
+static func notoriety(crime,game,place: Variant="",day: int=-1,same_day_tales: bool=true) -> float:
 	var total:=0.0
-	for item in evidence(crime,game,place,{},day):total+=float(item.weight)
+	for item in evidence(crime,game,place,{},day,same_day_tales):total+=float(item.weight)
 	return total
 ## Acts already answered at a hearing. A council's settlement answers only to that council, except a returned theft:
 ## paying a household for violence does not clear it for anyone else.
@@ -538,8 +539,9 @@ static func valid_bounties(crime,r: Dictionary,game) -> bool:
 	for index in range(r.bounties.size()):
 		var b: Variant=r.bounties[index]
 		if not b is Dictionary or b.size()!=6 or b.get("id")!=index+1 or not whole(b.get("day"),0,int(game.state.day)) or b.get("post") not in POSTS or not whole(b.get("cents"),int(crime.wanted_data.bounty_min_cents),int(crime.wanted_data.bounty_max_cents)) or not (b.get("cleared_day")==-1 or whole(b.get("cleared_day"),int(b.day),int(game.state.day))) or not b.get("incidents") is Array or b.incidents.is_empty():return false
-		var expected_cents: int=clampi(roundi(notoriety(shadow,game,b.post,int(b.day))*float(crime.wanted_data.bounty_step_cents)),int(crime.wanted_data.bounty_min_cents),int(crime.wanted_data.bounty_max_cents))
-		if int(b.cents)!=expected_cents:return false
+		var price:=func(same_day: bool):return clampi(roundi(notoriety(shadow,game,b.post,int(b.day),same_day)*float(crime.wanted_data.bounty_step_cents)),int(crime.wanted_data.bounty_min_cents),int(crime.wanted_data.bounty_max_cents))
+		# A companion who left the same day may have gone before or after the posting.
+		if int(b.cents)!=price.call(true) and int(b.cents)!=price.call(false):return false
 		for id in b.incidents:
 			if not whole(id,1,r.incidents.size()) or id in posted:return false
 			posted.append(id)
