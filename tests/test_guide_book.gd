@@ -55,16 +55,31 @@ func run():
 	for chapter in data.chapters:
 		book.open_chapter(chapter.id)
 		check(book.spread_text().length()>200,"Chapter %s reads" % chapter.id)
-	# Turning pages runs through the whole book and back.
+	# Turning pages runs through the whole book onto the back cover, and back to the front cover.
 	book.open_chapter("preface")
 	var seen: Array=[]
 	var turns:=0
-	while book.next_button.visible and turns<200:
+	while book.cover=="" and turns<200:
 		book.turn(1);turns+=1
-		if not book.current_id() in seen:seen.append(book.current_id())
-	check(book.current_id()=="fighting" and seen.size()==data.chapters.size()-1,"Turning pages reaches the last chapter through every chapter")
-	while book.back_button.visible and turns<400:book.turn(-1);turns+=1
-	check(book.current_id()=="preface" and book.spread==0,"Turning back returns to the first page")
+		if book.cover=="" and not book.current_id() in seen:seen.append(book.current_id())
+	check(book.cover=="back" and book.current_id()=="fighting" and seen.size()==data.chapters.size()-1,"Paging on past the last page closes the book onto its back cover")
+	check(not book.left_page.visible and not book.tabs[0].visible and book.back_nodes.all(func(n):return n.visible),"The back cover hides the pages and tabs")
+	book.turn(1)
+	check(book.cover=="back","Nothing lies past the back cover")
+	book.turn(-1)
+	check(book.cover=="" and book.current_id()=="fighting" and book.spread==book.spreads("fighting")-1,"Paging back from the back cover opens the last page")
+	while book.cover=="" and turns<400:book.turn(-1);turns+=1
+	check(book.cover=="front" and book.front_nodes.all(func(n):return n.visible) and not book.right_page.visible,"Paging back past page one closes the book onto its front cover")
+	book.turn(-1)
+	check(book.cover=="front","Nothing lies before the front cover")
+	book.turn(1)
+	check(book.cover=="" and book.current_id()=="preface" and book.spread==0 and book.left_page.visible,"Opening the front cover shows page one")
+	book.turn(-1)
+	book.open_chapter("road")
+	check(book.cover=="" and book.current_id()=="road","Opening a chapter from the cover opens the book")
+	book.turn(-1);book.turn(-1);book.turn(-1);book.turn(-1);book.turn(-1);book.turn(-1);book.turn(-1);book.turn(-1)
+	book.tabs[3].pressed.emit()
+	check(book.cover=="","A thumb tab opens the book")
 	book.tabs[3].pressed.emit()
 	check(book.current_id()==data.chapters[3].id and book.spread==0,"A thumb tab opens its chapter")
 	# The store starts empty, and its guide button opens the outfit chapter.
@@ -95,6 +110,12 @@ func run():
 			await process_frame
 			await RenderingServer.frame_post_draw
 			root.get_texture().get_image().save_png("res://.tools/guide-%s-%s-%d.png" % shot)
+		for side in ["front","back"]:
+			screen.guide._set_cover(side,0,0)
+			await process_frame
+			await RenderingServer.frame_post_draw
+			root.get_texture().get_image().save_png("res://.tools/guide-cover-%s.png" % side)
+		screen.guide.open_chapter("outfit")
 		screen.guide.turn(1)
 		screen.guide._turn_t=0.3
 		screen.guide._turn.queue_redraw()
