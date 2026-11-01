@@ -12,13 +12,15 @@ static func number(v: Variant) -> bool:return (v is int or v is float) and is_fi
 static func valid_rules(v: Variant) -> bool:
 	if not v is Dictionary or not v.get("note") is String or not v.get("traveler_points") is Dictionary or not v.get("endings") is Dictionary:return false
 	if not ["healthy","fair","poor"].all(func(k):return number(v.traveler_points.get(k)) and v.traveler_points[k]>=0):return false
-	if not ["arrived","settled","run_off","returned_east","lost"].all(func(k):return number(v.endings.get(k)) and v.endings[k]>=0 and v.endings[k]<=1):return false
+	if not ["arrived","settled","cul_de_sac","run_off","returned_east","lost"].all(func(k):return number(v.endings.get(k)) and v.endings[k]>=0 and v.endings[k]<=1):return false
 	if not number(v.get("healthy_at")) or not number(v.get("fair_at")) or v.fair_at>v.healthy_at or not number(v.get("dollars_per_point")) or v.dollars_per_point<=0:return false
 	return v.get("profession_base") is String
 
 ## Which ending a finished journey reached, or "" while it goes on.
 static func ending(game) -> String:
-	if game.state.status=="settled":return "run_off" if game.state.get("settled",{}).get("kind","")=="run_off" else "settled"
+	if game.state.status=="settled":
+		var kind: String=game.state.get("settled",{}).get("kind","")
+		return kind if kind in ["run_off","cul_de_sac"] else "settled"
 	return str(game.state.status) if game.state.status in ["arrived","returned_east","lost"] else ""
 
 static func goods_cents(game) -> int:
@@ -56,5 +58,5 @@ static func breakdown(game) -> Dictionary:
 
 static func text(game) -> String:
 	var b: Dictionary=breakdown(game)
-	var names: Dictionary={"arrived":"Reached Oregon","settled":"Settled short","run_off":"Run off","returned_east":"Turned back east","lost":"Journey lost"}
+	var names: Dictionary={"arrived":"Reached Oregon","settled":"Settled short","cul_de_sac":"Settled in the houses in the sage","run_off":"Run off","returned_east":"Turned back east","lost":"Journey lost"}
 	return "SCORE %d\nTravelers %d + goods %d + cash %d + keepsakes %d = %d\nx %.2f for %s, x %.1f for a %s" % [b.total,b.travelers,b.goods,b.cash,b.keepsakes,b.subtotal,b.ending_factor,names.get(b.ending,"the ending").to_lower(),b.profession_factor,str(game.state.get("profession",""))]

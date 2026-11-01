@@ -154,6 +154,7 @@ func run():
 	check(changed>20 and on_land==0,"In a stop picture it is painted over the sky only (%d px, %d on land)" % [changed,on_land])
 	test_sailor()
 	test_novablade_custody()
+	await test_cul_de_sac()
 	print("Unhinged: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures==0 else 1)
 
@@ -210,6 +211,63 @@ func crime_pick(game,command: String) -> bool:
 	for i in range(game.pending.get("choices",[]).size()):
 		if game.pending.choices[i].get("crime_command","")==command:return game.choose(i)
 	return false
+
+func test_cul_de_sac():
+	var game=started(4242)
+	# A place is met inside a leg, not at a route stop.
+	game.pending={}
+	game.state.next_landmark="south_pass"
+	game._arrive_landmark()
+	game.choose(pick(game))
+	game.state.leg_miles=10
+	game.state.miles+=10
+	game._present(event(game,"cul_de_sac"))
+	var index: int=-1
+	for i in range(game.pending.choices.size()):
+		if game.pending.choices[i].label=="Move into a house":index=i
+	check(index>=0 and game.can_choose(index),"The houses offer a permanent home")
+	var store=Store.new()
+	var offer: Dictionary=store.capture(game)
+	var restored=store.restore(JSON.parse_string(JSON.stringify(offer)))
+	check(restored!=null and restored.can_choose(index),"The settlement offer survives a save")
+	var before: Dictionary=game.state.duplicate(true)
+	var dice=game.rng.state
+	check(game.choose(index) and game.state.status=="settled" and game.state.settled.kind=="cul_de_sac","Moving into a house ends the journey with its own settlement kind")
+	check(game.pending.is_empty() and game.service_return.is_empty(),"The ending clears the event and service menus")
+	for key in ["day","money","food","health","ox_health","miles","leg_miles","landmark","next_landmark"]:
+		check(game.state[key]==before[key],"Settlement preserves "+key)
+	check(game.rng.state==dice and not game.travel() and not game.rest() and not game.choose(index),"The finished party cannot keep traveling, resting or settling again")
+	var score: Dictionary=game.Scoring.breakdown(game)
+	check(score.ending=="cul_de_sac" and is_equal_approx(score.ending_factor,0.6) and score.total>0,"The houses score the same factor as an ordinary settlement")
+	check("houses in the sage" in game.Cabins.ending_title(game) and "blue door" in game.Cabins.ending_text(game) and "houses in the sage" in game.Scoring.text(game),"The ending and score name the houses rather than the last stop")
+	var saved: Dictionary=store.capture(game)
+	var after=store.restore(JSON.parse_string(JSON.stringify(saved)))
+	check(after!=null and store.capture(after)==saved,"A mid-leg cul-de-sac ending round-trips exactly")
+	var bad: Dictionary=saved.duplicate(true)
+	bad.state.mode="classic"
+	check(store.restore(bad)==null,"Classic saves cannot claim this settlement")
+	bad=saved.duplicate(true)
+	bad.state.settled.people="somebody"
+	check(store.restore(bad)==null,"The empty houses cannot claim a welcoming community")
+	var old: Dictionary=offer.duplicate(true)
+	old.rules="262c4869cdae6e1ba3d43eabfd4963beaaf028029e0f528acbca39f5dabab35a"
+	check(store.restore(old)!=null,"The previous master fingerprint still loads")
+	var plain=started(4242,"classic")
+	plain._present(event(plain,"cul_de_sac"))
+	check(not plain.can_choose(index),"Classic cannot settle in the houses")
+	var lawn=started(4242)
+	lawn._present(event(lawn,"cul_de_sac"))
+	var day: int=lawn.state.day
+	check(lawn.choose(0) and lawn.state.day==day+1 and lawn.state.status=="traveling","Resting on the lawn still spends one day and continues the journey")
+	var screen=load("res://ui/main.tscn").instantiate()
+	root.add_child(screen)
+	await process_frame
+	screen.game=game
+	screen._refresh()
+	check(screen.landscape.scene_id=="ending_cul_de_sac" and screen.landscape.scenes.textures.has("ending_cul_de_sac"),"The ending screen selects the registered cul-de-sac picture")
+	check("houses in the sage" in screen.event_title.text and "SCORE" in screen.event_text.text,"The actual screen shows the settlement and score")
+	screen.queue_free()
+	await process_frame
 
 func test_novablade_custody():
 	var detention=preload("res://simulation/detention.gd")

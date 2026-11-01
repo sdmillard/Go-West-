@@ -39,6 +39,8 @@ The journey then ends with status `settled` and `state.settled` = {place, kind, 
 - `cabin` (welcomed, with a finished cabin);
 - `run_off`.
 
+In Unhinged mode, the houses in the sage encounter also offers **Move into a house**. This ends the journey immediately with kind `cul_de_sac`, without spending a day or changing supplies. The route position remains on the road where the houses were met; `settled.place` records the last route stop. Its score factor is 0.6, the same as an ordinary settlement. The ending screen currently reuses the cul-de-sac place picture.
+
 ## Scores for every ending
 
 The score is:

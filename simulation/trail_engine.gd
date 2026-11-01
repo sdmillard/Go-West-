@@ -687,6 +687,7 @@ func can_choose(index: int) -> bool:
 		return false
 	var choice: Dictionary = pending.choices[index]
 	if choice.has("oddity_recruit") and (choice.oddity_recruit!="beached_ship" or not recruitment.can_sign_sailor(self)):return false
+	if choice.has("settle_oddity") and (choice.settle_oddity!="cul_de_sac" or not Cabins.can_settle_cul_de_sac(self)):return false
 	if choice.has("bandit_payment") and (pending.id!="bandits" or not combat.BanditDemand.valid_choice(choice) or (choice.get("bandit_wagon",false) and state.vehicle!="wagon")):return false
 	if pending.get("native_menu",false):return native_encounters.can_choose(self,index)
 	if choice.has("native_portage") and not native_encounters.valid_portage(self,choice):return false
@@ -735,6 +736,7 @@ func choose(index: int) -> bool:
 		return chosen
 	var choice: Dictionary = pending.choices[index]
 	if choice.has("carcass_meat"):return _butcher_carcass(choice)
+	if choice.has("settle_oddity"):return Cabins.settle_cul_de_sac(self)
 	if choice.has("oddity_recruit") and not recruitment.sign_sailor(self):return false
 	if choice.get("camp_repair_part","") in camp_repair.PARTS:
 		if not camp_repair.queue(self,str(choice.camp_repair_part)):return false

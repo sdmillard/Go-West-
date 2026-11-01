@@ -2379,6 +2379,7 @@ func _ending_scene(s: Dictionary) -> String:
 		return "ending_lost"
 	var settled: Dictionary = s.get("settled", {})
 	match str(settled.get("kind", "")):
+		"cul_de_sac": return "ending_cul_de_sac"
 		"post": return "ending_post"
 		"cabin": return "ending_cabin"
 		"run_off": return "ending_run_off"

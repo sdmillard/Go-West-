@@ -5,7 +5,7 @@ extends RefCounted
 ## and in Native country the people there decide. Staying where they refuse ends with the party run off.
 ## state.cabins = {stop: work units}; two units per worker-day, three with Carpentry.
 ## state.settled = {"place", "kind", "people"} once the journey has ended by settling.
-const KINDS=["open","post","cabin","native","run_off"]
+const KINDS=["open","post","cabin","native","run_off","cul_de_sac"]
 static var data: Dictionary=load_rules()
 
 static func load_rules() -> Dictionary:
@@ -135,14 +135,28 @@ static func settle(game) -> bool:
 	game.journal.append("Day %d · %s" % [game.state.day,ending_title(game)])
 	return true
 
+## The empty houses are an encounter on the road, rather than a route stop.
+static func can_settle_cul_de_sac(game) -> bool:
+	return game.state.extended_route and game.state.mode=="unhinged" and game.state.status=="traveling" and game.pending.get("id","")=="cul_de_sac" and game.party_health.is_active(game.party_health.members[0])
+static func settle_cul_de_sac(game) -> bool:
+	if not can_settle_cul_de_sac(game):return false
+	game.state["settled"]={"place":str(game.state.landmark),"kind":"cul_de_sac","people":""}
+	game.state.status="settled"
+	game.pending={}
+	game.service_return={}
+	game.journal.append("Day %d · %s" % [game.state.day,ending_title(game)])
+	return true
+
 static func ending_title(game) -> String:
 	var s: Dictionary=game.state.get("settled",{})
+	if s.get("kind","")=="cul_de_sac":return "Settled in the houses in the sage"
 	var name: String=game.route.nodes[str(s.get("place",game.state.landmark))].name
 	return "Run off from %s" % name if s.get("kind","")=="run_off" else "Settled at %s" % name
 static func ending_text(game) -> String:
 	var s: Dictionary=game.state.get("settled",{})
 	var name: String=game.route.nodes[str(s.place)].name
 	var text: String={
+		"cul_de_sac":"Your party unloaded at the house with the blue door and stayed for good, short of Oregon. The sprinklers come on at dusk. Nobody asks you to leave.",
 		"open":"Your party went no farther than %s and made a home there, short of Oregon." % name,
 		"post":"Your party stayed on at %s, working for the post and living beside it, short of Oregon." % name,
 		"cabin":"Your party wintered in its own cabin at %s and stayed for good, short of Oregon%s." % [name,", with the leave of the %s people" % s.people if not str(s.people).is_empty() else ""],
@@ -158,4 +172,5 @@ static func valid_state(s: Dictionary,route) -> bool:
 	if s.has("settled"):
 		var v: Variant=s.settled
 		if not v is Dictionary or v.size()!=3 or not route.nodes.has(v.get("place")) or v.get("kind") not in KINDS or not v.get("people") is String or v.place!=s.get("landmark"):return false
+		if v.kind=="cul_de_sac" and (s.get("mode")!="unhinged" or v.people!=""):return false
 	return true

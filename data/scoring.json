@@ -11,6 +11,7 @@
   "endings": {
     "arrived": 1.0,
     "settled": 0.6,
+    "cul_de_sac": 0.6,
     "run_off": 0.3,
     "returned_east": 0.25,
     "lost": 0.0

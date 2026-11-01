@@ -200,35 +200,115 @@ end)
 K.save("event_beached_ship")
 
 ---------------------------------------------------------------- the houses in the sage
-K.canvas(W, H, 2205)
+local cul_scene = K.canvas(W, H, 2205)
 K.layer("country", function()
-  K.sky(W, 80, {{70, 16, 0.9}, {260, 12, 0.7}}, "sand")
-  K.ridge(0, W - 1, 78, 82, function(x) return 12 + 7 * math.sin(x / 31) + 2 * math.sin(x / 9) end, "far_hill", "mist", "haze")
-  sage_ground(82)
+  K.sky(W, 68, {{55, 12, 0.7}, {285, 9, 0.6}}, "sand")
+  -- A distant range, with a lower foothill band and a quiet plain between it and the houses.
+  K.poly({{0, 67}, {0, 43}, {27, 40}, {51, 24}, {67, 35}, {86, 31}, {112, 48}, {136, 35}, {159, 44}, {189, 56}, {216, 36}, {247, 25}, {271, 42}, {292, 34}, {322, 49}, {349, 30}, {371, 36}, {395, 27}, {431, 44}, {431, 68}}, "far_hill")
+  K.poly({{27, 40}, {51, 24}, {67, 35}, {54, 31}, {43, 43}}, "mist")
+  K.poly({{216, 36}, {247, 25}, {271, 42}, {247, 34}, {237, 39}}, "mist")
+  K.ridge(0, W - 1, 65, 72, function(x) return 3 + 3 * math.sin(x / 39) end, "haze", "mist", "sand")
+  sage_ground(72)
 end)
 K.layer("street", function()
-  -- the paved road leaves the ruts and ends in a circle
-  road({{-10, 144, 6}, {120, 136, 5}, {440, 130, 3}})
-  K.poly({{150, 136}, {176, 136}, {196, 118}, {184, 116}}, "asphalt")
-  K.ellipse(250, 110, 66, 9, "asphalt"); K.ellipse(250, 110, 18, 3, "lawn")
-  K.rect(184, 110, 132, 1, "asphalt_lt")
-  -- lawns and houses around the circle, alternating siding
-  local houses = {{164, 96, "siding_tan"}, {206, 92, "siding_blue"}, {250, 90, "cream"}, {294, 92, "siding_tan"}, {336, 96, "siding_blue"}}
+  road({{-10, 145, 5}, {104, 144, 5}, {198, 147, 5}})
+  K.ellipse(273, 115, 156, 35, "lawn")
+  K.ellipse(271, 113, 103, 25, "stone_lt") -- one continuous sidewalk
+  K.ellipse(271, 113, 96, 21, "sand")
+  K.ellipse(271, 113, 92, 18, "asphalt_lt")
+  K.ellipse(271, 113, 90, 17, "asphalt")
+  K.poly({{247, 131}, {276, 131}, {252, 150}, {203, 150}}, "stone_lt")
+  K.poly({{250, 129}, {273, 130}, {249, 150}, {207, 150}}, "sand")
+  K.poly({{252, 128}, {271, 129}, {246, 150}, {211, 150}}, "asphalt")
+  -- Each footprint has its own inward direction. Foreground lots are larger; their
+  -- street-facing walls are hidden behind their roofs, so we see backs, not front doors.
+  local houses = {
+    {159, 92, 34, 15, 0.90, 0.44, "siding_tan"},
+    {196, 86, 34, 15, 0.45, 0.89, "siding_blue"},
+    {233, 82, 34, 15, 0.18, 0.98, "cream"},
+    {270, 81, 34, 15, 0, 1, "siding_tan"},
+    {307, 82, 34, 15, -0.18, 0.98, "siding_blue"},
+    {344, 86, 34, 15, -0.45, 0.89, "cream"},
+    {381, 92, 34, 15, -0.90, 0.44, "siding_tan"},
+    {139, 112, 44, 23, 0.97, 0.24, "cream"},
+    {403, 112, 44, 23, -0.97, 0.24, "siding_blue"},
+    {122, 145, 58, 26, 0.85, -0.53, "siding_blue"},
+    {411, 145, 58, 26, -0.85, -0.53, "siding_tan"}
+  }
+  -- Keep yards open. No stray rails or mailbox posts across the fronts.
   for _, h in ipairs(houses) do
-    local x, y = h[1], h[2]
-    K.rect(x - 4, y, 40, 10, "lawn"); K.dither(x - 4, y + 8, 40, 2, "lawn", "lawn_lt")
-    K.rect(x, y - 14, 32, 14, h[3]); K.side_wall(x + 32, y, 5, 14, "clap_sh", "clap_sh")
-    K.gable_roof(x - 2, y - 14, 36, 7)
-    K.rect(x + 20, y - 10, 10, 10, "asphalt_lt") -- garage door
-    K.window(x + 4, y - 11, 6, 5); K.door(x + 12, y, 8)
-    K.rect(x + 34, y + 2, 1, 1, "light_blue"); K.px(x + 33, y + 1, "white") -- a sprinkler's spray
+    local cx, cy, w, ht, nx, ny = table.unpack(h, 1, 6)
+    local depth = w * 0.64
+    local fx, fy = cx + nx * depth * 0.5, cy + ny * depth * 0.25
+    local angle = math.atan((cy - 113) / 25, (cx - 271) / 103)
+    local curb_x, curb_y = 271 + math.cos(angle) * 103, 113 + math.sin(angle) * 25
+    local dx, dy = curb_x - fx, curb_y - fy
+    local len = math.max(1, math.sqrt(dx * dx + dy * dy))
+    local px, py = -dy / len * 1.5, dx / len * 1.5
+    K.poly({{fx + px, fy + py}, {curb_x + px, curb_y + py}, {curb_x - px, curb_y - py}, {fx - px, fy - py}}, "stone_lt")
   end
-  -- a mailbox at the turn
-  K.rect(186, 118, 1, 6, "storm"); K.rect(184, 115, 5, 3, "storm_dk")
+  for _, h in ipairs(houses) do
+    local cx, cy, w, ht, nx, ny = table.unpack(h, 1, 6)
+    local depth = w * 0.64
+    local ux, uy, vx, vy = ny, -nx * 0.5, nx, ny * 0.5
+    local function p(u, v, z) return {math.floor(cx + ux * u + vx * v + 0.5), math.floor(cy + uy * u + vy * v - z + 0.5)} end
+    local a, b, c, d = p(-w/2, depth/2, 0), p(w/2, depth/2, 0), p(w/2, -depth/2, 0), p(-w/2, -depth/2, 0)
+    local at, bt, ct, dt = p(-w/2, depth/2, ht), p(w/2, depth/2, ht), p(w/2, -depth/2, ht), p(-w/2, -depth/2, ht)
+    K.shadow(cx - w/2 + 5, cy + 6, w + 9)
+    -- Only the two walls facing the viewer are visible. A north-facing front is behind the house.
+    if nx >= 0 then K.poly({d, a, at, dt}, h[7]) else K.poly({b, c, ct, bt}, "clap_sh") end
+    local front = ny >= 0
+    local v = front and depth/2 or -depth/2
+    K.poly(front and {a, b, bt, at} or {c, d, dt, ct}, front and h[7] or "clap_sh")
+    local function wall_rect(u0, u1, z0, z1, color)
+      K.poly({p(u0,v,z0),p(u1,v,z0),p(u1,v,z1),p(u0,v,z1)},color)
+    end
+    if math.abs(ny) > 0.35 then
+      if front then
+        wall_rect(-w*0.39,-w*0.21,ht*0.43,ht*0.78,"deep")
+        wall_rect(-w*0.37,-w*0.23,ht*0.47,ht*0.74,"glass")
+        wall_rect(-w*0.10,w*0.08,0,ht*0.64,"siding_blue")
+        wall_rect(w*0.19,w*0.44,0,ht*0.62,"cream")
+        for z=3, math.floor(ht*0.6), 3 do K.line(table.unpack({p(w*0.20,v,z)[1],p(w*0.20,v,z)[2],p(w*0.43,v,z)[1],p(w*0.43,v,z)[2],"stone"})) end
+      else
+        -- Paired back windows and a plain rear wall make the foreground orientation explicit.
+        wall_rect(-w*0.32,-w*0.14,ht*0.45,ht*0.75,"deep")
+        wall_rect(-w*0.30,-w*0.16,ht*0.49,ht*0.71,"glass")
+        wall_rect(w*0.14,w*0.32,ht*0.45,ht*0.75,"deep")
+        wall_rect(w*0.16,w*0.30,ht*0.49,ht*0.71,"glass")
+      end
+    end
+    local rf, rb = p(0,depth/2,ht+7),p(0,-depth/2,ht+7)
+    K.poly({at,dt,rb,rf},"roof_lt")
+    K.poly({bt,ct,rb,rf},"roof")
+    K.line(rf[1],rf[2],rb[1],rb[2],"roof_dk")
+    K.line(at[1],at[2],dt[1],dt[2],"roof_dk")
+    K.line(bt[1],bt[2],ct[1],ct[2],"roof_dk")
+    -- Close the gable at the visible end of the roof.
+    K.poly(front and {at,bt,rf} or {ct,dt,rb}, front and h[7] or "clap_sh")
+  end
+  -- One sprinkler in the open central lawn; no fence-like rows of posts.
+  K.px(190,134,"storm"); K.px(187,132,"light_blue"); K.px(183,133,"white")
 end)
 K.layer("figures", function()
-  party(36, 142)
-  K.person(140, 136, "rust", "deep"); K.person(150, 137, "teal", "bonnet", true)
+  -- A compact party on the approach, to scale with the large near houses.
+  K.shadow(7,145,36)
+  K.rect(9,132,25,7,"blue")
+  K.poly({{8,132},{8,122},{12,118},{29,118},{34,122},{34,132}},"cream")
+  K.line(13,120,13,131,"sand"); K.line(21,119,21,131,"sand"); K.line(28,120,29,131,"clap_sh")
+  K.wheel(14,141,4); K.wheel(29,141,3)
+  K.line(34,139,47,139,"wood")
+  for _, q in ipairs({{47,139},{54,142}}) do
+    K.rect(q[1],q[2]-7,13,5,"ox_dk")
+    K.rect(q[1]+10,q[2]-9,5,5,"ox_white")
+    K.line(q[1]+2,q[2]-2,q[1]+2,q[2]+2,"deep")
+    K.line(q[1]+10,q[2]-2,q[1]+10,q[2]+2,"deep")
+  end
+  for _, q in ipairs({{70,141,"rust"},{78,143,"teal"}}) do
+    K.rect(q[1],q[2]-6,3,4,q[3]); K.rect(q[1],q[2]-9,3,3,"skin")
+    K.line(q[1]-1,q[2]-9,q[1]+3,q[2]-9,"deep")
+    K.line(q[1],q[2]-2,q[1],q[2],"deep"); K.line(q[1]+2,q[2]-2,q[1]+2,q[2],"deep")
+  end
 end)
 K.save("event_cul_de_sac")
 
