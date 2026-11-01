@@ -19,6 +19,12 @@ K.HEX = {
   storm_dk="3b414c", storm="555d68", storm_lt="7b8389",
   -- trail map
   dune="e2c286", sea="9cc2c2", sea_line="7ba6ae",
+  -- Unhinged mode places (scenes/oddities.lua): things that should not be in 1848
+  hut_purple="6b3f8f", hut_purple_dk="4a2a66", hut_purple_lt="8a5aab", hut_yellow="e8b83a",
+  onyx="141218", onyx_hi="2c2a36", onyx_glint="5e5e74", asphalt="4b4a4c", asphalt_lt="6b6a6a",
+  lawn="4f9a3a", lawn_lt="78bf4f", siding_blue="9fb4c8", siding_tan="d8c7a0", glass="a9d3e0",
+  laundro_white="eef0ea", signal_red="d8352a", signal_amber="e0a02a", signal_off="3a3a3a",
+  hull="3d2a20", sail="e9e1c9",
 }
 local col = {}
 for k, h in pairs(K.HEX) do

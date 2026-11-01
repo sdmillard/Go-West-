@@ -15,6 +15,8 @@ const PAPER := Color("f6e7bc")
 const NATION := Color("7d5f8a") # border ticks
 const NATION_INK := Color("552869") # nation names: deep plum on a paper halo
 const NATION_HALO := Color(0.965, 0.906, 0.737, 0.85)
+const ODDITY := Color("2f8a86") # Unhinged places: teal, a color nothing else on the map uses
+const ODDITY_SEEN := Color("9cc9c4")
 var game
 var data: Dictionary = {}
 var stops: Dictionary = {} # id -> Vector2, pixel position on the map picture
@@ -131,6 +133,18 @@ static func part_of(points: PackedVector2Array, fraction: float) -> PackedVector
 			return out
 		left -= step
 		out.append(points[i + 1])
+	return out
+
+## Unhinged: map points for the places this journey's seed dealt.
+func oddity_points() -> Array:
+	var out: Array=[]
+	for mark in game.oddities.map_marks(game):
+		if not stops.has(mark.from) or not stops.has(mark.to):continue
+		var part: PackedVector2Array=part_of(road(mark.from,mark.to),float(mark.fraction))
+		var title: String=str(mark.label)
+		for event in game.catalog.events:
+			if event.id==mark.id:title=str(event.title)
+		out.append({"at":part[part.size()-1],"label":mark.label,"title":title,"seen":mark.seen,"from":mark.from,"to":mark.to})
 	return out
 
 ## Where the party is on the map now, and the stops and part-road it has covered.
@@ -353,7 +367,16 @@ func _draw_map() -> void:
 	for trip in game.field_outings.record.trips:
 		var point: Variant=outing_point(trip.origin)
 		if point is Vector2:keep_clear.append(tag_box(point,"HUNTERS' CAMP","above"))
+	var odd_marks: Array=oddity_points()
+	for mark in odd_marks:keep_clear.append(tag_box(mark.at,mark.label,"below"))
 	draw_nation_names(keep_clear)
+	# Unhinged: the places this seed dealt, as plain diamonds the same as any other mark.
+	for mark in odd_marks:
+		var at: Vector2=mark.at.round()
+		var diamond:=PackedVector2Array([at+Vector2(0,-4),at+Vector2(4,0),at+Vector2(0,4),at+Vector2(-4,0)])
+		map_canvas.draw_colored_polygon(diamond,INK)
+		map_canvas.draw_colored_polygon(PackedVector2Array([at+Vector2(0,-2),at+Vector2(2,0),at+Vector2(0,2),at+Vector2(-2,0)]),ODDITY_SEEN if mark.seen else ODDITY)
+		tag(mark.at,mark.label,"below")
 	tag(stops["independence"], "INDEPENDENCE", "below")
 	tag(stops["oregon_city"], "OREGON CITY", "left")
 	if cache_at is Vector2:
@@ -396,6 +419,8 @@ func _get_tooltip(at: Vector2) -> String:
 		var point: Variant=outing_point(trip.origin)
 		if point is Vector2 and point.distance_to(at)<7.0/zoom:names.append("%s: %s; expected day %d. Search area at mile %d." % [game.party_health.members[trip.member].name,game.field_outings.public_status(trip),game.field_outings.expected_day(trip),trip.mile])
 	if not names.is_empty():return "\n".join(names)+" Travel here and use Camp > Field trips to look for stranded hunters."
+	for mark in oddity_points():
+		if mark.at.distance_to(at)<7.0/zoom:return "%s\n%s" % [mark.title,"You stopped here." if mark.seen else "On the road between %s and %s." % [game.route.nodes[mark.from].name,game.route.nodes[mark.to].name]]
 	var best := ""
 	var nearest := 6.0 / zoom
 	for id in stops:

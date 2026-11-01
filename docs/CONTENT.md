@@ -52,9 +52,9 @@ The player corridor now comes from `data/route.json`. Its landmark arrivals have
 
 Historical threshold events are checked in file order after a travel/rest day and after resolving an encounter. An eligible historical event takes priority over a rare roll. Due historical events remain eligible until displayed. An event is marked seen when presented and cannot recur.
 
-Absurd events must use `random`. Classic cannot schedule or roll them. In Unhinged mode the engine makes a single roll in `[0,1)` on a day without a due historical event. A value below `0.01` selects uniformly among unseen absurd events. With three available examples, each has a 1/300 chance on the first eligible day. The chance is per eligible day, **not per journey**. Resolving an encounter or spending time through a choice does not create bonus rolls.
+Absurd events must use `random`. Classic never shows them. In Unhinged mode the journey's seed deals an assortment of them, as places on a stretch of road or road encounters at a guide mile; see [UNHINGED_MODE.md](UNHINGED_MODE.md) for the extra fields (`oddity`, `chance`, `label`, `edges`/`span`, `near`, `miles`, `needs`, `visible_from`, `view_notes`).
 
-The engine owns RNG, state, eligibility and effects. The UI owns presentation and calls `travel`, `rest`, `configure` and `choose`. `roll_absurd(roll)` accepts an explicit roll for boundary tests; normal play uses the private seeded RNG. `_present` is an internal helper used only by the scheduler and example integration tests. Keep preview/cheat calls out of normal play so Classic remains isolated.
+The engine owns RNG, state, eligibility and effects. The UI owns presentation and calls `travel`, `rest`, `configure` and `choose`. `_present` is an internal helper used by the scheduler and example integration tests. Keep preview/cheat calls out of normal play so Classic remains isolated.
 
 ## Recurring survival content
 

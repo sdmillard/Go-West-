@@ -121,12 +121,9 @@ func _initialize() -> void:
 	poor.state.food = 0
 	poor.choose(1)
 	check(poor.state.status == "lost", "Death during crossing cannot become victory")
-	var classic = Simulation.new(42)
-	for i in range(1000):
-		check(classic.roll_absurd(0).is_empty(), "Classic hard-excludes absurd roll")
+	# Unhinged content: per-seed dealing is covered by tests/test_unhinged.gd; here, each example's effects.
+	check(Simulation.new(42).oddities.places.is_empty() and Simulation.new(42).oddities.road.is_empty(), "Classic deals no oddities")
 	var wild = Simulation.new(42, "unhinged")
-	check(not wild.roll_absurd(0.009999).is_empty(), "Roll just below 1% selects content")
-	check(wild.roll_absurd(0.01).is_empty() and wild.roll_absurd(0.99).is_empty(), "1% upper boundary excluded")
 	for event in wild.catalog.events:
 		if event.category != "absurd":
 			continue
@@ -134,19 +131,17 @@ func _initialize() -> void:
 		sample._present(event)
 		sample.choose(0)
 		match event.id:
-			"found_lightsaber":
-				check("lightsaber" in sample.state.items, "Lightsaber persists in inventory")
-			"corolla":
+			"novablade":
+				check(int(sample.state.get("novablades", 0)) == 1, "Novablade is kept as a blade")
+			"civet":
 				sample.seen.append("muddy_trail")
 				sample.travel()
-				check(sample.state.miles == 30 and sample.state.fuel == 2, "Corolla uses fuel and covers 30 miles")
+				check(sample.state.miles == 30 and sample.state.fuel == 2 and sample.state.vehicle == "wagon", "Civet tows the wagon 30 miles on a day of fuel")
 				sample.state.fuel = 0
 				sample.travel()
-				check(sample.state.vehicle == "wagon", "Empty Corolla falls back to wagon")
+				check(sample.state.miles < 60, "Out of fuel, the oxen pull again")
 			"elder_god":
 				check(sample.state.food == 160 and sample.state.health == 95, "Elder god exchanges food for health")
-		wild.seen.append(event.id)
-	check(wild.roll_absurd(0).is_empty(), "Exhausted absurd pool returns no encounter")
 	var a = Simulation.new(93, "unhinged")
 	var b = Simulation.new(93, "unhinged")
 	for i in range(8):
@@ -186,13 +181,6 @@ func _initialize() -> void:
 				sim.travel()
 		check(sim.state.status == "arrived", "Safe policy completes seed %d" % seed_value)
 		check(sim.state.food >= 0 and sim.state.health > 0 and sim.state.miles == 102, "Arrival invariants seed %d" % seed_value)
-	# A deterministic grid verifies the configured probability without flaky statistical tolerances.
-	var hits := 0
-	var odds = Simulation.new(5, "unhinged")
-	for i in range(10000):
-		if not odds.roll_absurd(float(i) / 10000.0).is_empty():
-			hits += 1
-	check(hits == 100, "1% of uniformly spaced rolls selects absurd pool")
 	print("Example seeds (default settings, first choices): ", example_seeds)
 	print("Simulation: %d checks, %d failures" % [checks, failures.size()])
 	quit(0 if failures.is_empty() else 1)

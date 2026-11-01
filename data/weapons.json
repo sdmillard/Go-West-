@@ -1,5 +1,5 @@
 {
-  "note": "Authored game values, not measured historical data. Most 1848 emigrants brought a rifle or shotgun and a belt knife from home; each traveler starts with a rifle and a knife. The outfitter sells more. Colt revolvers existed (the 1847 Walker, early Dragoons) but were scarce and dear in civilian hands, so only one is offered, at a high price. Weights are counted only for arms beyond the travelers' own.",
+  "note": "Authored game values, not measured historical data. Most 1848 emigrants brought a rifle or shotgun and a belt knife from home; each traveler starts with a rifle and a knife. The outfitter sells more. Colt revolvers existed (the 1847 Walker, early Dragoons) but were scarce and dear in civilian hands, so only one is offered, at a high price. Weights are counted only for arms beyond the travelers' own. Unhinged mode adds the Novablade, found on the road: sold at any counter for $60 (traders pay less), and far beyond anything of 1848 on purpose.",
   "home_kit": {
     "rifles": 1,
     "knives": 1
@@ -73,6 +73,14 @@
     "pistols"
   ],
   "blades": {
+    "novablades": {
+      "label": "Novablade",
+      "hit": 0.97,
+      "damage_min": 70,
+      "damage_max": 100,
+      "cost": 2,
+      "sell_cents": 6000
+    },
     "hatchets": {
       "label": "Hatchet",
       "hit": 0.78,
@@ -89,6 +97,7 @@
     }
   },
   "blade_order": [
+    "novablades",
     "hatchets",
     "knives"
   ],

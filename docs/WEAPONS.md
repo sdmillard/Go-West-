@@ -39,3 +39,7 @@ When a fight starts, `Armory.loadout_for(state, ids)` first gives each fighter t
 - When the party is taken into custody, each accused gives up the firearm and blade they carry (their pick first, `custody.arms`). They get them back when they walk free (discharged, bailed, fined, or sentenced without prison). This sets up jailbreak as a tactical fight.
 
 Tests: `tests/test_weapons.gd`.
+
+## The Novablade (Unhinged mode)
+
+An Unhinged seed can deal the Novablade as a road encounter. Picking it up sets `state.novablades` to 1. The key is listed in `Armory.ODD_BLADES`, not `KEYS`, so the ordinary arms trade, theft, custody and weight code never touches it. It is first in `blade_order`, so the leader carries it unless the player hands it to someone else in View Party. Hit 0.97, damage 70 to 100, 2 AP: deliberately far beyond any 1848 blade (Spencer). It weighs nothing. It sells at any post for $60 and to passing traders for three quarters of that (`sell_cents`, `Oddities.counter_rows`); nobody sells one.

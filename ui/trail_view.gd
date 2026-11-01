@@ -39,7 +39,9 @@ const FAR_SHORE := 201.0
 const PATH_END := 214.0
 const RAFT_LENGTH := 25.0 # path units; one unit is (2, -1) pixels, 2.24 sprite pixels along the deck
 const CAR = preload("res://art/pixels/corolla.png")
-const ELDER = preload("res://art/pixels/elder.png")
+## Unhinged: the elder god is too vast to exist inside the world; only the tear it looks through shows,
+## and deliberately not as pixel art (Spencer's picture, drawn at full window resolution).
+const ELDER_RIFT = preload("res://art/pixels/elder_rift.png")
 const SABER = preload("res://art/pixels/lightsaber.png")
 # Backdrop layers drawn far to near, with how fast each slides relative to the road.
 const PARALLAX := {
@@ -81,6 +83,7 @@ var herded_oxen := 0
 var mount_plan: Dictionary = {}
 var walkers := 5
 var encounter := ""
+var elder_view: TextureRect
 var motion := 0.0
 var clock_time := 0.0
 var river_scene := false
@@ -124,6 +127,15 @@ func _ready() -> void:
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	clip_contents = true
+	elder_view = TextureRect.new()
+	elder_view.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	elder_view.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	elder_view.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	elder_view.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	elder_view.position = Vector2(150, 0)
+	elder_view.size = Vector2(150, 150)
+	elder_view.visible = false
+	add_child(elder_view)
 	# Derive shoreline clipping from the same outlines that the crossing picture paints.
 	for y in range(WORLD.y):
 		var left := maxf(0.0, _bank_edge(NEAR_BANK, y + 0.5, true))
@@ -143,6 +155,11 @@ func _bank_edge(polygon: Array, y: float, rightmost: bool) -> float:
 
 func _process(delta: float) -> void:
 	clock_time += delta
+	elder_view.visible = encounter == "elder_god"
+	if elder_view.visible:
+		elder_view.texture = ELDER_RIFT
+		elder_view.pivot_offset = elder_view.size / 2.0
+		elder_view.scale = Vector2.ONE * (1.0 + sin(clock_time * 0.7) * 0.025)
 	if not crossing.is_empty():
 		if not crossing_paused:
 			crossing_elapsed += delta
@@ -189,7 +206,7 @@ func _draw() -> void:
 	if vehicle=="foot":
 		_draw_herd(scrolling or motion>0)
 		_draw_party(Vector2(150+shift,132+bob),scrolling or motion>0)
-	elif vehicle == "corolla":
+	elif vehicle == "civet":
 		draw_texture(CAR, Vector2(173 + shift, 96 + bob))
 	else:
 		# Representative trailing wagons; the ledger holds the complete train.
@@ -204,12 +221,10 @@ func _draw() -> void:
 		draw_texture_rect_region(OXEN, Rect2(261 + shift, 103, 48, 32), Rect2(((frame + 4) % FRAMES) * 48, 0, 48, 32))
 	_draw_livestock(scrolling or motion>0,false)
 	match encounter:
-		"elder_god":
-			draw_texture(ELDER, Vector2(51, 48))
-		"found_lightsaber":
+		"novablade":
 			draw_texture(SABER, Vector2(83, 120))
-		"corolla":
-			if vehicle != "corolla":
+		"civet":
+			if vehicle != "civet":
 				draw_texture(CAR, Vector2(39, 99))
 		"stampede":
 			_draw_stampede()

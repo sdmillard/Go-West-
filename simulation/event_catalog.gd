@@ -55,6 +55,9 @@ func load_data(data: Variant, repeatable: bool = false) -> bool:
 			return _fail("Unknown category or trigger")
 		if event.category == "absurd" and event.trigger != "random":
 			return _fail("Absurd events must use random trigger")
+		var oddity_error: String = preload("res://simulation/oddities.gd").valid_event(event, null)
+		if not oddity_error.is_empty():
+			return _fail(oddity_error)
 		if repeatable and (event.category != "historical" or event.trigger != "random" or not event.has("weight")):
 			return _fail("Repeatable events require a historical random trigger and weight")
 		if event.trigger != "random" and (not _number(event.get("at")) or event.at < 0):
@@ -106,7 +109,7 @@ func _effects(effects: Variant) -> bool:
 			if not effects[key] is String or effects[key].is_empty():
 				return false
 		elif key == "vehicle":
-			if effects[key] not in ["wagon", "corolla"]:
+			if effects[key] not in ["wagon", "civet"]:
 				return false
 		else:
 			return false

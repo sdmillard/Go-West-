@@ -6,7 +6,7 @@ Latest calibration: [Balance pass 01](BALANCE_PASS_01.md) compares BASIC arithme
 
 Current implementation: the [BASIC survival benchmark](BASIC_SURVIVAL_BENCHMARK.md) adds weather/exposure, clothing, team condition/fatigue, hunting/ammunition, purchases/barter, care and functional counterparts to the sixteen selector categories plus rider tactics. Earlier missing-feature notes are research history where superseded by this benchmark. Route extension remains deferred until these mechanics are tuned.
 
-Current direction: **historical accuracy takes priority over matching classic-game rules** (user decision October 22, 2026). The games remain comparison references. The setting is 1848; absurd content stays parked. See `HISTORICAL_ACCURACY.md` for supported changes and outstanding limitations.
+Current direction: **historical accuracy takes priority over matching classic-game rules** (user decision October 22, 2026). The games remain comparison references. The setting is 1848. Absurd content lives only in Unhinged mode (started November 1, 2026; see `UNHINGED_MODE.md`). See `HISTORICAL_ACCURACY.md` for supported changes and outstanding limitations.
 
 The complete BASIC coverage comparison is in [Classic mechanics audit](CLASSIC_MECHANICS_AUDIT.md): all sixteen primary event branches, the other major systems, transcription problems, and later classic features absent from BASIC. The subsequent [party-health pass](PARTY_HEALTH.md) adds inspectable individuals, named conditions, recovery and personal deaths. Health is presented verbally; formulas, condition odds and recovery tuning remain provisional.
 
