@@ -47,6 +47,9 @@ var loading_companion:=false
 var generation_index:=0
 var generate_party_button: Button
 var generate_button: Button
+## Companions whose temperament, values, background and relationship have not been chosen or generated yet.
+var unchosen: Dictionary={}
+var leader_generate_button: Button
 var bonds_layer: Control
 var bond_boxes: Array = []
 var romance_check: CheckBox
@@ -100,7 +103,8 @@ func _ready() -> void:
 		text("LEADER" if i == 0 else "TRAVELER %d" % (i + 1), Rect2(12, 50 + i * 23, 78, 18), party_layer)
 		var entry := LineEdit.new()
 		entry.max_length = 14
-		entry.text = game.state.party[i]
+		# The party starts blank: type names or generate them.
+		entry.placeholder_text = "Your name" if i == 0 else "Name"
 		entry.text_changed.connect(func(_value):
 			_update_quote()
 			_title_editor())
@@ -255,6 +259,9 @@ func _update_quote() -> void:
 	if bonds_layer!=null and not preload("res://simulation/party_social.gd").valid_commitments(selected_bonds(),draft.profiles):
 		depart_button.disabled=true
 		feedback.text="Conflicting partners: check PARTY RELATIONSHIPS and EDIT."
+	if not unchosen.is_empty():
+		depart_button.disabled=true
+		feedback.text="Choose or generate every companion: EDIT each one, or GENERATE PARTY."
 	next_button.disabled = false
 	for entry in names:
 		if entry.text.strip_edges().is_empty():
@@ -278,6 +285,9 @@ func describe_items(box: OptionButton, descriptions: Array) -> void:
 
 func _build_companions() -> void:
 	draft.start(int(game.state.seed),5)
+	# Nothing is pre-rolled: plain looks, and companions wait for EDIT or GENERATE.
+	for profile in draft.profiles:profile["appearance"]=preload("res://simulation/traveler_appearance.gd").default_for(int(profile.id))
+	for member in range(1,5):unchosen[member]=true
 	# The character sheet stays closed until an EDIT button opens it, leaving the town in view.
 	editor_layer=Control.new()
 	put(editor_layer,Rect2(267,0,355,236),party_layer)
@@ -302,6 +312,11 @@ func _build_companions() -> void:
 	generate_button.tooltip_text="Replaces this draft companion's personality, background, relationship, specials, flaw and wage offer. No journey time or money passes."
 	rows.add_child(generate_button)
 	generate_button.pressed.connect(_generate_companion)
+	leader_generate_button=Button.new()
+	leader_generate_button.text="GENERATE MY CHARACTER"
+	leader_generate_button.tooltip_text="Fills in a name and appearance for your leader. Your specials and flaw stay as you set them."
+	rows.add_child(leader_generate_button)
+	leader_generate_button.pressed.connect(_generate_leader)
 	var appearance_button := Button.new()
 	appearance_button.text="APPEARANCE & PERSONAL BACKGROUND"
 	appearance_button.pressed.connect(open_appearance.bind(-1))
@@ -387,7 +402,7 @@ func close_editor() -> void:
 	_update_quote()
 
 func _title_editor() -> void:
-	if editor_title!=null:editor_title.text="EDITING %s · SCROLL FOR MORE" % names[edited_member].text.strip_edges().to_upper()
+	if editor_title!=null:editor_title.text="EDITING %s · SCROLL FOR MORE" % (names[edited_member].text.strip_edges().to_upper() if not names[edited_member].text.strip_edges().is_empty() else ("YOUR LEADER" if edited_member==0 else "TRAVELER %d" % (edited_member+1)))
 
 func _apply_generated_member(member: int) -> void:
 	generation_index+=1
@@ -395,10 +410,31 @@ func _apply_generated_member(member: int) -> void:
 	var profile: Dictionary=offer.profile
 	profile.id=member
 	draft.profiles[member]=profile
+	unchosen.erase(member)
 	var full_name: String=offer.name
 	names[member].text=full_name if full_name.length()<=14 else full_name.get_slice(" ",0)+" "+full_name.get_slice(" ",1).left(1)+"."
 	draft_terms.erase(str(member))
 	if not offer.terms.is_empty():draft_terms[str(member)]=offer.terms
+
+## The leader's generated name and look fit each other; their specials and flaw are left alone.
+func _generate_leader() -> void:
+	_store_companion()
+	generation_index+=1
+	var offer: Dictionary=draft.generate_candidate(int(game.state.seed),generation_index,"stranger")
+	draft.profiles[0]["appearance"]=offer.profile.appearance
+	var full_name: String=offer.name
+	names[0].text=full_name if full_name.length()<=14 else full_name.get_slice(" ",0)+" "+full_name.get_slice(" ",1).left(1)+"."
+	_title_editor()
+	_update_quote()
+
+## For tests and studies only: the old preset party (default names, dealt personalities and looks).
+func use_preset_party() -> void:
+	_store_companion()
+	draft.start(int(game.state.seed),5)
+	unchosen.clear()
+	for i in range(5):names[i].text=game.state.party[i]
+	_load_companion()
+	_update_quote()
 
 func _generate_companion() -> void:
 	_store_companion()
@@ -457,6 +493,7 @@ func _refresh_special_limit() -> void:
 func _refresh_wage_quote() -> void:
 	if loading_companion:return
 	_refresh_special_limit()
+	if [personality,values,background_choice,relationship].any(func(box):return box.selected<0):return
 	var profile: Dictionary={"skill":draft.SKILLS[background_choice.selected],"traits":[personality.get_item_text(personality.selected),values.get_item_text(values.selected)],"specials":[]}
 	for special in special_checks:
 		if special_checks[special].button_pressed:profile.specials.append(special)
@@ -485,6 +522,15 @@ func _store_companion() -> void:
 		for special in special_checks:
 			if special_checks[special].button_pressed:profile.specials.append(special)
 		return
+	if [personality,values,background_choice,relationship].any(func(box):return box.selected<0):
+		# Unchosen companions keep only their flaw and specials until the four choices are made.
+		profile.specials=[]
+		profile.erase("flaws")
+		if not accepted_flaw.is_empty():profile.flaws=[accepted_flaw]
+		for special in special_checks:
+			if special_checks[special].button_pressed:profile.specials.append(special)
+		return
+	unchosen.erase(edited_member)
 	profile.traits=[personality.get_item_text(personality.selected),values.get_item_text(values.selected)]
 	profile.skill=draft.SKILLS[background_choice.selected]
 	profile.relationship=draft.catalog.data.relationships.keys()[relationship.selected]
@@ -505,7 +551,9 @@ func _load_companion() -> void:
 	var flaws: Array=profile.get("flaws",[])
 	accepted_flaw="" if flaws.is_empty() else flaws[0]
 	flaw_choice.select(0 if accepted_flaw.is_empty() else draft.FLAWS.keys().find(accepted_flaw)+1)
-	if edited_member!=0:
+	if unchosen.has(edited_member):
+		for box in [personality,values,background_choice,relationship]:box.selected=-1
+	elif edited_member!=0:
 		personality.selected=draft.catalog.data.temperaments.keys().find(profile.traits[0])
 		values.selected=draft.catalog.data.values.keys().find(profile.traits[1])
 		background_choice.selected=draft.SKILLS.find(profile.skill)
@@ -522,6 +570,10 @@ func _load_companion() -> void:
 	var leader: bool=edited_member==0
 	for node in companion_rows:node.visible=not leader
 	if leader:auto_pay.visible=false
+	leader_generate_button.visible=leader
+	if unchosen.has(edited_member):
+		character_summary.text="Choose temperament, values, background and relationship, or GENERATE A COMPANION."
+		wage_quote_label.text=""
 	for special in special_checks:special_checks[special].visible=not leader or special in draft.LEADER_SPECIALS
 	for index in range(draft.FLAWS.size()):flaw_choice.set_item_disabled(index+1,leader and draft.FLAWS.keys()[index] in draft.LEADER_EXCLUDED_FLAWS)
 	loading_companion=false

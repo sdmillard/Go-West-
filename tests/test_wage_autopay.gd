@@ -97,6 +97,7 @@ func run():
  root.add_child(screen)
  await process_frame
  var setup=screen.departure_view
+ setup.use_preset_party()
  setup.open_editor(1)
  setup.special_checks.Mercenary.button_pressed=true
  setup.auto_pay.button_pressed=true

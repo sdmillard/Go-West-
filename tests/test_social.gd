@@ -121,6 +121,7 @@ func run():
 	root.add_child(screen)
 	await process_frame
 	var view=screen.departure_view
+	view.use_preset_party()
 	view.open_bonds()
 	check(view.bonds_layer.visible and not view.editor_layer.visible and view.bond_boxes.size()==6,"Departure UI exposes all six companion pairs")
 	for row in view.bond_boxes:

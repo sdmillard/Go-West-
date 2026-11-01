@@ -12,6 +12,7 @@ func run():
  root.add_child(screen)
  await process_frame
  var view=screen.departure_view
+ view.use_preset_party()
  view.fill_suggested()
  screen.game.depart("banker",view.party_names(),5,view.cart(),view.customization())
  view.hide()

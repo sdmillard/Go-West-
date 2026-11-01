@@ -88,6 +88,10 @@ func choose(game,index: int) -> bool:
 		if not person.is_empty() and place.begins_with("native:"):
 			var origins: Array=game.native_encounters.data.sites[place.trim_prefix("native:")].recruit_heritages
 			person.profile.appearance.heritage=origins[random.randi_range(0,origins.size()-1)]
+			# Named after the heritage is known, from that community's pool.
+			var name_random:=RandomNumberGenerator.new()
+			name_random.seed=random.seed ^ 0x4e414d45
+			person.name=game.characters.catalog.generated_name(name_random,person.profile.appearance.heritage,preload("res://simulation/traveler_appearance.gd").wears_dress(person.profile.appearance))
 		record.searches[place]={"day":int(game.state.day),"candidate":person,"declined":false,"hired_id":-1}
 		game.journal.append("Day %d · Looked for companions: %s." % [game.state.day,"met "+person.name if not person.is_empty() else "nobody seeking a party"])
 	elif command=="decline":

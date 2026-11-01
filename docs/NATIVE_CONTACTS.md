@@ -20,7 +20,7 @@ The same existing0.85 crossing-risk factor applies; guidance and preparation do 
 
 A recurring seller offers one job during the authored April–October work window: pack preserved provisions, or repair a storage rack if the leader has a suitable Carpentry background. Both use ordinary quoted wages with a $1 floor. Completing either closes both job offers, grants the same small household-only discount, and leads to an offer of an introduction.
 
-An introduction opens the existing local companion search, with the same65% chance, one day/meals, candidate terms and permanent accept/decline record. It does not create a second roll or guarantee recruitment. A found candidate's panel explains the seller's introduction and their interest in company toward the Willamette Valley. This is personal context, not yet a separate destination/departure system. The current generic fictional name pool remains in use.
+An introduction opens the existing local companion search, with the same65% chance, one day/meals, candidate terms and permanent accept/decline record. It does not create a second roll or guarantee recruitment. A found candidate's panel explains the seller's introduction and their interest in company toward the Willamette Valley. This is personal context, not yet a separate destination/departure system. The recruit is named from their community's pool (see NATIVE_ENCOUNTERS.md).
 
 ## Pawnee provision keeper: a finite supply exchange
 

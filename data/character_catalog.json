@@ -1164,5 +1164,215 @@
       "Zachariah",
       "Zebulon"
     ]
+  },
+  "native_names": {
+    "note": "One name, as emigrant journals, missions and traders recorded people: mission or fur-trade names for some Plateau and Columbia people (and a few at Fort Hall), English renderings of personal names otherwise. Fictional; no names of known historical individuals or sacred beings.",
+    "pools": {
+      "Plateau": {
+        "mission_chance": 0.3,
+        "women": [
+          "Camas Flower",
+          "Morning Star",
+          "Swan",
+          "Bluebird",
+          "Kingfisher",
+          "Willow",
+          "Rain Falling",
+          "Huckleberry",
+          "Bright Feather",
+          "Elk Woman",
+          "Doe Running",
+          "Bitterroot",
+          "White Swan",
+          "Grey Dove",
+          "Cous Root"
+        ],
+        "men": [
+          "Grizzly Bear",
+          "Walking Wolf",
+          "Thunder Eyes",
+          "Standing Elk",
+          "Morning Hawk",
+          "Flying Raven",
+          "Spotted Horse",
+          "Grey Otter",
+          "Leaping Salmon",
+          "Eagle Feather",
+          "Three Feathers",
+          "Rattle",
+          "Kingfisher",
+          "Running Coyote",
+          "White Cloud",
+          "Horse Herder",
+          "Sun Rising"
+        ],
+        "mission_women": [
+          "Mary",
+          "Martha",
+          "Rebecca",
+          "Ruth",
+          "Sarah",
+          "Eliza",
+          "Hannah",
+          "Marie",
+          "Louise",
+          "Agnes",
+          "Catherine",
+          "Angelique"
+        ],
+        "mission_men": [
+          "Joseph",
+          "Timothy",
+          "Jacob",
+          "Luke",
+          "Mark",
+          "James",
+          "Lot",
+          "Noah",
+          "Solomon",
+          "Daniel",
+          "Abraham",
+          "Isaac",
+          "John",
+          "Peter",
+          "Paul",
+          "Pierre",
+          "Louis",
+          "Ignace",
+          "Francois",
+          "Xavier"
+        ]
+      },
+      "Chinookan": {
+        "mission_chance": 0.4,
+        "women": [
+          "Wapato",
+          "Cedar Woman",
+          "Heron",
+          "Little Rain",
+          "Shell",
+          "Blue Camas",
+          "River Mist",
+          "Basket Maker",
+          "Salmonberry",
+          "Dentalium"
+        ],
+        "men": [
+          "Sturgeon",
+          "Raven",
+          "Fishhook",
+          "Cedar Bark",
+          "Swift Water",
+          "Grey Heron",
+          "Net Mender",
+          "Canoe Maker",
+          "Smelt",
+          "Falls Fisher"
+        ],
+        "mission_women": [
+          "Marie",
+          "Louise",
+          "Josette",
+          "Angelique",
+          "Catherine",
+          "Sophie",
+          "Lisette"
+        ],
+        "mission_men": [
+          "Pierre",
+          "Baptiste",
+          "Louis",
+          "Charles",
+          "Joseph",
+          "Thomas",
+          "Antoine",
+          "Michel"
+        ]
+      },
+      "Shoshone and Bannock": {
+        "mission_chance": 0.15,
+        "women": [
+          "Sage Hen",
+          "Wild Rose",
+          "Antelope Woman",
+          "Pine Nut",
+          "Willow Basket",
+          "Morning Bird",
+          "Rabbit Woman",
+          "Bright Water",
+          "Yellow Flower",
+          "Chokecherry",
+          "Meadowlark"
+        ],
+        "men": [
+          "Antelope",
+          "Grey Elk",
+          "Rabbit Robe",
+          "Sagebrush",
+          "Black Bear",
+          "Running Water",
+          "Red Fox",
+          "Many Horses",
+          "Magpie",
+          "Mountain Sheep",
+          "Badger",
+          "Lone Pine"
+        ],
+        "mission_women": [
+          "Marie",
+          "Josette",
+          "Louise",
+          "Isabelle"
+        ],
+        "mission_men": [
+          "Baptiste",
+          "Louis",
+          "Pierre",
+          "Joseph",
+          "Antoine"
+        ]
+      },
+      "Pawnee": {
+        "mission_chance": 0.0,
+        "women": [
+          "Comes Singing",
+          "Yellow Corn",
+          "Blue Bird",
+          "Squash Blossom",
+          "Sweet Grass",
+          "Little Owl",
+          "Prairie Hen",
+          "Spotted Fawn",
+          "Plum Woman",
+          "Red Bean"
+        ],
+        "men": [
+          "Red Hawk",
+          "Dawn Walker",
+          "Fox Running",
+          "Buffalo Bull",
+          "Two Arrows",
+          "Standing Bear",
+          "Brings Horses",
+          "Coyote",
+          "Sees Far",
+          "Young Wolf",
+          "Night Owl",
+          "Sharp Knife"
+        ]
+      }
+    },
+    "heritages": {
+      "Nez Perce": "Plateau",
+      "Cayuse": "Plateau",
+      "Walla Walla": "Plateau",
+      "Umatilla": "Plateau",
+      "Sahaptin-speaking river community": "Plateau",
+      "Wasco": "Chinookan",
+      "Upper Chinookan": "Chinookan",
+      "Northern Shoshone": "Shoshone and Bannock",
+      "Bannock": "Shoshone and Bannock",
+      "Pawnee": "Pawnee"
+    }
   }
 }
