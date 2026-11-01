@@ -172,9 +172,11 @@ func fresh_service(place: String,food_sold: int) -> Dictionary:
 func add_transient(game,place: String) -> void:
 	if not transient(place) or record.services.has(place):return
 	for uid in staff_ids(place):record.actors[uid]=fresh_actor(place,uid)
-	# The counter sells by the pound: count the pounds actually bought, not whole lots (older records kept only lots).
+	# A trader's counter sells by the pound: count the pounds actually bought, not whole lots (older records kept only lots).
+	# An emigrant family's food sold on a peaceful visit is counted from the visit record instead (food_left), never here.
 	var spent: Dictionary=game.context.record.spent
-	record.services[place]=fresh_service(place,int(spent.get(place+"|buy_food|units",int(spent.get(place+"|buy_food",0))*int(rules(place).food_lot))))
+	var lots: int=int(spent.get(place+"|buy_food",0))*int(rules(place).food_lot)
+	record.services[place]=fresh_service(place,int(spent.get(place+"|buy_food|units",lots)) if trader(place) else lots)
 	record.services[place]["mile"]=int(game.state.miles)
 func person_id(seed_value: int,slot: int) -> String:return "party:%d:original:%d" % [seed_value,slot]
 func actor_id(place: String,id: String) -> String:return id+":"+place
