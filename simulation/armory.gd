@@ -3,6 +3,9 @@ extends RefCounted
 ## the outfitter sells more. In a fight each traveler takes one firearm and one blade from what the party holds.
 ## Authored game values in data/weapons.json, not measured historical data.
 const KEYS=["rifles","shotguns","pistols","revolvers","knives","hatchets"]
+## Unhinged mode: blades that are pack items, not counted goods (blade key -> item name in state.items).
+## Never sold, stolen or weighed; one each at most.
+const ODD_BLADES={"novablades":"Novablade"}
 static var data: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/weapons.json"))
 static func number(v: Variant) -> bool:return (v is int or v is float) and is_finite(v)
 static func whole(v: Variant,low: int,high: int) -> bool:return number(v) and v==floor(v) and v>=low and v<=high
@@ -22,7 +25,7 @@ static func valid_rules(v: Variant) -> bool:
 			if not number(gun.get(field)) or absf(gun[field])>2:return false
 	for blade in v.blades.values()+[v.fists]:
 		if not blade is Dictionary or not blade.get("label") is String or not number(blade.get("hit")) or blade.hit<0 or blade.hit>1 or not whole(blade.get("damage_min"),1,100) or not whole(blade.get("damage_max"),int(blade.damage_min),100) or not whole(blade.get("cost"),1,8):return false
-	return v.blades.keys().all(func(key):return key in KEYS)
+	return v.blades.keys().all(func(key):return key in KEYS or ODD_BLADES.has(key))
 ## Arms counts are optional in a saved state; journeys from before arms carry none.
 static func valid_state(state: Dictionary) -> bool:
 	if state.has("arms_home") and not whole(state.arms_home,0,100):return false
@@ -39,7 +42,9 @@ static func valid_assignments(v: Variant) -> bool:
 		if pick.has("weapon") and not (pick.weapon is String and (pick.weapon=="" or data.firearms.has(pick.weapon))):return false
 		if pick.has("blade") and not (pick.blade is String and (pick.blade=="" or data.blades.has(pick.blade))):return false
 	return true
-static func count(state: Dictionary,key: String) -> int:return maxi(0,int(state.get(key,0)))
+static func count(state: Dictionary,key: String) -> int:
+	if ODD_BLADES.has(key):return 1 if ODD_BLADES[key] in state.get("items",[]) else 0
+	return maxi(0,int(state.get(key,0)))
 ## Journeys saved before arms were counted: every traveler still has the rifle and knife they set out with.
 static func settle(state: Dictionary) -> void:
 	if not state.has("arms_home") and state.get("party") is Array:home_kit(state,state.party.size())
@@ -74,7 +79,7 @@ static func loadout(state: Dictionary,fighters: int) -> Array:
 static func loadout_for(state: Dictionary,ids: Array) -> Array:
 	var picks: Dictionary=state.get("arms_assigned",{}) if state.get("arms_assigned") is Dictionary else {}
 	var stock: Dictionary={}
-	for key in KEYS:stock[key]=count(state,key)
+	for key in KEYS+ODD_BLADES.keys():stock[key]=count(state,key)
 	var result: Array=[]
 	for id in ids:result.append({"weapon":"","blade":"","auto_weapon":true,"auto_blade":true})
 	for slot in ["weapon","blade"]:

@@ -112,5 +112,16 @@ func run():
 	walker.pending={}
 	walker.travel()
 	check(int(walker.state.miles)-before==30 or int(walker.state.leg_miles)==int(walker.state.leg_length),"The Civet makes 30 miles a day (or reaches the stop)")
+	# The Novablade: a pack item that is the best blade in any fight, weightless and never for sale.
+	var armed=started(seed_value)
+	var Armory=armed.Armory
+	check(Armory.count(armed.state,"novablades")==0 and Armory.loadout(armed.state,2)[0].blade!="novablades","No Novablade until it is found")
+	var weight: float=Armory.extra_weight(armed.state)
+	armed._present(event(armed,"novablade"))
+	armed.choose(0)
+	check(Armory.count(armed.state,"novablades")==1 and Armory.loadout(armed.state,2)[0].blade=="novablades" and Armory.loadout(armed.state,2)[1].blade!="novablades","The leader carries the one Novablade")
+	check(is_equal_approx(Armory.extra_weight(armed.state),weight),"The Novablade weighs nothing on the load")
+	var blade: Dictionary=Armory.data.blades.novablades
+	check(float(blade.hit)>=0.95 and int(blade.damage_min)>=int(Armory.data.blades.hatchets.damage_max)*2,"The Novablade outclasses every 1848 blade")
 	print("Unhinged: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures==0 else 1)

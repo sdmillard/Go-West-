@@ -26,7 +26,7 @@ Classic deals nothing. Every oddity happens at most once (it goes into `seen`).
 | laundromat | place | either side of Soda Springs | $1 wash, health |
 | round_hole | place | Fort Hall to The Dalles | Drop in bullets or food; something may come back |
 | traffic_light | place | just short of South Pass | Wait a day, or run it (risk to team and party) |
-| novablade | road | miles 60–1500 | The Novablade, kept in the pack |
+| novablade | road | miles 60–1500 | The Novablade: the best blade in any tactical fight (see WEAPONS.md) |
 | civet | road | miles 100–1200, needs a wagon | The 2002 Hanabi Civet tows the wagon 30 mi/day for 3 days (`fuel`) |
 | elder_god | road | miles 150–1800 | Food offering for health, or refuse |
 | vending_machine | road | miles 500–1500 | Takes no coin of yours; shake it |
@@ -40,6 +40,6 @@ Names are invented (Spencer: legally distinct names, so Novablade, Hanabi Civet,
 ## Still to do
 
 - Art: place pictures (`event_<id>`, 432 × 150, wired in `main.gd` `_event_scene` once they exist in `data/location_scenes.json`), road sprites, the sphere on the travel horizon, and the elder god in a realistic, high-detail style that clashes with the pixel art (Spencer).
-- Deeper versions Spencer approved: a sailor from the ship joins as a companion, settling in the cul-de-sac as its own ending, clean clothes slowing disease, the compass pointing at the sphere, and the Novablade as a blade in tactical fights.
+- Deeper versions Spencer approved: a sailor from the ship joins as a companion, settling in the cul-de-sac as its own ending, clean clothes slowing disease, the compass pointing at the sphere.
 
 Tests: `tests/test_unhinged.gd`. `tests/chaos_journeys.gd -- --unhinged` forces every oddity into each bot journey.
