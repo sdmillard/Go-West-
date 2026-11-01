@@ -114,57 +114,53 @@ K.layer("country", function()
   K.sky(W, 100, {{20, 12, 0.8}, {380, 22, 0.7}}, "mist")
 end)
 K.layer("sphere", function()
-  -- colossal and miles off: it stands beyond the mountains, so only its lower part shows,
-  -- a black dome filling the sky; the range at its foot is a low line against it
-  local cx, cy, r = 250, -150, 252
-  local function edge(x) local d = r * r - (x - cx) ^ 2; return d > 0 and cy + math.sqrt(d) or nil end
-  for x = 0, W - 1 do
-    local e = edge(x)
-    if e and e > 0 then
-      for y = 0, math.min(H - 1, math.floor(e)) do
-        local c = "onyx"
-        local below = e - y
-        if below < 9 - 4 * math.abs(x - cx) / r then c = (below < 3) and "storm_dk" or "onyx_hi" end -- salt reflected along the lower curve
-        K.px(x, y, c)
-      end
-    end
-  end
-  -- the bright sky reflected high on its left shoulder, and a sun glint
-  -- (a long soft band just inside the left limb, following the curve, not a spot)
-  for x = 52, 190 do
-    local t = (x - 52) / 138
-    local y0 = math.floor(edge(x) - 18 - 10 * t)
-    local w = math.floor(1 + 6 * math.sin(math.pi * t))
-    for y = math.max(0, y0 - w), y0 do K.px(x, y, (y0 - y < w // 2 and t > 0.3 and t < 0.7) and "onyx_glint" or "onyx_hi") end
-  end
-  -- a rim of sky light along the left limb
-  for y = 0, 96 do
-    local d = r * r - (y - cy) ^ 2
-    if d > 0 then K.px(math.floor(cx - math.sqrt(d)) + 1, y, "onyx_hi") end
-  end
-  -- distance: the air between greys its foot, in dithered bands
-  local bands = {{82, "roof_dk"}, {88, "storm_dk"}, {93, "storm"}, {97, "storm_lt"}}
-  for y = 80, 101 do for x = 0, W - 1 do
-    local c = K.at(x, y)
-    if c == "onyx" or c == "onyx_hi" or c == "storm_dk" or c == "roof_dk" or c == "storm" then
-      local pick
-      for i, bd in ipairs(bands) do
-        if y >= bd[1] then pick = bd[2] elseif y == bd[1] - 1 and (x + y) % 2 == 0 then pick = bd[2] end
-      end
-      if pick then K.px(x, y, pick) end
-    end
-  end end
-  -- the far range at its foot, then the salt flat
+  -- the salt flat first, with the far range low on the horizon
   K.ridge(0, W - 1, 98, 102, function(x) return 7 + 4 * math.sin(x / 37) + 2 * math.sin(x / 7) end, "far_hill", "mist", "haze")
   K.rect(0, 102, W, H - 102, "white")
   for y = 102, H - 1 do for x = 0, W - 1 do if K.rnd(9) == 0 then K.px(x, y, "stone_lt") end end end
   for i = 1, 30 do local x, y = K.rnd(W), 106 + K.rnd(40); K.line(x, y, x + 6 + K.rnd(10), y + K.rnd(3) - 1, "stone_lt") end
+  -- standing at its foot: only the bottom of the sphere is in the picture, a black curve
+  -- rising out of the top of the frame and coming down to touch the salt beside the party
+  local R, contact_x, ground = 420, 318, 122
+  local cx, cy = contact_x, ground - R
+  local function limb(y) local d = R * R - (y - cy) ^ 2; return d > 0 and cx - math.sqrt(d) or nil end
+  for y = 0, ground do
+    local lx = limb(y)
+    if lx then
+      for x = math.max(0, math.floor(lx)), W - 1 do
+        -- below its equator it faces the ground: the lower it is the more white salt it mirrors
+        local nx, ny = (x - cx) / R, (y - cy) / R
+        local c = "onyx"
+        if ny > 0.985 then c = "storm_dk" elseif ny > 0.97 then c = "onyx_hi" end
+        if ny > 0.995 then c = (nx < -0.02) and "storm" or "storm_dk" end
+        K.px(x, y, c)
+      end
+      -- a thin bright line of sky along the limb
+      K.px(math.floor(lx), y, "onyx_glint"); K.px(math.floor(lx) + 1, y, "onyx_hi")
+    end
+  end
+  -- the long gleam of the sky running down its curve, a little inside the limb
+  for y = 0, 90 do
+    local lx = limb(y)
+    if lx then
+      local t = y / 90
+      local w = math.floor(1 + 5 * math.sin(math.pi * t))
+      local x0 = math.floor(lx) + 10 + math.floor(8 * t)
+      for x = x0, x0 + w do K.px(x, y, (x - x0 > 0 and x - x0 < w and t > 0.25 and t < 0.75) and "onyx_glint" or "onyx_hi") end
+    end
+  end
+  -- the dark wedge of shade where it meets the salt
+  for x = contact_x - 60, W - 1 do
+    local lx = limb(ground - 1)
+    local y = ground + 1 + math.floor(math.max(0, (x - (contact_x - 60)) / 40))
+    for yy = ground, math.min(H - 1, y) do if x >= contact_x - 60 then K.px(x, yy, (x > contact_x - 30) and "stone_dk" or "stone") end end
+  end
 end)
 K.layer("figures", function()
-  -- the party, halted and looking
-  party(90, 138)
-  K.person(200, 136, "blue", "roof"); K.person(212, 137, "red", "bonnet", true)
-  K.far_wagon(330, 112, -1)
+  -- the party halted right beside it, at their own size
+  party(60, 140)
+  K.person(222, 132, "blue", "roof"); K.person(236, 134, "red", "bonnet", true)
+  K.person(262, 126, "brick", "rust") -- one gone up close to put a hand on it
 end)
 K.save("event_onyx_sphere")
 
