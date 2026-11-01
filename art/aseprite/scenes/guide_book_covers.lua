@@ -70,7 +70,7 @@ K.layer("board", function()
     fleuron(c[1], c[2], "ochre", "gold")
   end
   -- oval cartouche for the vignette
-  local cx, cy = FX + BW // 2, 168
+  local cx, cy = FX + BW // 2, 148
   for a = 0, 719 do
     local t = a * math.pi / 360
     K.px(math.floor(cx + 56 * math.cos(t) + 0.5), math.floor(cy + 36 * math.sin(t) + 0.5), "gold")
@@ -78,10 +78,10 @@ K.layer("board", function()
   end
   -- rules under the title and above the imprint
   for x = FX + 60, FX + BW - 61 do
-    if x % 2 == 0 then K.px(x, 102, "ochre") end
-    if x % 2 == 0 then K.px(x, 252, "ochre") end
+    if x % 2 == 0 then K.px(x, 62, "ochre") end
+    if x % 2 == 0 then K.px(x, 234, "ochre") end
   end
-  fleuron(cx, 102, "ochre", "gold"); fleuron(cx, 252, "ochre", "gold")
+  fleuron(cx, 62, "ochre", "gold"); fleuron(cx, 234, "ochre", "gold")
 end)
 K.layer("spine", function() spine(FX - 12) end)
 -- the vignette: an emigrant wagon struck in gold line, as a binder's stamp would cut it
@@ -92,7 +92,7 @@ local function ring(cx, cy, r, c)
   end
 end
 K.layer("gold vignette", function()
-  local x, y = FX + BW // 2 - 26, 190
+  local x, y = FX + BW // 2 - 31, 170 -- wagon and tongue are 62 wide
   -- bonnet
   K.line(x + 2, y - 18, x, y - 30, "gold"); K.line(x, y - 30, x + 7, y - 37, "gold")
   K.line(x + 7, y - 37, x + 42, y - 37, "gold"); K.line(x + 42, y - 37, x + 49, y - 30, "gold")
@@ -112,7 +112,7 @@ K.layer("gold vignette", function()
   end
   -- tongue and a strip of stamped ground
   K.line(x + 48, y - 7, x + 62, y - 5, "gold")
-  for gx = FX + BW // 2 - 40, FX + BW // 2 + 40 do if gx % 3 ~= 0 then K.px(gx, y + 1, "ochre") end end
+  for gx = FX + BW // 2 - 38, FX + BW // 2 + 38 do if gx % 3 ~= 0 then K.px(gx, y + 1, "ochre") end end
 end)
 K.save("guide_book_front")
 
