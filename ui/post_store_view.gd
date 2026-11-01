@@ -103,9 +103,9 @@ func _ready() -> void:
 
 func columns(x: int, count: String, action: String) -> void:
 	text("GOODS", Rect2(x, 26, 50, 12))
-	right(text(count, Rect2(x + 46, 26, 36, 12)))
-	text("EACH", Rect2(x + 88, 26, 34, 12))
-	text(action, Rect2(x + 126, 26, 46, 12))
+	right(text(count, Rect2(x + 44, 26, 36, 12)))
+	text("EACH", Rect2(x + 85, 26, 34, 12))
+	text(action, Rect2(x + 126, 26, 42, 12))
 
 ## Rebuild the counter from the post's current stock; quantities reset to zero.
 func open(where: String = "") -> void:
@@ -154,8 +154,8 @@ func open(where: String = "") -> void:
 		# A family pays over the odds for what it is short of: those prices show in green.
 		if float(row.get("premium", 1.0)) >= 1.3:
 			rows_layer.get_child(rows_layer.get_child_count() - 2).add_theme_color_override("font_color", Color("2f6b2f"))
-		buys[row.item] = spin(row.can_buy, Rect2(POST_X + 128, y, 36, 17))
-		sells[row.item] = spin(row.can_sell, Rect2(PARTY_X + 128, y, 36, 17))
+		buys[row.item] = spin(row.can_buy, Rect2(POST_X + 124, y, 44, 17))
+		sells[row.item] = spin(row.can_sell, Rect2(PARTY_X + 124, y, 44, 17))
 		counts[row.item] = [have, stock]
 		held[row.item] = row
 	for child in rows_layer.get_children():child.position-=Vector2(244,40)
@@ -166,11 +166,11 @@ func open(where: String = "") -> void:
 	update_quote()
 
 func line(x: int, y: int, goods: String, cents: float, tip: String) -> Label:
-	var name := text(goods, Rect2(x, y + 2, 58, 16), rows_layer)
+	var name := text(goods, Rect2(x, y + 2, 56, 16), rows_layer)
 	name.tooltip_text = tip
 	name.mouse_filter = Control.MOUSE_FILTER_PASS
-	text("$%.2f" % (cents / 100.0) if cents >= 0 else "  -", Rect2(x + 88, y + 2, 38, 16), rows_layer)
-	return right(text("", Rect2(x + 58, y + 2, 24, 16), rows_layer))
+	text("$%.2f" % (cents / 100.0) if cents >= 0 else "  -", Rect2(x + 85, y + 2, 38, 16), rows_layer)
+	return right(text("", Rect2(x + 56, y + 2, 24, 16), rows_layer))
 
 func spin(limit: int, bounds: Rect2) -> SpinBox:
 	var box := SpinBox.new()
@@ -178,9 +178,19 @@ func spin(limit: int, bounds: Rect2) -> SpinBox:
 	box.max_value = limit
 	box.step = 1
 	box.editable = limit > 0
-	box.get_line_edit().add_theme_constant_override("minimum_character_width", 1)
+	# Room for four digits (selling 1,998 lb of food or bullets): slim padding, arrows flush to the field, figures right-aligned.
+	box.alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	box.add_theme_constant_override("field_and_buttons_separation", 0)
+	var field := box.get_line_edit()
+	field.add_theme_constant_override("minimum_character_width", 1)
 	box.value_changed.connect(func(_value): update_quote())
 	put(box, bounds, rows_layer)
+	# The parchment field style comes from the window's theme, so it is read once the box is on screen.
+	for state in ["normal", "focus", "read_only"]:
+		var look: StyleBox = field.get_theme_stylebox(state).duplicate()
+		look.content_margin_left = 2
+		look.content_margin_right = 2
+		field.add_theme_stylebox_override(state, look)
 	return box
 
 ## Buying and selling the same goods in one visit nets out; the post settles the difference.
