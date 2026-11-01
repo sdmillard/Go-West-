@@ -37,13 +37,17 @@ K.layer("country", function()
   road({{-10, 140, 6}, {140, 132, 5}, {300, 126, 4}, {440, 120, 3}})
 end)
 K.layer("building", function()
-  -- paved lot in front, painted stall lines
-  K.rect(196, 106, 200, 16, "asphalt"); K.rect(196, 106, 200, 1, "asphalt_lt")
-  for x = 206, 386, 22 do K.rect(x, 110, 1, 10, "cream") end
-  -- low stucco block with a mission-style parapet
+  -- paved lot in front, lying flat: painted stall lines slant away from us
+  K.poly({{190, 104}, {402, 104}, {414, 124}, {180, 124}}, "asphalt")
+  K.rect(190, 104, 212, 1, "asphalt_lt")
+  for x = 204, 392, 20 do K.line(x, 106, x - 3, 113, "cream") end
+  for i = 1, 60 do K.px(190 + K.rnd(220), 105 + K.rnd(18), "asphalt_lt") end
+  K.rect(180, 124, 234, 1, "stone")
+  -- low stucco block with a mission-style parapet; its east end turned away in shade
   K.rect(214, 74, 140, 32, "hut_purple")
   K.rect(214, 74, 140, 2, "hut_purple_lt")
-  K.side_wall(354, 106, 12, 32, "hut_purple_dk", "hut_purple_dk")
+  K.poly({{354, 74}, {364, 70}, {364, 102}, {354, 106}}, "hut_purple_dk")
+  K.poly({{214, 74}, {224, 70}, {364, 70}, {354, 74}}, "hut_yellow")
   K.poly({{232, 74}, {246, 62}, {274, 62}, {288, 74}}, "hut_yellow")
   K.rect(246, 62, 28, 1, "white")
   K.rect(214, 98, 140, 8, "hut_yellow")
@@ -115,15 +119,20 @@ K.layer("country", function()
   for i = 1, 30 do local x, y = K.rnd(W), 106 + K.rnd(40); K.line(x, y, x + 6 + K.rnd(10), y + K.rnd(3) - 1, "stone_lt") end
 end)
 K.layer("sphere", function()
-  -- colossal: it fills the right of the sky and stands on the salt
-  local cx, cy, r = 290, 58, 56
-  K.ellipse(cx, 112, r + 6, 5, "stone") -- its shadow on the salt
+  -- colossal: it rises off the top of the picture and its foot sits on the salt; the
+  -- party is a speck beside it
+  local cx, cy, r = 300, 18, 96
+  K.ellipse(cx - 8, 113, r + 14, 6, "stone") -- its shadow on the salt
   K.ellipse(cx, cy, r, r, "onyx")
-  -- a soft ramp of reflected sky on the upper left, a hard window glint
-  for i = 1, 4 do K.ellipse(cx - 18 - i * 2, cy - 18 - i * 2, math.max(2, 22 - i * 5), math.max(2, 18 - i * 4), i < 3 and "onyx_hi" or "onyx_glint") end
-  K.rect(cx - 30, cy - 34, 6, 3, "white"); K.rect(cx - 28, cy - 37, 2, 2, "white")
-  -- the salt reflected along its lower rim
-  for x = cx - 40, cx + 40 do local y = cy + math.floor(math.sqrt(math.max(0, r * r - (x - cx) ^ 2))) - 1; K.px(x, y, "stone_ink") end
+  -- the bright sky reflected high on the upper left, softly ramped
+  for i = 1, 4 do K.ellipse(cx - 40 - i * 3, cy + 26 - i * 3, math.max(3, 30 - i * 7), math.max(3, 24 - i * 6), (i < 3) and "onyx_hi" or "onyx_glint") end
+  K.rect(cx - 58, cy + 12, 4, 2, "white"); K.px(cx - 57, cy + 11, "white")
+  -- the white salt flat reflected as a pale band along the lower curve
+  for x = cx - r + 6, cx + r - 6 do
+    local edge = cy + math.floor(math.sqrt(math.max(0, r * r - (x - cx) ^ 2)))
+    for y = edge - 12, edge - 5 do if y > edge - 12 + math.floor(4 * math.abs(x - cx) / r) then K.px(x, y, (y < edge - 8) and "onyx_hi" or "storm_dk") end end
+    K.px(x, edge - 1, "stone_ink")
+  end
 end)
 K.layer("figures", function()
   -- the party halted far off, small against it
@@ -211,14 +220,17 @@ K.layer("country", function()
   road({{-10, 144, 6}, {200, 134, 5}, {440, 126, 3}})
 end)
 K.layer("building", function()
-  K.rect(218, 76, 150, 36, "laundro_white"); K.side_wall(368, 112, 10, 36, "stone_lt", "stone_lt")
-  K.rect(214, 72, 158, 5, "storm_dk")
+  K.rect(218, 76, 150, 36, "laundro_white")
+  K.poly({{368, 76}, {378, 72}, {378, 108}, {368, 112}}, "stone_lt")
+  K.rect(214, 72, 158, 5, "storm_dk"); K.poly({{372, 72}, {382, 68}, {382, 72}, {372, 77}}, "storm_dk")
+  K.rect(214, 112, 168, 2, "stone") -- a concrete apron
   -- long glass front with the machines inside, round doors in a row
   K.rect(224, 82, 138, 24, "glass")
   for x = 228, 352, 14 do K.rect(x, 92, 12, 12, "laundro_white"); K.ellipse(x + 5, 98, 3, 3, "storm_lt"); K.px(x + 4, 97, "white") end
   K.rect(224, 82, 138, 1, "white")
   -- sign boards: OPEN 24 HOURS suggested by lettering blocks
   K.sign(232, 64, 60, "cream", 18); K.sign(310, 64, 48, "signal_red", 14)
+  for _, x in ipairs({240, 284, 318, 350}) do K.rect(x, 68, 1, 4, "storm_dk") end
   K.rect(290, 104, 12, 8, "glass")
 end)
 K.layer("figures", function()
@@ -255,7 +267,11 @@ K.save("event_round_hole")
 K.canvas(W, H, 2208)
 K.layer("country", function()
   K.sky(W, 88, {{50, 16, 0.9}, {290, 12, 1.1}}, "mist")
-  K.peaks(0, W - 1, 80, 90, function(x) return 22 + 12 * math.sin(x / 53 + 1) + 4 * math.sin(x / 11) end, 26)
+  -- the Wind River peaks off to the north, the pass itself a broad open saddle
+  local function top(x) return 62 - 12 * math.sin(x / 53 + 1) - 5 * math.sin(x / 17) - 2 * math.sin(x / 5) end
+  K.ridge(0, W - 1, 0, 90, function(x) return -top(x) end, "far_hill", "mist", "haze")
+  for x = 0, W - 1 do local t = math.floor(top(x) + 0.5); if t < 56 then for y = t, t + (56 - t) // 2 do K.px(x, y, ((x + y) % 4 == 0) and "mist" or "white") end end end
+  K.ridge(0, W - 1, 0, 92, function(x) return -(80 - 3 * math.sin(x / 31)) end, "sage", "haze", "teal")
   sage_ground(90)
   road({{-10, 142, 6}, {200, 128, 5}, {440, 112, 3}})
 end)
