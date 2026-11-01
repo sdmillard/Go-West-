@@ -42,7 +42,7 @@ Old stops and Salt Lake are not minor, so the tuned journey length (Spencer: don
 
 - **Labels.** `map.json` has `nations`, a label spot for each people named per stop in `cabins.json` `settle.peoples`. The settle rules and the map read the same list, so they cannot disagree. A test checks that every named people has a label and every label is a named people.
 - **Border ticks.** `ui/map_view.gd` `draw_nations()` draws a light dashed tick across the road wherever the people changes from one stop to the next. Leaving open ground or a post also counts as a change. These ticks are the game's rule boundaries, not surveyed 1848 borders, which overlapped and moved.
-- **Readability.** Names are drawn at screen size. On the crowded Columbia, a name that would overlap another waits for the player to zoom in.
+- **Readability.** Names are drawn at screen size in dark plum on a pale paper halo, so they read over hills and rivers (Spencer, November 1, found the first purple labels hard to read and cluttered). At 1x only the larger peoples along the road are named; the smaller ones listed in `map.json` `nations_zoom` (the Columbia peoples, the Shawnee by Independence and the Applegate peoples) appear from 2x. Each name may slide a few pixels off its spot to stay clear of the roads, stops, map labels, the paper tags and other names (`draw_nation_names` in `ui/map_view.gd`); a name with no clear spot waits for more zoom. The label spots are the same as before, so the names still sit in each people's country along the road.
 - **Tooltips.** Hovering a stop shows "<people> country.".
 
 ## Saves
