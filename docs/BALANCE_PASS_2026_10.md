@@ -193,3 +193,29 @@ Spencer: the Columbia raft should get harder in winter, and may even be impossib
 - The season notice and the leave choices say all of this. The guide's winter chapter has the plain rules.
 
 Same seeds, farmer/carpenter/banker: late June 23 and late July 22 arrivals of 36, before and after. Six late-June parties spent 8 to 45 days waiting out the ice; one of them was later lost. The river winter costs time rather than deciding outcomes on its own. `tests/current_journey_policy.gd` now rests when every road out of a stop is shut for the season.
+
+## Step 6: pace (November 1)
+
+Spencer: grueling was never worth it, and losing 3 health a day at one pace against gaining 1 at the next looked lopsided. He picked moving the price of speed onto the oxen.
+
+What the code did before:
+- Miles step evenly (22, 26, 30), but daily health while moving was rations (bare -3, meager 0, filling +1) minus pace (0, 1, **4**). The last step cost four times the one before.
+- Wagon oxen wore the same at every pace; only horses, mules and loose cows felt pace. The tooltip claimed otherwise.
+- So a grueling day needed almost half a rest day to repay, about 21 effective miles a day, slower than steady. And strenuous beat steady outright (faster and fewer deaths), a free win.
+
+Now (`survival_rules.json`):
+- `pace_health_cost` 0/1/2: filling rations give +1, 0, -1 a day; meager 0, -1, -2; bare -3, -4, -5.
+- `pace_ox_strain` 0/0.5/1: extra wear on a working wagon team on top of grass, water, season and terrain. Strenuous adds a point every other day, grueling a point every day (`pace_ox_strain()` in trail_engine.gd spreads fractions over days without dice). Riders and walkers are unchanged (mounts already wear by pace).
+- An earlier try at 0/1/2 ox wear made both fast paces slower than steady (strenuous 218 days, grueling 260), because the oxen needed so much rest.
+
+Careful April bot, farmer/carpenter/banker, seeds 90000-90023 (72 journeys each), only the pace changed. Steady is identical under both rules.
+
+| Pace | Arrived | Median days | Deaths/journey | Rest days | Leaders dead of exhaustion |
+|---|---|---|---|---|---|
+| Steady | 60 | 204 | 0.39 | 15 | 0 |
+| Strenuous, before | 61 | 188 | 0.29 | 19 | 0 |
+| Strenuous, after | 59 | 201 | 0.43 | 22 | 1 |
+| Grueling, before | 31 | 266 | 1.57 | 73 | 24 |
+| Grueling, after | 55 | 195 | 0.68 | 40 | 4 |
+
+Now the ladder trades time for risk: grueling is the fastest way to Oregon at about twice steady's deaths, and its losses fall on poorer parties (farmers 8 of 24 arrive against 12), whose few oxen give out. Strenuous sits in between and no longer beats steady on safety.

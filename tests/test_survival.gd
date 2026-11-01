@@ -284,6 +284,27 @@ func run() -> void:
 	check(not screen.service_window.visible and not screen.post_store_window.visible and screen.game.state == before, "Closing trade costs no time or supplies")
 	screen._new_journey()
 	check(screen.game.hunt.is_empty() and not screen.hunt_window.visible and not screen.options_window.visible, "Restart cancels activity UI without stale completion")
+	# Pace costs climb evenly: each step adds one point of daily health loss and some team wear.
+	var paced = outfit(1850)
+	check(paced.survival.data.pace_health_cost.map(func(v): return int(v)) == [0, 1, 2], "Pace health costs climb evenly")
+	var wear_days: Array = []
+	for pace in range(3):
+		paced.state.pace = pace
+		var total := 0
+		for pace_day in range(1, 11):
+			paced.state.day = pace_day
+			total += paced.pace_ox_strain()
+		wear_days.append(total)
+	check(wear_days == [0, 5, 10], "Strenuous adds team wear every other day and grueling every day: %s" % str(wear_days))
+	var steady = outfit(1851)
+	var pushed = outfit(1851)
+	pushed.configure(2, 2)
+	steady.configure(0, 2)
+	for i in range(5):
+		steady.travel()
+		pushed.travel()
+	check(int(pushed.state.ox_health) < int(steady.state.ox_health), "A grueling pace wears the wagon team faster than a steady one")
+	check(int(pushed.state.health) < int(steady.state.health), "A grueling pace costs the travelers health")
 	screen.queue_free()
 	await process_frame
 	print("Survival: %d checks, %d failures" % [checks, failures])

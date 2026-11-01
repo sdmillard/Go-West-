@@ -108,6 +108,16 @@
     26,
     30
   ],
+  "pace_health_cost": [
+    0,
+    1,
+    2
+  ],
+  "pace_ox_strain": [
+    0,
+    0.5,
+    1
+  ],
   "rest_recovery": [
     3,
     5,

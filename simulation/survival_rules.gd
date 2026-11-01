@@ -35,6 +35,15 @@ func load_data(value: Variant) -> bool:
 			if not _integer(amount, 1) or amount <= previous:
 				return _fail("Pace and recovery values must increase")
 			previous = int(amount)
+	# Each step up in pace costs the travelers and the team a little more each day, never less.
+	for key in ["pace_health_cost", "pace_ox_strain"]:
+		if not value.get(key) is Array or value[key].size() != 3 or value[key][0] != 0:
+			return _fail("Invalid pace cost table")
+		var floor_cost := 0.0
+		for amount in value[key]:
+			if not (_integer(amount, 0) if key == "pace_health_cost" else _number(amount)) or amount < floor_cost or amount > 6:
+				return _fail("Pace costs must not decrease")
+			floor_cost = float(amount)
 	for chance in value.monthly_cold_chance:
 		if not _number(chance) or chance < 0 or chance > 1:
 			return _fail("Invalid seasonal chance")
