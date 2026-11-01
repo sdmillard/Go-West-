@@ -72,6 +72,9 @@ const NEAR_BANK = [Vector2(0, 178), Vector2(25, 189), Vector2(50, 204), Vector2(
 const FAR_BANK = [Vector2(330, 0), Vector2(360, 21), Vector2(390, 26), Vector2(420, 43), Vector2(450, 62), Vector2(480, 77), Vector2(510, 90), Vector2(540, 99), Vector2(570, 125), Vector2(600, 136), Vector2(630, 150), Vector2(660, 161), Vector2(690, 182), Vector2(720, 200), Vector2(720, 0)]
 signal crossing_finished
 var scenes = preload("res://ui/location_scenes.gd").new()
+var far_sphere = preload("res://ui/far_sphere.gd").new()
+## The Onyx Sphere on the horizon (Unhinged): far_sphere.gd view() {"size","x","tier"}, or {}.
+var sphere_look: Dictionary = {}
 var ambience = preload("res://ui/scene_ambience.gd").new()
 var scene_id := ""
 var cabin_frame := -1 # the party's cabin at this stop, see _draw_cabin
@@ -176,7 +179,10 @@ func _draw() -> void:
 		_draw_crossing_sky()
 		return
 	if not scene_id.is_empty():
-		draw_texture(scenes.texture_for(scene_id, season), Vector2.ZERO)
+		var picture: Texture2D = scenes.texture_for(scene_id, season)
+		if not sphere_look.is_empty():
+			picture = far_sphere.over_scene(scene_id + ":" + season, picture, sphere_look)
+		draw_texture(picture, Vector2.ZERO)
 		_draw_cabin()
 		ambience.draw(self, scene_id, scenes.texture_for(scene_id, season), clock_time)
 		if not scene_id.begins_with("ending_"): # ending pictures already show the party
@@ -196,6 +202,13 @@ func _draw() -> void:
 		var texture: Texture2D = _travel_texture(set_name + "_" + layer[0])
 		var drift: float = clock_time * 1.5 if layer[0] == "clouds" else 0.0
 		_tile(texture, 0, posmod(int(scroll_distance * layer[1] + drift), 432))
+		# the sphere stands beyond the low ranges of the plains and desert, but in front of the
+		# distant peaks of the mountain and forest sets so the near ridges still cover its foot
+		var behind: String = "far" if set_name in ["travel_mountains", "travel_forest"] else "sky"
+		if layer[0] == behind and not sphere_look.is_empty():
+			var foot: int = {"prairie": 84, "river": 84, "travel_desert": 88}.get(set_name, 96)
+			var placed: Array = far_sphere.for_travel(sphere_look, foot)
+			draw_texture(placed[0], placed[1])
 	if set_name in ["prairie", "river"]:
 		_tile(_travel_texture("travel_horizon"), 65, int(scroll_distance / 7.0) % 432)
 		_tile(_travel_texture("travel_ground"), 100, int(scroll_distance) % 432)

@@ -2012,6 +2012,7 @@ func _refresh() -> void:
 	# on the road the last place passed decides the mild lower-river winter
 	landscape.season = _scene_season(landscape.scene_id if not landscape.scene_id.is_empty() else str(s.landmark), date)
 	landscape.tallgrass = str(s.landmark) in TALLGRASS_LANDMARKS
+	landscape.sphere_look = _sphere_look(s)
 	landscape.cabin_frame = _cabin_frame(landscape.scene_id, date)
 	if landscape.scene_id == "fort_kearny" and date.year == 1848 and date.month < 6:
 		landscape.scene_id = "fort_kearny_early"
@@ -2322,6 +2323,38 @@ func _cabin_frame(stop: String, date: Dictionary) -> int:
 ## Lower Columbia, Willamette and southern Oregon valley places where winter is rain and green grass, not snow, unless
 ## it is snowing: they keep the picture as drawn.
 const MILD_WINTER_SCENES := ["eagle_creek", "oregon_city", "rogue_valley", "umpqua_valley", "south_willamette"]
+## Where the Onyx Sphere stands in the picture (Unhinged), or {} when it is not in view: on the
+## road, and in the picture of the stop the party is at, from the stops listed in its
+## "visible_from". Its size and side come from map distance and bearing (ui/far_sphere.gd).
+const FarSphere = preload("res://ui/far_sphere.gd")
+var _map_stops: Dictionary = {}
+func _sphere_look(s: Dictionary) -> Dictionary:
+	if s.get("mode", "") != "unhinged" or not ("onyx_sphere" in game.oddities.in_view(game)):
+		return {}
+	if not landscape.scene_id.is_empty() and landscape.scene_id != str(s.landmark):
+		return {}
+	if _map_stops.is_empty():
+		var data: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://data/map.json"))
+		_map_stops = data.get("stops", {}) if data is Dictionary else {}
+	var place: Dictionary = {}
+	for p in game.oddities.places:
+		if p.id == "onyx_sphere":
+			place = p
+	var edge: Dictionary = game.route.edge_between(place.get("from", ""), place.get("to", ""))
+	var here: Array = _map_stops.get(str(s.landmark), [])
+	var a: Array = _map_stops.get(str(place.get("from", "")), [])
+	var b: Array = _map_stops.get(str(place.get("to", "")), [])
+	if here.is_empty() or a.is_empty() or b.is_empty() or edge.is_empty():
+		return {}
+	var f := float(place.at) / maxf(1.0, float(edge.miles))
+	var there := [lerpf(a[0], b[0], f), lerpf(a[1], b[1], f)]
+	# on the road, the party is partway to the next stop
+	var ahead: Array = _map_stops.get(str(s.get("next_landmark", "")), [])
+	if landscape.scene_id.is_empty() and not ahead.is_empty() and int(s.get("leg_length", 0)) > 0:
+		var g := clampf(float(s.leg_miles) / float(s.leg_length), 0.0, 1.0)
+		here = [lerpf(here[0], ahead[0], g), lerpf(here[1], ahead[1], g)]
+	return FarSphere.view(here, there)
+
 ## Missouri and eastern Kansas: travel from these places shows tallgrass autumn colours.
 const TALLGRASS_LANDMARKS := ["independence", "elm_grove", "wakarusa", "kansas_river", "big_vermilion", "big_blue", "little_blue"]
 
