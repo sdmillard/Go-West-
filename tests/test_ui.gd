@@ -239,5 +239,19 @@ func check_map() -> void:
 	map.reset_view()
 	check(map.zoom==1 and map.pan==Vector2.ZERO, "Fit restores the whole map")
 	await process_frame
+	# Nation names (Spencer, November 1): the big peoples at 1x, the small ones on zoom, never on a road, stop or each other.
+	var names: Dictionary = map.nation_boxes
+	check(names.has("Lakota") and names.has("Pawnee") and not names.keys().any(func(n): return map.data.nations_zoom.has(n)), "At 1x only the larger peoples are named")
+	var clear := true
+	for a in names:
+		if map.is_busy(Rect2((names[a].position-map.pan)/map.zoom,names[a].size/map.zoom)):clear=false
+		for b in names:
+			if a!=b and names[a].intersects(names[b]):clear=false
+	check(clear, "Nation names keep off the roads, stops, map labels and each other")
+	map.set_zoom(3.0, map.map_to_screen(map.stops.the_dalles))
+	await process_frame
+	check(["Wasco","Tenino","Cayuse","Umatilla"].all(func(n): return map.nation_boxes.has(n)), "Zooming in on the Columbia names its peoples")
+	map.reset_view()
+	await process_frame
 	map.close_button.pressed.emit()
 	check(not map.visible, "Back to the trail closes the map")

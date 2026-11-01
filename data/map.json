@@ -129,6 +129,7 @@
     "Cascades": [45.95, -122.05],
     "Molalla": [44.95, -122.20]
   },
+  "nations_zoom": {"Shawnee": 2, "Umatilla": 2, "Tenino": 2, "Wasco": 2, "Cascades": 2, "Molalla": 2, "Pit River": 2, "Modoc": 2, "Klamath": 2, "Shasta": 2, "Takelma": 2},
   "peaks": [
     {"name": "Mount Hood", "at": [45.373, -121.696]},
     {"name": "Mount Adams", "at": [46.202, -121.490]},

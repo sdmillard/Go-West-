@@ -12,7 +12,9 @@ const JOURNEY := Color("c8302a")
 const JOURNEY_DARK := Color("7a1f1a")
 const LABEL := Color("45372f")
 const PAPER := Color("f6e7bc")
-const NATION := Color("7d5f8a")
+const NATION := Color("7d5f8a") # border ticks
+const NATION_INK := Color("552869") # nation names: deep plum on a paper halo
+const NATION_HALO := Color(0.965, 0.906, 0.737, 0.85)
 var game
 var data: Dictionary = {}
 var stops: Dictionary = {} # id -> Vector2, pixel position on the map picture
@@ -25,6 +27,9 @@ var zoom := 1.0
 var pan := Vector2.ZERO
 var dragging := false
 var zoom_label: Label
+var busy: Dictionary = {} # Vector2i cell -> true where a road, stop or map label lies (map pixels / BUSY_CELL)
+const BUSY_CELL := 2.0
+var nation_boxes: Dictionary = {} # name -> where it was last drawn on screen (map canvas pixels)
 const MAP_SIZE := Vector2(616, 288)
 const MAX_ZOOM := 4.0
 
@@ -198,8 +203,8 @@ func text(at: Vector2, value: String, color: Color = LABEL) -> void:
 func nation(id: String) -> String:
 	return str(game.Cabins.data.get("settle",{}).get("peoples",{}).get(id,""))
 
-## Native nations along the road: a light dashed tick across the road where the country changes, and each
-## nation's name near its stretch. Authored from the game's per-stop list, not surveyed 1848 borders.
+## Native nations along the road: a light dashed tick across the road where the country changes (names are
+## drawn later, by draw_nation_names). Authored from the game's per-stop list, not surveyed 1848 borders.
 func draw_nations() -> void:
 	for id in game.route.nodes:
 		for edge in game.route.nodes[id].next:
@@ -214,22 +219,75 @@ func draw_nations() -> void:
 			for step in [-5,-3,3,5]:
 				map_canvas.draw_rect(Rect2((at+across*step).round(),Vector2.ONE),NATION)
 			map_canvas.draw_rect(Rect2(at.round(),Vector2.ONE),NATION)
-	# Names stay a readable size at any zoom, so crowded country (the Columbia) opens up as the map is zoomed;
-	# a name that would overlap one already drawn waits for more zoom.
+
+## Every map pixel a nation name should not cover: the roads, the stops and the fixed map labels.
+func busy_map() -> Dictionary:
+	if not busy.is_empty():return busy
+	for id in game.route.nodes:
+		for edge in game.route.nodes[id].next:
+			var points: PackedVector2Array=road(id,str(edge.to))
+			for i in range(points.size()-1):
+				var steps:=int(maxf(1.0,points[i].distance_to(points[i+1])))
+				for t in range(steps+1):
+					mark_busy(Rect2(points[i].lerp(points[i+1],float(t)/steps)-Vector2(1,1),Vector2(3,3)))
+	for id in stops:
+		mark_busy(Rect2(stops[id]-Vector2(3,3),Vector2(7,7)))
+	for label in data.labels:
+		var y: float=project(label.at).y
+		for line in str(label.text).split("\n"):
+			var width: float=PIXEL_FONT.get_string_size(line,HORIZONTAL_ALIGNMENT_LEFT,-1,8).x
+			mark_busy(Rect2(project(label.at).x-width/2.0,y-8,width,10))
+			y+=9
+	return busy
+
+func mark_busy(box: Rect2) -> void:
+	for x in range(floori(box.position.x/BUSY_CELL),floori(box.end.x/BUSY_CELL)+1):
+		for y in range(floori(box.position.y/BUSY_CELL),floori(box.end.y/BUSY_CELL)+1):
+			busy[Vector2i(x,y)]=true
+
+func is_busy(box: Rect2) -> bool:
+	for x in range(floori(box.position.x/BUSY_CELL),floori((box.end.x-0.01)/BUSY_CELL)+1):
+		for y in range(floori(box.position.y/BUSY_CELL),floori((box.end.y-0.01)/BUSY_CELL)+1):
+			if busy.has(Vector2i(x,y)):return true
+	return false
+
+## Nation names, drawn at screen size in dark plum on a paper halo so they read over hills and rivers.
+## The smaller peoples (data.nations_zoom) wait for zoom, and each name slides a little off its spot to keep
+## clear of the roads, stops, map labels, tags and other names; a name that finds no clear spot waits for more zoom.
+func draw_nation_names(keep_clear: Array) -> void:
+	busy_map()
 	map_canvas.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
-	var taken: Array[Rect2]=[]
+	nation_boxes.clear()
+	var taken: Array=[]
+	for box in keep_clear:
+		taken.append(Rect2(pan+box.position*zoom,box.size*zoom))
+	var view:=Rect2(Vector2(2,2),MAP_SIZE-Vector2(4,4))
 	for name in data.get("nations",{}):
+		if zoom<float(data.get("nations_zoom",{}).get(name,1)):continue
 		var value: String=str(name).to_upper()
-		var width: float=PIXEL_FONT.get_string_size(value,HORIZONTAL_ALIGNMENT_LEFT,-1,8).x
+		var width: float=PIXEL_FONT.get_string_size(value,HORIZONTAL_ALIGNMENT_LEFT,-1,8).x+2
 		var at: Vector2=(pan+project(data.nations[name])*zoom).round()
-		var box:=Rect2(at-Vector2(roundf(width/2.0),8),Vector2(width,10))
-		if not Rect2(Vector2.ZERO,MAP_SIZE).encloses(box) or taken.any(func(other):return other.grow(2).intersects(box)):continue
-		taken.append(box)
-		map_canvas.draw_string(PIXEL_FONT,box.position+Vector2(0,8),value,HORIZONTAL_ALIGNMENT_LEFT,-1,8,NATION)
+		for shift in [Vector2(0,0),Vector2(0,-8),Vector2(0,8),Vector2(-16,0),Vector2(16,0),Vector2(0,-15),Vector2(0,15),Vector2(-24,-8),Vector2(24,-8),Vector2(-24,8),Vector2(24,8),Vector2(-32,0),Vector2(32,0),Vector2(0,-22),Vector2(0,22),Vector2(-40,0),Vector2(40,0)]:
+			var box:=Rect2(at+shift-Vector2(roundf(width/2.0),8),Vector2(width,10))
+			if not view.encloses(box) or taken.any(func(other):return other.grow(1).intersects(box)):continue
+			if is_busy(Rect2((box.position-pan)/zoom,box.size/zoom)):continue
+			taken.append(box)
+			nation_boxes[name]=box
+			var base:=box.position+Vector2(1,8)
+			for d in [Vector2(-1,0),Vector2(1,0),Vector2(0,-1),Vector2(0,1),Vector2(-1,-1),Vector2(1,-1),Vector2(-1,1),Vector2(1,1)]:
+				map_canvas.draw_string(PIXEL_FONT,base+d,value,HORIZONTAL_ALIGNMENT_LEFT,-1,8,NATION_HALO)
+			map_canvas.draw_string(PIXEL_FONT,base,value,HORIZONTAL_ALIGNMENT_LEFT,-1,8,NATION_INK)
+			break
 	map_canvas.draw_set_transform(pan, 0.0, Vector2.ONE * zoom)
 
 ## A name on a small paper tag beside a map point (side: "above", "below" or "left"), kept inside the map.
 func tag(at: Vector2, value: String, side: String, ink: Color = INK) -> void:
+	var box := tag_box(at, value, side)
+	map_canvas.draw_rect(box, PAPER)
+	map_canvas.draw_rect(box, INK, false, 1.0)
+	map_canvas.draw_string(PIXEL_FONT, box.position + Vector2(3, 9), value, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, ink)
+
+func tag_box(at: Vector2, value: String, side: String) -> Rect2:
 	var width := PIXEL_FONT.get_string_size(value, HORIZONTAL_ALIGNMENT_LEFT, -1, 8).x + 6
 	var x := roundf(at.x - width / 2.0)
 	var y := at.y + 6.0
@@ -240,10 +298,7 @@ func tag(at: Vector2, value: String, side: String, ink: Color = INK) -> void:
 		y = at.y - 5.0
 	x = clampf(x, 4.0, data.projection.width - width - 4.0)
 	y = clampf(y, 4.0, data.projection.height - 15.0)
-	var box := Rect2(Vector2(x, y), Vector2(width, 11))
-	map_canvas.draw_rect(box, PAPER)
-	map_canvas.draw_rect(box, INK, false, 1.0)
-	map_canvas.draw_string(PIXEL_FONT, box.position + Vector2(3, 9), value, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, ink)
+	return Rect2(Vector2(x, y), Vector2(width, 11))
 
 func _draw() -> void:
 	if data.is_empty() or game == null:
@@ -291,9 +346,16 @@ func _draw_map() -> void:
 		var r := 2.0 if kind in ["fort", "town", "destination"] else 1.0
 		map_canvas.draw_rect(Rect2(p - Vector2(r, r), Vector2(r * 2 + 1, r * 2 + 1)), INK)
 		map_canvas.draw_rect(Rect2(p - Vector2(r - 1, r - 1), Vector2(r * 2 - 1, r * 2 - 1)), JOURNEY if visited else PAPER)
+	var cache_at: Variant=cache_point()
+	var keep_clear: Array=[tag_box(stops["independence"],"INDEPENDENCE","below"),tag_box(stops["oregon_city"],"OREGON CITY","left"),tag_box(j.here,"YOU ARE HERE","above"),Rect2(j.here.round()+Vector2(-6,-13),Vector2(13,18))]
+	if cache_at is Vector2:
+		keep_clear.append(tag_box(cache_at,"WAGON CACHE","left" if cache_at.distance_to(stops["independence"])<25 else "below"))
+	for trip in game.field_outings.record.trips:
+		var point: Variant=outing_point(trip.origin)
+		if point is Vector2:keep_clear.append(tag_box(point,"HUNTERS' CAMP","above"))
+	draw_nation_names(keep_clear)
 	tag(stops["independence"], "INDEPENDENCE", "below")
 	tag(stops["oregon_city"], "OREGON CITY", "left")
-	var cache_at: Variant=cache_point()
 	if cache_at is Vector2:
 		map_canvas.draw_rect(Rect2(cache_at-Vector2(3,3),Vector2(7,5)),Color("e2ab4c"))
 		map_canvas.draw_rect(Rect2(cache_at-Vector2(3,3),Vector2(7,5)),INK,false,1.0)
