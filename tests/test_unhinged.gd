@@ -155,6 +155,7 @@ func run():
 	test_sailor()
 	test_novablade_custody()
 	await test_cul_de_sac()
+	test_laundry()
 	print("Unhinged: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures==0 else 1)
 
@@ -211,6 +212,96 @@ func crime_pick(game,command: String) -> bool:
 	for i in range(game.pending.get("choices",[]).size()):
 		if game.pending.choices[i].get("crime_command","")==command:return game.choose(i)
 	return false
+
+func test_laundry():
+	var game=started(57)
+	game._present(event(game,"laundromat"))
+	for member in game.party_health.members:member.health=70
+	game.state.health=70
+	var cash: float=game.state.money
+	var day: int=game.state.day
+	var dice=game.rng.state
+	check(game.choose(0),"The party can wash at the laundromat")
+	check(is_equal_approx(float(game.state.money),cash-1.0) and game.state.health>70 and event(game,"laundromat").choices[0].effects.health==6 and game.state.day==day,"Laundry keeps its $1 cost and existing health benefit without a day cost")
+	check(game.state.clean_until==day+14 and game.rng.state==dice,"Laundry records a fortnight without drawing the journey dice")
+	check(is_equal_approx(game.oddities.clean_onset_factor(game.state),0.8),"Clean clothes modestly reduce spontaneous onset")
+	var store=Store.new()
+	var saved: Dictionary=store.capture(game)
+	var restored=store.restore(JSON.parse_string(JSON.stringify(saved)))
+	check(restored!=null and store.capture(restored)==saved,"Laundry protection round-trips exactly")
+	var state: Dictionary=game.state.duplicate(true)
+	state.day=day+14
+	check(is_equal_approx(game.oddities.clean_onset_factor(state),0.8),"Protection includes the fourteenth following day")
+	state.day+=1
+	check(game.oddities.clean_onset_factor(state)==1.0,"Protection expires on the fifteenth following day")
+	state.mode="classic"
+	state.day=day
+	check(game.oddities.clean_onset_factor(state)==1.0,"Classic never gains laundry protection")
+	var old: Dictionary=saved.duplicate(true)
+	old.state.erase("clean_until")
+	old.rules="38699226e287ddad9bbd5f7263b72d6bb8e0043ca78cfe3825800e953ba82c99"
+	var legacy=store.restore(old)
+	check(legacy!=null and not legacy.state.has("clean_until") and legacy.oddities.clean_onset_factor(legacy.state)==1.0,"An older save loads without free protection")
+	for invalid in [-1,day+15,1.5,"14",true]:
+		var bad: Dictionary=saved.duplicate(true)
+		bad.state.clean_until=invalid
+		check(store.restore(bad)==null,"Saves reject an invalid laundry expiry: "+str(invalid))
+	var bad: Dictionary=saved.duplicate(true)
+	bad.state.mode="classic"
+	check(store.restore(bad)==null,"Classic saves cannot claim laundry protection")
+	var declined=started(57)
+	declined._present(event(declined,"laundromat"))
+	check(declined.choose(1) and not declined.state.has("clean_until"),"Passing the laundromat grants no protection")
+	var broke=started(57)
+	broke.state.money=0
+	broke._present(event(broke,"laundromat"))
+	check(not broke.choose(0) and not broke.state.has("clean_until"),"Unaffordable laundry cannot grant protection")
+	# A shared health-RNG draw between the two thresholds proves the real daily tick is wired.
+	var seed_value: int=0
+	var random=RandomNumberGenerator.new()
+	for s in range(1000):
+		random.seed=s
+		var draw: float=random.randf()
+		if draw>=0.7*0.6*0.8 and draw<0.7*0.6:seed_value=s;break
+	var dirty=started(57)
+	var clean=started(57)
+	for g in [dirty,clean]:
+		g.pending={}
+		g.party_health.daily_onset_chance=1.0
+		g.party_health.rng.seed=seed_value
+	clean.state["clean_until"]=int(clean.state.day)+14
+	dirty._tick_day(true)
+	clean._tick_day(true)
+	check(dirty.party_health.members.any(func(m):return not m.conditions.is_empty()) and clean.party_health.members.all(func(m):return m.conditions.is_empty()),"The actual daily illness roll is reduced while clean")
+	# Expiry restores the same roll and outcome; merely having an old timestamp does nothing.
+	var expired=started(57)
+	var plain=started(57)
+	for g in [expired,plain]:
+		g.pending={}
+		g.party_health.daily_onset_chance=1.0
+		g.party_health.rng.seed=seed_value
+	expired.state["clean_until"]=int(expired.state.day)
+	expired._tick_day(true)
+	plain._tick_day(true)
+	check(expired.party_health.members==plain.party_health.members and expired.party_health.rng.state==plain.party_health.rng.state,"Expired protection leaves ordinary health outcomes and RNG unchanged")
+	var sick_clean=started(57)
+	var sick_plain=started(57)
+	for g in [sick_clean,sick_plain]:
+		g.pending={}
+		g.party_health.begin_condition(0,"dysentery",int(g.state.day),1)
+		g.party_health.begin_condition(1,"wound",int(g.state.day),1)
+	sick_clean.state["clean_until"]=int(sick_clean.state.day)+14
+	sick_clean._tick_day(true)
+	sick_plain._tick_day(true)
+	check(sick_clean.party_health.members==sick_plain.party_health.members and sick_clean.party_health.rng.state==sick_plain.party_health.rng.state,"Laundry does not alter existing disease, wound or spread clocks")
+	var offer=started(57)
+	offer._present(event(offer,"laundromat"))
+	var pending_save: Dictionary=store.capture(offer)
+	check(store.restore(pending_save)!=null,"An unchosen laundry offer saves and loads")
+	pending_save.pending.choices[0].clean_days=1000
+	check(store.restore(pending_save)==null,"A save cannot forge a longer laundry offer")
+	offer.pending.choices[0].clean_days="forever"
+	check(not offer.choose(0),"A malformed laundry offer is safely rejected")
 
 func test_cul_de_sac():
 	var game=started(4242)

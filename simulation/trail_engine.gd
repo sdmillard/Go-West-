@@ -687,6 +687,7 @@ func can_choose(index: int) -> bool:
 		return false
 	var choice: Dictionary = pending.choices[index]
 	if choice.has("oddity_recruit") and (choice.oddity_recruit!="beached_ship" or not recruitment.can_sign_sailor(self)):return false
+	if choice.has("clean_days") and (state.mode!="unhinged" or pending.id!="laundromat" or not crime.whole(choice.clean_days,1,14)):return false
 	if choice.has("settle_oddity") and (choice.settle_oddity!="cul_de_sac" or not Cabins.can_settle_cul_de_sac(self)):return false
 	if choice.has("bandit_payment") and (pending.id!="bandits" or not combat.BanditDemand.valid_choice(choice) or (choice.get("bandit_wagon",false) and state.vehicle!="wagon")):return false
 	if pending.get("native_menu",false):return native_encounters.can_choose(self,index)
@@ -749,6 +750,7 @@ func choose(index: int) -> bool:
 	if friendly:
 		journal.append("The riders proved friendly. Any ammunition or time spent was still used.")
 	_apply(choice.get("effects", {}), "injuries", choice.get("rest", false))
+	if choice.has("clean_days"):state["clean_until"]=int(state.day)+int(choice.clean_days)
 	if choice.get("bandit_payment",false):combat.BanditDemand.finish(self,choice)
 	journal.append(choice.result)
 	if choice.has("risk") and rng.randf() < choice.risk.probability:
@@ -881,6 +883,7 @@ func _tick_day(resting: bool, team_working: bool = false, camp_action: String = 
 		var nutrition: int = state.rations if fed else 0
 		var risk_multiplier: float = [2.0, 1.3, 0.7][nutrition] * (0.6 if resting else 1.0) * (1.4 if unprotected and survival.weather.exposure else 1.0) * float(survival.weather.get("illness_risk",1.0))
 		if sheltered and int(calendar().month) in survival.data.seasonal.winter_months:risk_multiplier*=float(Cabins.data.winter_illness_factor)
+		risk_multiplier*=oddities.clean_onset_factor(state)
 		party_health.tick(state.day, resting, risk_multiplier, nutrition, int(calendar().year), int(calendar().month) if state.extended_route else 0, context.region_id(self) if state.extended_route else "", party_health.days_without_fresh,camp_tasks.day_plan.get("rest",{}),vitamin_coverage)
 		_collect_health_events()
 		state.health = party_health.average_health()

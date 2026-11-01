@@ -160,6 +160,7 @@ func valid_menu(menu: Dictionary, game, count: int=5) -> bool:
 		if choice.has("remains_command") and not menu.get("remains_menu",false):return false
 		if choice.has("action") and choice.action not in ["cross", "rest", "leave", "trade", "notes", "activity"]:
 			return false
+		if choice.has("clean_days") and (game.state.mode!="unhinged" or menu.get("id","")!="laundromat" or not integer(choice.clean_days,1,14)):return false
 		if choice.has("activity") and (not choice.activity is String or not game.context.data.activities.has(choice.activity)):return false
 		if choice.get("action","")=="activity" and (choice.get("activity","")!=menu.get("landmark","") or not game.context.data.activities.get(choice.get("activity",""),{}).has("kind") or not choice.get("result") is String):return false
 		if choice.has("market_key")!=choice.has("stock_limit"):return false
@@ -283,6 +284,7 @@ func restore(value: Variant):
 	if not Simulation.Direction.valid_state(s,game.route) or not game.provisions.Shortfall.valid_state(s):return null
 	if s.has("household_gear_lb") and (not (s.household_gear_lb is int or s.household_gear_lb is float) or not is_finite(s.household_gear_lb) or s.household_gear_lb<0 or s.household_gear_lb>100000):return null
 	if not Simulation.Cabins.valid_state(s,game.route):return null
+	if s.has("clean_until") and (s.mode!="unhinged" or not integer(s.clean_until,0,int(s.day)+14)):return null
 	if s.status=="returned_east" and (s.landmark!=game.route.start or s.miles!=0 or s.next_landmark!=""):return null
 	if not game.route.nodes.has(s.landmark) or (s.next_landmark != "" and not game.route.nodes.has(s.next_landmark)) or not integer(s.day,0,100000) or not integer(s.miles,0,game.route.longest_miles) or s.leg_miles > s.leg_length:
 		return null
