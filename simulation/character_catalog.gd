@@ -42,6 +42,23 @@ func load_data(value: Variant) -> bool:
 		if not value.get(field) is Array or value[field].is_empty() or value[field].size()>200:return false
 		for name in value[field]:
 			if not name is String or name.is_empty() or name.length()>24:return false
+	var given_names: Variant=value.get("given_names",{"women":value.first_names,"men":value.first_names})
+	if not given_names is Dictionary:return false
+	for field in ["women","men"]:
+		if not given_names.get(field) is Array or given_names[field].is_empty() or given_names[field].size()>200:return false
+		for name in given_names[field]:
+			if not name is String or name.is_empty() or name.length()>24:return false
+	var heritage_names: Variant=value.get("heritage_names",{})
+	if not heritage_names is Dictionary or heritage_names.size()>32:return false
+	for heritage in heritage_names:
+		var pool: Variant=heritage_names[heritage]
+		if not heritage is String or heritage.length()>64 or not pool is Dictionary:return false
+		var chance: Variant=pool.get("own_given_chance",1.0)
+		if not (chance is float or chance is int) or not is_finite(chance) or chance<0 or chance>1:return false
+		for field in ["women","men","surnames"]:
+			if not pool.get(field) is Array or pool[field].is_empty() or pool[field].size()>200:return false
+			for name in pool[field]:
+				if not name is String or name.is_empty() or name.length()>24:return false
 	for category in REQUIRED:
 		for required in REQUIRED[category]:
 			if not value[category].has(required):return false
@@ -83,3 +100,22 @@ func health_delta(profile: Dictionary,delta: int,cause: String,conditions: Dicti
 		for condition in conditions.values():
 			if condition.kind=="illness" and condition.name.to_lower()==cause:key="hurt_illness"
 	return -maxi(1,ceili(absf(delta)*factor(profile,"hurt_all")*(factor(profile,key) if not key.is_empty() else 1.0)))
+## Draws a full name that fits the traveler: women's or men's given names (from the outfit), and the heritage's pool.
+## Surnames come from the heritage pool; given names from it or, Americanized, from the general pool.
+## "Mixed heritage" takes the given name and surname from two random pools; other labels use the general pool.
+func generated_name(random: RandomNumberGenerator, heritage: String, woman: bool) -> String:
+	var pools: Dictionary=data.get("heritage_names",{})
+	var general_given: Dictionary=data.get("given_names",{"women":data.first_names,"men":data.first_names})
+	var general: Dictionary={"women":general_given.women,"men":general_given.men,"surnames":data.surnames}
+	var given_pool: Dictionary=general
+	var surname_pool: Dictionary=general
+	if heritage=="Mixed heritage":
+		var choices: Array=[general]+pools.values()
+		given_pool=choices[random.randi_range(0,choices.size()-1)]
+		surname_pool=choices[random.randi_range(0,choices.size()-1)]
+	elif pools.has(heritage):
+		surname_pool=pools[heritage]
+		given_pool=pools[heritage] if random.randf()<float(pools[heritage].get("own_given_chance",1.0)) else general
+	var given: Array=given_pool.women if woman else given_pool.men
+	var surnames: Array=surname_pool.surnames
+	return "%s %s" % [given[random.randi_range(0,given.size()-1)],surnames[random.randi_range(0,surnames.size()-1)]]

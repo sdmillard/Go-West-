@@ -269,7 +269,7 @@ func generate_candidate(seed_value: int, candidate_index: int, relationship: Str
 	profile.specials=pool.slice(0,random.randi_range(0,creation_special_limit(profile)))
 	var terms: Dictionary={}
 	if "Mercenary" in profile.specials:terms={"wage_cents":wage_quote(profile).daily_cents*7,"interval_days":7}
-	return {"candidate_id":"%d:%d" % [seed_value,candidate_index],"name":"%s %s" % [catalog.data.first_names[random.randi_range(0,catalog.data.first_names.size()-1)],catalog.data.surnames[random.randi_range(0,catalog.data.surnames.size()-1)]],"profile":profile,"terms":terms}
+	return {"candidate_id":"%d:%d" % [seed_value,candidate_index],"name":catalog.generated_name(random,str(profile.appearance.heritage),Appearance.wears_dress(profile.appearance)),"profile":profile,"terms":terms}
 
 func daily(game, resting: bool, working: bool, sick_before: bool, rest_by_member: Dictionary={}) -> void:
 	advance_contracts(game)
