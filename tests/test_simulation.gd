@@ -132,7 +132,7 @@ func _initialize() -> void:
 		sample.choose(0)
 		match event.id:
 			"novablade":
-				check("Novablade" in sample.state.items, "Novablade persists in inventory")
+				check(int(sample.state.get("novablades", 0)) == 1, "Novablade is kept as a blade")
 			"civet":
 				sample.seen.append("muddy_trail")
 				sample.travel()

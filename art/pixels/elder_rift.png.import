@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://oh44170ffrun"
-path="res://.godot/imported/elder_god_2.png-b086a8d9a47cc22d24bc9c4630cf7502.ctex"
+uid="uid://jafj4ss4qjle"
+path="res://.godot/imported/elder_rift.png-de80ee942fba6edba07d919bdd8dca7c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/pixels/elder_god_2.png"
-dest_files=["res://.godot/imported/elder_god_2.png-b086a8d9a47cc22d24bc9c4630cf7502.ctex"]
+source_file="res://art/pixels/elder_rift.png"
+dest_files=["res://.godot/imported/elder_rift.png-de80ee942fba6edba07d919bdd8dca7c.ctex"]
 
 [params]
 

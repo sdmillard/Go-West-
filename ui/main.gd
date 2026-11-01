@@ -1975,8 +1975,7 @@ func _refresh() -> void:
 	landscape.walkers=int(s.party_size)
 	landscape.traveler_profiles=game.characters.profiles.filter(func(profile):return int(profile.id)<game.party_health.members.size() and game.party_health.is_active(game.party_health.members[int(profile.id)]))
 	landscape.encounter = game.pending.get("id", "")
-	landscape.elder_variant = int(s.seed)
-	# The elder god is drawn at the window's full resolution, so it clashes with the pixel art.
+	# The rift the elder god looks through is drawn at the window's full resolution, so it clashes with the pixel art.
 	var full_res: bool = landscape.encounter == "elder_god"
 	var root_window: Window = get_tree().root if is_inside_tree() else null
 	if root_window != null and (root_window.content_scale_mode == Window.CONTENT_SCALE_MODE_CANVAS_ITEMS) != full_res:

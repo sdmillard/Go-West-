@@ -943,7 +943,9 @@ func _apply(effects: Dictionary, health_cause: String = "injuries", resting: boo
 	if team_conditions.record.oxen.size()!=int(state.oxen):team_conditions.start_legacy(self)
 	var before := state.duplicate(true)
 	for key in effects:
-		if key == "item":
+		if key == "item" and Armory.ODD_BLADES.values().has(effects[key]):
+			state[Armory.ODD_BLADES.find_key(effects[key])] = 1 # Unhinged: a blade found on the road
+		elif key == "item":
 			if effects[key] not in state.items:
 				state.items.append(effects[key])
 		elif key == "vehicle" and effects[key] == "civet":
@@ -1285,6 +1287,7 @@ func post_store() -> Dictionary:
 	rows.append_array(Produce.rows(self,str(offer.key),"post"))
 	rows.append_array(Pelts.rows(self,str(offer.key),"post"))
 	rows.append_array(income.rows(self,str(offer.key),"post"))
+	rows.append_array(oddities.counter_rows(self,str(offer.key),"post"))
 	rows.append_array(leathercraft.rows(self,str(offer.key),"post"))
 	rows.append_array(livestock.rows(self,str(offer.key)))
 	var wagon_row: Dictionary=provisions.WagonTrade.row(self,str(offer.key))
@@ -1320,6 +1323,7 @@ func trade_counter(venue: String="") -> Dictionary:
 	rows.append_array(Produce.rows(self,str(offer.key),"traders"))
 	rows.append_array(Pelts.rows(self,str(offer.key),"traders"))
 	rows.append_array(income.rows(self,str(offer.key),"traders"))
+	rows.append_array(oddities.counter_rows(self,str(offer.key),"traders"))
 	rows.append_array(leathercraft.rows(self,str(offer.key),"traders"))
 	return {"name":"Passing traders","kind":"traders","key":str(offer.key),"mood":goods.mood,"late_food":late,"rows":rows,"days":context.trade_days(offer),"money_cents":roundi(float(state.money)*100.0),"purse_cents":_purse_left(str(offer.key),int(goods.purse_cents)),"rumor":"","discount":characters.available(self,"Trading")}
 

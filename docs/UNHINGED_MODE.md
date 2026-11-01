@@ -39,7 +39,7 @@ Names are invented (Spencer: legally distinct names, so Novablade, Hanabi Civet,
 
 ## Still to do
 
-- Art: place pictures (`event_<id>`, 432 × 150, wired in `main.gd` `_event_scene` once they exist in `data/location_scenes.json`), road sprites, the sphere on the travel horizon, and the elder god in a realistic, high-detail style that clashes with the pixel art (Spencer).
+- Art: place pictures (`event_<id>`, 432 × 150, wired in `main.gd` `_event_scene` once they exist in `data/location_scenes.json`), road sprites, the sphere on the travel horizon, and the elder god (done: a realistic tear in reality, art/pixels/elder_rift.png, drawn at full window resolution; the god itself is too vast to show).
 - Deeper versions Spencer approved: a sailor from the ship joins as a companion, settling in the cul-de-sac as its own ending, clean clothes slowing disease, the compass pointing at the sphere.
 
 Tests: `tests/test_unhinged.gd`. `tests/chaos_journeys.gd -- --unhinged` forces every oddity into each bot journey.

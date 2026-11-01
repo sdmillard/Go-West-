@@ -3,8 +3,9 @@ extends RefCounted
 ## the outfitter sells more. In a fight each traveler takes one firearm and one blade from what the party holds.
 ## Authored game values in data/weapons.json, not measured historical data.
 const KEYS=["rifles","shotguns","pistols","revolvers","knives","hatchets"]
-## Unhinged mode: blades that are pack items, not counted goods (blade key -> item name in state.items).
-## Never sold, stolen or weighed; one each at most.
+## Unhinged mode: blades found on the road, held as a 0/1 count in state but outside KEYS, so the
+## ordinary arms trade, theft, custody and weight code never touches them. They sell at any counter
+## (Oddities.counter_rows) for the blade's "sell_cents".
 const ODD_BLADES={"novablades":"Novablade"}
 static var data: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/weapons.json"))
 static func number(v: Variant) -> bool:return (v is int or v is float) and is_finite(v)
@@ -43,7 +44,6 @@ static func valid_assignments(v: Variant) -> bool:
 		if pick.has("blade") and not (pick.blade is String and (pick.blade=="" or data.blades.has(pick.blade))):return false
 	return true
 static func count(state: Dictionary,key: String) -> int:
-	if ODD_BLADES.has(key):return 1 if ODD_BLADES[key] in state.get("items",[]) else 0
 	return maxi(0,int(state.get(key,0)))
 ## Journeys saved before arms were counted: every traveler still has the rifle and knife they set out with.
 static func settle(state: Dictionary) -> void:
@@ -138,7 +138,7 @@ static func equip(config: Dictionary,state: Dictionary,unarmed: Array=[]) -> Dic
 			member["weapon"]=""
 			member["blade"]=""
 	return config
-const NAMES={"rifles":["rifle","rifles"],"shotguns":["shotgun","shotguns"],"pistols":["pistol","pistols"],"revolvers":["Colt revolver","Colt revolvers"],"knives":["knife","knives"],"hatchets":["hatchet","hatchets"]}
+const NAMES={"rifles":["rifle","rifles"],"shotguns":["shotgun","shotguns"],"pistols":["pistol","pistols"],"revolvers":["Colt revolver","Colt revolvers"],"knives":["knife","knives"],"hatchets":["hatchet","hatchets"],"novablades":["Novablade","Novablades"]}
 ## "1 Colt revolver, 2 knives", in KEYS order.
 static func describe(arms: Dictionary) -> String:
 	return ", ".join(KEYS.filter(func(key):return int(arms.get(key,0))>0).map(func(key):return "%d %s" % [int(arms[key]),NAMES[key][0 if int(arms[key])==1 else 1]]))

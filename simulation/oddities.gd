@@ -140,3 +140,17 @@ func map_marks(game) -> Array:
 			continue
 		marks.append({"id": place.id, "label": str(event.label), "from": place.from, "to": place.to, "fraction": float(place.at) / maxf(1.0, float(edge.miles)), "seen": place.id in game.seen})
 	return marks
+
+## Unhinged blades found on the road sell at a post or to passing traders (traders pay three quarters).
+func counter_rows(game, venue: String, kind: String) -> Array:
+	var rows: Array = []
+	if kind not in ["post", "traders"]:
+		return rows
+	for key in game.Armory.ODD_BLADES:
+		if int(game.state.get(key, 0)) < 1:
+			continue
+		var price: int = int(game.Armory.data.blades[key].get("sell_cents", 0))
+		if kind == "traders":
+			price = floori(price * 0.75)
+		rows.append({"item": key, "label": str(game.Armory.ODD_BLADES[key]), "amount": 1, "buy_cents": 0, "sell_cents": price, "can_buy": 0, "can_sell": 1, "held": 1, "buy_key": venue + "|buy_" + key, "sell_key": venue + "|sell_" + key, "sells": false, "buys": true})
+	return rows

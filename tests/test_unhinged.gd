@@ -123,5 +123,15 @@ func run():
 	check(is_equal_approx(Armory.extra_weight(armed.state),weight),"The Novablade weighs nothing on the load")
 	var blade: Dictionary=Armory.data.blades.novablades
 	check(float(blade.hit)>=0.95 and int(blade.damage_min)>=int(Armory.data.blades.hatchets.damage_max)*2,"The Novablade outclasses every 1848 blade")
+	# It sells at a post counter (Spencer: "you can sell it, sure").
+	armed.pending={}
+	armed.state.next_landmark="fort_laramie"
+	armed._arrive_landmark()
+	var store: Dictionary=armed.trade_counter()
+	var row: Array=store.get("rows",[]).filter(func(r):return r.item=="novablades")
+	check(row.size()==1 and int(row[0].sell_cents)==6000 and int(row[0].can_buy)==0,"A post will buy the Novablade for $60 and never sells one")
+	var cash: float=float(armed.state.money)
+	check(armed.counter_checkout({"novablades":-1}) and int(armed.state.novablades)==0 and float(armed.state.money)>cash+59.0,"Selling the Novablade pays for it and it is gone")
+	check(Armory.loadout(armed.state,2)[0].blade!="novablades","Sold, it is out of the fight")
 	print("Unhinged: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures==0 else 1)
