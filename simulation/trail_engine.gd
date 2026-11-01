@@ -597,7 +597,7 @@ func travel() -> bool:
 		else:_arrive_landmark(true)
 		return true
 	var on_river: bool = state.extended_route and current_edge().get("hazard","") == "river"
-	if state.extended_route and not on_river and state.vehicle!="foot" and (team_conditions.pulling(state) == 0 or state.ox_health == 0):
+	if state.extended_route and not on_river and state.vehicle!="foot" and not oddities.powered_civet(state) and (team_conditions.pulling(state) == 0 or state.ox_health == 0):
 		pending = {"id": "no_team", "title": "No team to pull the wagon", "text": "Trade for an ox, rest a worn team, or abandon the wagon through Provisions / Cargo.", "choices": [{"label": "Return to camp", "effects": {}, "result": "The wagon stays in camp."}]}
 		return true
 	var snow: Dictionary=snow_country()
@@ -617,17 +617,17 @@ func travel() -> bool:
 			return true
 	var pace_miles: int = int(survival.data.pace_miles[state.pace]) if state.extended_route else PACE_MILES[state.pace]
 	var distance: int = pace_miles + rng.randi_range(-2, 2)
-	# Unhinged: the Civet tows the wagon 30 miles a day while its fuel lasts (fuel = days left).
-	var civet: bool = int(state.fuel) > 0 and state.vehicle == "wagon" and not on_river
+	# The Civet replaces one wagon. Once empty, it remains and surviving oxen must pull it.
+	var civet: bool = oddities.powered_civet(state) and not on_river
 	if civet:
 		distance = 30
-		state.fuel = int(state.fuel) - 1
-		if state.fuel == 0:
-			journal.append("Day %d · The Civet runs out of fuel. You leave it by the trail and hitch the oxen again." % (int(state.day) + 1))
+		if not state.has("civet_wagon_id"):
+			if state.extended_route:Train.ensure(self,state)
+			state["civet_wagon_id"]=int(state.wagon_train[0].id) if state.has("wagon_train") else 0
 	if state.extended_route:
 		# On the river the current carries the party; the team rides or is driven alongside.
 		field_outings.moving=true
-		_tick_day(false, not on_river)
+		_tick_day(false, not on_river and (not civet or Train.count(state)>1))
 		field_outings.moving=false
 		if state.status != "traveling":
 			return true
@@ -655,6 +655,9 @@ func travel() -> bool:
 	else:
 		state.miles = mini(DESTINATION, state.miles + distance)
 		_tick_day(false)
+	if civet:
+		state.fuel=int(state.fuel)-1
+		if state.fuel==0:journal.append("Day %d · The Civet runs out of fuel. It stays with the party; surviving oxen can pull it." % int(state.day))
 	journal.append("Day %d · Traveled to mile %d. Food remaining: %d units." % [state.day, state.miles, state.food])
 	var odd_note: String = oddities.daily_note(self)
 	if not odd_note.is_empty():journal.append("Day %d · %s" % [state.day, odd_note])
@@ -687,6 +690,7 @@ func can_choose(index: int) -> bool:
 		return false
 	var choice: Dictionary = pending.choices[index]
 	if choice.has("oddity_recruit") and (choice.oddity_recruit!="beached_ship" or not recruitment.can_sign_sailor(self)):return false
+	if choice.get("effects",{}).get("vehicle","")=="civet" and (state.mode!="unhinged" or state.vehicle!="wagon" or Train.count(state)<1):return false
 	if choice.has("clean_days") and (state.mode!="unhinged" or pending.id!="laundromat" or not crime.whole(choice.clean_days,1,14)):return false
 	if choice.has("settle_oddity") and (choice.settle_oddity!="cul_de_sac" or not Cabins.can_settle_cul_de_sac(self)):return false
 	if choice.has("bandit_payment") and (pending.id!="bandits" or not combat.BanditDemand.valid_choice(choice) or (choice.get("bandit_wagon",false) and state.vehicle!="wagon")):return false
@@ -956,7 +960,13 @@ func _apply(effects: Dictionary, health_cause: String = "injuries", resting: boo
 			if effects[key] not in state.items:
 				state.items.append(effects[key])
 		elif key == "vehicle" and effects[key] == "civet":
-			pass # The Civet tows the wagon; its days of fuel are the "fuel" effect.
+			if state.extended_route:Train.ensure(self,state)
+			state["civet_wagon_id"]=int(state.wagon_train[0].id) if state.has("wagon_train") else 0
+			if state.has("wagon_train"):
+				state.wagon_train[0].condition=100
+				if int(state.get("repair_wagon_id",-1))==int(state.civet_wagon_id):
+					camp_repair.work={}
+					state.erase("repair_wagon_id")
 		elif key == "vehicle":
 			state.vehicle = effects[key]
 			if state.vehicle=="foot" and state.has("wagon_train"):state.wagon_train=[];state.erase("repair_wagon_id")

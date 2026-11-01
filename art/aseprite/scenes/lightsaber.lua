@@ -1,5 +1,5 @@
--- Found Lightsaber Encounter Sprite (40x16, transparent background).
--- Drawn in ui/trail_view.gd at (83, 120) when encounter == "found_lightsaber".
+-- Novablade encounter sprite (40x16, transparent background).
+-- Drawn at (83,120) for "novablade"; legacy output filename retained for art loaders.
 local K = dofile(app.params.kit)
 local W, H = 40, 16
 

@@ -14,6 +14,17 @@ const CLEAN_ONSET_FACTOR := 0.8
 static func clean_onset_factor(state: Dictionary) -> float:
 	return CLEAN_ONSET_FACTOR if state.get("mode","")=="unhinged" and int(state.get("clean_until",0))>0 and int(state.day)<=int(state.clean_until) else 1.0
 
+## The Civet occupies one existing vehicle slot; its identity survives fuel expiry and caching.
+static func civet_index(state: Dictionary) -> int:
+	if state.get("mode","")!="unhinged" or state.get("vehicle","")!="wagon":return -1
+	if not state.has("civet_wagon_id"):return 0 if int(state.get("fuel",0))>0 else -1 # older powered saves
+	var wagons: Array=state.get("wagon_train",[{"id":0}])
+	for i in range(wagons.size()):
+		if int(wagons[i].id)==int(state.civet_wagon_id):return i
+	return -1
+static func powered_civet(state: Dictionary) -> bool:
+	return civet_index(state)>=0 and int(state.get("fuel",0))>0
+
 ## Deals from the catalog with an RNG of its own, so the main game's dice are untouched.
 func deal(seed_value: int, mode: String, catalog, route) -> void:
 	places = []
