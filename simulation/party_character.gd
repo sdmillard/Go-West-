@@ -266,7 +266,7 @@ func generate_candidate(seed_value: int, candidate_index: int, relationship: Str
 		var swap: Variant=pool[index]
 		pool[index]=pool[other]
 		pool[other]=swap
-	profile.specials=pool.slice(0,random.randi_range(0,creation_special_limit(profile)))
+	profile.specials=pool.slice(0,creation_special_limit(profile))
 	var terms: Dictionary={}
 	if "Mercenary" in profile.specials:terms={"wage_cents":wage_quote(profile).daily_cents*7,"interval_days":7}
 	return {"candidate_id":"%d:%d" % [seed_value,candidate_index],"name":catalog.generated_name(random,str(profile.appearance.heritage),Appearance.wears_dress(profile.appearance)),"profile":profile,"terms":terms}

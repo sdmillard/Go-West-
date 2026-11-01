@@ -204,6 +204,8 @@ func _build_theme() -> void:
 	skin.set_stylebox("normal", "LineEdit", style("ecd097", "76503c", 3))
 	skin.set_stylebox("focus", "LineEdit", style("f6e7bc", "ddb461", 3))
 	skin.set_color("font_color", "LineEdit", Color("45372f"))
+	# Placeholder hints stay readable on the tan field: muted brown, not the engine default white.
+	skin.set_color("font_placeholder_color", "LineEdit", Color("8a6a52"))
 	skin.set_stylebox("panel", "PopupMenu", style("45372f", "ddb461", 5))
 	skin.set_stylebox("hover", "PopupMenu", style("a16b43", "ddb461", 2))
 	skin.set_color("font_color", "PopupMenu", Color("f6e7bc"))
