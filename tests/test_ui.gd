@@ -132,18 +132,24 @@ func run() -> void:
 	check(screen.game.state.status == "arrived" and screen.travel_button.disabled and not screen.traveling, "Completion stops and locks travel")
 	check(screen.landscape.scene_id == "platte", "Chapter endpoint retains Platte arrival illustration")
 	await capture("platte-arrival")
-	# Retain renderer coverage for the parked examples without exposing the mode.
+	# Every Unhinged encounter renders through the ordinary event panel.
 	screen.game = screen.Simulation.new(1848, "unhinged")
 	for event in screen.game.catalog.events:
 		if event.category == "absurd":
 			screen.game._present(event)
 			screen._refresh()
 			await capture(event.id)
-			check(screen.choices.get_child_count() == 2 and screen.landscape.encounter == event.id, "Parked renderer: " + event.id)
+			check(screen.choices.get_child_count() == event.choices.size() and screen.landscape.encounter == event.id, "Unhinged renderer: " + event.id)
 			screen.choices.get_child(0).pressed.emit()
 	screen._new_journey()
 	check(screen.game.state.day == 0 and screen.game.state.status == "outfitting" and screen.departure_view.visible, "Restart returns to setup without old purchases")
-	check(screen.mode.item_count == 1 and screen.mode.disabled, "Classic remains the only player mode")
+	check(screen.mode.item_count == 2 and not screen.mode.disabled and screen.game.state.mode == "classic", "Mode box offers Classic and Unhinged; Classic by default")
+	screen.mode.selected = 1
+	screen._new_journey()
+	check(screen.game.state.mode == "unhinged" and screen.game.state.status == "outfitting", "UNHINGED starts an Unhinged journey")
+	screen.mode.selected = 0
+	screen._new_journey()
+	check(screen.game.state.mode == "classic", "CLASSIC starts a Classic journey again")
 	screen.departure_view.use_preset_party()
 	screen.departure_view.next_button.pressed.emit()
 	screen.departure_view.depart_button.pressed.emit()

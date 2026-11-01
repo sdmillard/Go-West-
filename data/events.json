@@ -18,30 +18,605 @@
     ]
   },
   {
-    "id": "found_lightsaber", "category": "absurd", "trigger": "random",
+    "id": "taco_hut",
+    "category": "absurd",
+    "trigger": "random",
+    "oddity": "place",
+    "chance": 0.25,
+    "title": "Taco Hut",
+    "text": "Where the guidebook shows open prairie there is a low building of purple and yellow stucco. The sign says TACO HUT. The yard in front of it is paved, and a post by the road says it is open late. Nobody else on the road seems to think it remarkable.",
+    "label": "TACO HUT",
+    "span": [
+      "elm_grove",
+      "fort_kearny"
+    ],
+    "choices": [
+      {
+        "label": "Eat inside · $2",
+        "effects": {
+          "money": -2,
+          "health": 6
+        },
+        "result": "A girl in a paper hat takes the order without looking up. No one can say afterward quite what they ate, but everyone feels better for it.",
+        "requires": {
+          "money": 2
+        }
+      },
+      {
+        "label": "Buy a sack for the road · $3 for 30 lb",
+        "effects": {
+          "money": -3,
+          "food": 30
+        },
+        "result": "The sack is warm and smells of cumin. The receipt is longer than the guidebook.",
+        "requires": {
+          "money": 3
+        }
+      },
+      {
+        "label": "Ask the way to Oregon",
+        "effects": {
+          "item": "Fire Sauce packets"
+        },
+        "result": "The man at the window says Oregon is a ways yet. He gives you eleven packets of something called Fire Sauce, which you did not ask for."
+      },
+      {
+        "label": "Drive on",
+        "effects": {},
+        "result": "You leave Taco Hut behind. Its sign is visible for some miles."
+      }
+    ]
+  },
+  {
+    "id": "prairie_light",
+    "category": "absurd",
+    "trigger": "random",
+    "oddity": "place",
+    "chance": 0.25,
+    "title": "The light on the plain",
+    "text": "A white lighthouse stands on the dry plain, a long way from any water a ship could use. Its lamp turns all night. The keeper is a tidy man who enters your wagon in his book of passing vessels.",
+    "label": "LIGHTHOUSE",
+    "span": [
+      "fort_kearny",
+      "fort_laramie"
+    ],
+    "choices": [
+      {
+        "label": "Camp under the light · 1 day",
+        "effects": {
+          "days": 1,
+          "health": 5
+        },
+        "result": "No wolves come near the light. Everyone sleeps well.",
+        "rest": true
+      },
+      {
+        "label": "Buy fish from the keeper · $1 for 20 lb",
+        "effects": {
+          "money": -1,
+          "food": 20
+        },
+        "result": "He says the catch was good this morning. You do not ask where.",
+        "requires": {
+          "money": 1
+        }
+      },
+      {
+        "label": "Sign the book and go on",
+        "effects": {},
+        "result": "He enters you as a schooner, bound west, all well."
+      }
+    ]
+  },
+  {
+    "id": "onyx_sphere",
+    "category": "absurd",
+    "trigger": "random",
+    "oddity": "place",
+    "chance": 0.35,
+    "title": "The sphere",
+    "text": "For days it has stood on the horizon: a black sphere, larger than any hill, polished like a stove. Up close it hums, low enough to feel in the teeth. The salt around it is perfectly smooth. The oxen will not look at it.",
+    "label": "ONYX SPHERE",
+    "visible_from": ["fort_bridger", "weber_river", "salt_lake", "bear_river_ford", "bear_river", "greenwood_cutoff", "soda_springs", "fort_hall", "american_falls", "raft_river"],
+    "view_notes": ["The black sphere stands on the horizon again today. It hums.", "The hum from the sphere carries even here. The oxen are restless.", "Nobody mentions the sphere at supper. Everybody can hear it.", "The sphere has not moved. Somehow that is worse."],
+    "edges": [
+      [
+        "weber_river",
+        "salt_lake"
+      ],
+      [
+        "salt_lake",
+        "bear_river_ford"
+      ]
+    ],
+    "choices": [
+      {
+        "label": "Go up and touch it · 1 day",
+        "effects": {
+          "days": 1
+        },
+        "result": "Nobody remembers the afternoon. The journal for that day is written in a hand no one recognizes, and it is very neat.",
+        "risk": {
+          "probability": 0.5,
+          "effects": {
+            "health": 15
+          },
+          "text": "When you come back to yourselves, every ache and sickness in the party is easier."
+        }
+      },
+      {
+        "label": "Keep well back",
+        "effects": {},
+        "result": "You make camp on the far side of a rise. The hum goes on all night, and in the morning the coffee tastes of copper."
+      }
+    ]
+  },
+  {
+    "id": "beached_ship",
+    "category": "absurd",
+    "trigger": "random",
+    "oddity": "place",
+    "chance": 0.25,
+    "title": "A ship on the Platte",
+    "text": "A three-masted ship sits upright in the grass beside the river, sails furled, decks scrubbed. The crew is lowering a boat onto the prairie. The mate asks very politely which way the sea is.",
+    "label": "SHIP",
+    "span": [
+      "fort_kearny",
+      "fort_laramie"
+    ],
+    "choices": [
+      {
+        "label": "Point them west",
+        "effects": {
+          "food": 40
+        },
+        "result": "They thank you and give you a barrel of salt pork for your trouble. The boat sets off across the grass."
+      },
+      {
+        "label": "Point them east",
+        "effects": {
+          "food": 40
+        },
+        "result": "They thank you and give you a barrel of salt pork for your trouble. You feel a little bad about it."
+      },
+      {
+        "label": "Leave them to it",
+        "effects": {},
+        "result": "The mate is still taking soundings in the grass when you pass out of sight."
+      }
+    ]
+  },
+  {
+    "id": "cul_de_sac",
+    "category": "absurd",
+    "trigger": "random",
+    "oddity": "place",
+    "chance": 0.25,
+    "title": "The houses in the sage",
+    "text": "A paved street curves off the trail and ends in a circle of eleven houses. The lawns are green and the sprinklers are on. Every door is unlocked and nobody is home.",
+    "label": "HOUSES",
+    "span": [
+      "south_pass",
+      "soda_springs"
+    ],
+    "choices": [
+      {
+        "label": "Rest on a lawn · 1 day",
+        "effects": {
+          "days": 1,
+          "health": 6,
+          "ox_health": 8
+        },
+        "result": "The grass is soft and nobody tells you to get off it. The animals graze on the lawns.",
+        "rest": true
+      },
+      {
+        "label": "Look inside",
+        "effects": {},
+        "result": "Every house has the same couch. Every television shows the same weather map, and it is of somewhere else. You touch nothing."
+      }
+    ]
+  },
+  {
+    "id": "laundromat",
+    "category": "absurd",
+    "trigger": "random",
+    "oddity": "place",
+    "chance": 0.3,
+    "title": "The laundromat",
+    "text": "Beside the springs stands a long glass room full of humming white boxes. A sign in the window says OPEN 24 HOURS and WASH 25¢. A woman is folding towels and does not look up.",
+    "label": "LAUNDROMAT",
+    "edges": [
+      [
+        "bear_river",
+        "soda_springs"
+      ],
+      [
+        "soda_springs",
+        "fort_hall"
+      ]
+    ],
+    "choices": [
+      {
+        "label": "Wash everything · $1",
+        "effects": {
+          "money": -1,
+          "health": 6
+        },
+        "result": "Everything comes out clean and warm and smelling of a meadow none of you have seen. Everyone feels more like themselves.",
+        "requires": {
+          "money": 1
+        }
+      },
+      {
+        "label": "Go on in your own clothes",
+        "effects": {},
+        "result": "The woman keeps folding. You go on smelling the way you smell."
+      }
+    ]
+  },
+  {
+    "id": "round_hole",
+    "category": "absurd",
+    "trigger": "random",
+    "oddity": "place",
+    "chance": 0.25,
+    "title": "The hole",
+    "text": "Off the trail there is a hole in the ground, perfectly round, about the width of a wagon wheel. Its edge is smooth as glass. A pebble dropped in makes no sound. A pebble comes back up.",
+    "label": "HOLE",
+    "span": [
+      "fort_hall",
+      "the_dalles"
+    ],
+    "choices": [
+      {
+        "label": "Drop in 10 bullets",
+        "effects": {
+          "bullets": -10
+        },
+        "result": "You drop them in and wait.",
+        "requires": {
+          "bullets": 10
+        },
+        "risk": {
+          "probability": 0.6,
+          "effects": {
+            "food": 40
+          },
+          "text": "A smoked ham comes up, wrapped in paper."
+        }
+      },
+      {
+        "label": "Drop in 20 lb of food",
+        "effects": {
+          "food": -20
+        },
+        "result": "You drop it in and wait.",
+        "requires": {
+          "food": 20
+        },
+        "risk": {
+          "probability": 0.6,
+          "effects": {
+            "medicine": 2
+          },
+          "text": "Two care kits come up, neatly tied with string."
+        }
+      },
+      {
+        "label": "Leave it alone",
+        "effects": {},
+        "result": "Something below says thank you anyway."
+      }
+    ]
+  },
+  {
+    "id": "novablade",
+    "category": "absurd",
+    "trigger": "random",
+    "oddity": "road",
+    "chance": 0.25,
     "title": "An elegant fence post",
-    "text": "A metal cylinder lies in the grass. A blue blade hums into existence. Your family agrees this is probably a new kind of plow.",
+    "text": "A silver cylinder lies in the grass beside the ruts. When someone picks it up, a blue blade hums out of one end, cuts a sagebrush in half, and goes out again. The grip is stamped NOVABLADE. The family agrees it is probably a new kind of plow.",
+    "miles": [
+      60,
+      1500
+    ],
     "choices": [
-      {"label": "Keep the lightsaber", "effects": {"item": "lightsaber"}, "result": "Lightsaber packed. Its agricultural applications remain unproven."},
-      {"label": "Leave the mysterious implement", "effects": {}, "result": "Somebody else's problem, probably."}
+      {
+        "label": "Keep the Novablade",
+        "effects": {
+          "item": "Novablade"
+        },
+        "result": "Novablade packed. Its uses in farming remain unproven."
+      },
+      {
+        "label": "Leave the strange tool",
+        "effects": {},
+        "result": "Somebody else's problem, probably."
+      }
     ]
   },
   {
-    "id": "corolla", "category": "absurd", "trigger": "random",
-    "title": "The 2002 Toyota Corolla",
-    "text": "A beige Corolla idles beside the trail. The odometer reads 287,000. A note says: 'Still runs.' There is enough fuel for about 90 miles. Keep the wagon hitched behind it for when the tank runs dry.",
+    "id": "civet",
+    "category": "absurd",
+    "trigger": "random",
+    "oddity": "road",
+    "chance": 0.25,
+    "title": "The 2002 Hanabi Civet",
+    "text": "A beige four-door carriage with no horses idles beside the trail, doors unlocked. A dial reads 287,000. A note on the seat says STILL RUNS. The gauge suggests fuel for about three days. There is a hitch at the back that will take the wagon.",
+    "miles": [
+      100,
+      1200
+    ],
+    "needs": "wagon",
     "choices": [
-      {"label": "Drive it · 30 miles/day while fuel lasts", "effects": {"vehicle": "corolla", "fuel": 3}, "result": "The oxen ride in the back. No one discusses the logistics."},
-      {"label": "Stay with the wagon", "effects": {}, "result": "You leave the keys on the seat."}
+      {
+        "label": "Drive it · 30 miles a day while the fuel lasts",
+        "effects": {
+          "vehicle": "civet",
+          "fuel": 3
+        },
+        "result": "The oxen ride in the wagon behind. Nobody discusses how."
+      },
+      {
+        "label": "Stay with the oxen",
+        "effects": {},
+        "result": "You leave the keys on the seat."
+      }
     ]
   },
   {
-    "id": "elder_god", "category": "absurd", "trigger": "random",
+    "id": "elder_god",
+    "category": "absurd",
+    "trigger": "random",
+    "oddity": "road",
+    "chance": 0.25,
     "title": "The thing beyond the ford",
-    "text": "The horizon unfolds into an elder god. It asks for a modest offering of trail biscuits. This was absent from the guidebook.",
+    "text": "Where the trail dips toward water, the horizon folds open like a letter and something very old leans through. It asks, in a voice like a long hymn, for a modest offering of trail biscuits. None of the guidebooks mention this.",
+    "miles": [
+      150,
+      1800
+    ],
     "choices": [
-      {"label": "Offer 20 lb of food · recover 10 health", "requires": {"food": 20}, "effects": {"food": -20, "health": 10}, "result": "The sky knits itself together. Everyone feels strangely rested."},
-      {"label": "Politely decline · lose 5 health", "effects": {"health": -5}, "result": "It accepts your refusal. Your dreams will be less accommodating."}
+      {
+        "label": "Offer 20 lb of food",
+        "effects": {
+          "food": -20,
+          "health": 10
+        },
+        "result": "The sky knits itself together. Everyone feels strangely rested.",
+        "requires": {
+          "food": 20
+        }
+      },
+      {
+        "label": "Politely decline",
+        "effects": {
+          "health": -5
+        },
+        "result": "It accepts your refusal. Your dreams for a while are less accommodating."
+      }
+    ]
+  },
+  {
+    "id": "vending_machine",
+    "category": "absurd",
+    "trigger": "random",
+    "oddity": "road",
+    "chance": 0.25,
+    "title": "A machine in the sagebrush",
+    "text": "A tall red cabinet stands alone in the sage, lit from inside and humming. Behind the glass are rows of small bright packets. A slot asks for coins. The coins it wants are dated a century and a half from now, and yours are all from the past.",
+    "miles": [
+      500,
+      1500
+    ],
+    "choices": [
+      {
+        "label": "Try your coins anyway · $1",
+        "effects": {
+          "money": -1
+        },
+        "result": "The machine takes them and gives nothing back. The leader says that is about what you would expect from a machine.",
+        "requires": {
+          "money": 1
+        }
+      },
+      {
+        "label": "Shake it",
+        "effects": {},
+        "result": "You rock the cabinet.",
+        "risk": {
+          "probability": 0.5,
+          "effects": {
+            "food": 5
+          },
+          "text": "A packet of something called Cheez Dust falls out. Everyone has some."
+        }
+      },
+      {
+        "label": "Walk on",
+        "effects": {},
+        "result": "It hums at your backs until the next rise."
+      }
+    ]
+  },
+  {
+    "id": "french_bison",
+    "category": "absurd",
+    "trigger": "random",
+    "oddity": "road",
+    "chance": 0.25,
+    "title": "The bison",
+    "text": "A bull bison stands in the trail and will not move. When you come near it says, in fluent French, that it will tell you where the deer bed down if you will kindly go around. One of your party has a little French and confirms that this is what it said.",
+    "miles": [
+      200,
+      900
+    ],
+    "choices": [
+      {
+        "label": "Take its advice",
+        "effects": {
+          "food": 40
+        },
+        "result": "The deer are exactly where it said. You eat well for a week."
+      },
+      {
+        "label": "Try to shoot it · 3 bullets",
+        "effects": {
+          "bullets": -3
+        },
+        "result": "Three shots, three misses. The bison looks disappointed in you and walks away.",
+        "requires": {
+          "bullets": 3
+        }
+      },
+      {
+        "label": "Go around",
+        "effects": {},
+        "result": "It nods as you pass."
+      }
+    ]
+  },
+  {
+    "id": "phone_booth",
+    "category": "absurd",
+    "trigger": "random",
+    "oddity": "road",
+    "chance": 0.25,
+    "title": "The telephone",
+    "text": "A glass booth with a telephone in it stands beside the trail in the middle of the desert, ringing. It goes on ringing as you come up.",
+    "miles": [
+      1150,
+      1700
+    ],
+    "choices": [
+      {
+        "label": "Answer it",
+        "effects": {},
+        "result": "A woman asks for the leader of the party by name. She says it is about your wagon's extended warranty, and that this is the final notice. Then she hangs up."
+      },
+      {
+        "label": "Let it ring",
+        "effects": {},
+        "result": "It rings until the trail bends out of sight. Then it stops, which is somehow worse."
+      }
+    ]
+  },
+  {
+    "id": "frog_rain",
+    "category": "absurd",
+    "trigger": "random",
+    "oddity": "road",
+    "chance": 0.25,
+    "title": "Frogs",
+    "text": "The sky darkens, and it rains frogs: small green ones, by the thousand, all of them alive and none of them hurt. It stops after an hour. The ground is hopping.",
+    "miles": [
+      100,
+      1400
+    ],
+    "choices": [
+      {
+        "label": "Gather them for the pot",
+        "effects": {
+          "food": 30
+        },
+        "result": "Frog legs, it turns out, are very good fried. 30 lb of food."
+      },
+      {
+        "label": "Wait it out under the wagon cover",
+        "effects": {},
+        "result": "The frogs move off toward the river in good order."
+      }
+    ]
+  },
+  {
+    "id": "mirror_train",
+    "category": "absurd",
+    "trigger": "random",
+    "oddity": "road",
+    "chance": 0.25,
+    "title": "Travelers going east",
+    "text": "A wagon train comes toward you heading east. It is your own party: the same faces, the same wagon, the same patched cover, all looking about a week older. They seem as surprised as you are. They are willing to trade.",
+    "miles": [
+      700,
+      1700
+    ],
+    "choices": [
+      {
+        "label": "Trade 30 lb of food for their spare wheel",
+        "effects": {
+          "food": -30,
+          "wheels": 1
+        },
+        "result": "It is the wheel you have, but theirs.",
+        "requires": {
+          "food": 30
+        }
+      },
+      {
+        "label": "Trade $5 for 2 care kits",
+        "effects": {
+          "money": -5,
+          "medicine": 2
+        },
+        "result": "They count the money carefully. It is your money, but older.",
+        "requires": {
+          "money": 5
+        }
+      },
+      {
+        "label": "Ask them what is ahead",
+        "effects": {},
+        "result": "They say it is fine. They say it in your voices, and they will not say anything more about it."
+      },
+      {
+        "label": "Part ways",
+        "effects": {},
+        "result": "Both parties are quiet for the rest of the day."
+      }
+    ]
+  },
+  {
+    "id": "traffic_light",
+    "category": "absurd",
+    "trigger": "random",
+    "oddity": "place",
+    "chance": 0.3,
+    "title": "A red light at the pass",
+    "text": "Where the trail tops the pass, a traffic light hangs from a wire strung between two posts. It is red. There is no cross traffic. There is nothing for a hundred miles in any direction. It stays red.",
+    "label": "RED LIGHT",
+    "edges": [
+      [
+        "devils_gate",
+        "south_pass"
+      ]
+    ],
+    "near": [
+      0.92,
+      0.98
+    ],
+    "choices": [
+      {
+        "label": "Wait for green · 1 day",
+        "effects": {
+          "days": 1
+        },
+        "result": "It turns green the next morning. Everyone agrees it was the right thing to do."
+      },
+      {
+        "label": "Run it",
+        "effects": {},
+        "result": "You go through on red.",
+        "risk": {
+          "probability": 0.3,
+          "effects": {
+            "ox_health": -15,
+            "health": -5
+          },
+          "text": "Something that is not there clips the wagon at speed. The team is badly shaken."
+        }
+      }
     ]
   }
 ]

@@ -156,7 +156,7 @@ Alternatively, import `project.godot` in [Godot 4.5.1](https://github.com/godote
 
 One continuous southern/Barlow itinerary is playable; Greenwood’s Cutoff, the Walla Walla detour and Columbia rafting offer alternative roads. Classic contains only historical-style content. Reusing a seed **and the same decisions** repeats the run on the tested Godot version. [The mechanics ledger](docs/MECHANICS_LEDGER.md) identifies verified source behavior, provisional tuning and missing classic systems.
 
-The experimental absurd-event code and sprites remain available for future development and regression tests, but the player interface currently starts Classic only. Set a seed and click **New Journey** to return to outfitting. The priority is completing the classic survival loop before extending the unusual examples.
+**Unhinged mode:** choose UNHINGED in the mode box before **New Journey**. Each seed deals its own few impossible places and road encounters, marked on the map and told in the same plain voice as everything else. See [docs/UNHINGED_MODE.md](docs/UNHINGED_MODE.md). Set a seed and click **New Journey** to return to outfitting.
 
 ## What's playable
 

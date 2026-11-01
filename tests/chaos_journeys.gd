@@ -170,11 +170,14 @@ func run():
  var styles: Array=["careful_apr","on_foot","horses","criminal","late_jul","reckless"]
  var professions: Array=["farmer","banker","outlaw","doctor"]
  var branches: Array=["","south road","salt lake","greenwood","raft"]
+ var mode: String="classic"
  for argument in OS.get_cmdline_user_args():
   if argument.begins_with("--label="):label=argument.get_slice("=",1).validate_filename()
   if argument.begins_with("--seed-start="):seed_start=int(argument.get_slice("=",1))
   if argument.begins_with("--seeds="):seeds=int(argument.get_slice("=",1))
   if argument=="--trace":trace=true
+  # --unhinged: Unhinged mode, and every unseen absurd encounter is forced in early so each style meets them.
+  if argument=="--unhinged":mode="unhinged"
   if argument.begins_with("--chaos="):chaos=float(argument.get_slice("=",1))
   if argument.begins_with("--styles="):styles=Array(argument.get_slice("=",1).split(","))
   if argument.begins_with("--professions="):professions=Array(argument.get_slice("=",1).split(","))
@@ -188,7 +191,7 @@ func run():
    for seed_value in range(seed_start,seed_start+seeds):
     var chaos_rng:=RandomNumberGenerator.new()
     chaos_rng.seed=seed_value*7919+hash(style+profession)
-    var game=Observed.new(seed_value,"classic",true)
+    var game=Observed.new(seed_value,mode,true)
     var cart: Dictionary=outfit(game,style)
     while not game.outfitter.quote(profession,cart).get("valid",false) and int(cart.get("oxen",0))>4:cart.oxen=int(cart.oxen)-1
     while not game.outfitter.quote(profession,cart).get("valid",false) and int(cart.get("food",0))>100:cart.food=int(cart.food)-50
@@ -211,6 +214,9 @@ func run():
      if game.state.day>=730:outcome="two_year_limit";break
      var day: int=game.state.day
      var mile: int=game.state.miles
+     if mode=="unhinged" and game.pending.is_empty() and game.tactical_session.is_empty() and game.raft.is_empty() and game.hunt.is_empty() and step%25==12:
+      for event in game.catalog.events:
+       if event.category=="absurd" and event.id not in game.seen:game._present(event);break
      var result: Array=step_game(game,style,profile,aim,count,acts,chaos_rng,chaos)
      history.append(str(result[0]))
      if trace and (game.state.miles!=mile or game.state.day!=day):print("TRACE day %d->%d miles %d->%d leg %d %s->%s %s" % [day,game.state.day,mile,game.state.miles,game.state.leg_miles,game.state.landmark,game.state.next_landmark,str(result[0])])

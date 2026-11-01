@@ -395,8 +395,8 @@ func _build_ui() -> void:
 	rest_button.tooltip_text = "Set up camp without spending time. Choose rest, preservation or care inside."
 	mode = OptionButton.new()
 	mode.add_item("CLASSIC")
-	mode.disabled = true
-	mode.tooltip_text = "Classic is the current development focus. Unhinged mode will return after the classic systems are established."
+	mode.add_item("UNHINGED")
+	mode.tooltip_text = "The mode for the next NEW JOURNEY.\nCLASSIC: the 1848 trail as it was.\nUNHINGED: the same trail, but on rare days something that cannot be there is there. It is told as plainly as any broken axle."
 	place(mode, Rect2(11, 334, 104, 17))
 	var seed_label := label("SEED")
 	seed_label.add_theme_color_override("font_color", Color("f6e7bc"))
@@ -1724,7 +1724,7 @@ func _new_journey() -> void:
 	crossing_result = {}
 	_pause_travel()
 	camping = false
-	game = Simulation.new(int(seed_input.value), "classic", true)
+	game = Simulation.new(int(seed_input.value), "unhinged" if mode.selected == 1 else "classic", true)
 	pace.selected = 0
 	rations.selected = 2
 	_open_departure()
@@ -1958,15 +1958,15 @@ func _refresh() -> void:
 	if s.extended_route:
 		var nearby: Dictionary=game.context.market(game)
 		stats.text+="\nPOST: STOCK LIMITED" if nearby.post else ("\nTRADERS NEARBY" if nearby.available else ("\nNO TRADERS ON THIS ROAD" if nearby.get("remote",false) else "\nNO TRADERS IN SIGHT"))
-	if s.vehicle == "corolla":
-		stats.text += "\nFUEL      %d" % s.fuel
+	if int(s.fuel) > 0:
+		stats.text += "\nCIVET FUEL %d DAYS" % s.fuel
 	if not s.items.is_empty():
 		stats.text += "\nPACK: " + ", ".join(s.items).to_upper()
 	progress.max_value = game.destination()
 	progress.value = s.miles
 	landscape.terrain = s.terrain
 	landscape.miles = s.miles
-	landscape.vehicle = s.vehicle
+	landscape.vehicle = "civet" if int(s.fuel) > 0 and s.vehicle == "wagon" else s.vehicle
 	landscape.dog_present=game.dogs.alive()
 	landscape.livestock_counts={"dairy_cows":int(s.get("dairy_cows",0)),"goats":int(s.get("goats",0)),"hens":int(s.get("hens",0))}
 	landscape.herded_oxen=int(s.oxen) if s.vehicle=="foot" else 0
@@ -1975,6 +1975,12 @@ func _refresh() -> void:
 	landscape.walkers=int(s.party_size)
 	landscape.traveler_profiles=game.characters.profiles.filter(func(profile):return int(profile.id)<game.party_health.members.size() and game.party_health.is_active(game.party_health.members[int(profile.id)]))
 	landscape.encounter = game.pending.get("id", "")
+	landscape.elder_variant = int(s.seed)
+	# The elder god is drawn at the window's full resolution, so it clashes with the pixel art.
+	var full_res: bool = landscape.encounter == "elder_god"
+	var root_window: Window = get_tree().root if is_inside_tree() else null
+	if root_window != null and (root_window.content_scale_mode == Window.CONTENT_SCALE_MODE_CANVAS_ITEMS) != full_res:
+		root_window.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS if full_res else Window.CONTENT_SCALE_MODE_VIEWPORT
 	landscape.weather_id = str(game.survival.weather.get("id", "clear")) if s.extended_route else "clear"
 	landscape.scene_id = ""
 	if s.extended_route:
@@ -2282,6 +2288,7 @@ func _load_journey() -> void:
 		pace.selected = game.state.pace
 		rations.selected = game.state.rations
 		seed_input.value = game.state.seed
+		mode.selected = 1 if game.state.mode == "unhinged" else 0
 		_open_departure()
 		_refresh()
 	visited_graves.clear()
@@ -2291,6 +2298,9 @@ func _load_journey() -> void:
 func _event_scene() -> String:
 	var id := str(game.pending.get("id", ""))
 	if id in ["bandits", "cayuse_riders", "waiilatpu_ruins", "horse_thieves", "war_volunteers", "wagon_fire"]:
+		return "event_" + id
+	# Unhinged places have their own pictures once painted; until then, the road.
+	if game.pending.get("oddity", "") == "place" and landscape.scenes.textures.has("event_" + id):
 		return "event_" + id
 	var current: Dictionary = game.crime.incident()
 	if not current.is_empty() and str(current.get("action", "")) == "wanted" and str(current.get("stage", "")) == "standoff":

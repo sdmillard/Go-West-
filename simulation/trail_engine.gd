@@ -27,6 +27,7 @@ var wagon_cache: Dictionary={}
 const MAX_TRAVELERS := 1000000 # File-size validation bounds records; there is no gameplay roster cap.
 const PARTY_CAPACITY := 5 # Starting party only.
 const Train=preload("res://simulation/wagon_train.gd")
+const Oddities=preload("res://simulation/oddities.gd")
 var native_encounters=preload("res://simulation/native_encounters.gd").new()
 var recruitment=preload("res://simulation/party_recruitment.gd").new()
 var social=preload("res://simulation/party_social.gd").new()
@@ -39,7 +40,6 @@ var news=preload("res://simulation/trail_news.gd").new()
 ## The last fragment of news a camp menu question drew (shown beside the camp picture; not saved).
 var last_news: String=""
 const DESTINATION := 102
-const ABSURD_CHANCE := 0.01
 const PACE_MILES = [12, 18, 24]
 const RATION_LB = [1, 2, 3]
 var catalog = Catalog.new()
@@ -47,6 +47,8 @@ var rng := RandomNumberGenerator.new()
 var state: Dictionary
 var pending: Dictionary = {}
 var seen: Array = []
+## Unhinged mode: the impossible things this seed dealt (empty in Classic).
+var oddities = Oddities.new()
 var journal: Array[String] = []
 var error := ""
 var outfitter = Outfitting.new()
@@ -185,6 +187,8 @@ func _init(seed_value: int = 1848, mode: String = "classic", setup: bool = false
 	if not trail_events.load_file("res://data/trail_events.json", true) or not survival.error.is_empty():
 		error = trail_events.error if not trail_events.error.is_empty() else survival.error
 		state.status = "error"
+	if state.status != "error":
+		oddities.deal(seed_value, state.mode, catalog, route)
 	journal.append("Independence, 1848. Outfit your wagon." if setup else "May 1, 1848 · Independence. Five travelers, one wagon, a long road.")
 
 func depart(profession: String, names: Array, month: int, cart: Dictionary, customization: Dictionary={}) -> bool:
@@ -613,13 +617,13 @@ func travel() -> bool:
 			return true
 	var pace_miles: int = int(survival.data.pace_miles[state.pace]) if state.extended_route else PACE_MILES[state.pace]
 	var distance: int = pace_miles + rng.randi_range(-2, 2)
-	if state.vehicle == "corolla":
-		if state.fuel > 0:
-			distance = 30
-			state.fuel -= 1
-		else:
-			state.vehicle = "wagon"
-			journal.append("The Corolla is out of fuel. You unhitch the wagon and continue with oxen.")
+	# Unhinged: the Civet tows the wagon 30 miles a day while its fuel lasts (fuel = days left).
+	var civet: bool = int(state.fuel) > 0 and state.vehicle == "wagon" and not on_river
+	if civet:
+		distance = 30
+		state.fuel = int(state.fuel) - 1
+		if state.fuel == 0:
+			journal.append("Day %d · The Civet runs out of fuel. You leave it by the trail and hitch the oxen again." % (int(state.day) + 1))
 	if state.extended_route:
 		# On the river the current carries the party; the team rides or is driven alongside.
 		field_outings.moving=true
@@ -633,6 +637,7 @@ func travel() -> bool:
 			return true
 		if on_river:distance=maxi(1,roundi((int(RIVER.miles)+rng.randi_range(-2,2))*float(survival.weather.speed)))
 		elif state.vehicle=="foot":distance=walking_distance()
+		elif civet:pass
 		elif Train.count(state)>1:distance=maxi(1,roundi(distance*Train.speed(self)))
 		else:distance = maxi(1, roundi(distance * survival.movement_factor(team_conditions.pulling(state), state.ox_health, state.fatigue, 0, state.terrain, int(calendar().month), context.region(self)) * provisions.movement_factor(provisions.cargo(state),team_conditions.pulling(state))))
 		var east: bool=Direction.heading(self)=="east"
@@ -651,6 +656,8 @@ func travel() -> bool:
 		state.miles = mini(DESTINATION, state.miles + distance)
 		_tick_day(false)
 	journal.append("Day %d · Traveled to mile %d. Food remaining: %d units." % [state.day, state.miles, state.food])
+	var odd_note: String = oddities.daily_note(self)
+	if not odd_note.is_empty():journal.append("Day %d · %s" % [state.day, odd_note])
 	if state.status == "traveling" and not crime.check_pursuit(self) and not crime.check_wanted(self):
 		if not field_outings.camp_notice(self) and not Direction.cache_notice(self):_schedule_event()
 	# Spare miles count only for an arrival inside this day's travel, so a save never holds them half-used.
@@ -939,6 +946,8 @@ func _apply(effects: Dictionary, health_cause: String = "injuries", resting: boo
 		if key == "item":
 			if effects[key] not in state.items:
 				state.items.append(effects[key])
+		elif key == "vehicle" and effects[key] == "civet":
+			pass # The Civet tows the wagon; its days of fuel are the "fuel" effect.
 		elif key == "vehicle":
 			state.vehicle = effects[key]
 			if state.vehicle=="foot" and state.has("wagon_train"):state.wagon_train=[];state.erase("repair_wagon_id")
@@ -988,6 +997,11 @@ func _schedule_event(allow_random: bool = true) -> void:
 		state.erase("east_arrival")
 		_arrive_landmark(true)
 		return
+	# Unhinged: an oddity this seed placed here comes before the stop ahead.
+	var oddity: Dictionary = oddities.due(self) if state.extended_route else {}
+	if not oddity.is_empty():
+		_present(oddity)
+		return
 	if state.extended_route and Direction.heading(self)=="west" and state.leg_miles >= state.leg_length:
 		_arrive_landmark()
 		return
@@ -1002,24 +1016,8 @@ func _schedule_event(allow_random: bool = true) -> void:
 		if (event.trigger == "day" and state.day >= event.at) or (event.trigger == "mile" and state.miles >= event.at):
 			_present(event)
 			return
-	if allow_random and state.mode == "unhinged":
-		var event := roll_absurd(rng.randf())
-		if not event.is_empty():
-			_present(event)
 	if allow_random and state.extended_route and pending.is_empty() and survival.rng.randf() < survival.data.event_chance * {"unrest":float(UNREST.chance_factor),"raids":float(RAIDS.chance_factor)}.get(current_edge().get("hazard",""),1.0):
 		_roll_trail_event()
-
-func roll_absurd(roll: float) -> Dictionary:
-	# One Bernoulli roll per travel/rest day; uniform among unseen examples.
-	if state.mode != "unhinged" or roll < 0.0 or roll >= ABSURD_CHANCE:
-		return {}
-	var candidates: Array = []
-	for event in catalog.events:
-		if event.category == "absurd" and event.id not in seen:
-			candidates.append(event)
-	if candidates.is_empty():
-		return {}
-	return candidates[rng.randi_range(0, candidates.size() - 1)].duplicate(true)
 
 func _present(event: Dictionary) -> void:
 	pending = event.duplicate(true)
