@@ -144,34 +144,37 @@ func _init(simulation=null) -> void:
 
 func _build_covers() -> void:
 	var board: Rect2=FRONT_BOARD
-	var heading: Label=_label(Rect2(0,0,90,10),"ddb461",HORIZONTAL_ALIGNMENT_CENTER)
-	heading.text=str(data.get("title","THE OVERLAND GUIDE"))
+	# The title is struck at twice the size: the label is exactly as wide as its words, then scaled.
+	var title_text: String=str(data.get("title","THE OVERLAND GUIDE")).to_upper()
+	var title_w: float=ceil(FONT.get_string_size(title_text,HORIZONTAL_ALIGNMENT_LEFT,-1,8).x)
+	var heading: Label=_label(Rect2(0,0,title_w,10),"ddb461",HORIZONTAL_ALIGNMENT_LEFT)
+	heading.text=title_text
 	heading.scale=Vector2(2,2)
-	heading.set_meta("rect",Rect2(board.get_center().x-90,70,90,10))
+	heading.set_meta("rect",Rect2(round(board.get_center().x-title_w),32,title_w,10))
 	front_nodes.append(heading)
 	var subtitle: String=str(data.get("subtitle",""))
 	var parts: PackedStringArray=subtitle.split(", with ",false,1)
-	var lines: Array=[[parts[0].to_upper(),112,170]]
-	if parts.size()>1:lines.append([("With "+parts[1]).to_upper().replace(". INDEPENDENCE, 1848.","."),214,220])
-	lines.append(["INDEPENDENCE, 1848",262,170])
+	var lines: Array=[[parts[0].to_upper(),76,170]]
+	if parts.size()>1:lines.append([("With "+parts[1]).to_upper().replace(". INDEPENDENCE, 1848.","."),196,220])
+	lines.append(["INDEPENDENCE, 1848",246,170])
 	for line in lines:
 		var label: Label=_label(Rect2(board.get_center().x-line[2]/2.0,line[1],line[2],30),"ddb461",HORIZONTAL_ALIGNMENT_CENTER)
 		label.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 		label.text=line[0]
 		front_nodes.append(label)
-	var open_front: Button=_gilt_button("OPEN THE BOOK >",Rect2(board.end.x-24-92,282,92,10))
+	var open_front: Button=_gilt_button("OPEN THE BOOK >",Rect2(board.end.x-30-92,274,92,10))
 	open_front.alignment=HORIZONTAL_ALIGNMENT_RIGHT
 	open_front.tooltip_text="Open at the first page (right arrow)."
 	open_front.pressed.connect(func():turn(1))
-	var away_front: Button=_gilt_button("PUT IT AWAY",Rect2(board.position.x+24,282,80,10))
+	var away_front: Button=_gilt_button("PUT IT AWAY",Rect2(board.position.x+30,274,80,10))
 	away_front.tooltip_text="Close the guide (Esc)."
 	away_front.pressed.connect(hide)
 	front_nodes.append_array([open_front,away_front])
 	board=BACK_BOARD
-	var open_back: Button=_gilt_button("< OPEN THE BOOK",Rect2(board.position.x+24,282,92,10))
+	var open_back: Button=_gilt_button("< OPEN THE BOOK",Rect2(board.position.x+30,274,92,10))
 	open_back.tooltip_text="Open at the last page (left arrow)."
 	open_back.pressed.connect(func():turn(-1))
-	var away_back: Button=_gilt_button("PUT IT AWAY",Rect2(board.end.x-24-80,282,80,10))
+	var away_back: Button=_gilt_button("PUT IT AWAY",Rect2(board.end.x-30-80,274,80,10))
 	away_back.alignment=HORIZONTAL_ALIGNMENT_RIGHT
 	away_back.tooltip_text="Close the guide (Esc)."
 	away_back.pressed.connect(hide)
