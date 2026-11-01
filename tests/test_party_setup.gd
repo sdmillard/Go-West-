@@ -28,6 +28,19 @@ func run():
 	check(setup.leader_generate_button.visible and not setup.generate_button.visible,"The leader's sheet offers GENERATE MY CHARACTER")
 	setup.leader_generate_button.pressed.emit()
 	check(setup.names[0].text!="P0" and " " in setup.names[0].text,"Generating the leader fills a name")
+	var rolled:=false
+	var legal:=true
+	for roll in range(12):
+		setup.leader_generate_button.pressed.emit()
+		var leader: Dictionary=setup.draft.profiles[0]
+		if not leader.specials.is_empty() or leader.has("flaws"):rolled=true
+		if leader.specials.any(func(s):return s not in setup.draft.LEADER_SPECIALS) or leader.get("flaws",[]).any(func(f):return f in setup.draft.LEADER_EXCLUDED_FLAWS) or leader.specials.size()>setup.draft.creation_special_limit(leader):legal=false
+		var shown: Array=setup.special_checks.keys().filter(func(s):return setup.special_checks[s].button_pressed)
+		var expected: Array=leader.specials.duplicate()
+		expected.sort()
+		shown.sort()
+		if shown!=expected:legal=false
+	check(rolled and legal,"Generating the leader rolls legal leader specials and flaws, shown on the sheet")
 	setup.done_button.pressed.emit()
 	setup.generate_party_button.pressed.emit()
 	check(setup.unchosen.is_empty() and setup.names.slice(1).all(func(entry):return " " in entry.text),"GENERATE PARTY fills every companion")

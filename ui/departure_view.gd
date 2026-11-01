@@ -314,7 +314,7 @@ func _build_companions() -> void:
 	generate_button.pressed.connect(_generate_companion)
 	leader_generate_button=Button.new()
 	leader_generate_button.text="GENERATE MY CHARACTER"
-	leader_generate_button.tooltip_text="Fills in a name and appearance for your leader. Your specials and flaw stay as you set them."
+	leader_generate_button.tooltip_text="Fills in a name, appearance, special traits and maybe a flaw for your leader."
 	rows.add_child(leader_generate_button)
 	leader_generate_button.pressed.connect(_generate_leader)
 	var appearance_button := Button.new()
@@ -421,9 +421,24 @@ func _generate_leader() -> void:
 	_store_companion()
 	generation_index+=1
 	var offer: Dictionary=draft.generate_candidate(int(game.state.seed),generation_index,"stranger")
-	draft.profiles[0]["appearance"]=offer.profile.appearance
+	var leader: Dictionary=draft.profiles[0]
+	leader["appearance"]=offer.profile.appearance
+	# Specials and a flaw come from the leader's own lists, like a companion's roll: a flaw one time in three.
+	var random:=RandomNumberGenerator.new()
+	random.seed=int(game.state.seed) ^ (generation_index*104729) ^ 0x4c454144
+	leader.erase("flaws")
+	var flaws: Array=draft.FLAWS.keys().filter(func(flaw):return flaw not in draft.LEADER_EXCLUDED_FLAWS)
+	if random.randi_range(0,2)==0:leader.flaws=[flaws[random.randi_range(0,flaws.size()-1)]]
+	var pool: Array=draft.LEADER_SPECIALS.duplicate()
+	for index in range(pool.size()-1,0,-1):
+		var other:=random.randi_range(0,index)
+		var swap: Variant=pool[index]
+		pool[index]=pool[other]
+		pool[other]=swap
+	leader.specials=pool.slice(0,random.randi_range(0,draft.creation_special_limit(leader)))
 	var full_name: String=offer.name
 	names[0].text=full_name if full_name.length()<=14 else full_name.get_slice(" ",0)+" "+full_name.get_slice(" ",1).left(1)+"."
+	if edited_member==0:_load_companion()
 	_title_editor()
 	_update_quote()
 
