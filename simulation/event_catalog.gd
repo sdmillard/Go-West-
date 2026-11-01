@@ -69,6 +69,8 @@ func load_data(data: Variant, repeatable: bool = false) -> bool:
 				return _fail("Choice needs label and result")
 			if not _effects(choice.get("effects", {})):
 				return _fail("Invalid effects")
+			if choice.has("clean_days") and (event.id!="laundromat" or event.category!="absurd" or not _number(choice.clean_days) or choice.clean_days!=int(choice.clean_days) or choice.clean_days<1 or choice.clean_days>14):
+				return _fail("Invalid laundry protection")
 			if choice.has("oddity_recruit") and (choice.oddity_recruit!="beached_ship" or event.id!="beached_ship" or event.category!="absurd"):
 				return _fail("Invalid oddity recruit")
 			if choice.has("settle_oddity") and (choice.settle_oddity!="cul_de_sac" or event.id!="cul_de_sac" or event.category!="absurd"):

@@ -9,6 +9,11 @@ extends RefCounted
 var places: Array = []
 var road: Array = []
 
+## A modest, authored benefit from the impossible laundromat, applied to spontaneous onset only.
+const CLEAN_ONSET_FACTOR := 0.8
+static func clean_onset_factor(state: Dictionary) -> float:
+	return CLEAN_ONSET_FACTOR if state.get("mode","")=="unhinged" and int(state.get("clean_until",0))>0 and int(state.day)<=int(state.clean_until) else 1.0
+
 ## Deals from the catalog with an RNG of its own, so the main game's dice are untouched.
 func deal(seed_value: int, mode: String, catalog, route) -> void:
 	places = []

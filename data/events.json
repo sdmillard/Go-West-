@@ -251,11 +251,12 @@
     "choices": [
       {
         "label": "Wash everything · $1",
+        "clean_days": 14,
         "effects": {
           "money": -1,
           "health": 6
         },
-        "result": "Everything comes out clean and warm and smelling of a meadow none of you have seen. Everyone feels more like themselves.",
+        "result": "Everything comes out clean and warm and smelling of a meadow none of you have seen. Everyone feels more like themselves. For the next fortnight, new sickness is a little less likely.",
         "requires": {
           "money": 1
         }
