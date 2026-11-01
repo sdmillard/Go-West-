@@ -353,6 +353,7 @@ func run():
 	venue_checks(store)
 	fort_checks(store)
 	trader_checks(store)
+	trader_repeat_checks(store)
 	emigrant_checks(store)
 	var screen=Main.instantiate()
 	root.add_child(screen)
@@ -648,6 +649,41 @@ func on_road(game):
 		var offer: Dictionary=game.context.market(game)
 		if offer.available and not offer.post:return game
 	return game
+## Bug pass (November 2026): two trader records that saved but could not be loaded.
+func trader_repeat_checks(store) -> void:
+	# Food bought by the pound before the first act is counted by the pound, so buying more afterwards still loads.
+	var game=on_road(willing(outfit()))
+	var key: String=game.context.market(game).key
+	game.context.record.spent[key+"|buy_food"]=1
+	game.context.record.spent[key+"|buy_food|units"]=21
+	game.crime.scenes.passing_traders.theft_success=1
+	game.crime.scenes.passing_traders.escape_capture=0
+	game.crime.scenes.passing_traders.escape_injury=0
+	game.open_crime()
+	choose(game,"theft")
+	check(game.crime.service(key).food_sold==21,"Pounds already bought from traders enter the record as pounds: %d" % game.crime.service(key).food_sold)
+	choose(game,"flee");choose(game,"finish")
+	check(game.pending.is_empty() and game.crime.record.active.is_empty(),"The thief walks off")
+	game.context.record.spent[key+"|buy_food|units"]=31
+	game.crime.consume_trade({"market_key":key+"|buy_food","effects":{"food":10}})
+	check(store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))!=null,"Buying more from traders after a theft still saves: "+store.error)
+	# An unseen theft from traders already on guard from an earlier robbery, then walking off: they saw nothing of it.
+	game=on_road(willing(outfit()))
+	key=game.context.market(game).key
+	game.crime.scenes.passing_traders.compliance=1
+	game.crime.scenes.passing_traders.theft_success=1
+	game.crime.scenes.passing_traders.escape_capture=0
+	game.crime.scenes.passing_traders.escape_injury=0
+	game.open_crime()
+	choose(game,"robbery");choose(game,"take");choose(game,"flee");choose(game,"finish")
+	check(game.crime.service(key).alarmed and game.pending.is_empty(),"The robbed traders are on guard")
+	check(game.open_crime() and choose(game,"theft") and game.crime.incident().attempt=="unseen","A later theft from them goes unseen")
+	check(choose(game,"flee"),"The thief walks off without taking anything")
+	var current: Dictionary=game.crime.record.incidents[-1]
+	check(not current.knowledge.keys().any(func(uid):return uid in game.crime.staff_ids(key)),"The traders know nothing of the unseen theft")
+	choose(game,"finish")
+	check(game.pending.is_empty() and game.crime.record.active.is_empty(),"The encounter is over")
+	check(store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))!=null,"A second, unseen act against alarmed traders saves: "+store.error)
 ## Passing traders: each party is its own target, entering the record only once the party acts against it.
 func trader_checks(store) -> void:
 	var game=on_road(willing(outfit()))

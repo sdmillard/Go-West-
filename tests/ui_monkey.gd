@@ -126,6 +126,9 @@ func run():
 				g.finish_rafting();screen._rafting_returned()
 			elif not g.hunt.is_empty():
 				g.finish_hunt();screen._refresh()
+			elif g.camp_repair.blocked(g):
+				if not g.camp_repair.fit_spare(g) and not g.camp_repair.leader_work(g,"patch") and not g.camp_repair.leader_work(g,"wood"):g.rest()
+				screen._refresh()
 			elif not g.pending.is_empty():
 				var options: Array=range(g.pending.choices.size()).filter(func(i):return g.can_choose(i))
 				if options.is_empty():note("no_choice","pending %s has nothing choosable" % g.pending.get("id",""));g.pending={}
