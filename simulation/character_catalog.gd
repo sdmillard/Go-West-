@@ -59,6 +59,17 @@ func load_data(value: Variant) -> bool:
 			if not pool.get(field) is Array or pool[field].is_empty() or pool[field].size()>200:return false
 			for name in pool[field]:
 				if not name is String or name.is_empty() or name.length()>24:return false
+	var native_names: Variant=value.get("native_names",{"pools":{},"heritages":{}})
+	if not native_names is Dictionary or not native_names.get("pools") is Dictionary or not native_names.get("heritages") is Dictionary:return false
+	for pool in native_names.pools.values():
+		if not pool is Dictionary:return false
+		var lists: Array=["women","men"]+(["mission_women","mission_men"] if pool.has("mission_men") or pool.has("mission_women") else [])
+		for field in lists:
+			if not pool.get(field) is Array or pool[field].is_empty() or pool[field].size()>200:return false
+			for name in pool[field]:
+				if not name is String or name.is_empty() or name.length()>14:return false
+	for heritage in native_names.heritages:
+		if not native_names.pools.has(native_names.heritages[heritage]):return false
 	for category in REQUIRED:
 		for required in REQUIRED[category]:
 			if not value[category].has(required):return false
@@ -104,6 +115,13 @@ func health_delta(profile: Dictionary,delta: int,cause: String,conditions: Dicti
 ## Surnames come from the heritage pool; given names from it or, Americanized, from the general pool.
 ## "Mixed heritage" takes the given name and surname from two random pools; other labels use the general pool.
 func generated_name(random: RandomNumberGenerator, heritage: String, woman: bool) -> String:
+	var native: Dictionary=data.get("native_names",{})
+	if native.get("heritages",{}).has(heritage):
+		# One name, as emigrants and traders recorded it: sometimes a mission or trade name, usually an English rendering.
+		var pool: Dictionary=native.pools[native.heritages[heritage]]
+		var prefix: String="mission_" if pool.has("mission_men") and random.randf()<float(pool.get("mission_chance",0.0)) else ""
+		var names: Array=pool[prefix+("women" if woman else "men")]
+		return names[random.randi_range(0,names.size()-1)]
 	var pools: Dictionary=data.get("heritage_names",{})
 	var general_given: Dictionary=data.get("given_names",{"women":data.first_names,"men":data.first_names})
 	var general: Dictionary={"women":general_given.women,"men":general_given.men,"surnames":data.surnames}

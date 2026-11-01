@@ -105,6 +105,9 @@ func run():
  check(not candidate.is_empty() and candidate.profile.appearance.heritage=="Wasco","Community recruitment supplies a local upbringing")
  var expected: Dictionary=recruits.characters.generate_candidate(int(recruits.state.seed),int("native:the_dalles".hash())%1000000,"stranger")
  expected.profile.appearance.heritage="Wasco"
+ var pool: Dictionary=recruits.characters.catalog.data.native_names.pools.Chinookan
+ check(candidate.name in pool.women+pool.men+pool.mission_women+pool.mission_men,"A local recruit carries a name from their community's pool")
+ expected.name=candidate.name
  check(candidate==expected,"Local identity changes no skill, trait, wage or survival statistic")
  var found=restore(recruits)
  check(found!=null and found.recruitment.candidate(found)==Save.new().normalize(candidate),"Candidate and contract terms remain fixed across saves")
