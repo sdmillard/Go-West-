@@ -42,7 +42,7 @@ func run():
  check(Store.new().capture(game)==before,"Invalid selections are atomic")
  var ordinary: Dictionary=game.pack_quote({"food":20,"clothing":3})
  var guarded: Dictionary=game.pack_quote({"food":20,"clothing":3},false,[1,2])
- check(guarded.valid and ordinary.capacity_lb==200 and guarded.capacity_lb==120 and guarded.cargo_lb==83,"Guard preview excludes their bodies and personal gear from the walking party")
+ check(guarded.valid and ordinary.capacity_lb==250 and guarded.capacity_lb==150 and guarded.cargo_lb==83,"Guard preview excludes their bodies and personal gear from the walking party")
  check(Store.new().capture(game)==before,"Guard preview changes no supplies, roster, random stream or time")
  check(not game.abandon_wagon({"food":150},[1,2]) and Store.new().capture(game)==before,"Reduced carry limit enforced before assigning guards")
  check(game.abandon_wagon({"food":20,"clothing":3,"bullets":10},[1,2]),"Leave two actual companions")

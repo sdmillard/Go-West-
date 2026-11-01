@@ -16,7 +16,7 @@ New items: horses $40, mules $50, saddle and bridle $15, pack saddle $5, saddleb
 - A saddle animal carries one rider and, with saddlebags, 25 lb. A pack horse carries 175 lb, a pack mule 200 lb. Spare animals are led and carry nothing.
 - **Mounted:** every traveler has a saddle. Riders carry only their 15 lb personal gear.
 - **Doubled up** (Travel → DOUBLE UP): with at least one saddle per two travelers, two ride each saddled animal at riding pace. Doubled riders also carry only personal gear.
-- **Pack train / on foot:** too few saddles. Everyone walks at the normal walking pace with full 40 lb packs, and the animals carry their saddlebags and packs.
+- **Pack train / on foot:** too few saddles. Everyone walks at the normal walking pace with full 50 lb packs, and the animals carry their saddlebags and packs.
 
 Example for five: five saddle horses with bags and three pack mules carry 800 lb in all (75 gear, 125 bags, 600 packs), against the wagon's 2,500.
 

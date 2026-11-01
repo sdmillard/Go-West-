@@ -37,18 +37,18 @@ func run():
  for member in game.party_health.members:member.health=60
  game.state.health=60
  game.state.food=0
- check(is_equal_approx(game.provisions.capacity(game.state),200),"Moderate illness still leaves pack capacity for meals")
+ check(is_equal_approx(game.provisions.capacity(game.state),250),"Moderate illness still leaves pack capacity for meals")
  check(game.hunting_capacity()==200,"Retrieval uses the same health factor with its separate fifty-pound baseline")
  var mass: float=game.provisions.cargo(game.state)
- check(mass==110 and is_equal_approx(game.provisions.capacity(game.state)-mass,90),"Real gear stays counted; relief gives food room without a second health modifier")
+ check(mass==110 and is_equal_approx(game.provisions.capacity(game.state)-mass,140),"Real gear stays counted; relief gives food room without a second health modifier")
  game.party_health.begin_condition(1,"broken_leg",0)
- check(is_equal_approx(game.provisions.capacity(game.state),160),"A broken leg still removes a carrier completely")
+ check(is_equal_approx(game.provisions.capacity(game.state),200),"A broken leg still removes a carrier completely")
  var previous:=0.0
  for h in range(101):
   for member in game.party_health.members:member.conditions=[];member.health=h;member.alive=h>0
   game.state.health=h
   var capacity: float=game.provisions.capacity(game.state)
-  check(capacity>=previous and capacity<=200,"Pack capacity decreases continuously toward no capacity as health falls")
+  check(capacity>=previous and capacity<=250,"Pack capacity decreases continuously toward no capacity as health falls")
   previous=capacity
  var store=Store.new()
  var legacy: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-nutrition-pack-save-v1.json"))
@@ -58,7 +58,7 @@ func run():
   for member in restored.party_health.members:member.health=60
   restored.state.health=60
   var clone=store.restore(JSON.parse_string(JSON.stringify(store.capture(restored))))
-  check(clone!=null and is_equal_approx(clone.provisions.capacity(clone.state),200),"Adjusted capacity derives from live restored people")
+  check(clone!=null and is_equal_approx(clone.provisions.capacity(clone.state),250),"Adjusted capacity derives from live restored people")
  var horse_sync: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/pre-recovery-horse-sync-save-v1.json"))
  var synced=store.restore(horse_sync)
  check(synced!=null and synced.state==store.upgraded_state(horse_sync.state) and str(synced.rng.state)==horse_sync.random,"The concurrent horse-update save migrates without resetting a journey")

@@ -18,7 +18,7 @@ One processing day handles up to 100 **physical** lb, after that day's spoilage 
 
 **Superseded health curve:** the October 24 [field-outing update](FIELD_OUTINGS.md) keeps full capacity through Good and Fair, then reduces it smoothly in Poor/Very Poor for walking and all retrieval work. The linear formula below describes the original checkpoint, not current rules.
 
-Each active traveler contributes their current health fraction times an allowance:50 lb on retrieval jobs;40 lb gross pack capacity on foot. At50 health the contributions are25 lb and 20 lb respectively. A broken leg contributes zero until the condition ends. Dead/departed travelers contribute zero. A full hunting/retrieval trip is capped at 200 lb and actual cargo room. These limits and the linear health response are authored estimates, not recovered classic formulas or measured historical performance.
+Each active traveler contributes their current health fraction times an allowance: 50 lb on retrieval jobs; 50 lb gross pack capacity on foot (40 before November 2026). The health curve scales both. A broken leg contributes zero until the condition ends. Dead/departed travelers contribute zero. A full hunting/retrieval trip is capped at 200 lb and actual cargo room. These limits and the linear health response are authored estimates, not recovered classic formulas or measured historical performance.
 
 Hunting and crime retrieval count only companions willing to participate in the relevant action. Walking includes everyone still with the party; personal gear still occupies15 lb per traveler. Recovery changes capacity immediately. Health is read from the actual party ledger, including after loading; no duplicate health/capacity field is saved.
 
