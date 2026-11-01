@@ -14,6 +14,8 @@ The seed deals the journey its own assortment (`simulation/oddities.gd`, `deal`)
 
 Classic deals nothing. Every oddity happens at most once (it goes into `seen`).
 
+If the authorities take a traveler carrying the Novablade, it is held with their other arms and returned on release. Saves accept the single blade both during custody and in the completed hearing record; this also repairs loading the detention saves rejected before the validation fix.
+
 ## The oddities (November 1)
 
 | Id | Kind | Where | What it does |

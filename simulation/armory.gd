@@ -4,7 +4,8 @@ extends RefCounted
 ## Authored game values in data/weapons.json, not measured historical data.
 const KEYS=["rifles","shotguns","pistols","revolvers","knives","hatchets"]
 ## Unhinged mode: blades found on the road, held as a 0/1 count in state but outside KEYS, so the
-## ordinary arms trade, theft, custody and weight code never touches them. They sell at any counter
+## ordinary arms trade, theft and weight code never touches them. Custody holds equipped blades
+## with the accused's other arms and returns them on release. They sell at any counter
 ## (Oddities.counter_rows) for the blade's "sell_cents".
 const ODD_BLADES={"novablades":"Novablade"}
 static var data: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/weapons.json"))
