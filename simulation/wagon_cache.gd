@@ -129,6 +129,8 @@ static func recover(game) -> bool:
 	var target: int=game.wagon_cache.mile
 	if game.state.miles>target and game.walking_overloaded():return true
 	game.journal.append("Day %d · Backtracking from mile %d toward the abandoned wagon at mile %d." % [game.state.day,game.state.miles,target])
+	# The party has now stood west of where it is: graves, camps and traders out there stay on record.
+	if game.state.miles>target and not game.state.has("travel_direction"):game.state["travel_direction"]="west"
 	while game.state.miles>target:
 		game._tick_day(false,true)
 		if game.state.status!="traveling":return true

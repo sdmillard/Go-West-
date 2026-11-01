@@ -933,6 +933,8 @@ func _apply(effects: Dictionary, health_cause: String = "injuries", resting: boo
 		elif key == "vehicle":
 			state.vehicle = effects[key]
 			if state.vehicle=="foot" and state.has("wagon_train"):state.wagon_train=[];state.erase("repair_wagon_id")
+			# A lost or surrendered wagon takes any half-done camp repair with it.
+			if state.vehicle=="foot":camp_repair.work={}
 		elif key == "money":
 			state.money = maxf(0.0, snappedf(float(state.money) + float(effects[key]), 0.01))
 		elif key == "health":

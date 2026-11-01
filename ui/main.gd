@@ -1920,6 +1920,8 @@ func _refresh() -> void:
 			var choice_label: String=game.pending.choices[i].label
 			if game.pending.has("landmark") and game.pending.choices[i].get("action", "")=="rest":choice_label="Rest here · choose number of days"
 			var option := button(choice_label, _choose.bind(i))
+			# Long road labels (seasonal notes on a fork) wrap instead of widening the story panel.
+			option.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			option.disabled = not game.can_choose(i)
 			choices.add_child(option)
 	elif s.status == "arrived":

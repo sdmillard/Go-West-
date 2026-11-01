@@ -58,7 +58,12 @@ func run():
 	game.wagon_cache.found=false
 	game.provisions.data.walking.cache_loss_base=0
 	game.provisions.data.walking.cache_loss_daily=0
+	# A traveler who dies out ahead of the cache leaves remains further west than the recovered wagon.
+	game.party_health.kill(game.party_health.members[4],int(game.state.day),"dysentery")
+	game._collect_health_events()
+	game.state.party_size=game.party_health.living_count()
 	check(game.recover_wagon() and game.state.miles==20 and game.state.landmark=="independence" and game.state.leg_miles==20,"Backtracking across multiple route legs restores the correct mile and next landmark")
+	check(store.restore(JSON.parse_string(JSON.stringify(store.capture(game))))!=null,"A save made after backtracking past a grave still loads: "+store.error)
 	game=outfit()
 	game.abandon_wagon(PACK)
 	game.travel()

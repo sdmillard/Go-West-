@@ -1,9 +1,10 @@
 # Claude handoff: Westward, Probably
 
-Last updated October 31, 2026. Latest checkpoint: tactical combat finished and merged with the October 27 local work (docs/TACTICAL_COMBAT.md). Earlier sections are chronological records.
+Last updated November 1, 2026. Latest checkpoint: tactical combat finished and merged with the October 27 local work (docs/TACTICAL_COMBAT.md). Earlier sections are chronological records.
 
 ## Resume here
 
+- **Bug pass 1 (November 1, Claude; Spencer asked for bug testing):** two new hunting tools. `tests/chaos_journeys.gd` plays the play-style bots with a share of random public actions (menus, crimes, trades, toggles, settling, tactical fights, rafting) and checks invariants and a save round trip every 40 steps. `tests/ui_monkey.gd` runs the real screen under xvfb (`xvfb-run -a godot --path . --rendering-driver opengl3 --script tests/ui_monkey.gd -- --seed=N --shots`), presses random buttons and flags controls spilling out of their panels. Fixed: walking back to an abandoned wagon past a grave made the save unloadable (backtracking now sets `travel_direction`); losing the wagon with a camp repair queued made the save unloadable (the repair goes with the wagon); long fork labels widened the story panel (choice buttons wrap).
 - **Applegate South Road scenes (November 1, Claude; awaiting Spencer's OK):**
   - Aseprite arrival scenes for all 15 South Road stops, each with winter and autumn versions.
   - 9 cabin spots in scene_ambience.json. `awaiting_art` is empty again.
