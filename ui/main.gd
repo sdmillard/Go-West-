@@ -1793,6 +1793,8 @@ func _choose(index: int) -> void:
 		_show_service()
 	if accepted and is_crossing:
 		crossing_result = game.last_crossing.duplicate(true)
+		if game.route.nodes.has(str(crossing_result.get("landmark", ""))):
+			crossing_result["country"] = game.route.nodes[crossing_result.landmark].get("crossing_country", "prairie")
 		landscape.start_crossing(crossing_result)
 	_refresh()
 

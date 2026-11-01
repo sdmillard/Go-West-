@@ -39,6 +39,8 @@ func load_data(data: Variant) -> bool:
 			return _fail("Invalid regional terrain.")
 		if node.get("river_source","rain") not in ["rain","snowmelt"]:
 			return _fail("Invalid river source.")
+		if node.get("crossing_country","prairie") not in ["prairie","sage","pine","oak"] or (node.has("crossing_country") and node.kind!="river"):
+			return _fail("Invalid crossing country.")
 		for key in ["trade_bulk","descent","portage","minor","remote"]:
 			if node.has(key) and not node[key] is bool:
 				return _fail("Invalid landmark activity flag.")
@@ -90,6 +92,8 @@ func load_data(data: Variant) -> bool:
 				return _fail("Road distance must be positive whole miles.")
 			if edge.to in targets or (edge.has("label") and (not edge.label is String or edge.label.is_empty())) or edge.get("hazard", "") not in ["", "waterless", "river", "unrest", "raids"]:
 				return _fail("Invalid road choice.")
+			if edge.has("closed_with") and (not candidate.has(edge.closed_with) or not candidate[edge.closed_with].has("wagon_closed_months")):
+				return _fail("Invalid seasonal road closure.")
 			if edge.has("wagon_opens") and not valid_date(edge.wagon_opens):
 				return _fail("Invalid wagon road opening date.")
 			if edge.has("late_after") and (not edge.late_after is String or not valid_date("1848-"+str(edge.late_after))):

@@ -93,9 +93,8 @@
     {
       "id": "big_vermilion",
       "name": "Big Vermilion",
-      "kind": "camp",
-      "text": "The road crosses Turkey Creek and the Little Vermilion to the Big Vermilion, a wooded creek with steep clay banks. Palmer's table counts intermediate camps along it; there is wood, water and grass here before the Big Blue.",
-      "minor": true,
+      "kind": "river",
+      "text": "The road crosses Turkey Creek and the Little Vermilion to the Big Vermilion, a wooded creek with steep clay banks. Wagons are let down the cut bank to a rocky ford and double-teamed up the far side; after rain it runs bank-full and swift. There is wood, water and grass here before the Big Blue.",
       "next": [
         {
           "to": "big_blue",
@@ -290,19 +289,40 @@
       "terrain": "plains",
       "next": [
         {
-          "to": "fort_laramie",
-          "miles": 36,
+          "to": "laramie_ford",
+          "miles": 35,
           "source_rows": [
             12,
-            24
+            23
           ],
           "source_table_rows": [
             27,
             28
-          ]
+          ],
+          "allocation_note": "Palmer rows 27-28 (12 and 24 miles to Laramie's fork) less the last mile, from the Laramie ford up the far bank to Fort John."
         }
       ],
       "hunting_region": "plains"
+    },
+    {
+      "id": "laramie_ford",
+      "name": "Laramie River ford",
+      "kind": "river",
+      "text": "The Laramie comes down clear and cold from the mountains to meet the North Platte. Fort John stands on its far bank about a mile above the mouth. In the June rise the ford runs deep and fast enough to roll a wagon; later in the summer it is an easy crossing.",
+      "terrain": "plains",
+      "hunting_region": "plains",
+      "river_source": "snowmelt",
+      "next": [
+        {
+          "to": "fort_laramie",
+          "miles": 1,
+          "source_rows": [
+            1
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored subdivision of a period-guide aggregate; not a separately surveyed distance. Palmer's 24 miles to Laramie's fork end at the river; the fort is about a mile up the far bank."
+        }
+      ]
     },
     {
       "id": "fort_laramie",
@@ -390,7 +410,9 @@
       "id": "north_platte",
       "name": "North Platte crossing",
       "kind": "river",
-      "text": "The trail returns to the North Platte. A crossing commits livestock and loaded wagons to the current. Wait for better water if the stage is unfavorable.",
+      "text": "The trail returns to the North Platte at the upper crossing. A crossing commits livestock and loaded wagons to the current. Since 1847 Mormon ferrymen have kept a raft of dugout canoes here and take wagons over for a dollar and a half, more when the river is up; others ford, or wait for better water.",
+      "ferry_dollars": 1.5,
+      "ferry_high_dollars": 3,
       "terrain": "plains",
       "next": [
         {
@@ -609,11 +631,11 @@
           ]
         },
         {
-          "to": "salt_lake",
-          "miles": 121,
+          "to": "weber_river",
+          "miles": 85,
           "label": "Take the Mormon road to Great Salt Lake City \u00b7 about 121 miles",
           "source_rows": [
-            121
+            85
           ],
           "source_table_rows": [],
           "allocation_note": "William Clayton, The Latter-Day Saints' Emigrants' Guide (1848): Fort Bridger to the City of the Great Salt Lake about 121 1/2 miles, by Echo Canyon and Emigration Canyon."
@@ -622,6 +644,26 @@
       "trade_bulk": true,
       "hunting_region": "sagebrush",
       "advice": "Check food for the next long leg, allow for days lost to weather, and keep money for later supplies. A post is a chance to prepare, not a guarantee that the journey ahead is safe."
+    },
+    {
+      "id": "weber_river",
+      "name": "Weber River crossing",
+      "kind": "river",
+      "text": "The Mormon road comes down Echo Canyon between red sandstone cliffs to the Weber River. The pioneer company forded it here in July 1847. It runs swift and cold with the June snowmelt and is easy by August. Beyond, the road climbs over two mountains and down Emigration Canyon to the valley.",
+      "terrain": "mountains",
+      "hunting_region": "highcountry",
+      "river_source": "snowmelt",
+      "next": [
+        {
+          "to": "salt_lake",
+          "miles": 36,
+          "source_rows": [
+            36
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored split of Clayton's 121 1/2 miles from Fort Bridger: about 85 to the Weber ford at the foot of Echo Canyon, about 36 over Big and Little Mountain to the city."
+        }
+      ]
     },
     {
       "id": "bear_river",
@@ -662,19 +704,40 @@
       "bulk_food_cents": 4500,
       "next": [
         {
-          "to": "raft_river",
-          "miles": 230,
+          "to": "bear_river_ford",
+          "miles": 60,
           "label": "Take Hensley's Salt Lake cutoff north to the Raft River \u00b7 about 230 miles",
           "wagon_opens": "1848-09-15",
           "source_rows": [
-            180,
-            50
+            60
           ],
           "source_table_rows": [],
-          "allocation_note": "Authored estimate: about 180 miles from the city north of the lake to the California road near the City of Rocks (Salt Lake Cutoff, opened by Samuel Hensley's pack train in summer 1848 and made a wagon road by returning Mormon Battalion men in September 1848), then about 50 miles down the Raft River valley to the Oregon road."
+          "allocation_note": "Authored estimate: about 60 miles from the city past the Weber to the Bear River ford, of about 230 to the Raft River by the Salt Lake Cutoff."
         }
       ],
       "hunting_region": "highcountry"
+    },
+    {
+      "id": "bear_river_ford",
+      "name": "Bear River crossing",
+      "kind": "river",
+      "text": "North of the Weber, Hensley's cutoff strikes the Bear River above its marshy mouth on the lake. The river is deep and slow between muddy banks, and in high water there is no bottom for the oxen; companies hunt for a bar or caulk their wagon beds and float them over. Shoshone families camp along the bottoms.",
+      "terrain": "plains",
+      "hunting_region": "sagebrush",
+      "river_source": "snowmelt",
+      "crossing_country": "sage",
+      "next": [
+        {
+          "to": "raft_river",
+          "miles": 170,
+          "source_rows": [
+            120,
+            50
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored estimate: about 60 miles from the city to the Bear River ford, about 120 more past the Malad and the Curlew valley to the California road near the City of Rocks (Salt Lake Cutoff, opened by Samuel Hensley's pack train in summer 1848 and made a wagon road by returning Mormon Battalion men in September 1848), then about 50 miles down the Raft River valley to the Oregon road."
+        }
+      ]
     },
     {
       "id": "soda_springs",
@@ -842,6 +905,7 @@
         }
       ],
       "hunting_region": "sagebrush",
+      "crossing_country": "sage",
       "river_source": "snowmelt"
     },
     {
@@ -865,6 +929,7 @@
       "trade_bulk": true,
       "bulk_food_cents": 4000,
       "hunting_region": "sagebrush",
+      "crossing_country": "sage",
       "advice": "This is the old Hudson's Bay Company post near the river confluence, not the United States Army post built near modern Boise in 1863.",
       "river_source": "snowmelt"
     },
@@ -1075,7 +1140,8 @@
           ]
         }
       ],
-      "hunting_region": "sagebrush"
+      "hunting_region": "sagebrush",
+      "crossing_country": "sage"
     },
     {
       "id": "deschutes",
@@ -1095,7 +1161,8 @@
           ]
         }
       ],
-      "hunting_region": "sagebrush"
+      "hunting_region": "sagebrush",
+      "crossing_country": "sage"
     },
     {
       "id": "the_dalles",
@@ -1105,10 +1172,11 @@
       "terrain": "mountains",
       "next": [
         {
-          "to": "barlow_pass",
-          "miles": 70,
+          "to": "white_river",
+          "miles": 62,
+          "closed_with": "barlow_pass",
           "source_rows": [
-            70
+            62
           ],
           "source_table_rows": [],
           "allocation_note": "Authored subdivision of a period-guide aggregate; not a separately surveyed distance.",
@@ -1131,6 +1199,27 @@
       ],
       "hunting_region": "forest",
       "advice": "The river route used rafts, boats and portages, with livestock driven along trails. A raft was not an uninterrupted ride: wind pins boats to the shore and the Cascades must be portaged or run. The Barlow road is longer, costs a toll and ends at Laurel Hill."
+    },
+    {
+      "id": "white_river",
+      "name": "White River crossing",
+      "kind": "river",
+      "text": "Below Mount Hood the White River spreads over a wide bed of boulders and grey sand. Its water is milky with glacier silt, so no one can see the bottom, and the channels shift from one day to the next. Barlow's road fords it on the climb to the pass.",
+      "terrain": "mountains",
+      "hunting_region": "forest",
+      "river_source": "snowmelt",
+      "crossing_country": "pine",
+      "next": [
+        {
+          "to": "barlow_pass",
+          "miles": 8,
+          "source_rows": [
+            8
+          ],
+          "source_table_rows": [],
+          "allocation_note": "Authored subdivision of a period-guide aggregate; not a separately surveyed distance."
+        }
+      ]
     },
     {
       "id": "columbia_raft",
@@ -1271,11 +1360,13 @@
     {
       "id": "gravelly_ford",
       "name": "Gravelly Ford",
-      "kind": "camp",
+      "kind": "river",
       "remote": true,
       "terrain": "desert",
       "hunting_region": "sagebrush",
-      "text": "A gravel bar lets the wagons cross the Humboldt. Willows and rye grass line the river, and there is nothing else for fuel or shade. Guards sit up with the cattle every night along this stretch.",
+      "river_source": "snowmelt",
+      "crossing_country": "sage",
+      "text": "A gravel bar lets the wagons cross the Humboldt. Willows and rye grass line the river, and there is nothing else for fuel or shade. By late summer the snow water has run off and the bar is firm under the wheels. Guards sit up with the cattle every night along this stretch.",
       "next": [
         {
           "to": "lassen_meadows",
@@ -1430,10 +1521,11 @@
     {
       "id": "klamath_river",
       "name": "Klamath River crossing",
-      "kind": "camp",
+      "kind": "river",
       "remote": true,
       "terrain": "plains",
       "hunting_region": "forest",
+      "crossing_country": "pine",
       "text": "Below the Klamath lake the river runs over a rock ledge shallow enough to ford in the fall. West of it the road climbs into pine timber: the Cascade Mountains, and the first real forest since the Missouri.",
       "next": [
         {
@@ -1483,11 +1575,12 @@
     {
       "id": "rogue_valley",
       "name": "Rogue River valley",
-      "kind": "camp",
+      "kind": "river",
       "remote": true,
       "terrain": "forest",
       "hunting_region": "forest",
-      "text": "Bear Creek runs down a wide oak valley to the Rogue River, the best grass and game since the Snake. The Shasta and Takelma people here have fought the trapping parties for twenty years. In 1847 they shot horses in an emigrant camp; companies keep together and stand guard.",
+      "crossing_country": "oak",
+      "text": "Bear Creek runs down a wide oak valley to the Rogue River, the best grass and game since the Snake. The Shasta and Takelma people here have fought the trapping parties for twenty years. In 1847 they shot horses in an emigrant camp; companies keep together and stand guard. Down the valley the road fords the Rogue on a gravel riffle, then strikes north into the hills.",
       "next": [
         {
           "to": "canyon_creek",
@@ -1527,11 +1620,12 @@
     {
       "id": "umpqua_valley",
       "name": "Umpqua valley",
-      "kind": "camp",
+      "kind": "river",
       "remote": true,
       "terrain": "forest",
       "hunting_region": "forest",
-      "text": "Below the canyon the Umpqua country opens into round oak hills and grassy bottoms. The Umpqua people trade salmon and camas, and the road is easier from here. Ahead lie the Calapooya Mountains and the head of the Willamette valley.",
+      "crossing_country": "oak",
+      "text": "Below the canyon the Umpqua country opens into round oak hills and grassy bottoms. The Umpqua people trade salmon and camas, and the road is easier from here. The road fords the Umpqua on a gravel bar. Ahead lie the Calapooya Mountains and the head of the Willamette valley.",
       "next": [
         {
           "to": "south_willamette",

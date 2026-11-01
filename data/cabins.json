@@ -4,7 +4,7 @@
   "carpentry_factor": 1.5,
   "minimum_health": 40,
   "winter_illness_factor": 0.6,
-  "timber": ["elm_grove", "wakarusa", "kansas_river", "big_vermilion", "big_blue", "little_blue", "ash_hollow", "fort_laramie", "horseshoe_creek", "deer_creek", "north_platte", "green_river", "fort_bridger", "salt_lake", "bear_river", "soda_springs", "fort_hall", "fort_boise", "burnt_river", "grande_ronde", "blue_mountains", "umatilla", "the_dalles", "columbia_raft", "barlow_pass", "laurel_hill", "eagle_creek",
+  "timber": ["elm_grove", "wakarusa", "kansas_river", "big_vermilion", "big_blue", "little_blue", "ash_hollow", "laramie_ford", "fort_laramie", "horseshoe_creek", "deer_creek", "north_platte", "green_river", "fort_bridger", "weber_river", "salt_lake", "bear_river", "soda_springs", "fort_hall", "fort_boise", "burnt_river", "grande_ronde", "blue_mountains", "umatilla", "the_dalles", "columbia_raft", "white_river", "barlow_pass", "laurel_hill", "eagle_creek",
     "city_of_rocks", "fandango_pass", "goose_lake", "klamath_river", "green_springs", "rogue_valley", "canyon_creek", "umpqua_valley", "south_willamette"],
   "settle": {
     "note": "Spencer: a party may settle anywhere at any time, within the constraints. Missouri, the Latter-day Saints' valley at Great Salt Lake and the edge of the Willamette settlements are open to settlers. At a trading post the party stays on as hands or squatters, unless the post refuses it over known crimes. Everywhere else is Native country: the people there decide, once per party and place, and refuse squatters more often than not; a party they have heard ill of is refused. Peoples per stop are approximate for 1848 and only name who the party would have to ask.",
@@ -13,10 +13,10 @@
     "posts": ["fort_laramie", "fort_bridger", "fort_hall", "fort_boise", "fort_walla_walla"],
     "peoples": {
       "elm_grove": "Shawnee", "wakarusa": "Shawnee", "kansas_river": "Kanza", "big_vermilion": "Kanza", "big_blue": "Pawnee", "little_blue": "Pawnee", "platte": "Pawnee", "fort_kearny": "Pawnee", "south_platte": "Pawnee",
-      "ash_hollow": "Lakota", "courthouse_rock": "Lakota", "chimney_rock": "Lakota", "scotts_bluff": "Lakota", "horseshoe_creek": "Lakota", "deer_creek": "Lakota", "north_platte": "Lakota", "willow_spring": "Lakota",
-      "independence_rock": "Shoshone", "devils_gate": "Shoshone", "south_pass": "Shoshone", "little_sandy": "Shoshone", "greenwood_cutoff": "Shoshone", "green_river": "Shoshone", "bear_river": "Shoshone", "soda_springs": "Shoshone", "american_falls": "Shoshone", "raft_river": "Shoshone", "salmon_falls": "Shoshone", "snake_river": "Shoshone",
+      "ash_hollow": "Lakota", "courthouse_rock": "Lakota", "chimney_rock": "Lakota", "scotts_bluff": "Lakota", "laramie_ford": "Lakota", "horseshoe_creek": "Lakota", "deer_creek": "Lakota", "north_platte": "Lakota", "willow_spring": "Lakota",
+      "independence_rock": "Shoshone", "devils_gate": "Shoshone", "south_pass": "Shoshone", "little_sandy": "Shoshone", "greenwood_cutoff": "Shoshone", "green_river": "Shoshone", "weber_river": "Shoshone", "bear_river_ford": "Shoshone", "bear_river": "Shoshone", "soda_springs": "Shoshone", "american_falls": "Shoshone", "raft_river": "Shoshone", "salmon_falls": "Shoshone", "snake_river": "Shoshone",
       "malheur": "Northern Paiute", "burnt_river": "Shoshone", "powder_river": "Cayuse", "grande_ronde": "Nez Perce", "blue_mountains": "Cayuse", "umatilla": "Umatilla", "umatilla_mouth": "Umatilla", "john_day": "Tenino", "deschutes": "Tenino",
-      "the_dalles": "Wasco", "columbia_raft": "Cascades", "barlow_pass": "Molalla", "laurel_hill": "Molalla",
+      "the_dalles": "Wasco", "white_river": "Tenino", "columbia_raft": "Cascades", "barlow_pass": "Molalla", "laurel_hill": "Molalla",
       "city_of_rocks": "Shoshone", "humboldt_wells": "Western Shoshone", "gravelly_ford": "Western Shoshone", "lassen_meadows": "Northern Paiute", "black_rock": "Northern Paiute",
       "high_rock_canyon": "Northern Paiute", "fandango_pass": "Northern Paiute", "goose_lake": "Pit River", "tule_lake": "Modoc", "klamath_river": "Klamath",
       "green_springs": "Shasta", "rogue_valley": "Takelma", "canyon_creek": "Umpqua", "umpqua_valley": "Umpqua"
