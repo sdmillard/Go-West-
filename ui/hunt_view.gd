@@ -6,6 +6,13 @@ signal elapsed(delta: float)
 var traveler_profile: Dictionary={}
 const Palette=preload("res://ui/traveler_palette.gd")
 const PRAIRIE = preload("res://art/pixels/prairie.png")
+const PRAIRIE_SEASONS := {"winter": preload("res://art/pixels/prairie_winter.png"),
+	"autumn": preload("res://art/pixels/prairie_autumn.png"),
+	"autumn_east": preload("res://art/pixels/prairie_autumn_east.png")}
+## Season of the hunting ground, as on the trail ("winter", "autumn" or ""), and whether it is
+## tallgrass country (Kansas autumn colours).
+var season := ""
+var tallgrass := false
 # Eight-frame sheets sized to data/hunting.json species; rows walk, run (after a shot) and down.
 const ANIMALS = [preload("res://art/pixels/hunt_bison.png"), preload("res://art/pixels/hunt_deer.png"), preload("res://art/pixels/hunt_rabbit.png")]
 const COVER = preload("res://art/pixels/hunt_cover.png") # the model's 12 x 14 cover
@@ -50,7 +57,11 @@ func _gui_input(event: InputEvent) -> void:
 func _draw() -> void:
 	var region: String = encounter.get("region","woodland")
 	var scenery: String = {"highcountry":"travel_mountains","sagebrush":"travel_desert","forest":"travel_forest"}.get(region,"")
-	draw_texture(PRAIRIE if scenery.is_empty() else scenes.texture_for(scenery), Vector2.ZERO)
+	var ground: Texture2D = scenes.texture_for(scenery, season)
+	if scenery.is_empty():
+		var key := "autumn_east" if season == "autumn" and tallgrass else season
+		ground = PRAIRIE_SEASONS.get(key, PRAIRIE)
+	draw_texture(ground, Vector2.ZERO)
 	if encounter.is_empty():
 		return
 	if encounter.has("dog"):

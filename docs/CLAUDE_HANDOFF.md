@@ -5,7 +5,12 @@ Last updated October 31, 2026. Latest checkpoint: tactical combat finished and m
 ## Resume here
 
 - **Walking balance (October 31, Claude; Spencer: walking was too harsh):** see [WALKING_BALANCE.md](WALKING_BALANCE.md). Packs are 50 lb a person (was 40), and a pack slows walkers only past 80% full (was 50%), so walkers are no longer slower than ox wagons. On-foot bots: 0 to 6 of 36 arrive, mostly bankers. Trading still costs a day.
-
+- **Seasonal travel backgrounds, PR #151 (October 31, Claude; Spencer approved):** `build.sh --seasons` now also builds winter and autumn versions of every scrolling travel layer, plus a tallgrass `autumn_east` set for the prairie, river, horizon and road. In winter there is snow on the flats and mesa tops, the roads are trodden to mud and the wooded ridges turn grey. `ui/trail_view.gd` `_travel_texture()` picks them using `landscape.season` and `landscape.tallgrass` (TALLGRASS_LANDMARKS in main.gd). Winter firs on travel layers use `K.flat_snow` (snow on level tier ledges only). The hunting ground follows the same rule. See art/aseprite/README.md, Seasons.
+- **Seasonal place pictures and the 12 new stops' scenes, PR #149 (October 31, Claude; Spencer approved):**
+  - Winter and autumn versions of every outdoor route stop come from `build.sh --seasons`, with `K.season` and the `REGION` table in lib.lua.
+  - Autumn depends on the region: tallgrass copper, plains straw, sage with rabbitbrush, mountain larch and aspen gold, and the west green with maples.
+  - `_scene_season()` in main.gd picks the version.
+  - `awaiting_art` is empty.
 - **Endings, cabin, visit and event art, PR #148 (October 31, Claude; Spencer approved):** all drawn with the Aseprite pipeline. `scenes/endings.lua` gives seven ending pictures, chosen by `_ending_scene()` in ui/main.gd: post, cabin, run off, east, lost, and homestead east or west. `scenes/cabin_overlay.lua` (with `K.log_cabin`) is a 5-stage x 3-size sheet. ui/trail_view.gd draws it at the `cabin` point in data/scene_ambience.json for all 21 timber stops. It follows `Cabins.progress`, is snowy in snow weather or Dec-Feb, and smokes when finished. `scenes/encounters.lua` covers all seven Native visits. `scenes/events.lua` has nine trail event pictures, picked by `_event_scene()` from pending events and wanted standoffs. Next: seasonal (winter/autumn) scene variants (Spencer asked), a cascades_portage picture when that stop exists, and scenes for new stops.
 
 - **New stops, the Salt Lake road and Native nations on the map (October 31, Claude; Spencer asked, Salt Lake in the same PR):** see [ROUTE_STOPS.md](ROUTE_STOPS.md).

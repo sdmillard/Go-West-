@@ -56,5 +56,12 @@ K.layer("prairie_floor", function()
   K.rect(0, 137, W, 2, "dirt_dk")
 end)
 
+-- the far wooded ridge (teal) greys under snow and turns with the grass in autumn
+K.season_extra = {
+  {season="winter", map={teal="stone"}},
+  {season="winter", y0=100, y1=150, map={ochre="silt", gold="silt_lt", sand="stone_lt"}},
+  {season="autumn", region="plains", map={teal="silt"}},
+  {season="autumn", region="tallgrass", map={teal="rust"}},
+}
 K.save("prairie")
 K.save_layers({sky = "prairie_sky", clouds = "prairie_clouds", distant_range = "prairie_far", prairie_floor = "prairie_floor"})

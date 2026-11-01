@@ -113,5 +113,9 @@ K.layer("prairie_and_channel", function()
   end
 end)
 
+-- winter: the road is trodden to mud through the snow
+K.season_extra = {
+  {season="winter", y0=100, y1=150, map={ochre="silt", gold="silt_lt", sand="stone_lt", rust="silt_dk", leaf="white"}},
+}
 K.save("river")
 K.save_layers({sky = "river_sky", clouds = "river_clouds", river_valley = "river_far", prairie_and_channel = "river_floor"})

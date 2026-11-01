@@ -47,7 +47,14 @@ After `-Install`, run `godot --headless --path . --editor --import` and then `./
 - Never call `K.rnd` in season-only code. It would shift every later random mark, so the seasonal picture would stop matching the summer one.
 - Put `-- no seasons` near the top of a script to skip it. Indoor scenes, trading counters, the night camp, Independence and the endings are skipped this way.
 
+- A scene can add recolours of its own for a band of rows with `K.season_extra`, for colours the shared tables leave alone because they mean something else elsewhere. For example, teal is water in a river picture but a wooded ridge in a travel layer, and the road turns to trodden mud only in the ground band. See the travel scripts.
+
 ui/main.gd `_scene_season()` picks the version: winter in snow weather or from December to February (Eagle Creek and Oregon City only when snowing), autumn in October and November.
+
+**Travel layers.** `--seasons` also covers the scrolling travel scripts (`prairie`, `river`, `travel_ground`, `travel_horizon`, `travel_desert`, `travel_mountains`, `travel_forest`).
+- `K.save_layers` writes `<layer>_<season>.png` for each layer the season changes. Sky and clouds stay as drawn, so they get no copy.
+- The prairie, river, horizon and road sets also get a tallgrass `autumn_east` version. While traveling, `ui/trail_view.gd` `_travel_texture()` picks it when the last place passed is in Missouri or eastern Kansas (`TALLGRASS_LANDMARKS` in main.gd).
+- On the road, the last place passed decides the mild lower-river winter. The hunting ground takes the same season.
 
 ## How to work
 

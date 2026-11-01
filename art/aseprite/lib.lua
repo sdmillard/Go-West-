@@ -81,7 +81,14 @@ for _, n in ipairs({"platte", "fort_kearny", "fort_kearny_early", "jail_army", "
     "chimney_rock", "scotts_bluff", "fort_laramie", "deer_creek", "north_platte"}) do REGION[n] = "plains" end
 for _, n in ipairs({"horseshoe_creek", "bear_river", "blue_mountains", "grande_ronde", "barlow_pass", "laurel_hill"}) do REGION[n] = "mountain" end
 for _, n in ipairs({"eagle_creek", "oregon_city", "columbia_raft"}) do REGION[n] = "west" end
-K.region = REGION[app.params.scene or ""] or "sage"
+-- the scrolling travel layers: prairie and river sets serve Kansas and the Platte (build.sh also
+-- makes an "autumn_east" tallgrass version of them), desert is sage country, mountains and
+-- forest are the high timber
+for _, n in ipairs({"prairie", "river", "travel_ground", "travel_horizon"}) do REGION[n] = "plains" end
+REGION.travel_desert = "sage"; REGION.travel_mountains = "mountain"; REGION.travel_forest = "mountain"
+K.region = (app.params.region ~= "" and app.params.region) or REGION[app.params.scene or ""] or "sage"
+-- the file suffix: the season, or a regional variant such as autumn_east
+local TAG = (app.params.tag ~= "" and app.params.tag) or K.season
 local SEASON_MAP = {
   winter = {grass="white", sage="stone_lt", haze="mist",
             far_hill="stone_lt"},
@@ -97,6 +104,14 @@ local AUTUMN_MAP = {
 local CAPPED = {pine=true, leaf=true, ink=true, roof=true, roof_lt=true, roof_dk=true}
 local OPEN = {sky=true, sky_top=true, light_blue=true, mist=true, haze=true, far_hill=true,
               storm=true, storm_lt=true, stone_lt=true, white=true, cream=true}
+-- A scene can add its own recolours for a band of rows, for colours the shared tables leave
+-- alone because they mean something else elsewhere (teal is water in a river picture but a
+-- wooded ridge in a travel layer): K.season_extra = {{season="winter", region=nil, y0=100,
+-- y1=150, map={leaf="white"}}, ...}. The first matching entry wins over the tables.
+K.season_extra = {}
+-- With K.flat_snow, snow settles only where a top edge runs level (branch tiers, ridge tops),
+-- not down every sloping edge, which reads as a white outline round a fir.
+K.flat_snow = false
 local function seasonal(image, season)
   local name_of = {}
   for n, c in pairs(col) do name_of[c] = n end
@@ -110,6 +125,12 @@ local function seasonal(image, season)
     for x = 0, W - 1 do
       local n = at(x, y)
       local t = n and map[n]
+      for _, e in ipairs(K.season_extra) do
+        if n and e.season == season and (not e.region or e.region == K.region)
+            and y >= (e.y0 or 0) and y < (e.y1 or H) and e.map[n] then
+          t = e.map[n]; break
+        end
+      end
       if type(t) == "table" then
         -- patches a few pixels wide (staggered like tufts), with a sprinkle of single pixels,
         -- so the mix reads as grass rather than hatching or gravel
@@ -146,9 +167,13 @@ local function seasonal(image, season)
         end
         if same == 0 then t = (season == "winter") and "white" or "silt" end
       end
-      if season == "winter" and n and CAPPED[n] and OPEN[at(x, y - 1) or ""] then
+      -- (on a single layer, transparent above means open sky behind)
+      local function open(m) return m == nil or OPEN[m] end
+      if season == "winter" and n and CAPPED[n] and open(at(x, y - 1))
+          and not (K.flat_snow and (open(at(x - 1, y)) or open(at(x + 1, y))
+            or not open(at(x - 1, y - 1)) or not open(at(x + 1, y - 1)))) then
         t = "white"
-        if (x * 7 + y * 3) % 5 < 2 and at(x, y + 1) == n then image:drawPixel(x, y + 1, col.white) end
+        if not K.flat_snow and (x * 7 + y * 3) % 5 < 2 and at(x, y + 1) == n then image:drawPixel(x, y + 1, col.white) end
       end
       if t then image:drawPixel(x, y, col[t]) end
     end
@@ -174,13 +199,10 @@ end
 function K.save(name)
   local out = app.params.out or "."
   if K.season then
-    spr:flatten()
-    local cel = spr.layers[1]:cel(1)
-    local image = Image(W, H, ColorMode.RGB)
-    image:drawImage(cel.image, cel.position)
+    local image = Image(spr) -- the flattened picture; the layered sprite stays for save_layers
     seasonal(image, K.season)
-    image:saveAs(out .. "/" .. name .. "_" .. K.season .. ".png")
-    print("built " .. name .. "_" .. K.season .. " (" .. W .. "x" .. H .. ")")
+    image:saveAs(out .. "/" .. name .. "_" .. TAG .. ".png")
+    print("built " .. name .. "_" .. TAG .. " (" .. W .. "x" .. H .. ")")
     return
   end
   spr:saveAs(out .. "/" .. name .. ".aseprite")
@@ -195,8 +217,22 @@ function K.save_layers(names)
   for _, l in ipairs(spr.layers) do shown[l] = l.isVisible end
   for layer_name, file in pairs(names) do
     for _, l in ipairs(spr.layers) do l.isVisible = (l.name == layer_name) end
-    spr:saveCopyAs(out .. "/" .. file .. ".png")
-    print("built " .. file .. " (layer " .. layer_name .. ")")
+    if K.season then
+      local image = Image(spr)
+      seasonal(image, K.season)
+      -- a layer the season leaves alone (sky, clouds) gets no copy: the game falls back to
+      -- the plain one
+      local plain = app.fs.isFile(out .. "/" .. file .. ".png") and Image{fromFile = out .. "/" .. file .. ".png"}
+      if plain and plain:isEqual(image) then
+        print("same " .. file .. " in " .. TAG)
+      else
+        image:saveAs(out .. "/" .. file .. "_" .. TAG .. ".png")
+        print("built " .. file .. "_" .. TAG .. " (layer " .. layer_name .. ")")
+      end
+    else
+      spr:saveCopyAs(out .. "/" .. file .. ".png")
+      print("built " .. file .. " (layer " .. layer_name .. ")")
+    end
   end
   for _, l in ipairs(spr.layers) do l.isVisible = shown[l] end
 end

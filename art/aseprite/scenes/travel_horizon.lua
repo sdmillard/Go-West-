@@ -60,4 +60,10 @@ K.layer("horizon", function()
   end
 end)
 
+-- the wooded ridge (teal over pine) greys under snow and turns with the grass in autumn
+K.season_extra = {
+  {season="winter", map={teal="stone", pine="stone_dk"}},
+  {season="autumn", region="plains", map={teal="silt", pine="silt_dk"}},
+  {season="autumn", region="tallgrass", map={teal="rust", pine="brick"}},
+}
 K.save("travel_horizon")
