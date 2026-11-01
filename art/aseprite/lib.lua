@@ -109,6 +109,9 @@ local OPEN = {sky=true, sky_top=true, light_blue=true, mist=true, haze=true, far
 -- wooded ridge in a travel layer): K.season_extra = {{season="winter", region=nil, y0=100,
 -- y1=150, map={leaf="white"}}, ...}. The first matching entry wins over the tables.
 K.season_extra = {}
+-- With K.flat_snow, snow settles only where a top edge runs level (branch tiers, ridge tops),
+-- not down every sloping edge, which reads as a white outline round a fir.
+K.flat_snow = false
 local function seasonal(image, season)
   local name_of = {}
   for n, c in pairs(col) do name_of[c] = n end
@@ -165,9 +168,12 @@ local function seasonal(image, season)
         if same == 0 then t = (season == "winter") and "white" or "silt" end
       end
       -- (on a single layer, transparent above means open sky behind)
-      if season == "winter" and n and CAPPED[n] and (at(x, y - 1) == nil or OPEN[at(x, y - 1)]) then
+      local function open(m) return m == nil or OPEN[m] end
+      if season == "winter" and n and CAPPED[n] and open(at(x, y - 1))
+          and not (K.flat_snow and (open(at(x - 1, y)) or open(at(x + 1, y))
+            or not open(at(x - 1, y - 1)) or not open(at(x + 1, y - 1)))) then
         t = "white"
-        if (x * 7 + y * 3) % 5 < 2 and at(x, y + 1) == n then image:drawPixel(x, y + 1, col.white) end
+        if not K.flat_snow and (x * 7 + y * 3) % 5 < 2 and at(x, y + 1) == n then image:drawPixel(x, y + 1, col.white) end
       end
       if t then image:drawPixel(x, y, col[t]) end
     end

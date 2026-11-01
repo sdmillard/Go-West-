@@ -135,6 +135,7 @@ end)
 
 -- winter: the sunlit fir needles stay dark under their snow, the forest floor goes white
 -- and the road is trodden to mud
+K.flat_snow = true
 K.season_extra = {
   {season="winter", y0=0, y1=100, map={grass="leaf"}},
   {season="winter", y0=100, y1=150, map={leaf="white", pine="stone_lt", ochre="silt", gold="silt_lt", sand="stone_lt", rust="silt_dk"}},

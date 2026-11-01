@@ -163,6 +163,7 @@ K.layer("ground", function()
 end)
 
 -- winter: the road is trodden to mud through the snow
+K.flat_snow = true
 K.season_extra = {
   {season="winter", y0=100, y1=150, map={ochre="silt", sand="stone_lt", clap_sh="stone_lt", rust="silt_dk", leaf="white", pine="stone_lt"}},
 }
