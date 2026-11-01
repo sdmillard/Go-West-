@@ -37,7 +37,10 @@ func choose_back(game) -> void:
 	game.service_return={}
 func choose(game,command: String) -> bool:
 	for index in range(game.pending.choices.size()):
-		if game.pending.choices[index].get("crime_command","")==command:return game.choose(index)
+		if game.pending.choices[index].get("crime_command","")==command:
+			# The old hit roll: an attack that comes to a fight off the grid. New openings are tested in test_strike.gd.
+			if command in ["shoot","assault"]:game.crime.forced_strike="fight"
+			return game.choose(index)
 	return false
 func run():
 	var store=Store.new()
@@ -131,6 +134,8 @@ func run():
 	check(restored!=null and restored.state==store.upgraded_state(previous.state) and restored.characters.profiles==store.normalize(previous.characters),"Authentic old save keeps people, contract and inventory without invented incidents")
 	game=outfit()
 	game.open_crime()
+	# The old hit roll: an attack that comes to a fight off the grid.
+	game.crime.forced_strike="fight"
 	choose(game,"shoot")
 	var good: Dictionary=store.capture(game)
 	for field in ["random","record"]:
@@ -843,6 +848,7 @@ func emigrant_checks(store) -> void:
 	game.crime.scenes.passing_emigrants.escape_injury=0
 	var food: int=game.state.food
 	game.open_crime()
+	game.crime.forced_strike="fight"
 	choose(game,"shoot")
 	check(game.crime.incident().attempt=="killed" and game.crime.record.services[key].mile==game.state.miles,"A family member can be killed, and the camp joins the record")
 	choose(game,"take")

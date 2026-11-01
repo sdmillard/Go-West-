@@ -86,6 +86,7 @@ func run():
 		var bullets: int=game.state.bullets
 		game.open_crime()
 		var index: int=game.pending.choices.find_custom(func(choice):return choice.crime_command=="assault")
+		game.crime.forced_strike="fight"
 		check(index>=0 and game.choose(index),"Unarmed venue attack is selectable even with bullets")
 		check(game.state.bullets==bullets and game.state.day==1,"Venue assault costs one day and no ammunition")
 		check(restored(game)!=null,"Venue assault witnesses and outcomes round-trip")

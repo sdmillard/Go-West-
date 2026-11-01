@@ -29,7 +29,9 @@ func party(values: Array,bonds: Array=[],temperaments: Array=["Cautious","Cautio
 		profile.boundaries=game.characters.catalog.boundaries(values[index-1])
 	game.crime.record.bonds=bonds
 	return game
+## The old hit roll: the attack comes to a fight, settled off the grid. New openings are tested in test_strike.gd.
 func attack(game,target: int) -> bool:
+	game.crime.forced_strike="fight"
 	return game.open_attack(target) and game.choose(0)
 ## Turns the companion in a slot against the party: allowed to betray, trust at zero.
 func turn(game,slot: int) -> void:
@@ -215,6 +217,7 @@ func run():
 	target.pressed.emit()
 	check(screen.service_window.visible and screen.service_window.title=="Attack Ben","The attack menu opens in the native UI")
 	screen.game.crime.companion_rules.hit=0
+	screen.game.crime.forced_strike="fight"
 	screen._service_choice(0)
 	check(screen.record_notice.visible and screen.record_notice.title=="YOU SHOT AT BEN" and "You shot at Ben: missed." in screen.record_notice.dialog_text and "Fled: Ben. They took " in screen.record_notice.dialog_text and not "(trust" in screen.record_notice.dialog_text,"The result of the shot is shown at once: the miss and who left")
 	check(screen.record_notice.size.x<=640 and screen.record_notice.size.y<=330,"The shot notice fits the 640 x 360 screen")

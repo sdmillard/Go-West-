@@ -526,6 +526,7 @@ func _test_bug_regressions() -> void:
 		g6.state.merge({"day": 40, "landmark": "fort_bridger", "next_landmark": "fort_bridger", "miles": 989, "leg_length": 0, "leg_miles": 0}, true)
 		g6._arrive_landmark(true, false)
 		g6.open_crime()
+		g6.crime.forced_strike = "fight"
 		g6.crime.choose(g6, "shoot")
 		if g6.state.status != "traveling" or g6.crime.incident().is_empty():
 			continue

@@ -225,6 +225,10 @@ func _opening_banner(place_name: String, reason: String, venue: Dictionary) -> S
 			return "Garrison rifles level across %s! Cut your way to the retreat edge or drop the patrol." % place_name
 		"shoot":
 			return "Your party levels rifles at %s. Single-shot muzzleloaders—make every ball count." % place_name
+		"assault":
+			return "They saw you coming at %s. No powder: close in with blades, stocks and fists." % place_name
+		"party":
+			return "It comes to a fight among your own wagons at %s. The ones you turned on are armed." % place_name
 		"bandits":
 			return "Armed highwaymen block %s! Take cover behind the wagons and drive them off." % place_name
 		"riders":
