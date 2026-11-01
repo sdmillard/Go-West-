@@ -134,6 +134,7 @@ func run():
 	check(armed.counter_checkout({"novablades":-1}) and int(armed.state.novablades)==0 and float(armed.state.money)>cash+59.0,"Selling the Novablade pays for it and it is gone")
 	check(Armory.loadout(armed.state,2)[0].blade!="novablades","Sold, it is out of the fight")
 	test_sailor()
+	test_novablade_custody()
 	print("Unhinged: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures==0 else 1)
 
@@ -185,3 +186,40 @@ func test_sailor():
 	var plain=started(4242,"classic")
 	plain._present(event(plain,"beached_ship"))
 	check(not plain.can_choose(index),"Classic cannot sign on the sailor")
+
+func crime_pick(game,command: String) -> bool:
+	for i in range(game.pending.get("choices",[]).size()):
+		if game.pending.choices[i].get("crime_command","")==command:return game.choose(i)
+	return false
+
+func test_novablade_custody():
+	var detention=preload("res://simulation/detention.gd")
+	check(detention.valid_arms({"rifles":5,"knives":4,"novablades":1}),"Custody accepts a Novablade alongside ordinary arms")
+	for invalid in [null,[],{"unknown_blade":1},{"novablades":0},{"novablades":2},{"novablades":-1},{"novablades":0.5},{"novablades":"1"},{"rifles":101}]:
+		check(not detention.valid_arms(invalid),"Custody rejects malformed or excessive arms: "+str(invalid))
+	var game=started(57)
+	game._present(event(game,"novablade"))
+	check(game.choose(0),"Find the Novablade before arrest")
+	game.pending={}
+	game.state.next_landmark="independence"
+	game._arrive_landmark()
+	check(game.open_crime("independence"),"Open the store crime with a Novablade")
+	game.crime.scenes.independence.theft_success=0
+	check(crime_pick(game,"theft") and crime_pick(game,"surrender"),"A caught thief surrenders with the Novablade equipped")
+	var current: Dictionary=game.crime.incident()
+	check(current.stage=="custody" and current.custody.arms.get("novablades",0)==1 and game.state.novablades==0,"Arrest holds the blade instead of leaving it in inventory")
+	var store=Store.new()
+	var saved: Dictionary=store.capture(game)
+	var restored=store.restore(JSON.parse_string(JSON.stringify(saved)))
+	check(restored!=null,"A save with the Novablade in custody restores")
+	if restored==null:return
+	check(store.capture(restored)==saved,"Custody preserves the whole save exactly")
+	check(crime_pick(restored,"bail") and restored.state.novablades==1,"Release returns the one confiscated Novablade")
+	var released: Dictionary=store.capture(restored)
+	var after=store.restore(JSON.parse_string(JSON.stringify(released)))
+	check(after!=null and store.capture(after)==released,"The custody record remains valid after the blade is returned")
+	check(crime_pick(restored,"finish") and not crime_pick(restored,"bail") and restored.state.novablades==1,"Closing the hearing cannot return the blade twice")
+	for invalid in [2,0,-1,0.5,"1"]:
+		var bad: Dictionary=saved.duplicate(true)
+		bad.crime.record.incidents.back().custody.arms.novablades=invalid
+		check(store.restore(bad)==null,"Save validation rejects a forged custody blade count: "+str(invalid))

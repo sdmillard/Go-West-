@@ -254,7 +254,9 @@ static func recover_arms(crime,game,current: Dictionary) -> void:
 	var before: Dictionary=broken_custody(crime,current)
 	if not before.is_empty():return_arms(game,before)
 static func valid_arms(arms: Variant) -> bool:
-	return arms is Dictionary and arms.keys().all(func(key):return key in preload("res://simulation/armory.gd").KEYS and whole(arms[key],1,100))
+	if not arms is Dictionary:return false
+	var armory=preload("res://simulation/armory.gd")
+	return arms.keys().all(func(key):return (key in armory.KEYS and whole(arms[key],1,100)) or (armory.ODD_BLADES.has(key) and whole(arms[key],1,1)))
 static func valid_custody(crime,r: Dictionary,current: Dictionary,game) -> bool:
 	if not current.has("custody"):return current.stage!="custody"
 	var c: Variant=current.custody
