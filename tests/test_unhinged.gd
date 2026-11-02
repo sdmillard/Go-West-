@@ -158,6 +158,7 @@ func run():
 	test_laundry()
 	test_civet_transport()
 	await test_road_sprites()
+	test_more_oddities()
 	print("Unhinged: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures==0 else 1)
 
@@ -214,6 +215,59 @@ func crime_pick(game,command: String) -> bool:
 	for i in range(game.pending.get("choices",[]).size()):
 		if game.pending.choices[i].get("crime_command","")==command:return game.choose(i)
 	return false
+
+func test_more_oddities():
+	var ids: Array=["prairie_lift","parcel_cart","moon_cart"]
+	var probe=started(57)
+	var dice=probe.rng.state
+	probe.oddities.deal(57,"unhinged",probe.catalog,probe.route)
+	check(probe.rng.state==dice,"Adding oddities never draws from the journey RNG when dealing")
+	var previous_catalog=load("res://simulation/event_catalog.gd").new()
+	check(previous_catalog.load_data(probe.catalog.events.filter(func(e):return e.id not in ids)),"Load the prior catalog for a seeded compatibility check")
+	for seed_value in [0,57,4242]:
+		var prior=load("res://simulation/oddities.gd").new()
+		prior.deal(seed_value,"unhinged",previous_catalog,probe.route)
+		probe.oddities.deal(seed_value,"unhinged",probe.catalog,probe.route)
+		check(probe.oddities.places.filter(func(p):return p.id not in ids)==prior.places and probe.oddities.road.filter(func(p):return p.id not in ids)==prior.road,"New entries preserve the older oddities' deal and placement for seed %d" % seed_value)
+	for id in ids:
+		var content: Dictionary=event(probe,id)
+		check(content.category=="absurd" and is_equal_approx(content.chance,0.25),"New encounter has the authored Unhinged deal chance: "+id)
+		var store=Store.new()
+		var game=started(57)
+		game._present(event(game,id))
+		var saved: Dictionary=store.capture(game)
+		var restored=store.restore(JSON.parse_string(JSON.stringify(saved)))
+		check(restored!=null and store.capture(restored)==saved,"New encounter offer round-trips exactly: "+id)
+		var cash: float=game.state.money
+		var clothes: int=game.state.clothing
+		var day: int=game.state.day
+		var food: int=game.state.food
+		check(game.choose(0),"The first new encounter choice is usable: "+id)
+		if id=="parcel_cart":
+			check(is_equal_approx(game.state.money,cash-2.0) and game.state.clothing==clothes+1 and game.state.day==day,"The parcel charges two dollars for one clothing set without spending a day")
+		else:
+			check(game.state.day==day+1 and game.state.food<food,"Waiting at the new encounter spends a real day and meals: "+id)
+			check(is_equal_approx(game.state.money,cash+(0.5 if id=="moon_cart" else 0.0)),"The new encounter pays only its stated amount: "+id)
+		check(id in game.seen,"The new encounter is consumed once: "+id)
+		game.pending={}
+		game.oddities.places=[]
+		game.oddities.road=[{"id":id,"mile":0}]
+		check(game.oddities.due(game).is_empty(),"A completed encounter cannot recur: "+id)
+		var declined=started(57)
+		declined._present(event(declined,id))
+		var before: Dictionary=declined.state.duplicate(true)
+		check(declined.choose(1) and declined.state==before,"Declining does not grant goods, cash or spend a day: "+id)
+	var broke=started(57)
+	broke.state.money=1
+	broke._present(event(broke,"parcel_cart"))
+	var before: Dictionary=broke.state.duplicate(true)
+	check(not broke.can_choose(0) and not broke.choose(0) and broke.state==before,"The parcel cannot be bought without two dollars")
+	var classic=Simulation.new(57,"classic",true)
+	check(classic.oddities.places.is_empty() and classic.oddities.road.is_empty(),"The expanded catalog still deals nothing to Classic")
+	var store=Store.new()
+	var previous: Dictionary=store.capture(started(57))
+	previous.rules="4afaf9f81f2e45ee2aa4decd755f029b00f5f469cabf50cbe944fa4950f6b784"
+	check(store.restore(previous)!=null,"Saves from the previous master rules still load")
 
 func take_civet():
 	var game=started(57)
