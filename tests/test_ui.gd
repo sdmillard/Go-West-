@@ -16,6 +16,28 @@ func run() -> void:
 	screen = Main.instantiate()
 	root.add_child(screen)
 	await process_frame
+	check(int(screen.seed_input.value) == int(screen.game.state.seed), "Opening seed matches the generated journey")
+	check(screen.seed_input.value >= 0 and screen.seed_input.value <= screen.MAX_JOURNEY_SEED, "Generated seed fits the editable range")
+	var initial_state: Dictionary = screen.game.state.duplicate(true)
+	var initial_rng = screen.game.rng.state
+	var initial_seed: int = int(screen.seed_input.value)
+	screen.new_seed_button.pressed.emit()
+	check(int(screen.seed_input.value) != initial_seed, "NEW SEED picks a different seed")
+	check(screen.game.state == initial_state and screen.game.rng.state == initial_rng, "NEW SEED leaves the current journey and its random stream unchanged")
+	check(screen.seed_input.get_rect().end.x <= screen.new_seed_button.position.x and screen.new_seed_button.get_rect().end.x <= 312, "Seed controls fit beside NEW JOURNEY")
+	screen.seed_input.value = 830
+	screen._new_journey()
+	check(screen.game.state.seed == 830, "NEW JOURNEY uses an edited seed")
+	var replay_state: Dictionary = screen.game.state.duplicate(true)
+	screen._new_journey()
+	check(screen.game.state == replay_state and screen.seed_input.value == 830, "Starting again preserves the selected seed and repeats setup")
+	screen.new_seed_button.pressed.emit()
+	var generated_seed: int = int(screen.seed_input.value)
+	screen._new_journey()
+	check(screen.game.state.seed == generated_seed, "NEW JOURNEY uses the newly generated seed")
+	# Keep the existing UI scenario reproducible.
+	screen.seed_input.value = 1848
+	screen._new_journey()
 	check(screen.departure_view.visible and screen.game.state.status == "outfitting", "New game opens departure setup")
 	check(root.content_scale_size == Vector2i(800, 360), "Native pixel canvas includes the 800 by 360 action ribbon")
 	await capture("departure")

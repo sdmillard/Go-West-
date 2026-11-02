@@ -4,6 +4,8 @@ Last updated November 1, 2026. Latest checkpoint: tactical combat finished and m
 
 ## Resume here
 
+- **Automatic starting seed (Codex; Spencer asked):** opening the game generates an editable seed; NEW SEED chooses a different value for the next NEW JOURNEY without changing the current simulation or its RNG. NEW JOURNEY retains the selected seed for repeatable testing; loading restores the saved seed. UI regression coverage checks generation, manual seeds, replay and control spacing.
+
 - **Faster Civet with roof cargo (Codex; Spencer approved the loaded sprite):** 90 powered miles per driving day, retained across short stops through optional saved `civet_drive_day` / `civet_miles_left`. Calendar-changing activities expire unused distance. The acquired car always uses `civet_loaded.png` (generated alongside the original sedan by `scenes/corolla.lua`), including when oxen pull it after fuel exhaustion. Roadside offer art remains the empty sedan. Tests cover last-day mileage, saving, expiry and loaded-art selection.
 
 - **Three more Unhinged oddities (Codex):** `prairie_lift`, `parcel_cart` and `moon_cart` are authored encounters with 25% seeded inclusion each. They are appended to preserve all existing encounters' seeded placements. They use the existing text encounter system and actual day/meal/cash/clothing accounting; tests are in `tests/test_unhinged.gd`. The original six-item Unhinged handoff now has an implemented first pass throughout.
