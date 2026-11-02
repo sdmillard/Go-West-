@@ -4,6 +4,8 @@ Last updated November 1, 2026. Latest checkpoint: tactical combat finished and m
 
 ## Resume here
 
+- **Faster Civet with roof cargo (Codex; Spencer approved the loaded sprite):** 90 powered miles per driving day, retained across short stops through optional saved `civet_drive_day` / `civet_miles_left`. Calendar-changing activities expire unused distance. The acquired car always uses `civet_loaded.png` (generated alongside the original sedan by `scenes/corolla.lua`), including when oxen pull it after fuel exhaustion. Roadside offer art remains the empty sedan. Tests cover last-day mileage, saving, expiry and loaded-art selection.
+
 - **Three more Unhinged oddities (Codex):** `prairie_lift`, `parcel_cart` and `moon_cart` are authored encounters with 25% seeded inclusion each. They are appended to preserve all existing encounters' seeded placements. They use the existing text encounter system and actual day/meal/cash/clothing accounting; tests are in `tests/test_unhinged.gd`. The original six-item Unhinged handoff now has an implemented first pass throughout.
 
 - **Unhinged road sprites and persistent Civet (November 1, Codex; Spencer approved the three new sprites):** see `UNHINGED_MODE.md`, item 5. Existing blade/car/bison/wagon/traveler art is reused; vending machine, phone booth and frogs come from `art/aseprite/scenes/road_oddities.lua`. Frogs fall from the existing weather-cloud base. Spencer revised the Civet: it replaces a wagon, remains after fuel expiry, and surviving oxen can pull it. The optional `civet_wagon_id` ties it to the existing vehicle ledger. Tests remain in `tests/test_unhinged.gd`. Next is more oddities, item 6.

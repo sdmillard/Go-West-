@@ -111,7 +111,7 @@ func run():
 	var before: int=int(walker.state.miles)
 	walker.pending={}
 	walker.travel()
-	check(int(walker.state.miles)-before==30 or int(walker.state.leg_miles)==int(walker.state.leg_length),"The Civet makes 30 miles a day (or reaches the stop)")
+	check(int(walker.state.miles)-before==90 or int(walker.state.leg_miles)==int(walker.state.leg_length),"The Civet makes up to 90 miles a day (or reaches the stop)")
 	# The Novablade: a pack item that is the best blade in any fight, weightless and never for sale.
 	var armed=started(seed_value)
 	var Armory=armed.Armory
@@ -157,6 +157,7 @@ func run():
 	await test_cul_de_sac()
 	test_laundry()
 	test_civet_transport()
+	test_civet_fast_day()
 	await test_road_sprites()
 	test_more_oddities()
 	print("Unhinged: %d checks, %d failures" % [checks,failures])
@@ -290,8 +291,13 @@ func test_civet_transport():
 		for i in range(3):
 			if not game.pending.is_empty():game.choose(pick(game))
 			var before: int=game.state.miles
-			check(game.travel() and game.state.miles>before and game.state.miles-before<=30,"Powered day %d makes up to thirty miles, including without oxen" % (i+1))
+			check(game.travel() and game.state.miles>before and game.state.miles-before<=90,"Powered day %d makes up to ninety miles, including without oxen" % (i+1))
 			check(game.state.fuel==2-i,"Each powered travel day consumes one day of fuel")
+			for hop in range(20):
+				if game.oddities.civet_miles_left(game.state)==0:break
+				if not game.pending.is_empty():game.choose(pick(game))
+				if game.oddities.civet_miles_left(game.state)==0:break
+				game.travel()
 		check(game.oddities.civet_index(game.state)==0 and not game.oddities.powered_civet(game.state),"The empty Civet stays with the party")
 		var saved: Dictionary=store.capture(game)
 		var restored=store.restore(JSON.parse_string(JSON.stringify(saved)))
@@ -333,6 +339,45 @@ func test_civet_transport():
 	broken._present(event(broken,"civet"))
 	check(broken.choose(0) and broken.state.wagon_train[0].condition==100 and broken.camp_repair.work.is_empty() and not broken.state.has("repair_wagon_id"),"A running replacement Civet does not inherit the abandoned wagon's broken part")
 
+func test_civet_fast_day():
+	var game=take_civet()
+	game.state.next_landmark="fort_hall"
+	game._arrive_landmark()
+	game.state.miles=int(game.route.node_miles().fort_hall)
+	game.choose(pick(game))
+	game.state.fuel=1
+	game.state.oxen=0
+	game.team_conditions.sync(game)
+	var mile: int=game.state.miles
+	var day: int=game.state.day
+	check(game.travel() and game.state.day==day+1 and game.state.fuel==0 and game.oddities.civet_miles_left(game.state)>0,"The last fuel day retains unused miles at a short stop")
+	var store=Store.new()
+	var saved: Dictionary=store.capture(game)
+	var restored=store.restore(JSON.parse_string(JSON.stringify(saved)))
+	check(restored!=null and store.capture(restored)==saved and restored.oddities.powered_civet(restored.state),"Remaining last-day driving miles save and restore without requiring oxen")
+	var meals: int=game.state.food
+	for hop in range(10):
+		if game.oddities.civet_miles_left(game.state)==0:break
+		if not game.pending.is_empty():game.choose(pick(game))
+		game.travel()
+	check(game.state.miles-mile==90 and game.state.day==day+1 and game.state.food==meals and game.state.fuel==0,"A full 90-mile day crosses short stops without extra fuel, meals or calendar days")
+	check(game.oddities.civet_index(game.state)==0 and not game.oddities.powered_civet(game.state),"The loaded car remains when its final driving allowance runs out")
+	game.pending={}
+	var after: int=game.state.miles
+	game.travel()
+	check(game.state.miles==after and game.state.day==day+1,"No oxen means no movement after the full last fuel day")
+	var idle=take_civet()
+	idle.travel()
+	idle.pending={}
+	check(idle.rest() and idle.oddities.civet_miles_left(idle.state)==0 and idle.state.fuel==2,"Spending another day at camp expires leftover miles without using another fuel day")
+	for invalid in [-1,91,0.5,"90"]:
+		var bad: Dictionary=saved.duplicate(true)
+		bad.state.civet_miles_left=invalid
+		check(store.restore(bad)==null,"Saves reject an invalid daily driving allowance: "+str(invalid))
+	var bad: Dictionary=saved.duplicate(true)
+	bad.state.erase("civet_drive_day")
+	check(store.restore(bad)==null,"A driving allowance requires its calendar day")
+
 func test_road_sprites():
 	var view_script=load("res://ui/trail_view.gd")
 	for spec in [["road_vending_machine",28,36],["road_phone_booth",28,44],["road_frogs",64,12]]:
@@ -345,6 +390,7 @@ func test_road_sprites():
 				if image.get_pixel(x,y).a not in [0.0,1.0]:crisp=false
 		check(crisp,"New road sprite has crisp transparent edges: "+spec[0])
 	check(view_script.CAR==load("res://art/pixels/corolla.png") and view_script.SABER==load("res://art/pixels/lightsaber.png") and view_script.ROAD_BISON==load("res://art/pixels/hunt_bison.png"),"Existing sedan, Novablade and bison artwork is reused")
+	check(view_script.LOADED_CAR.get_size()==Vector2(80,56) and view_script.LOADED_CAR!=view_script.CAR,"The acquired Civet has its own roof-loaded sprite with unchanged wheel anchors")
 	var screen=load("res://ui/main.tscn").instantiate()
 	root.add_child(screen)
 	await process_frame
@@ -378,8 +424,18 @@ func test_road_sprites():
 	screen.game.pending={}
 	screen.game.travel()
 	screen.game.state.fuel=0
+	screen.game.state.civet_miles_left=0
 	screen._refresh()
 	check(screen.landscape.vehicle=="civet" and not screen.landscape.civet_powered and screen.landscape.civet_index==0,"The real travel view keeps the sedan and shows ox-drawn mode after fuel expires")
+	screen.landscape.scene_id=""
+	screen.landscape.scrolling=true
+	screen.landscape.scroll_distance=0
+	screen.landscape._process(0.1)
+	var ox_scroll: float=screen.landscape.scroll_distance
+	screen.landscape.civet_powered=true
+	screen.landscape.scroll_distance=0
+	screen.landscape._process(0.1)
+	check(is_equal_approx(screen.landscape.scroll_distance,ox_scroll*3.0),"Powered Civet visibly scrolls three times faster than ox-drawn travel")
 	screen.queue_free()
 	await process_frame
 

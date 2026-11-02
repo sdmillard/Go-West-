@@ -619,15 +619,18 @@ func travel() -> bool:
 	var distance: int = pace_miles + rng.randi_range(-2, 2)
 	# The Civet replaces one wagon. Once empty, it remains and surviving oxen must pull it.
 	var civet: bool = oddities.powered_civet(state) and not on_river
+	var continuing_drive: bool=civet and oddities.civet_miles_left(state)>0
 	if civet:
-		distance = 30
+		distance = oddities.civet_miles_left(state) if continuing_drive else oddities.CIVET_MILES_PER_DAY
 		if not state.has("civet_wagon_id"):
 			if state.extended_route:Train.ensure(self,state)
 			state["civet_wagon_id"]=int(state.wagon_train[0].id) if state.has("wagon_train") else 0
+	var driving_budget: int=distance
+	var miles_before: int=state.miles
 	if state.extended_route:
 		# On the river the current carries the party; the team rides or is driven alongside.
 		field_outings.moving=true
-		_tick_day(false, not on_river and (not civet or Train.count(state)>1))
+		if not continuing_drive:_tick_day(false, not on_river and (not civet or Train.count(state)>1))
 		field_outings.moving=false
 		if state.status != "traveling":
 			return true
@@ -643,7 +646,7 @@ func travel() -> bool:
 		var east: bool=Direction.heading(self)=="east"
 		var uncapped: int=distance
 		distance=mini(distance,int(state.leg_miles) if east else int(state.leg_length)-int(state.leg_miles))
-		_spare_miles=uncapped-distance if not east and not on_river and route.nodes[str(state.next_landmark)].get("minor",false) else 0
+		_spare_miles=uncapped-distance if not civet and not east and not on_river and route.nodes[str(state.next_landmark)].get("minor",false) else 0
 		distance=Direction.clamp_at_cache(self,distance)
 		distance=field_outings.clamp_distance(self,distance)
 		state.leg_miles+=-distance if east else distance
@@ -654,15 +657,17 @@ func travel() -> bool:
 		field_outings.resolve_returns(self)
 	else:
 		state.miles = mini(DESTINATION, state.miles + distance)
-		_tick_day(false)
+		if not continuing_drive:_tick_day(false)
 	if civet:
-		state.fuel=int(state.fuel)-1
-		if state.fuel==0:journal.append("Day %d · The Civet runs out of fuel. It stays with the party; surviving oxen can pull it." % int(state.day))
+		state["civet_drive_day"]=int(state.day)
+		state["civet_miles_left"]=maxi(0,driving_budget-absi(int(state.miles)-miles_before))
+		if not continuing_drive:state.fuel=int(state.fuel)-1
+		if state.fuel==0 and int(state.civet_miles_left)==0:journal.append("Day %d · The Civet runs out of fuel. It stays with the party; surviving oxen can pull it." % int(state.day))
 	journal.append("Day %d · Traveled to mile %d. Food remaining: %d units." % [state.day, state.miles, state.food])
 	var odd_note: String = oddities.daily_note(self)
 	if not odd_note.is_empty():journal.append("Day %d · %s" % [state.day, odd_note])
 	if state.status == "traveling" and not crime.check_pursuit(self) and not crime.check_wanted(self):
-		if not field_outings.camp_notice(self) and not Direction.cache_notice(self):_schedule_event()
+		if not field_outings.camp_notice(self) and not Direction.cache_notice(self):_schedule_event(not continuing_drive)
 	# Spare miles count only for an arrival inside this day's travel, so a save never holds them half-used.
 	_spare_miles=0
 	return true

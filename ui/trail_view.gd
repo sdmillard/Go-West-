@@ -39,6 +39,7 @@ const FAR_SHORE := 201.0
 const PATH_END := 214.0
 const RAFT_LENGTH := 25.0 # path units; one unit is (2, -1) pixels, 2.24 sprite pixels along the deck
 const CAR = preload("res://art/pixels/corolla.png")
+const LOADED_CAR=preload("res://art/pixels/civet_loaded.png")
 ## Unhinged: the elder god is too vast to exist inside the world; only the tear it looks through shows,
 ## and deliberately not as pixel art (Spencer's picture, drawn at full window resolution).
 const ELDER_RIFT = preload("res://art/pixels/elder_rift.png")
@@ -176,7 +177,8 @@ func _process(delta: float) -> void:
 			if crossing_elapsed >= crossing_duration:
 				finish_crossing()
 	elif scrolling and scene_id.is_empty():
-		scroll_distance = fposmod(scroll_distance + delta * 28.0, 432.0 * 7.0)
+		var speed: float=84.0 if vehicle=="civet" and civet_powered else 28.0
+		scroll_distance = fposmod(scroll_distance + delta * speed, 432.0 * 7.0)
 	motion = maxf(0.0, motion - delta)
 	queue_redraw()
 
@@ -257,14 +259,14 @@ func _draw_trailing_wagons(frame: int,shift: int,bob: int) -> void:
 	# Representative trailing wagons; the ledger holds the complete train.
 	for i in range(mini(3,maxi(0,train_count-1)),0,-1):
 		var rear: int=137-i*130+shift
-		if i==civet_index:draw_texture(CAR,Vector2(rear,99-i*5+bob))
+		if i==civet_index:draw_texture(LOADED_CAR,Vector2(rear,83-i*5+bob))
 		else:draw_texture_rect_region(WAGON,Rect2(rear,75-i*5+bob,96,64),Rect2(frame*96,0,96,64))
 		if i==civet_index and civet_powered:continue
 		draw_line(Vector2(rear+83,117-i*5),Vector2(rear+110,117-i*5),Color("76503c"),1)
 		draw_texture_rect_region(OXEN,Rect2(rear+90,103-i*5,48,32),Rect2(((frame+i*2)%FRAMES)*48,0,48,32))
 
 func _draw_civet(at: Vector2,frame: int,powered: bool) -> void:
-	draw_texture(CAR,at)
+	draw_texture(LOADED_CAR,at-Vector2(0,16))
 	if powered:return
 	# The oxen face the same way as the sedan, pulling from its front bumper.
 	draw_line(at+Vector2(75,24),at+Vector2(117,24),Color("76503c"),1)
@@ -274,7 +276,7 @@ func _draw_civet(at: Vector2,frame: int,powered: bool) -> void:
 func _draw_mirror_train(frame: int) -> void:
 	# Reuse the party's actual assets and traveler palettes, reflected eastward behind it.
 	draw_set_transform(Vector2(430,48),0,Vector2(-1,1))
-	if vehicle=="civet":draw_texture(CAR,Vector2(0,24))
+	if vehicle=="civet":draw_texture(LOADED_CAR,Vector2(0,8))
 	else:draw_texture_rect_region(WAGON,Rect2(0,0,96,64),Rect2(frame*96,0,96,64))
 	draw_line(Vector2(83,42),Vector2(125,42),Color("76503c"),1)
 	for i in range(2):draw_texture_rect_region(OXEN,Rect2(100+i*34,28,48,32),Rect2(((frame+i*4)%FRAMES)*48,0,48,32))

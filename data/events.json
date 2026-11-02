@@ -365,12 +365,12 @@
     "needs": "wagon",
     "choices": [
       {
-        "label": "Drive it · 30 miles a day while the fuel lasts",
+        "label": "Drive it · 90 miles a day while the fuel lasts",
         "effects": {
           "vehicle": "civet",
           "fuel": 3
         },
-        "result": "You transfer the load into the carriage and leave the wagon. Everything fits. The oxen follow along."
+        "result": "You leave the wagon and lash the baggage to the carriage. Bedrolls, sacks and a crate go on the roof, with rope over the lot. The oxen follow along."
       },
       {
         "label": "Stay with the oxen",

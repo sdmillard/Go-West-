@@ -22,8 +22,11 @@ static func civet_index(state: Dictionary) -> int:
 	for i in range(wagons.size()):
 		if int(wagons[i].id)==int(state.civet_wagon_id):return i
 	return -1
+const CIVET_MILES_PER_DAY: int=90
+static func civet_miles_left(state: Dictionary) -> int:
+	return int(state.get("civet_miles_left",0)) if civet_index(state)>=0 and int(state.get("civet_drive_day",-1))==int(state.day) else 0
 static func powered_civet(state: Dictionary) -> bool:
-	return civet_index(state)>=0 and int(state.get("fuel",0))>0
+	return civet_index(state)>=0 and (int(state.get("fuel",0))>0 or civet_miles_left(state)>0)
 
 ## Deals from the catalog with an RNG of its own, so the main game's dice are untouched.
 func deal(seed_value: int, mode: String, catalog, route) -> void:

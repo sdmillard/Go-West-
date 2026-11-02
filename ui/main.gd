@@ -1959,7 +1959,9 @@ func _refresh() -> void:
 		var nearby: Dictionary=game.context.market(game)
 		stats.text+="\nPOST: STOCK LIMITED" if nearby.post else ("\nTRADERS NEARBY" if nearby.available else ("\nNO TRADERS ON THIS ROAD" if nearby.get("remote",false) else "\nNO TRADERS IN SIGHT"))
 	if game.oddities.civet_index(s)>=0:
-		stats.text += ("\nCIVET FUEL %d DAYS" % s.fuel) if int(s.fuel)>0 else "\nCIVET · OUT OF FUEL"
+		var miles_left: int=game.oddities.civet_miles_left(s)
+		stats.text += ("\nCIVET FUEL %d DAYS" % s.fuel) if int(s.fuel)>0 else ("\nCIVET · LAST FUEL" if miles_left>0 else "\nCIVET · OUT OF FUEL")
+		if miles_left>0:stats.text+=" · %d MI LEFT TODAY" % miles_left
 	if not s.items.is_empty():
 		stats.text += "\nPACK: " + ", ".join(s.items).to_upper()
 	progress.max_value = game.destination()
