@@ -23,7 +23,8 @@ var party_fight_journal: int = -1
 var dog_window=preload("res://ui/dog_view.gd").new()
 var livestock_window=preload("res://ui/livestock_view.gd").new()
 var fishing_window=preload("res://ui/fishing_view.gd").new()
-var game = Simulation.new(1848, "classic", true)
+const MAX_JOURNEY_SEED: int=999999999
+var game = Simulation.new(generate_seed(), "classic", true)
 var landscape: Control
 var date_label: Label
 var stats: Label
@@ -37,6 +38,7 @@ var pace: OptionButton
 var rations: OptionButton
 var mode: OptionButton
 var seed_input: SpinBox
+var new_seed_button: Button
 var travel_settings_label: Label
 var travel_button: Button
 var rest_button: Button
@@ -125,6 +127,15 @@ var grave_remains: Dictionary = {}
 var crossing_result: Dictionary = {}
 var map_view: Control
 var map_button: Button
+
+static func generate_seed(previous: int=-1) -> int:
+	var random:=RandomNumberGenerator.new()
+	random.randomize()
+	var value: int=random.randi_range(0,MAX_JOURNEY_SEED)
+	return (value+1)%(MAX_JOURNEY_SEED+1) if value==previous else value
+
+func _new_seed() -> void:
+	seed_input.value=generate_seed(int(seed_input.value))
 
 func _ready() -> void:
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -397,29 +408,33 @@ func _build_ui() -> void:
 	mode.add_item("CLASSIC")
 	mode.add_item("UNHINGED")
 	mode.tooltip_text = "The mode for the next NEW JOURNEY.\nCLASSIC: the 1848 trail as it was.\nUNHINGED: the same trail, but on rare days something that cannot be there is there. It is told as plainly as any broken axle."
-	place(mode, Rect2(11, 334, 104, 17))
+	place(mode, Rect2(11, 334, 96, 17))
 	var seed_label := label("SEED")
 	seed_label.add_theme_color_override("font_color", Color("f6e7bc"))
-	place(seed_label, Rect2(128, 338, 28, 10))
+	place(seed_label, Rect2(113, 338, 28, 10))
 	seed_input = SpinBox.new()
 	seed_input.min_value = 0
-	seed_input.max_value = 999999999
-	seed_input.value = 1848
+	seed_input.max_value = MAX_JOURNEY_SEED
+	seed_input.value = game.state.seed
+	seed_input.tooltip_text="Seed for the next NEW JOURNEY. Generated when the game opens; type a known seed to replay it."
 	seed_input.get_line_edit().add_theme_constant_override("minimum_character_width", 1)
-	place(seed_input, Rect2(161, 334, 102, 17))
-	place(button("NEW JOURNEY", _new_journey), Rect2(274, 334, 90, 17))
+	place(seed_input, Rect2(144, 334, 86, 17))
+	new_seed_button=button("NEW SEED",_new_seed)
+	new_seed_button.tooltip_text="Pick a different seed for the next NEW JOURNEY. Your current journey continues unchanged."
+	place(new_seed_button,Rect2(236,334,70,17))
+	place(button("NEW JOURNEY", _new_journey), Rect2(312, 334, 86, 17))
 	save_button = button("SAVE", _save_journey)
-	place(save_button, Rect2(370, 334, 47, 17))
+	place(save_button, Rect2(404, 334, 44, 17))
 	load_button = button("LOAD", _load_journey)
-	place(load_button, Rect2(422, 334, 47, 17))
-	place(button("JOURNAL", _show_journal), Rect2(474, 334, 67, 17))
+	place(load_button, Rect2(454, 334, 44, 17))
+	place(button("JOURNAL", _show_journal), Rect2(504, 334, 60, 17))
 	record_notice = AcceptDialog.new()
 	record_notice.title = "TRAIL RECORD"
 	wrap_dialog(record_notice)
 	add_child(record_notice)
 	options_button = button("OPTIONS", _show_preferences)
 	options_button.tooltip_text = "Display and automatic travel preferences"
-	place(options_button, Rect2(548, 334, 80, 17))
+	place(options_button, Rect2(570, 334, 58, 17))
 	grave_window = AcceptDialog.new()
 	grave_window.title = "A GRAVESTONE ON THE TRAIL"
 	grave_window.confirmed.connect(_leave_gravestone)
