@@ -357,7 +357,7 @@
     "oddity": "road",
     "chance": 0.25,
     "title": "The 2002 Hanabi Civet",
-    "text": "A beige four-door carriage with no horses idles beside the trail, doors unlocked. A dial reads 287,000. A note on the seat says STILL RUNS. The gauge suggests fuel for about three days. There is a hitch at the back that will take the wagon.",
+    "text": "A beige four-door carriage with no horses idles beside the trail, doors unlocked. A dial reads 287,000. A note on the seat says STILL RUNS. The gauge suggests fuel for about three days. You could transfer your load and leave the wagon here. When the fuel is gone, surviving oxen could pull the carriage.",
     "miles": [
       100,
       1200
@@ -370,7 +370,7 @@
           "vehicle": "civet",
           "fuel": 3
         },
-        "result": "The oxen ride in the wagon behind. Nobody discusses how."
+        "result": "You transfer the load into the carriage and leave the wagon. Everything fits. The oxen follow along."
       },
       {
         "label": "Stay with the oxen",

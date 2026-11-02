@@ -1,4 +1,5 @@
--- 1990s Beige Toyota Corolla Encounter Sprite (80x40, transparent background).
+-- Hanabi Civet: reuse the beige sedan artwork (80x40, transparent background).
+-- The legacy output filename is retained for existing art loaders.
 -- Drawn in ui/trail_view.gd either as a roadside encounter or as the player's vehicle.
 local K = dofile(app.params.kit)
 local W, H = 80, 40

@@ -1,5 +1,6 @@
 extends RefCounted
 ## Wagons share supplies, but never share drivers or draft animals.
+const Oddities=preload("res://simulation/oddities.gd")
 static func count(s: Dictionary) -> int:
  if s.get("vehicle","")=="foot":return 0
  return s.wagon_train.size() if s.has("wagon_train") else 1
@@ -60,12 +61,15 @@ static func ready(game) -> String:
  for wagon in game.state.wagon_train:
   var title: String="Wagon %d" % (int(wagon.id)+1)
   if wagon.driver not in people:return title+" needs an available driver. Reassign the train in Supplies > Wagons & teams."
-  if wagon.team.is_empty() or condition(game,wagon)<=0:return title+" needs an ox team. Assign draft animals in Supplies > Wagons & teams."
+  var powered: bool=Oddities.powered_civet(game.state) and game.state.wagon_train.find(wagon)==Oddities.civet_index(game.state)
+  if not powered and (wagon.team.is_empty() or condition(game,wagon)<=0):return title+" needs an ox team. Assign draft animals in Supplies > Wagons & teams."
   if int(wagon.condition)<=0:return title+" needs repairs before the train can move."
  return ""
 static func capacity(s: Dictionary,per_ox: float,per_wagon: float) -> float:
  var total: float=0
- for wagon in s.get("wagon_train",[]):total+=minf(per_wagon,wagon.team.size()*per_ox)
+ for wagon in s.get("wagon_train",[]):
+  var powered: bool=Oddities.powered_civet(s) and s.wagon_train.find(wagon)==Oddities.civet_index(s)
+  total+=per_wagon if powered else minf(per_wagon,wagon.team.size()*per_ox)
  return total
 static func speed(game) -> float:
  var result: float=INF

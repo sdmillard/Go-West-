@@ -285,6 +285,7 @@ func restore(value: Variant):
 	if s.has("household_gear_lb") and (not (s.household_gear_lb is int or s.household_gear_lb is float) or not is_finite(s.household_gear_lb) or s.household_gear_lb<0 or s.household_gear_lb>100000):return null
 	if not Simulation.Cabins.valid_state(s,game.route):return null
 	if s.has("clean_until") and (s.mode!="unhinged" or not integer(s.clean_until,0,int(s.day)+14)):return null
+	if s.has("civet_wagon_id") and (s.mode!="unhinged" or not integer(s.civet_wagon_id,0,int(s.get("next_wagon_id",1))-1)):return null
 	if s.status=="returned_east" and (s.landmark!=game.route.start or s.miles!=0 or s.next_landmark!=""):return null
 	if not game.route.nodes.has(s.landmark) or (s.next_landmark != "" and not game.route.nodes.has(s.next_landmark)) or not integer(s.day,0,100000) or not integer(s.miles,0,game.route.longest_miles) or s.leg_miles > s.leg_length:
 		return null

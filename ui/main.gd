@@ -1958,18 +1958,20 @@ func _refresh() -> void:
 	if s.extended_route:
 		var nearby: Dictionary=game.context.market(game)
 		stats.text+="\nPOST: STOCK LIMITED" if nearby.post else ("\nTRADERS NEARBY" if nearby.available else ("\nNO TRADERS ON THIS ROAD" if nearby.get("remote",false) else "\nNO TRADERS IN SIGHT"))
-	if int(s.fuel) > 0:
-		stats.text += "\nCIVET FUEL %d DAYS" % s.fuel
+	if game.oddities.civet_index(s)>=0:
+		stats.text += ("\nCIVET FUEL %d DAYS" % s.fuel) if int(s.fuel)>0 else "\nCIVET · OUT OF FUEL"
 	if not s.items.is_empty():
 		stats.text += "\nPACK: " + ", ".join(s.items).to_upper()
 	progress.max_value = game.destination()
 	progress.value = s.miles
 	landscape.terrain = s.terrain
 	landscape.miles = s.miles
-	landscape.vehicle = "civet" if int(s.fuel) > 0 and s.vehicle == "wagon" else s.vehicle
+	landscape.civet_index=game.oddities.civet_index(s)
+	landscape.civet_powered=game.oddities.powered_civet(s)
+	landscape.vehicle = "civet" if landscape.civet_index==0 else s.vehicle
 	landscape.dog_present=game.dogs.alive()
 	landscape.livestock_counts={"dairy_cows":int(s.get("dairy_cows",0)),"goats":int(s.get("goats",0)),"hens":int(s.get("hens",0))}
-	landscape.herded_oxen=int(s.oxen) if s.vehicle=="foot" else 0
+	landscape.herded_oxen=int(s.oxen) if s.vehicle=="foot" or (landscape.civet_powered and game.wagon_count()==1) else 0
 	landscape.mount_plan=game.mount_plan() if s.vehicle=="foot" and game.Mounts.animals(s)>0 else {}
 	landscape.train_count=game.wagon_count()
 	landscape.walkers=int(s.party_size)

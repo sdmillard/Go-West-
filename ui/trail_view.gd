@@ -43,6 +43,13 @@ const CAR = preload("res://art/pixels/corolla.png")
 ## and deliberately not as pixel art (Spencer's picture, drawn at full window resolution).
 const ELDER_RIFT = preload("res://art/pixels/elder_rift.png")
 const SABER = preload("res://art/pixels/lightsaber.png")
+const ROAD_BISON=preload("res://art/pixels/hunt_bison.png")
+const VENDING_MACHINE=preload("res://art/pixels/road_vending_machine.png")
+const PHONE_BOOTH=preload("res://art/pixels/road_phone_booth.png")
+const FROGS=preload("res://art/pixels/road_frogs.png")
+const FROG_CLOUD_BASE: int=32 # the existing rain-cloud sprite's lower rolls
+var civet_index: int=-1
+var civet_powered: bool=false
 # Backdrop layers drawn far to near, with how fast each slides relative to the road.
 const PARALLAX := {
 	"prairie": [["sky", 0.0], ["clouds", 0.04], ["far", 0.1], ["floor", 0.0]],
@@ -197,7 +204,7 @@ func _draw() -> void:
 	var set_name: String = "river" if river_scene else ("travel_" + terrain if terrain in ["mountains", "desert", "forest"] else "prairie")
 	var layers: Array = PARALLAX[set_name]
 	for layer in layers:
-		if layer[0] == "clouds" and weather_id in ["thunderstorm", "hail", "rain", "heavy_rain", "blizzard", "fog"]:
+		if layer[0] == "clouds" and (encounter=="frog_rain" or weather_id in ["thunderstorm", "hail", "rain", "heavy_rain", "blizzard", "fog"]):
 			continue # fair-weather clouds are lost under the overcast
 		var texture: Texture2D = _travel_texture(set_name + "_" + layer[0])
 		var drift: float = clock_time * 1.5 if layer[0] == "clouds" else 0.0
@@ -216,18 +223,15 @@ func _draw() -> void:
 	var frame := int(clock_time * FPS) % FRAMES if scrolling or motion > 0 else 0
 	var bob := -1 if frame % 4 >= 2 else 0
 	var shift := int(sin(clock_time * 3) * 3) if motion > 0 else 0
+	if encounter=="mirror_train":_draw_mirror_train(frame)
+	if vehicle!="foot":_draw_trailing_wagons(frame,shift,bob)
 	if vehicle=="foot":
 		_draw_herd(scrolling or motion>0)
 		_draw_party(Vector2(150+shift,132+bob),scrolling or motion>0)
 	elif vehicle == "civet":
-		draw_texture(CAR, Vector2(173 + shift, 96 + bob))
+		_draw_civet(Vector2(137+shift,99+bob),frame,civet_powered)
+		if civet_powered:_draw_herd(scrolling or motion>0)
 	else:
-		# Representative trailing wagons; the ledger holds the complete train.
-		for i in range(mini(3,maxi(0,train_count-1)),0,-1):
-			var rear: int=137-i*130+shift
-			draw_texture_rect_region(WAGON,Rect2(rear,75-i*5+bob,96,64),Rect2(frame*96,0,96,64))
-			draw_line(Vector2(rear+83,117-i*5),Vector2(rear+110,117-i*5),Color("76503c"),1)
-			draw_texture_rect_region(OXEN,Rect2(rear+90,103-i*5,48,32),Rect2(((frame+i*2)%FRAMES)*48,0,48,32))
 		draw_texture_rect_region(WAGON, Rect2(137 + shift, 75 + bob, 96, 64), Rect2(frame * 96, 0, 96, 64))
 		draw_line(Vector2(220 + shift, 117), Vector2(262 + shift, 117), Color("76503c"), 1)
 		draw_texture_rect_region(OXEN, Rect2(227 + shift, 103, 48, 32), Rect2(frame * 48, 0, 48, 32))
@@ -237,14 +241,48 @@ func _draw() -> void:
 		"novablade":
 			draw_texture(SABER, Vector2(83, 120))
 		"civet":
-			if vehicle != "civet":
+			if civet_index<0:
 				draw_texture(CAR, Vector2(39, 99))
+		"vending_machine":draw_texture(VENDING_MACHINE,Vector2(353,103))
+		"phone_booth":draw_texture(PHONE_BOOTH,Vector2(350,95))
+		"french_bison":draw_texture_rect_region(ROAD_BISON,Rect2(347,115,40,24),Rect2(0,0,40,24))
 		"stampede":
 			_draw_stampede()
 		"muddy_trail":
 			draw_rect(Rect2(150, 130, 80, 7), Color("76503c"))
 			draw_rect(Rect2(159, 132, 60, 2), Color("a16b43"))
 	_draw_weather()
+
+func _draw_trailing_wagons(frame: int,shift: int,bob: int) -> void:
+	# Representative trailing wagons; the ledger holds the complete train.
+	for i in range(mini(3,maxi(0,train_count-1)),0,-1):
+		var rear: int=137-i*130+shift
+		if i==civet_index:draw_texture(CAR,Vector2(rear,99-i*5+bob))
+		else:draw_texture_rect_region(WAGON,Rect2(rear,75-i*5+bob,96,64),Rect2(frame*96,0,96,64))
+		if i==civet_index and civet_powered:continue
+		draw_line(Vector2(rear+83,117-i*5),Vector2(rear+110,117-i*5),Color("76503c"),1)
+		draw_texture_rect_region(OXEN,Rect2(rear+90,103-i*5,48,32),Rect2(((frame+i*2)%FRAMES)*48,0,48,32))
+
+func _draw_civet(at: Vector2,frame: int,powered: bool) -> void:
+	draw_texture(CAR,at)
+	if powered:return
+	# The oxen face the same way as the sedan, pulling from its front bumper.
+	draw_line(at+Vector2(75,24),at+Vector2(117,24),Color("76503c"),1)
+	for i in range(2):
+		draw_texture_rect_region(OXEN,Rect2(at+Vector2(90+i*34,4),Vector2(48,32)),Rect2(((frame+i*4)%FRAMES)*48,0,48,32))
+
+func _draw_mirror_train(frame: int) -> void:
+	# Reuse the party's actual assets and traveler palettes, reflected eastward behind it.
+	draw_set_transform(Vector2(430,48),0,Vector2(-1,1))
+	if vehicle=="civet":draw_texture(CAR,Vector2(0,24))
+	else:draw_texture_rect_region(WAGON,Rect2(0,0,96,64),Rect2(frame*96,0,96,64))
+	draw_line(Vector2(83,42),Vector2(125,42),Color("76503c"),1)
+	for i in range(2):draw_texture_rect_region(OXEN,Rect2(100+i*34,28,48,32),Rect2(((frame+i*4)%FRAMES)*48,0,48,32))
+	for i in range(mini(walkers,5)):
+		var profile: Dictionary=traveler_profiles[i] if i<traveler_profiles.size() else {"id":i}
+		var row: int=int(profile.get("appearance",{}).get("outfit",i%2))
+		draw_texture_rect_region(Palette.texture(WALKER,profile),Rect2(25+i*18,38,16,24),Rect2(0,row*24,16,24))
+	draw_set_transform(Vector2.ZERO)
 
 ## The party's cabin at a timber stop, at its build stage (cabin_frame: -1 none, 0 logs,
 ## 1 half walls, 2 rafters, 3 finished, 4 finished under snow), with chimney smoke once lived in.
@@ -341,6 +379,11 @@ func _draw_walkers(origin: Vector2,moving: bool,offset: int=0) -> void:
 
 func _draw_weather() -> void:
 	var full := Rect2(0, 0, 432, 150)
+	if encounter=="frog_rain":
+		_draw_rain_sky(false)
+		for frog in frog_particles():
+			draw_texture_rect_region(FROGS,Rect2(frog.at,Vector2(16,12)),Rect2(int(frog.frame)*16,0,16,12))
+		return
 	if weather_id in ["thunderstorm", "hail"]:
 		# The light goes under a thunderhead whose base drifts slowly across the top of the view.
 		draw_rect(full, Color(0.13, 0.15, 0.2, 0.28))
@@ -386,9 +429,7 @@ func _draw_weather() -> void:
 	elif weather_id in ["rain", "heavy_rain"]:
 		# A low grey overcast, rain on the wind, and drops splashing on the ground.
 		var heavy := weather_id == "heavy_rain"
-		draw_rect(full, Color(0.2, 0.24, 0.28, 0.26 if heavy else 0.16))
-		draw_rect(Rect2(0, 0, 432, 90), Color(0.5, 0.55, 0.58, 0.4)) # the sky goes grey
-		_tile(RAIN_CLOUDS, 0, posmod(int(clock_time * 2.0), 432))
+		_draw_rain_sky(heavy)
 		var slant := 2 if heavy else 1
 		for index in range(80 if heavy else 40):
 			var x := posmod(index * 37 - int(clock_time * 20.0 * slant), 432)
@@ -413,6 +454,21 @@ func _draw_weather() -> void:
 		draw_rect(full, Color(0.8, 0.83, 0.78, 0.3))
 		if not scene_id.is_empty() or not crossing.is_empty():
 			_draw_fog_banks() # on the road the banks lie behind the wagon instead
+
+func frog_particles() -> Array:
+	var result: Array=[]
+	var step: int=int(clock_time*10)
+	for i in range(30):
+		result.append({"at":Vector2(posmod(i*67-step*2,416),FROG_CLOUD_BASE+posmod(i*43+step*9,138-FROG_CLOUD_BASE)),"frame":(i+step)%2,"falling":true})
+	for i in range(12):
+		var phase: int=(i+step)%4
+		result.append({"at":Vector2(posmod(i*71+13,416),133+posmod(i*7,5)-(3 if phase==3 else 0)),"frame":2+phase%2,"falling":false})
+	return result
+
+func _draw_rain_sky(heavy: bool) -> void:
+	draw_rect(Rect2(0,0,432,150),Color(0.2,0.24,0.28,0.26 if heavy else 0.16))
+	draw_rect(Rect2(0,0,432,90),Color(0.5,0.55,0.58,0.4))
+	_tile(RAIN_CLOUDS,0,posmod(int(clock_time*2.0),432))
 
 func _draw_fog_banks() -> void:
 	if weather_id == "fog":

@@ -97,7 +97,7 @@ func run():
 	g.pending={}
 	g._schedule_event(false)
 	check(g.pending.get("id","")!="taco_hut","Taco Hut does not come round twice")
-	# The Civet needs a wagon to tow; on foot it waits further down the road.
+	# The Civet replaces a wagon; on foot it waits further down the road.
 	var walker=started(seed_value)
 	walker.oddities.road=[{"id":"civet","mile":0}]
 	walker.oddities.places=[]
@@ -107,7 +107,7 @@ func run():
 	check(walker.oddities.due(walker).get("id","")=="civet","The Civet waits for a wagon")
 	walker._present(walker.oddities.due(walker))
 	walker.choose(0)
-	check(int(walker.state.fuel)==3 and walker.state.vehicle=="wagon","Taking the Civet keeps the wagon and fills three days of fuel")
+	check(int(walker.state.fuel)==3 and walker.state.vehicle=="wagon","Taking the Civet reuses the vehicle slot and fills three days of fuel")
 	var before: int=int(walker.state.miles)
 	walker.pending={}
 	walker.travel()
@@ -156,6 +156,8 @@ func run():
 	test_novablade_custody()
 	await test_cul_de_sac()
 	test_laundry()
+	test_civet_transport()
+	await test_road_sprites()
 	print("Unhinged: %d checks, %d failures" % [checks,failures])
 	quit(0 if failures==0 else 1)
 
@@ -212,6 +214,120 @@ func crime_pick(game,command: String) -> bool:
 	for i in range(game.pending.get("choices",[]).size()):
 		if game.pending.choices[i].get("crime_command","")==command:return game.choose(i)
 	return false
+
+func take_civet():
+	var game=started(57)
+	for e in game.catalog.events:game.seen.append(e.id)
+	game.oddities.places=[]
+	game.oddities.road=[]
+	game._present(event(game,"civet"))
+	check(game.choose(0),"Take the Civet in place of the wagon")
+	return game
+
+func test_civet_transport():
+	var store=Store.new()
+	for with_oxen in [true,false]:
+		var game=take_civet()
+		check(game.oddities.civet_index(game.state)==0 and game.wagon_count()==1,"The Civet replaces one vehicle slot, without adding a wagon")
+		if not with_oxen:
+			game.state.oxen=0
+			game.team_conditions.sync(game)
+		check(game.Train.ready(game).is_empty() and game.provisions.capacity(game.state)>0,"Fuelled Civet has carrying capacity and does not require draft animals")
+		for i in range(3):
+			if not game.pending.is_empty():game.choose(pick(game))
+			var before: int=game.state.miles
+			check(game.travel() and game.state.miles>before and game.state.miles-before<=30,"Powered day %d makes up to thirty miles, including without oxen" % (i+1))
+			check(game.state.fuel==2-i,"Each powered travel day consumes one day of fuel")
+		check(game.oddities.civet_index(game.state)==0 and not game.oddities.powered_civet(game.state),"The empty Civet stays with the party")
+		var saved: Dictionary=store.capture(game)
+		var restored=store.restore(JSON.parse_string(JSON.stringify(saved)))
+		check(restored!=null and store.capture(restored)==saved,"An empty Civet saves and restores exactly")
+		if not game.pending.is_empty() and with_oxen:game.choose(pick(game))
+		game.pending={}
+		var before: int=game.state.miles
+		var day: int=game.state.day
+		check(game.travel(),"Try to move the empty Civet")
+		if with_oxen:check(game.state.miles>before and game.state.fuel==0,"Surviving oxen pull the empty Civet at normal team speed")
+		else:check(game.state.miles==before and game.state.day==day and game.pending.get("id","") in ["no_team","train_unready"],"Without oxen the empty Civet stops without spending another day")
+	var legacy=take_civet()
+	legacy.state.erase("civet_wagon_id")
+	var saved: Dictionary=store.capture(legacy)
+	saved.rules="e9c49cd422a9a7fa3178931a0ad99cbe2b2c8442c5c51b940bf815d038a514f8"
+	var old=store.restore(JSON.parse_string(JSON.stringify(saved)))
+	check(old!=null and old.oddities.powered_civet(old.state),"Previous master powered-Civet saves remain usable")
+	if old!=null:
+		old.pending={}
+		old.travel()
+		check(old.state.has("civet_wagon_id"),"An older powered Civet retains its identity before fuel is spent")
+	var cached=take_civet()
+	cached.state.fuel=0
+	cached.pending={}
+	check(cached.abandon_wagon({"food":30,"clothing":5}) and cached.oddities.civet_index(cached.state)==-1,"Leaving the Civet uses ordinary cache rules and removes its travel sprite")
+	var replacement: Dictionary=cached.state.duplicate(true)
+	check(cached.provisions.WagonTrade.apply_inventory(cached,replacement,1) and cached.oddities.civet_index(replacement)==-1,"Buying a different wagon does not turn it into the left-behind Civet")
+	cached.pending={}
+	check(cached.recover_wagon() and cached.oddities.civet_index(cached.state)==0,"Recovering the cached Civet restores its identity")
+	var bad: Dictionary=store.capture(cached)
+	bad.state.civet_wagon_id=int(bad.state.next_wagon_id)
+	check(store.restore(bad)==null,"A save cannot invent an unknown Civet vehicle id")
+	var plain=started(57,"classic")
+	plain._present(event(plain,"civet"))
+	check(not plain.choose(0),"Classic cannot acquire the Civet")
+	var broken=started(57)
+	broken.pending={}
+	check(broken.camp_repair.queue(broken,"axles"),"Prepare a broken wagon before the car encounter")
+	broken._present(event(broken,"civet"))
+	check(broken.choose(0) and broken.state.wagon_train[0].condition==100 and broken.camp_repair.work.is_empty() and not broken.state.has("repair_wagon_id"),"A running replacement Civet does not inherit the abandoned wagon's broken part")
+
+func test_road_sprites():
+	var view_script=load("res://ui/trail_view.gd")
+	for spec in [["road_vending_machine",28,36],["road_phone_booth",28,44],["road_frogs",64,12]]:
+		var texture: Texture2D=load("res://art/pixels/%s.png" % spec[0])
+		check(texture!=null and texture.get_size()==Vector2(spec[1],spec[2]),"New road sprite has its intended native size: "+spec[0])
+		var image: Image=texture.get_image()
+		var crisp: bool=true
+		for y in range(image.get_height()):
+			for x in range(image.get_width()):
+				if image.get_pixel(x,y).a not in [0.0,1.0]:crisp=false
+		check(crisp,"New road sprite has crisp transparent edges: "+spec[0])
+	check(view_script.CAR==load("res://art/pixels/corolla.png") and view_script.SABER==load("res://art/pixels/lightsaber.png") and view_script.ROAD_BISON==load("res://art/pixels/hunt_bison.png"),"Existing sedan, Novablade and bison artwork is reused")
+	var screen=load("res://ui/main.tscn").instantiate()
+	root.add_child(screen)
+	await process_frame
+	for id in ["novablade","civet","vending_machine","french_bison","phone_booth","frog_rain","mirror_train"]:
+		screen.game=started(57)
+		screen.game.pending={}
+		screen.game.travel()
+		screen.game._present(event(screen.game,id))
+		var dice=screen.game.rng.state
+		var health_dice=screen.game.party_health.rng.state
+		screen._refresh()
+		screen.landscape.queue_redraw()
+		await process_frame
+		await process_frame
+		check(screen.landscape.encounter==id and screen.landscape.scene_id.is_empty(),"Road oddity draws in the travel strip: "+id)
+		check(screen.game.rng.state==dice and screen.game.party_health.rng.state==health_dice,"Road visuals do not roll simulation dice: "+id)
+	screen.landscape.set_process(false)
+	screen.landscape.clock_time=0
+	var first: Array=screen.landscape.frog_particles()
+	check(first==screen.landscape.frog_particles(),"Frog rain is deterministic at a fixed animation time")
+	for time in [0.0,0.1,1.7,19.0]:
+		screen.landscape.clock_time=time
+		var valid: bool=true
+		for frog in screen.landscape.frog_particles():
+			if not Rect2(0,0,432,150).encloses(Rect2(frog.at,Vector2(16,12))):valid=false
+			if frog.falling and frog.at.y<view_script.FROG_CLOUD_BASE:valid=false
+			if not frog.falling and frog.at.y<126:valid=false
+		check(valid,"Frogs emerge below clouds, land on the ground and remain inside the scene at %.1fs" % time)
+	check(first!=screen.landscape.frog_particles(),"Falling and hopping frogs animate over time")
+	screen.game=take_civet()
+	screen.game.pending={}
+	screen.game.travel()
+	screen.game.state.fuel=0
+	screen._refresh()
+	check(screen.landscape.vehicle=="civet" and not screen.landscape.civet_powered and screen.landscape.civet_index==0,"The real travel view keeps the sedan and shows ox-drawn mode after fuel expires")
+	screen.queue_free()
+	await process_frame
 
 func test_laundry():
 	var game=started(57)

@@ -136,7 +136,7 @@ func _initialize() -> void:
 			"civet":
 				sample.seen.append("muddy_trail")
 				sample.travel()
-				check(sample.state.miles == 30 and sample.state.fuel == 2 and sample.state.vehicle == "wagon", "Civet tows the wagon 30 miles on a day of fuel")
+				check(sample.state.miles == 30 and sample.state.fuel == 2 and sample.state.vehicle == "wagon", "Civet replaces the vehicle and drives 30 miles on a day of fuel")
 				sample.state.fuel = 0
 				sample.travel()
 				check(sample.state.miles < 60, "Out of fuel, the oxen pull again")
