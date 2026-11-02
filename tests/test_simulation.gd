@@ -136,10 +136,10 @@ func _initialize() -> void:
 			"civet":
 				sample.seen.append("muddy_trail")
 				sample.travel()
-				check(sample.state.miles == 30 and sample.state.fuel == 2 and sample.state.vehicle == "wagon", "Civet replaces the vehicle and drives 30 miles on a day of fuel")
+				check(sample.state.miles == 90 and sample.state.fuel == 2 and sample.state.vehicle == "wagon", "Civet replaces the vehicle and drives 90 miles on a day of fuel")
 				sample.state.fuel = 0
 				sample.travel()
-				check(sample.state.miles < 60, "Out of fuel, the oxen pull again")
+				check(sample.state.miles < 180, "Out of fuel, the oxen pull again")
 			"elder_god":
 				check(sample.state.food == 160 and sample.state.health == 95, "Elder god exchanges food for health")
 	var a = Simulation.new(93, "unhinged")

@@ -29,7 +29,7 @@ If the authorities take a traveler carrying the Novablade, it is held with their
 | round_hole | place | Fort Hall to The Dalles | Drop in bullets or food; something may come back |
 | traffic_light | place | just short of South Pass | Wait a day, or run it (risk to team and party) |
 | novablade | road | miles 60–1500 | The Novablade: the best blade in any tactical fight (see WEAPONS.md) |
-| civet | road | miles 100–1200, needs a wagon | The 2002 Hanabi Civet replaces one wagon; 30 mi/day for 3 fuel days, then surviving oxen can pull it |
+| civet | road | miles 100–1200, needs a wagon | The roof-loaded 2002 Hanabi Civet replaces one wagon; 90 mi/day for 3 driving days, then surviving oxen can pull it |
 | elder_god | road | miles 150–1800 | Food offering for health, or refuse |
 | vending_machine | road | miles 500–1500 | Takes no coin of yours; shake it |
 | french_bison | road | miles 200–900 | Hunting advice (40 lb), will not be shot |
@@ -53,6 +53,8 @@ Spencer approved every item below. Build them in this order. Each one is its own
 5. **Road encounter sprites — implemented.** `trail_view.gd` reuses the existing Novablade, beige sedan, hunting bison, wagon and traveler art. Only the vending machine, phone booth and four-pose frogs are new, approved Aseprite sprites (`scenes/road_oddities.lua`). Frog rain shares the weather clouds, emerges from their lower edge and hops on the ground; it never rolls simulation dice. The mirror train reflects the party's existing wagon and traveler palettes eastward.
 
    **Civet revision (Spencer):** the sedan replaces one wagon rather than towing it. The ordinary vehicle ledger still handles capacity, repairs, drivers, caches and sales; optional `state.civet_wagon_id` identifies the replaced slot. The running car does not inherit the old wagon's broken part. Fuel gives three powered travel days, including the final day with no oxen. After fuel expires the sedan remains, uses normal ox-drawn movement, and stops if no team survives. Its identity survives saving and caching; buying a different wagon does not recreate it. The original `corolla.png` filename is retained to reuse approved artwork, not as an in-game name. **Next: item 6, more oddities.**
+
+   **Faster, loaded Civet:** powered travel is now 90 miles per driving day. `civet_drive_day` and `civet_miles_left` retain that day's unused distance across ordinary stops, including after the final fuel unit is committed. Continuing the same drive uses no additional day, meals or fuel and gets no extra daily random encounter roll. Resting, a paid crossing or another activity that advances the calendar expires the unused allowance. The approved `civet_loaded.png` shows sacks, bedrolls, a crate and blanket lashed to the roof from acquisition onward, powered or ox-drawn; the roadside car before acquisition stays empty. The wagon never returns to replace the car when fuel ends.
 6. **More oddities — first batch implemented.** The lift, parcel cart and moon cart are appended to `data/events.json`, each at chance 0.25, with no real brand names. The lift has a route span and map label; the carts have road mile windows. They use the existing text encounters and choice effects. Declining grants nothing, paid choices enforce their cost, and waiting costs actual days and meals. Tests cover their offers, accounting, saves, seeded compatibility and one-use behavior. Further batches can use the same fields and plain 1848 voice; this completes the original handoff's six steps.
 
 Rules to keep:
