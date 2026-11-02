@@ -631,5 +631,75 @@
         }
       }
     ]
+  },
+  {
+    "id": "prairie_lift",
+    "category": "absurd",
+    "trigger": "random",
+    "oddity": "place",
+    "chance": 0.25,
+    "title": "The lift",
+    "text": "Two metal doors stand upright in the grass. There is no building around them. A button beside the doors is marked UP. When you press it, a small clean room opens. There is a bench inside and another button marked PRAIRIE.",
+    "label": "LIFT",
+    "span": ["fort_kearny", "fort_laramie"],
+    "choices": [
+      {
+        "label": "Ride to the prairie · 1 day and meals",
+        "effects": {"days": 1, "health": 4},
+        "rest": true,
+        "result": "The room hums quietly while you sit. At dusk the doors open on the same grass. Everyone has had a good rest."
+      },
+      {
+        "label": "Stay on this prairie",
+        "effects": {},
+        "result": "The doors close. You hear a bell from somewhere below the grass."
+      }
+    ]
+  },
+  {
+    "id": "parcel_cart",
+    "category": "absurd",
+    "trigger": "random",
+    "oddity": "road",
+    "chance": 0.25,
+    "title": "A parcel for you",
+    "text": "A man with a parcel cart asks your name, then finds a bundle already addressed to you. The writing is your own. He says the carriage charge is two dollars. You do not remember sending it.",
+    "miles": [250, 1100],
+    "choices": [
+      {
+        "label": "Pay the carriage · $2 for a clothing set",
+        "requires": {"money": 2},
+        "effects": {"money": -2, "clothing": 1},
+        "result": "Inside is a complete change of clothes, folded the way you fold them. The man enters your payment in a book and goes on."
+      },
+      {
+        "label": "Refuse the parcel",
+        "effects": {},
+        "result": "He marks the bundle RETURN TO SENDER. Neither of you knows where that will be."
+      }
+    ]
+  },
+  {
+    "id": "moon_cart",
+    "category": "absurd",
+    "trigger": "random",
+    "oddity": "road",
+    "chance": 0.25,
+    "title": "A load of moonlight",
+    "text": "A man pushes a handcart with a small moon tied under a blanket. Its light shows through the cloth, though it is broad day. He asks you to mind the cart while he fetches a wheel. He offers fifty cents for the trouble.",
+    "miles": [1100, 1750],
+    "choices": [
+      {
+        "label": "Mind the cart · 1 day and meals, earn 50 cents",
+        "effects": {"days": 1, "money": 0.5},
+        "rest": true,
+        "result": "He returns at dusk, fits the wheel and pays the fifty cents. Before he goes, he tightens the blanket. You can still see the light through it."
+      },
+      {
+        "label": "Keep to your own journey",
+        "effects": {},
+        "result": "He thanks you all the same and sits down beside the cart."
+      }
+    ]
   }
 ]

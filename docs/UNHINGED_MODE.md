@@ -6,7 +6,7 @@ Spencer started this mode on November 1, 2026 (he also calls it surreal mode). T
 
 Pick **UNHINGED** in the mode box on the bottom bar, then press **NEW JOURNEY**. The mode is saved with the journey.
 
-The seed deals the journey its own assortment (`simulation/oddities.gd`, `deal`). Each oddity in `data/events.json` with `"category": "absurd"` has a `chance` of being dealt. The deal uses its own random stream, so it never changes the main game's dice. Same seed, same oddities. Over seeds 0 to 399, a journey gets about 4 oddities on average, and fewer than 2% get none.
+The seed deals the journey its own assortment (`simulation/oddities.gd`, `deal`). Each oddity in `data/events.json` with `"category": "absurd"` has a `chance` of being dealt. The stories are authored entries; the seed selects and places them rather than writing new stories. The deal uses its own random stream, so it never changes the main game's dice. Same seed and catalog, same oddities. With the expanded catalog, a journey gets about 5 oddities on average. New entries are appended so the older encounters retain their seeded deals and locations.
 
 - **Places** (`"oddity": "place"`) stand at one mile on one stretch of road: listed `edges`, or every main-road stretch in a `span`. `near` sets how far along the stretch (default a quarter to three quarters). They are marked on the trail map as teal diamonds with their `label`, and turn pale once visited. They meet the party before the stop ahead. A place on a branch the party does not take is simply missed.
 - **Road encounters** (`"oddity": "road"`) wait at a guide mile inside their `miles` window. `"needs": "wagon"` holds an encounter back (to later in the road) while the party has no wagon.
@@ -36,6 +36,9 @@ If the authorities take a traveler carrying the Novablade, it is held with their
 | phone_booth | road | miles 1150–1700 | Extended warranty |
 | frog_rain | road | miles 100–1400 | 30 lb of frog legs |
 | mirror_train | road | miles 700–1700 | Your own party, a week older, going east; trade |
+| prairie_lift | place | Fort Kearny to Fort John | A lift standing in the grass; a real day of rest and meals, or leave it alone |
+| parcel_cart | road | miles 250–1100 | A parcel in your own handwriting; $2 for one clothing set, or refuse |
+| moon_cart | road | miles 1100–1750 | Mind a small moon on a handcart for a day and meals; earn 50 cents |
 
 Names are invented (Spencer: legally distinct names, so Novablade, Hanabi Civet, Taco Hut).
 
@@ -50,7 +53,7 @@ Spencer approved every item below. Build them in this order. Each one is its own
 5. **Road encounter sprites — implemented.** `trail_view.gd` reuses the existing Novablade, beige sedan, hunting bison, wagon and traveler art. Only the vending machine, phone booth and four-pose frogs are new, approved Aseprite sprites (`scenes/road_oddities.lua`). Frog rain shares the weather clouds, emerges from their lower edge and hops on the ground; it never rolls simulation dice. The mirror train reflects the party's existing wagon and traveler palettes eastward.
 
    **Civet revision (Spencer):** the sedan replaces one wagon rather than towing it. The ordinary vehicle ledger still handles capacity, repairs, drivers, caches and sales; optional `state.civet_wagon_id` identifies the replaced slot. The running car does not inherit the old wagon's broken part. Fuel gives three powered travel days, including the final day with no oxen. After fuel expires the sedan remains, uses normal ox-drawn movement, and stops if no team survives. Its identity survives saving and caching; buying a different wagon does not recreate it. The original `corolla.png` filename is retained to reuse approved artwork, not as an in-game name. **Next: item 6, more oddities.**
-6. **More oddities.** Add new entries to `data/events.json` with `"category": "absurd"`, `oddity`, `chance` (keep about 0.25) and placement fields. Use invented names only, never a real brand (Spencer: legally distinct, for example Taco Hut, Novablade, Hanabi Civet). Tell them in the same plain 1848 voice as everything else.
+6. **More oddities — first batch implemented.** The lift, parcel cart and moon cart are appended to `data/events.json`, each at chance 0.25, with no real brand names. The lift has a route span and map label; the carts have road mile windows. They use the existing text encounters and choice effects. Declining grants nothing, paid choices enforce their cost, and waiting costs actual days and meals. Tests cover their offers, accounting, saves, seeded compatibility and one-use behavior. Further batches can use the same fields and plain 1848 voice; this completes the original handoff's six steps.
 
 Rules to keep:
 - Classic must deal nothing.
